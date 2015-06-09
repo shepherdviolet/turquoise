@@ -1,0 +1,470 @@
+package sviolet.turquoise.view.slide.view;
+
+import sviolet.turquoise.utils.MeasureUtils;
+import sviolet.turquoise.view.slide.SlideException;
+import sviolet.turquoise.view.slide.SlideView;
+import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
+import sviolet.turquoise.view.slide.logic.LinearScrollEngine;
+import android.content.Context;
+import android.view.View;
+import android.view.View.OnClickListener;
+
+/**
+ * LayoutDrawer控件逻辑实现<br>
+ * 
+ * @author S.Violet
+ *
+ */
+
+public class LayoutDrawerProvider {
+
+	/*******************************************************
+	 * var
+	 */
+	
+	private LinearGestureDriver mGestureDriver;
+	private LinearScrollEngine mSlideEngine;
+	
+	public static final int DRAWER_WIDTH_MATCH_PARENT = -1;//抽屉宽度=控件宽/高
+	public static final int FEEDBACK_RANGE_HALF_HANDLE_WIDTH = -1;//把手触摸反馈=把手宽度/2
+	
+	public static final boolean INIT_STAGE_PUSH_IN = false;//初始位置: 收起
+	public static final boolean INIT_STAGE_PULL_OUT = true;//初始位置: 拉出
+	
+	public static final int DEF_HANDLE_WIDTH = 0;
+	public static final int DEF_SCROLL_DURATION = 500;
+	public static final boolean DEF_OVER_SCROLL_ENABLED = false;
+	public static final float DEF_OVER_SCROLL_DAMP = 0.7f;
+	
+	public static final int DIRECTION_TOP = 0;//抽屉从顶部拉出
+	public static final int DIRECTION_BOTTOM = 1;//抽屉从底部拉出
+	public static final int DIRECTION_LEFT = 2;//抽屉从左边拉出
+	public static final int DIRECTION_RIGHT = 3;//抽屉从右边拉出
+	
+	private int scrollDirection = DIRECTION_LEFT;//抽屉拉出方向
+	private int drawerWidth = DRAWER_WIDTH_MATCH_PARENT;//抽屉宽度(dp), 包含把手宽度
+	private int handleWidth = DEF_HANDLE_WIDTH;//把手宽度(dp), 即抽屉未拉出时露出部分
+	private int scrollDuration = DEF_SCROLL_DURATION;//惯性滑动全程耗时
+	private boolean initStage = INIT_STAGE_PUSH_IN;//初始状态是否拉出
+	private boolean overScrollEnabled = DEF_OVER_SCROLL_ENABLED;//是否允许越界拖动
+	private float overScrollDamp = DEF_OVER_SCROLL_DAMP;//越界阻尼
+	
+	private int scrollRange = 0;//抽屉滑动距离
+	private int pullOutStage;//拉出抽屉状态对应的stage
+	private int pushInStage;//关闭抽屉状态对应的stage
+	
+	protected boolean handleFeedbackEnabled = false;//把手触摸反馈效果开关
+	private int handleFeedbackRange = FEEDBACK_RANGE_HALF_HANDLE_WIDTH;//把手触摸反馈幅度
+	private OnClickListener mOnHandleClickListener;//把手点击监听器
+	private OnClickListener mOnHandleLongPressListener;//把手长按监听器
+	
+	/*******************************************************
+	 * setting/init
+	 */
+	
+	/**
+	 * 设置滑动抽屉方向<br>
+	 * <br>
+	 * 默认{@link #DIRECTION_LEFT}<br>
+	 * <br>
+	 * {@link #DIRECTION_TOP} 抽屉从顶部拉出<br>
+	 * 	{@link #DIRECTION_BOTTOM} 抽屉从底部拉出<br>
+	 * 	{@link #DIRECTION_LEFT} 抽屉从左边拉出<br>
+	 * 	{@link #DIRECTION_RIGHT} 抽屉从右边拉出<br>
+	 * 
+	 * @param scrollDirection 抽屉方向
+	 */
+	public void setSlideScrollDirection(int scrollDirection){
+		this.scrollDirection = scrollDirection;
+	}
+	
+	/**
+	 * 设置抽屉宽度(单位 dp), 即可滑动距离<br>
+	 * <br>
+	 * 默认{@link #DRAWER_WIDTH_MATCH_PARENT} = {@value #DRAWER_WIDTH_MATCH_PARENT}<br>
+	 * <br>
+	 * 默认抽屉宽度 = 控件的宽度或高度<br>
+	 * 
+	 * @param drawerWidth
+	 * @return
+	 */
+	public void setSlideDrawerWidth(int drawerWidth){
+		this.drawerWidth = drawerWidth;
+	}
+	
+	/**
+	 * 设置把手宽度(单位 dp)<br>
+	 * <br>
+	 * 默认{@value #DEF_HANDLE_WIDTH}<br>
+	 * <br>
+	 * 把手是抽屉收起来后用于拉出抽屉的一块特殊范围, 由GestureDriver的永久触摸区域实现, 
+	 * 即控件边界处宽handleWidth的区域, 触摸起点在这个区域内, 可拉出抽屉.<br>
+	 * 例如DIRECTION_RIGHT的抽屉, handleWidth=30, 则该控件右边界宽30dp的范围内开始
+	 * 触摸, 向左滑动即可拉出抽屉<br>
+	 * 
+	 * @param handleWidth
+	 * @return
+	 */
+	public void setSlideHandleWidth(int handleWidth){
+		this.handleWidth = handleWidth;
+	}
+	
+	/**
+	 * 设置惯性滑动时间(全程) 单位ms<br>
+	 * <br>
+	 * 默认{@value #DEF_SCROLL_DURATION}<Br>
+	 * <br>
+	 * 抽屉从收起状态到拉出状态惯性滑动所需的时间<Br>
+	 * 
+	 * @param scrollDuration
+	 * @return
+	 */
+	public void setSlideScrollDuration(int scrollDuration){
+		this.scrollDuration = scrollDuration;
+	}
+	
+	/**
+	 * 设置抽屉初始状态:收起/拉出<br>
+	 * <br>
+	 * 默认{@link #INIT_STAGE_PUSH_IN}<br>
+	 * <br>
+	 * {@link #INIT_STAGE_PUSH_IN}:抽屉初始状态:收起<br>
+	 * {@link #INIT_STAGE_PULL_OUT}:抽屉初始状态:拉出<br>
+	 * 
+	 * @param initStage
+	 * @return
+	 */
+	public void setSlideInitStage(boolean initStage){
+		this.initStage = initStage;
+	}
+	
+	/**
+	 * 设置抽屉是否允许越界拖动<br>
+	 * <br>
+	 * 默认{@value #DEF_OVER_SCROLL_ENABLED}<br>
+	 * 
+	 * @param overScrollEnabled
+	 * @return
+	 */
+	public void setSlideOverScrollEnabled(boolean overScrollEnabled){
+		this.overScrollEnabled = overScrollEnabled;
+	}
+	
+	/**
+	 * 设置抽屉越界拖动阻尼[0,1)<br>
+	 * <br>
+	 * 默认{@value #DEF_OVER_SCROLL_DAMP}<br>
+	 * <br>
+	 * 越界阻尼越大, 越界时拖动越慢<br>
+	 * 
+	 * @param overScrollDamp
+	 * @return
+	 */
+	public void setSlideOverScrollDamp(float overScrollDamp){
+		this.overScrollDamp = overScrollDamp;
+	}
+	
+	/**
+	 * 设置把手触摸反馈效果(按在把手上抽屉弹出一部分)<br>
+	 * 
+	 * @param enabled
+	 * @return
+	 */
+	public void setHandleFeedback(boolean enabled){
+		this.handleFeedbackEnabled = enabled;
+	}
+	
+	/**
+	 * 设置把手触摸反馈效果幅度, 单位dp(按在把手上抽屉弹出一部分)<br>
+	 * <br>
+	 * 默认{@link #FEEDBACK_RANGE_HALF_HANDLE_WIDTH}: 幅度 = 把手宽度(handleWidth) / 2<br>
+	 * <br>
+	 * 此处的幅度不同于LinearSlideEngine的永久触摸区域反馈幅度. 此处数值为正数, 单位为dp, 
+	 * 无需考虑方向(方向由抽屉方向决定), 而LinearSlideEngine的反馈幅度需要区别正负方向, 
+	 * 单位为像素px<br>
+	 * 
+	 * @param range 反馈效果幅度 >=0
+	 * @return
+	 */
+	public void setHandleFeedbackRange(int range){
+		this.handleFeedbackRange = range;
+	}
+	
+	/**
+	 * 设置把手点击事件监听器<br>
+	 * <br>
+	 * 由于该监听事件回调后, 还会触发SlideEngine手势释放事件, 导致滚动目标重定向, 
+	 * 该监听事件回调中若需要pullOut/pushIn, 必须使用强制执行方式<br>
+	 * 
+	 * @param listener
+	 */
+	public void setOnHandleClickListener(OnClickListener listener){
+		this.mOnHandleClickListener = listener;
+	}
+	
+	/**
+	 * 设置把手长按事件监听器<br>
+	 * <br>
+	 * 由于该监听事件回调后, 还会触发SlideEngine手势释放事件, 导致滚动目标重定向, 
+	 * 该监听事件回调中若需要pullOut/pushIn, 必须使用强制执行方式<br>
+	 * 
+	 * @param listener
+	 */
+	public void setOnHandleLongPressListener(OnClickListener listener){
+		this.mOnHandleLongPressListener = listener;
+	}
+	
+	/*********************************************************
+	 * init
+	 */
+	
+	/**
+	 * 初始化滑动
+	 */
+	protected void initSlide(SlideView view) {
+		try{
+			
+			Context viewContext = ((View)view).getContext();
+			int viewWidth = ((View)view).getWidth();//控件宽度
+			int viewHeight = ((View)view).getHeight();//控件高度
+			int initPosition = 0;//初始位置
+			int orientation = LinearGestureDriver.ORIENTATION_HORIZONTAL;//手势捕获方向
+			int xScrollRange;//x轴方向滚动距离
+			int yScrollRange;//y轴方向滚动距离
+			if(drawerWidth > DRAWER_WIDTH_MATCH_PARENT){
+				xScrollRange = MeasureUtils.dp2px(viewContext, drawerWidth); //滑动范围
+				yScrollRange = MeasureUtils.dp2px(viewContext, drawerWidth); //滑动范围
+			}else{
+				xScrollRange = viewWidth;//滑动范围
+				yScrollRange = viewHeight;//滑动范围
+			}
+			
+			//永久触摸区域
+			int staticTouchAreaLeft = 0;
+			int staticTouchAreaRight = 0;
+			int staticTouchAreaTop = 0;
+			int staticTouchAreaBottom = 0;
+			boolean staticTouchAreaEnabled = false;
+			if(handleWidth > 0)
+				staticTouchAreaEnabled = true;
+			
+			//把手触摸反馈
+			int _handleFeedbackRange = 0;
+			if(handleFeedbackRange > FEEDBACK_RANGE_HALF_HANDLE_WIDTH)
+				_handleFeedbackRange = MeasureUtils.dp2px(viewContext, handleFeedbackRange);
+			else
+				_handleFeedbackRange = MeasureUtils.dp2px(viewContext, handleWidth / 2);
+			
+			switch(scrollDirection){
+			case DIRECTION_TOP:
+				scrollRange = yScrollRange;//滑动范围
+				orientation = LinearGestureDriver.ORIENTATION_VERTICAL;//捕获垂直手势
+				pullOutStage = 0;
+				pushInStage = 1;
+				//永久触摸区域
+				staticTouchAreaLeft = 0;
+				staticTouchAreaRight = viewWidth;
+				staticTouchAreaTop = 0;
+				staticTouchAreaBottom = MeasureUtils.dp2px(viewContext, handleWidth);
+				//把手触摸反馈
+				_handleFeedbackRange = - _handleFeedbackRange;//设定方向
+				//初始位置
+				if(initStage == INIT_STAGE_PULL_OUT)
+					initPosition = 0;//初始位置:原位
+				else
+					initPosition = scrollRange;//初始位置:上面
+				break;
+			case DIRECTION_BOTTOM:
+				scrollRange = yScrollRange;//滑动范围
+				orientation = LinearGestureDriver.ORIENTATION_VERTICAL;//捕获垂直手势
+				pullOutStage = 1;
+				pushInStage = 0;
+				//永久触摸区域
+				staticTouchAreaLeft = 0;
+				staticTouchAreaRight = viewWidth;
+				staticTouchAreaTop = viewHeight - MeasureUtils.dp2px(viewContext, handleWidth);
+				staticTouchAreaBottom = viewHeight;
+				//把手触摸反馈
+//				_handleFeedbackRange = _handleFeedbackRange;//设定方向
+				//初始位置
+				if(initStage == INIT_STAGE_PULL_OUT)
+					initPosition = scrollRange;//初始位置:原位
+				else
+					initPosition = 0;//初始位置:下面
+				break;
+			case DIRECTION_LEFT:
+				scrollRange = xScrollRange;//滑动范围
+				orientation = LinearGestureDriver.ORIENTATION_HORIZONTAL;//捕获水平手势
+				pullOutStage = 0;
+				pushInStage = 1;
+				//永久触摸区域
+				staticTouchAreaLeft = 0;
+				staticTouchAreaRight = MeasureUtils.dp2px(viewContext, handleWidth);
+				staticTouchAreaTop = 0;
+				staticTouchAreaBottom = viewHeight;
+				//把手触摸反馈
+				_handleFeedbackRange = - _handleFeedbackRange;//设定方向
+				//初始位置
+				if(initStage == INIT_STAGE_PULL_OUT)
+					initPosition = 0;//初始位置:原位
+				else
+					initPosition = scrollRange;//初始位置:左边
+				break;
+			case DIRECTION_RIGHT:
+				scrollRange = xScrollRange;//滑动范围
+				orientation = LinearGestureDriver.ORIENTATION_HORIZONTAL;//捕获水平手势
+				pullOutStage = 1;
+				pushInStage = 0;
+				//永久触摸区域
+				staticTouchAreaLeft = viewWidth - MeasureUtils.dp2px(viewContext, handleWidth);
+				staticTouchAreaRight = viewWidth;
+				staticTouchAreaTop = 0;
+				staticTouchAreaBottom = viewHeight;
+				//把手触摸反馈
+//				_handleFeedbackRange = _handleFeedbackRange;//设定方向
+				//初始位置
+				if(initStage == INIT_STAGE_PULL_OUT)
+					initPosition = scrollRange;//初始位置:原位
+				else
+					initPosition = 0;//初始位置:右边
+				break;
+			}
+			
+			destory();//销毁原来的滑动驱动
+			mGestureDriver = new LinearGestureDriver(viewContext, orientation);
+			mGestureDriver.setStaticTouchArea(staticTouchAreaEnabled, staticTouchAreaLeft, staticTouchAreaRight, staticTouchAreaTop, staticTouchAreaBottom);
+			mSlideEngine = new LinearScrollEngine(viewContext, view, scrollRange, initPosition, scrollDuration);
+			mSlideEngine.bind(mGestureDriver);
+			mSlideEngine.setOverScroll(overScrollEnabled, overScrollDamp);
+			mSlideEngine.setStaticTouchAreaFeedback(handleFeedbackEnabled, _handleFeedbackRange);
+			mSlideEngine.setOnStaticTouchAreaClickListener(mOnHandleClickListener);
+			mSlideEngine.setOnStaticTouchAreaLongPressListener(mOnHandleLongPressListener);
+			
+		}catch(ClassCastException e){
+			throw new SlideException("[DrawerProvider]SlideView is not a View instance", e);
+		}
+	}
+	
+	/****************************************************
+	 * func
+	 */
+	
+	/**
+	 * 拉出抽屉
+	 */
+	protected void pullOut(){
+		if(mSlideEngine != null)
+			mSlideEngine.scrollToStage(pullOutStage, false);
+	}
+	
+	/**
+	 * 关闭抽屉
+	 */
+	protected void pushIn(){
+		if(mSlideEngine != null)
+			mSlideEngine.scrollToStage(pushInStage, false);
+	}
+	
+	/**
+	 * 拉出抽屉<br>
+	 * <br>
+	 * 设定强制执行后, 抽屉拉出完成前触摸无效, 滚动强制完成目标无法改变<br>
+	 * 
+	 * @param force 是否强制执行(锁定目标)
+	 */
+	protected void pullOut(boolean force){
+		if(mSlideEngine != null)
+			mSlideEngine.scrollToStage(pullOutStage, force);
+	}
+	
+	/**
+	 * 关闭抽屉<br>
+	 * <br>
+	 * 	设定强制执行后, 抽屉拉出完成前触摸无效, 滚动强制完成目标无法改变<br>
+	 * 
+	 * @param force 是否强制执行(锁定目标)
+	 */
+	protected void pushIn(boolean force){
+		if(mSlideEngine != null)
+			mSlideEngine.scrollToStage(pushInStage, force);
+	}
+	
+	/**
+	 * 销毁
+	 */
+	protected void destory(){
+		if(mGestureDriver != null){
+			mGestureDriver.destroy();
+			mGestureDriver = null;
+		}
+		if(mSlideEngine != null){
+			mSlideEngine.destroy();
+			mSlideEngine = null;
+		}
+	}
+
+	/*******************************************************
+	 * getter
+	 */
+	
+	/**
+	 * 获得抽屉滚动范围(距离)
+	 * @return
+	 */
+	public int getScrollRange(){
+		return scrollRange;
+	}
+	
+	protected LinearGestureDriver getGestureDriver() {
+		return mGestureDriver;
+	}
+
+	protected LinearScrollEngine getSlideEngine() {
+		return mSlideEngine;
+	}
+
+	protected int getScrollDirection() {
+		return scrollDirection;
+	}
+
+	protected int getDrawerWidth() {
+		return drawerWidth;
+	}
+
+	protected int getHandleWidth() {
+		return handleWidth;
+	}
+
+	protected int getScrollDuration() {
+		return scrollDuration;
+	}
+
+	protected boolean getInitStage() {
+		return initStage;
+	}
+
+	protected boolean isOverScrollEnabled() {
+		return overScrollEnabled;
+	}
+
+	protected float getOverScrollDamp() {
+		return overScrollDamp;
+	}
+
+	protected int getPullOutStage() {
+		return pullOutStage;
+	}
+
+	protected int getPushInStage() {
+		return pushInStage;
+	}
+
+	protected boolean isHandleFeedbackEnabled() {
+		return handleFeedbackEnabled;
+	}
+
+	protected int getHandleFeedbackRange() {
+		return handleFeedbackRange;
+	}
+	
+}

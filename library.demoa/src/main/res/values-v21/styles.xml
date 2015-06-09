@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 应用Style -->
+
+    <style name="AppTheme" parent="android:Theme.Material.Light"></style>
+    <style name="AppTheme_NoTitle" parent="android:Theme.Material.NoActionBar"></style>
+
+</resources>

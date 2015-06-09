@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/library.demoa/library.demoa.iml" filepath="$PROJECT_DIR$/library.demoa/library.demoa.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library.librarya/library.librarya.iml" filepath="$PROJECT_DIR$/library.librarya/library.librarya.iml" />
+      <module fileurl="file://$PROJECT_DIR$/library.turquoise/library.turquoise.iml" filepath="$PROJECT_DIR$/library.turquoise/library.turquoise.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sviolet.turquoise.iml" filepath="$PROJECT_DIR$/sviolet.turquoise.iml" />
+    </modules>
+  </component>
+</project>

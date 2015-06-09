@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- ======================
+	Turquoise Library attrs Common
+	S.Violet
+====================== -->
+
+<!-- =================================
+    标签声明::
+    xmlns:sviolet="http://schemas.android.com/apk/res/应用包名"
+    Android Studio::
+    xmlns:sviolet="http://schemas.android.com/apk/res-auto"
+
+    标签使用::
+    sviolet:widget="300dp"
+    sviolet:color="#FF00FF"
+
+    类型::
+    reference:资源ID
+    color:颜色
+    boolean:布尔
+    dimension:尺寸
+    float:浮点
+    integer:整型
+    string:字符串
+    fraction:百分数
+    enum:枚举值
+    flag:位或运算
+
+    Class中使用::
+    TypedArray types = mContext.obtainStyledAttributes(attributeSet, R.styleable.MyView);
+    layoutWidth = (int)types.getDimension(R.styleable.DotPageIndicator_android_layout_width, 0);//取android系统参数
+    width = (int) types.getDimension(R.styleable.sviolet_width, 300);
+    color = types.getColor(R.styleable.sviolet_color, 0xFFD6D6D6);
+    types.recycle();
+
+    取android参数::
+    LayoutParams params = (LayoutParams) view.getLayoutParams();
+    LayoutParams params = (LayoutParams) getLayoutParams();
+
+    attrs声明::
+    <resources>
+
+        <attr name="color" format="color"/> 公共声明
+
+        <declare-styleable name="MyView">自定义控件配置
+            <attr name="android:layout_width"/> 引用安卓公共声明(取android:标签参数)
+            <attr name="width" format="dimension"/> 自定义声明
+            <attr name="color"/> 引用自定义公共声明
+        </declare-styleable>
+
+    </resources>
+
+    注意事项:
+    declare-styleable name应与控件类名相同, Eclipse插件会自动检索, XML编辑中可ALT+/检索
+    attr name不可重复, 特殊的参数名应带上空间名避免重复, 例如:MyView_type
+
+ ================================= -->
+
+<resources>
+
+    <!--=====================common=====================-->
+
+    <!-- 度量 -->
+    <attr name="width" format="dimension" />
+    <!-- 宽度 -->
+    <attr name="height" format="dimension" />
+    <!-- 高度 -->
+    <attr name="radius" format="dimension" />
+    <!-- 半径 -->
+    <attr name="padding" format="dimension" />
+    <!-- 内边距 -->
+    <attr name="angle" format="float" />
+    <!-- 角度 -->
+    <attr name="strokeWidth" format="dimension" />
+    <!-- 画笔宽度 -->
+    <attr name="scale" format="float" />
+    <!-- 比例0-1 -->
+    <attr name="scaleX" format="float" />
+    <!-- X轴比例0-1 -->
+    <attr name="scaleY" format="float" />
+    <!-- Y轴比例0-1 -->
+
+    <!-- 颜色 -->
+    <attr name="color" format="color" />
+    <!-- 颜色 -->
+    <attr name="backgroundColor" format="color" />
+    <!-- 背景颜色 -->
+    <attr name="alpha" format="integer" />
+    <!-- 透明度0-255 -->
+    <attr name="highLightColor" format="color" />
+    <!-- 高亮处颜色 -->
+
+    <!-- 资源 -->
+    <attr name="text" format="string" />
+    <!-- 文本 -->
+    <attr name="src" format="reference" />
+    <!-- 图片资源ID -->
+
+    <!-- 配置 -->
+    <attr name="center" format="boolean" />
+    <!-- 中心居中 -->
+    <attr name="quantity" format="integer" />
+    <!-- 数量 -->
+    <attr name="interval" format="dimension" />
+    <!-- 间隔 -->
+
+    <!-- 动画控制 -->
+    <attr name="framerate" format="integer" />
+    <!-- 动画刷新帧间隔 -->
+    <attr name="duration" format="integer" />
+    <!-- 持续时间 -->
+    <attr name="repeat" format="boolean" />
+    <!-- 是否重复 -->
+
+    <!-- 缩放(动画) -->
+    <attr name="zoomEnable" format="boolean" />
+    <!-- 允许动画缩放 -->
+    <attr name="zoomScale" format="float" />
+    <!-- 动画缩放比例 -->
+    <attr name="zoomDuration" format="integer" />
+    <!-- 缩放动画持续时间 -->
+
+    <!-- 触摸控制 -->
+    <attr name="touchEnabled" format="boolean" />
+    <!-- 允许触摸 -->
+    <attr name="longpressEnabled" format="boolean" />
+    <!-- 允许长按 -->
+    <attr name="abordTouchEvent" format="boolean" />
+    <!-- 阻断触摸事件(不向下分发) -->
+
+    <!-- 比例长宽控制 -->
+    <!-- 例:widthProportion=0.5 屏幕宽度1080px, 则控件宽度540px, 设置widthHeightRatio=0.5, 则控件高度为1080px  -->
+    <attr name="widthProportion" format="float" />
+    <!-- 宽度占屏幕宽度的比例0-1 -->
+    <attr name="heightProportion" format="float" />
+    <!-- 高度占屏幕高度的比例0-1 -->
+    <attr name="widthHeightRatio" format="float" />
+    <!-- 宽度/高度的比例, 适用于widthProportion/heightProportion -->
+
+</resources>

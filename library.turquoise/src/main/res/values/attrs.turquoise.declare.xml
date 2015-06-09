@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- ======================
+	Turquoise Library attrs Declare
+	S.Violet
+====================== -->
+
+<!-- =================================
+    标签声明::
+    xmlns:sviolet="http://schemas.android.com/apk/res/应用包名"
+    Android Studio::
+    xmlns:sviolet="http://schemas.android.com/apk/res-auto"
+
+    标签使用::
+    sviolet:widget="300dp"
+    sviolet:color="#FF00FF"
+
+    类型::
+    reference:资源ID
+    color:颜色
+    boolean:布尔
+    dimension:尺寸
+    float:浮点
+    integer:整型
+    string:字符串
+    fraction:百分数
+    enum:枚举值
+    flag:位或运算
+
+    Class中使用::
+    TypedArray types = mContext.obtainStyledAttributes(attributeSet, R.styleable.MyView);
+    layoutWidth = (int)types.getDimension(R.styleable.DotPageIndicator_android_layout_width, 0);//取android系统参数
+    width = (int) types.getDimension(R.styleable.sviolet_width, 300);
+    color = types.getColor(R.styleable.sviolet_color, 0xFFD6D6D6);
+    types.recycle();
+
+    取android参数::
+    LayoutParams params = (LayoutParams) view.getLayoutParams();
+    LayoutParams params = (LayoutParams) getLayoutParams();
+
+    attrs声明::
+    <resources>
+
+        <attr name="color" format="color"/> 公共声明
+
+        <declare-styleable name="MyView">自定义控件配置
+            <attr name="android:layout_width"/> 引用安卓公共声明(取android:标签参数)
+            <attr name="width" format="dimension"/> 自定义声明
+            <attr name="color"/> 引用自定义公共声明
+        </declare-styleable>
+
+    </resources>
+
+    注意事项:
+    declare-styleable name应与控件类名相同, Eclipse插件会自动检索, XML编辑中可ALT+/检索
+    attr name不可重复, 特殊的参数名应带上空间名避免重复, 例如:MyView_type
+
+ ================================= -->
+
+<resources>
+
+    <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/slide/view/DotPageIndicator.java -->
+    <declare-styleable name="DotPageIndicator">
+        <attr name="color" />
+        <!-- 颜色 -->
+        <attr name="highLightColor" />
+        <!-- 高亮处颜色 -->
+        <attr name="radius" />
+        <!-- 半径 -->
+        <attr name="quantity" />
+        <!-- 数量 -->
+        <attr name="interval" />
+        <!-- 间隔 -->
+    </declare-styleable>
+
+    <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/shadow/LinearShadowView.java -->
+    <declare-styleable name="LinearShadowView">
+        <attr name="color" />
+        <!-- 阴影颜色 -->
+        <attr name="LinearShadowView_direction">
+            <enum name="top" value="0" />
+            <enum name="bottom" value="1" />
+            <enum name="left" value="2" />
+            <enum name="right" value="3" />
+        </attr>
+        <!-- 阴影方向 -->
+    </declare-styleable>
+
+    <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/shadow/LinearShadowLayout.java -->
+    <declare-styleable name="LinearShadowLayout">
+        <attr name="scale" />
+        <!-- 缩放比例 -->
+        <attr name="backgroundColor" />
+        <!-- 背景色 -->
+        <attr name="color" />
+        <!-- 阴影颜色 -->
+        <attr name="alpha" />
+        <!-- 阴影透明度 -->
+        <attr name="radius" />
+        <!-- 阴影半径 -->
+        <attr name="LinearShadowLayout_shadowOffsetX" format="dimension" />
+        <!-- 阴影位移X -->
+        <attr name="LinearShadowLayout_shadowOffsetY" format="dimension" />
+        <!-- 阴影位移Y -->
+    </declare-styleable>
+
+    <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/shadow/RelativeShadowLayout.java -->
+    <declare-styleable name="RelativeShadowLayout">
+        <attr name="scale" />
+        <!-- 缩放比例 -->
+        <attr name="backgroundColor" />
+        <!-- 背景色 -->
+        <attr name="color" />
+        <!-- 阴影颜色 -->
+        <attr name="alpha" />
+        <!-- 阴影透明度 -->
+        <attr name="radius" />
+        <!-- 阴影半径 -->
+        <attr name="RelativeShadowLayout_shadowOffsetX" format="dimension" />
+        <!-- 阴影位移X -->
+        <attr name="RelativeShadowLayout_shadowOffsetY" format="dimension" />
+        <!-- 阴影位移Y -->
+    </declare-styleable>
+
+</resources>

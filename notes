@@ -1,0 +1,11 @@
+1.Slide:
+
+停止监听器
+otherIntecept改为更好的捆绑engine方式
+slidelist
+
+2.Cache
+
+本地缓存管理器
+网络功能优化
+资源管理器(自动网络获取/缓存获取)

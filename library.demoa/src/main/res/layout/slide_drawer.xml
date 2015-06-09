@@ -1,0 +1,59 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sviolet="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="sviolet.demoa.slide.DrawerSlideActivity">
+
+    <!-- 底部ListView -->
+    <ListView
+        android:id="@+id/slide_drawer_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:divider="#C0C0C0"
+        android:dividerHeight="1px" />
+
+    <!-- 抽屉控件 -->
+    <!-- scrollX/scrollY设置一个很大的值, 让子控件消失, 由engine的初始位置决定控件初始位置 -->
+    <!-- [必须]background 设置透明背景, 使得ViewGroup得以绘制, 否则无法滑动 -->
+    <!-- [必须]若子控件不处理触摸事件的(例TextView), 则必须设置子控件clickable="true", 否则无法捕获触摸事件, 无法滑动 -->
+    <sviolet.turquoise.view.slide.view.RelativeLayoutDrawer
+        android:id="@+id/slide_drawer_leftdrawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00000000"
+        android:scrollX="10000dp"
+        android:scrollY="10000dp">
+
+        <ListView
+            android:id="@+id/slide_drawer_leftdrawer_listview"
+            android:layout_width="280dp"
+            android:layout_height="match_parent"
+            android:background="#FFC0C0C0" />
+
+        <!-- 线性渐变阴影 -->
+        <!-- 关系布局在被占满后, 若使用诸如toRightOf在右侧添加控件, 会导致显示不出来,
+				因此必须使用alignRight与之右对齐, 然后用marginRight将阴影移出去, 才能在
+				超出屏幕范围外的地方放置阴影 -->
+        <sviolet.turquoise.view.shadow.LinearShadowView
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:layout_alignRight="@id/slide_drawer_leftdrawer_listview"
+            android:layout_marginRight="-5dp"
+            sviolet:LinearShadowView_direction="right"
+            sviolet:color="#50000000" />
+
+        <!-- 线性渐变阴影 -->
+        <sviolet.turquoise.view.shadow.LinearShadowView
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:layout_alignLeft="@id/slide_drawer_leftdrawer_listview"
+            android:layout_marginLeft="-5dp"
+            sviolet:LinearShadowView_direction="left"
+            sviolet:color="#50000000" />
+
+    </sviolet.turquoise.view.slide.view.RelativeLayoutDrawer>
+
+</RelativeLayout>
