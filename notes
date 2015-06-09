@@ -1,5 +1,7 @@
 1.Slide:
 
+flingEngine速度溢出
+AdaptListView到底检测
 停止监听器
 otherIntecept改为更好的捆绑engine方式
 slidelist
@@ -9,3 +11,7 @@ slidelist
 本地缓存管理器
 网络功能优化
 资源管理器(自动网络获取/缓存获取)
+
+3.Fragment
+
+Fragment滑动
