@@ -19,7 +19,7 @@ import android.view.ViewTreeObserver.OnPreDrawListener;
  * 
  * @author S.Violet
  */
-
+@Deprecated
 public abstract class ShadowLayoutProvider {
 
 	private static final float DEF_SCALE = 0.96f;

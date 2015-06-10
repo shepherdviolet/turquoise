@@ -3,58 +3,14 @@ package sviolet.turquoise.view.slide.logic;
 import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Scroller;
 
+import sviolet.turquoise.compat.CompatScroller;
 import sviolet.turquoise.view.slide.SlideView;
 
 /**
  * 线性滑动引擎(有惯性, 惯性滑动至停止点)<br>
  * <br>
  * @see sviolet.turquoise.view.slide.SlideView
- **************************************************************************************<br>
- * 刷新UI/输出显示示例:<br>
- * SlideView::<br>
- * <br>
-	//实现通知刷新UI接口
-	@Override
-	public void notifyRefresh() {
-		postInvalidate();
-	}
-	
-	//常用输出方法(0 -> range)
-	@Override
-	public void computeScroll() {
-		if(mSlideEngine != null){
-			scrollTo(mSlideEngine.getPosition(), 0);
-			if(!mSlideEngine.isStop())
-				postInvalidate();
-		}
-	}
-	
-	//常用输出方法2(-range -> 0)
-	@Override
-	public void computeScroll() {
-		if(mSlideEngine != null){
-			scrollTo(mSlideEngine.getPosition() - mSlideEngine.getRange(), 0);
-			if(!mSlideEngine.isStop())
-				postInvalidate();
-		}
-	}
-	
-	//其他输出方法
-//	@Override
-//	protected void onDraw(Canvas canvas) {
-//		//绘制View
-//		super.onDraw(canvas);
-//		//滑动至engine所在位置
-//		if(mSlideEngine != null){
-//			scrollTo(mSlideEngine.getPosition(), 0);
-//			//判断是否停止
-//			if(!mSlideEngine.isStop())
-//				postInvalidate();
-//		}
-//	}
- * <br>
  **************************************************************************************<br>
  * 输出定义::<br>
  * <br>
@@ -76,7 +32,7 @@ public class LinearScrollEngine extends LinearDragEngine {
 	
 	protected int stageDuration = DEF_STAGE_DURATION;//一个阶段的全程惯性滑动时间
 	
-	protected Scroller mScroller = null;
+	protected CompatScroller mScroller = null;
 
 	private OnClickListener mOnStaticTouchAreaTouchListener;//永久触摸区域触摸事件监听器
 	private OnClickListener mOnStaticTouchAreaClickListener;//永久触摸区域点击事件监听器
@@ -111,7 +67,7 @@ public class LinearScrollEngine extends LinearDragEngine {
 	public LinearScrollEngine(Context context, SlideView slideView, int maxRange, int initPosition, int stageDuration, int slidingDirection){
 		super(context, slideView, maxRange, initPosition, slidingDirection);
 		this.stageDuration = stageDuration;
-		mScroller = new Scroller(mContext);
+		mScroller = new CompatScroller(mContext);
 	}
 	
 	/******************************************************

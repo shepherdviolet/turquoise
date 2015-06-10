@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 
 import sviolet.turquoise.compat.CompatScroller;
-import sviolet.turquoise.utils.DeviceUtils;
 import sviolet.turquoise.view.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.view.slide.SlideView;
 
@@ -12,50 +11,6 @@ import sviolet.turquoise.view.slide.SlideView;
  * 线性滑动引擎(有惯性, 惯性滑动距离由松手时速度决定)<br>
  * <br>
  * @see sviolet.turquoise.view.slide.SlideView
- **************************************************************************************<br>
- * 刷新UI/输出显示示例:<br>
- * SlideView::<br>
- * <br>
-	//实现通知刷新UI接口
-	@Override
-	public void notifyRefresh() {
-		postInvalidate();
-	}
-
-	//常用输出方法(0 -> range)
-	@Override
-	public void computeScroll() {
-		if(mSlideEngine != null){
-			scrollTo(mSlideEngine.getPosition(), 0);
-			if(!mSlideEngine.isStop())
-				postInvalidate();
-		}
-	}
-
-	//常用输出方法2(-range -> 0)
-	@Override
-	public void computeScroll() {
-		if(mSlideEngine != null){
-			scrollTo(mSlideEngine.getPosition() - mSlideEngine.getRange(), 0);
-			if(!mSlideEngine.isStop())
-				postInvalidate();
-		}
-	}
-
-	//其他输出方法
-//	@Override
-//	protected void onDraw(Canvas canvas) {
-//		//绘制View
-//		super.onDraw(canvas);
-//		//滑动至engine所在位置
-//		if(mSlideEngine != null){
-//			scrollTo(mSlideEngine.getPosition(), 0);
-//			//判断是否停止
-//			if(!mSlideEngine.isStop())
-//				postInvalidate();
-//		}
-//	}
- * <br>
  **************************************************************************************<br>
  * 输出定义::<br>
  * <br>
@@ -216,17 +171,7 @@ public class LinearFlingEngine extends LinearDragEngine {
 	protected void callVelocityOverflow(){
 		if (!isVelocityOverflowCallbacked && mOnVelocityOverflowListener != null && mScroller != null) {
 			isVelocityOverflowCallbacked = true;
-			if (DeviceUtils.getVersionSDK() >= 14) {
-				float velocity;
-				if (checkPositionState(position) < POSITION_IN_RANGE){
-					velocity = - mScroller.getCurrVelocity();
-				}else{
-					velocity = mScroller.getCurrVelocity();
-				}
-				mOnVelocityOverflowListener.onVelocityOverflow((int) velocity);
-			}else {
-				mOnVelocityOverflowListener.onVelocityOverflow(0);
-			}
+			mOnVelocityOverflowListener.onVelocityOverflow(getCurrVelocity());
 		}
 	}
 
@@ -262,6 +207,12 @@ public class LinearFlingEngine extends LinearDragEngine {
 		//初始化scroller
 		abortScroller();
 		if(mScroller != null){
+			//先行位移, 防止在停止点
+			if(velocity > 0) {
+				position++;
+			}else {
+				position--;
+			}
 			mScroller.fling(position, 0, velocity, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
 		}
 		//通知刷新UI
@@ -271,12 +222,31 @@ public class LinearFlingEngine extends LinearDragEngine {
 	/**
 	 * 速度溢出监听器<br>
 	 * <br>
+	 * 注意: 无限滑动模式中该监听器无效<Br>
 	 * 当惯性滑动到底时, 若速度未降至0, 则回调该监听器, 并传入剩余速度参数<br>
 	 *
 	 * @param mOnVelocityOverflowListener 监听器
 	 */
 	public void setOnVelocityOverflowListener(OnVelocityOverflowListener mOnVelocityOverflowListener){
 		this.mOnVelocityOverflowListener = mOnVelocityOverflowListener;
+	}
+
+	/**
+	 * 获得当前惯性滑动速度
+	 * @return
+	 */
+	public int getCurrVelocity(){
+		if (mScroller != null) {
+			float velocity;
+			if (mScroller.getStartX() < mScroller.getCurrX()){
+				velocity = mScroller.getCurrVelocity();
+			}else{
+				velocity = - mScroller.getCurrVelocity();
+			}
+			return (int) velocity;
+		}else {
+			return 0;
+		}
 	}
 
 }

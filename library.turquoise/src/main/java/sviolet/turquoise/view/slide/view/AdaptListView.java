@@ -1,5 +1,6 @@
 package sviolet.turquoise.view.slide.view;
 
+import sviolet.turquoise.view.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.view.slide.SlideView;
 import sviolet.turquoise.view.slide.logic.LinearFlingEngine;
 import android.annotation.SuppressLint;
@@ -22,6 +23,10 @@ import android.widget.ListView;
  */
 
 public class AdaptListView extends ListView implements SlideView{
+
+	private OnVelocityOverflowListener mOnVelocityOverflowListener;//速度溢出监听器
+
+	private boolean isVelocityOverflowCallbacked = false;//速度溢出事件已回调
 
 	//内置滑动引擎
 	private LinearFlingEngine mSlideEngine;
@@ -62,11 +67,22 @@ public class AdaptListView extends ListView implements SlideView{
 	 */
 	@Override
 	public void computeScroll() {
-		if(mSlideEngine != null){
+		if(mSlideEngine != null) {
 			int offset = mSlideEngine.getOffset();
 			smoothScrollBy(offset, 0);
-			if(!mSlideEngine.isStop()){
+			if (!mSlideEngine.isStop()) {
 				postInvalidate();
+			}
+			//速度溢出监听
+			if (mOnVelocityOverflowListener != null){
+				if (reachTop() || reachBottom()) {
+					if(!isVelocityOverflowCallbacked) {
+						isVelocityOverflowCallbacked = true;
+						mOnVelocityOverflowListener.onVelocityOverflow(mSlideEngine.getCurrVelocity());
+					}
+				}else{
+					isVelocityOverflowCallbacked = false;
+				}
 			}
 		}
 	}
@@ -87,12 +103,43 @@ public class AdaptListView extends ListView implements SlideView{
 	
 	/**
 	 * 获得控件内置滑动引擎
-	 * @return
 	 */
 	public LinearFlingEngine getSlideEngine(){
 		return mSlideEngine;
 	}
-	
+
+	/**
+	 * 列表是否拉到顶部
+	 */
+	public boolean reachTop(){
+		//显示的第一个Item为第一个, 且该Item到达顶端的距离为0
+		if(getFirstVisiblePosition() == 0 && getChildAt(0).getTop() == 0){
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 列表是否拉到底部
+	 */
+	public boolean reachBottom(){
+		//显示的最后一个Item为最后一个, 且该Item到达底部的距离为0
+		if(getLastVisiblePosition() == (getCount() - 1) &&
+				getChildAt(getChildCount() - 1).getBottom() == getHeight()){
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 设置速度溢出监听器<br>
+	 *     该实现方式与LinearFlingEngine不同, 必须使用此方法实现监听
+	 * @param listener
+	 */
+	public void setOnVelocityOverflowListener(OnVelocityOverflowListener listener){
+		this.mOnVelocityOverflowListener = listener;
+	}
+
 	/****************************************************
 	 * private
 	 */

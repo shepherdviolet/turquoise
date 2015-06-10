@@ -80,18 +80,11 @@ public class MySlideView extends LinearLayout implements SlideView{
 		mSlideEngine.setOnGestureHoldListener(mOnGestureHoldListener);
 	}
 	
-//	@Override
-//	public boolean dispatchTouchEvent(MotionEvent ev) {
-//		System.out.println("dispatch" + ev.getAction());
-//		return super.dispatchTouchEvent(ev);
-//	}
-	
 	/**
 	 * 捕获触摸事件
 	 */
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
-//		System.out.println("inter" + ev.getAction());
 		boolean original = super.onInterceptTouchEvent(ev);
 		if(mGestureDriver != null && mGestureDriver.onInterceptTouchEvent(ev))
 			return true;
@@ -103,7 +96,6 @@ public class MySlideView extends LinearLayout implements SlideView{
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-//		System.out.println("touch" + event.getAction());
 		boolean original = super.onTouchEvent(event);
 		if(mGestureDriver != null && mGestureDriver.onTouchEvent(event))
 			return true;
@@ -117,7 +109,6 @@ public class MySlideView extends LinearLayout implements SlideView{
 	public void computeScroll() {
 		if(mSlideEngine != null){
 			int value = mSlideEngine.getPosition();
-//			System.out.println("myslideview"+value);
 			scrollTo(0, value);
 			if(!mSlideEngine.isStop()){
 				postInvalidate();

@@ -105,11 +105,10 @@ package sviolet.turquoise.view.slide;
 	//常用输出方法3:改变宽高
 	@Override
 	public void computeScroll() {
-		if(mSlideEngine != null){
+		if(mSlideEngine != null && !mSlideEngine.isStop()){
 			LinearLayout.LayoutParams params = (LayoutParams) getLayoutParams();
 			params.height = mSlideEngine.getPosition();
-			if(!mSlideEngine.isStop())
-				requestLayout();//改用requestLayout();
+			requestLayout();//改用requestLayout();
 		}
 	}
 	

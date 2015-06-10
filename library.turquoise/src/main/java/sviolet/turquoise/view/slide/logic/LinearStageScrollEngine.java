@@ -8,51 +8,7 @@ import android.content.Context;
  * <br>
  * 滑动全程可分为多个等分阶段, 每个阶段停止, 类似于ViewPager<br>
  * <br>
- * @see sviolet.turquoise.view.slide.SlideView<br>
- **************************************************************************************<br>
- * 刷新UI/输出显示示例:<br>
- * SlideView::<br>
- * <br>
-	//实现通知刷新UI接口
-	@Override
-	public void notifyRefresh() {
-		postInvalidate();
-	}
-	
-	//常用输出方法(0 -> range)
-	@Override
-	public void computeScroll() {
-		if(mSlideEngine != null){
-			scrollTo(mSlideEngine.getPosition(), 0);
-			if(!mSlideEngine.isStop())
-				postInvalidate();
-		}
-	}
-	
-	//常用输出方法2(-range -> 0)
-	@Override
-	public void computeScroll() {
-		if(mSlideEngine != null){
-			scrollTo(mSlideEngine.getPosition() - mSlideEngine.getRange(), 0);
-			if(!mSlideEngine.isStop())
-				postInvalidate();
-		}
-	}
-	
-	//其他输出方法
-//	@Override
-//	protected void onDraw(Canvas canvas) {
-//		//绘制View
-//		super.onDraw(canvas);
-//		//滑动至engine所在位置
-//		if(mSlideEngine != null){
-//			scrollTo(mSlideEngine.getPosition(), 0);
-//			//判断是否停止
-//			if(!mSlideEngine.isStop())
-//				postInvalidate();
-//		}
-//	}
- * <br>
+ * @see sviolet.turquoise.view.slide.SlideView
  **************************************************************************************<br>
  * 输出定义::<br>
  * <br>

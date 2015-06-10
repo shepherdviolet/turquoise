@@ -38,7 +38,7 @@ import android.widget.RelativeLayout;
  * @author S.Violet
  *
  */
-
+@Deprecated
 public class RelativeShadowLayout extends RelativeLayout{
 
 	private ShadowLayoutProvider mProvider = new ShadowLayoutProvider(this){

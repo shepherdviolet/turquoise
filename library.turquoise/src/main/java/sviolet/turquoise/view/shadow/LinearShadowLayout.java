@@ -38,7 +38,7 @@ import android.widget.LinearLayout;
  * @author S.Violet
  *
  */
-
+@Deprecated
 public class LinearShadowLayout extends LinearLayout {
 
 	private ShadowLayoutProvider mProvider = new ShadowLayoutProvider(this){

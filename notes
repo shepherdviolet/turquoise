@@ -1,17 +1,14 @@
-1.Slide:
 
-flingEngine速度溢出(API14以下能否反射)
-AdaptListView到底检测
-停止监听器
+0.完善注释
+
+1.Slide:
 otherIntecept改为更好的捆绑engine方式
 slidelist
 
 2.Cache
-
 本地缓存管理器
 网络功能优化
 资源管理器(自动网络获取/缓存获取)
 
 3.Fragment
-
 Fragment滑动
