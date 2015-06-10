@@ -183,7 +183,6 @@ public class LocusView extends View {
 			locus_line_semicircle_error = BitmapFactory.decodeStream(getContext().getAssets().open("locus/locus_line_semicircle_error.png"));
 			locus_arrow = BitmapFactory.decodeStream(getContext().getAssets().open("locus/locus_arrow.png"));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

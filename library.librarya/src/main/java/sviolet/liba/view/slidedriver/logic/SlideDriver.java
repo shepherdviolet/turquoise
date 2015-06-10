@@ -126,7 +126,6 @@ package sviolet.liba.view.slidedriver.logic;
 /* 例:
 		@Override
 		public boolean dispatchTouchEvent(MotionEvent ev) {
-			// TODO Auto-generated method stub
 			if(slideDriver.drive(ev))
 				return true;
 			

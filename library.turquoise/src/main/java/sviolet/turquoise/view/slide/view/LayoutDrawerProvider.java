@@ -1,6 +1,7 @@
 package sviolet.turquoise.view.slide.view;
 
 import sviolet.turquoise.utils.MeasureUtils;
+import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.SlideException;
 import sviolet.turquoise.view.slide.SlideView;
 import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
@@ -55,8 +56,11 @@ public class LayoutDrawerProvider {
 	
 	protected boolean handleFeedbackEnabled = false;//把手触摸反馈效果开关
 	private int handleFeedbackRange = FEEDBACK_RANGE_HALF_HANDLE_WIDTH;//把手触摸反馈幅度
+	private OnClickListener mOnHandleTouchListener;//把手触摸监听器
 	private OnClickListener mOnHandleClickListener;//把手点击监听器
 	private OnClickListener mOnHandleLongPressListener;//把手长按监听器
+	private OnClickListener mOnGestureHoldListener;//持有监听器
+	private OnSlideStopListener mOnSlideStopListener;//滑动停止监听器
 	
 	/*******************************************************
 	 * setting/init
@@ -189,7 +193,19 @@ public class LayoutDrawerProvider {
 	public void setHandleFeedbackRange(int range){
 		this.handleFeedbackRange = range;
 	}
-	
+
+	/**
+	 * 设置把手触摸事件监听器<br>
+	 * <br>
+	 * 由于该监听事件回调后, 还会触发SlideEngine手势释放事件, 导致滚动目标重定向,
+	 * 该监听事件回调中若需要pullOut/pushIn, 必须使用强制执行方式<br>
+	 *
+	 * @param listener
+	 */
+	public void setOnHandleTouchListener(OnClickListener listener){
+		this.mOnHandleTouchListener = listener;
+	}
+
 	/**
 	 * 设置把手点击事件监听器<br>
 	 * <br>
@@ -212,6 +228,24 @@ public class LayoutDrawerProvider {
 	 */
 	public void setOnHandleLongPressListener(OnClickListener listener){
 		this.mOnHandleLongPressListener = listener;
+	}
+
+	/**
+	 * 设置滑动停止监听器
+	 * @param listener
+	 */
+	public void setOnSlideStopListener(OnSlideStopListener listener){
+		this.mOnSlideStopListener = listener;
+	}
+
+	/**
+	 * 设置持有事件监听器<br>
+	 *     当手势滑动有效距离, 触发Engine拖动时触发
+	 *
+	 * @param listener
+	 */
+	public void setOnGestureHoldListener(OnClickListener listener){
+		this.mOnGestureHoldListener = listener;
 	}
 	
 	/*********************************************************
@@ -339,6 +373,9 @@ public class LayoutDrawerProvider {
 			mSlideEngine.setStaticTouchAreaFeedback(handleFeedbackEnabled, _handleFeedbackRange);
 			mSlideEngine.setOnStaticTouchAreaClickListener(mOnHandleClickListener);
 			mSlideEngine.setOnStaticTouchAreaLongPressListener(mOnHandleLongPressListener);
+			mSlideEngine.setOnSlideStopListener(mOnSlideStopListener);
+			mSlideEngine.setOnGestureHoldListener(mOnGestureHoldListener);
+			mSlideEngine.setOnStaticTouchAreaTouchListener(mOnHandleTouchListener);
 			
 		}catch(ClassCastException e){
 			throw new SlideException("[DrawerProvider]SlideView is not a View instance", e);

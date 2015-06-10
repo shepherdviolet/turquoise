@@ -22,7 +22,6 @@ public abstract class ListeningService extends Service {
 	
 	@Override
 	public void onCreate() {
-		// TODO Auto-generated method stub
 		super.onCreate();
 		
 		pulseReceiver = new PulseReceiver();
@@ -35,13 +34,11 @@ public abstract class ListeningService extends Service {
 	
 	@Override
 	public IBinder onBind(Intent arg0) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public void onDestroy() {
-		// TODO Auto-generated method stub
 		super.onDestroy();
 		unregisterReceiver(pulseReceiver);
 		alarmManager.cancel(pulseReceiverIntent);
@@ -57,7 +54,6 @@ public abstract class ListeningService extends Service {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
 			task();
 		}
 		

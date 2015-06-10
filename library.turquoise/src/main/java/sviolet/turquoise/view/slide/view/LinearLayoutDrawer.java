@@ -1,5 +1,6 @@
 package sviolet.turquoise.view.slide.view;
 
+import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.SlideView;
 import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
 import sviolet.turquoise.view.slide.logic.LinearScrollEngine;
@@ -232,7 +233,20 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 		mDrawerProvider.setHandleFeedbackRange(range);
 		return this;
 	}
-	
+
+	/**
+	 * 设置把手触摸事件监听器<br>
+	 * <br>
+	 * 由于该监听事件回调后, 还会触发SlideEngine手势释放事件, 导致滚动目标重定向,
+	 * 该监听事件回调中若需要pullOut/pushIn, 必须使用强制执行方式<br>
+	 *
+	 * @param listener
+	 */
+	public LinearLayoutDrawer setOnHandleTouchListener(OnClickListener listener){
+		mDrawerProvider.setOnHandleTouchListener(listener);
+		return this;
+	}
+
 	/**
 	 * 设置把手点击事件监听器<br>
 	 * <br>
@@ -256,6 +270,28 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	 */
 	public LinearLayoutDrawer setOnHandleLongPressListener(OnClickListener listener){
 		mDrawerProvider.setOnHandleLongPressListener(listener);
+		return this;
+	}
+
+	/**
+	 * 设置滑动停止监听器
+	 *
+	 * @param listener
+	 * @return
+	 */
+	public LinearLayoutDrawer setOnSlideStopListener(OnSlideStopListener listener){
+		mDrawerProvider.setOnSlideStopListener(listener);
+		return this;
+	}
+
+	/**
+	 * 设置持有监听器<br>
+	 * 当手势滑动有效距离, 触发Engine拖动时触发
+	 * @param listener
+	 * @return
+	 */
+	public LinearLayoutDrawer setOnGestureHoldListener(OnClickListener listener){
+		mDrawerProvider.setOnGestureHoldListener(listener);
 		return this;
 	}
 	

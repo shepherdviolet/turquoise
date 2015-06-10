@@ -1,5 +1,6 @@
 package sviolet.turquoise.view.slide.logic;
 
+import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.GestureDriver;
 import sviolet.turquoise.view.slide.SlideEngine;
 import sviolet.turquoise.view.slide.SlideView;
@@ -12,7 +13,7 @@ import android.view.View.OnClickListener;
 /**
  * 线性拖动引擎(无惯性)<br>
  * <br>
- * @see sviolet.turquoise.view.slide.SlideView<br>
+ * @see sviolet.turquoise.view.slide.SlideView
  **************************************************************************************<br>
  * 刷新UI/输出显示示例:<br>
  * SlideView::<br>
@@ -98,6 +99,7 @@ public class LinearDragEngine implements SlideEngine {
 	protected Context mContext = null;
 	
 	private OnClickListener mOnGestureHoldListener;//GestureDriver HOLD事件监听器
+	private OnSlideStopListener mOnSlideStopListener;//滑动停止监听器
 	
 	protected boolean infiniteRange = false;//无边界(无限滚动距离)
 	protected boolean overScrollEnable = false;//允许拖动越界
@@ -107,6 +109,8 @@ public class LinearDragEngine implements SlideEngine {
 	protected int position = ORIGIN_POSITION;//当前位置
 	protected int lastPosition = ORIGIN_POSITION;//上次位置, 用于计算偏移量
 	protected int range = ORIGIN_POSITION;//可滑动最大距离
+
+	protected boolean isSlideStopCallbacked = false;//滑动停止事件已回调
 	
 	/**
 	 * 
@@ -381,7 +385,18 @@ public class LinearDragEngine implements SlideEngine {
 	 * @return
 	 */
 	public boolean isStop(){
-			return state == STATE_STOP;
+
+		if (state == STATE_STOP){
+			if (!isSlideStopCallbacked && mOnSlideStopListener != null){
+				isSlideStopCallbacked = true;
+				mOnSlideStopListener.onStop();
+			}
+			return true;
+		}else{
+			//清除已回调状态
+			isSlideStopCallbacked = false;
+			return false;
+		}
 	}
 	
 	/**
@@ -425,14 +440,24 @@ public class LinearDragEngine implements SlideEngine {
 	}
 	
 	/**
-	 * 设置hold事件监听器
+	 * 设置hold事件监听器<Br>
+	 * 当手势滑动有效距离, 触发Engine拖动时触发
 	 * 
 	 * @param listener
 	 */
 	public void setOnGestureHoldListener(OnClickListener listener){
 		this.mOnGestureHoldListener = listener;
 	}
-	
+
+	/**
+	 * 设置滑动停止监听器
+	 *
+	 * @param mOnSlideStopListener
+	 */
+	public void setOnSlideStopListener(OnSlideStopListener mOnSlideStopListener){
+		this.mOnSlideStopListener = mOnSlideStopListener;
+	}
+
 	/**
 	 * 设置是否无限滑动距离(无边界)<br>
 	 * <br>

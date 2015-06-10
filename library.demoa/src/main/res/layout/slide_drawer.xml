@@ -38,6 +38,7 @@
 				因此必须使用alignRight与之右对齐, 然后用marginRight将阴影移出去, 才能在
 				超出屏幕范围外的地方放置阴影 -->
         <sviolet.turquoise.view.shadow.LinearShadowView
+            android:id="@+id/slide_drawer_leftdrawer_rightshadow"
             android:layout_width="5dp"
             android:layout_height="match_parent"
             android:layout_alignRight="@id/slide_drawer_leftdrawer_listview"

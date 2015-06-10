@@ -1,15 +1,16 @@
 package sviolet.turquoise.view.slide.logic;
 
-import sviolet.turquoise.view.slide.SlideView;
 import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Scroller;
 
+import sviolet.turquoise.view.slide.SlideView;
+
 /**
  * 线性滑动引擎(有惯性, 惯性滑动至停止点)<br>
  * <br>
- * @see sviolet.turquoise.view.slide.SlideView<br>
+ * @see sviolet.turquoise.view.slide.SlideView
  **************************************************************************************<br>
  * 刷新UI/输出显示示例:<br>
  * SlideView::<br>
@@ -76,7 +77,8 @@ public class LinearScrollEngine extends LinearDragEngine {
 	protected int stageDuration = DEF_STAGE_DURATION;//一个阶段的全程惯性滑动时间
 	
 	protected Scroller mScroller = null;
-	
+
+	private OnClickListener mOnStaticTouchAreaTouchListener;//永久触摸区域触摸事件监听器
 	private OnClickListener mOnStaticTouchAreaClickListener;//永久触摸区域点击事件监听器
 	private OnClickListener mOnStaticTouchAreaLongPressListener;//永久触摸区域长按事件监听器
 	
@@ -183,6 +185,13 @@ public class LinearScrollEngine extends LinearDragEngine {
 	 */
 	@Override
 	public void onStaticTouchAreaCaptureEscapedTouch() {
+		//触摸监听
+		if(mOnStaticTouchAreaTouchListener != null)
+			try{
+				mOnStaticTouchAreaTouchListener.onClick((View) mSlideView);
+			}catch (ClassCastException e){
+				mOnStaticTouchAreaTouchListener.onClick(null);
+			}
 		//允许反馈效果, 且当前运动已停止
 		if(staticTouchAreaFeedbackEnabled && isStop()){
 			//激活永久触摸区域反馈效果状态
@@ -260,7 +269,7 @@ public class LinearScrollEngine extends LinearDragEngine {
 			if(!scrollTargetLock && isOnArrestPoint()){//到达边界为止, 判断为结束, 目标锁定时跳过
 				abortScroller();
 				state = STATE_STOP;
-				return true;
+				return super.isStop();
 			}else if(mScroller != null && mScroller.isFinished()){//Scroll停止
 				//若滚动目标锁定状态
 				if(scrollTargetLock){
@@ -270,17 +279,17 @@ public class LinearScrollEngine extends LinearDragEngine {
 					if(mGestureDriver != null && mGestureDriver.getState() > LinearGestureDriver.STATE_DOWN){
 						//手势驱动器down/move状态则置为拖动状态, 不停止
 						state = STATE_HOLDING;
-						return false;
+						return super.isStop();
 					}else{
 						//手势驱动器release状态则置为停止状态
 						state = STATE_STOP;
-						return true;
+						return super.isStop();
 					}
 				}
 				//若在进行永久触摸区域反馈效果则停止运动
 				if(isStaticTouchAreaFeedbackRunning){
 					state = STATE_STOP;
-					return true;
+					return super.isStop();
 				}
 				//重新计算惯性滑动目标
 				int target = calculateSlideTarget(0);
@@ -326,6 +335,22 @@ public class LinearScrollEngine extends LinearDragEngine {
 	public void setStaticTouchAreaFeedback(boolean enabled, int range){
 		this.staticTouchAreaFeedbackEnabled = enabled;
 		this.staticTouchAreaFeedbackRange = range;
+	}
+
+	/**
+	 * 设置永久触摸区域触摸事件监听器<br>
+	 * <br>
+	 *  ACTION_Down时触发, 永久触摸区域触摸触发<br>
+	 * <br>
+	 * 永久触摸区域::<br>
+	 * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
+	 * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
+	 * 捕获触摸事件. 可用于控件边界的把手设计.<br>
+	 *
+	 * @param listener
+	 */
+	public void setOnStaticTouchAreaTouchListener(OnClickListener listener){
+		this.mOnStaticTouchAreaTouchListener = listener;
 	}
 	
 	/**

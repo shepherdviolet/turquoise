@@ -49,7 +49,6 @@ public abstract class LanLinker {
 		try {
 			serverSocket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -62,14 +61,12 @@ public abstract class LanLinker {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				while(looper_startListener){
 					try {
 						readData(serverSocket.accept());
 					}catch (SocketTimeoutException te){
 						
 					}catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -86,7 +83,6 @@ public abstract class LanLinker {
 		new Thread(new Runnable(){
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				ObjectInputStream objectInputStream = null;
 				try {
 					//socket.setSoTimeout(5000);
@@ -105,11 +101,9 @@ public abstract class LanLinker {
 				} catch (SocketTimeoutException te){
 					te.printStackTrace();
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					sendErrorMessage(HANDLER_ERROR_READ);
 				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					sendErrorMessage(HANDLER_ERROR_READ);
 				}finally{
@@ -145,7 +139,6 @@ public abstract class LanLinker {
 		new Thread(new Runnable(){
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				Socket socket = null;
 				ObjectOutputStream objectOutputStream = null;
 				try {
@@ -154,14 +147,12 @@ public abstract class LanLinker {
 					objectOutputStream.writeObject(object);
 					objectOutputStream.flush();
 				} catch (UnknownHostException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					sendErrorMessage(HANDLER_ERROR_SEND_NO_TARGET);
 				} catch (ConnectException ce){
 					ce.printStackTrace();
 					sendErrorMessage(HANDLER_ERROR_SEND_NO_TARGET);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 					sendErrorMessage(HANDLER_ERROR_SEND);
 				}finally{
@@ -192,7 +183,6 @@ public abstract class LanLinker {
 
 		@Override
 		public void handleMessage(Message msg) {
-			// TODO Auto-generated method stub
 			super.handleMessage(msg);
 			switch(msg.arg1){
 			case HANDLER_READ_DATA:

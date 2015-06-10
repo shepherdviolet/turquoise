@@ -1,6 +1,6 @@
 1.Slide:
 
-flingEngine速度溢出
+flingEngine速度溢出(API14以下能否反射)
 AdaptListView到底检测
 停止监听器
 otherIntecept改为更好的捆绑engine方式

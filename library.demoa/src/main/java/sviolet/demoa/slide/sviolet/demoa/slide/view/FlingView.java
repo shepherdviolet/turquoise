@@ -1,6 +1,8 @@
 package sviolet.demoa.slide.sviolet.demoa.slide.view;
 
 import sviolet.turquoise.utils.MeasureUtils;
+import sviolet.turquoise.view.listener.OnSlideStopListener;
+import sviolet.turquoise.view.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.view.slide.SlideView;
 import sviolet.turquoise.view.slide.logic.LinearFlingEngine;
 import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
@@ -64,6 +66,15 @@ public class FlingView extends LinearLayout implements SlideView {
 //		mSlideEngine.setInfiniteRange(true);//无限滑动
 //		mSlideEngine.setOverScroll(true, 0.9f);//越界拖动
         mSlideEngine.setOnGestureHoldListener(mOnGestureHoldListener);
+
+        //反弹效果, 速度溢出监听
+        mSlideEngine.setOnVelocityOverflowListener(new OnVelocityOverflowListener() {
+            @Override
+            public void onVelocityOverflow(int velocity) {
+                //反向滑动
+                mSlideEngine.fling(-velocity);
+            }
+        });
     }
 
     /**

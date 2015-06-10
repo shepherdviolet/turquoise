@@ -189,8 +189,14 @@ public class LinearShadowView extends View {
 		if(isInitComplete)
 			drawShadow(canvas);
 	}
-	
-    /********************************************************
+
+	@Override
+	public void setVisibility(int visibility) {
+		super.setVisibility(visibility);
+		postInvalidate();
+	}
+
+	/********************************************************
      * private
      */
     

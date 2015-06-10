@@ -67,7 +67,6 @@ public class LanBroadcast {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				DatagramPacket packet;
 				String[] msg;
 				while(looper_startListen){
@@ -88,7 +87,6 @@ public class LanBroadcast {
 					} catch (SocketTimeoutException te){
 						
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -106,14 +104,12 @@ public class LanBroadcast {
 
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				while(looper_startOnlineCast){
 					freshLocalIp();
 					onlineCast();
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -130,12 +126,10 @@ public class LanBroadcast {
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				HashMap<String,String> map;
 				try {
 					Thread.sleep(5000);
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				while(looper_startMapFresh){
@@ -146,7 +140,6 @@ public class LanBroadcast {
 					try {
 						Thread.sleep(10000);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 				}
@@ -163,7 +156,6 @@ public class LanBroadcast {
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
 				byte[] bytes = new byte[PACKET_SIZE];
 				bytes = (TITLE+"@"+localIp+"@"+Id).getBytes();
 				DatagramPacket packet = new DatagramPacket(bytes,bytes.length,ADDR,BROADCAST_PORT);
@@ -190,7 +182,6 @@ public class LanBroadcast {
 			addr = InetAddress.getByName(ip);
 			cast("reply",addr);
 		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
     	
@@ -212,7 +203,6 @@ public class LanBroadcast {
     		try {
 				multicastSocket.leaveGroup(broadcastAddress);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     		multicastSocket.close();
