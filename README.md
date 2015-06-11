@@ -2,7 +2,7 @@
 
 > Description::<br />
 > Android Library contains View/Utils/Io...<br />
-> <br />
+<br />
 > Modules::<br />
 > library.turquoise : the "Turquoise" Library Module<br />
 > library.demoa : Demo of "Turquoise" Library<br />
