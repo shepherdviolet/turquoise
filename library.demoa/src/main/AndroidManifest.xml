@@ -18,17 +18,22 @@
         </activity>
         <activity
             android:name=".slide.SlideActivity"
-            android:label="@string/slide_main_title"/>
+            android:label="@string/slide_main_title" />
         <activity
             android:name=".slide.DrawerSlideActivity"
-            android:label="@string/slide_drawer_title"/>
+            android:label="@string/slide_drawer_title" />
         <activity
             android:name=".slide.ZoomDrawerSlideActivity"
             android:label="@string/slide_zoomdrawer_title"
-            android:theme="@style/AppTheme_NoTitle"/>
-        <activity android:name=".slide.FlingSlideActivity"
+            android:theme="@style/AppTheme_NoTitle" />
+        <activity
+            android:name=".slide.FlingSlideActivity"
             android:label="@string/slide_fling_title"
-            android:theme="@style/AppTheme_NoTitle"/>
+            android:theme="@style/AppTheme_NoTitle" />
+        <activity
+            android:name=".slide.CardSlideActivity"
+            android:label="@string/slide_card_title"
+            android:theme="@style/AppTheme_NoTitle" />
     </application>
 
 </manifest>

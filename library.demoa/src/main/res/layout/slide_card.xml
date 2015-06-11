@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}">
+
+    <ListView
+        android:id="@+id/slide_card_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        android:divider="#C0C0C0"
+        android:dividerHeight="1px" />
+
+    <sviolet.demoa.slide.sviolet.demoa.slide.view.CardSlideView
+        android:id="@+id/slide_card_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00000000"
+        android:orientation="vertical"
+        android:scrollX="10000dp"
+        android:scrollY="10000dp">
+
+        <sviolet.demoa.slide.sviolet.demoa.slide.view.CardSlideTitleView
+            android:id="@+id/slide_card_cardview_title"
+            android:layout_width="match_parent"
+            android:layout_height="180dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#30A0A0"
+                android:clickable="true" />
+
+        </sviolet.demoa.slide.sviolet.demoa.slide.view.CardSlideTitleView>
+
+        <sviolet.turquoise.view.slide.view.AdaptListView
+            android:id="@+id/slide_card_cardview_listview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#FFFFFF"
+            android:divider="#C0C0C0"
+            android:dividerHeight="1px" />
+
+    </sviolet.demoa.slide.sviolet.demoa.slide.view.CardSlideView>
+
+</RelativeLayout>

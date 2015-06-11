@@ -12,7 +12,8 @@ import sviolet.demoa.common.DemoList;
 @DemoList({
         DrawerSlideActivity.class,
         ZoomDrawerSlideActivity.class,
-        FlingSlideActivity.class
+        FlingSlideActivity.class,
+        CardSlideActivity.class
 })
 
 /**************************************************************

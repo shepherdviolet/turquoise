@@ -8,5 +8,6 @@
     <string name="slide_drawer_title">Drawer</string>
     <string name="slide_zoomdrawer_title">ZoomDrawer</string>
     <string name="slide_fling_title">Fling</string>
+    <string name="slide_card_title">Slide Card</string>
 
 </resources>

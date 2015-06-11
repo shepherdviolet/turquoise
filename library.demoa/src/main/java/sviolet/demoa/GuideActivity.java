@@ -11,6 +11,7 @@ import android.widget.ListView;
 import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
+import sviolet.demoa.slide.CardSlideActivity;
 import sviolet.demoa.slide.SlideActivity;
 import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
@@ -20,7 +21,9 @@ import sviolet.turquoise.app.TActivity;
  * Demo配置
  */
 //默认Demo
-//@DemoDefault(DrawerSlideActivity.class)
+//@DemoDefault(
+//        CardSlideActivity.class
+//)
 
 // Demo列表
 @DemoList({
