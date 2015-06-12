@@ -262,6 +262,13 @@ public class LinearDragEngine implements SlideEngine {
 				break;
 			}
 		}
+		//若引擎被驱动时, 处于STOP状态, 则置为HOLDING状态, 并通知刷新
+		if (state == STATE_STOP){
+			//持有状态
+			state = STATE_HOLDING;
+			//通知刷新UI
+			notifySlideView();
+		}
 	}
 	
 	/**

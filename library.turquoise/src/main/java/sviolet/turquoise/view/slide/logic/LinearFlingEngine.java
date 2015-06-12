@@ -34,6 +34,9 @@ public class LinearFlingEngine extends LinearDragEngine {
 
 	protected boolean isVelocityOverflowCallbacked = false;//速度溢出事件已回调
 
+    protected int flingMaxRange = Integer.MAX_VALUE;//单次惯性滑动最大距离
+    protected int flingMaxVelocity = Integer.MAX_VALUE;//惯性滑动最大速度限制
+
 	/**
 	 *
 	 * @param context ViewGroup上下文
@@ -134,9 +137,14 @@ public class LinearFlingEngine extends LinearDragEngine {
 	public boolean isStop(){
 		if(state != STATE_HOLDING){
 			//scroll停止
+			int currVelocity = getCurrVelocity();
+			int currPositionState = checkPositionState(position);
 			if(mScroller == null || mScroller.isFinished()){
+				//惯性滑动停止
 				state = STATE_STOP;
-			}else if (checkPositionState(position) != POSITION_IN_RANGE){
+			}else if ((currPositionState < POSITION_IN_RANGE  && currVelocity < 0)
+					|| (currPositionState > POSITION_IN_RANGE  && currVelocity > 0)){
+				//速度溢出
 				state = STATE_STOP;
 				callVelocityOverflow();
 			}
@@ -200,6 +208,12 @@ public class LinearFlingEngine extends LinearDragEngine {
 		//速度为0无需滚动
 		if(velocity == 0)
 			return;
+        //惯性滑动最大速度限制
+        if(velocity > flingMaxVelocity){
+            velocity = flingMaxVelocity;
+        }else if(velocity < - flingMaxVelocity){
+            velocity = - flingMaxVelocity;
+        }
 		//惯性滑动状态
 		state = STATE_SLIDING;
 		//清除已回调状态
@@ -207,13 +221,18 @@ public class LinearFlingEngine extends LinearDragEngine {
 		//初始化scroller
 		abortScroller();
 		if(mScroller != null){
-			//先行位移, 防止在停止点
+			//先行位移, 防止停在原点
 			if(velocity > 0) {
 				position++;
 			}else {
 				position--;
 			}
-			mScroller.fling(position, 0, velocity, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
+            //惯性滑动最大距离控制
+            if(flingMaxRange == Integer.MAX_VALUE) {
+                mScroller.fling(position, 0, velocity, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, 0, 0);
+            }else{
+                mScroller.fling(position, 0, velocity, 0, position - flingMaxRange, position + flingMaxRange, 0, 0);
+            }
 		}
 		//通知刷新UI
 		notifySlideView();
@@ -248,5 +267,27 @@ public class LinearFlingEngine extends LinearDragEngine {
 			return 0;
 		}
 	}
+
+    /**
+     * 设置单次惯性滑动的最大距离(0, MAX_VALUE]<br />
+     * 主要用于增大惯性滑动阻尼<br />
+     * 默认: Integer.MAX_VALUE<br />
+     *
+     * @param flingMaxRange
+     */
+    public void setFlingMaxRange(int flingMaxRange){
+        this.flingMaxRange = flingMaxRange;
+    }
+
+    /**
+     * 设置惯性滑动最大速度限制(0, MAX_VALUE]<br />
+     * 控制最大初始速度<br />
+     * 默认: Integer.MAX_VALUE<br />
+     *
+     * @param flingMaxVelocity
+     */
+    public void setFlingMaxVelocity(int flingMaxVelocity){
+        this.flingMaxVelocity = flingMaxVelocity;
+    }
 
 }

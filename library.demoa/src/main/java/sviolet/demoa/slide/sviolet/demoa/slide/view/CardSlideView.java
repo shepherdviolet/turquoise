@@ -1,7 +1,15 @@
 package sviolet.demoa.slide.sviolet.demoa.slide.view;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
+import android.view.ViewTreeObserver.OnPreDrawListener;
+import android.widget.LinearLayout;
+
 import java.util.List;
 
+import sviolet.turquoise.utils.MeasureUtils;
 import sviolet.turquoise.view.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.view.slide.SlideEngine;
 import sviolet.turquoise.view.slide.SlideEngineGroup;
@@ -11,14 +19,6 @@ import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
 import sviolet.turquoise.view.slide.logic.LinearScrollEngine;
 import sviolet.turquoise.view.slide.logic.LinearStageScrollEngine;
 import sviolet.turquoise.view.slide.view.AdaptListView;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewTreeObserver.OnPreDrawListener;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 
 
 /**
@@ -87,9 +87,11 @@ public class CardSlideView extends LinearLayout implements SlideView {
 			@Override
 			public void onVelocityOverflow(int velocity) {
 				if (velocity < 0) {
-					//由于titleSlideEngine反向输出, 此处将速度反向
-					//减速
-					titleSlideEngine.fling(-velocity / 2);
+					//限速, 防止滑动过快
+                    if(velocity < - MeasureUtils.dp2px(getContext(), 1200))
+                        velocity = - MeasureUtils.dp2px(getContext(), 1200);
+                    //由于titleSlideEngine反向输出, 此处将速度反向
+					titleSlideEngine.fling(-velocity);
 				}
 			}
 		});
@@ -104,6 +106,13 @@ public class CardSlideView extends LinearLayout implements SlideView {
 				}
 			}
 		});
+
+        //惯性滑动最大速度限制(限制初始速度)
+//        titleSlideEngine.setFlingMaxVelocity(MeasureUtils.dp2px(getContext(), 1500));
+
+        //单次惯性滑动最大距离(增大阻尼)
+//        listSlideEngine.setFlingMaxRange(MeasureUtils.dp2px(getContext(), 2000));
+//		titleSlideEngine.setFlingMaxRange(MeasureUtils.dp2px(getContext(), 2000));
 	}
 	
 	/**
