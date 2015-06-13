@@ -276,25 +276,6 @@ public class CommonUtils {
 	}
 
 	/**
-	 * 性能优化
-	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB)
-	public static void enableStrictMode() {
-		if (hasGingerbread()) {
-			// 线程策略
-			StrictMode.ThreadPolicy.Builder threadPolicyBuilder = new StrictMode.ThreadPolicy.Builder()
-					.detectAll() // 发现所有策略的违反行为
-					.penaltyLog(); // 发现违反策略，打印log
-			// VM策略
-			StrictMode.VmPolicy.Builder vmPolicyBuilder = new StrictMode.VmPolicy.Builder()
-					.detectAll().penaltyLog();
-
-			StrictMode.setThreadPolicy(threadPolicyBuilder.build());
-			StrictMode.setVmPolicy(vmPolicyBuilder.build());
-		}
-	}
-
-	/**
 	 * 2.3以上
 	 */
 	public static boolean hasGingerbread() {

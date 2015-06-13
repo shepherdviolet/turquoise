@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
 import sviolet.turquoise.utils.DeviceUtils;
+import sviolet.turquoise.utils.SettingUtils;
 
 /**
  * [组件扩展]Activity<br>
@@ -32,6 +33,8 @@ import sviolet.turquoise.utils.DeviceUtils;
 
 public abstract class TActivity extends Activity {
 
+    private Logger mLogger;//日志打印器
+
     private ActivitySettings settings;
 
     @Override
@@ -40,6 +43,13 @@ public abstract class TActivity extends Activity {
         super.onCreate(savedInstanceState);
         injectContentView();// 注入Activity布局
         injectViewId(getClass());// 注入成员View
+
+        //将自身加入TApplication
+        if (getApplication() instanceof TApplication){
+           try {
+               ((TApplication) getApplication()).addActivity(this);
+           }catch (Exception ignored){}
+        }
     }
 
     /**
@@ -63,6 +73,11 @@ public abstract class TActivity extends Activity {
     private void windowSetting() {
         if (getActivitySettings() == null)
             return;
+
+        //硬件加速
+        if(getActivitySettings().enableHardwareAccelerated()){
+            SettingUtils.enableHardwareAccelerated(getWindow());
+        }
 
         //无标题
         if (getActivitySettings().noTitle()) {
@@ -156,5 +171,24 @@ public abstract class TActivity extends Activity {
         } catch (IllegalAccessException | IllegalArgumentException e) {
             throw new InjectException("[TActivity]inject view [" + field.getName() + "] failed", e);
         }
+    }
+
+    /**********************************************
+     * public
+     */
+
+    /**
+     * 获得日志打印器(需配合TApplication)<br/>
+     * 由TApplication子类标签设置日志打印权限<br/>
+     * 若本应用不采用TApplication, 则返回的日志打印器无用.<br/>
+     *
+     */
+    public Logger getLogger(){
+        if (getApplication() instanceof TApplication){
+            try {
+                return ((TApplication) getApplication()).getLogger();
+            }catch (Exception ignored){}
+        }
+        return new Logger("", false, false, false);//返回无效的日志打印器
     }
 }

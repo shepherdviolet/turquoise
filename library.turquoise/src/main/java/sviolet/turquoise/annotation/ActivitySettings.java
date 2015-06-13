@@ -69,4 +69,9 @@ public @interface ActivitySettings {
      */
     int navigationBarColor() default DEF_NAVIGATION_BAR_COLOR;
 
+    /**
+     * 启用硬件加速
+     */
+    boolean enableHardwareAccelerated() default false;
+
 }
