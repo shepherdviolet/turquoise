@@ -32,7 +32,8 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	protected List<String> onGestureHoldEngines = new ArrayList<String>();
 	protected List<String> onGestureReleaseEngines = new ArrayList<String>();
 	protected List<String> onIsSlidingEngines = new ArrayList<String>();
-	protected List<String> onOtherInterceptedEngines = new ArrayList<String>();
+
+	private SlideEngine parentSlideEngine = null;//外部引擎（嵌套时）
 	
 	/***************************************************
 	 * override SlideEngine
@@ -116,26 +117,58 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 						return true;
 		return false;
 	}
-	
+
+	/**
+	 * 添加一个内部引擎<br/>
+	 * 作用:<br/>
+	 * 1.内部引擎拦截到事件后, 会调用外部引擎对应驱动的skipIntercept()方法,
+	 *      阻断外部引擎的本次事件拦截, 防止内部控件滑动时被外部拦截<br/>
+	 *
+	 * @param slideEngine 内部引擎
+	 */
 	@Override
-	public void otherIntercepted() {
-		onOtherInterceptedEngines.clear();
-		dispatchOtherIntercepted(onOtherInterceptedEngines);
-		if(onOtherInterceptedEngines != null && onOtherInterceptedEngines.size() > 0)
-			for(String alias : onOtherInterceptedEngines)
-				if(mSlideEngines.containsKey(alias))
-					handleOtherIntercepted(mSlideEngines.get(alias), alias);
+	public void addInnerEngine(SlideEngine slideEngine) {
+		if (slideEngine != null)
+			slideEngine.setParentEngine(this);
 	}
-	
+
 	@Override
+	public void setParentEngine(SlideEngine slideEngine) {
+		this.parentSlideEngine = slideEngine;
+	}
+
+	@Override
+	public SlideEngine getParentEngine() {
+		return parentSlideEngine;
+	}
+
+	@Override
+	public GestureDriver getGestureDriver() {
+		return mGestureDriver;
+	}
+
+	@Override
+	public void skipIntercepted() {
+		//手势驱动器跳过本次拦截
+		if (getGestureDriver() != null)
+			getGestureDriver().skipIntercepted();
+		//外部驱动跳过本次拦截
+		if (parentSlideEngine != null)
+			parentSlideEngine.skipIntercepted();
+	}
+
+	@Override
+	@Deprecated
 	public void onStaticTouchAreaCaptureEscapedTouch() {
 	}
 
 	@Override
+	@Deprecated
 	public void onStaticTouchAreaClick() {
 	}
 
 	@Override
+	@Deprecated
 	public void onStaticTouchAreaLongPress() {
 	}
 	
@@ -356,16 +389,7 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	public boolean handleIsSliding(SlideEngine engine, String alias) {
 		return engine.isSliding();
 	}
-	
-	/**
-	 * [实现]处理otherIntercepted事件<br>
-	 * <br>
-	 * 若不复写该方法, 默认直接调用SlideEngine.otherIntercepted();<br>
-	 */
-	public void handleOtherIntercepted(SlideEngine engine, String alias){
-		engine.otherIntercepted();
-	}
-	
+
 	/***************************************************
 	 * public
 	 */

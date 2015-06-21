@@ -15,7 +15,7 @@ import android.view.ViewConfiguration;
 /**
  * 线性手势驱动<br>
  * <br>
- * @see sviolet.turquoise.view.slide.SlideView<br>
+ * @see sviolet.turquoise.view.slide.SlideView
  **************************************************************************************<br>
  * 手势捕获示例:<br>
  * 需要捕获触摸手势的控件复写如下方法:<br>
@@ -76,8 +76,8 @@ public class LinearGestureDriver implements GestureDriver {
 	private boolean isDestroyed = false;
 	//[特殊状态]在控件惯性滑动时触摸停住(hold)滑动
 	private boolean holdSliding = false;
-	//[特殊状态]第三者拦截状态::被其他GestureDriver拦截事件, 不再拦截本次事件(本次down的后续事件), 下次down会重置标志位
-	private boolean otherIntercepted = false;
+	//[特殊状态]跳过拦截状态::被其他GestureDriver拦截事件, 不再拦截本次事件(本次down的后续事件), 下次down会重置标志位
+	private boolean skipIntercepted = false;
 	
 	//参数/////////////////////////////////
 	//捕获手势方向
@@ -470,8 +470,8 @@ public class LinearGestureDriver implements GestureDriver {
 	//onInterceptTouchEvent//////////////////////////////////////////////
 	
 	private boolean onInterceptDown(MotionEvent event){
-		//[特殊状态]重置第三者拦截状态
-		otherIntercepted = false;
+		//[特殊状态]重置跳过拦截状态
+		skipIntercepted = false;
 		//重置永久触摸区域状态
 		resetStaticTouchAreaState();
 		//重置坐标
@@ -490,8 +490,8 @@ public class LinearGestureDriver implements GestureDriver {
 	}
 	
 	private boolean onInterceptMove(MotionEvent event) {
-		//是否被第三者拦截
-		if(otherIntercepted)
+		//是否被跳过本次拦截
+		if(skipIntercepted)
 			return false;
 		//计算坐标
 		calculateCoordinate(event);
@@ -507,8 +507,8 @@ public class LinearGestureDriver implements GestureDriver {
 	}
 
 	private boolean onInterceptUP(MotionEvent event) {
-		//是否被第三者拦截
-		if(otherIntercepted)
+		//是否被跳过本次拦截
+		if(skipIntercepted)
 			return false;
 		//有效滑动状态拦截事件
 		if(state > STATE_DOWN){
@@ -597,7 +597,6 @@ public class LinearGestureDriver implements GestureDriver {
 	 * 将这个手势驱动和滑动引擎互相绑定<br>
 	 * 只需要任意一方调用即可完成双向绑定<br>
 	 * 
-	 * @param SlideEngine
 	 */
 	@Override
 	public void bind(SlideEngine slideEngine) {
@@ -697,19 +696,22 @@ public class LinearGestureDriver implements GestureDriver {
 	}
 	
 	/**
-	 * [特殊]第三者拦截<br>
+	 * [特殊]跳过本次拦截<br>
 	 * <br>
 	 * 用于嵌套结构的SlideView, 内部的SlideView在拦截到事件后, 调用外部SlideView的
-	 * GestureDriver.otherIntercepted()方法, 以阻断外部SlideView对本次事件的拦截,
+	 * GestureDriver.skipIntercepted()方法, 以阻断外部SlideView对本次事件的拦截,
 	 * 防止内部SlideView在滑动时, 被外部拦截掉. <br>
-	 * <br>
-	 * 用法示例:<br>
+	 * <br/>
+	 * 用法示例1:<br/>
+	 * 外部的SlideEngine.setInnerEngine(SlideEngine)，设置一个内部引擎，内部引擎
+	 * 拦截到事件后，会阻断外部引擎的本次拦截<br/>
+	 * 用法示例2:<br>
 	 * 给里层SlideView的SlideEngine设置一个onGestureHoldListener监听器, 触发时,
-	 * 执行外层SlideView的GestureDriver.otherIntercepted();<br>
+	 * 执行外层SlideView的GestureDriver.skipIntercepted();<br>
 	 */
 	@Override
-	public void otherIntercepted(){
-		this.otherIntercepted = true;
+	public void skipIntercepted(){
+		this.skipIntercepted = true;
 	}
 	
 	/**

@@ -1,6 +1,7 @@
 package sviolet.turquoise.view.slide.view;
 
 import sviolet.turquoise.annotation.ResourceId;
+import sviolet.turquoise.view.listener.OnInitCompleteListener;
 import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.SlideView;
 import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
@@ -96,7 +97,7 @@ public class RelativeLayoutDrawer extends RelativeLayout implements SlideView {
 	public static final int DIRECTION_LEFT = 2;//抽屉从左边拉出
 	public static final int DIRECTION_RIGHT = 3;//抽屉从右边拉出
 	
-	private LayoutDrawerProvider mDrawerProvider = new LayoutDrawerProvider();
+	private LayoutDrawerProvider mDrawerProvider = new LayoutDrawerProvider(this);
 	
 	/***********************************************************
 	 * setting / init
@@ -297,6 +298,16 @@ public class RelativeLayoutDrawer extends RelativeLayout implements SlideView {
 	 */
 	public RelativeLayoutDrawer setOnGestureHoldListener(OnClickListener listener){
 		mDrawerProvider.setOnGestureHoldListener(listener);
+		return this;
+	}
+
+	/**
+	 * 设置初始化完成监听器
+	 * @param mOnInitCompleteListener
+	 * @return
+	 */
+	public RelativeLayoutDrawer setOnInitCompleteListener(OnInitCompleteListener mOnInitCompleteListener){
+		mDrawerProvider.setOnInitCompleteListener(mOnInitCompleteListener);
 		return this;
 	}
 

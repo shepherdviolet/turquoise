@@ -1,6 +1,7 @@
 package sviolet.turquoise.view.slide.view;
 
 import sviolet.turquoise.utils.MeasureUtils;
+import sviolet.turquoise.view.listener.OnInitCompleteListener;
 import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.SlideException;
 import sviolet.turquoise.view.slide.SlideView;
@@ -25,6 +26,7 @@ public class LayoutDrawerProvider {
 	
 	private LinearGestureDriver mGestureDriver;
 	private LinearScrollEngine mSlideEngine;
+	private View mView;
 	
 	public static final int DRAWER_WIDTH_MATCH_PARENT = -1;//抽屉宽度=控件宽/高
 	public static final int FEEDBACK_RANGE_HALF_HANDLE_WIDTH = -1;//把手触摸反馈=把手宽度/2
@@ -61,7 +63,12 @@ public class LayoutDrawerProvider {
 	private OnClickListener mOnHandleLongPressListener;//把手长按监听器
 	private OnClickListener mOnGestureHoldListener;//持有监听器
 	private OnSlideStopListener mOnSlideStopListener;//滑动停止监听器
-	
+	private OnInitCompleteListener mOnInitCompleteListener;//初始化完成监听器
+
+	public LayoutDrawerProvider(View view){
+		this.mView = view;
+	}
+
 	/*******************************************************
 	 * setting/init
 	 */
@@ -247,6 +254,15 @@ public class LayoutDrawerProvider {
 	public void setOnGestureHoldListener(OnClickListener listener){
 		this.mOnGestureHoldListener = listener;
 	}
+
+	/**
+	 * 设置初始化完成监听器
+	 *
+	 * @param mOnInitCompleteListener
+	 */
+	public void setOnInitCompleteListener(OnInitCompleteListener mOnInitCompleteListener){
+		this.mOnInitCompleteListener = mOnInitCompleteListener;
+	}
 	
 	/*********************************************************
 	 * init
@@ -376,10 +392,12 @@ public class LayoutDrawerProvider {
 			mSlideEngine.setOnSlideStopListener(mOnSlideStopListener);
 			mSlideEngine.setOnGestureHoldListener(mOnGestureHoldListener);
 			mSlideEngine.setOnStaticTouchAreaTouchListener(mOnHandleTouchListener);
-			
 		}catch(ClassCastException e){
 			throw new SlideException("[DrawerProvider]SlideView is not a View instance", e);
 		}
+
+		if (mOnInitCompleteListener != null)
+			mOnInitCompleteListener.onInitComplete(mView);
 	}
 	
 	/****************************************************

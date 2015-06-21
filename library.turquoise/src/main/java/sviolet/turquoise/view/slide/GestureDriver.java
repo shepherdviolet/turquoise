@@ -91,20 +91,20 @@ public interface GestureDriver {
 	public int getState();
 	
 	/**
-	 * [特殊]第三者拦截<br>
+	 * [特殊]跳过本次拦截<br>
 	 * <br>
 	 * 用于嵌套结构的SlideView, 内部的SlideView在拦截到事件后, 调用外部SlideView的
-	 * GestureDriver.otherIntercepted()方法, 以阻断外部SlideView对本次事件的拦截,
+	 * GestureDriver.skipIntercepted()方法, 以阻断外部SlideView对本次事件的拦截,
 	 * 防止内部SlideView在滑动时, 被外部拦截掉. <br>
 	 * <br>
-	 * 一个GestrueDriver被调用otherIntercepted()后, 不再拦截事件, 直到第二次ACTION_DOWN
-	 * 事件来临, 拦截会被重置<br>
+	 * 一个GestrueDriver被调用skipIntercepted()后, 不再拦截事件, 直到第二次ACTION_DOWN
+	 * 事件来临, 状态会被重置<br>
 	 * <br>
 	 * [实现提示]<br>
 	 * 在onInterceptTouchEvent()中, ACTION_DOWN事件重置拦截标志, ACTION_MOVE/RELEASE
 	 * 事件判断拦截标志, 若被拦截则直接返回false, 放弃拦截<br>
 	 */
-	public void otherIntercepted();
+	public void skipIntercepted();
 	
 	/**
 	 * 销毁

@@ -69,7 +69,7 @@ public class LinearScrollEngine extends LinearDragEngine {
 		this.stageDuration = stageDuration;
 		mScroller = new CompatScroller(mContext);
 	}
-	
+
 	/******************************************************
 	 * override SlideEngine
 	 */

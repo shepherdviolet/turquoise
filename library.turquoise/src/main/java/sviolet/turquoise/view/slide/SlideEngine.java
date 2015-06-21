@@ -122,19 +122,55 @@ public interface SlideEngine {
 	 * @return
 	 */
 	public boolean isSliding();
-	
+
 	/**
-	 * [特殊]第三者拦截<br>
-	 * <br>
-	 * 	用于嵌套结构的SlideView, 内部的SlideView在拦截到事件后, 调用外部SlideView的
-	 * 此方法, 以阻断外部SlideView对本次事件的拦截,防止内部SlideView在滑动时, 被外部
-	 * 拦截掉. <br>
-	 * <br>
-	 * 代码实现见sviolet.turquoise.view.slide.GestureDriver.otherIntercepted()<br>
-	 * <br>
+	 * 添加一个内部引擎<br/>
+     * 对应setParentEngine()<br/>
+     * 作用:<br/>
+     * 1.内部引擎拦截到事件后, 会调用外部引擎对应驱动的skipIntercept()方法,
+     *      阻断外部引擎的本次事件拦截, 防止内部控件滑动时被外部拦截<br/>
+     *
+	 * @param slideEngine 内部引擎
 	 */
-	public void otherIntercepted();
-	
+	public void addInnerEngine(SlideEngine slideEngine);
+
+    /**
+     * 设置外部引擎<br/>
+     * 对应addInnerEngine()<br/>
+     *
+     * @param slideEngine 外部引擎
+     */
+    public void setParentEngine(SlideEngine slideEngine);
+
+    /**
+     * 获得外部引擎<br/>
+     *
+     * @return 外部引擎
+     */
+    public SlideEngine getParentEngine();
+
+    /**
+     * 获得对应的手势驱动器
+     * @return
+     */
+    public GestureDriver getGestureDriver();
+
+    /**
+     * [特殊]跳过本次拦截<br>
+     * <br>
+     * 用于嵌套结构的SlideView, 内部的SlideView在拦截到事件后, 调用外部SlideView的
+     * GestureDriver.skipIntercepted()方法, 以阻断外部SlideView对本次事件的拦截,
+     * 防止内部SlideView在滑动时, 被外部拦截掉. <br>
+     * <br>
+     * 一个GestrueDriver被调用skipIntercepted()后, 不再拦截事件, 直到第二次ACTION_DOWN
+     * 事件来临, 状态会被重置<br>
+     * <br>
+     * [实现提示]<br>
+     * 调用自身对应GestureDriver.skipIntercepted()方法, 并调用外部引擎的skipIntercepted()
+     * 方法.
+     */
+    public void skipIntercepted();
+
 	/**
 	 * 销毁
 	 */

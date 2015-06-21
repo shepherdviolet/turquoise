@@ -1,6 +1,7 @@
 package sviolet.demoa.slide.sviolet.demoa.slide.view;
 
 import sviolet.turquoise.utils.MeasureUtils;
+import sviolet.turquoise.view.slide.SlideEngine;
 import sviolet.turquoise.view.slide.SlideView;
 import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
 import sviolet.turquoise.view.slide.logic.LinearScrollEngine;
@@ -136,5 +137,9 @@ public class MySlideView extends LinearLayout implements SlideView{
 	
 	public void setOnGestureHoldListener(OnClickListener listener){
 		this.mOnGestureHoldListener = listener;
+	}
+
+	public SlideEngine getSlideEngine(){
+		return mSlideEngine;
 	}
 }

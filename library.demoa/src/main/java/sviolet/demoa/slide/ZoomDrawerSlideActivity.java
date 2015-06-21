@@ -15,6 +15,7 @@ import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
 import sviolet.turquoise.app.TActivity;
 import sviolet.turquoise.utils.MeasureUtils;
+import sviolet.turquoise.view.listener.OnInitCompleteListener;
 import sviolet.turquoise.view.slide.view.RelativeLayoutDrawer;
 
 @DemoDescription(
@@ -69,6 +70,14 @@ public class ZoomDrawerSlideActivity extends TActivity {
             }
         });
 
+        //TODO 新方式
+//        drawer.setOnInitCompleteListener(new OnInitCompleteListener() {
+//            @Override
+//            public void onInitComplete(View view) {
+//                drawer.getSlideEngine().addInnerEngine(drawerMyslideview.getSlideEngine());
+//            }
+//        });
+
         /**
          * 在里层SlideView hold事件时, 拦截外层的本次后续事件,
          * 防止里层在滑动时, 外层滑动拦截掉里层事件
@@ -76,7 +85,7 @@ public class ZoomDrawerSlideActivity extends TActivity {
         drawerMyslideview.setOnGestureHoldListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawer.getGestureDriver().otherIntercepted();
+                drawer.getGestureDriver().skipIntercepted();
             }
         });
 

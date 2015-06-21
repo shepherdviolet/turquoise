@@ -53,6 +53,7 @@ public class LinearDragEngine implements SlideEngine {
 	protected SlideView mSlideView = null;
 	protected GestureDriver mGestureDriver = null;
 	protected Context mContext = null;
+	private SlideEngine parentSlideEngine = null;//外部引擎（嵌套时）
 	
 	private OnClickListener mOnGestureHoldListener;//GestureDriver HOLD事件监听器
 	private OnSlideStopListener mOnSlideStopListener;//滑动停止监听器
@@ -67,9 +68,8 @@ public class LinearDragEngine implements SlideEngine {
 	protected int range = ORIGIN_POSITION;//可滑动最大距离
 
 	protected boolean isSlideStopCallbacked = false;//滑动停止事件已回调
-	
+
 	/**
-	 * 
 	 * @param context ViewGroup上下文
 	 * @param slideView 通知刷新的View
 	 * @param maxRange 允许滑动最大距离(全程) >=0
@@ -78,9 +78,8 @@ public class LinearDragEngine implements SlideEngine {
 	public LinearDragEngine(Context context, SlideView slideView, int maxRange, int initPosition){
 		this(context, slideView, maxRange, initPosition, DIRECTION_LEFT_OR_TOP);
 	}
-	
+
 	/**
-	 * 
 	 * @param context ViewGroup上下文
 	 * @param slideView 通知刷新的View
 	 * @param maxRange 允许滑动最大距离(全程) >=0
@@ -93,13 +92,13 @@ public class LinearDragEngine implements SlideEngine {
 		this.slidingDirection = slidingDirection;
 		this.position = initPosition;
 		this.lastPosition = ORIGIN_POSITION;
-		
+
 		if(maxRange  >= 0)
 			this.range = maxRange;
 		else
 			this.range = 0;
 	}
-	
+
 	/*********************************************************
 	 * 实现
 	 */
@@ -198,21 +197,63 @@ public class LinearDragEngine implements SlideEngine {
 	}
 
 	/**
-	 * [特殊]第三者拦截<br>
-	 * <br>
-	 * 	用于嵌套结构的SlideView, 内部的SlideView在拦截到事件后, 调用外部SlideView的
-	 * 此方法, 以阻断外部SlideView对本次事件的拦截,防止内部SlideView在滑动时, 被外部
-	 * 拦截掉. <br>
-	 * <br>
-	 * 代码实现见sviolet.turquoise.view.slide.GestureDriver.otherIntercepted()<br>
-	 * <br>
+	 * 添加一个内部引擎<br/>
+	 * 作用:<br/>
+	 * 1.内部引擎拦截到事件后, 会调用外部引擎对应驱动的skipIntercept()方法,
+	 *      阻断外部引擎的本次事件拦截, 防止内部控件滑动时被外部拦截<br/>
+	 *
+	 * @param innerSlideEngine 内部引擎
 	 */
 	@Override
-	public void otherIntercepted() {
-		if(mGestureDriver != null)
-			mGestureDriver.otherIntercepted();
+	public void addInnerEngine(SlideEngine innerSlideEngine) {
+		if (innerSlideEngine != null){
+			innerSlideEngine.setParentEngine(this);
+		}
 	}
-	
+
+	/**
+	 * 设置外部引擎<br/>
+	 * 对应addInnerEngine()<br/>
+	 *
+	 * @param parentSlideEngine 外部引擎
+	 */
+	@Override
+	public void setParentEngine(SlideEngine parentSlideEngine) {
+		this.parentSlideEngine = parentSlideEngine;
+	}
+
+	/**
+	 * 获得外部引擎
+	 * @return
+	 */
+	@Override
+	public SlideEngine getParentEngine() {
+		return parentSlideEngine;
+	}
+
+	/**
+	 * 获得对应手势驱动器
+	 *
+	 * @return
+	 */
+	@Override
+	public GestureDriver getGestureDriver() {
+		return mGestureDriver;
+	}
+
+	/**
+	 * 跳过本次拦截, 并上发到外部引擎
+	 */
+	@Override
+	public void skipIntercepted() {
+		//手势驱动器跳过本次拦截
+		if (getGestureDriver() != null)
+			getGestureDriver().skipIntercepted();
+		//外部驱动跳过本次拦截
+		if (parentSlideEngine != null)
+			parentSlideEngine.skipIntercepted();
+	}
+
 	/**
 	 * 销毁
 	 */
@@ -264,10 +305,7 @@ public class LinearDragEngine implements SlideEngine {
 		}
 		//若引擎被驱动时, 处于STOP状态, 则置为HOLDING状态, 并通知刷新
 		if (state == STATE_STOP){
-			//持有状态
-			state = STATE_HOLDING;
-			//通知刷新UI
-			notifySlideView();
+			handleGestureHold();
 		}
 	}
 	
@@ -279,7 +317,12 @@ public class LinearDragEngine implements SlideEngine {
 		state = STATE_HOLDING;
 		//通知刷新UI
 		notifySlideView();
-		
+
+		//跳过外部引擎本次拦截
+		if (parentSlideEngine != null){
+			parentSlideEngine.skipIntercepted();
+		}
+
 		//调用监听器
 		if(mOnGestureHoldListener != null){
 			try{
@@ -385,7 +428,7 @@ public class LinearDragEngine implements SlideEngine {
 	public int getStageNum(){
 		return 2;
 	}
-	
+
 	/*********************************************************
 	 * Setting
 	 */
