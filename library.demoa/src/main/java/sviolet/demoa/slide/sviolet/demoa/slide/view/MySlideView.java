@@ -21,8 +21,8 @@ import android.widget.LinearLayout;
 @SuppressLint("ClickableViewAccessibility")
 public class MySlideView extends LinearLayout implements SlideView{
 
-	private LinearGestureDriver mGestureDriver;
-	private LinearScrollEngine mSlideEngine;
+	private LinearGestureDriver mGestureDriver = new LinearGestureDriver(getContext());
+	private LinearStageScrollEngine mSlideEngine = new LinearStageScrollEngine(getContext(), this);
 	
 	private OnClickListener mOnGestureHoldListener;
 	
@@ -54,18 +54,20 @@ public class MySlideView extends LinearLayout implements SlideView{
 	}
 	
 	//LinearSlideEngine初始化示例
-	private void initLinearSlide() {
-		//此处可调用getWidth()/getHeight()等方法获得自身宽高, 因为View已完成measure
-        int range = getHeight() - MeasureUtils.dp2px(getContext(), 60);//滑动范围 = 控件高 - 30dp
-        int position = range;//初始位置
-        //后续初始化操作, 创建配置手势驱动/滑动引擎实例
-		mGestureDriver = new LinearGestureDriver(getContext(), LinearGestureDriver.ORIENTATION_VERTICAL);
-		mSlideEngine = new LinearScrollEngine(getContext(), this, range, position, 1000);
-		mGestureDriver.bind(mSlideEngine);
-		//允许拖动越界, 越界阻尼0.7
+//	private void initLinearSlide() {
+//		//此处可调用getWidth()/getHeight()等方法获得自身宽高, 因为View已完成measure
+//        int range = getHeight() - MeasureUtils.dp2px(getContext(), 60);//滑动范围 = 控件高 - 30dp
+//        int position = range;//初始位置
+//        //后续初始化操作, 创建配置手势驱动/滑动引擎实例
+//		mGestureDriver.setOrientation(LinearGestureDriver.ORIENTATION_VERTICAL);
+//		mSlideEngine.setMaxRange(range);
+//		mSlideEngine.setInitPosition(position);
+//		mSlideEngine.setStageDuration(1000);
+//		mGestureDriver.bind(mSlideEngine);
+//		//允许拖动越界, 越界阻尼0.7
 //		mSlideEngine.setOverScroll(true, 0.7f);
-		mSlideEngine.setOnGestureHoldListener(mOnGestureHoldListener);
-	}
+//		mSlideEngine.setOnGestureHoldListener(mOnGestureHoldListener);
+//	}
 	
 	//StageLinearSlideEngine初始化示例
 	private void initStageLinearSlide() {
@@ -73,8 +75,11 @@ public class MySlideView extends LinearLayout implements SlideView{
         int range = getHeight() - MeasureUtils.dp2px(getContext(), 60);//滑动范围 = 控件高 - 30dp
         int position = range;//初始位置
         //后续初始化操作, 创建配置手势驱动/滑动引擎实例
-		mGestureDriver = new LinearGestureDriver(getContext(), LinearGestureDriver.ORIENTATION_VERTICAL);
-		mSlideEngine = new LinearStageScrollEngine(getContext(), this, range / 2, 3, position, 1000);
+		mGestureDriver.setOrientation(LinearGestureDriver.ORIENTATION_VERTICAL);
+		mSlideEngine.setStageRange(range / 2);//一个阶段的滑动距离
+		mSlideEngine.setStageNum(3);//阶段数
+		mSlideEngine.setInitPosition(position);//初始位置
+		mSlideEngine.setStageDuration(1000);//阶段滑动时间
 		mGestureDriver.bind(mSlideEngine);
 		//允许拖动越界, 越界阻尼0.7
 //		mSlideEngine.setOverScroll(true, 0.7f);

@@ -20,8 +20,8 @@ import android.widget.LinearLayout;
 @SuppressLint("ClickableViewAccessibility")
 public class FlingView extends LinearLayout implements SlideView {
 
-    private LinearGestureDriver mGestureDriver;
-    private LinearFlingEngine mSlideEngine;
+    private LinearGestureDriver  mGestureDriver = new LinearGestureDriver(getContext());
+    private LinearFlingEngine mSlideEngine = new LinearFlingEngine(getContext(), this);
 
     private OnClickListener mOnGestureHoldListener;
 
@@ -60,8 +60,9 @@ public class FlingView extends LinearLayout implements SlideView {
         int range = getHeight() - MeasureUtils.dp2px(getContext(), 60);//滑动范围 = 控件高 - 30dp
         int position = 0;//初始位置
         //后续初始化操作, 创建配置手势驱动/滑动引擎实例
-        mGestureDriver = new LinearGestureDriver(getContext(), LinearGestureDriver.ORIENTATION_VERTICAL);
-        mSlideEngine = new LinearFlingEngine(getContext(), this, range, position);
+        mGestureDriver.setOrientation(LinearGestureDriver.ORIENTATION_VERTICAL);
+        mSlideEngine.setMaxRange(range);//设置最大可滑动距离
+        mSlideEngine.setInitPosition(position);//设置初始位置
         mSlideEngine.bind(mGestureDriver);
 //		mSlideEngine.setInfiniteRange(true);//无限滑动
 //		mSlideEngine.setOverScroll(true, 0.9f);//越界拖动

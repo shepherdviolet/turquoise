@@ -11,7 +11,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 /**
- * 线性拖动引擎(无惯性)<br>
+ * 线性拖动引擎(无惯性)<br/>
+ * <Br/>
+ * 基本设置:<br/>
+ * setMaxRange()<br/>
+ * setInitPosition()<br/>
+ * setSlidingDirection()<br/>
  * <br>
  * @see sviolet.turquoise.view.slide.SlideView
  **************************************************************************************<br>
@@ -72,31 +77,113 @@ public class LinearDragEngine implements SlideEngine {
 	/**
 	 * @param context ViewGroup上下文
 	 * @param slideView 通知刷新的View
-	 * @param maxRange 允许滑动最大距离(全程) >=0
-	 * @param initPosition 初始位置
 	 */
-	public LinearDragEngine(Context context, SlideView slideView, int maxRange, int initPosition){
-		this(context, slideView, maxRange, initPosition, DIRECTION_LEFT_OR_TOP);
-	}
-
-	/**
-	 * @param context ViewGroup上下文
-	 * @param slideView 通知刷新的View
-	 * @param maxRange 允许滑动最大距离(全程) >=0
-	 * @param initPosition 初始位置
-	 * 	@param slidingDirection 滑动输出方向
-	 */
-	public LinearDragEngine(Context context, SlideView slideView, int maxRange, int initPosition, int slidingDirection){
+	public LinearDragEngine(Context context, SlideView slideView){
 		this.mContext = context;
 		this.mSlideView = slideView;
-		this.slidingDirection = slidingDirection;
-		this.position = initPosition;
-		this.lastPosition = ORIGIN_POSITION;
+	}
 
+	/*********************************************************
+	 * settings
+	 */
+
+	/**
+     * [基本设置]<br/>
+	 * 设置允许滑动的最大距离(默认0)
+	 * @param maxRange 允许滑动最大距离(全程) >=0
+	 */
+	public void setMaxRange(int maxRange){
 		if(maxRange  >= 0)
 			this.range = maxRange;
 		else
 			this.range = 0;
+	}
+
+	/**
+     * [基本设置]<br/>
+	 * 设置初始位置(默认0)
+	 * @param initPosition 初始位置
+	 */
+	public void setInitPosition(int initPosition){
+		this.position = initPosition;
+		this.lastPosition = ORIGIN_POSITION;
+	}
+
+	/**
+     * [基本设置]<br/>
+	 * 设置滑动输出方向(默认DIRECTION_LEFT_OR_TOP)
+	 * @param slidingDirection 滑动输出方向
+	 */
+	public void setSlidingDirection(int slidingDirection){
+		this.slidingDirection = slidingDirection;
+	}
+
+	/**
+	 * 设置越界拖动
+	 *
+	 * @param overScrollEnable 是否允许越界拖动
+	 * @param overScrollDamp 越界拖动阻尼[0~1), 阻尼越大越界拖动越慢
+	 */
+	public void setOverScroll(boolean overScrollEnable, float overScrollDamp){
+		this.overScrollEnable = overScrollEnable;
+		if(overScrollDamp >=0.0f && overScrollDamp < 1.0f)
+			this.overScrollDamp = overScrollDamp;
+	}
+
+	/**
+	 * 设置hold事件监听器<Br>
+	 * 当手势滑动有效距离, 触发Engine拖动时触发
+	 *
+	 * @param listener
+	 */
+	public void setOnGestureHoldListener(OnClickListener listener){
+		this.mOnGestureHoldListener = listener;
+	}
+
+	/**
+	 * 设置滑动停止监听器
+	 *
+	 * @param mOnSlideStopListener
+	 */
+	public void setOnSlideStopListener(OnSlideStopListener mOnSlideStopListener){
+		this.mOnSlideStopListener = mOnSlideStopListener;
+	}
+
+	/**
+	 * 设置是否无限滑动距离(无边界)<br>
+	 * <br>
+	 * 默认:false<br>
+	 *
+	 * @param value true:无限距离(无边界)
+	 */
+	public void setInfiniteRange(boolean value){
+		this.infiniteRange = value;
+	}
+
+	/**
+	 * 添加一个内部引擎<br/>
+	 * 作用:<br/>
+	 * 1.内部引擎拦截到事件后, 会调用外部引擎对应驱动的skipIntercept()方法,
+	 *      阻断外部引擎的本次事件拦截, 防止内部控件滑动时被外部拦截<br/>
+	 *
+	 * @param innerSlideEngine 内部引擎
+	 */
+	@Override
+	public void addInnerEngine(SlideEngine innerSlideEngine) {
+		if (innerSlideEngine != null){
+			innerSlideEngine.setParentEngine(this);
+		}
+	}
+
+	/**
+	 * 设置外部引擎<br/>
+	 * 对应addInnerEngine()<br/>
+	 *
+	 * @param parentSlideEngine 外部引擎
+	 */
+	@Override
+	public void setParentEngine(SlideEngine parentSlideEngine) {
+		this.parentSlideEngine = parentSlideEngine;
 	}
 
 	/*********************************************************
@@ -194,32 +281,6 @@ public class LinearDragEngine implements SlideEngine {
 	@Override
 	public boolean isSliding() {
 		return state == STATE_SLIDING;
-	}
-
-	/**
-	 * 添加一个内部引擎<br/>
-	 * 作用:<br/>
-	 * 1.内部引擎拦截到事件后, 会调用外部引擎对应驱动的skipIntercept()方法,
-	 *      阻断外部引擎的本次事件拦截, 防止内部控件滑动时被外部拦截<br/>
-	 *
-	 * @param innerSlideEngine 内部引擎
-	 */
-	@Override
-	public void addInnerEngine(SlideEngine innerSlideEngine) {
-		if (innerSlideEngine != null){
-			innerSlideEngine.setParentEngine(this);
-		}
-	}
-
-	/**
-	 * 设置外部引擎<br/>
-	 * 对应addInnerEngine()<br/>
-	 *
-	 * @param parentSlideEngine 外部引擎
-	 */
-	@Override
-	public void setParentEngine(SlideEngine parentSlideEngine) {
-		this.parentSlideEngine = parentSlideEngine;
 	}
 
 	/**
@@ -427,52 +488,6 @@ public class LinearDragEngine implements SlideEngine {
 	 */
 	public int getStageNum(){
 		return 2;
-	}
-
-	/*********************************************************
-	 * Setting
-	 */
-	
-	/**
-	 * 设置越界拖动
-	 * 
-	 * @param overScrollEnable 是否允许越界拖动
-	 * @param overScrollDamp 越界拖动阻尼[0~1), 阻尼越大越界拖动越慢
-	 */
-	public void setOverScroll(boolean overScrollEnable, float overScrollDamp){
-		this.overScrollEnable = overScrollEnable;
-		if(overScrollDamp >=0.0f && overScrollDamp < 1.0f)
-			this.overScrollDamp = overScrollDamp;
-	}
-	
-	/**
-	 * 设置hold事件监听器<Br>
-	 * 当手势滑动有效距离, 触发Engine拖动时触发
-	 * 
-	 * @param listener
-	 */
-	public void setOnGestureHoldListener(OnClickListener listener){
-		this.mOnGestureHoldListener = listener;
-	}
-
-	/**
-	 * 设置滑动停止监听器
-	 *
-	 * @param mOnSlideStopListener
-	 */
-	public void setOnSlideStopListener(OnSlideStopListener mOnSlideStopListener){
-		this.mOnSlideStopListener = mOnSlideStopListener;
-	}
-
-	/**
-	 * 设置是否无限滑动距离(无边界)<br>
-	 * <br>
-	 * 默认:false<br>
-	 * 
-	 * @param value true:无限距离(无边界)
-	 */
-	public void setInfiniteRange(boolean value){
-		this.infiniteRange = value;
 	}
 	
 	/***************************************************

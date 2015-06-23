@@ -1,13 +1,14 @@
 package sviolet.turquoise.view.slide.view;
 
-import sviolet.turquoise.R;
-import sviolet.turquoise.view.slide.SlideIndicator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
+
+import sviolet.turquoise.R;
+import sviolet.turquoise.view.slide.SlideIndicator;
 
 /**
  * 点状翻页指示器

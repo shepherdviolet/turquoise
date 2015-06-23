@@ -70,29 +70,15 @@ public class ZoomDrawerSlideActivity extends TActivity {
             }
         });
 
-        //TODO 新方式
-//        drawer.setOnInitCompleteListener(new OnInitCompleteListener() {
-//            @Override
-//            public void onInitComplete(View view) {
-//                drawer.getSlideEngine().addInnerEngine(drawerMyslideview.getSlideEngine());
-//            }
-//        });
-
         /**
-         * 在里层SlideView hold事件时, 拦截外层的本次后续事件,
-         * 防止里层在滑动时, 外层滑动拦截掉里层事件
+         * 设置内部引擎, 当内部引擎截获事件后, 会阻断外部引擎的拦截,
+         * 防止内部控件滑动时, 外部控件滑动
          */
-        drawerMyslideview.setOnGestureHoldListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                drawer.getGestureDriver().skipIntercepted();
-            }
-        });
+        drawer.getSlideEngine().addInnerEngine(drawerMyslideview.getSlideEngine());
 
         /**
          * 背景ListView
          */
-
         backgroundListView.setAdapter(new EmulateListAdapter(this, 5, "      Menu", null, null, 0xF0FFFFFF));
 
     }

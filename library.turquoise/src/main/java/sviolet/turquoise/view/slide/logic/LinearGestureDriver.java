@@ -13,7 +13,10 @@ import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
 
 /**
- * 线性手势驱动<br>
+ * 线性手势驱动<br/>
+ * <br/>
+ * 基本设置:<br/>
+ * setOrientation()<br/>
  * <br>
  * @see sviolet.turquoise.view.slide.SlideView
  **************************************************************************************<br>
@@ -142,12 +145,85 @@ public class LinearGestureDriver implements GestureDriver {
 	
 	/**
 	 * @param context ViewGroup上下文
-	 * @param orientation 手势捕获方向
+
 	 */
-	public LinearGestureDriver(Context context, int orientation){
+	public LinearGestureDriver(Context context){
 		this.mContext = context;
 		this.mTouchSlop = ViewConfiguration.get(mContext).getScaledTouchSlop();
+	}
+
+	/*****************************************************
+	 * 					settings
+	 */
+
+	/**
+	 * [基本设置]<br/>
+	 * 设置手势获取方向(默认ORIENTATION_ALL)<Br/>
+	 * 	ORIENTATION_ALL 双向支持<Br/>
+	 * 	ORIENTATION_VERTICAL 垂直手势捕获<Br/>
+	 * 	ORIENTATION_HORIZONTAL 水平手势捕获<Br/>
+	 *
+	 * @param orientation 手势捕获方向
+	 */
+	public void setOrientation(int orientation){
 		this.orientation = orientation;
+	}
+
+	/**
+	 * 设置有效/无效触摸区域<br>
+	 * <br>
+	 * touchAreaMode::<br>
+	 * TOUCH_AREA_MODE_NULL 触摸全部无效<br>
+	 * TOUCH_AREA_MODE_ALL 触摸全部有效<br>
+	 * TOUCH_AREA_MODE_VALID 指定范围内有效(矩形)<br>
+	 * TOUCH_AREA_MODE_INVALID 指定范围内无效(矩形)<br>
+	 * <br>
+	 *
+	 * @param touchAreaMode
+	 * @param left 区域左边界
+	 * @param right 区域右边界
+	 * @param top 区域上边界
+	 * @param bottom 区域下边界
+	 */
+	public void setTouchArea(int touchAreaMode, int left, int right, int top, int bottom){
+		this.touchAreaMode = touchAreaMode;//有效区域模式
+		this.touchAreaLeft = left;//区域左边界
+		this.touchAreaRight = right;//区域右边界
+		this.touchAreaTop = top;//区域上边界
+		this.touchAreaBottom = bottom;//区域下边界
+	}
+
+	/**
+	 * 设置有效/无效触摸区域<br>
+	 * <br>
+	 * touchAreaMode::<br>
+	 * TOUCH_AREA_MODE_NULL 触摸全部无效<br>
+	 * TOUCH_AREA_MODE_ALL 触摸全部有效<br>
+	 * TOUCH_AREA_MODE_VALID 指定范围内有效(矩形)<br>
+	 * TOUCH_AREA_MODE_INVALID 指定范围内无效(矩形)<br>
+	 * <br>
+	 * @param touchAreaMode
+	 */
+	public void setTouchAreaMode(int touchAreaMode){
+		this.touchAreaMode = touchAreaMode;//有效区域模式
+	}
+
+	/**
+	 * 设置永久触摸区域<br>
+	 * 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent会返回true以阻止事件向后方传递<Br>
+	 *
+	 * @param staticTouchAreaEnabled 是否开启永久触摸区域
+	 * @param left 区域左边界
+	 * @param right 区域右边界
+	 * @param top 区域上边界
+	 * @param bottom 区域下边界
+	 */
+	public void setStaticTouchArea(boolean staticTouchAreaEnabled, int left, int right, int top, int bottom){
+		this.staticTouchAreaEnabled = staticTouchAreaEnabled;//是否允许永久触摸区域
+		this.staticTouchAreaLeft = left;//区域左边界
+		this.staticTouchAreaRight = right;//区域右边界
+		this.staticTouchAreaTop = top;//区域上边界
+		this.staticTouchAreaBottom = bottom;//区域下边界
 	}
 	
 	/***********************************************************************************************************
@@ -723,67 +799,6 @@ public class LinearGestureDriver implements GestureDriver {
 		mSlideEngine = null;
 		mContext = null;
 		isDestroyed = true;
-	}
-	
-	/*****************************************************
-	 * 					FUNC
-	 */
-	
-	/**
-	 * 设置有效/无效触摸区域<br>
-	 * <br>
-	 * touchAreaMode::<br>
-	 * TOUCH_AREA_MODE_NULL 触摸全部无效<br>
-	 * TOUCH_AREA_MODE_ALL 触摸全部有效<br>
-	 * TOUCH_AREA_MODE_VALID 指定范围内有效(矩形)<br>
-	 * TOUCH_AREA_MODE_INVALID 指定范围内无效(矩形)<br>
-	 * <br>
-	 * 
-	 * @param touchAreaMode
-	 * @param left 区域左边界
-	 * @param right 区域右边界
-	 * @param top 区域上边界
-	 * @param bottom 区域下边界
-	 */
-	public void setTouchArea(int touchAreaMode, int left, int right, int top, int bottom){
-		this.touchAreaMode = touchAreaMode;//有效区域模式
-		this.touchAreaLeft = left;//区域左边界
-		this.touchAreaRight = right;//区域右边界
-		this.touchAreaTop = top;//区域上边界
-		this.touchAreaBottom = bottom;//区域下边界
-	}
-	
-	/**
-	 * 设置有效/无效触摸区域<br>
-	 * <br>
-	 * touchAreaMode::<br>
-	 * TOUCH_AREA_MODE_NULL 触摸全部无效<br>
-	 * TOUCH_AREA_MODE_ALL 触摸全部有效<br>
-	 * TOUCH_AREA_MODE_VALID 指定范围内有效(矩形)<br>
-	 * TOUCH_AREA_MODE_INVALID 指定范围内无效(矩形)<br>
-	 * <br>
-	 * @param touchAreaMode
-	 */
-	public void setTouchAreaMode(int touchAreaMode){
-		this.touchAreaMode = touchAreaMode;//有效区域模式
-	}
-	
-	/**
-	 * 设置永久触摸区域<br>
-	 * 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent会返回true以阻止事件向后方传递<Br>
-	 * 
-	 * @param staticTouchAreaEnabled 是否开启永久触摸区域
-	 * @param left 区域左边界
-	 * @param right 区域右边界
-	 * @param top 区域上边界
-	 * @param bottom 区域下边界
-	 */
-	public void setStaticTouchArea(boolean staticTouchAreaEnabled, int left, int right, int top, int bottom){
-		this.staticTouchAreaEnabled = staticTouchAreaEnabled;//是否允许永久触摸区域
-		this.staticTouchAreaLeft = left;//区域左边界
-		this.staticTouchAreaRight = right;//区域右边界
-		this.staticTouchAreaTop = top;//区域上边界
-		this.staticTouchAreaBottom = bottom;//区域下边界
 	}
 	
 	/*********************************************************

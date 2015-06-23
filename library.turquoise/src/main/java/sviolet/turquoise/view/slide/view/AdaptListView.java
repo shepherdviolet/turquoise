@@ -29,7 +29,7 @@ public class AdaptListView extends ListView implements SlideView{
 	private boolean isVelocityOverflowCallbacked = false;//速度溢出事件已回调
 
 	//内置滑动引擎
-	private LinearFlingEngine mSlideEngine;
+	private LinearFlingEngine mSlideEngine = new LinearFlingEngine(getContext(), this);
 	
 	public AdaptListView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -43,8 +43,9 @@ public class AdaptListView extends ListView implements SlideView{
 
 	//初始化引擎
 	private void init(){
-		mSlideEngine = new LinearFlingEngine(getContext(), this, Integer.MAX_VALUE, 0);
-		mSlideEngine.setInfiniteRange(true);
+		mSlideEngine.setMaxRange(Integer.MAX_VALUE);//允许滑动距离
+		mSlideEngine.setInitPosition(0);//初始位置
+		mSlideEngine.setInfiniteRange(true);//无限滑动
 	}
 	
 	/******************************************************

@@ -1,12 +1,19 @@
 package sviolet.turquoise.view.slide.logic;
 
+import sviolet.turquoise.view.slide.SlideException;
 import sviolet.turquoise.view.slide.SlideView;
 import android.content.Context;
 
 /**
  * 多页/多阶段式线性滑动引擎(有惯性, 惯性滑动至停止点)<br>
- * <br>
  * 滑动全程可分为多个等分阶段, 每个阶段停止, 类似于ViewPager<br>
+ * <br/>
+ * 基本设置:<br/>
+ * setStageNum()<br/>
+ * setStageRange()<br/>
+ * setInitPosition()<br/>
+ * setSlidingDirection()<br/>
+ * setStageDuration()<br/>
  * <br>
  * @see sviolet.turquoise.view.slide.SlideView
  **************************************************************************************<br>
@@ -26,44 +33,54 @@ import android.content.Context;
 
 public class LinearStageScrollEngine extends LinearScrollEngine {
 
-	private int stageRange;//一个阶段的滑动距离
-	private int stageNum;//等分阶段数
+	private int stageRange = 0;//一个阶段的滑动距离
+	private int stageNum = 2;//等分阶段数
 	
 	/**
-	 * 
 	 * @param context ViewGroup上下文
 	 * @param slideView 通知刷新的View
-	 * @param stageRange 一个阶段的滑动距离 >=0
-	 * @param stageNum 等分阶段数 [2, maxRange + 1]
-	 * @param initPosition 初始位置
-	 * @param stageDuration 一个阶段的全程滑动时间(ms)
 	 */
-	public LinearStageScrollEngine(Context context, SlideView slideView, int stageRange, int stageNum, int initPosition, int stageDuration) {
-		this(context, slideView, stageRange, stageNum, initPosition, stageDuration, DIRECTION_LEFT_OR_TOP);
+	public LinearStageScrollEngine(Context context, SlideView slideView) {
+		super(context, slideView);
 	}
-	
-	/**
-	 * @param context ViewGroup上下文
-	 * @param slideView 通知刷新的View
-	 * @param stageRange 一个阶段的滑动距离 >=0
-	 * @param stageNum 等分阶段数 [2, maxRange + 1]
-	 * @param initPosition 初始位置
-	 * @param stageDuration 一个阶段的全程滑动时间(ms)
-	 * 	@param slidingDirection 滑动输出方向
+
+	/**********************************************************
+	 * settings
 	 */
-	public LinearStageScrollEngine(Context context, SlideView slideView, int stageRange, int stageNum, int initPosition, int stageDuration, int slidingDirection) {
-		super(context, slideView, 0, initPosition, stageDuration, slidingDirection);
-		
+
+	/**
+	 * 禁用设置最大可滑动范围, 改用setStageNum()和setStageRange()
+	 */
+	@Override
+	@Deprecated
+	public void setMaxRange(int maxRange) {
+		throw new SlideException("LinearStageScorllEngine use setStageNum() & setStageRange() instead");
+	}
+
+	/**
+	 *	[基本设置]<br/>
+	 * @param stageNum 等分阶段数 [2, maxRange + 1]
+	 */
+	public void setStageNum(int stageNum) {
 		if(stageNum > 1)
 			this.stageNum = stageNum;
 		else
 			this.stageNum = 2;
-		
+
+		//计算最大滑动范围
+		range = stageRange * ( stageNum - 1 );
+	}
+
+	/**
+	 * [基本设置]<br/>
+	 * @param stageRange 一个阶段的滑动距离 >=0
+	 */
+	public void setStageRange(int stageRange) {
 		if(stageRange >= 0)
 			this.stageRange = stageRange;
 		else
 			this.stageRange = 0;
-		
+
 		//计算最大滑动范围
 		range = stageRange * ( stageNum - 1 );
 	}

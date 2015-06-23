@@ -26,7 +26,7 @@ public class LayoutDrawerProvider {
 	
 	private LinearGestureDriver mGestureDriver;
 	private LinearScrollEngine mSlideEngine;
-	private View mView;
+	private SlideView mSlideView;
 	
 	public static final int DRAWER_WIDTH_MATCH_PARENT = -1;//抽屉宽度=控件宽/高
 	public static final int FEEDBACK_RANGE_HALF_HANDLE_WIDTH = -1;//把手触摸反馈=把手宽度/2
@@ -65,8 +65,18 @@ public class LayoutDrawerProvider {
 	private OnSlideStopListener mOnSlideStopListener;//滑动停止监听器
 	private OnInitCompleteListener mOnInitCompleteListener;//初始化完成监听器
 
-	public LayoutDrawerProvider(View view){
-		this.mView = view;
+	/**
+	 *
+	 * @param view 必须为继承View实现SlideView的类
+	 */
+	public LayoutDrawerProvider(SlideView view){
+		this.mSlideView = view;
+		try {
+			mSlideEngine = new LinearScrollEngine(((View) view).getContext(), view);
+			mGestureDriver = new LinearGestureDriver(((View) view).getContext());
+		}catch(ClassCastException e){
+			throw new SlideException("[DrawerProvider]SlideView is not a View instance", e);
+		}
 	}
 
 	/*******************************************************
@@ -271,19 +281,18 @@ public class LayoutDrawerProvider {
 	/**
 	 * 初始化滑动
 	 */
-	protected void initSlide(SlideView view) {
+	protected void initSlide() {
 		try{
-			
-			Context viewContext = ((View)view).getContext();
-			int viewWidth = ((View)view).getWidth();//控件宽度
-			int viewHeight = ((View)view).getHeight();//控件高度
+			Context context = ((View) mSlideView).getContext();
+			int viewWidth = ((View)mSlideView).getWidth();//控件宽度
+			int viewHeight = ((View)mSlideView).getHeight();//控件高度
 			int initPosition = 0;//初始位置
 			int orientation = LinearGestureDriver.ORIENTATION_HORIZONTAL;//手势捕获方向
 			int xScrollRange;//x轴方向滚动距离
 			int yScrollRange;//y轴方向滚动距离
 			if(drawerWidth > DRAWER_WIDTH_MATCH_PARENT){
-				xScrollRange = MeasureUtils.dp2px(viewContext, drawerWidth); //滑动范围
-				yScrollRange = MeasureUtils.dp2px(viewContext, drawerWidth); //滑动范围
+				xScrollRange = MeasureUtils.dp2px(context, drawerWidth); //滑动范围
+				yScrollRange = MeasureUtils.dp2px(context, drawerWidth); //滑动范围
 			}else{
 				xScrollRange = viewWidth;//滑动范围
 				yScrollRange = viewHeight;//滑动范围
@@ -301,9 +310,9 @@ public class LayoutDrawerProvider {
 			//把手触摸反馈
 			int _handleFeedbackRange = 0;
 			if(handleFeedbackRange > FEEDBACK_RANGE_HALF_HANDLE_WIDTH)
-				_handleFeedbackRange = MeasureUtils.dp2px(viewContext, handleFeedbackRange);
+				_handleFeedbackRange = MeasureUtils.dp2px(context, handleFeedbackRange);
 			else
-				_handleFeedbackRange = MeasureUtils.dp2px(viewContext, handleWidth / 2);
+				_handleFeedbackRange = MeasureUtils.dp2px(context, handleWidth / 2);
 			
 			switch(scrollDirection){
 			case DIRECTION_TOP:
@@ -315,7 +324,7 @@ public class LayoutDrawerProvider {
 				staticTouchAreaLeft = 0;
 				staticTouchAreaRight = viewWidth;
 				staticTouchAreaTop = 0;
-				staticTouchAreaBottom = MeasureUtils.dp2px(viewContext, handleWidth);
+				staticTouchAreaBottom = MeasureUtils.dp2px(context, handleWidth);
 				//把手触摸反馈
 				_handleFeedbackRange = - _handleFeedbackRange;//设定方向
 				//初始位置
@@ -332,7 +341,7 @@ public class LayoutDrawerProvider {
 				//永久触摸区域
 				staticTouchAreaLeft = 0;
 				staticTouchAreaRight = viewWidth;
-				staticTouchAreaTop = viewHeight - MeasureUtils.dp2px(viewContext, handleWidth);
+				staticTouchAreaTop = viewHeight - MeasureUtils.dp2px(context, handleWidth);
 				staticTouchAreaBottom = viewHeight;
 				//把手触摸反馈
 //				_handleFeedbackRange = _handleFeedbackRange;//设定方向
@@ -349,7 +358,7 @@ public class LayoutDrawerProvider {
 				pushInStage = 1;
 				//永久触摸区域
 				staticTouchAreaLeft = 0;
-				staticTouchAreaRight = MeasureUtils.dp2px(viewContext, handleWidth);
+				staticTouchAreaRight = MeasureUtils.dp2px(context, handleWidth);
 				staticTouchAreaTop = 0;
 				staticTouchAreaBottom = viewHeight;
 				//把手触摸反馈
@@ -366,7 +375,7 @@ public class LayoutDrawerProvider {
 				pullOutStage = 1;
 				pushInStage = 0;
 				//永久触摸区域
-				staticTouchAreaLeft = viewWidth - MeasureUtils.dp2px(viewContext, handleWidth);
+				staticTouchAreaLeft = viewWidth - MeasureUtils.dp2px(context, handleWidth);
 				staticTouchAreaRight = viewWidth;
 				staticTouchAreaTop = 0;
 				staticTouchAreaBottom = viewHeight;
@@ -379,11 +388,13 @@ public class LayoutDrawerProvider {
 					initPosition = 0;//初始位置:右边
 				break;
 			}
-			
-			destory();//销毁原来的滑动驱动
-			mGestureDriver = new LinearGestureDriver(viewContext, orientation);
+
+			mGestureDriver.setOrientation(orientation);//设置手势捕获方向
 			mGestureDriver.setStaticTouchArea(staticTouchAreaEnabled, staticTouchAreaLeft, staticTouchAreaRight, staticTouchAreaTop, staticTouchAreaBottom);
-			mSlideEngine = new LinearScrollEngine(viewContext, view, scrollRange, initPosition, scrollDuration);
+			mSlideEngine.setMaxRange(scrollRange);//设置最大可滑动距离
+			mSlideEngine.setInitPosition(initPosition);//设置初始位置
+			mSlideEngine.setStageDuration(scrollDuration);//设置阶段滑动时间
+
 			mSlideEngine.bind(mGestureDriver);
 			mSlideEngine.setOverScroll(overScrollEnabled, overScrollDamp);
 			mSlideEngine.setStaticTouchAreaFeedback(handleFeedbackEnabled, _handleFeedbackRange);
@@ -397,7 +408,7 @@ public class LayoutDrawerProvider {
 		}
 
 		if (mOnInitCompleteListener != null)
-			mOnInitCompleteListener.onInitComplete(mView);
+			mOnInitCompleteListener.onInitComplete((View) mSlideView);
 	}
 	
 	/****************************************************

@@ -28,8 +28,8 @@ import sviolet.turquoise.view.slide.view.AdaptListView;
  */
 public class CardSlideView extends LinearLayout implements SlideView {
 
-	private LinearGestureDriver mGestureDriver;//手势驱动
-	private LinearScrollEngine cardSlideEngine;//滑动引擎(本View用)
+	private LinearGestureDriver mGestureDriver = new LinearGestureDriver(getContext());//手势驱动
+	private LinearStageScrollEngine cardSlideEngine = new LinearStageScrollEngine(getContext(), this);//滑动引擎(本View用)
 	
 	private LinearFlingEngine listSlideEngine;//滑动引擎(内部AdaptListView用)
 	private LinearFlingEngine titleSlideEngine;//滑动引擎(内部CardSlideTitleView用)
@@ -70,11 +70,14 @@ public class CardSlideView extends LinearLayout implements SlideView {
         int position = 0;//初始位置
         //后续初始化操作, 创建配置手势驱动/滑动引擎实例
         //手势驱动
-		mGestureDriver = new LinearGestureDriver(getContext(), LinearGestureDriver.ORIENTATION_VERTICAL);
+        mGestureDriver.setOrientation(LinearGestureDriver.ORIENTATION_VERTICAL);
 		//绑定引擎组
 		mGestureDriver.bind(mSlideEngineGroup);
 		//本View使用的滑动引擎
-		cardSlideEngine = new LinearStageScrollEngine(getContext(), this, range / 4, 5, position, 700);
+		cardSlideEngine.setStageRange(range / 4);//一阶段的滑动距离
+		cardSlideEngine.setStageNum(5);//阶段数
+		cardSlideEngine.setInitPosition(position);//初始位置
+        cardSlideEngine.setStageDuration(700);//阶段滑动时间
 		//引擎组新增两个引擎(必须设置别名)
 		mSlideEngineGroup.addSlideEngine(cardSlideEngine, "card");
 		mSlideEngineGroup.addSlideEngine(listSlideEngine, "list");

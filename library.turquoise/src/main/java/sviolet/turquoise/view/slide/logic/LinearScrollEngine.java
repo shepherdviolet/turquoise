@@ -9,6 +9,12 @@ import sviolet.turquoise.view.slide.SlideView;
 
 /**
  * 线性滑动引擎(有惯性, 惯性滑动至停止点)<br>
+ * <Br/>
+ * 基本设置:<br/>
+ * setMaxRange()<br/>
+ * setInitPosition()<br/>
+ * setSlidingDirection()<br/>
+ * setStageDuration()<br/>
  * <br>
  * @see sviolet.turquoise.view.slide.SlideView
  **************************************************************************************<br>
@@ -45,30 +51,98 @@ public class LinearScrollEngine extends LinearDragEngine {
 	protected boolean scrollTargetLock = false;//滚动目标锁
 	
 	/**
-	 * 
 	 * @param context ViewGroup上下文
 	 * @param slideView 通知刷新的View
-	 * @param maxRange 允许滑动最大距离(全程) >=0
-	 * @param initPosition 初始位置
-	 * @param stageDuration 一个阶段的全程滑动时间(ms)
 	 */
-	public LinearScrollEngine(Context context, SlideView slideView, int maxRange, int initPosition, int stageDuration){
-		this(context, slideView, maxRange, initPosition, stageDuration, DIRECTION_LEFT_OR_TOP);
-	}
-	
-	/**
-	 * @param context ViewGroup上下文
-	 * @param slideView 通知刷新的View
-	 * @param maxRange 允许滑动最大距离(全程) >=0
-	 * @param initPosition 初始位置
-	 * @param stageDuration 一个阶段的全程滑动时间(ms)
-	 * 	@param slidingDirection 滑动输出方向
-	 */
-	public LinearScrollEngine(Context context, SlideView slideView, int maxRange, int initPosition, int stageDuration, int slidingDirection){
-		super(context, slideView, maxRange, initPosition, slidingDirection);
-		this.stageDuration = stageDuration;
+	public LinearScrollEngine(Context context, SlideView slideView){
+		super(context, slideView);
 		mScroller = new CompatScroller(mContext);
 	}
+
+	/******************************************************
+	 * settings
+	 */
+
+	/**
+     * [基本设置]<br/>
+	 * 设置一个阶段的全程滑动时间(ms)(默认DEF_STAGE_DURATION)
+	 *
+	 * @param stageDuration 一个阶段的全程滑动时间(ms) [0, INTEGER_MAX)
+	 */
+	public void setStageDuration(int stageDuration) {
+        if (stageDuration >= 0)
+		    this.stageDuration = stageDuration;
+        else
+            this.stageDuration = 0;
+	}
+
+    /**
+     * 设置永久触摸区域触摸反馈效果<br>
+     * <br>
+     * 永久触摸区域::<br>
+     * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
+     * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
+     * 捕获触摸事件. 可用于控件边界的把手设计.<br>
+     * <br>
+     * range反馈幅度::<br>
+     * 永久触摸区域捕获到未被处理的事件时, 向一个方向滑动一小段距离(通常是滑出)的效果.
+     * range需要指定方向(正负值), 和幅度大小.<br>
+     *
+     * @param enabled 开关
+     * @param range 反馈幅度(带正负方向) 单位px
+     */
+    public void setStaticTouchAreaFeedback(boolean enabled, int range){
+        this.staticTouchAreaFeedbackEnabled = enabled;
+        this.staticTouchAreaFeedbackRange = range;
+    }
+
+    /**
+     * 设置永久触摸区域触摸事件监听器<br>
+     * <br>
+     *  ACTION_Down时触发, 永久触摸区域触摸触发<br>
+     * <br>
+     * 永久触摸区域::<br>
+     * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
+     * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
+     * 捕获触摸事件. 可用于控件边界的把手设计.<br>
+     *
+     * @param listener
+     */
+    public void setOnStaticTouchAreaTouchListener(OnClickListener listener){
+        this.mOnStaticTouchAreaTouchListener = listener;
+    }
+
+    /**
+     * 设置永久触摸区域单击事件监听器<br>
+     * <br>
+     *  ACTION_UP时触发, 永久触摸区域的触摸事件未发生有效位移<br>
+     * <br>
+     * 永久触摸区域::<br>
+     * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
+     * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
+     * 捕获触摸事件. 可用于控件边界的把手设计.<br>
+     *
+     * @param listener
+     */
+    public void setOnStaticTouchAreaClickListener(OnClickListener listener){
+        this.mOnStaticTouchAreaClickListener = listener;
+    }
+
+    /**
+     * 设置永久触摸区域长按事件监听器<br>
+     * <br>
+     * 长按计时器触发, 且永久触摸区域的触摸事件未发生有效位移<br>
+     * <br>
+     * 永久触摸区域::<br>
+     * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
+     * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
+     * 捕获触摸事件. 可用于控件边界的把手设计.<br>
+     *
+     * @param listener
+     */
+    public void setOnStaticTouchAreaLongPressListener(OnClickListener listener){
+        this.mOnStaticTouchAreaLongPressListener = listener;
+    }
 
 	/******************************************************
 	 * override SlideEngine
@@ -267,78 +341,6 @@ public class LinearScrollEngine extends LinearDragEngine {
 	@Override
 	public void setInfiniteRange(boolean value) {
 		
-	}
-	
-	/***********************************************************
-	 * setting
-	 */
-	
-	/**
-	 * 设置永久触摸区域触摸反馈效果<br>
-	 * <br>
-	 * 永久触摸区域::<br>
-	 * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
-	 * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
-	 * 捕获触摸事件. 可用于控件边界的把手设计.<br>
-	 * <br>
-	 * range反馈幅度::<br>
-	 * 永久触摸区域捕获到未被处理的事件时, 向一个方向滑动一小段距离(通常是滑出)的效果. 
-	 * range需要指定方向(正负值), 和幅度大小.<br>
-	 * 
-	 * @param enabled 开关
-	 * @param range 反馈幅度(带正负方向) 单位px
-	 */
-	public void setStaticTouchAreaFeedback(boolean enabled, int range){
-		this.staticTouchAreaFeedbackEnabled = enabled;
-		this.staticTouchAreaFeedbackRange = range;
-	}
-
-	/**
-	 * 设置永久触摸区域触摸事件监听器<br>
-	 * <br>
-	 *  ACTION_Down时触发, 永久触摸区域触摸触发<br>
-	 * <br>
-	 * 永久触摸区域::<br>
-	 * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
-	 * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
-	 * 捕获触摸事件. 可用于控件边界的把手设计.<br>
-	 *
-	 * @param listener
-	 */
-	public void setOnStaticTouchAreaTouchListener(OnClickListener listener){
-		this.mOnStaticTouchAreaTouchListener = listener;
-	}
-	
-	/**
-	 * 设置永久触摸区域单击事件监听器<br>
-	 * <br>
-	 *  ACTION_UP时触发, 永久触摸区域的触摸事件未发生有效位移<br>
-	 * <br>
-	 * 永久触摸区域::<br>
-	 * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
-	 * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
-	 * 捕获触摸事件. 可用于控件边界的把手设计.<br>
-	 * 
-	 * @param listener
-	 */
-	public void setOnStaticTouchAreaClickListener(OnClickListener listener){
-		this.mOnStaticTouchAreaClickListener = listener;
-	}
-	
-	/**
-	 * 设置永久触摸区域长按事件监听器<br>
-	 * <br>
-	 * 长按计时器触发, 且永久触摸区域的触摸事件未发生有效位移<br>
-	 * <br>
-	 * 永久触摸区域::<br>
-	 * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
-	 * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
-	 * 捕获触摸事件. 可用于控件边界的把手设计.<br>
-	 * 
-	 * @param listener
-	 */
-	public void setOnStaticTouchAreaLongPressListener(OnClickListener listener){
-		this.mOnStaticTouchAreaLongPressListener = listener;
 	}
 	
 	/***********************************************

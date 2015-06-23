@@ -9,6 +9,11 @@ import sviolet.turquoise.view.slide.SlideView;
 
 /**
  * 线性滑动引擎(有惯性, 惯性滑动距离由松手时速度决定)<br>
+ * <Br/>
+ * 基本设置:<br/>
+ * setMaxRange()<br/>
+ * setInitPosition()<br/>
+ * setSlidingDirection()<br/>
  * <br>
  * @see sviolet.turquoise.view.slide.SlideView
  **************************************************************************************<br>
@@ -38,26 +43,50 @@ public class LinearFlingEngine extends LinearDragEngine {
     protected int flingMaxVelocity = Integer.MAX_VALUE;//惯性滑动最大速度限制
 
 	/**
-	 *
 	 * @param context ViewGroup上下文
 	 * @param slideView 通知刷新的View
-	 * @param maxRange 允许滑动最大距离(全程) >=0
-	 * @param initPosition 初始位置
 	 */
-	public LinearFlingEngine(Context context, SlideView slideView, int maxRange, int initPosition) {
-		this(context, slideView, maxRange, initPosition, DIRECTION_LEFT_OR_TOP);
+	public LinearFlingEngine(Context context, SlideView slideView) {
+		super(context, slideView);
+		mScroller = new CompatScroller(mContext);
+	}
+
+	/************************************************************
+	 * settings
+	 */
+
+	/**
+	 * 速度溢出监听器<br>
+	 * <br>
+	 * 注意: 无限滑动模式中该监听器无效<Br>
+	 * 当惯性滑动到底时, 若速度未降至0, 则回调该监听器, 并传入剩余速度参数<br>
+	 *
+	 * @param mOnVelocityOverflowListener 监听器
+	 */
+	public void setOnVelocityOverflowListener(OnVelocityOverflowListener mOnVelocityOverflowListener){
+		this.mOnVelocityOverflowListener = mOnVelocityOverflowListener;
 	}
 
 	/**
-	 * @param context ViewGroup上下文
-	 * @param slideView 通知刷新的View
-	 * @param maxRange 允许滑动最大距离(全程) >=0
-	 * @param initPosition 初始位置
-	 * 	@param slidingDirection 滑动输出方向
+	 * 设置单次惯性滑动的最大距离(0, MAX_VALUE]<br />
+	 * 主要用于增大惯性滑动阻尼<br />
+	 * 默认: Integer.MAX_VALUE<br />
+	 *
+	 * @param flingMaxRange
 	 */
-	public LinearFlingEngine(Context context, SlideView slideView, int maxRange, int initPosition, int slidingDirection) {
-		super(context, slideView, maxRange, initPosition, slidingDirection);
-		mScroller = new CompatScroller(mContext);
+	public void setFlingMaxRange(int flingMaxRange){
+		this.flingMaxRange = flingMaxRange;
+	}
+
+	/**
+	 * 设置惯性滑动最大速度限制(0, MAX_VALUE]<br />
+	 * 控制最大初始速度<br />
+	 * 默认: Integer.MAX_VALUE<br />
+	 *
+	 * @param flingMaxVelocity
+	 */
+	public void setFlingMaxVelocity(int flingMaxVelocity){
+		this.flingMaxVelocity = flingMaxVelocity;
 	}
 
 	/************************************************************
@@ -239,18 +268,6 @@ public class LinearFlingEngine extends LinearDragEngine {
 	}
 
 	/**
-	 * 速度溢出监听器<br>
-	 * <br>
-	 * 注意: 无限滑动模式中该监听器无效<Br>
-	 * 当惯性滑动到底时, 若速度未降至0, 则回调该监听器, 并传入剩余速度参数<br>
-	 *
-	 * @param mOnVelocityOverflowListener 监听器
-	 */
-	public void setOnVelocityOverflowListener(OnVelocityOverflowListener mOnVelocityOverflowListener){
-		this.mOnVelocityOverflowListener = mOnVelocityOverflowListener;
-	}
-
-	/**
 	 * 获得当前惯性滑动速度
 	 * @return
 	 */
@@ -267,27 +284,5 @@ public class LinearFlingEngine extends LinearDragEngine {
 			return 0;
 		}
 	}
-
-    /**
-     * 设置单次惯性滑动的最大距离(0, MAX_VALUE]<br />
-     * 主要用于增大惯性滑动阻尼<br />
-     * 默认: Integer.MAX_VALUE<br />
-     *
-     * @param flingMaxRange
-     */
-    public void setFlingMaxRange(int flingMaxRange){
-        this.flingMaxRange = flingMaxRange;
-    }
-
-    /**
-     * 设置惯性滑动最大速度限制(0, MAX_VALUE]<br />
-     * 控制最大初始速度<br />
-     * 默认: Integer.MAX_VALUE<br />
-     *
-     * @param flingMaxVelocity
-     */
-    public void setFlingMaxVelocity(int flingMaxVelocity){
-        this.flingMaxVelocity = flingMaxVelocity;
-    }
 
 }

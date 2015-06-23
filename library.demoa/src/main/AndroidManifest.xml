@@ -35,6 +35,8 @@
             android:name=".slide.CardSlideActivity"
             android:label="@string/slide_card_title"
             android:theme="@style/AppTheme_NoTitle" />
+        <activity android:name=".slide.ListSlideActivity"
+            android:label="@string/slide_list_title"/>
     </application>
 
 </manifest>

@@ -437,7 +437,7 @@ public class RelativeLayoutDrawer extends RelativeLayout implements SlideView {
 				//移除监听, 不重复初始化
 				getViewTreeObserver().removeOnPreDrawListener(this);
 				//初始化滑动
-				mDrawerProvider.initSlide(RelativeLayoutDrawer.this);
+				mDrawerProvider.initSlide();
 				//重绘UI, 触发OnPreDrawListener
 				postInvalidate();
 				return true;

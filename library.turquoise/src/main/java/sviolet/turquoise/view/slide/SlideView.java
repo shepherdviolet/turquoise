@@ -22,6 +22,12 @@ package sviolet.turquoise.view.slide;
  * ViewGroup(LinearLayout/RelativeLayout等) 实现SlideView接口, 并按如下复写方法:<br>
  * SlideView::<br>
  * <br>
+
+ 	//成员变量, 实例化
+ 	private LinearGestureDriver mGestureDriver = new LinearGestureDriver(getContext());//手势驱动
+ 	private LinearScrollEngine mSlideEngine = new LinearScrollEngine(getContext(), this);//滑动引擎1
+ 	private LinearStageScrollEngine mStageSlideEngine = new LinearStageScrollEngine(getContext(), this);//滑动引擎2
+
 	//构造方法(有三个)
 	public MyView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -46,31 +52,38 @@ package sviolet.turquoise.view.slide;
 	
 	//LinearSlideEngine初始化示例
 	private void initLinearSlide() {
-		//此处可调用getWidth()/getHeight()等方法获得自身宽高, 因为View已完成measure
-        int range = getWidth() - MeasureUtils.dp2px(getContext(), 100);//滑动范围 = 控件宽 - 100dp
-        int position = range;//初始位置 = 滑动范围
-        //后续初始化操作, 创建配置手势驱动/滑动引擎实例
-		mGestureDriver = new LinearGestureDriver(getContext(), LinearGestureDriver.ORIENTATION_HORIZONTAL);
-		mSlideEngine = new LinearSlideEngine(getContext(), this, range, position, 500);
-		mGestureDriver.bind(mSlideEngine);
-		//允许拖动越界, 越界阻尼0.7
-		mSlideEngine.setOverScroll(true, 0.7f);
+		 //此处可调用getWidth()/getHeight()等方法获得自身宽高, 因为View已完成measure
+		 int range = getHeight() - MeasureUtils.dp2px(getContext(), 60);//滑动范围 = 控件高 - 30dp
+		 int position = range;//初始位置
+		 //后续初始化操作, 创建配置手势驱动/滑动引擎实例
+		 mGestureDriver.setOrientation(LinearGestureDriver.ORIENTATION_VERTICAL);
+		 mSlideEngine.setMaxRange(range);//最大可滑动距离
+		 mSlideEngine.setInitPosition(position);//初始位置
+		 mSlideEngine.setStageDuration(1000);//阶段滑动时间
+		 mGestureDriver.bind(mSlideEngine);
+		 //允许拖动越界, 越界阻尼0.7
+		 mSlideEngine.setOverScroll(true, 0.7f);
+		 mSlideEngine.setOnGestureHoldListener(mOnGestureHoldListener);
 	}
 	
 	//LinearStageSlideEngine初始化示例
 	private void initLinearStageSlide() {
-		//此处可调用getWidth()/getHeight()等方法获得自身宽高, 因为View已完成measure
-        int range = getWidth() - MeasureUtils.dp2px(getContext(), 100);//滑动范围 = 控件宽 - 100dp
-        int position = range;//初始位置 = 滑动范围
-        //后续初始化操作, 创建配置手势驱动/滑动引擎实例
-		mGestureDriver = new LinearGestureDriver(getContext(), LinearGestureDriver.ORIENTATION_HORIZONTAL);
-		mSlideEngine = new LinearStageSlideEngine(getContext(), this, range / 2, 3, position, 500);
-		mGestureDriver.bind(mSlideEngine);
-		//允许拖动越界, 越界阻尼0.7
-		mSlideEngine.setOverScroll(true, 0.7f);
+ //此处可调用getWidth()/getHeight()等方法获得自身宽高, 因为View已完成measure
+		int range = getHeight() - MeasureUtils.dp2px(getContext(), 60);//滑动范围 = 控件高 - 30dp
+		int position = range;//初始位置
+		 //后续初始化操作, 创建配置手势驱动/滑动引擎实例
+		mGestureDriver.setOrientation(LinearGestureDriver.ORIENTATION_VERTICAL);
+		mStageSlideEngine.setStageRange(range / 2);//一个阶段的滑动距离
+		mStageSlideEngine.setStageNum(3);//阶段数
+		mStageSlideEngine.setInitPosition(position);//初始位置
+ 		mStageSlideEngine.setStageDuration(1000);//阶段滑动时间
+		 mGestureDriver.bind(mSlideEngine);
+		 //允许拖动越界, 越界阻尼0.7
+		 //		mStageSlideEngine.setOverScroll(true, 0.7f);
+ 		mStageSlideEngine.setOnGestureHoldListener(mOnGestureHoldListener);
 	}
- * 
- * 
+ *
+ *
  **************************************************************************************<br>
  *	output<br>
  * 刷新UI/输出显示示例:<br>
@@ -113,18 +126,18 @@ package sviolet.turquoise.view.slide;
 	}
 	
 	//其他输出方法
-//	@Override
-//	protected void onDraw(Canvas canvas) {
-//		//绘制View
-//		super.onDraw(canvas);
-//		//滑动至engine所在位置
-//		if(mSlideEngine != null){
-//			scrollTo(mSlideEngine.getPosition(), 0);
-//			//判断是否停止
-//			if(!mSlideEngine.isStop())
-//				postInvalidate();
-//		}
-//	}
+	@Override
+	protected void onDraw(Canvas canvas) {
+		//绘制View
+		super.onDraw(canvas);
+		//滑动至engine所在位置
+		if(mSlideEngine != null){
+			scrollTo(mSlideEngine.getPosition(), 0);
+			//判断是否停止
+			if(!mSlideEngine.isStop())
+				postInvalidate();
+		}
+	}
  * <br>
  * <br>
  **************************************************************************************<br>
@@ -141,7 +154,7 @@ package sviolet.turquoise.view.slide;
 			return true;
 		return original;
 	}
-	
+
 	//复写触摸事件处理
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -218,14 +231,7 @@ package sviolet.turquoise.view.slide;
  * 其他<br>
  * <br>
  * 1.里层SlideView滑动后阻断外层SlideView拦截:<br>
-		//里层设置hold事件监听
-		insideSlideView.getSlideEngine()..setOnGestureHoldListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				//阻断外层手势拦截
-				outsideSlideView.getSlideEngine().otherIntercepted();
-			}
-		});
+		outside.getSlideEngine().addInnerEngine(inside.getSlideEngine());
  * <br>
  * @author S.Violet
  */
