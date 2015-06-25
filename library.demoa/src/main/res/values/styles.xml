@@ -2,8 +2,8 @@
 
     <!-- 应用Style -->
 
-    <style name="AppTheme" parent="android:Theme.Light"></style>
-    <style name="AppTheme_NoTitle" parent="android:Theme.NoTitleBar"></style>
+    <style name="AppTheme" parent="android:Theme.Light"/>
+    <style name="AppTheme_NoTitle" parent="android:Theme.NoTitleBar"/>
 
     <!-- 控件Style -->
 

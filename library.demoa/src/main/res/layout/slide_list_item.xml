@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+LinearLayoutDrawer必须设置背景颜色
+内部不处理触摸事件的控件, 必须设置android:clickable="true"
+内部控件必须填满整个布局, 否则触摸到空隙会无法滑动
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sviolet="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#209090">
+
+        <sviolet.turquoise.view.shadow.LinearShadowView
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_alignParentTop="true"
+            sviolet:LinearShadowView_direction="bottom"
+            sviolet:color="#40000000" />
+
+        <sviolet.turquoise.view.shadow.LinearShadowView
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_alignParentBottom="true"
+            sviolet:LinearShadowView_direction="top"
+            sviolet:color="#40000000" />
+
+    </RelativeLayout>
+
+    <sviolet.turquoise.view.slide.view.LinearLayoutDrawer
+        android:id="@+id/slide_list_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="#00000000"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="#FFF8F8F8"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal">
+
+                <!-- 标题 -->
+                <TextView
+                    android:id="@+id/common_list_item_title"
+                    style="@style/common_list_text_title"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="7"
+                    android:clickable="true"
+                    android:gravity="center_vertical"
+                    android:padding="3dp"
+                    android:singleLine="true" />
+
+                <!-- 类型 -->
+                <TextView
+                    android:id="@+id/common_list_item_type"
+                    style="@style/common_list_text_common"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
+                    android:layout_weight="3"
+                    android:clickable="true"
+                    android:gravity="right|center_vertical"
+                    android:padding="3dp"
+                    android:singleLine="true" />
+
+            </LinearLayout>
+
+            <!-- 信息 -->
+            <TextView
+                android:id="@+id/common_list_item_info"
+                style="@style/common_list_text_common"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:gravity="center_vertical"
+                android:padding="3dp" />
+
+        </LinearLayout>
+
+        <sviolet.turquoise.view.shadow.LinearShadowView
+            android:layout_width="3dp"
+            android:layout_height="100dp"
+            sviolet:LinearShadowView_direction="right"
+            sviolet:color="#40000000" />
+
+    </sviolet.turquoise.view.slide.view.LinearLayoutDrawer>
+
+</RelativeLayout>
