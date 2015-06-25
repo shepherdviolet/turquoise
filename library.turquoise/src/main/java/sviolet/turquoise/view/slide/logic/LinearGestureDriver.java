@@ -343,12 +343,12 @@ public class LinearGestureDriver implements GestureDriver {
 	 * @return true:有效滑动 false:无效滑动
 	 */
 	private boolean checkValidMove() {
-		if(isValidMoveX()){
-			state = STATE_MOVING_X;
+		if(isValidMoveY()){
+			state = STATE_MOVING_Y;
 			holdEngine();
 			return true;
-		}else if(isValidMoveY()){
-			state = STATE_MOVING_Y;
+		} else if(isValidMoveX()){
+			state = STATE_MOVING_X;
 			holdEngine();
 			return true;
 		}

@@ -1,6 +1,5 @@
 package sviolet.liba.view;
 
-import sviolet.liba.R;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -15,6 +14,8 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
+
+import sviolet.liba.R;
 
 /**
  * 水波纹触摸效果控件(RelativeLayout)<p>
