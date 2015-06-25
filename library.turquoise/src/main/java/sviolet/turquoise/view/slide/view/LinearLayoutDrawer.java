@@ -308,6 +308,7 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 
 	/**
 	 * 应用滑动设置(使setSlide...生效)<br>
+	 * 非立即生效<br/>
 	 */
 	public void applySlideSetting(){
 		postInitSlide();
@@ -406,7 +407,25 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	public void pushIn(boolean force){
 		mDrawerProvider.pushIn(force);
 	}
-	
+
+	/**
+	 * 拉出抽屉(立即, 无动画)<br>
+	 * <br>
+	 *
+	 */
+	public void pullOutImmidiatly(){
+		mDrawerProvider.pullOutImmidiatly();
+	}
+
+	/**
+	 * 关闭抽屉(立即, 无动画)<br>
+	 * <br>
+	 *
+	 */
+	public void pushInImmidiatly(){
+		mDrawerProvider.pushInImmidiatly();
+	}
+
 	/**
 	 * 销毁
 	 */

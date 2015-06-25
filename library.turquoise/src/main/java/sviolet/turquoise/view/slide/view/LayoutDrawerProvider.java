@@ -454,6 +454,22 @@ public class LayoutDrawerProvider {
 		if(mSlideEngine != null)
 			mSlideEngine.scrollToStage(pushInStage, force);
 	}
+
+    /**
+     * 打开抽屉(立即, 无动画)
+     */
+	protected void pullOutImmidiatly(){
+		if (mSlideEngine != null)
+			mSlideEngine.scrollToPosition(mSlideEngine.getPositionOfStage(pullOutStage), 0, false);
+	}
+
+    /**
+     * 关闭抽屉(立即, 无动画)
+     */
+	protected void pushInImmidiatly(){
+		if (mSlideEngine != null)
+			mSlideEngine.scrollToPosition(mSlideEngine.getPositionOfStage(pushInStage), 0, false);
+	}
 	
 	/**
 	 * 销毁
