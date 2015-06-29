@@ -5,7 +5,7 @@ import android.widget.ListView;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
-import sviolet.demoa.slide.sviolet.demoa.slide.view.SlideListAdapter;
+import sviolet.demoa.slide.sviolet.demoa.slide.view.MySlideListAdapter;
 import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
 import sviolet.turquoise.app.TActivity;
@@ -35,7 +35,7 @@ public class ListSlideActivity extends TActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mSlideListView.setAdapter(new SlideListAdapter(this, 30, "title", "type", "info.............."));
+        mSlideListView.setAdapter(new MySlideListAdapter(this, 30, "title", "type", "info.............."));
 
     }
 }

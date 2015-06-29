@@ -55,7 +55,7 @@ public class DrawerSlideActivity extends TActivity {
                 .setSlideScrollDuration(700)//设置惯性滑动时间
                 .setSlideDrawerWidth(280)//设置抽屉宽度
                 .setSlideHandleWidth(50)//设置把手宽度(dp)
-                .setSlideInitStage(RelativeLayoutDrawer.INIT_STAGE_PUSH_IN)//设置默认状态:拉出
+                .setSlideInitStage(RelativeLayoutDrawer.STAGE_PUSH_IN)//设置默认状态:拉出
                 .setSlideOverScrollEnabled(true)//设置允许越界拖动
                 .setHandleFeedback(true)//把手触摸反馈
                 .setHandleFeedbackRange(25)//把手触摸反馈幅度

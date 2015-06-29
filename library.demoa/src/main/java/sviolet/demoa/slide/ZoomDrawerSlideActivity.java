@@ -53,7 +53,7 @@ public class ZoomDrawerSlideActivity extends TActivity {
                 .setSlideScrollDirection(ZoomRelativeLayoutDrawer.DIRECTION_RIGHT)//设置抽屉方向
                 .setSlideScrollDuration(700)//设置惯性滑动时间
                 .setSlideDrawerWidth(MeasureUtils.getScreenWidthDp(getApplicationContext()) - 90)//设置抽屉宽度
-                .setSlideInitStage(ZoomRelativeLayoutDrawer.INIT_STAGE_PULL_OUT)//设置默认状态:拉出
+                .setSlideInitStage(ZoomRelativeLayoutDrawer.STAGE_PULL_OUT)//设置默认状态:拉出
                 .applySlideSetting();//应用设置
 
         //抽屉中的ListView

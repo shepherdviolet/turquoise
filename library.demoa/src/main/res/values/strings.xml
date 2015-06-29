@@ -5,10 +5,16 @@
     <string name="guide_menu_about">About</string>
 
     <string name="slide_main_title">Slide Demo</string>
+
     <string name="slide_drawer_title">Drawer</string>
+
     <string name="slide_zoomdrawer_title">ZoomDrawer</string>
+
     <string name="slide_fling_title">Fling</string>
+
     <string name="slide_card_title">Slide Card</string>
+
     <string name="slide_list_title">SlideListView</string>
+    <string name="slide_list_background_button">OK</string>
 
 </resources>

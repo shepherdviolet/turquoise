@@ -29,7 +29,7 @@ import android.widget.RelativeLayout;
 			.setSlideScrollDuration(500)//设置惯性滑动时间
 			.setSlideDrawerWidth(300)//设置抽屉宽度, 对应XML中内容宽度300dp
 			.setSlideHandleWidth(30)//设置把手宽度(dp)
-			.setSlideInitStage(RelativeLayoutDrawer.INIT_STAGE_PULL_OUT)//设置默认状态:拉出
+			.setSlideInitStage(RelativeLayoutDrawer.STAGE_PULL_OUT)//设置默认状态:拉出
 			.setSlideOverScrollEnabled(true)//设置允许越界拖动
 			.applySlideSetting();//应用设置
  * <br>
@@ -84,8 +84,8 @@ public class RelativeLayoutDrawer extends RelativeLayout implements SlideView {
 	public static final int DRAWER_WIDTH_MATCH_PARENT = -1;//抽屉宽度=控件宽/高
 	public static final int FEEDBACK_RANGE_HALF_HANDLE_WIDTH = -1;//把手触摸反馈=把手宽度/2
 	
-	public static final boolean INIT_STAGE_PUSH_IN = false;//初始位置: 收起
-	public static final boolean INIT_STAGE_PULL_OUT = true;//初始位置: 拉出
+	public static final int STAGE_PUSH_IN = 0;//初始位置: 收起
+	public static final int STAGE_PULL_OUT = 1;//初始位置: 拉出
 	
 	public static final int DEF_HANDLE_WIDTH = 0;
 	public static final int DEF_SCROLL_DURATION = 500;
@@ -171,15 +171,15 @@ public class RelativeLayoutDrawer extends RelativeLayout implements SlideView {
 	/**
 	 * 设置抽屉初始状态:收起/拉出<br>
 	 * <br>
-	 * 默认{@link #INIT_STAGE_PUSH_IN}<br>
+	 * 默认{@link #STAGE_PUSH_IN}<br>
 	 * <br>
-	 * {@link #INIT_STAGE_PUSH_IN}:抽屉初始状态:收起<br>
-	 * {@link #INIT_STAGE_PULL_OUT}:抽屉初始状态:拉出<br>
+	 * {@link #STAGE_PUSH_IN}:抽屉初始状态:收起<br>
+	 * {@link #STAGE_PULL_OUT}:抽屉初始状态:拉出<br>
 	 * 
 	 * @param initStage
 	 * @return
 	 */
-	public RelativeLayoutDrawer setSlideInitStage(boolean initStage){
+	public RelativeLayoutDrawer setSlideInitStage(int initStage){
 		mDrawerProvider.setSlideInitStage(initStage);
 		return this;
 	}
@@ -498,6 +498,18 @@ public class RelativeLayoutDrawer extends RelativeLayout implements SlideView {
 
 	public float getOverScrollDamp() {
 		return mDrawerProvider.getOverScrollDamp();
+	}
+
+	public float getCurrentStage(){
+		return mDrawerProvider.getCurrentStage();
+	}
+
+	public float getPullOutStage(){
+		return mDrawerProvider.getPullOutStage();
+	}
+
+	public float getPushInStage(){
+		return mDrawerProvider.getPushInStage();
 	}
 	
 }

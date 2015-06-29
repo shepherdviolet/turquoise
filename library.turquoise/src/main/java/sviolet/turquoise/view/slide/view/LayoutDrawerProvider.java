@@ -31,8 +31,8 @@ public class LayoutDrawerProvider {
 	public static final int DRAWER_WIDTH_MATCH_PARENT = -1;//抽屉宽度=控件宽/高
 	public static final int FEEDBACK_RANGE_HALF_HANDLE_WIDTH = -1;//把手触摸反馈=把手宽度/2
 	
-	public static final boolean INIT_STAGE_PUSH_IN = false;//初始位置: 收起
-	public static final boolean INIT_STAGE_PULL_OUT = true;//初始位置: 拉出
+	public static final int STAGE_PUSH_IN = 0;//初始位置: 收起
+	public static final int STAGE_PULL_OUT = 1;//初始位置: 拉出
 	
 	public static final int DEF_HANDLE_WIDTH = 0;
 	public static final int DEF_SCROLL_DURATION = 500;
@@ -48,7 +48,7 @@ public class LayoutDrawerProvider {
 	private int drawerWidth = DRAWER_WIDTH_MATCH_PARENT;//抽屉宽度(dp), 包含把手宽度
 	private int handleWidth = DEF_HANDLE_WIDTH;//把手宽度(dp), 即抽屉未拉出时露出部分
 	private int scrollDuration = DEF_SCROLL_DURATION;//惯性滑动全程耗时
-	private boolean initStage = INIT_STAGE_PUSH_IN;//初始状态是否拉出
+	private int initStage = STAGE_PUSH_IN;//初始状态是否拉出
 	private boolean overScrollEnabled = DEF_OVER_SCROLL_ENABLED;//是否允许越界拖动
 	private float overScrollDamp = DEF_OVER_SCROLL_DAMP;//越界阻尼
 	
@@ -147,15 +147,15 @@ public class LayoutDrawerProvider {
 	/**
 	 * 设置抽屉初始状态:收起/拉出<br>
 	 * <br>
-	 * 默认{@link #INIT_STAGE_PUSH_IN}<br>
+	 * 默认{@link #STAGE_PUSH_IN}<br>
 	 * <br>
-	 * {@link #INIT_STAGE_PUSH_IN}:抽屉初始状态:收起<br>
-	 * {@link #INIT_STAGE_PULL_OUT}:抽屉初始状态:拉出<br>
+	 * {@link #STAGE_PUSH_IN}:抽屉初始状态:收起<br>
+	 * {@link #STAGE_PULL_OUT}:抽屉初始状态:拉出<br>
 	 * 
 	 * @param initStage
 	 * @return
 	 */
-	public void setSlideInitStage(boolean initStage){
+	public void setSlideInitStage(int initStage){
 		this.initStage = initStage;
 	}
 	
@@ -328,7 +328,7 @@ public class LayoutDrawerProvider {
 				//把手触摸反馈
 				_handleFeedbackRange = - _handleFeedbackRange;//设定方向
 				//初始位置
-				if(initStage == INIT_STAGE_PULL_OUT)
+				if(initStage == STAGE_PULL_OUT)
 					initPosition = 0;//初始位置:原位
 				else
 					initPosition = scrollRange;//初始位置:上面
@@ -346,7 +346,7 @@ public class LayoutDrawerProvider {
 				//把手触摸反馈
 //				_handleFeedbackRange = _handleFeedbackRange;//设定方向
 				//初始位置
-				if(initStage == INIT_STAGE_PULL_OUT)
+				if(initStage == STAGE_PULL_OUT)
 					initPosition = scrollRange;//初始位置:原位
 				else
 					initPosition = 0;//初始位置:下面
@@ -364,7 +364,7 @@ public class LayoutDrawerProvider {
 				//把手触摸反馈
 				_handleFeedbackRange = - _handleFeedbackRange;//设定方向
 				//初始位置
-				if(initStage == INIT_STAGE_PULL_OUT)
+				if(initStage == STAGE_PULL_OUT)
 					initPosition = 0;//初始位置:原位
 				else
 					initPosition = scrollRange;//初始位置:左边
@@ -382,7 +382,7 @@ public class LayoutDrawerProvider {
 				//把手触摸反馈
 //				_handleFeedbackRange = _handleFeedbackRange;//设定方向
 				//初始位置
-				if(initStage == INIT_STAGE_PULL_OUT)
+				if(initStage == STAGE_PULL_OUT)
 					initPosition = scrollRange;//初始位置:原位
 				else
 					initPosition = 0;//初始位置:右边
@@ -521,7 +521,7 @@ public class LayoutDrawerProvider {
 		return scrollDuration;
 	}
 
-	protected boolean getInitStage() {
+	protected int getInitStage() {
 		return initStage;
 	}
 
@@ -533,11 +533,11 @@ public class LayoutDrawerProvider {
 		return overScrollDamp;
 	}
 
-	protected int getPullOutStage() {
+	protected float getPullOutStage() {
 		return pullOutStage;
 	}
 
-	protected int getPushInStage() {
+	protected float getPushInStage() {
 		return pushInStage;
 	}
 
@@ -547,6 +547,13 @@ public class LayoutDrawerProvider {
 
 	protected int getHandleFeedbackRange() {
 		return handleFeedbackRange;
+	}
+
+	protected float getCurrentStage(){
+		if (mSlideEngine != null)
+			return mSlideEngine.getCurrentStage();
+		else
+			return 0;
 	}
 	
 }
