@@ -46,17 +46,7 @@ public abstract class HttpURLConnectionResponse {
 	 * @param errorCode 异常码
 	 * @param e Exception
 	 */
-	public abstract void onNetException(int errorCode, Exception e);
-	
-	/**
-	 * 编码逻辑错误
-	 * 
-	 * @param errorCode
-	 * @param e
-	 */
-	public void onLogicException(int errorCode, Exception e){
-		e.printStackTrace();
-	}
+	public abstract void onException(int errorCode, Exception e);
 	
 	/**
 	 * 网络请求被取消后调用(超时/手动)

@@ -1,12 +1,14 @@
 package sviolet.turquoise.view.slide;
 
+import android.view.MotionEvent;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import android.view.MotionEvent;
+import sviolet.turquoise.app.DeprecatedException;
 
 /**
  * SlideEngine组, 滑动引擎组<br>
@@ -195,7 +197,7 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	@Deprecated
 	@Override
 	public void bind(SlideEngine slideEngine) {
-		throw new SlideException("[SlideEngineGroup]group can't bind SlideEngine, please use addSlideEngine()");
+		throw new DeprecatedException("[SlideEngineGroup]group can't bind SlideEngine, please use addSlideEngine()");
 	}
 
 	@Deprecated
@@ -213,7 +215,7 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	@Deprecated
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent event) {
-		throw new SlideException("[SlideEngineGroup]group can't call onInterceptTouchEvent()");
+		throw new DeprecatedException("[SlideEngineGroup]group can't call onInterceptTouchEvent()");
 	}
 
 	/**
@@ -226,7 +228,7 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	@Deprecated
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		throw new SlideException("[SlideEngineGroup]group can't call onTouchEvent()");
+		throw new DeprecatedException("[SlideEngineGroup]group can't call onTouchEvent()");
 	}
 	
 	/***************************************************

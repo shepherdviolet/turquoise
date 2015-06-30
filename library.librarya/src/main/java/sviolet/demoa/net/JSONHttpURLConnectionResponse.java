@@ -49,13 +49,8 @@ public abstract class JSONHttpURLConnectionResponse extends HttpURLConnectionRes
 	}
 
 	@Override
-	public void onNetException(int errorCode, Exception e) {
+	public void onException(int errorCode, Exception e) {
 		
-	}
-
-	@Override
-	public void onLogicException(int errorCode, Exception e) {
-		super.onLogicException(errorCode, e);
 	}
 
 	@Override

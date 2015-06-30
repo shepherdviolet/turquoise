@@ -1,8 +1,9 @@
 package sviolet.turquoise.view.slide.logic;
 
-import sviolet.turquoise.view.slide.SlideException;
-import sviolet.turquoise.view.slide.SlideView;
 import android.content.Context;
+
+import sviolet.turquoise.app.DeprecatedException;
+import sviolet.turquoise.view.slide.SlideView;
 
 /**
  * 多页/多阶段式线性滑动引擎(有惯性, 惯性滑动至停止点)<br>
@@ -54,7 +55,7 @@ public class LinearStageScrollEngine extends LinearScrollEngine {
 	@Override
 	@Deprecated
 	public void setMaxRange(int maxRange) {
-		throw new SlideException("LinearStageScorllEngine use setStageNum() & setStageRange() instead");
+		throw new DeprecatedException("LinearStageScorllEngine use setStageNum() & setStageRange() instead");
 	}
 
 	/**

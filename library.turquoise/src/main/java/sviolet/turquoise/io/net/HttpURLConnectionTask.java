@@ -16,6 +16,7 @@ import java.net.UnknownHostException;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
+import sviolet.turquoise.app.CommonException;
 import sviolet.turquoise.io.Task;
 import sviolet.turquoise.utils.BinaryUtils;
 
@@ -48,9 +49,6 @@ public class HttpURLConnectionTask extends Task {
 	public static final int ERROR_CODE_SSL_EXCEPTION = 105;//SSL其他错误
 	public static final int ERROR_CODE_SOCKET_TIMEOUT_EXCEPTION = 106;//网络超时
 	public static final int ERROR_CODE_OTHER_EXCEPTION = 199;//其他IO错误
-	//代码逻辑错误
-	public static final int ERROR_CODE_NO_CLIENT = 201;//SimpleHttpURLConnectionClient未绑定
-	public static final int ERROR_CODE_NO_SUCH_TYPE = 202;//类型type不存在
 	
 	//变量////////////////////////////////////////////
 	
@@ -111,8 +109,7 @@ public class HttpURLConnectionTask extends Task {
 	public Object doInBackground(Object params) {
 		//未绑定client
 		if(getClient() == null){
-			errorCode = ERROR_CODE_NO_CLIENT;
-			return null;
+			throw new CommonException("[HttpURLConnectionTask]HttpUrlConnectionClient can't be null");
 		}
 		//网络请求
 		try {
@@ -160,10 +157,8 @@ public class HttpURLConnectionTask extends Task {
 				response.onReceived(result);
 			else//网络返回码异常
 				response.onResponseCodeError(responseCode);
-		}else if(errorCode > 200){//逻辑错误
-			response.onLogicException(errorCode, exception);
 		}else{//网络错误
-			response.onNetException(errorCode, exception);
+			response.onException(errorCode, exception);
 		}
 		
 		//回调onPost
@@ -314,7 +309,7 @@ public class HttpURLConnectionTask extends Task {
 	 * ((OutputStreamWriter)output).flush();<br>
 	 * ((OutputStreamWriter)output).close();<br>
 	 * 
-	 * @param input
+	 * @param output 输出流
 	 * @throws IOException
 	 */
 	public void closeOutput(Object output) throws IOException{
@@ -393,8 +388,7 @@ public class HttpURLConnectionTask extends Task {
 			break;
 		}
 		
-		errorCode = ERROR_CODE_NO_SUCH_TYPE;//网络请求类型不存在
-		return null;
+		throw new CommonException("[HttpURLConnectionTask]undefined http type (get/post)");
 	}
 	
 	/**
@@ -465,7 +459,7 @@ public class HttpURLConnectionTask extends Task {
 	/**
 	 * 读取数据
 	 * 
-	 * @param inputReader
+	 * @param inputStream 输入流
 	 * @param connection
 	 * @return
 	 * @throws IOException
