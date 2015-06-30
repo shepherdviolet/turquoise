@@ -16,6 +16,7 @@
 
 ```java
 repositories {
+    ......
     flatDir {
         dirs 'libs'
     }
@@ -23,5 +24,8 @@ repositories {
 ```
 
 ```java
-compile(name:'library.turquoise-release', ext:'aar')
+dependencies {
+    ......
+    compile(name:'library.turquoise-release', ext:'aar')
+}
 ```
