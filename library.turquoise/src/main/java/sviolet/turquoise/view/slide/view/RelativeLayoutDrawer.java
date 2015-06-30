@@ -83,9 +83,9 @@ public class RelativeLayoutDrawer extends RelativeLayout implements SlideView {
 
 	public static final int DRAWER_WIDTH_MATCH_PARENT = -1;//抽屉宽度=控件宽/高
 	public static final int FEEDBACK_RANGE_HALF_HANDLE_WIDTH = -1;//把手触摸反馈=把手宽度/2
-	
-	public static final int STAGE_PUSH_IN = 0;//初始位置: 收起
-	public static final int STAGE_PULL_OUT = 1;//初始位置: 拉出
+
+	public static final boolean STAGE_PUSH_IN = false;//初始位置: 收起
+	public static final boolean STAGE_PULL_OUT = true;//初始位置: 拉出
 	
 	public static final int DEF_HANDLE_WIDTH = 0;
 	public static final int DEF_SCROLL_DURATION = 500;
@@ -179,7 +179,7 @@ public class RelativeLayoutDrawer extends RelativeLayout implements SlideView {
 	 * @param initStage
 	 * @return
 	 */
-	public RelativeLayoutDrawer setSlideInitStage(int initStage){
+	public RelativeLayoutDrawer setSlideInitStage(boolean initStage){
 		mDrawerProvider.setSlideInitStage(initStage);
 		return this;
 	}

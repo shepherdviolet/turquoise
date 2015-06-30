@@ -170,7 +170,7 @@ public class LinearGestureDriver implements GestureDriver {
 	}
 
 	/**
-	 * 设置有效/无效触摸区域<br>
+	 * 设置有效/无效触摸区域(单位px)<br>
 	 * <br>
 	 * touchAreaMode::<br>
 	 * TOUCH_AREA_MODE_NULL 触摸全部无效<br>
@@ -209,7 +209,7 @@ public class LinearGestureDriver implements GestureDriver {
 	}
 
 	/**
-	 * 设置永久触摸区域<br>
+	 * 设置永久触摸区域(单位px)<br>
 	 * 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent会返回true以阻止事件向后方传递<Br>
 	 *
 	 * @param staticTouchAreaEnabled 是否开启永久触摸区域
