@@ -29,13 +29,13 @@ public abstract class Task {
 	private Object params;//参数
 	private Queue queue;//任务队列
 	private long timeOutSet = -1;//任务超时设置
-	private boolean isCanceled = false;//是否被取消(中止)
+	private Object[] tags;//任务标签
 	private boolean cancelable = true;//是否允许被取消(中止)
 	
 	//var//////////////////////////////////////////
 
 	private int state = STATE_WAITTING;//执行状态
-	private Object result;//结果
+	private boolean isCanceled = false;//是否被取消(中止)
 	private Thread taskThread;//任务线程
 	private Timer timeOutTimer;//超时计时器
 	
@@ -127,6 +127,37 @@ public abstract class Task {
 	 */
 	public void setCancelable(boolean cancelable){
 		this.cancelable = cancelable;
+	}
+
+	/**
+	 * 设置标签组
+	 *
+	 * @param tags
+	 */
+	public void setTags(Object[] tags){
+		this.tags = tags;
+	}
+
+	/**
+	 * 设置一个标签
+	 * @param tag
+	 */
+	public void setTag(Object tag){
+		this.tags = new Object[]{ tag };
+	}
+
+	/**
+	 * 判断该任务是否有指定的标签
+	 *
+	 * @param tag
+	 * @return
+	 */
+	public boolean containTag(Object tag){
+		for (Object o : tags) {
+			if (o.equals(tag))
+				return true;
+		}
+		return false;
 	}
 	
 	/*********************************************
@@ -220,9 +251,12 @@ public abstract class Task {
 			@Override
 			public void run() {
 				state++;
-				result = Task.this.doInBackground(params);
+				Object result = Task.this.doInBackground(params);
 				setStopState();
-				handler.sendEmptyMessage(HANDLER_TASK_COMPLETE);//主线程执行onPostExecute
+				Message msg = handler.obtainMessage();
+				msg.what = HANDLER_TASK_COMPLETE;
+				msg.obj = result;
+				msg.sendToTarget();//主线程执行onPostExecute
 			}
 		});
 		taskThread.start();
@@ -272,7 +306,17 @@ public abstract class Task {
 			queue.notifyDispatchTask();
 		}
 	}
-	
+
+	/**
+	 * 销毁任务
+	 */
+	protected void onDestory(){
+		queue = null;
+		taskThread = null;//任务线程
+		timeOutTimer = null;//超时计时器
+		params = null;
+	}
+
 	/**************************************************************************
 	 * HANDLER
 	 */
@@ -288,7 +332,8 @@ public abstract class Task {
 				process();
 				break;
 			case HANDLER_TASK_COMPLETE:
-				onPostExecute(result);
+				onPostExecute(msg.obj);
+				onDestory();
 				break;
 			default:
 				break;

@@ -111,7 +111,22 @@ public class Queue {
 	public int getConcurrencyVolumeMax(){
 		return concurrencyVolumeMax;
 	}
-	
+
+	/**
+	 * 取消所有包含tag标签的任务
+	 */
+	public void cancelAll(Object tag){
+		synchronized (Queue.this) {
+			try{
+				for(Task task : taskList){
+					if (task.containTag(tag))
+						task.cancel();
+				}
+			}catch(Exception e){
+			}
+		}
+	}
+
 	/**
 	 * 取消所有任务
 	 */
