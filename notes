@@ -2,8 +2,6 @@
 0.完善注释
 
 1.Slide:
-LinearSlideEngine只能输出一维方向, 但有二维捕获, bug
-recyclerView
 
 2.Cache
 本地缓存管理器
