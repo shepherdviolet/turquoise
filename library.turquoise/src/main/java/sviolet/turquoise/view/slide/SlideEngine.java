@@ -41,6 +41,7 @@ public interface SlideEngine {
 	
 	/**
 	 * [手势通知引擎]输入触摸状态(二维)<br>
+	 *  onGestureDriver方法只需实现一个<br/>
 	 * <br>
 	 * 输入手势运动状态<br>
 	 * 
@@ -55,15 +56,13 @@ public interface SlideEngine {
 	
 	/**
 	 * [手势通知引擎]输入触摸状态(一维)<br>
+	 * onGestureDriver方法只需实现一个<br/>
 	 * <br>
 	 * 输入手势运动状态<br>
 	 * 
-	 * @param x
-	 * @param y
-	 * @param offsetX
-	 * @param offsetY
-	 * @param velocityX
-	 * @param velocityY
+	 * @param curr
+	 * @param offset
+	 * @param velocity
 	 */
 	public void onGestureDrive(int curr, int offset, int velocity);
 	
