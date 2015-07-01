@@ -310,7 +310,7 @@ public abstract class Task {
 	/**
 	 * 销毁任务
 	 */
-	protected void onDestory(){
+	protected void onDestroy(){
 		queue = null;
 		taskThread = null;//任务线程
 		timeOutTimer = null;//超时计时器
@@ -333,7 +333,7 @@ public abstract class Task {
 				break;
 			case HANDLER_TASK_COMPLETE:
 				onPostExecute(msg.obj);
-				onDestory();
+				onDestroy();
 				break;
 			default:
 				break;

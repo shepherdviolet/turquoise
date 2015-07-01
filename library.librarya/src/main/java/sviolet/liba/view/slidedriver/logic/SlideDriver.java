@@ -2,12 +2,12 @@ package sviolet.liba.view.slidedriver.logic;
 
 
 /**
- * 翻页驱动<<destory()销毁>><p>
+ * 翻页驱动<<destroy()销毁>><p>
  * 
  * (经过反向包装,与正常思维方式相同,
  * page为View从左往右1、2、3...)<p>
  * 
- * 利用MotionEvent驱动View的滑动/翻页,务必destory()销毁<p>
+ * 利用MotionEvent驱动View的滑动/翻页,务必destroy()销毁<p>
  * 
  * FLIP弹射:松手后自动移动/归位到驻点<p>
  * TargetFlip标的弹射:直接弹射至目标位置<p>
@@ -17,7 +17,7 @@ package sviolet.liba.view.slidedriver.logic;
  */
 
 /* 
- * 务必destory()销毁
+ * 务必destroy()销毁
  * 
  * 用法:
  * 1.创建对象:new PageTouchDriver(float minX,float maxX,float minY,float maxY){...}

@@ -57,7 +57,7 @@ public abstract class Engine {
 	 * 销毁(Inputer回调onStop,handler清空)<p>
 	 * 不回调Outputer的onStop
 	 */
-	public void destory(){
+	public void destroy(){
 		if(mInputer != null)
 			mInputer.onStop();
 		handler.removeCallbacksAndMessages(null);

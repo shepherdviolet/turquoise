@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 
 import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
+import sviolet.turquoise.io.BitmapManager;
 import sviolet.turquoise.utils.DeviceUtils;
 import sviolet.turquoise.utils.SettingUtils;
 
@@ -34,6 +35,7 @@ import sviolet.turquoise.utils.SettingUtils;
 public abstract class TActivity extends Activity {
 
     private Logger mLogger;//日志打印器
+    private BitmapManager mBitmapManager;//Bitmap管理器
 
     private ActivitySettings settings;
 
@@ -178,6 +180,10 @@ public abstract class TActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //回收掉内置Bitmap管理器所有的位图
+        if (mBitmapManager != null){
+            mBitmapManager.recycleAll();
+        }
         //将自身从TApplication移除
         if (getApplication() instanceof TApplication){
             try {
@@ -203,5 +209,17 @@ public abstract class TActivity extends Activity {
             }catch (Exception ignored){}
         }
         return new Logger("", false, false, false);//返回无效的日志打印器
+    }
+
+    /**
+     * 获得Activity内置的Bitmap管理器, 带缓存/回收功能,
+     * 且当Activity.onDestroy时会回收其所有的Bitmap
+     *
+     */
+    public BitmapManager getBitmapManager(){
+        if (mBitmapManager == null){
+            mBitmapManager = new BitmapManager();
+        }
+        return mBitmapManager;
     }
 }

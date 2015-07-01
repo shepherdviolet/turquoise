@@ -1,7 +1,8 @@
 package sviolet.liba.view;
 
-import sviolet.liba.utils.BitmapUtils;
 import sviolet.liba.R;
+import sviolet.turquoise.utils.BitmapUtils;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -24,7 +25,7 @@ import android.view.WindowManager;
 import android.widget.TextView;
 
 /**
- * 刮刮乐TextView<<destory()销毁>><p>
+ * 刮刮乐TextView<<destroy()销毁>><p>
  * xmlns:sviolet="http://schemas.android.com/apk/res/应用包名
  * 
  * @author S.Violet (ZhuQinChao)
@@ -63,7 +64,7 @@ import android.widget.TextView;
     方法:
    	reset(String):重置覆盖面/内容
 	getPercent():获得刮开部分的比例
-	destory():销毁控件
+	destroy():销毁控件
  */
 
 public class ScrapeTextView extends TextView {
@@ -102,7 +103,7 @@ public class ScrapeTextView extends TextView {
 	/**
 	 * 销毁, 回收资源
 	 */
-	public void destory(){
+	public void destroy(){
 		if(mBitmap != null && !mBitmap.isRecycled()){
 			mBitmap.recycle();
 		}
@@ -237,13 +238,12 @@ public class ScrapeTextView extends TextView {
 	
 	/**
 	 * 初始化原图层
-	 * @param resId
 	 */
 	private void initOriginalBitmap() {
 		// 初始化初始覆盖面图形(0则为颜色模式)
 		if(resId != 0 && width > 0 && height > 0){
 			Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resId);
-			oBitmap = BitmapUtils.zoom(null, bitmap, width, height);
+			oBitmap = BitmapUtils.zoom(bitmap, width, height, true);
 		}
 	}
 	

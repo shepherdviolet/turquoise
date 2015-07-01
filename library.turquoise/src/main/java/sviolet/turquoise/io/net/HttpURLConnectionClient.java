@@ -9,7 +9,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import sviolet.turquoise.io.Queue;
-import sviolet.turquoise.utils.BinaryUtils;
+import sviolet.turquoise.utils.conversion.BinaryUtils;
 
 /**
  * 简易Http/HttpsURLConnection请求会话实例<br>

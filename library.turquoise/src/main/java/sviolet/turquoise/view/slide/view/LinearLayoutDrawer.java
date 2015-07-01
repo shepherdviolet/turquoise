@@ -365,7 +365,7 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	
 	@Override
 	public void destroy() {
-		
+		mDrawerProvider.destroy();
 	}
 	
 	/********************************************************
@@ -424,13 +424,6 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	 */
 	public void pushInImmidiatly(){
 		mDrawerProvider.pushInImmidiatly();
-	}
-
-	/**
-	 * 销毁
-	 */
-	public void destory(){
-		mDrawerProvider.destory();
 	}
 	
 	/***********************************************************

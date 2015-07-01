@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 /**
  * 
- * 可设置旋转角度的ImageView<<destory()销毁>><p>
+ * 可设置旋转角度的ImageView<<destroy()销毁>><p>
  * rotate()调整图片角度<p>
  * xmlns:sviolet="http://schemas.android.com/apk/res/应用包名
  * 
@@ -141,7 +141,7 @@ public class RotateImageView extends ImageView {
 	/**
 	 * 销毁
 	 */
-	public void destory(){
+	public void destroy(){
 		if(bitmap != null && !bitmap.isRecycled())
 			bitmap.recycle();
 		if(originBitmap != null && !originBitmap.isRecycled())

@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import sviolet.liba.utils.BitmapUtils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -18,8 +17,10 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import sviolet.turquoise.utils.BitmapUtils;
+
 /**
- * 轨迹密码控件(务必调用destory()销毁)<p>
+ * 轨迹密码控件(务必调用destroy()销毁)<p>
  * 
  * 如需加密请复写encrypt()方法,默认返回原值
  * 
@@ -150,8 +151,7 @@ public class LocusView extends View {
 
 	/**
 	 * 初始化Cache信息
-	 * 
-	 * @param canvas
+	 *
 	 */
 	private void initCache() {
 
@@ -202,16 +202,16 @@ public class LocusView extends View {
 //		if (locus_round_original.getWidth() > roundMinW) {
 			float sf = roundMinW * zoom / locus_round_original.getWidth(); // 取得缩放比例，将所有的图片进行缩放
 			
-			locus_round_original = BitmapUtils.zoom(null, locus_round_original, sf);
-			locus_round_click = BitmapUtils.zoom(null, locus_round_click, sf);
-			locus_round_click_error = BitmapUtils.zoom(null, locus_round_click_error,sf);
+			locus_round_original = BitmapUtils.zoom(locus_round_original, sf, true);
+			locus_round_click = BitmapUtils.zoom(locus_round_click, sf, true);
+			locus_round_click_error = BitmapUtils.zoom(locus_round_click_error,sf, true);
 
-			locus_line = BitmapUtils.zoom(null, locus_line, sf);
-			locus_line_semicircle = BitmapUtils.zoom(null, locus_line_semicircle, sf);
+			locus_line = BitmapUtils.zoom(locus_line, sf, true);
+			locus_line_semicircle = BitmapUtils.zoom(locus_line_semicircle, sf, true);
 
-			locus_line_error = BitmapUtils.zoom(null, locus_line_error, sf);
-			locus_line_semicircle_error = BitmapUtils.zoom(null, locus_line_semicircle_error, sf);
-			locus_arrow = BitmapUtils.zoom(null, locus_arrow, sf);
+			locus_line_error = BitmapUtils.zoom(locus_line_error, sf, true);
+			locus_line_semicircle_error = BitmapUtils.zoom(locus_line_semicircle_error, sf, true);
+			locus_arrow = BitmapUtils.zoom(locus_arrow, sf, true);
 			
 			roundW = locus_round_original.getWidth() / 2;
 //		}
@@ -339,8 +339,7 @@ public class LocusView extends View {
 
 	/**
 	 * 1=30度 2=45度 4=60度
-	 * 
-	 * @param tan
+	 *
 	 * @return
 	 */
 	private float switchDegrees(float x, float y) {
@@ -612,7 +611,7 @@ public class LocusView extends View {
 	/**
 	 * 销毁
 	 */
-	public void destory() {
+	public void destroy() {
 		
 		if(task != null){
 			task.cancel();
@@ -745,8 +744,7 @@ public class LocusView extends View {
 	
 	/**
 	 * 设置监听器
-	 * 
-	 * @param mCompleteListener
+	 *
 	 */
 	public void setOnCompleteListener(OnCompleteListener onCompleteListener) {
 		this.mCompleteListener = onCompleteListener;

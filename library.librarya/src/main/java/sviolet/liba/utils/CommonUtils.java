@@ -297,7 +297,7 @@ public class CommonUtils {
 			@Override
 			public void run() {
 				//退出应用时回收所有bitmap内存
-				BitmapUtils.wipeAll();
+//				BitmapUtils.wipeAll();
 				android.os.Process.killProcess(android.os.Process.myPid());
 			}
 		}).start();

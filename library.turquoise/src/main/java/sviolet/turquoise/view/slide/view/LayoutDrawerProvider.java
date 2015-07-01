@@ -474,7 +474,7 @@ public class LayoutDrawerProvider {
 	/**
 	 * 销毁
 	 */
-	protected void destory(){
+	protected void destroy(){
 		if(mGestureDriver != null){
 			mGestureDriver.destroy();
 			mGestureDriver = null;

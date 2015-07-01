@@ -29,8 +29,6 @@ public class HttpUtils {
 
 	/**
 	 * 根据HttpURLConnection获取返回报文头
-	 * @param http
-	 * @return
 	 * @throws UnsupportedEncodingException
 	 */
 	public static Map<String, String> getHttpResponseHeader(HttpURLConnection httpConnection) throws UnsupportedEncodingException {

@@ -1,4 +1,4 @@
-package sviolet.turquoise.utils;
+package sviolet.turquoise.utils.conversion;
 
 /**
  * 二进制处理工具

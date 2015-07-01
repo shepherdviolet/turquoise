@@ -18,7 +18,7 @@ import javax.net.ssl.SSLHandshakeException;
 
 import sviolet.turquoise.app.CommonException;
 import sviolet.turquoise.io.Task;
-import sviolet.turquoise.utils.BinaryUtils;
+import sviolet.turquoise.utils.conversion.BinaryUtils;
 
 /**
  * 简易Http/HttpsURLConnection请求任务(通常由SimpleHttpURLConnectionClient创建并管理)<br>

@@ -370,7 +370,7 @@ public class RelativeLayoutDrawer extends RelativeLayout implements SlideView {
 	
 	@Override
 	public void destroy() {
-		
+		mDrawerProvider.destroy();
 	}
 	
 	/********************************************************
@@ -429,13 +429,6 @@ public class RelativeLayoutDrawer extends RelativeLayout implements SlideView {
 	 */
 	public void pushInImmidiatly(){
 		mDrawerProvider.pushInImmidiatly();
-	}
-
-	/**
-	 * 销毁
-	 */
-	public void destory(){
-		mDrawerProvider.destory();
 	}
 	
 	/***********************************************************

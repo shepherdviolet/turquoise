@@ -11,9 +11,9 @@ import android.os.Message;
 import android.view.MotionEvent;
 
 /**
- * 翻页驱动<<destory()销毁>>(核心逻辑,不建议使用,与正常思维逻辑相反)<p>
+ * 翻页驱动<<destroy()销毁>>(核心逻辑,不建议使用,与正常思维逻辑相反)<p>
  * 
- * 利用MotionEvent驱动View的滑动/翻页,务必destory()销毁<p>
+ * 利用MotionEvent驱动View的滑动/翻页,务必destroy()销毁<p>
  * 
  * FLIP弹射:松手后自动移动/归位到驻点<p>
  * TargetFlip标的弹射:直接弹射至目标位置<p>
@@ -166,7 +166,7 @@ public abstract class SlideDriverCore{
 	/**
 	 * 销毁
 	 */
-	public void destory(){
+	public void destroy(){
 		
 		if(timerTask != null){
 			timerTask.cancel();
@@ -223,9 +223,7 @@ public abstract class SlideDriverCore{
 	/**
 	 * 
 	 * 初始化
-	 * 
-	 * @param xPage 初始x页码
-	 * @param yPage 初始y页码
+	 *
 	 */
 	public void reset() {
 		distanceX = 0;
@@ -316,8 +314,7 @@ public abstract class SlideDriverCore{
 	/**
 	 * 设置越界范围(拖到底时,可再多拖一点的距离,
 	 * 通常配合弹射使用,越界后弹回)
-	 * 
-	 * @param overRange
+	 *
 	 * @param overResistance 越界阻力(建议5以上,值越大越难拖动)
 	 */
 	public void setOverRange(float overResistance){
@@ -1065,8 +1062,7 @@ public abstract class SlideDriverCore{
 	
 	/**
 	 * 限制X距离(总范围限制)
-	 * 
-	 * @param x
+	 *
 	 * @return true 事件继续由Driver处理 false 本Driver放弃处理事件(向下传递)
 	 */
 	private boolean moveDistanceX(float step){
@@ -1098,8 +1094,7 @@ public abstract class SlideDriverCore{
 	
 	/**
 	 * 限制Y距离(总范围限制)
-	 * 
-	 * @param y
+	 *
 	 * @return true 事件继续由Driver处理 false 本Driver放弃处理事件(向下传递)
 	 */
 	private boolean moveDistanceY(float step){
@@ -1236,8 +1231,8 @@ public abstract class SlideDriverCore{
 	/**
 	 * 当点击时回调
 	 * 
-	 * @param endX 当前触点坐标(原始数据)
-	 * @param endY 当前触点坐标(原始数据)
+	 * @param x 当前触点坐标(原始数据)
+	 * @param y 当前触点坐标(原始数据)
 	 * @return 返回true截获事件
 	 */
 	protected abstract boolean onClick(float x,float y);

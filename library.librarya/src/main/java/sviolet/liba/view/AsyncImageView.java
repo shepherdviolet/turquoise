@@ -48,7 +48,7 @@ public abstract class AsyncImageView extends RecycleImageView {
 	
 	private int src;
 	
-	private boolean isDestory = false;
+	private boolean isDestroy = false;
 	private int loadCount = 0;
 
 	public AsyncImageView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -179,7 +179,6 @@ public abstract class AsyncImageView extends RecycleImageView {
 	 * 绘制进度条(可重写)
 	 * 
 	 * @param canvas
-	 * @param num
 	 */
 	public void drawProgressbar(Canvas canvas, int loadCount) {
 		int x = (int) (getWidth() * (PROGRESSBAR_X - PROGRESSBAR_INTERVAL));
@@ -211,7 +210,7 @@ public abstract class AsyncImageView extends RecycleImageView {
 			public void run() {
 				setLoadingImage();
 				bitmap = onLoad(params);
-				if(!isDestory)
+				if(!isDestroy)
 					setLoadedImage();
 			}
 		});
@@ -250,8 +249,8 @@ public abstract class AsyncImageView extends RecycleImageView {
 	/**
 	 * 销毁控件, 回收Bitmap资源
 	 */
-	public void destory(){
-		isDestory = true;
+	public void destroy(){
+		isDestroy = true;
 		releaseBitmap(bitmap);
 		super.destroy();
 	}

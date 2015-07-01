@@ -1,4 +1,4 @@
-package sviolet.turquoise.utils;
+package sviolet.turquoise.utils.conversion;
 
 /**
  * Byte处理工具
