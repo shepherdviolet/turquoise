@@ -37,6 +37,11 @@
             android:theme="@style/AppTheme_NoTitle" />
         <activity android:name=".slide.ListSlideActivity"
             android:label="@string/slide_list_title"/>
+        <activity android:name=".slide.ActivitySlideActivity"
+            android:label="@string/slide_activity_title" />
+        <activity android:name=".slide.SubActivitySlideActivity"
+            android:label="@string/slide_activity_title"
+            android:theme="@style/AppTheme_Translucent"/>
     </application>
 
 </manifest>

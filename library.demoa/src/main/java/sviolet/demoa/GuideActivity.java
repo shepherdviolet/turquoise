@@ -11,6 +11,7 @@ import android.widget.ListView;
 import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
+import sviolet.demoa.slide.ActivitySlideActivity;
 import sviolet.demoa.slide.ListSlideActivity;
 import sviolet.demoa.slide.SlideActivity;
 import sviolet.turquoise.annotation.ActivitySettings;
@@ -21,9 +22,9 @@ import sviolet.turquoise.app.TActivity;
  * Demo配置
  */
 //默认Demo
-@DemoDefault(
-        ListSlideActivity.class
-)
+//@DemoDefault(
+//        ActivitySlideActivity.class
+//)
 
 // Demo列表
 @DemoList({

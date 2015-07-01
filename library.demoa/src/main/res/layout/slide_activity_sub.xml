@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sviolet="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <sviolet.turquoise.view.slide.view.RelativeLayoutDrawer
+        android:id="@+id/slide_activity_sub_drawer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00000000">
+
+        <View
+            android:id="@+id/slide_activity_sub_drawer_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80209090"
+            android:clickable="true" />
+
+        <sviolet.turquoise.view.shadow.LinearShadowView
+            android:layout_width="5dp"
+            android:layout_height="match_parent"
+            android:layout_alignLeft="@id/slide_activity_sub_drawer_view"
+            android:layout_marginLeft="-5dp"
+            sviolet:LinearShadowView_direction="left"
+            sviolet:color="#40000000" />
+
+    </sviolet.turquoise.view.slide.view.RelativeLayoutDrawer>
+
+</LinearLayout>

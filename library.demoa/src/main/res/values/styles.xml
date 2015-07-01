@@ -4,6 +4,11 @@
 
     <style name="AppTheme" parent="android:Theme.Light"/>
     <style name="AppTheme_NoTitle" parent="android:Theme.NoTitleBar"/>
+    <style name="AppTheme_Translucent" parent="android:Theme.NoTitleBar">
+        <item name="android:windowBackground">@color/translucent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+    </style>
 
     <!-- 控件Style -->
 

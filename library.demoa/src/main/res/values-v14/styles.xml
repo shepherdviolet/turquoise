@@ -2,7 +2,12 @@
 
     <!-- 应用Style -->
 
-    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar"></style>
-    <style name="AppTheme_NoTitle" parent="android:Theme.Holo.Light.NoActionBar"></style>
+    <style name="AppTheme" parent="android:Theme.Holo.Light.DarkActionBar"/>
+    <style name="AppTheme_NoTitle" parent="android:Theme.Holo.Light.NoActionBar"/>
+    <style name="AppTheme_Translucent" parent="android:Theme.Holo.Light.NoActionBar">
+        <item name="android:windowBackground">@color/translucent</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+    </style>
 
 </resources>

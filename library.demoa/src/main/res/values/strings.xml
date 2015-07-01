@@ -17,4 +17,6 @@
     <string name="slide_list_title">SlideListView</string>
     <string name="slide_list_background_button">OK</string>
 
+    <string name="slide_activity_title">SlideActivity</string>
+
 </resources>
