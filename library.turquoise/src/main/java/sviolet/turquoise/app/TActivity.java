@@ -37,6 +37,8 @@ public abstract class TActivity extends Activity {
 
     private ActivitySettings settings;
 
+    private int activityIndex;//对应在TApplication中的编号
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         windowSetting();//窗口设置
@@ -47,7 +49,7 @@ public abstract class TActivity extends Activity {
         //将自身加入TApplication
         if (getApplication() instanceof TApplication){
            try {
-               ((TApplication) getApplication()).addActivity(this);
+               activityIndex = ((TApplication) getApplication()).addActivity(this);
            }catch (Exception ignored){}
         }
     }
@@ -170,6 +172,17 @@ public abstract class TActivity extends Activity {
             field.set(this, view);
         } catch (IllegalAccessException | IllegalArgumentException e) {
             throw new InjectException("[TActivity]inject view [" + field.getName() + "] failed", e);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //将自身从TApplication移除
+        if (getApplication() instanceof TApplication){
+            try {
+                ((TApplication) getApplication()).removeActivity(activityIndex);
+            }catch (Exception ignored){}
         }
     }
 

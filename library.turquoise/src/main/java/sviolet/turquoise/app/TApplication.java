@@ -10,12 +10,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Looper;
 import android.os.SystemClock;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import sviolet.turquoise.annotation.ApplicationSettings;
 import sviolet.turquoise.annotation.DebugSettings;
@@ -35,23 +38,34 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
 
     private static TApplication mApplication;//实例
 
-    private LinkedList<Activity> mActivityList = new LinkedList<Activity>();
+    private SparseArray<Activity> mSubActivityList = new SparseArray<Activity>();
+    private int subActivityIntex = 0;
 
     private boolean crashHandleToken = true;//崩溃处理令牌
     private boolean crashHandleTokenInner = false;//崩溃处理令牌(内部)
 
     private Logger logger;//日志打印器
 
-    protected void addActivity(Activity activity) {
-        mActivityList.add(activity);
+    protected int addActivity(Activity activity) {
+        //编号递增
+        subActivityIntex++;
+        //存入Activity
+        mSubActivityList.put(subActivityIntex, activity);
 
         //第一个Activity提示当前Debug模式
-        if (mActivityList.size() == 1){
+        if (mSubActivityList.size() == 1){
             if (isDebugMode()){
                 getLogger().i("[TApplication]DebugMode");
                 Toast.makeText(getApplicationContext(), "Debug Mode", Toast.LENGTH_SHORT).show();
             }
         }
+
+        //返回编号
+        return subActivityIntex;
+    }
+
+    protected void removeActivity(int index){
+        mSubActivityList.remove(index);
     }
 
     public void onCreate() {
@@ -293,11 +307,10 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
      */
     public void killApp() {
         try {
-            for (Activity activity : mActivityList) {
-                if (activity != null) {
-                    activity.finish();
-                }
+            for (int i = 0 ; i < mSubActivityList.size() ; i ++){
+                mSubActivityList.valueAt(i).finish();
             }
+            mSubActivityList.clear();
         } catch (Exception ignored) {
         } finally {
             android.os.Process.killProcess(android.os.Process.myPid());
