@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 
 import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
-import sviolet.turquoise.io.BitmapManager;
+import sviolet.turquoise.io.cache.BitmapManager;
 import sviolet.turquoise.utils.DeviceUtils;
 import sviolet.turquoise.utils.SettingUtils;
 

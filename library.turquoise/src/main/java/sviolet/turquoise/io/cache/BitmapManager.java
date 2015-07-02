@@ -1,4 +1,4 @@
-package sviolet.turquoise.io;
+package sviolet.turquoise.io.cache;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
