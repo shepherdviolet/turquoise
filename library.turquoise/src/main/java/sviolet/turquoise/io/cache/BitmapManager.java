@@ -4,8 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.InputStream;
 
 import sviolet.turquoise.utils.BitmapUtils;
 
@@ -261,6 +260,34 @@ public class BitmapManager {
      */
     public Bitmap decodeFromBase64(String key, String base64, int reqWidth, int reqHeight) {
         Bitmap bitmap = BitmapUtils.decodeFromBase64(base64, reqWidth, reqHeight);
+        cacheBitmap(key, bitmap);
+        return bitmap;
+    }
+
+    /**
+     * 从输入流中解码图片
+     *
+     * @param  key 标签
+     * @param inputStream 输入流
+     */
+    public Bitmap decodeFromStream(String key, InputStream inputStream) {
+        Bitmap bitmap = BitmapUtils.decodeFromStream(inputStream);
+        cacheBitmap(key, bitmap);
+        return bitmap;
+    }
+
+    /**
+     * 从输入流中解码图片(节省内存)<br/>
+     * 根据宽高需求计算出缩放比率, 以整数倍缩放图片, 达到节省内存的效果,
+     * 解码出的图片尺寸不等于需求尺寸.
+     *
+     * @param  key 标签
+     * @param inputStream 输入流
+     * @param reqWidth  需求宽度 px
+     * @param reqHeight 需求高度 px
+     */
+    public Bitmap decodeFromStream(String key, InputStream inputStream, int reqWidth, int reqHeight) {
+        Bitmap bitmap = BitmapUtils.decodeFromStream(inputStream, reqWidth, reqHeight);
         cacheBitmap(key, bitmap);
         return bitmap;
     }
