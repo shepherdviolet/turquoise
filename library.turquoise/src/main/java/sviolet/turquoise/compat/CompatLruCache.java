@@ -414,6 +414,10 @@ public class CompatLruCache<K, V> {
         return size;
     }
 
+    protected int getMaxSize(){
+        return maxSize;
+    }
+
     protected int getEvictionCount() {
         return evictionCount;
     }
