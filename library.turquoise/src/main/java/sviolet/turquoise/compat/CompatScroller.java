@@ -1,5 +1,6 @@
-/**
- * 兼容低版本的Scroller, 取自android.widget.CompatScroller (API 22)
+/*
+ * for lower API, from android.widget.Scroller (API 22)
+ * 兼容低版本的Scroller, 取自android.widget.Scroller (API 22)
  */
 
 /*
