@@ -1,5 +1,6 @@
 package sviolet.turquoise.io.cache;
 
+import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 
@@ -10,7 +11,9 @@ import sviolet.turquoise.utils.BitmapUtils;
 
 /**
  * Bitmap管理器<br/>
- * 包含缓存/回收功能, 更多功能:<br/>
+ * 内置BitmapCache图片内存缓存器:<br/>
+ * @see sviolet.turquoise.io.cache.BitmapCache
+ * 调用Bitmap处理工具类:<br/>
  * @see sviolet.turquoise.utils.BitmapUtils
  * <br/>
  * 1.在解码/转换/编辑时, 若管理器中已存在同名(key)的Bitmap, 程序会先回收掉原有的Bitmap<br/>
@@ -25,71 +28,95 @@ public class BitmapManager {
 
     private int defaultKeyIndex = 0;//默认标签编号
 
-    private Map<String, Bitmap> mBitmapMap = new HashMap<String, Bitmap>();
+    private BitmapCache mBitmapCache;
+
+    /**
+     * 创建缓存实例<Br/>
+     * 根据实际情况设置缓存占比, 参考值0.125, 不超过0.5<Br/>
+     * <Br/>
+     * BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
+     * 站占用maxSize, 回收站内存占用超过maxSize会报异常.<br/>
+     *
+     * @param context
+     * @param percent Bitmap缓存区占用应用可用内存的百分比 (0, 0.5)
+     * @return
+     */
+    public BitmapManager(Context context, float percent){
+        mBitmapCache = BitmapCache.newInstance(context, percent);
+    }
+
+    /**
+     * 创建缓存实例<Br/>
+     * 缓存最大值为默认值DEFAULT_CACHE_MEMORY_PERCENT = 0.125f<Br/>
+     * <Br/>
+     * BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
+     * 站占用maxSize, 回收站内存占用超过maxSize会报异常.<br/>
+     *
+     * @param context
+     * @return
+     */
+    public BitmapManager(Context context){
+        mBitmapCache = BitmapCache.newInstance(context);
+    }
+
+    /**
+     * 创建缓存实例<Br/>
+     * 根据实际情况设置缓冲区占用最大内存<br/>
+     * <Br/>
+     * BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
+     * 站占用maxSize, 回收站内存占用超过maxSize会报异常.<br/>
+     *
+     * @param maxSize Bitmap缓存区占用最大内存 单位byte
+     */
+    public BitmapManager(int maxSize){
+        mBitmapCache = BitmapCache.newInstance(maxSize);
+    }
 
     /************************************************************
      * 缓存管理
      ************************************************************/
 
     /**
-     * 获得本管理器中已加载且未被回收的Bitmap<Br/>
-     * 若未加载或已回收, 则返回null
+     * 从缓存中取Bitmap<br/>
+     * 若该Bitmap已被标记为unused, 则会清除unused标记<Br/>
+     * 不会从回收站中取Bitmap<br/>
      *
-     * @param key 标签
+     * @param key
+     * @return
      */
     public Bitmap getBitmap(String key){
-        Bitmap bitmap = mBitmapMap.get(key);
-        if (bitmap != null && !bitmap.isRecycled()){
-            return bitmap;
-        }
-        return null;
+        return mBitmapCache.get(key);
     }
 
     /**
-     * 将Bitmap添加到管理器缓存中<br/>
-     * 1.若管理器中已存在同名(key)的Bitmap, 程序会先回收掉原有的Bitmap<br/>
-     * 2.输入key=null时, 会分配Bitmap一个默认的不重复的标签<Br/>
+     * 将一个Bitmap放入缓存<Br/>
+     * 放入前会强制回收已存在的同名Bitmap(包括缓存和回收站),
+     * 不当的使用可能会导致异常 : 回收了正在使用的Bitmap
      *
-     * @param key 标签
+     * @param key
      * @param bitmap
+     * @return
      */
     public void cacheBitmap(String key, Bitmap bitmap) {
-        if (bitmap != null) {
-            if (key != null && !key.equals("")) {
-                recycle(key);
-            } else {
-                key = DEFAULT_KEY_PREFIX + defaultKeyIndex;//默认标签
-                defaultKeyIndex++;//标签编号递增
-            }
-            mBitmapMap.put(key, bitmap);
-        }
+        mBitmapCache.put(key, bitmap);
     }
 
     /**
-     * 回收指定Bitmap
-     * @param key 标签
+     * 将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
+     * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
+     * 已进入回收站的Bitmap会被立即回收.
+     *
+     * @param key
      */
-    public void recycle(String key){
-        Bitmap bitmap = mBitmapMap.get(key);
-        if (bitmap != null && !bitmap.isRecycled()){
-            bitmap.recycle();
-        }
-        mBitmapMap.remove(key);
-        System.gc();
+    public void unused(String key){
+        mBitmapCache.unused(key);
     }
 
     /**
-     * 回收所有Bitmap
+     * 强制清除并回收所有Bitmap(包括缓存和回收站)
      */
     public void recycleAll(){
-        for (Map.Entry<String, Bitmap> entry : mBitmapMap.entrySet()) {
-            Bitmap bitmap = entry.getValue();
-            if (bitmap != null && !bitmap.isRecycled()){
-                bitmap.recycle();
-            }
-        }
-        mBitmapMap.clear();
-        System.gc();
+        mBitmapCache.removeAll();
     }
 
     /*********************************************

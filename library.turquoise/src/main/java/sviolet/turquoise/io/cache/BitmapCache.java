@@ -14,9 +14,11 @@ import sviolet.turquoise.utils.DeviceUtils;
 
 /**
  * Bitmap内存缓存<br/>
- * <Br/>
- * BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
- * 站占用maxSize, 回收站内存占用超过maxSize会报异常.
+ * <br/>
+ * 1.BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
+ * 站占用maxSize, 回收站内存占用超过maxSize会报异常.<br/>
+ * 2.缓存区满后, 会清理最早创建或最少使用的Bitmap, 若被清理的Bitmap置为unused不再
+ * 使用状态, 则Bitmap会被回收(recycle()), 因此, 及时将不用的位图置为unused是必要的.
  * <br/>
  * CommonException: [BitmapCache]recycler Out Of Memory!!!<br/>
  * 当回收站内存占用超过设定值 (即内存总消耗超过设定值的两倍) 时, 会触发此异常<Br/>
@@ -78,12 +80,25 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     }
 
     /**
+     * 创建缓存实例<Br/>
+     * 根据实际情况设置缓冲区占用最大内存<br/>
+     * <Br/>
      * BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
      * 站占用maxSize, 回收站内存占用超过maxSize会报异常.<br/>
      *
      * @param maxSize Bitmap缓存区占用最大内存 单位byte
      */
-    public BitmapCache(int maxSize) {
+    public static BitmapCache newInstance(int maxSize){
+        return new BitmapCache(maxSize);
+    }
+
+    /**
+     * BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
+     * 站占用maxSize, 回收站内存占用超过maxSize会报异常.<br/>
+     *
+     * @param maxSize Bitmap缓存区占用最大内存 单位byte
+     */
+    private BitmapCache(int maxSize) {
         super(maxSize);
         this.recyclerMap = new LinkedHashMap<String, Bitmap>(0, 0.75f, true);
         this.unusedMap = new LinkedHashMap<String, Boolean>(0, 0.75f, true);
