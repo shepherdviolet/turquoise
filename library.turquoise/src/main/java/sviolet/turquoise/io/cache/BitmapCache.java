@@ -29,6 +29,8 @@ import sviolet.turquoise.utils.DeviceUtils;
  */
 public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
+    private static final float DEFAULT_CACHE_MEMORY_PERCENT = 0.125f;
+
     //回收站 : 存放被清理出缓存但未被标记为unused的Bitmap
     private final LinkedHashMap<String, Bitmap> recyclerMap;
     //不再使用标记
@@ -38,7 +40,26 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
     /**
      * 创建缓存实例<Br/>
-     * 根据实际情况设置缓存占比, 参考值0.125, 建议不超过0.5<Br/>
+     * 缓存最大值为默认值DEFAULT_CACHE_MEMORY_PERCENT = 0.125f<Br/>
+     * <Br/>
+     * BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
+     * 站占用maxSize, 回收站内存占用超过maxSize会报异常.<br/>
+     *
+     * @param context
+     * @return
+     */
+    public static BitmapCache newInstance(Context context){
+        //应用可用内存级别
+        final int memoryClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
+        //计算缓存大小
+        final int cacheSize = (int) (1024 * 1024 * memoryClass * DEFAULT_CACHE_MEMORY_PERCENT);
+        //实例化
+        return new BitmapCache(cacheSize);
+    }
+
+    /**
+     * 创建缓存实例<Br/>
+     * 根据实际情况设置缓存占比, 参考值0.125, 不超过0.5<Br/>
      * <Br/>
      * BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
      * 站占用maxSize, 回收站内存占用超过maxSize会报异常.<br/>
@@ -60,7 +81,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
      * 站占用maxSize, 回收站内存占用超过maxSize会报异常.<br/>
      *
-     * @param maxSize Bitmap缓存区占用最大内存
+     * @param maxSize Bitmap缓存区占用最大内存 单位byte
      */
     public BitmapCache(int maxSize) {
         super(maxSize);
