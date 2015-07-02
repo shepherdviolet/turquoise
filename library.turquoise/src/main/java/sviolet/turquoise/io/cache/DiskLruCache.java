@@ -284,6 +284,10 @@ public final class DiskLruCache implements Closeable {
     };
 
     private DiskLruCache(File directory, int appVersion, int valueCount, long maxSize) {
+        //路径不存在则创建
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
         this.directory = directory;
         this.appVersion = appVersion;
         this.journalFile = new File(directory, JOURNAL_FILE);
