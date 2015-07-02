@@ -6,7 +6,7 @@ import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 
 /**
- * 设备工具
+ * 设备级工具<br/>
  * Created by S.Violet on 2015/6/3.
  */
 public class DeviceUtils {

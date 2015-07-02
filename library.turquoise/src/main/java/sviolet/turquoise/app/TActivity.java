@@ -14,8 +14,8 @@ import java.lang.reflect.Field;
 import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
 import sviolet.turquoise.io.cache.BitmapManager;
+import sviolet.turquoise.utils.ApplicationUtils;
 import sviolet.turquoise.utils.DeviceUtils;
-import sviolet.turquoise.utils.SettingUtils;
 
 /**
  * [组件扩展]Activity<br>
@@ -80,7 +80,7 @@ public abstract class TActivity extends Activity {
 
         //硬件加速
         if(getActivitySettings().enableHardwareAccelerated()){
-            SettingUtils.enableHardwareAccelerated(getWindow());
+            ApplicationUtils.enableHardwareAccelerated(getWindow());
         }
 
         //无标题
@@ -212,14 +212,28 @@ public abstract class TActivity extends Activity {
     }
 
     /**
-     * 获得Activity内置的Bitmap管理器, 带缓存/回收功能,
+     * 获得Activity内置的Bitmap管理器, 带缓存/回收功能, 内存分配1/8应用内存
      * 且当Activity.onDestroy时会回收其所有的Bitmap
      *
      */
     public BitmapManager getBitmapManager(){
         if (mBitmapManager == null){
-            mBitmapManager = new BitmapManager();
+            mBitmapManager = new BitmapManager(this);
         }
         return mBitmapManager;
     }
+
+    /**
+     * 获得Activity内置的Bitmap管理器, 带缓存/回收功能, 内存分配1/8应用内存
+     * 且当Activity.onDestroy时会回收其所有的Bitmap
+     *
+     * @param percent 缓存区占应用可用内存比例 (0, 0.5)
+     */
+    public BitmapManager getBitmapManager(float percent){
+        if (mBitmapManager == null){
+            mBitmapManager = new BitmapManager(this, percent);
+        }
+        return mBitmapManager;
+    }
+
 }

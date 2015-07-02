@@ -16,14 +16,11 @@ import android.widget.Toast;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 import sviolet.turquoise.annotation.ApplicationSettings;
 import sviolet.turquoise.annotation.DebugSettings;
 import sviolet.turquoise.annotation.ReleaseSettings;
-import sviolet.turquoise.utils.SettingUtils;
+import sviolet.turquoise.utils.ApplicationUtils;
 
 /**
  * [组件扩展]Application<br>
@@ -104,7 +101,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
         if (isDebugMode()){
             //策略检测
             if (getDebugSettings().enableStrictMode()){
-                SettingUtils.enableStrictMode();
+                ApplicationUtils.enableStrictMode();
             }
             //日志打印权限
             logger = new Logger(getDebugSettings().logTag(),
@@ -114,7 +111,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
         }else {
             //策略检测
             if (getReleaseSettings().enableStrictMode()) {
-                SettingUtils.enableStrictMode();
+                ApplicationUtils.enableStrictMode();
             }
             //日志打印权限
             logger = new Logger(getReleaseSettings().logTag(),

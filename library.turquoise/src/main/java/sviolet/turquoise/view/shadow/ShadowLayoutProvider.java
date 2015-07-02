@@ -1,8 +1,5 @@
 package sviolet.turquoise.view.shadow;
 
-import sviolet.turquoise.R;
-import sviolet.turquoise.utils.MeasureUtils;
-import sviolet.turquoise.utils.SettingUtils;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -13,6 +10,10 @@ import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnPreDrawListener;
+
+import sviolet.turquoise.R;
+import sviolet.turquoise.utils.ApplicationUtils;
+import sviolet.turquoise.utils.MeasureUtils;
 
 /**
  * ShadowLayout逻辑实现
@@ -65,7 +66,7 @@ public abstract class ShadowLayoutProvider {
 	
 	protected void init(Context context, AttributeSet attrs){
 		//禁用硬件加速
-		SettingUtils.disableHardwareAccelerated(mViewGroup);
+		ApplicationUtils.disableHardwareAccelerated(mViewGroup);
 		//初始化参数
 		initParams(context, attrs);
 		//初始化画笔
