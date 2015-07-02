@@ -369,18 +369,31 @@ public class LinearGestureDriver implements GestureDriver {
 		if (mSlideEngine != null) {
 			//当前加速度
 			int velocity[] = getVelocity();
-			switch (state) {
-				case STATE_MOVING_X://X轴方向移动
-					mSlideEngine.onGestureDrive(currX, stepX, velocity[0]);
-					mSlideEngine.onGestureDrive(currX, 0, stepX, 0, velocity[0], 0);
-					break;
-				case STATE_MOVING_Y://Y轴方向移动
-					mSlideEngine.onGestureDrive(currY, stepY, velocity[1]);
-					mSlideEngine.onGestureDrive(0, currY, 0, stepY, 0, velocity[1]);
-					break;
-				default:
-					break;
-			}
+
+            switch(mSlideEngine.inputMode()){
+                case SlideEngine.INPUT_MODE_1D:
+                    //一维
+                    switch (state) {
+                        case STATE_MOVING_X://X轴方向移动
+                            mSlideEngine.onGestureDrive(currX, stepX, velocity[0]);
+                            break;
+                        case STATE_MOVING_Y://Y轴方向移动
+                            mSlideEngine.onGestureDrive(currY, stepY, velocity[1]);
+                            break;
+                    }
+                    break;
+                case SlideEngine.INPUT_MODE_2D:
+                    //二维
+                    switch (state) {
+                        case STATE_MOVING_X://X轴方向移动
+                            mSlideEngine.onGestureDrive(currX, 0, stepX, 0, velocity[0], 0);
+                            break;
+                        case STATE_MOVING_Y://Y轴方向移动
+                            mSlideEngine.onGestureDrive(0, currY, 0, stepY, 0, velocity[1]);
+                            break;
+                    }
+                    break;
+            }
 		}
 	}
 	

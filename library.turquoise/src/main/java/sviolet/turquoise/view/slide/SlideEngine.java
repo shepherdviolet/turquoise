@@ -20,7 +20,12 @@ package sviolet.turquoise.view.slide;
  */
 
 public interface SlideEngine {
-	
+
+	//输入模式
+	public static final int INPUT_MODE_1D = 1;//一维输入
+	public static final int INPUT_MODE_2D = 2;//二维输入
+//	public static final int INPUT_MODE_3D = 3;//三维输入
+
 	/**********************************************
 	 * 待实现
 	 */
@@ -38,10 +43,20 @@ public interface SlideEngine {
 	 * 将这个滑动引擎和手势驱动绑定<br>
 	 */
 	public void onBind(GestureDriver gestureDriver);
-	
+
 	/**
-	 * [手势通知引擎]输入触摸状态(二维)<br>
-	 *  onGestureDriver方法只需实现一个<br/>
+	 * 输入模式<Br/>
+	 * INPUT_MODE_1D = 1;//一维输入<Br/>
+	 * INPUT_MODE_2D = 2;//二维输入<Br/>
+	 * <br/>
+	 * 通过该方法设置引擎所用的输入模式, 根据输入模式, 选择实现
+	 * 两个onGestureDrive中的一个.
+	 */
+	public int inputMode();
+
+	/**
+	 * [手势通知引擎]输入触摸状态(二维输入)<br>
+	 *  选择二维输入时实现<br/>
 	 * <br>
 	 * 输入手势运动状态<br>
 	 * 
@@ -55,8 +70,8 @@ public interface SlideEngine {
 	public void onGestureDrive(int x, int y, int offsetX, int offsetY, int velocityX, int velocityY);
 	
 	/**
-	 * [手势通知引擎]输入触摸状态(一维)<br>
-	 * onGestureDriver方法只需实现一个<br/>
+	 * [手势通知引擎]输入触摸状态(一维输入)<br>
+	 * 选择一维输入时实现<br/>
 	 * <br>
 	 * 输入手势运动状态<br>
 	 * 

@@ -202,7 +202,13 @@ public class CardSlideView extends LinearLayout implements SlideView {
 	 */
 	
 	private SlideEngineGroup mSlideEngineGroup = new SlideEngineGroup() {
-		
+
+		@Override
+		public int inputMode() {
+			//选择一维输入
+			return SlideEngine.INPUT_MODE_1D;
+		}
+
 		/**
 		 * 通用分发
 		 */

@@ -206,6 +206,14 @@ public class LinearDragEngine implements SlideEngine {
 	}
 
 	/**
+	 * 输入方式 : 一维
+	 */
+	@Override
+	public int inputMode() {
+		return SlideEngine.INPUT_MODE_1D;
+	}
+
+	/**
 	 * [手势通知引擎]输入触摸状态(二维)<br>
 	 * <br>
 	 * 输入手势运动状态<br>
