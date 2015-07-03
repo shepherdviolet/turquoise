@@ -1,4 +1,4 @@
-package sviolet.turquoise.io.cache;
+package sviolet.turquoise.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -6,10 +6,12 @@ import android.graphics.Bitmap;
 
 import java.io.InputStream;
 
+import sviolet.turquoise.io.cache.BitmapCache;
 import sviolet.turquoise.utils.BitmapUtils;
 
 /**
- * Bitmap管理器<br/>
+ * 内置内存缓存的Bitmap工具<br/>
+ * <br/>
  * 内置BitmapCache图片内存缓存器:<br/>
  * @see sviolet.turquoise.io.cache.BitmapCache
  * 调用Bitmap处理工具类:<br/>
@@ -21,7 +23,7 @@ import sviolet.turquoise.utils.BitmapUtils;
  *
  * Created by S.Violet on 2015/7/1.
  */
-public class BitmapManager {
+public class CachedBitmapUtils {
 
     private static final String DEFAULT_KEY_PREFIX = "DEFAULT_KEY_PREFIX";//默认标签前缀
 
@@ -40,7 +42,7 @@ public class BitmapManager {
      * @param percent Bitmap缓存区占用应用可用内存的百分比 (0, 0.5)
      * @return
      */
-    public BitmapManager(Context context, float percent){
+    public CachedBitmapUtils(Context context, float percent){
         mBitmapCache = BitmapCache.newInstance(context, percent);
     }
 
@@ -54,7 +56,7 @@ public class BitmapManager {
      * @param context
      * @return
      */
-    public BitmapManager(Context context){
+    public CachedBitmapUtils(Context context){
         mBitmapCache = BitmapCache.newInstance(context);
     }
 
@@ -67,7 +69,7 @@ public class BitmapManager {
      *
      * @param maxSize Bitmap缓存区占用最大内存 单位byte
      */
-    public BitmapManager(int maxSize){
+    public CachedBitmapUtils(int maxSize){
         mBitmapCache = BitmapCache.newInstance(maxSize);
     }
 

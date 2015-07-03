@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 
 import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
-import sviolet.turquoise.io.cache.BitmapManager;
+import sviolet.turquoise.utils.CachedBitmapUtils;
 import sviolet.turquoise.utils.ApplicationUtils;
 import sviolet.turquoise.utils.DeviceUtils;
 
@@ -35,7 +35,7 @@ import sviolet.turquoise.utils.DeviceUtils;
 public abstract class TActivity extends Activity {
 
     private Logger mLogger;//日志打印器
-    private BitmapManager mBitmapManager;//Bitmap管理器
+    private CachedBitmapUtils mCachedBitmapUtils;//内置内存缓存的Bitmap工具
 
     private ActivitySettings settings;
 
@@ -180,9 +180,9 @@ public abstract class TActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //回收掉内置Bitmap管理器所有的位图
-        if (mBitmapManager != null){
-            mBitmapManager.recycleAll();
+        //回收掉内置Bitmap工具缓存的所有的位图
+        if (mCachedBitmapUtils != null){
+            mCachedBitmapUtils.recycleAll();
         }
         //将自身从TApplication移除
         if (getApplication() instanceof TApplication){
@@ -212,28 +212,28 @@ public abstract class TActivity extends Activity {
     }
 
     /**
-     * 获得Activity内置的Bitmap管理器, 带缓存/回收功能, 内存分配1/8应用内存
+     * 获得Activity内置的Bitmap工具, 带内存缓存/回收功能, 内存分配1/8应用内存
      * 且当Activity.onDestroy时会回收其所有的Bitmap
      *
      */
-    public BitmapManager getBitmapManager(){
-        if (mBitmapManager == null){
-            mBitmapManager = new BitmapManager(this);
+    public CachedBitmapUtils getCachedBitmapUtils(){
+        if (mCachedBitmapUtils == null){
+            mCachedBitmapUtils = new CachedBitmapUtils(this);
         }
-        return mBitmapManager;
+        return mCachedBitmapUtils;
     }
 
     /**
-     * 获得Activity内置的Bitmap管理器, 带缓存/回收功能, 内存分配1/8应用内存
+     * 获得Activity内置的Bitmap工具, 带内存缓存/回收功能,
      * 且当Activity.onDestroy时会回收其所有的Bitmap
      *
      * @param percent 缓存区占应用可用内存比例 (0, 0.5)
      */
-    public BitmapManager getBitmapManager(float percent){
-        if (mBitmapManager == null){
-            mBitmapManager = new BitmapManager(this, percent);
+    public CachedBitmapUtils getCachedBitmapUtils(float percent){
+        if (mCachedBitmapUtils == null){
+            mCachedBitmapUtils = new CachedBitmapUtils(this, percent);
         }
-        return mBitmapManager;
+        return mCachedBitmapUtils;
     }
 
 }
