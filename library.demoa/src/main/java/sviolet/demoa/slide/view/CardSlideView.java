@@ -1,4 +1,4 @@
-package sviolet.demoa.slide.sviolet.demoa.slide.view;
+package sviolet.demoa.slide.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -16,7 +16,6 @@ import sviolet.turquoise.view.slide.SlideEngineGroup;
 import sviolet.turquoise.view.slide.SlideView;
 import sviolet.turquoise.view.slide.logic.LinearFlingEngine;
 import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
-import sviolet.turquoise.view.slide.logic.LinearScrollEngine;
 import sviolet.turquoise.view.slide.logic.LinearStageScrollEngine;
 import sviolet.turquoise.view.slide.view.AdaptListView;
 

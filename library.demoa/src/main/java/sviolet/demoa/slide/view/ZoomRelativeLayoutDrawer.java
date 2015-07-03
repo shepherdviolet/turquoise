@@ -1,4 +1,4 @@
-package sviolet.demoa.slide.sviolet.demoa.slide.view;
+package sviolet.demoa.slide.view;
 
 import sviolet.turquoise.utils.DeviceUtils;
 import sviolet.turquoise.view.slide.view.LayoutDrawerProvider;

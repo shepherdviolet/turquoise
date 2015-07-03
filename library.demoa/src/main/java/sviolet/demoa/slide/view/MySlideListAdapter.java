@@ -1,4 +1,4 @@
-package sviolet.demoa.slide.sviolet.demoa.slide.view;
+package sviolet.demoa.slide.view;
 
 import android.content.Context;
 import android.view.View;

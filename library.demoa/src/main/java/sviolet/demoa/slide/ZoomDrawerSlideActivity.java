@@ -9,14 +9,12 @@ import android.widget.Toast;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.common.EmulateListAdapter;
-import sviolet.demoa.slide.sviolet.demoa.slide.view.MySlideView;
-import sviolet.demoa.slide.sviolet.demoa.slide.view.ZoomRelativeLayoutDrawer;
+import sviolet.demoa.slide.view.MySlideView;
+import sviolet.demoa.slide.view.ZoomRelativeLayoutDrawer;
 import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
 import sviolet.turquoise.app.TActivity;
 import sviolet.turquoise.utils.MeasureUtils;
-import sviolet.turquoise.view.listener.OnInitCompleteListener;
-import sviolet.turquoise.view.slide.view.RelativeLayoutDrawer;
 
 @DemoDescription(
         title = "ZoomDrawer",

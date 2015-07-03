@@ -1,4 +1,4 @@
-package sviolet.demoa.slide.sviolet.demoa.slide.view;
+package sviolet.demoa.slide.view;
 
 import sviolet.turquoise.utils.MeasureUtils;
 import sviolet.turquoise.view.listener.OnSlideStopListener;

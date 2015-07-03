@@ -10,7 +10,7 @@
     <!-- scrollX/scrollY设置一个很大的值, 让子控件消失, 由engine的初始位置决定控件初始位置 -->
     <!-- [必须]background 设置透明背景, 使得ViewGroup得以绘制, 否则无法滑动 -->
     <!-- [必须]若子控件不处理触摸事件的(例TextView), 则必须设置子控件clickable="true", 否则无法捕获触摸事件, 无法滑动 -->
-    <sviolet.demoa.slide.sviolet.demoa.slide.view.FlingView
+    <sviolet.demoa.slide.view.FlingView
         android:id="@+id/slide_fling_flingview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,6 +29,6 @@
             sviolet:color="#50808080"
             sviolet:LinearShadowView_direction="bottom"/>
 
-    </sviolet.demoa.slide.sviolet.demoa.slide.view.FlingView>
+    </sviolet.demoa.slide.view.FlingView>
 
 </LinearLayout>

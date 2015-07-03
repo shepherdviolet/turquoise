@@ -4,7 +4,7 @@ import android.os.Bundle;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
-import sviolet.demoa.slide.sviolet.demoa.slide.view.FlingView;
+import sviolet.demoa.slide.view.FlingView;
 import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
 import sviolet.turquoise.app.TActivity;
@@ -16,6 +16,7 @@ import sviolet.turquoise.app.TActivity;
 )
 
 /**
+ *
  * Created by S.Violet on 2015/6/7.
  */
 
