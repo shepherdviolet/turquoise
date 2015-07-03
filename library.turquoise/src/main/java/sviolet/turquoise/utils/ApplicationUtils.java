@@ -26,7 +26,7 @@ public class ApplicationUtils {
      * @param context
      * @param uniqueName 缓存路径下的子目录
      */
-    public File getDiskCacheDir(Context context, String uniqueName) {
+    public static File getDiskCacheDir(Context context, String uniqueName) {
         String cachePath = null;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
                 || !Environment.isExternalStorageRemovable()) {
@@ -47,7 +47,7 @@ public class ApplicationUtils {
      *
      * @param context
      */
-    public int getAppVersion(Context context) {
+    public static int getAppVersion(Context context) {
         try {
             PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             return info.versionCode;
@@ -113,5 +113,15 @@ public class ApplicationUtils {
             StrictMode.setVmPolicy(vmPolicyBuilder.build());
         }
     }
+
+    /****************************************************************
+     * 5.0 Service Intent  must be explitict 异常解决
+     * 5.0 Service必须显式调用
+     * 通常采用:
+     * Intent mIntent = new Intent();
+     * mIntent.setAction("XXX.XXX.XXX");//service的action
+     * mIntent.setPackage(getPackageName());//service所在应用的包名
+     * context.startService(mIntent);
+     */
 
 }

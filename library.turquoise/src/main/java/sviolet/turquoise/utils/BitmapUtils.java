@@ -375,6 +375,48 @@ public class BitmapUtils {
      * 保存Bitmap到本地(异步)
      *
      * @param bitmap
+     * @param outputStream 输出流
+     * @param recycle 是否回收源Bitmap
+     * @param onSaveCompleteListener 完成回调
+     */
+    public static void saveBitmap(final Bitmap bitmap, final OutputStream outputStream, final boolean recycle, final OnSaveCompleteListener onSaveCompleteListener) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Throwable throwable = null;
+                if (outputStream != null && bitmap != null) {
+                    try {
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                        outputStream.flush();
+                        if (onSaveCompleteListener != null) {
+                            onSaveCompleteListener.onSaveSucceed();
+                        }
+                        return;
+                    } catch (IOException e) {
+                        throwable = e;
+                    } finally {
+                        try {
+                            outputStream.close();
+                            //回收源Bitmap
+                            if (recycle && !bitmap.isRecycled()) {
+                                bitmap.recycle();
+                                System.gc();
+                            }
+                        } catch (IOException ignored) {
+                        }
+                    }
+                    if (onSaveCompleteListener != null) {
+                        onSaveCompleteListener.onSaveFailed(throwable);
+                    }
+                }
+            }
+        }).start();
+    }
+
+    /**
+     * 保存Bitmap到本地(异步)
+     *
+     * @param bitmap
      * @param path 路径
      * @param fileName 文件名
      * @param recycle 是否回收源Bitmap
