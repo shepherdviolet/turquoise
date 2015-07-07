@@ -381,34 +381,46 @@ public class BitmapUtils {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Throwable throwable = null;
-                if (outputStream != null && bitmap != null) {
-                    try {
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                        outputStream.flush();
-                        if (onSaveCompleteListener != null) {
-                            onSaveCompleteListener.onSaveSucceed();
-                        }
-                        return;
-                    } catch (IOException e) {
-                        throwable = e;
-                    } finally {
-                        try {
-                            outputStream.close();
-                            //回收源Bitmap
-                            if (recycle && !bitmap.isRecycled()) {
-                                bitmap.recycle();
-                                System.gc();
-                            }
-                        } catch (IOException ignored) {
-                        }
-                    }
-                    if (onSaveCompleteListener != null) {
-                        onSaveCompleteListener.onSaveFailed(throwable);
-                    }
-                }
+                syncSaveBitmap(outputStream, bitmap, onSaveCompleteListener, recycle);
             }
         }).start();
+    }
+
+    /**
+     * 保存Bitmap到本地(同步, 会阻塞线程)
+     *
+     * @param bitmap
+     * @param outputStream 输出流
+     * @param recycle 是否回收源Bitmap
+     * @param onSaveCompleteListener 完成回调
+     */
+    public static void syncSaveBitmap(OutputStream outputStream, Bitmap bitmap, OnSaveCompleteListener onSaveCompleteListener, boolean recycle) {
+        Throwable throwable = null;
+        if (outputStream != null && bitmap != null) {
+            try {
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                outputStream.flush();
+                if (onSaveCompleteListener != null) {
+                    onSaveCompleteListener.onSaveSucceed();
+                }
+                return;
+            } catch (IOException e) {
+                throwable = e;
+            } finally {
+                try {
+                    outputStream.close();
+                    //回收源Bitmap
+                    if (recycle && !bitmap.isRecycled()) {
+                        bitmap.recycle();
+                        System.gc();
+                    }
+                } catch (IOException ignored) {
+                }
+            }
+            if (onSaveCompleteListener != null) {
+                onSaveCompleteListener.onSaveFailed(throwable);
+            }
+        }
     }
 
     /**
@@ -424,43 +436,56 @@ public class BitmapUtils {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                OutputStream outputStream = null;
-                Throwable throwable = null;
-                if (path != null && fileName != null && bitmap != null) {
-                    File pathFile = new File(path);
-                    if (!pathFile.exists()) {
-                        pathFile.mkdir();
-                    }
-                    File file = new File(path + File.separator + fileName);
-                    try {
-                        outputStream = new FileOutputStream(file);
-                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
-                        outputStream.flush();
-                        if (onSaveCompleteListener != null) {
-                            onSaveCompleteListener.onSaveSucceed();
-                        }
-                        return;
-                    } catch (IOException e) {
-                        throwable = e;
-                    } finally {
-                        try {
-                            if (outputStream != null) {
-                                outputStream.close();
-                            }
-                            //回收源Bitmap
-                            if (recycle && !bitmap.isRecycled()) {
-                                bitmap.recycle();
-                                System.gc();
-                            }
-                        } catch (IOException ignored) {
-                        }
-                    }
-                    if (onSaveCompleteListener != null) {
-                        onSaveCompleteListener.onSaveFailed(throwable);
-                    }
-                }
+                syncSaveBitmap(path, fileName, bitmap, onSaveCompleteListener, recycle);
             }
         }).start();
+    }
+
+    /**
+     * 保存Bitmap到本地(同步, 会阻塞线程)
+     *
+     * @param bitmap
+     * @param path 路径
+     * @param fileName 文件名
+     * @param recycle 是否回收源Bitmap
+     * @param onSaveCompleteListener 完成回调
+     */
+    public static void syncSaveBitmap(String path, String fileName, Bitmap bitmap, OnSaveCompleteListener onSaveCompleteListener, boolean recycle) {
+        OutputStream outputStream = null;
+        Throwable throwable = null;
+        if (path != null && fileName != null && bitmap != null) {
+            File pathFile = new File(path);
+            if (!pathFile.exists()) {
+                pathFile.mkdir();
+            }
+            File file = new File(path + File.separator + fileName);
+            try {
+                outputStream = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                outputStream.flush();
+                if (onSaveCompleteListener != null) {
+                    onSaveCompleteListener.onSaveSucceed();
+                }
+                return;
+            } catch (IOException e) {
+                throwable = e;
+            } finally {
+                try {
+                    if (outputStream != null) {
+                        outputStream.close();
+                    }
+                    //回收源Bitmap
+                    if (recycle && !bitmap.isRecycled()) {
+                        bitmap.recycle();
+                        System.gc();
+                    }
+                } catch (IOException ignored) {
+                }
+            }
+            if (onSaveCompleteListener != null) {
+                onSaveCompleteListener.onSaveFailed(throwable);
+            }
+        }
     }
 
     /**
