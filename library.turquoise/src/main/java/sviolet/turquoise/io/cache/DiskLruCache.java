@@ -509,6 +509,41 @@ public final class DiskLruCache implements Closeable {
     }
 
     /**
+     * Returns a File of the entry named {@code key}, or null if it doesn't
+     * exist is not currently readable. If a value is returned, it is moved to
+     * the head of the LRU queue.
+     *
+     * @param key 缓存key
+     * @param index 缓存序号(默认0)
+     */
+    public synchronized File getFile(String key, int index) throws IOException {
+        checkNotClosed();
+        validateKey(key);
+        Entry entry = lruEntries.get(key);
+        if (entry == null) {
+            return null;
+        }
+
+        if (!entry.readable) {
+            return null;
+        }
+
+        //返回缓存文件
+        File file = entry.getCleanFile(index);
+        if (!file.exists()){
+            return null;
+        }
+
+        redundantOpCount++;
+        journalWriter.append(READ + ' ' + key + '\n');
+        if (journalRebuildRequired()) {
+            executorService.submit(cleanupCallable);
+        }
+
+        return file;
+    }
+
+    /**
      * Returns an editor for the entry named {@code key}, or null if another
      * edit is in progress.
      */

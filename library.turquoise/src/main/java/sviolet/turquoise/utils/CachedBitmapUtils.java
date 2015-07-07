@@ -289,16 +289,17 @@ public class CachedBitmapUtils {
 
     /**
      * 从输入流中解码图片(节省内存)<br/>
-     * 根据宽高需求计算出缩放比率, 以整数倍缩放图片, 达到节省内存的效果,
-     * 解码出的图片尺寸不等于需求尺寸.
+     * 以整数倍缩放图片, 达到节省内存的效果<br/>
+     *
+     * InputStream只能使用一次, 因此不能通过第一次解码获得图片长宽,
+     * 计算缩放因子, 再解码获得图片这种方式<br/>
      *
      * @param  key 标签
      * @param inputStream 输入流
-     * @param reqWidth  需求宽度 px
-     * @param reqHeight 需求高度 px
+     * @param inSampleSize 缩放因子 (1:原大小 2:缩小一倍 ...)
      */
-    public Bitmap decodeFromStream(String key, InputStream inputStream, int reqWidth, int reqHeight) {
-        Bitmap bitmap = BitmapUtils.decodeFromStream(inputStream, reqWidth, reqHeight);
+    public Bitmap decodeFromStream(String key, InputStream inputStream, int inSampleSize) {
+        Bitmap bitmap = BitmapUtils.decodeFromStream(inputStream, inSampleSize);
         cacheBitmap(key, bitmap);
         return bitmap;
     }

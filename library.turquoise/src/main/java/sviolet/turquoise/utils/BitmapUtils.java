@@ -173,23 +173,22 @@ public class BitmapUtils {
      * @param inputStream 输入流
      */
     public static Bitmap decodeFromStream(InputStream inputStream) {
-        return decodeFromStream(inputStream, 0, 0);
+        return decodeFromStream(inputStream, 1);
     }
 
     /**
      * 从输入流中解码图片(节省内存)<br/>
-     * 根据宽高需求计算出缩放比率, 以整数倍缩放图片, 达到节省内存的效果,
-     * 解码出的图片尺寸不等于需求尺寸.
+     * 以整数倍缩放图片, 达到节省内存的效果<br/>
+     *
+     * InputStream只能使用一次, 因此不能通过第一次解码获得图片长宽,
+     * 计算缩放因子, 再解码获得图片这种方式<br/>
      *
      * @param inputStream 输入流
-     * @param reqWidth  需求宽度 px
-     * @param reqHeight 需求高度 px
+     * @param inSampleSize 缩放因子 (1:原大小 2:缩小一倍 ...)
      */
-    public static Bitmap decodeFromStream(InputStream inputStream, int reqWidth, int reqHeight) {
+    public static Bitmap decodeFromStream(InputStream inputStream, int inSampleSize) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;//仅计算参数, 不解码
-        BitmapFactory.decodeStream(inputStream, null, options);
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);//缩放因子(整数倍)
+        options.inSampleSize = inSampleSize;//缩放因子(整数倍)
         options.inJustDecodeBounds = false;//解码模式
         return BitmapFactory.decodeStream(inputStream, null, options);
     }
