@@ -28,6 +28,7 @@ public abstract class TTask {
 	//setting//////////////////////////////////////////
 
 	private Object params;//参数
+	private Object result;//结果
 	private TQueue queue;//任务队列
 	private long timeOutSet = -1;//任务超时设置
 	private String key;//标签
@@ -142,8 +143,13 @@ public abstract class TTask {
 	public void start(){
 		if(state != STATE_WAITTING)
 			throw new CommonException("[TTask]can not start a Task which state != STATE_WAITTING");
-		state++;
-		handler.sendEmptyMessage(HANDLER_TASK_START);//通知主线程执行任务过程
+
+		if (queue != null) {
+			state++;
+			queue.taskStart(this);
+		}else {
+			setStopState();
+		}
 	}
 	
 	/**
@@ -218,31 +224,22 @@ public abstract class TTask {
 	/**
 	 * 任务执行过程(主线程)
 	 */
-	private void process(){
+	protected void process(){
 		onPreExecute(params);
 		resetTimeOutTimer();
 		taskThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
 				state++;
-				Object result = TTask.this.doInBackground(params);
+				result = TTask.this.doInBackground(params);
 				setStopState();
-                complete(result);
+                if (queue != null){
+					queue.taskComplete(TTask.this);
+				}
 			}
 		});
 		taskThread.start();
 	}
-
-    /**
-     * 通知主线程处理onPostExecute
-     * @param result
-     */
-    private void complete(Object result) {
-        Message msg = handler.obtainMessage();
-        msg.what = HANDLER_TASK_COMPLETE;
-        msg.obj = result;
-        msg.sendToTarget();//主线程执行onPostExecute
-    }
 
     /**
 	 * 重置超时计时器
@@ -297,30 +294,11 @@ public abstract class TTask {
 		taskThread = null;//任务线程
 		timeOutTimer = null;//超时计时器
 		params = null;
+		result = null;
 	}
 
-	/**************************************************************************
-	 * HANDLER
-	 */
-	
-	private static final int HANDLER_TASK_START = 0;//任务启动(主线程执行任务过程)
-	private static final int HANDLER_TASK_COMPLETE = 1;//任务完成(主线程执行onPostExecute)
-	
-	private final Handler handler = new Handler(new Handler.Callback() {
-		@Override
-		public boolean handleMessage(Message msg) {
-			switch (msg.what) {
-			case HANDLER_TASK_START:
-				process();
-				break;
-			case HANDLER_TASK_COMPLETE:
-				onPostExecute(msg.obj);
-				onDestroy();
-				break;
-			default:
-				break;
-			}
-			return true;
-		}
-	});
+	protected Object getResult(){
+		return result;
+	}
+
 }

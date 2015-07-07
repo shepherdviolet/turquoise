@@ -1,12 +1,15 @@
 package sviolet.turquoise.io;
 
+import android.os.Handler;
+import android.os.Message;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * 任务队列<br/>
+ * 任务队列 (必须在主线程实例化)<br/>
  * <br/>
  * [concurrencyVolumeMax]:<br/>
  * 最大并发量, 同时执行的任务数<br/>
@@ -81,6 +84,7 @@ public class TQueue {
     public void syncPut(String key, TTask task) {
         //给任务设置队列对象(用于回调)
         task.setQueue(this);
+        task.setKey(key);
 
         synchronized (TQueue.this){
             //等待队列超出限制时, 清除优先级最低的任务
@@ -387,5 +391,63 @@ public class TQueue {
 		}
 		dispatchCounter--;//消费掉计数
 	}
-	
+
+    /**************************************************************************
+     * HANDLER
+     * TQueue实例化在主线程, TTask启动时利用TQueue中的Handler, 将
+     * onPreExecute和onPostExecute加入主线程队列执行
+     */
+
+    /**
+     * [由TTask调用]<br/>
+     * 将task推至主线程启动<br/>
+     *
+     * @param task
+     */
+    protected void taskStart(TTask task){
+        Message msg = mHandler.obtainMessage();
+        msg.what = HANDLER_TASK_START;
+        msg.obj = task;
+        msg.sendToTarget();
+    }
+
+    /**
+     * [由TTask调用]<br/>
+     * 将task推至主线程完成<br/>
+     *
+     * @param task
+     */
+    protected void taskComplete(TTask task){
+        Message msg = mHandler.obtainMessage();
+        msg.what = HANDLER_TASK_COMPLETE;
+        msg.obj = task;
+        msg.sendToTarget();
+    }
+
+    private static final int HANDLER_TASK_START = 0;//任务启动(主线程执行任务过程)
+    private static final int HANDLER_TASK_COMPLETE = 1;//任务完成(主线程执行onPostExecute)
+
+    private final Handler mHandler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case HANDLER_TASK_START:
+                    if (msg.obj != null && msg.obj instanceof TTask) {
+                        ((TTask)msg.obj).process();
+                    }
+                    break;
+                case HANDLER_TASK_COMPLETE:
+                    if (msg.obj != null && msg.obj instanceof TTask) {
+                        TTask task = (TTask) msg.obj;
+                        task.onPostExecute(task.getResult());
+                        task.onDestroy();
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+    });
+
 }

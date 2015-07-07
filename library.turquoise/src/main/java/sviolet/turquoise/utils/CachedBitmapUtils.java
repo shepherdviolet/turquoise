@@ -99,6 +99,15 @@ public class CachedBitmapUtils {
      * @return
      */
     public void cacheBitmap(String key, Bitmap bitmap) {
+        if (bitmap == null) {
+            return;
+        }
+
+        if (key == null || key.equals("")){
+            key = DEFAULT_KEY_PREFIX + defaultKeyIndex;
+            defaultKeyIndex++;
+        }
+
         mBitmapCache.put(key, bitmap);
     }
 
