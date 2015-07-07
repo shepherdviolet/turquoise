@@ -8,7 +8,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 
-import sviolet.turquoise.io.Queue;
+import sviolet.turquoise.io.TQueue;
 import sviolet.turquoise.utils.conversion.BinaryUtils;
 
 /**
@@ -26,13 +26,16 @@ import sviolet.turquoise.utils.conversion.BinaryUtils;
 public class HttpURLConnectionClient {
 	
 	//static//////////////////////////////////
-	
+
+	private static final String DEFAULT_KEY_PREFIX = "DEFAULT_KEY_PREFIX";//默认标签前缀
 	private static final int DEFAULT_TIMEOUT = 30000;//网络超时时间(默认)
 	
 	//var//////////////////////////////////
 	
-	private Queue queue;//请求队列
+	private TQueue queue;//请求队列
 	private HttpSessionKeeper httpSessionKeeper = new HttpSessionKeeper();//会话管理器
+
+	private int defaultKeyIndex = 0;//默认标签编号
 	
 	//setting//////////////////////////////////
 	
@@ -45,18 +48,20 @@ public class HttpURLConnectionClient {
 	 */
 	
 	/**
+     * @param reverse false:顺序队列,先进先执行  true:逆序队列,后进先执行
 	 * @param concurrencyVolumeMax 最大并发量
 	 */
-	public HttpURLConnectionClient(int concurrencyVolumeMax){
-		queue = new Queue(concurrencyVolumeMax);
+	public HttpURLConnectionClient(boolean reverse, int concurrencyVolumeMax){
+		queue = new TQueue(reverse, concurrencyVolumeMax);
 	}
 	
 	/**
+     * @param reverse false:顺序队列,先进先执行  true:逆序队列,后进先执行
 	 * @param concurrencyVolumeMax 最大并发量
 	 * @param timeout 网络超时
 	 */
-	public HttpURLConnectionClient(int concurrencyVolumeMax, int timeout){
-		queue = new Queue(concurrencyVolumeMax);
+	public HttpURLConnectionClient(boolean reverse, int concurrencyVolumeMax, int timeout){
+		queue = new TQueue(reverse, concurrencyVolumeMax);
 		this.timeout = timeout;
 	}
 	
@@ -70,7 +75,7 @@ public class HttpURLConnectionClient {
 	 * @param response
 	 */
 	public HttpURLConnectionTask get(String url, HttpURLConnectionResponse response){
-		return get(url, 0, response);
+		return get(url, DEFAULT_KEY_PREFIX + defaultKeyIndex++, response);
 	}
 	
 	/**
@@ -80,32 +85,30 @@ public class HttpURLConnectionClient {
 	 * @param response
 	 */
 	public HttpURLConnectionTask post(String url, String request, HttpURLConnectionResponse response){
-		return post(url, 0, request, response);
+		return post(url, DEFAULT_KEY_PREFIX + defaultKeyIndex++, request, response);
 	}
 	
 	/**
 	 * 发起GET请求
 	 * @param url
-	 * @param priority 优先级
+	 * @param key 任务标签
 	 * @param response
 	 */
-	public HttpURLConnectionTask get(String url, int priority, HttpURLConnectionResponse response){
+	public HttpURLConnectionTask get(String url, String key, HttpURLConnectionResponse response){
 		HttpURLConnectionTask task = initConnectionTask(this, HttpURLConnectionTask.TYPE_GET, url, null, timeout, response);
-		task.setPriority(priority);
-		return (HttpURLConnectionTask) queue.addTask(task);
+		return (HttpURLConnectionTask) queue.put(key, task);
 	}
-	
+
 	/**
 	 * 发起POST请求
 	 * @param url
-	 * @param priority 优先级
+	 * @param key 任务标签
 	 * @param request
 	 * @param response
 	 */
-	public HttpURLConnectionTask post(String url, int priority, String request, HttpURLConnectionResponse response){
+	public HttpURLConnectionTask post(String url, String key, String request, HttpURLConnectionResponse response){
 		HttpURLConnectionTask task = initConnectionTask(this, HttpURLConnectionTask.TYPE_POST, url, request, timeout, response);
-		task.setPriority(priority);
-		return (HttpURLConnectionTask) queue.addTask(task);
+		return (HttpURLConnectionTask) queue.put(key, task);
 	}
 	
 	/**
@@ -298,7 +301,7 @@ public class HttpURLConnectionClient {
 	 * 获得队列queue实例
 	 * @return
 	 */
-	public Queue getQueue(){
+	public TQueue getQueue(){
 		return queue;
 	}
 	

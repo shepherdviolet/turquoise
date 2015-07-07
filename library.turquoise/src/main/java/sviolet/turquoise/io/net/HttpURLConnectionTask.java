@@ -17,7 +17,7 @@ import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
 import sviolet.turquoise.app.CommonException;
-import sviolet.turquoise.io.Task;
+import sviolet.turquoise.io.TTask;
 import sviolet.turquoise.utils.conversion.BinaryUtils;
 
 /**
@@ -29,7 +29,7 @@ import sviolet.turquoise.utils.conversion.BinaryUtils;
  *
  */
 
-public class HttpURLConnectionTask extends Task {
+public class HttpURLConnectionTask extends TTask {
 	
 	//请求类型////////////////////////////////////////
 	

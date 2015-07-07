@@ -21,12 +21,12 @@ import sviolet.turquoise.io.net.HttpURLConnectionTask;
  */
 public class JSONHttpURLConnectionClient extends HttpURLConnectionClient{
 
-	public JSONHttpURLConnectionClient(int concurrencyVolumeMax) {
-		super(concurrencyVolumeMax);
+	public JSONHttpURLConnectionClient(boolean reverse, int concurrencyVolumeMax) {
+		super(reverse, concurrencyVolumeMax);
 	}
 
-	public JSONHttpURLConnectionClient(int concurrencyVolumeMax, int timeout) {
-		super(concurrencyVolumeMax, timeout);
+	public JSONHttpURLConnectionClient(boolean reverse, int concurrencyVolumeMax, int timeout) {
+		super(reverse, concurrencyVolumeMax, timeout);
 	}
 	
 	/**
@@ -44,11 +44,12 @@ public class JSONHttpURLConnectionClient extends HttpURLConnectionClient{
 	 * POST请求(JSON报文)
 	 * 
 	 * @param url
+	 * @param key
 	 * @param request
 	 * @param response
 	 */
-	public void postJSON(String url, int priority, JSONObject request, HttpURLConnectionResponse response) {
-		post(url, priority, handleJSONRequest(request), response);
+	public void postJSON(String url, String key, JSONObject request, HttpURLConnectionResponse response) {
+		post(url, key, handleJSONRequest(request), response);
 	}
 	
 	/**
