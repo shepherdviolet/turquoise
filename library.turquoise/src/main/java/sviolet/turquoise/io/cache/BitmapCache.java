@@ -266,21 +266,19 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
     public String getMemoryReport(){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("++++++++++++++++++++++++++++++++");
-        stringBuilder.append("\n[BitmapCache]MemoryReport:\n");
-        stringBuilder.append("Cache/Recycler max: ");
+        stringBuilder.append("[BitmapCache]MemoryReport:  ");
+        stringBuilder.append("[max]: ");
         stringBuilder.append(maxSize()/(1024*1024));
-        stringBuilder.append("\nCache used: ");
+        stringBuilder.append("  [CacheUsed]: ");
         stringBuilder.append(size()/(1024*1024));
-        stringBuilder.append("M ");
+        stringBuilder.append("m ");
         stringBuilder.append(quantity());
-        stringBuilder.append("pcs\n");
-        stringBuilder.append("Recycler used: ");
+        stringBuilder.append("pcs  ");
+        stringBuilder.append("[RecyclerUsed]: ");
         stringBuilder.append(recyclerSize()/(1024*1024));
-        stringBuilder.append("M ");
+        stringBuilder.append("m ");
         stringBuilder.append(recyclerQuantity());
-        stringBuilder.append("pcs\n");
-        stringBuilder.append("++++++++++++++++++++++++++++++++");
+        stringBuilder.append("pcs");
         return stringBuilder.toString();
     }
 
