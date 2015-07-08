@@ -373,14 +373,16 @@ public class BitmapUtils {
      *
      * @param bitmap
      * @param outputStream 输出流
+     * @param format 图片保存格式
+     * @param quality 图片保存质量(0, 100]
      * @param recycle 是否回收源Bitmap
      * @param onSaveCompleteListener 完成回调
      */
-    public static void saveBitmap(final Bitmap bitmap, final OutputStream outputStream, final boolean recycle, final OnSaveCompleteListener onSaveCompleteListener) {
+    public static void saveBitmap(final Bitmap bitmap, final OutputStream outputStream, final Bitmap.CompressFormat format, final int quality, final boolean recycle, final OnSaveCompleteListener onSaveCompleteListener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                syncSaveBitmap(outputStream, bitmap, onSaveCompleteListener, recycle);
+                syncSaveBitmap(bitmap, outputStream, format, quality, recycle, onSaveCompleteListener);
             }
         }).start();
     }
@@ -390,14 +392,16 @@ public class BitmapUtils {
      *
      * @param bitmap
      * @param outputStream 输出流
+     * @param format 图片保存格式
+     * @param quality 图片保存质量(0, 100]
      * @param recycle 是否回收源Bitmap
      * @param onSaveCompleteListener 完成回调
      */
-    public static void syncSaveBitmap(OutputStream outputStream, Bitmap bitmap, OnSaveCompleteListener onSaveCompleteListener, boolean recycle) {
+    public static void syncSaveBitmap(Bitmap bitmap, OutputStream outputStream, Bitmap.CompressFormat format, int quality, boolean recycle, OnSaveCompleteListener onSaveCompleteListener) {
         Throwable throwable = null;
         if (outputStream != null && bitmap != null) {
             try {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                bitmap.compress(format, quality, outputStream);
                 outputStream.flush();
                 if (onSaveCompleteListener != null) {
                     onSaveCompleteListener.onSaveSucceed();
@@ -428,14 +432,16 @@ public class BitmapUtils {
      * @param bitmap
      * @param path 路径
      * @param fileName 文件名
+     * @param format 图片保存格式
+     * @param quality 图片保存质量(0, 100]
      * @param recycle 是否回收源Bitmap
      * @param onSaveCompleteListener 完成回调
      */
-    public static void saveBitmap(final Bitmap bitmap, final String path, final String fileName, final boolean recycle, final OnSaveCompleteListener onSaveCompleteListener) {
+    public static void saveBitmap(final Bitmap bitmap, final String path, final String fileName, final Bitmap.CompressFormat format, final int quality, final boolean recycle, final OnSaveCompleteListener onSaveCompleteListener) {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                syncSaveBitmap(path, fileName, bitmap, onSaveCompleteListener, recycle);
+                syncSaveBitmap(bitmap, path, fileName, format, quality, recycle, onSaveCompleteListener);
             }
         }).start();
     }
@@ -446,10 +452,12 @@ public class BitmapUtils {
      * @param bitmap
      * @param path 路径
      * @param fileName 文件名
+     * @param format 图片保存格式
+     * @param quality 图片保存质量(0, 100]
      * @param recycle 是否回收源Bitmap
      * @param onSaveCompleteListener 完成回调
      */
-    public static void syncSaveBitmap(String path, String fileName, Bitmap bitmap, OnSaveCompleteListener onSaveCompleteListener, boolean recycle) {
+    public static void syncSaveBitmap(Bitmap bitmap, String path, String fileName, Bitmap.CompressFormat format, int quality, boolean recycle, OnSaveCompleteListener onSaveCompleteListener) {
         OutputStream outputStream = null;
         Throwable throwable = null;
         if (path != null && fileName != null && bitmap != null) {
@@ -460,7 +468,7 @@ public class BitmapUtils {
             File file = new File(path + File.separator + fileName);
             try {
                 outputStream = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
+                bitmap.compress(format, quality, outputStream);
                 outputStream.flush();
                 if (onSaveCompleteListener != null) {
                     onSaveCompleteListener.onSaveSucceed();
