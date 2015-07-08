@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import sviolet.turquoise.app.CommonException;
+import sviolet.turquoise.app.Logger;
 import sviolet.turquoise.compat.CompatLruCache;
 import sviolet.turquoise.utils.DeviceUtils;
 
@@ -39,6 +40,9 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     private final LinkedHashMap<String, Boolean> unusedMap;
     //回收站占用内存
     private int recyclerSize = 0;
+
+    //日志打印器
+    private Logger logger;
 
     /**
      * 创建缓存实例<Br/>
@@ -131,6 +135,10 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             bitmap.recycle();
             System.gc();
         }
+
+        //打印内存使用情况
+        if (logger != null)
+            logger.i(getMemoryReport());
     }
 
     /**
@@ -250,6 +258,41 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         return recyclerMap.size();
     }
 
+    /**
+     * 当前缓存使用内存情况<br/>
+     * Cache/Recycler max: 缓存和回收站各自的最大容量<br/>
+     * Cache used: 缓存使用情况 (pcs Bitmap数)<Br/>
+     * Recycler used: 回收站使用情况 (pcs Bitmap数)<Br/>
+     */
+    public String getMemoryReport(){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("++++++++++++++++++++++++++++++++");
+        stringBuilder.append("\n[BitmapCache]MemoryReport:\n");
+        stringBuilder.append("Cache/Recycler max: ");
+        stringBuilder.append(maxSize()/(1024*1024));
+        stringBuilder.append("\nCache used: ");
+        stringBuilder.append(size()/(1024*1024));
+        stringBuilder.append("M ");
+        stringBuilder.append(quantity());
+        stringBuilder.append("pcs\n");
+        stringBuilder.append("Recycler used: ");
+        stringBuilder.append(recyclerSize()/(1024*1024));
+        stringBuilder.append("M ");
+        stringBuilder.append(recyclerQuantity());
+        stringBuilder.append("pcs\n");
+        stringBuilder.append("++++++++++++++++++++++++++++++++");
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 设置日志打印器, 用于调试输出日志<br/>
+     *
+     * @param logger
+     */
+    public void setLogger(Logger logger){
+        this.logger = logger;
+    }
+
     /******************************************************
      * override
      */
@@ -329,6 +372,10 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
             entryRemoved(true, key, value, null);
         }
+
+        //打印内存使用情况
+        if (logger != null)
+            logger.i(getMemoryReport());
     }
 
     @SuppressLint("NewApi")
