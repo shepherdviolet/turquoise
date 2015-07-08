@@ -410,16 +410,19 @@ public class CompatLruCache<K, V> {
         return map;
     }
 
-    protected int getSize() {
-        return size;
-    }
-
     protected int getMaxSize(){
         return maxSize;
     }
 
     protected int getEvictionCount() {
         return evictionCount;
+    }
+
+    /**
+     * @return 缓存中的位图数量
+     */
+    public int quantity(){
+        return map.size();
     }
 
 }

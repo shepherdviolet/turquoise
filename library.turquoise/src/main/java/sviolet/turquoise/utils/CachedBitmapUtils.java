@@ -89,6 +89,10 @@ public class CachedBitmapUtils {
         return mBitmapCache.get(key);
     }
 
+    public BitmapCache getBitmapCache(){
+        return mBitmapCache;
+    }
+
     /**
      * 将一个Bitmap放入缓存<Br/>
      * 放入前会强制回收已存在的同名Bitmap(包括缓存和回收站),

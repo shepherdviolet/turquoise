@@ -86,8 +86,9 @@ public abstract class TTask {
 	 * 设置参数
 	 * @param params
 	 */
-	public void setParams(Object params) {
+	public TTask setParams(Object params) {
 		this.params = params;
+		return this;
 	}
 	
 	/**

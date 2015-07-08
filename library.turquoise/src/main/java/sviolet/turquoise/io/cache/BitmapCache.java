@@ -243,6 +243,13 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         return recyclerSize;
     }
 
+    /**
+     * @return 回收站位图数量
+     */
+    public int recyclerQuantity(){
+        return recyclerMap.size();
+    }
+
     /******************************************************
      * override
      */
@@ -253,11 +260,11 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             String key;
             Bitmap value;
             synchronized (this) {
-                if (getSize() < 0 || (getMap().isEmpty() && getSize() != 0)) {
+                if (size() < 0 || (getMap().isEmpty() && size() != 0)) {
                     throw new IllegalStateException(getClass().getName() + ".sizeOf() is reporting inconsistent results!");
                 }
 
-                if (getSize() <= maxSize) {
+                if (size() <= maxSize) {
                     break;
                 }
 
@@ -278,7 +285,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
                 key = toEvict.getKey();
                 value = toEvict.getValue();
 
-                setSize(getSize() - safeSizeOf(key, value));
+                setSize(size() - safeSizeOf(key, value));
 
                 //是否被标记为不再使用
                 if (unusedMap.containsKey(key)){
