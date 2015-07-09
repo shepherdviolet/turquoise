@@ -150,7 +150,7 @@ public class HttpURLConnectionTask extends TTask {
 			return;
 		
 		//回调结果
-		if(isCanceled()){//任务中止
+		if(getState() >= TTask.STATE_CANCELING){//任务中止
 			response.onCancel();
 		}else if(errorCode == ERROR_CODE_NULL){//无错误
 			if(responseCode == HttpURLConnection.HTTP_OK)//网络请求成功
@@ -451,7 +451,7 @@ public class HttpURLConnectionTask extends TTask {
 		Object output = initOutput(outputStream);
 		if(request == null)
 			request = getDefaultRequest();
-		if (!isCanceled() && request != null) 
+		if (getState() < TTask.STATE_CANCELING && request != null)
 			output(output, request);
 		closeOutput(output);
 	}
@@ -467,7 +467,7 @@ public class HttpURLConnectionTask extends TTask {
 	private Object receiveData(InputStream inputStream, URLConnection connection) throws IOException{
 		Object input = initInput(inputStream);
 		Object result = null;
-		if (!isCanceled() && HttpURLConnection.HTTP_OK == responseCode){
+		if (getState() < TTask.STATE_CANCELING && HttpURLConnection.HTTP_OK == responseCode){
 			//持有会话
 			client.setSession(connection);
 			//读取数据

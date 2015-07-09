@@ -34,6 +34,8 @@ public class TQueue {
 	//Setting//////////////////////////////////////////////////////
 
 	private boolean reverse = false;//逆序
+    private boolean waitCancelingTask = false;//等待取消中的任务
+    private boolean overrideSameKeyTask = true;//覆盖同名任务
 	private int concurrencyVolumeMax = 1;//最大并发量
     private int volumeMax = Integer.MAX_VALUE;//最大任务量
 	
@@ -85,32 +87,44 @@ public class TQueue {
         //给任务设置队列对象(用于回调)
         task.setQueue(this);
         task.setKey(key);
-
         synchronized (TQueue.this){
-            //等待队列超出限制时, 清除优先级最低的任务
-            if (waittingTasks.size() >= volumeMax){
-                if (reverse){
-                    //取队列顶部(最早任务)
-                    Map.Entry<String, TTask> firstEntry = null;
-                    for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
-                        firstEntry = entry;
-                        break;
-                    }
-                    TTask cancelTask = waittingTasks.remove(firstEntry.getKey());
-                    cancelTask.cancel();
+            //是否存在同名任务
+            if (waittingTasks.containsKey(key)){
+                if (overrideSameKeyTask){
+                    //移除同名原有任务, 加入新任务
+                    TTask removeTask = waittingTasks.remove(key);
+                    removeTask.cancel();
+                    waittingTasks.put(key, task);//加入等待队列
                 }else{
-                    //取队列底部(最新任务)
-                    Map.Entry<String, TTask> lastEntry = null;
-                    for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
-                        lastEntry = entry;
-                    }
-                    TTask cancelTask = waittingTasks.remove(lastEntry.getKey());
-                    cancelTask.cancel();
+                    //取消同名新任务
+                    task.cancel();//取消新任务
+                    return;
                 }
+            }else {
+                //等待队列超出限制时, 清除优先级最低的任务
+                if (waittingTasks.size() >= volumeMax) {
+                    if (reverse) {
+                        //取队列顶部(最早任务)
+                        Map.Entry<String, TTask> firstEntry = null;
+                        for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
+                            firstEntry = entry;
+                            break;
+                        }
+                        TTask cancelTask = waittingTasks.remove(firstEntry.getKey());
+                        cancelTask.cancel();
+                    } else {
+                        //取队列底部(最新任务)
+                        Map.Entry<String, TTask> lastEntry = null;
+                        for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
+                            lastEntry = entry;
+                        }
+                        TTask cancelTask = waittingTasks.remove(lastEntry.getKey());
+                        cancelTask.cancel();
+                    }
+                }
+                waittingTasks.put(key, task);//加入等待队列
             }
-            waittingTasks.put(key, task);//加入等待队列
         }
-
         notifyDispatchTask();//触发任务调度
     }
 
@@ -170,8 +184,14 @@ public class TQueue {
             //遍历任务队列, 对开始和执行状态计数
             for (Map.Entry<String, TTask> entry : runningTasks.entrySet()) {
                 TTask task = entry.getValue();
-                if (task.getState() == TTask.STATE_STARTING || task.getState() == TTask.STATE_RUNNING)
-                    count++;
+                if (waitCancelingTask){
+                    //等待取消中任务模式下, STATE_CANCELING状态也计入并发量
+                    if (task.getState() == TTask.STATE_STARTING || task.getState() == TTask.STATE_RUNNING || task.getState() == TTask.STATE_CANCELING)
+                        count++;
+                }else {
+                    if (task.getState() == TTask.STATE_STARTING || task.getState() == TTask.STATE_RUNNING)
+                        count++;
+                }
             }
         }
 		return count;
@@ -306,6 +326,45 @@ public class TQueue {
         }
     }
 
+    /**
+     * [慎用]等待取消中的任务(默认false)<br/>
+     * <br/>
+     * 若设置为true, STATE_CANCELING状态的任务将不会被调度器从
+     * 执行队列中移除, 且该状态的任务计入任务并发数, 直到任务进程
+     * 结束, 任务状态变为STATE_CANCELED后, 才会被移除.
+     * 设置了该功能后, 取消中的任务将会占用并发数, 若大量的取消任务
+     * 占满执行队列, 且进程一直不结束, 将会阻碍其他任务的执行. 因此,
+     * 必须设法中断进程执行.<br/>
+     * <br/>
+     * 若设置为false, STATE_CANCELING状态的任务会和STATE_CANCELED
+     * 状态的任务一样, 从执行队列中移除. 但也必须注意, 合适的情况下
+     * 中断被取消的进程, 否则会有大量的线程消耗资源.
+     *
+     * @param waitCancelingTask 默认false
+     */
+    public TQueue waitCancelingTask(boolean waitCancelingTask){
+        this.waitCancelingTask = waitCancelingTask;
+        return this;
+    }
+
+    /**
+     * 同名任务处理策略, 覆盖同名任务(默认true)<br/>
+     * <br/>
+     * true:覆盖同名任务<br/>
+     * 等待队列或执行队列加入同名任务时, 将队列中原有任务取消并移除,
+     * 加入新的任务.<br/>
+     * <Br/>
+     * false:不覆盖同名任务<br/>
+     * 等待队列或执行队列加入同名任务时, 取消新加入的任务, 保持队列中
+     * 原有任务的状态.<br/>
+     *
+     * @param overrideSameKeyTask 默认true
+     */
+    public TQueue overrideSameKeyTask(boolean overrideSameKeyTask){
+        this.overrideSameKeyTask = overrideSameKeyTask;
+        return this;
+    }
+
     /**************************************************
 	 * Private
 	 */
@@ -331,8 +390,16 @@ public class TQueue {
 		//遍历执行队列, 清除已完成的任务
         List<String> removeKeyList = new ArrayList<String>();
         for (Map.Entry<String, TTask> entry : runningTasks.entrySet()) {
-            if (entry.getValue().getState() == TTask.STATE_COMPLETE){
-                removeKeyList.add(entry.getKey());
+            if (waitCancelingTask){
+                //等待取消中任务模式下, 移除完成/已取消的任务
+                if (entry.getValue().getState() == TTask.STATE_COMPLETE || entry.getValue().getState() == TTask.STATE_CANCELED) {
+                    removeKeyList.add(entry.getKey());
+                }
+            }else {
+                //移除完成/取消中/已取消的任务
+                if (entry.getValue().getState() >= TTask.STATE_COMPLETE) {
+                    removeKeyList.add(entry.getKey());
+                }
             }
         }
         for (String key : removeKeyList) {
@@ -353,9 +420,30 @@ public class TQueue {
                     if (lastEntry != null) {
                         String key = lastEntry.getKey();
                         TTask task = waittingTasks.remove(key);
-                        runningTasks.put(key, task);
-                        task.start();
-                        concurrencyVolume++;//并发数+1
+                        //是否存在同名任务
+                        if (runningTasks.containsKey(key)){
+                            //是否覆盖同名任务
+                            if (overrideSameKeyTask){
+                                TTask oldTask = runningTasks.remove(key);
+                                oldTask.cancel();
+                                //启动任务
+                                if (task.start()) {
+                                    //启动成功
+                                    runningTasks.put(key, task);
+                                    concurrencyVolume++;//并发数+1
+                                }
+                            }else{
+                                //取消同名新任务
+                                task.cancel();
+                            }
+                        }else {
+                            //启动任务
+                            if (task.start()) {
+                                //启动成功
+                                runningTasks.put(key, task);
+                                concurrencyVolume++;//并发数+1
+                            }
+                        }
                     }
                 }else{
                     //取队列顶部(最早任务)
@@ -367,9 +455,30 @@ public class TQueue {
                     if (firstEntry != null){
                         String key = firstEntry.getKey();
                         TTask task = waittingTasks.remove(key);
-                        runningTasks.put(key, task);
-                        task.start();
-                        concurrencyVolume++;//并发数+1
+                        //是否存在同名任务
+                        if (runningTasks.containsKey(key)){
+                            //是否覆盖同名任务
+                            if (overrideSameKeyTask){
+                                TTask oldTask = runningTasks.remove(key);
+                                oldTask.cancel();
+                                //启动任务
+                                if (task.start()) {
+                                    //启动成功
+                                    runningTasks.put(key, task);
+                                    concurrencyVolume++;//并发数+1
+                                }
+                            }else{
+                                //取消同名新任务
+                                task.cancel();
+                            }
+                        }else {
+                            //启动任务
+                            if (task.start()) {
+                                //启动成功
+                                runningTasks.put(key, task);
+                                concurrencyVolume++;//并发数+1
+                            }
+                        }
                     }
                 }
 			}
@@ -378,8 +487,16 @@ public class TQueue {
                 //遍历执行队列, 清除已完成的任务
                 List<String> keyList = new ArrayList<String>();
                 for (Map.Entry<String, TTask> entry : runningTasks.entrySet()) {
-                    if (entry.getValue().getState() == TTask.STATE_COMPLETE){
-                        keyList.add(entry.getKey());
+                    if (waitCancelingTask){
+                        //等待取消中任务模式下, 移除完成/已取消的任务
+                        if (entry.getValue().getState() == TTask.STATE_COMPLETE || entry.getValue().getState() == TTask.STATE_CANCELED) {
+                            keyList.add(entry.getKey());
+                        }
+                    }else {
+                        //移除完成/取消中/已取消的任务
+                        if (entry.getValue().getState() >= TTask.STATE_COMPLETE) {
+                            keyList.add(entry.getKey());
+                        }
                     }
                 }
                 for (String key : keyList) {

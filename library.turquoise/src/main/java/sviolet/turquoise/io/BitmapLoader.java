@@ -46,8 +46,8 @@ public abstract class BitmapLoader {
 
     public BitmapLoader(Context context, String cacheName, int cacheSizeMib) throws IOException {
         this.mCachedBitmapUtils = new CachedBitmapUtils(context, 0.125f);
-        this.mDiskCacheQueue = new TQueue(true, 10).setVolumeMax(10);
-        this.mNetLoadQueue = new TQueue(true, 3).setVolumeMax(10);
+        this.mDiskCacheQueue = new TQueue(true, 10).setVolumeMax(10).waitCancelingTask(true).overrideSameKeyTask(false);
+        this.mNetLoadQueue = new TQueue(true, 3).setVolumeMax(10).waitCancelingTask(true).overrideSameKeyTask(false);
         this.mDiskLruCache = DiskLruCache.open(ApplicationUtils.getDiskCacheDir(context, cacheName),
                 ApplicationUtils.getAppVersion(context), 1, 1024L * 1024L * cacheSizeMib);
     }
@@ -70,9 +70,13 @@ public abstract class BitmapLoader {
 
     /**
      * 实现根据参数从网络下载图片并写入cacheOutputStream输出流<Br/>
-     * 网络加载成功返回true, 加载失败返回false
+     * 网络加载成功返回true, 加载失败返回false<Br/>
+     * 可根据task.getState() >= TTask.STATE_CANCELING判断任务当前是否被取消<br/>
+     * BitmapLoader中任务的取消为软取消, 仅将任务置为完成+取消状态,
+     * 若网络加载不针对取消状态做处理, 取消中的任务将会占用并发量,
+     * 导致新的加载请求无法执行(一直在等待队列).
      */
-    protected abstract boolean loadFromNet(String url, String key, OutputStream cacheOutputStream);
+    protected abstract boolean loadFromNet(String url, String key, OutputStream cacheOutputStream, TTask task);
 
     /**
      * 实现异常处理
@@ -277,7 +281,7 @@ public abstract class BitmapLoader {
         public void onPostExecute(Object result) {
             if (mOnLoadCompleteListener != null) {
                 //若任务被取消
-                if (isCanceled()) {
+                if (getState() >= TTask.STATE_CANCELING) {
                     mOnLoadCompleteListener.onLoadCanceled(getParams());
                     mCachedBitmapUtils.unused(key);
                     if (logger != null) {
@@ -355,7 +359,7 @@ public abstract class BitmapLoader {
                 //获得输出流, 用于写入缓存
                 outputStream = editor.newOutputStream(0);
                 //从网络加载图片, 并写入缓存的输出流
-                if (loadFromNet(url, key, outputStream)) {
+                if (loadFromNet(url, key, outputStream, this)) {
                     //尝试flush输出流
                     try {outputStream.flush();} catch (Exception ignored) {}
                     //写入缓存成功commit
@@ -395,7 +399,7 @@ public abstract class BitmapLoader {
         public void onPostExecute(Object result) {
             if (mOnLoadCompleteListener != null) {
                 //若任务被取消
-                if (isCanceled()) {
+                if (getState() >= TTask.STATE_CANCELING) {
                     mOnLoadCompleteListener.onLoadCanceled(getParams());
                     mCachedBitmapUtils.unused(key);
                     if (logger != null) {

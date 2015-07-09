@@ -1,8 +1,5 @@
 package sviolet.turquoise.io;
 
-import android.os.Handler;
-import android.os.Message;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -24,6 +21,8 @@ public abstract class TTask {
 	public static final int STATE_STARTING = 1;//正在启动
 	public static final int STATE_RUNNING = 2;//正在执行
 	public static final int STATE_COMPLETE = 3;//执行完毕
+    public static final int STATE_CANCELING = 4;//取消中
+    public static final int STATE_CANCELED = 5;//已取消
 	
 	//setting//////////////////////////////////////////
 
@@ -37,7 +36,6 @@ public abstract class TTask {
 	//var//////////////////////////////////////////
 
 	private int state = STATE_WAITTING;//执行状态
-	private boolean isCanceled = false;//是否被取消(中止)
 	private Thread taskThread;//任务线程
 	private Timer timeOutTimer;//超时计时器
 	
@@ -51,6 +49,8 @@ public abstract class TTask {
 	 * STATE_STARTING = 1;//正在启动<br>
 	 * STATE_RUNNING = 2;//正在执行<br>
 	 * STATE_COMPLETE = 3;//执行完毕<br>
+     * STATE_CANCELING = 4;//取消中<Br/>
+     * STATE_CANCELED = 5;//已取消<br/>
 	 * 
 	 * @return
 	 */
@@ -139,18 +139,29 @@ public abstract class TTask {
 	 */
 
 	/**
-	 * 开始任务
+	 * 开始任务<br/>
+     * 任务不能独立执行, 必须TQueue.put(key, TTask)放入队列(自动执行)<br/>
+	 *
+	 * @return true:启动成功 false:启动失败
 	 */
-	public void start(){
-		if(state != STATE_WAITTING)
-			throw new CommonException("[TTask]can not start a Task which state != STATE_WAITTING");
+	protected boolean start(){
+        if (state >=  STATE_CANCELING) {
+			//已取消的任务不再执行
+			//启动失败
+			return false;
+		}else if(state != STATE_WAITTING) {
+            //其他非等待状态则抛出异常
+            throw new CommonException("[TTask]can not start a TTask which state != STATE_WAITTING");
+        }
 
 		if (queue != null) {
-			state++;
+			state = STATE_STARTING;
 			queue.taskStart(this);
 		}else {
-			setStopState();
+            throw new CommonException("[TTask]can not start a TTask without TQueue");
 		}
+		//启动成功
+		return true;
 	}
 	
 	/**
@@ -170,27 +181,16 @@ public abstract class TTask {
 	 * 并置空线程对象, 通知队列调度
 	 */
 	public void onCancel(){
-		isCanceled = true;
-		setStopState();
-	}
-	
-	/**
-	 * 任务当前是否被取消(超时或手动取消)
-	 * @return
-	 */
-	public boolean isCanceled(){
-		return isCanceled;
-	}
-	
-	/**
-	 * 回收资源(新线程)[复写]<br>
-	 * <br>
-	 * 在新线程结束前调用, 复写此方法回收资源, 请勿回收结果信息,
-	 * 因为此时onPostExecute()尚未调用, 该方法仅用于回收任务过程中的垃圾,
-	 * 线程调用, 不占用主线程资源, 结果信息请在onPostExecute()中回收
-	 */
-	public void onRecycle(){
-		
+        if (state == STATE_WAITTING){
+            //取消等待中的任务, 直接置为已取消状态
+            state = STATE_CANCELED;
+        } else if (state < STATE_CANCELING){
+            state = STATE_CANCELING;
+        }
+		cancelTimeOutTimer();
+		if(queue != null){
+			queue.notifyDispatchTask();
+		}
 	}
 	
 	/******************************************************************
@@ -231,12 +231,21 @@ public abstract class TTask {
 		taskThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				state++;
+				state = STATE_RUNNING;
 				result = TTask.this.doInBackground(params);
-				setStopState();
+                if (state == STATE_RUNNING) {
+                    state = STATE_COMPLETE;
+                }else{
+                    state = STATE_CANCELED;
+                }
+                cancelTimeOutTimer();
+                if(queue != null){
+                    queue.notifyDispatchTask();
+                }
                 if (queue != null){
 					queue.taskComplete(TTask.this);
 				}
+                taskThread = null;
 			}
 		});
 		taskThread.start();
@@ -267,24 +276,6 @@ public abstract class TTask {
 			return;
 		if(timeOutTimer != null)
 			timeOutTimer.cancel();
-	}
-	
-	/**
-	 *设置为结束状态<br>
-	 *<br>
-	 *1.设置任务状态为完成<br>
-	 *2.置空任务线程<br>
-	 *3.回收过程资源(不要回收结果信息)<br>
-	 *4.通知队列调度<br>
-	 */
-	private void setStopState(){
-		state = STATE_COMPLETE;
-		cancelTimeOutTimer();
-		taskThread = null;
-		onRecycle();
-		if(queue != null){
-			queue.notifyDispatchTask();
-		}
 	}
 
 	/**
