@@ -254,7 +254,14 @@ public class TQueue {
     public void syncCancel(String key) {
         synchronized (TQueue.this) {
             if (runningTasks.containsKey(key)){
-                TTask task = runningTasks.remove(key);
+                TTask task;
+                if (waitCancelingTask) {
+                    //等待取消任务
+                    task = runningTasks.get(key);
+                }else{
+                    //不等待取消任务
+                    task = runningTasks.remove(key);
+                }
                 if (task != null)
                     task.cancel();
             }
@@ -387,7 +394,85 @@ public class TQueue {
 			dispatchCounter--;//消费掉计数
 			return;
 		}
-		//遍历执行队列, 清除已完成的任务
+        //清理执行队列
+        cleanRunningTasks();
+        //当前执行队列任务数
+		int concurrencyVolume = getCurrentRunningVolume();
+		//唤醒等待的任务
+		//double-check
+		while(waittingTasks.size() > 0 && concurrencyVolume < concurrencyVolumeMax){
+			while(waittingTasks.size() > 0 && concurrencyVolume < concurrencyVolumeMax){
+                if (reverse){
+                    //取队列底部(最新任务)
+                    Map.Entry<String, TTask> lastEntry = null;
+                    for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
+                        lastEntry = entry;
+                    }
+                    concurrencyVolume = startTask(concurrencyVolume, lastEntry);
+                }else{
+                    //取队列顶部(最早任务)
+                    Map.Entry<String, TTask> firstEntry = null;
+                    for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
+                        firstEntry = entry;
+                        break;
+                    }
+                    concurrencyVolume = startTask(concurrencyVolume, firstEntry);
+                }
+			}
+            //检查调度完成后, 理论并发数是否等于实际并发数
+            if (concurrencyVolume != getCurrentConcurrencyVolume()){
+                //遍历执行队列, 清除已完成的任务
+                cleanRunningTasks();
+                //当前执行队列任务数
+                concurrencyVolume = getCurrentRunningVolume();
+            }
+		}
+		dispatchCounter--;//消费掉计数
+	}
+
+    /**
+     * 启动任务
+     * @param concurrencyVolume 并发量
+     * @param entry 任务Entry
+     * @return 递增后的并发量
+     */
+    private int startTask(int concurrencyVolume, Map.Entry<String, TTask> entry) {
+        if (entry != null) {
+            String key = entry.getKey();
+            TTask task = waittingTasks.remove(key);
+            //是否存在同名任务
+            if (runningTasks.containsKey(key)){
+                //是否覆盖同名任务
+                if (overrideSameKeyTask){
+                    TTask oldTask = runningTasks.remove(key);
+                    oldTask.cancel();
+                    //启动任务
+                    if (task.start()) {
+                        //启动成功
+                        runningTasks.put(key, task);
+                        concurrencyVolume++;//并发数+1
+                    }
+                }else{
+                    //取消同名新任务
+                    task.cancel();
+                }
+            }else {
+                //启动任务
+                if (task.start()) {
+                    //启动成功
+                    runningTasks.put(key, task);
+                    concurrencyVolume++;//并发数+1
+                }
+            }
+        }
+        return concurrencyVolume;
+    }
+
+    /**
+     * 清除执行队列中 已完成/已取消的任务
+     */
+    private void cleanRunningTasks() {
+        //遍历执行队列, 清除已完成的任务
         List<String> removeKeyList = new ArrayList<String>();
         for (Map.Entry<String, TTask> entry : runningTasks.entrySet()) {
             if (waitCancelingTask){
@@ -405,109 +490,7 @@ public class TQueue {
         for (String key : removeKeyList) {
             runningTasks.remove(key);
         }
-        //当前执行队列任务数
-		int concurrencyVolume = getCurrentRunningVolume();
-		//唤醒等待的任务
-		//double-check
-		while(waittingTasks.size() > 0 && concurrencyVolume < concurrencyVolumeMax){
-			while(waittingTasks.size() > 0 && concurrencyVolume < concurrencyVolumeMax){
-                if (reverse){
-                    //取队列底部(最新任务)
-                    Map.Entry<String, TTask> lastEntry = null;
-                    for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
-                        lastEntry = entry;
-                    }
-                    if (lastEntry != null) {
-                        String key = lastEntry.getKey();
-                        TTask task = waittingTasks.remove(key);
-                        //是否存在同名任务
-                        if (runningTasks.containsKey(key)){
-                            //是否覆盖同名任务
-                            if (overrideSameKeyTask){
-                                TTask oldTask = runningTasks.remove(key);
-                                oldTask.cancel();
-                                //启动任务
-                                if (task.start()) {
-                                    //启动成功
-                                    runningTasks.put(key, task);
-                                    concurrencyVolume++;//并发数+1
-                                }
-                            }else{
-                                //取消同名新任务
-                                task.cancel();
-                            }
-                        }else {
-                            //启动任务
-                            if (task.start()) {
-                                //启动成功
-                                runningTasks.put(key, task);
-                                concurrencyVolume++;//并发数+1
-                            }
-                        }
-                    }
-                }else{
-                    //取队列顶部(最早任务)
-                    Map.Entry<String, TTask> firstEntry = null;
-                    for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
-                        firstEntry = entry;
-                        break;
-                    }
-                    if (firstEntry != null){
-                        String key = firstEntry.getKey();
-                        TTask task = waittingTasks.remove(key);
-                        //是否存在同名任务
-                        if (runningTasks.containsKey(key)){
-                            //是否覆盖同名任务
-                            if (overrideSameKeyTask){
-                                TTask oldTask = runningTasks.remove(key);
-                                oldTask.cancel();
-                                //启动任务
-                                if (task.start()) {
-                                    //启动成功
-                                    runningTasks.put(key, task);
-                                    concurrencyVolume++;//并发数+1
-                                }
-                            }else{
-                                //取消同名新任务
-                                task.cancel();
-                            }
-                        }else {
-                            //启动任务
-                            if (task.start()) {
-                                //启动成功
-                                runningTasks.put(key, task);
-                                concurrencyVolume++;//并发数+1
-                            }
-                        }
-                    }
-                }
-			}
-            //检查调度完成后, 理论并发数是否等于实际并发数
-            if (concurrencyVolume != getCurrentConcurrencyVolume()){
-                //遍历执行队列, 清除已完成的任务
-                List<String> keyList = new ArrayList<String>();
-                for (Map.Entry<String, TTask> entry : runningTasks.entrySet()) {
-                    if (waitCancelingTask){
-                        //等待取消中任务模式下, 移除完成/已取消的任务
-                        if (entry.getValue().getState() == TTask.STATE_COMPLETE || entry.getValue().getState() == TTask.STATE_CANCELED) {
-                            keyList.add(entry.getKey());
-                        }
-                    }else {
-                        //移除完成/取消中/已取消的任务
-                        if (entry.getValue().getState() >= TTask.STATE_COMPLETE) {
-                            keyList.add(entry.getKey());
-                        }
-                    }
-                }
-                for (String key : keyList) {
-                    runningTasks.remove(key);
-                }
-                //当前执行队列任务数
-                concurrencyVolume = getCurrentRunningVolume();
-            }
-		}
-		dispatchCounter--;//消费掉计数
-	}
+    }
 
     /**************************************************************************
      * HANDLER
@@ -521,7 +504,7 @@ public class TQueue {
      *
      * @param task
      */
-    protected void taskStart(TTask task){
+    protected void ttask_postStart(TTask task){
         Message msg = mHandler.obtainMessage();
         msg.what = HANDLER_TASK_START;
         msg.obj = task;
@@ -534,7 +517,7 @@ public class TQueue {
      *
      * @param task
      */
-    protected void taskComplete(TTask task){
+    protected void ttask_postComplete(TTask task){
         Message msg = mHandler.obtainMessage();
         msg.what = HANDLER_TASK_COMPLETE;
         msg.obj = task;

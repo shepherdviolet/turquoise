@@ -146,8 +146,7 @@ public abstract class TTask {
 	 */
 	protected boolean start(){
         if (state >=  STATE_CANCELING) {
-			//已取消的任务不再执行
-			//启动失败
+			//已取消的任务不再执行, 启动失败
 			return false;
 		}else if(state != STATE_WAITTING) {
             //其他非等待状态则抛出异常
@@ -156,7 +155,7 @@ public abstract class TTask {
 
 		if (queue != null) {
 			state = STATE_STARTING;
-			queue.taskStart(this);
+			queue.ttask_postStart(this);
 		}else {
             throw new CommonException("[TTask]can not start a TTask without TQueue");
 		}
@@ -184,7 +183,8 @@ public abstract class TTask {
         if (state == STATE_WAITTING){
             //取消等待中的任务, 直接置为已取消状态
             state = STATE_CANCELED;
-        } else if (state < STATE_CANCELING){
+        } else if (state < STATE_COMPLETE){
+            //未完成的任务置为取消中
             state = STATE_CANCELING;
         }
 		cancelTimeOutTimer();
@@ -226,14 +226,18 @@ public abstract class TTask {
 	 * 任务执行过程(主线程)
 	 */
 	protected void process(){
-		onPreExecute(params);
+        if (checkCancelState())
+            return;
+        onPreExecute(params);
 		resetTimeOutTimer();
 		taskThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				state = STATE_RUNNING;
+                if (checkCancelState())
+                    return;
+                state = STATE_RUNNING;
 				result = TTask.this.doInBackground(params);
-                if (state == STATE_RUNNING) {
+                if (state <= STATE_COMPLETE) {
                     state = STATE_COMPLETE;
                 }else{
                     state = STATE_CANCELED;
@@ -243,13 +247,28 @@ public abstract class TTask {
                     queue.notifyDispatchTask();
                 }
                 if (queue != null){
-					queue.taskComplete(TTask.this);
+					queue.ttask_postComplete(TTask.this);
 				}
                 taskThread = null;
 			}
 		});
 		taskThread.start();
 	}
+
+    /**
+     * 检查取消状态, 取消中则置为已取消
+     */
+    private boolean checkCancelState() {
+        //检查取消状态
+        if (state >= STATE_CANCELING){
+            state = STATE_CANCELED;
+            if(queue != null){
+                queue.notifyDispatchTask();
+            }
+            return true;
+        }
+        return false;
+    }
 
     /**
 	 * 重置超时计时器
