@@ -144,13 +144,13 @@ public class HttpURLConnectionTask extends TTask {
 	 * @param result
 	 */
 	@Override
-	public void onPostExecute(Object result) {
+	public void onPostExecute(Object result, boolean isCancel) {
 		//无response实例, 不回调
 		if(response == null)
 			return;
 		
 		//回调结果
-		if(getState() >= TTask.STATE_CANCELING){//任务中止
+		if(isCancel){//任务中止
 			response.onCancel();
 		}else if(errorCode == ERROR_CODE_NULL){//无错误
 			if(responseCode == HttpURLConnection.HTTP_OK)//网络请求成功

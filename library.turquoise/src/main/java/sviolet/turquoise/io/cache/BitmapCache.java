@@ -5,7 +5,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 import sviolet.turquoise.app.CommonException;
@@ -35,9 +35,9 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     private static final float DEFAULT_CACHE_MEMORY_PERCENT = 0.125f;
 
     //回收站 : 存放被清理出缓存但未被标记为unused的Bitmap
-    private final LinkedHashMap<String, Bitmap> recyclerMap;
+    private final HashMap<String, Bitmap> recyclerMap;
     //不再使用标记
-    private final LinkedHashMap<String, Boolean> unusedMap;
+    private final HashMap<String, Boolean> unusedMap;
     //回收站占用内存
     private int recyclerSize = 0;
 
@@ -54,7 +54,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * @param context
      * @return
      */
-    public static BitmapCache newInstance(Context context){
+    public static BitmapCache newInstance(Context context) {
         //应用可用内存级别
         final int memoryClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
         //计算缓存大小
@@ -74,7 +74,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * @param percent Bitmap缓存区占用应用可用内存的百分比 (0, 0.5)
      * @return
      */
-    public static BitmapCache newInstance(Context context, float percent){
+    public static BitmapCache newInstance(Context context, float percent) {
         //应用可用内存级别
         final int memoryClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
         //计算缓存大小
@@ -92,7 +92,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      *
      * @param maxSize Bitmap缓存区占用最大内存 单位byte
      */
-    public static BitmapCache newInstance(int maxSize){
+    public static BitmapCache newInstance(int maxSize) {
         return new BitmapCache(maxSize);
     }
 
@@ -104,8 +104,8 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
     private BitmapCache(int maxSize) {
         super(maxSize);
-        this.recyclerMap = new LinkedHashMap<String, Bitmap>(0, 0.75f, true);
-        this.unusedMap = new LinkedHashMap<String, Boolean>(0, 0.75f, true);
+        this.recyclerMap = new HashMap<String, Bitmap>();
+        this.unusedMap = new HashMap<String, Boolean>();
     }
 
     /*****************************************************************************
@@ -119,7 +119,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      *
      * @param key
      */
-    public void unused(String key){
+    public void unused(String key) {
         Bitmap bitmap = null;
         synchronized (this) {
             //若Bitmap存在回收站中, 则直接清除回收资源
@@ -135,7 +135,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             bitmap.recycle();
             System.gc();
         }
-
         //打印内存使用情况
         if (logger != null)
             logger.i(getMemoryReport());
@@ -206,7 +205,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             needGc = true;
         }
         //GC
-        if (needGc){
+        if (needGc) {
             System.gc();
         }
         //返回空
@@ -216,7 +215,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     /**
      * 强制清除并回收所有Bitmap(包括缓存和回收站)
      */
-    public void removeAll(){
+    public void removeAll() {
         //移除缓存中的所有资源
         for (Map.Entry<String, Bitmap> entry : getMap().entrySet()) {
             Bitmap bitmap = entry.getValue();
@@ -245,16 +244,17 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
     /**
      * 获得回收站占用内存byte
+     *
      * @return
      */
-    public int recyclerSize(){
+    public int recyclerSize() {
         return recyclerSize;
     }
 
     /**
      * @return 回收站位图数量
      */
-    public int recyclerQuantity(){
+    public int recyclerQuantity() {
         return recyclerMap.size();
     }
 
@@ -264,18 +264,18 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * Cache used: 缓存使用情况 (pcs Bitmap数)<Br/>
      * Recycler used: 回收站使用情况 (pcs Bitmap数)<Br/>
      */
-    public String getMemoryReport(){
+    public String getMemoryReport() {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("[BitmapCache]MemoryReport:  ");
         stringBuilder.append("[max]: ");
-        stringBuilder.append(maxSize()/(1024*1024));
+        stringBuilder.append(maxSize() / (1024 * 1024));
         stringBuilder.append("  [CacheUsed]: ");
-        stringBuilder.append(size()/(1024*1024));
+        stringBuilder.append(size() / (1024 * 1024));
         stringBuilder.append("m ");
         stringBuilder.append(quantity());
         stringBuilder.append("pcs  ");
         stringBuilder.append("[RecyclerUsed]: ");
-        stringBuilder.append(recyclerSize()/(1024*1024));
+        stringBuilder.append(recyclerSize() / (1024 * 1024));
         stringBuilder.append("m ");
         stringBuilder.append(recyclerQuantity());
         stringBuilder.append("pcs");
@@ -287,7 +287,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      *
      * @param logger
      */
-    public void setLogger(Logger logger){
+    public void setLogger(Logger logger) {
         this.logger = logger;
     }
 
@@ -329,19 +329,19 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
                 setSize(size() - safeSizeOf(key, value));
 
                 //是否被标记为不再使用
-                if (unusedMap.containsKey(key)){
+                if (unusedMap.containsKey(key)) {
                     //回收不再使用的Bitmap
-                    if (value != null && !value.isRecycled()){
+                    if (value != null && !value.isRecycled()) {
                         value.recycle();
                         System.gc();
                     }
                     //清除标记
                     unusedMap.remove(key);
-                }else{
+                } else {
                     //加入回收站前清理回收站中的同名资源
-                    if (recyclerMap.containsKey(key)){
+                    if (recyclerMap.containsKey(key)) {
                         Bitmap recyclerBitmap = recyclerMap.remove(key);
-                        if (recyclerBitmap != null && !recyclerBitmap.isRecycled()){
+                        if (recyclerBitmap != null && !recyclerBitmap.isRecycled()) {
                             recyclerSize -= sizeOf(key, recyclerBitmap);
                             recyclerBitmap.recycle();
                             System.gc();
@@ -359,7 +359,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
                         2.给BitmapCache设置合理的最大占用内存(或占比), 分配过小可能会导致不够用而报错,
                           分配过大可能使应用其他占用内存受限.
                      */
-                    if (recyclerSize > getMaxSize()){
+                    if (recyclerSize > getMaxSize()) {
                         throw new CommonException("[BitmapCache]recycler Out Of Memory!!! see Notes of BitmapCache");
                     }
                 }
@@ -370,7 +370,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
             entryRemoved(true, key, value, null);
         }
-
         //打印内存使用情况
         if (logger != null)
             logger.i(getMemoryReport());

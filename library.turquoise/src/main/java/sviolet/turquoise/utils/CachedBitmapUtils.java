@@ -106,12 +106,10 @@ public class CachedBitmapUtils {
         if (bitmap == null) {
             return;
         }
-
         if (key == null || key.equals("")){
             key = DEFAULT_KEY_PREFIX + defaultKeyIndex;
             defaultKeyIndex++;
         }
-
         mBitmapCache.put(key, bitmap);
     }
 

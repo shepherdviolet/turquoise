@@ -108,7 +108,7 @@ public abstract class BitmapLoader {
         //计算缓存key
         String cacheKey = getCacheKey(url, key);
         if (logger != null) {
-            logger.d("[BitmapLoader]load:start:  url:" + url + " key:" + key + " cacheKey:" + cacheKey);
+            logger.d("[BitmapLoader]load:start:  url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
         }
         //尝试内存缓存中取Bitmap
         Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
@@ -116,7 +116,7 @@ public abstract class BitmapLoader {
             //缓存中存在直接回调:成功
             mOnLoadCompleteListener.onLoadSucceed(params, bitmap);
             if (logger != null) {
-                logger.d("[BitmapLoader]load:succeed:  from:BitmapCache url:" + url + " key:" + key + " cacheKey:" + cacheKey);
+                logger.d("[BitmapLoader]load:succeed:  from:BitmapCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
             }
             return;
         }
@@ -172,7 +172,7 @@ public abstract class BitmapLoader {
         //将位图标识为不再使用
         mCachedBitmapUtils.unused(cacheKey);
         if (logger != null) {
-            logger.d("[BitmapLoader]unused:  url:" + url + " key:" + key + " cacheKey:" + cacheKey);
+            logger.d("[BitmapLoader]unused:  url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
         }
     }
 
@@ -201,7 +201,7 @@ public abstract class BitmapLoader {
             mCachedBitmapUtils = null;
         }
         if (logger != null) {
-            logger.d("[BitmapLoader]destroy:");
+            logger.d("[BitmapLoader]destroy");
         }
     }
 
@@ -262,8 +262,9 @@ public abstract class BitmapLoader {
                 if (cacheFile != null) {
                     //若缓存文件存在, 从缓存中加载Bitmap
                     mCachedBitmapUtils.decodeFromFile(cacheKey, cacheFile.getAbsolutePath(), reqWidth, reqHeight);
-                    if (logger != null) {
-                        logger.d("[BitmapLoader]load:succeed:  from:DiskCache url:" + url + " key:" + key + " cacheKey:" + cacheKey);
+                    //若此时任务已被取消, 则废弃位图
+                    if (isCancel()){
+                        mCachedBitmapUtils.unused(cacheKey);
                     }
                     return RESULT_SUCCEED;
                 } else {
@@ -278,21 +279,24 @@ public abstract class BitmapLoader {
         }
 
         @Override
-        public void onPostExecute(Object result) {
+        public void onPostExecute(Object result, boolean isCancel) {
             if (mOnLoadCompleteListener != null) {
                 String cacheKey = getCacheKey(url, key);
                 //若任务被取消
-                if (getState() >= TTask.STATE_CANCELING) {
+                if (isCancel) {
                     mOnLoadCompleteListener.onLoadCanceled(getParams());
                     mCachedBitmapUtils.unused(cacheKey);
                     if (logger != null) {
-                        logger.d("[BitmapLoader]load:canceled:  from:DiskCache url:" + url + " key:" + key + " cacheKey:" + cacheKey);
+                        logger.d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
                     }
                     return;
                 }
                 switch ((int) result) {
                     case RESULT_SUCCEED:
                         mOnLoadCompleteListener.onLoadSucceed(getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
+                        if (logger != null) {
+                            logger.d("[BitmapLoader]load:succeed:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                        }
                         break;
                     case RESULT_FAILED:
                         mOnLoadCompleteListener.onLoadFailed(getParams());
@@ -373,8 +377,9 @@ public abstract class BitmapLoader {
                     if (cacheFile != null) {
                         //若缓存文件存在, 则读取
                         mCachedBitmapUtils.decodeFromFile(cacheKey, cacheFile.getAbsolutePath(), reqWidth, reqHeight);
-                        if (logger != null) {
-                            logger.d("[BitmapLoader]load:succeed:  from:NetLoad url:" + url + " key:" + key + " cacheKey:" + cacheKey);
+                        //若此时任务已被取消, 则废弃位图
+                        if (isCancel()){
+                            mCachedBitmapUtils.unused(cacheKey);
                         }
                         return RESULT_SUCCEED;
                     }
@@ -396,21 +401,24 @@ public abstract class BitmapLoader {
         }
 
         @Override
-        public void onPostExecute(Object result) {
+        public void onPostExecute(Object result, boolean isCancel) {
             if (mOnLoadCompleteListener != null) {
                 String cacheKey = getCacheKey(url, key);
                 //若任务被取消
-                if (getState() >= TTask.STATE_CANCELING) {
+                if (isCancel) {
                     mOnLoadCompleteListener.onLoadCanceled(getParams());
                     mCachedBitmapUtils.unused(cacheKey);
                     if (logger != null) {
-                        logger.d("[BitmapLoader]load:canceled:  from:NetLoad url:" + url + " key:" + key + " cacheKey:" + cacheKey);
+                        logger.d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
                     }
                     return;
                 }
                 switch ((int) result) {
                     case RESULT_SUCCEED:
                         mOnLoadCompleteListener.onLoadSucceed(getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
+                        if (logger != null) {
+                            logger.d("[BitmapLoader]load:succeed:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                        }
                         break;
                     case RESULT_FAILED:
                         mOnLoadCompleteListener.onLoadFailed(getParams());

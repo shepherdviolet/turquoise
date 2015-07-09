@@ -18,11 +18,12 @@ public abstract class TTask {
 	//static//////////////////////////////////////////
 	
 	public static final int STATE_WAITTING = 0;//等待被启动
-	public static final int STATE_STARTING = 1;//正在启动
-	public static final int STATE_RUNNING = 2;//正在执行
-	public static final int STATE_COMPLETE = 3;//执行完毕
-    public static final int STATE_CANCELING = 4;//取消中
-    public static final int STATE_CANCELED = 5;//已取消
+	public static final int STATE_PRE_EXECUTE = 1;//执行前
+	public static final int STATE_EXECUTING = 2;//正在执行
+    public static final int STATE_POST_EXECUTE = 3;//执行后
+	public static final int STATE_COMPLETE = 4;//执行完毕
+    public static final int STATE_CANCELING = 5;//取消中
+    public static final int STATE_CANCELED = 6;//已取消
 	
 	//setting//////////////////////////////////////////
 
@@ -45,12 +46,13 @@ public abstract class TTask {
 	
 	/**
 	 * 获取当前任务状态<br>
-	 * STATE_WAITTING = 0;//等待被启动<br>
-	 * STATE_STARTING = 1;//正在启动<br>
-	 * STATE_RUNNING = 2;//正在执行<br>
-	 * STATE_COMPLETE = 3;//执行完毕<br>
-     * STATE_CANCELING = 4;//取消中<Br/>
-     * STATE_CANCELED = 5;//已取消<br/>
+     * STATE_WAITTING = 0;//等待被启动
+     * STATE_PRE_EXECUTE = 1;//执行前
+     * STATE_EXECUTING = 2;//正在执行
+     * STATE_POST_EXECUTE = 3;//执行后
+     * STATE_COMPLETE = 4;//执行完毕
+     * STATE_CANCELING = 5;//取消中
+     * STATE_CANCELED = 6;//已取消
 	 * 
 	 * @return
 	 */
@@ -145,16 +147,17 @@ public abstract class TTask {
 	 * @return true:启动成功 false:启动失败
 	 */
 	protected boolean start(){
-        if (state >=  STATE_CANCELING) {
-			//已取消的任务不再执行, 启动失败
-			return false;
-		}else if(state != STATE_WAITTING) {
-            //其他非等待状态则抛出异常
-            throw new CommonException("[TTask]can not start a TTask which state != STATE_WAITTING");
+        synchronized (TTask.this) {
+            if (state >= STATE_CANCELING) {
+                //已取消的任务不再执行, 启动失败
+                return false;
+            } else if (state != STATE_WAITTING) {
+                //其他非等待状态则抛出异常
+                throw new CommonException("[TTask]can not start a TTask which state != STATE_WAITTING");
+            }
+            state = STATE_PRE_EXECUTE;
         }
-
 		if (queue != null) {
-			state = STATE_STARTING;
 			queue.ttask_postStart(this);
 		}else {
             throw new CommonException("[TTask]can not start a TTask without TQueue");
@@ -180,19 +183,28 @@ public abstract class TTask {
 	 * 并置空线程对象, 通知队列调度
 	 */
 	public void onCancel(){
-        if (state == STATE_WAITTING){
-            //取消等待中的任务, 直接置为已取消状态
-            state = STATE_CANCELED;
-        } else if (state < STATE_COMPLETE){
-            //未完成的任务置为取消中
-            state = STATE_CANCELING;
+        synchronized (TTask.this) {
+            if (state == STATE_WAITTING) {
+                //取消等待中的任务, 直接置为已取消状态
+                state = STATE_CANCELED;
+            } else if (state < STATE_COMPLETE) {
+                //未完成的任务置为取消中
+                state = STATE_CANCELING;
+            }
         }
 		cancelTimeOutTimer();
 		if(queue != null){
 			queue.notifyDispatchTask();
 		}
 	}
-	
+
+    /**
+     * @return 任务"取消中"/"已取消"状态返回true
+     */
+    public boolean isCancel(){
+        return state >= STATE_CANCELING;
+    }
+
 	/******************************************************************
 	 * abstract
 	 */
@@ -214,9 +226,11 @@ public abstract class TTask {
 	/**
 	 * 任务后回调(主线程), 通常为UI操作<br/>
      * 执行中的任务被cancel, 任务结束后仍会调用该方法<br/>
-     * 因此如有必要, 请判断TTask.isCanceled();
+     *
+     * @param  result doInBackground返回的结果
+     * @param isCancel 任务"取消中"/"已取消"状态为true
 	 */
-	public abstract void onPostExecute(Object result);
+	public abstract void onPostExecute(Object result, boolean isCancel);
 	
 	/**************************************************************************
 	 * Private
@@ -233,18 +247,17 @@ public abstract class TTask {
 		taskThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-                if (checkCancelState())
-                    return;
-                state = STATE_RUNNING;
-				result = TTask.this.doInBackground(params);
-                if (state <= STATE_COMPLETE) {
-                    state = STATE_COMPLETE;
-                }else{
-                    state = STATE_CANCELED;
+                synchronized (TTask.this) {
+                    if (checkCancelState())
+                        return;
+                    state = STATE_EXECUTING;
                 }
+				result = TTask.this.doInBackground(params);
                 cancelTimeOutTimer();
-                if(queue != null){
-                    queue.notifyDispatchTask();
+                synchronized (TTask.this) {
+                    if (checkCancelState())
+                        return;
+                    state = STATE_POST_EXECUTE;
                 }
                 if (queue != null){
 					queue.ttask_postComplete(TTask.this);
@@ -256,14 +269,31 @@ public abstract class TTask {
 	}
 
     /**
+     * 任务执行后的流程(主线程)
+     */
+    protected void afterProcess(){
+        onPostExecute(result, isCancel());
+        synchronized (TTask.this) {
+            if (state <= STATE_COMPLETE) {
+                state = STATE_COMPLETE;
+            } else {
+                state = STATE_CANCELED;
+            }
+        }
+        onDestroy();
+        if(queue != null){
+            queue.notifyDispatchTask();
+        }
+    }
+
+    /**
      * 检查取消状态, 取消中则置为已取消
      */
     private boolean checkCancelState() {
         //检查取消状态
         if (state >= STATE_CANCELING){
-            state = STATE_CANCELED;
             if(queue != null){
-                queue.notifyDispatchTask();
+                queue.ttask_postComplete(TTask.this);
             }
             return true;
         }
@@ -280,7 +310,7 @@ public abstract class TTask {
 		timeOutTimer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				if(state ==STATE_STARTING || state == STATE_RUNNING){
+				if(state ==STATE_PRE_EXECUTE || state == STATE_EXECUTING){
 					TTask.this.onCancel();//直接调用onCancel无视cancelable
 				}
 			}
@@ -306,10 +336,6 @@ public abstract class TTask {
 		timeOutTimer = null;//超时计时器
 		params = null;
 		result = null;
-	}
-
-	protected Object getResult(){
-		return result;
 	}
 
 }

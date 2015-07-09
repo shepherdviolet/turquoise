@@ -186,10 +186,10 @@ public class TQueue {
                 TTask task = entry.getValue();
                 if (waitCancelingTask){
                     //等待取消中任务模式下, STATE_CANCELING状态也计入并发量
-                    if (task.getState() == TTask.STATE_STARTING || task.getState() == TTask.STATE_RUNNING || task.getState() == TTask.STATE_CANCELING)
+                    if (task.getState() == TTask.STATE_PRE_EXECUTE || task.getState() == TTask.STATE_EXECUTING || task.getState() == TTask.STATE_POST_EXECUTE || task.getState() == TTask.STATE_CANCELING)
                         count++;
                 }else {
-                    if (task.getState() == TTask.STATE_STARTING || task.getState() == TTask.STATE_RUNNING)
+                    if (task.getState() == TTask.STATE_PRE_EXECUTE || task.getState() == TTask.STATE_EXECUTING || task.getState() == TTask.STATE_POST_EXECUTE)
                         count++;
                 }
             }
@@ -262,8 +262,9 @@ public class TQueue {
                     //不等待取消任务
                     task = runningTasks.remove(key);
                 }
-                if (task != null)
+                if (task != null) {
                     task.cancel();
+                }
             }
             if (waittingTasks.containsKey(key)){
                 TTask task = waittingTasks.remove(key);
@@ -538,9 +539,7 @@ public class TQueue {
                     break;
                 case HANDLER_TASK_COMPLETE:
                     if (msg.obj != null && msg.obj instanceof TTask) {
-                        TTask task = (TTask) msg.obj;
-                        task.onPostExecute(task.getResult());
-                        task.onDestroy();
+                        ((TTask)msg.obj).afterProcess();
                     }
                     break;
                 default:
