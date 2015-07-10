@@ -280,10 +280,10 @@ public abstract class TTask {
                 state = STATE_CANCELED;
             }
         }
+		if(queue != null){
+			queue.notifyDispatchTask();
+		}
         onDestroy();
-        if(queue != null){
-            queue.notifyDispatchTask();
-        }
     }
 
     /**
