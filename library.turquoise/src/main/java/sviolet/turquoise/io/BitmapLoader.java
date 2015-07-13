@@ -21,8 +21,48 @@ import sviolet.turquoise.utils.CachedBitmapUtils;
  * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
  * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
  * 这个cacheKey<br/>
+ * <Br/>
+ * ****************************************************************<br/>
+ * [使用说明]<br/>
+ * 1.实现抽象类BitmapLoader -> MyBitmapLoader <br/>
+ * 2.实例化MyBitmapLoader(必须) <br/>
+ * 3.setRamCache/setDiskCache/setNetLoad/setLogger设置参数(可选) <br/>
+ * 4.open() 启用BitmapLoader(必须, 否则抛异常)<br/>
  * <br/>
- * CommonException: [BitmapCache]recycler Out Of Memory!!!<br/>
+ * [代码示例]:<Br/>
+    private BitmapLoader mBitmapLoader;
+    try {
+        mBitmapLoader = new MyBitmapLoader(this, "bitmap")
+            .setRamCache(0.125f)
+            .setDiskCache(50, 5, 15)
+            .setNetLoad(3, 15)
+            .setLogger(getLogger())
+            .open();//必须调用
+    } catch (IOException e) {
+        //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
+    }
+ * <br/>
+ * [上述代码说明]:<br/>
+ * 位图内存缓存占用应用最大可用内存的12.5%(回收站最大可能占用额外的12.5%),
+ * 内存缓存能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 影响显示效果,
+ * 设置过大, 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
+ * 在路径/sdcard/Android/data/<application package>/cache/bitmap或
+ * /data/data/<application package>/cache/bitmap下存放磁盘缓存数据,
+ * 缓存最大容量50M, 磁盘缓存容量根据实际情况设置, 磁盘缓存加载最大并发量10,
+ * 并发量应考虑图片质量/大小, 若图片较大, 应考虑减少并发量, 磁盘缓存等待队列
+ * 容量15, 即只会加载最后请求的15个任务, 更早的加载请求会被取消, 等待队列容
+ * 量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的
+ * 2倍为宜, 设置过少会导致屏幕中图片未全部加载完, 例如屏幕中最多可能展示10
+ * 张图片, 则设置15-20较为合适, 若设置了10, 屏幕中会有2张图未加载. <br/>
+ * 网络加载并发量为3, 根据网络情况和图片大小决定, 过多的并发量会阻塞网络, 过
+ * 少会导致图片加载太慢, 网络加载等待队列容量15, 建议与磁盘缓存等待队列容量
+ * 相等, 根据屏幕中最多可能展示的图片数决定(略大于), 设置过少会导致屏幕中图
+ * 片未全部加载完.<br/>
+ * 设置日志打印器后, BitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
+ * 情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
+ * <br/>
+ * ****************************************************************<br/>
+ * [CommonException]: [BitmapCache]recycler Out Of Memory!!!<br/>
  * 当回收站内存占用超过设定值 (即内存总消耗超过设定值的两倍) 时, 会触发此异常<Br/>
  * 解决方案:<br/>
  * 1.请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
@@ -41,15 +81,117 @@ public abstract class BitmapLoader {
     private TQueue mDiskCacheQueue;//磁盘缓存加载队列
     private TQueue mNetLoadQueue;//网络加载队列
 
-    //日志打印器
-    private Logger logger;
+    //SETTINGS//////////////////////////////////////////////
 
-    public BitmapLoader(Context context, String cacheName, int cacheSizeMib) throws IOException {
-        this.mCachedBitmapUtils = new CachedBitmapUtils(context, 0.125f);
-        this.mDiskCacheQueue = new TQueue(true, 10).setVolumeMax(10).waitCancelingTask(true).overrideSameKeyTask(false);
-        this.mNetLoadQueue = new TQueue(true, 3).setVolumeMax(10).waitCancelingTask(true).overrideSameKeyTask(false);
-        this.mDiskLruCache = DiskLruCache.open(ApplicationUtils.getDiskCacheDir(context, cacheName),
-                ApplicationUtils.getAppVersion(context), 1, 1024L * 1024L * cacheSizeMib);
+    private Context context;
+    private String diskCacheName;//磁盘缓存名
+    private long diskCacheSize = 1024 * 1024 * 10;//磁盘缓存大小(Mb)
+    private float ramCacheSizePercent = 0.125f;//内存缓存大小(占应用可用内存比例)
+    private int diskLoadConcurrency = 5;//磁盘加载任务并发量
+    private int diskLoadVolume = 10;//磁盘加载等待队列容量
+    private int netLoadConcurrency = 3;//网络加载任务并发量
+    private int netLoadVolume = 10;//网络加载等待队列容量
+    private Logger logger;//日志打印器
+
+    /**
+     * 1.实现抽象类BitmapLoader -> MyBitmapLoader <br/>
+     * 2.实例化MyBitmapLoader(必须) <br/>
+     * 3.setRamCache/setDiskCache/setNetLoad/setLogger设置参数(可选) <br/>
+     * 4.open() 启用BitmapLoader(必须, 否则抛异常)<br/>
+     * <br/>
+     * [代码示例]:<Br/>
+            private BitmapLoader mBitmapLoader;
+            try {
+                mBitmapLoader = new MyBitmapLoader(this, "bitmap")
+                    .setRamCache(0.125f)
+                    .setDiskCache(50, 10, 15)
+                    .setNetLoad(3, 15)
+                    .setLogger(getLogger())
+                    .open();//必须调用
+            } catch (IOException e) {
+                //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
+            }
+     * <br/>
+     * [上述代码说明]:<br/>
+     * 位图内存缓存占用应用最大可用内存的12.5%(回收站最大可能占用额外的12.5%),
+     * 内存缓存能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 影响显示效果,
+     * 设置过大, 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
+     * 在路径/sdcard/Android/data/<application package>/cache/bitmap或
+     * /data/data/<application package>/cache/bitmap下存放磁盘缓存数据,
+     * 缓存最大容量50M, 磁盘缓存容量根据实际情况设置, 磁盘缓存加载最大并发量10,
+     * 并发量应考虑图片质量/大小, 若图片较大, 应考虑减少并发量, 磁盘缓存等待队列
+     * 容量15, 即只会加载最后请求的15个任务, 更早的加载请求会被取消, 等待队列容
+     * 量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的
+     * 2倍为宜, 设置过少会导致屏幕中图片未全部加载完, 例如屏幕中最多可能展示10
+     * 张图片, 则设置15-20较为合适, 若设置了10, 屏幕中会有2张图未加载. <br/>
+     * 网络加载并发量为3, 根据网络情况和图片大小决定, 过多的并发量会阻塞网络, 过
+     * 少会导致图片加载太慢, 网络加载等待队列容量15, 建议与磁盘缓存等待队列容量
+     * 相等, 根据屏幕中最多可能展示的图片数决定(略大于), 设置过少会导致屏幕中图
+     * 片未全部加载完.<br/>
+     * 设置日志打印器后, BitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
+     * 情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
+     * <br/>
+     * @param context 上下文
+     * @param diskCacheName 磁盘缓存目录名
+     */
+    public BitmapLoader(Context context, String diskCacheName) {
+        this.context = context;
+        this.diskCacheName = diskCacheName;
+    }
+
+    /**
+     * @param netLoadConcurrency 网络加载任务并发量, 默认3
+     * @param netLoadVolume 网络加载等待队列容量, 默认10
+     */
+    public BitmapLoader setNetLoad(int netLoadConcurrency, int netLoadVolume){
+        this.netLoadConcurrency = netLoadConcurrency;
+        this.netLoadVolume = netLoadVolume;
+        return this;
+    }
+
+    /**
+     * @param diskCacheSizeMib 磁盘缓存最大容量, 默认10, 单位Mb
+     * @param diskLoadConcurrency 磁盘加载任务并发量, 默认5
+     * @param diskLoadVolume 磁盘加载等待队列容量, 默认10
+     */
+    public BitmapLoader setDiskCache(int diskCacheSizeMib, int diskLoadConcurrency, int diskLoadVolume){
+        this.diskCacheSize = 1024L * 1024L * diskCacheSizeMib;
+        this.diskLoadConcurrency = diskLoadConcurrency;
+        this.diskLoadVolume = diskLoadVolume;
+        return this;
+    }
+
+    /**
+     * @param ramCacheSizePercent 内存缓存最大容量占应用可用内存的比例 (0, 0.5f], 默认0.125, 建议不超过0.25
+     */
+    public BitmapLoader setRamCache(float ramCacheSizePercent){
+        this.ramCacheSizePercent = ramCacheSizePercent;
+        return this;
+    }
+
+    /**
+     * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
+     */
+    public BitmapLoader setLogger(Logger logger) {
+        this.logger = logger;
+        if (mCachedBitmapUtils != null)
+            mCachedBitmapUtils.getBitmapCache().setLogger(logger);
+        return this;
+    }
+
+    /**
+     * [重要]启用BitmapLoader, 在实例化并设置完BitmapLoader后, 必须调用此
+     * 方法, 开启磁盘缓存/内存缓存. 否则会抛出异常.<Br/>
+     *
+     * @throws IOException 磁盘缓存启动失败抛出异常
+     */
+    public BitmapLoader open() throws IOException {
+        this.mDiskLruCache = DiskLruCache.open(ApplicationUtils.getDiskCacheDir(context, diskCacheName),
+                ApplicationUtils.getAppVersion(context), 1, diskCacheSize);
+        this.mCachedBitmapUtils = new CachedBitmapUtils(context, ramCacheSizePercent);
+        this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency).setVolumeMax(diskLoadVolume).waitCancelingTask(true).overrideSameKeyTask(false);
+        this.mNetLoadQueue = new TQueue(true, netLoadConcurrency).setVolumeMax(netLoadVolume).waitCancelingTask(true).overrideSameKeyTask(false);
+        return this;
     }
 
     /******************************************
@@ -105,6 +247,7 @@ public abstract class BitmapLoader {
      * @param mOnLoadCompleteListener 回调监听器
      */
     public void load(String url, String key, int reqWidth, int reqHeight, Object params, OnLoadCompleteListener mOnLoadCompleteListener) {
+        checkIsOpen();
         //计算缓存key
         String cacheKey = getCacheKey(url, key);
         if (logger != null) {
@@ -136,6 +279,7 @@ public abstract class BitmapLoader {
      * @return 若不存在或已被回收, 则返回null
      */
     public Bitmap get(String url, String key) {
+        checkIsOpen();
         //计算缓存key
         String cacheKey = getCacheKey(url, key);
         //尝试从内存缓存中取Bitmap
@@ -163,6 +307,7 @@ public abstract class BitmapLoader {
      * @param key 图片自定义key
      */
     public void unused(String url, String key) {
+        checkIsOpen();
         //计算缓存key
         String cacheKey = getCacheKey(url, key);
         //网络加载队列取消
@@ -180,6 +325,7 @@ public abstract class BitmapLoader {
      * [重要]将所有资源回收销毁, 请在Activity.onDestroy()时调用该方法
      */
     public void destroy() {
+        checkIsOpen();
         if (mNetLoadQueue != null) {
             mNetLoadQueue.cancelAll();
             mNetLoadQueue = null;
@@ -203,15 +349,6 @@ public abstract class BitmapLoader {
         if (logger != null) {
             logger.d("[BitmapLoader]destroy");
         }
-    }
-
-    /**
-     * 设置日志打印器, 用于调试输出日志
-     */
-    public void setLogger(Logger logger) {
-        this.logger = logger;
-        if (mCachedBitmapUtils != null)
-            mCachedBitmapUtils.getBitmapCache().setLogger(logger);
     }
 
     /******************************************
@@ -433,7 +570,16 @@ public abstract class BitmapLoader {
                 }
             }
         }
+    }
 
+    /**
+     * 检查BitmapLoader是否open(), 若未open()则抛出异常<br/>
+     * 遇到此异常, 请检查代码, BitmapLoader实例化/设置后必须调用open()方法启动.
+     */
+    private void checkIsOpen(){
+        if (mDiskLruCache == null || mCachedBitmapUtils == null || mDiskCacheQueue == null || mNetLoadQueue == null){
+            throw new CommonException("[BitmapLoader]can't use BitmapLoader without BitmapLoader.open()!!!");
+        }
     }
 
     /**

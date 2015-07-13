@@ -65,13 +65,13 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
     /**
      * 创建缓存实例<Br/>
-     * 根据实际情况设置缓存占比, 参考值0.125, 不超过0.5<Br/>
+     * 根据实际情况设置缓存占比, 参考值0.125, 建议不超过0.25<Br/>
      * <Br/>
      * BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
      * 站占用maxSize, 回收站内存占用超过maxSize会报异常.<br/>
      *
      * @param context
-     * @param percent Bitmap缓存区占用应用可用内存的百分比 (0, 0.5)
+     * @param percent Bitmap缓存区占用应用可用内存的百分比 (0, 0.5]
      * @return
      */
     public static BitmapCache newInstance(Context context, float percent) {
@@ -85,7 +85,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
     /**
      * 创建缓存实例<Br/>
-     * 根据实际情况设置缓冲区占用最大内存<br/>
+     * 根据实际情况设置缓冲区占用最大内存, 建议不超过应用可用内存的1/4<br/>
      * <Br/>
      * BitmapCache内存占用最大值为设置值(maxSize)的两倍, 即缓存区占用maxSize, 回收
      * 站占用maxSize, 回收站内存占用超过maxSize会报异常.<br/>
