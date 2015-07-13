@@ -9,7 +9,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import sviolet.lib.utils.crypt.DigestCipher;
+import sviolet.turquoise.utils.crypt.DigestCipher;
 
 public class AESHelper extends AESCipher {
 	public static final String Code="utf-8";//utf-8/gb2312

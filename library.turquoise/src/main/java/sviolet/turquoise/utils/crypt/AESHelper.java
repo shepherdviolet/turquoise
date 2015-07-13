@@ -1,4 +1,4 @@
-package sviolet.lib.utils.crypt;
+package sviolet.turquoise.utils.crypt;
 
 import java.io.UnsupportedEncodingException;
 import java.security.*;
@@ -7,7 +7,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-import sviolet.lib.utils.conversion.ByteJointUtils;
+import sviolet.turquoise.utils.conversion.ByteUtils;
 
 public class AESHelper extends AESCipher {
 	public static final String CODE="utf-8";//utf-8/gb2312
@@ -63,7 +63,7 @@ public class AESHelper extends AESCipher {
 		
 		for(int i = 0 ; i < loops ; i++){
 			sha = DigestCipher.digest(input, DigestCipher.TYPE_SHA1);
-			input = ByteJointUtils.joint(sha, input);
+			input = ByteUtils.joint(sha, input);
 		}
 		input = DigestCipher.digest(input, DigestCipher.TYPE_SHA1);
 		int offset = 0;

@@ -114,7 +114,7 @@ public abstract class BitmapLoader {
         Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
         if (bitmap != null && !bitmap.isRecycled()) {
             //缓存中存在直接回调:成功
-            mOnLoadCompleteListener.onLoadSucceed(params, bitmap);
+            mOnLoadCompleteListener.onLoadSucceed(url, key, params, bitmap);
             if (logger != null) {
                 logger.d("[BitmapLoader]load:succeed:  from:BitmapCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
             }
@@ -284,7 +284,7 @@ public abstract class BitmapLoader {
                 String cacheKey = getCacheKey(url, key);
                 //若任务被取消
                 if (isCancel) {
-                    mOnLoadCompleteListener.onLoadCanceled(getParams());
+                    mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
                     mCachedBitmapUtils.unused(cacheKey);
                     if (logger != null) {
                         logger.d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
@@ -293,17 +293,17 @@ public abstract class BitmapLoader {
                 }
                 switch ((int) result) {
                     case RESULT_SUCCEED:
-                        mOnLoadCompleteListener.onLoadSucceed(getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
+                        mOnLoadCompleteListener.onLoadSucceed(url, key, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
                         if (logger != null) {
                             logger.d("[BitmapLoader]load:succeed:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
                         }
                         break;
                     case RESULT_FAILED:
-                        mOnLoadCompleteListener.onLoadFailed(getParams());
+                        mOnLoadCompleteListener.onLoadFailed(url, key, getParams());
                         mCachedBitmapUtils.unused(cacheKey);
                         break;
                     case RESULT_CANCELED:
-                        mOnLoadCompleteListener.onLoadCanceled(getParams());
+                        mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
                         mCachedBitmapUtils.unused(cacheKey);
                         break;
                     default:
@@ -406,7 +406,7 @@ public abstract class BitmapLoader {
                 String cacheKey = getCacheKey(url, key);
                 //若任务被取消
                 if (isCancel) {
-                    mOnLoadCompleteListener.onLoadCanceled(getParams());
+                    mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
                     mCachedBitmapUtils.unused(cacheKey);
                     if (logger != null) {
                         logger.d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
@@ -415,17 +415,17 @@ public abstract class BitmapLoader {
                 }
                 switch ((int) result) {
                     case RESULT_SUCCEED:
-                        mOnLoadCompleteListener.onLoadSucceed(getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
+                        mOnLoadCompleteListener.onLoadSucceed(url, key, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
                         if (logger != null) {
                             logger.d("[BitmapLoader]load:succeed:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
                         }
                         break;
                     case RESULT_FAILED:
-                        mOnLoadCompleteListener.onLoadFailed(getParams());
+                        mOnLoadCompleteListener.onLoadFailed(url, key, getParams());
                         mCachedBitmapUtils.unused(cacheKey);
                         break;
                     case RESULT_CANCELED:
-                        mOnLoadCompleteListener.onLoadCanceled(getParams());
+                        mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
                         mCachedBitmapUtils.unused(cacheKey);
                         break;
                     default:
@@ -446,21 +446,21 @@ public abstract class BitmapLoader {
          * @param params 由load传入的参数, 并非Bitmap
          * @param bitmap 加载成功的位图, 可能为null
          */
-        public void onLoadSucceed(Object params, Bitmap bitmap);
+        public void onLoadSucceed(String url, String key, Object params, Bitmap bitmap);
 
         /**
          * 加载失败
          *
          * @param params 由load传入的参数, 并非Bitmap
          */
-        public void onLoadFailed(Object params);
+        public void onLoadFailed(String url, String key, Object params);
 
         /**
          * 加载取消
          *
          * @param params 由load传入的参数, 并非Bitmap
          */
-        public void onLoadCanceled(Object params);
+        public void onLoadCanceled(String url, String key, Object params);
     }
 
 }

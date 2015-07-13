@@ -1,4 +1,4 @@
-package sviolet.lib.utils;
+package sviolet.turquoise.utils;
 
 public class MathUtils {
 	/**

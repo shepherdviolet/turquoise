@@ -1,4 +1,4 @@
-package sviolet.lib.utils.crypt;
+package sviolet.turquoise.utils.crypt;
 
 import java.math.BigInteger;
 import java.security.KeyFactory;
@@ -27,7 +27,6 @@ public class RSAKeyGenerator {
 	 * 生成公钥私钥对
 	 * @throws NoSuchAlgorithmException 
 	 * @param keySize RSA密钥长度
-	 * @param mode 加密模式/签名模式
 	 */
 	public RSAKeyGenerator(int keySize) throws NoSuchAlgorithmException{
 		KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");

@@ -1,4 +1,4 @@
-package sviolet.lib.utils.crypt;
+package sviolet.turquoise.utils.crypt;
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;

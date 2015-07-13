@@ -1,7 +1,7 @@
 # Turquoise 1.5.0710
 
 ## Description
-> Android Library contains View/Utils/Io...
+> Android Library contains View/Utils/Io... <br/>
 > https://github.com/shepherdviolet/turquoise
 
 ## Modules

@@ -1,4 +1,4 @@
-package sviolet.lib.utils.sort;
+package sviolet.turquoise.utils.sort;
 
 import java.util.ArrayList;
 import java.util.Arrays;

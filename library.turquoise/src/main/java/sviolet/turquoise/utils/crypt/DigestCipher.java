@@ -1,4 +1,4 @@
-package sviolet.lib.utils.crypt;
+package sviolet.turquoise.utils.crypt;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -57,7 +57,6 @@ public class DigestCipher {
 	/**
 	 * 摘要文件
 	 * 
-	 * @param input
 	 * @return
 	 * @throws UnsupportedEncodingException 
 	 * @throws NoSuchAlgorithmException 

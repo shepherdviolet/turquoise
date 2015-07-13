@@ -1,4 +1,4 @@
-package sviolet.lib.utils.crypt;
+package sviolet.turquoise.utils.crypt;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -76,7 +76,7 @@ public class RSACipher {
      * 私钥解密 
      * </p> 
      *  
-     * @param encryptedData 已加密数据 
+     * @param data 已加密数据
      * @param privateKey 私钥
      * @return 
      * @throws NoSuchPaddingException 
@@ -161,8 +161,8 @@ public class RSACipher {
      * 公钥解密*
      * </p> 
      *  
-     * @param encryptedData 已加密数据 
-     * @param privateKey 私钥
+     * @param data 已加密数据
+     * @param publicKey 公钥
      * @return 
      * @throws NoSuchPaddingException 
      * @throws NoSuchAlgorithmException 
@@ -205,7 +205,7 @@ public class RSACipher {
      * </p> 
      *  
      * @param data 源数据 
-     * @param publicKey 公钥
+     * @param privateKey 私钥
      * @return 
      * @throws NoSuchPaddingException 
      * @throws NoSuchAlgorithmException 
