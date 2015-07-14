@@ -33,3 +33,6 @@ dependencies {
     compile(name:'library.turquoise-release', ext:'aar')
 }
 ```
+
+>Releases:
+>https://github.com/shepherdviolet/turquoise/aar/sviolet.turquoise1.5.0714.aar
