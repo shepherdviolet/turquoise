@@ -191,6 +191,8 @@ public abstract class BitmapLoader {
         this.mCachedBitmapUtils = new CachedBitmapUtils(context, ramCacheSizePercent);
         this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency).setVolumeMax(diskLoadVolume).waitCancelingTask(true).overrideSameKeyTask(false);
         this.mNetLoadQueue = new TQueue(true, netLoadConcurrency).setVolumeMax(netLoadVolume).waitCancelingTask(true).overrideSameKeyTask(false);
+        if(logger != null)
+            mCachedBitmapUtils.getBitmapCache().setLogger(logger);
         return this;
     }
 
