@@ -6,7 +6,6 @@ import android.widget.ListView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
@@ -17,7 +16,6 @@ import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
 import sviolet.turquoise.app.TActivity;
 import sviolet.turquoise.io.BitmapLoader;
-import sviolet.turquoise.utils.MeasureUtils;
 
 @DemoDescription(
         title = "AsyncImageList",

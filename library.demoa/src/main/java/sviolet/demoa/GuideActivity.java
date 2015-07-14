@@ -7,6 +7,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
@@ -16,6 +19,7 @@ import sviolet.demoa.slide.SlideActivity;
 import sviolet.turquoise.annotation.ActivitySettings;
 import sviolet.turquoise.annotation.ResourceId;
 import sviolet.turquoise.app.TActivity;
+import sviolet.turquoise.io.BitmapLoader;
 
 /**************************************************************
  * Demo配置
@@ -67,6 +71,20 @@ public class GuideActivity extends TActivity {
         if (id == R.id.guide_menu_settings) {
             return true;
         } else if (id == R.id.guide_menu_about) {
+            return true;
+        } else if (id == R.id.guide_menu_wipe_cache){
+            /*
+                清空磁盘缓存, 此处为简易写法, 为保证流畅, 应另启线程处理,
+                同时显示进度条遮罩, 阻止用户操作. 要确保该方法执行时, 对
+                应磁盘缓存区无读写操作, 否则会抛出异常.
+            */
+            try {
+                BitmapLoader.wipeDiskCache(this, "AsyncImageActivity");
+                Toast.makeText(getApplicationContext(), "cache wipe complete", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                Toast.makeText(getApplicationContext(), "cache wipe failed", Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
+            }
             return true;
         }
 

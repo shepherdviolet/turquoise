@@ -353,6 +353,20 @@ public abstract class BitmapLoader {
         }
     }
 
+    /**
+     * [慎用]清除磁盘缓存数据<br/>
+     * <br/>
+     * 注意:在该方法调用期间, 若对该磁盘缓存区进行读写操作, 可能会
+     * 抛出异常. 请确保调用期间该磁盘缓存区不被使用.
+     *
+     * @param context context
+     * @param diskCacheName 缓存目录名
+     * @throws IOException
+     */
+    public static void wipeDiskCache(Context context, String diskCacheName) throws IOException {
+        DiskLruCache.deleteContents(ApplicationUtils.getDiskCacheDir(context, diskCacheName));
+    }
+
     /******************************************
      * inner
      */
