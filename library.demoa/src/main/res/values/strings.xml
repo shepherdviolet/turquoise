@@ -19,4 +19,6 @@
 
     <string name="slide_activity_title">SlideActivity</string>
 
+    <string name="image_async_title">AsyncImageList</string>
+
 </resources>

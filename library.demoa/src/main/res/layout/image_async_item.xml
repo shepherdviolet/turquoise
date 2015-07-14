@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sviolet="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="3dp"
+    android:paddingTop="3dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F8F8F8"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp">
+
+        <TextView
+            android:id="@+id/image_async_item_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#505050"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/image_async_item_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#808080"
+            android:textSize="13sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
+
+            <sviolet.turquoise.view.GradualImageView
+                android:id="@+id/image_async_item_imageview0"
+                android:layout_width="160dp"
+                android:layout_height="160dp" />
+
+            <LinearLayout
+                android:layout_width="80dp"
+                android:layout_height="160dp"
+                android:layout_marginLeft="2dp"
+                android:orientation="vertical">
+
+                <sviolet.turquoise.view.GradualImageView
+                    android:id="@+id/image_async_item_imageview1"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="2dp" />
+
+                <sviolet.turquoise.view.GradualImageView
+                    android:id="@+id/image_async_item_imageview2"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="80dp"
+                android:layout_height="160dp"
+                android:layout_marginLeft="2dp"
+                android:orientation="vertical">
+
+                <sviolet.turquoise.view.GradualImageView
+                    android:id="@+id/image_async_item_imageview3"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:layout_marginBottom="2dp" />
+
+                <sviolet.turquoise.view.GradualImageView
+                    android:id="@+id/image_async_item_imageview4"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <sviolet.turquoise.view.shadow.LinearShadowView
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        sviolet:LinearShadowView_direction="bottom"
+        sviolet:color="#20000000" />
+
+</LinearLayout>

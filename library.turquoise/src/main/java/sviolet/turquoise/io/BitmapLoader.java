@@ -20,7 +20,7 @@ import sviolet.turquoise.utils.CachedBitmapUtils;
  * <br/>
  * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
  * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
- * 这个cacheKey<br/>
+ * 这个cacheKey标识唯一的资源<br/>
  * <Br/>
  * ****************************************************************<br/>
  * [使用说明]<br/>
@@ -51,7 +51,7 @@ import sviolet.turquoise.utils.CachedBitmapUtils;
  * 缓存最大容量50M, 磁盘缓存容量根据实际情况设置, 磁盘缓存加载最大并发量10,
  * 并发量应考虑图片质量/大小, 若图片较大, 应考虑减少并发量, 磁盘缓存等待队列
  * 容量15, 即只会加载最后请求的15个任务, 更早的加载请求会被取消, 等待队列容
- * 量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的
+ * 量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1-
  * 2倍为宜, 设置过少会导致屏幕中图片未全部加载完, 例如屏幕中最多可能展示10
  * 张图片, 则设置15-20较为合适, 若设置了10, 屏幕中会有2张图未加载. <br/>
  * 网络加载并发量为3, 根据网络情况和图片大小决定, 过多的并发量会阻塞网络, 过
@@ -121,7 +121,7 @@ public abstract class BitmapLoader {
      * 缓存最大容量50M, 磁盘缓存容量根据实际情况设置, 磁盘缓存加载最大并发量10,
      * 并发量应考虑图片质量/大小, 若图片较大, 应考虑减少并发量, 磁盘缓存等待队列
      * 容量15, 即只会加载最后请求的15个任务, 更早的加载请求会被取消, 等待队列容
-     * 量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的
+     * 量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1-
      * 2倍为宜, 设置过少会导致屏幕中图片未全部加载完, 例如屏幕中最多可能展示10
      * 张图片, 则设置15-20较为合适, 若设置了10, 屏幕中会有2张图未加载. <br/>
      * 网络加载并发量为3, 根据网络情况和图片大小决定, 过多的并发量会阻塞网络, 过
@@ -206,7 +206,7 @@ public abstract class BitmapLoader {
      * 计算, 得到摘要值作为cacheKey, 根据实际情况实现.  <Br/>
      * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
-     * 这个cacheKey<br/>
+     * 这个cacheKey标识唯一的资源<br/>
      *
      * @return 实现根据URL连接和指定Key, 计算并返回缓存Key
      */
@@ -239,7 +239,7 @@ public abstract class BitmapLoader {
      * <br/>
      * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
-     * 这个cacheKey<br/>
+     * 这个cacheKey标识唯一的资源<br/>
      *
      * @param url 图片URL地址
      * @param key 图片自定义key
@@ -274,7 +274,7 @@ public abstract class BitmapLoader {
      * <br/>
      * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
-     * 这个cacheKey<br/>
+     * 这个cacheKey标识唯一的资源<br/>
      *
      * @param url 图片URL地址
      * @param key 图片自定义key
@@ -303,7 +303,7 @@ public abstract class BitmapLoader {
      * <br/>
      * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
-     * 这个cacheKey<br/>
+     * 这个cacheKey标识唯一的资源<br/>
      *
      * @param url 图片URL地址
      * @param key 图片自定义key

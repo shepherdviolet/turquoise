@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sviolet.demoa">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -42,6 +44,8 @@
         <activity android:name=".slide.SubActivitySlideActivity"
             android:label="@string/slide_activity_title"
             android:theme="@style/AppTheme_Translucent"/>
+        <activity android:name=".image.AsyncImageActivity"
+            android:label="@string/image_async_title"/>
     </application>
 
 </manifest>
