@@ -34,5 +34,5 @@ dependencies {
 }
 ```
 
->Releases:
->https://github.com/shepherdviolet/turquoise/aar/sviolet.turquoise1.5.0714.aar
+## Releases
+>https://github.com/shepherdviolet/turquoise/blob/master/aar/sviolet.turquoise1.5.0714.aar<br/>
