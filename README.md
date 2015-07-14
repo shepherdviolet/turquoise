@@ -2,9 +2,9 @@
 
 ## Description
 > Android Library contains Views/Utils/IOs...<br/>
-> 1.Configurable "Application"/"Activity"... | 可配置的两大组件
-> 2.SlideEngine | 滑动引擎
-> 3.BitmapLoader | 双缓存图片异步加载器
+> 1.Configurable "Application"/"Activity"... | 可配置的两大组件<br/>
+> 2.SlideEngine | 滑动引擎<br/>
+> 3.BitmapLoader | 双缓存图片异步加载器<br/>
 > https://github.com/shepherdviolet/turquoise <br/>
 
 ## Modules
