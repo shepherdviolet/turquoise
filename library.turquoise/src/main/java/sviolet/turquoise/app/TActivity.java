@@ -218,7 +218,10 @@ public abstract class TActivity extends Activity {
      */
     public CachedBitmapUtils getCachedBitmapUtils(){
         if (mCachedBitmapUtils == null){
+            //创建实例
             mCachedBitmapUtils = new CachedBitmapUtils(this);
+            //设置日志打印器
+            mCachedBitmapUtils.getBitmapCache().setLogger(getLogger());
         }
         return mCachedBitmapUtils;
     }
@@ -231,7 +234,10 @@ public abstract class TActivity extends Activity {
      */
     public CachedBitmapUtils getCachedBitmapUtils(float percent){
         if (mCachedBitmapUtils == null){
+            //创建实例
             mCachedBitmapUtils = new CachedBitmapUtils(this, percent);
+            //设置日志打印器
+            mCachedBitmapUtils.getBitmapCache().setLogger(getLogger());
         }
         return mCachedBitmapUtils;
     }

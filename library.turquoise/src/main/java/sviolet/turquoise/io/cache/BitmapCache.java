@@ -216,11 +216,13 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 强制清除并回收所有Bitmap(包括缓存和回收站)
      */
     public void removeAll() {
+        int counter = 0;
         //移除缓存中的所有资源
         for (Map.Entry<String, Bitmap> entry : getMap().entrySet()) {
             Bitmap bitmap = entry.getValue();
             if (bitmap != null && !bitmap.isRecycled()) {
                 bitmap.recycle();
+                counter++;
             }
         }
         //移除回收站资源
@@ -228,6 +230,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             Bitmap bitmap = entry.getValue();
             if (bitmap != null && !bitmap.isRecycled()) {
                 bitmap.recycle();
+                counter++;
             }
         }
         //清理
@@ -240,6 +243,10 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         }
         //GC
         System.gc();
+        //打印日志
+        if (logger != null){
+            logger.i("[BitmapCache] recycled:" + counter);
+        }
     }
 
     /**

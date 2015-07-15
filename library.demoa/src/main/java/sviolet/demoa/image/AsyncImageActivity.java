@@ -58,8 +58,8 @@ public class AsyncImageActivity extends TActivity {
                     .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
                     .setLogger(getLogger())//打印日志
                     .open();//启动(必须)
-            //设置适配器, 传入图片加载器
-            listView.setAdapter(new AsyncImageAdapter(this, makeItemList(), mBitmapLoader));
+            //设置适配器, 传入图片加载器, 图片解码工具
+            listView.setAdapter(new AsyncImageAdapter(this, makeItemList(), mBitmapLoader, getCachedBitmapUtils()));
         } catch (IOException e) {
             //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
             e.printStackTrace();

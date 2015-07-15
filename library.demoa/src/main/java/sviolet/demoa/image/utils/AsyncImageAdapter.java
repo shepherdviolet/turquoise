@@ -1,5 +1,6 @@
 package sviolet.demoa.image.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
@@ -14,6 +15,8 @@ import java.util.List;
 import sviolet.demoa.R;
 import sviolet.turquoise.app.TActivity;
 import sviolet.turquoise.io.BitmapLoader;
+import sviolet.turquoise.utils.BitmapUtils;
+import sviolet.turquoise.utils.CachedBitmapUtils;
 import sviolet.turquoise.utils.MeasureUtils;
 import sviolet.turquoise.view.GradualImageView;
 
@@ -23,14 +26,26 @@ import sviolet.turquoise.view.GradualImageView;
  */
 public class AsyncImageAdapter extends BaseAdapter {
 
+    private static final String DEFAULT_BITMAP_KEY = "default_bitmap";
+
     private Context context;
     private List<AsyncImageItem> itemList;
-    private BitmapLoader loader;
+    private BitmapLoader bitmapLoader;
+    private CachedBitmapUtils cachedBitmapUtils;
 
-    public AsyncImageAdapter(Context context, List<AsyncImageItem> itemList, BitmapLoader loader){
+    /**
+     * @param context context
+     * @param itemList 数据
+     * @param bitmapLoader 用于图片动态加载缓存
+     * @param cachedBitmapUtils 用于解码默认图(TActivity.getCachedBitmapUtils())
+     */
+    public AsyncImageAdapter(Context context, List<AsyncImageItem> itemList, BitmapLoader bitmapLoader, CachedBitmapUtils cachedBitmapUtils){
         this.context = context;
         this.itemList = itemList;
-        this.loader = loader;
+        this.bitmapLoader = bitmapLoader;
+        this.cachedBitmapUtils = cachedBitmapUtils;
+        //用CachedBitmapUtils解码的默认图, 会缓存在其内建BtimapCache中, 在TActivity.onDestroy()时会回收资源
+        cachedBitmapUtils.decodeFromResource(DEFAULT_BITMAP_KEY, context.getResources(), R.mipmap.async_image_null);
     }
 
     @Override
@@ -63,13 +78,17 @@ public class AsyncImageAdapter extends BaseAdapter {
             holder.titleTextView = (TextView) view.findViewById(R.id.image_async_item_title);
             holder.contentTextView = (TextView) view.findViewById(R.id.image_async_item_content);
             view.setTag(holder);
+            for (int i = 0 ; i < 5 ; i++){
+                //设置背景为默认图片, 从cachedBitmapUtils缓存中取
+                holder.imageView[i].setBackgroundDrawable(BitmapUtils.bitmapToDrawable(cachedBitmapUtils.getBitmap(DEFAULT_BITMAP_KEY)));
+            }
         }else{
             holder = (ViewHolder) view.getTag();
             for (int i = 0 ; i < 5 ; i++){
-                //将ImageView中的图片去除, 也可以设置一个默认图片
+                //去除ImageView中原有图片
                 holder.imageView[i].setImageBitmapImmediate(null);
                 //将之前的位图资源置为unused状态以便回收资源 [重要]
-                loader.unused(holder.url[i], holder.key[i]);
+                bitmapLoader.unused(holder.url[i], holder.key[i]);
             }
         }
         AsyncImageItem item = itemList.get(position);
@@ -81,7 +100,7 @@ public class AsyncImageAdapter extends BaseAdapter {
 
         for (int i = 0 ; i < 5 ; i++) {
             //从内存缓存中取位图
-            Bitmap bitmap = loader.get(item.getUrl(i), item.getKey(i));
+            Bitmap bitmap = bitmapLoader.get(item.getUrl(i), item.getKey(i));
             if (bitmap != null && !bitmap.isRecycled()) {
                 //若内存缓存中存在, 则直接设置图片
                 holder.imageView[i].setImageBitmapImmediate(bitmap);
@@ -91,7 +110,7 @@ public class AsyncImageAdapter extends BaseAdapter {
                 int widthHeight = i == 0 ? MeasureUtils.dp2px(context, 160) : MeasureUtils.dp2px(context, 80);
                 //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
                 //将ImageView作为参数传入, 便于在回调函数中设置图片
-                loader.load(item.getUrl(i), item.getKey(i), widthHeight, widthHeight, holder.imageView[i], mOnLoadCompleteListener);
+                bitmapLoader.load(item.getUrl(i), item.getKey(i), widthHeight, widthHeight, holder.imageView[i], mOnLoadCompleteListener);
             }
         }
         return view;
