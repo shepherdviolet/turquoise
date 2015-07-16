@@ -16,7 +16,7 @@
     
     <!-- /SVIOLET.LIBRARYA/src/sviolet/liba/view/RippleView.java -->
     <declare-styleable name="RippleView">
-        <attr name="color"/><!-- 颜色 -->
+        <attr name="colour"/><!-- 颜色 -->
         <attr name="duration"/><!-- 持续时间 -->
         <attr name="framerate"/><!-- 动画刷新帧间隔 -->
         <attr name="alpha" /><!-- 透明度 -->
@@ -36,7 +36,7 @@
     <!-- /SVIOLET.LIBRARYA/src/sviolet/liba/view/AsyncImageView.java -->
     <declare-styleable name="AsyncImageView">
         <attr name="src" /><!-- 图片资源ID -->
-        <attr name="color"/><!-- 颜色 -->
+        <attr name="colour"/><!-- 颜色 -->
     </declare-styleable>
     
     <!-- /SVIOLET.LIBRARYA/src/sviolet/liba/view/GifView.java -->
@@ -65,7 +65,7 @@
 		<attr name="widthHeightRatio" /><!-- 宽度/高度的比例, 适用于widthProportion/heightProportion -->
 		<attr name="strokeWidth" /><!-- 画笔宽度 -->
 		<attr name="touchEnabled" /><!-- 允许触摸 -->
-		<attr name="color" /><!-- 颜色 -->
+		<attr name="colour" /><!-- 颜色 -->
 		<attr name="text"/><!-- 文本 -->
 		<attr name="src" /><!-- 图片资源ID -->
     </declare-styleable>

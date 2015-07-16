@@ -91,7 +91,7 @@ public abstract class AsyncImageView extends RecycleImageView {
 	private void init(Context context, AttributeSet attrs){
 		TypedArray types = context.obtainStyledAttributes(attrs, R.styleable.AsyncImageView);
 		src = types.getResourceId(R.styleable.AsyncImageView_src, 0);
-		int color = types.getColor(R.styleable.AsyncImageView_color, 0x808080);
+		int color = types.getColor(R.styleable.AsyncImageView_colour, 0x808080);
 		types.recycle();
 		
 		paint = new Paint();

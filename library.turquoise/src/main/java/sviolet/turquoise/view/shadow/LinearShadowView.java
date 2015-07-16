@@ -138,7 +138,7 @@ public class LinearShadowView extends View {
 	 */
 	private void initParams(Context context, AttributeSet attrs) {
 		TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LinearShadowView);
-		color = typedArray.getColor(R.styleable.LinearShadowView_color, COLOR_DEF);
+		color = typedArray.getColor(R.styleable.LinearShadowView_colour, COLOR_DEF);
 		direction = ShadowDirection.values()[
 		                               typedArray.getInt(R.styleable.LinearShadowView_LinearShadowView_direction, ShadowDirection.DIRECTION_BOTTOM.getValue())];
         typedArray.recycle();

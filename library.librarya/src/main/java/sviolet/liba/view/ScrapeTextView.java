@@ -186,7 +186,7 @@ public class ScrapeTextView extends TextView {
 		widthHeightRatio = types.getFloat(R.styleable.ScrapeTextView_widthHeightRatio, -1);
 		strokeWidth = (int)types.getDimension(R.styleable.ScrapeTextView_strokeWidth, 50);
 		touchEnabled = types.getBoolean(R.styleable.ScrapeTextView_touchEnabled, true);
-		color = types.getColor(R.styleable.ScrapeTextView_color, 0xFFC0C0C0);
+		color = types.getColor(R.styleable.ScrapeTextView_colour, 0xFFC0C0C0);
 		String text = types.getString(R.styleable.ScrapeTextView_text);
 		resId = types.getResourceId(R.styleable.ScrapeTextView_src, 0);
 		types.recycle();

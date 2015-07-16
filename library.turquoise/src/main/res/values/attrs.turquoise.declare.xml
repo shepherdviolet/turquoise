@@ -61,7 +61,7 @@
 
     <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/slide/view/DotPageIndicator.java -->
     <declare-styleable name="DotPageIndicator">
-        <attr name="color" />
+        <attr name="colour" />
         <!-- 颜色 -->
         <attr name="highLightColor" />
         <!-- 高亮处颜色 -->
@@ -75,7 +75,7 @@
 
     <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/shadow/LinearShadowView.java -->
     <declare-styleable name="LinearShadowView">
-        <attr name="color" />
+        <attr name="colour" />
         <!-- 阴影颜色 -->
         <attr name="LinearShadowView_direction">
             <enum name="top" value="0" />
@@ -92,7 +92,7 @@
         <!-- 缩放比例 -->
         <attr name="backgroundColor" />
         <!-- 背景色 -->
-        <attr name="color" />
+        <attr name="colour" />
         <!-- 阴影颜色 -->
         <attr name="alpha" />
         <!-- 阴影透明度 -->
@@ -110,7 +110,7 @@
         <!-- 缩放比例 -->
         <attr name="backgroundColor" />
         <!-- 背景色 -->
-        <attr name="color" />
+        <attr name="colour" />
         <!-- 阴影颜色 -->
         <attr name="alpha" />
         <!-- 阴影透明度 -->

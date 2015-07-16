@@ -225,7 +225,7 @@ public class RippleView extends RelativeLayout{
 	 */
 	private void initSetting(final Context context, AttributeSet attrs) {
 		TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RippleView);
-        rippleColor = typedArray.getColor(R.styleable.RippleView_color, RIPPLE_COLOR_DEF);
+        rippleColor = typedArray.getColor(R.styleable.RippleView_colour, RIPPLE_COLOR_DEF);
         rippleType = typedArray.getInt(R.styleable.RippleView_RippleView_type, RIPPLE_TYPE_DEF);
         duration = typedArray.getInteger(R.styleable.RippleView_duration, DURATION_DEF) * SLOW_DOWN;//不松开时减速
         frameRate = typedArray.getInteger(R.styleable.RippleView_framerate, FRAME_RATE_DEF);

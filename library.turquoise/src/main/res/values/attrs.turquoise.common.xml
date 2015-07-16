@@ -81,8 +81,8 @@
     <attr name="scaleY" format="float" />
     <!-- Y轴比例0-1 -->
 
-    <!-- 颜色 -->
-    <attr name="color" format="color" />
+    <!-- 颜色/避免与com.android.support中的color重复 -->
+    <attr name="colour" format="color" />
     <!-- 颜色 -->
     <attr name="backgroundColor" format="color" />
     <!-- 背景颜色 -->
