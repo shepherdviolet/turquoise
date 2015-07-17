@@ -56,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 sviolet:LinearShadowView_direction="bottom"
-                sviolet:color="#50000000" />
+                sviolet:colour="#50000000" />
 
         </sviolet.demoa.slide.view.MySlideView>
 

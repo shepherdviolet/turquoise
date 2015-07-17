@@ -24,7 +24,7 @@
             android:layout_alignLeft="@id/slide_activity_sub_drawer_view"
             android:layout_marginLeft="-5dp"
             sviolet:LinearShadowView_direction="left"
-            sviolet:color="#40000000" />
+            sviolet:colour="#40000000" />
 
     </sviolet.turquoise.view.slide.view.RelativeLayoutDrawer>
 

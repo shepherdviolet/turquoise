@@ -26,7 +26,7 @@
         <sviolet.turquoise.view.shadow.LinearShadowView
             android:layout_width="match_parent"
             android:layout_height="5dp"
-            sviolet:color="#50808080"
+            sviolet:colour="#50808080"
             sviolet:LinearShadowView_direction="bottom"/>
 
     </sviolet.demoa.slide.view.FlingView>
