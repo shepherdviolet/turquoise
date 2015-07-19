@@ -1,12 +1,12 @@
 package sviolet.demoa.image.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +31,8 @@ public class AsyncImageAdapter extends BaseAdapter {
     private Context context;
     private List<AsyncImageItem> itemList;
     private BitmapLoader bitmapLoader;
-    private CachedBitmapUtils cachedBitmapUtils;
+    private Drawable defaultBitmapDrawableLarge, defaultBitmapDrawableSmall;
+    private int widthHeightLarge, widthHeightSmall;
 
     /**
      * @param context context
@@ -43,9 +44,15 @@ public class AsyncImageAdapter extends BaseAdapter {
         this.context = context;
         this.itemList = itemList;
         this.bitmapLoader = bitmapLoader;
-        this.cachedBitmapUtils = cachedBitmapUtils;
+
         //用CachedBitmapUtils解码的默认图, 会缓存在其内建BtimapCache中, 在TActivity.onDestroy()时会回收资源
         cachedBitmapUtils.decodeFromResource(DEFAULT_BITMAP_KEY, context.getResources(), R.mipmap.async_image_null);
+        //大小尺寸的默认背景图
+        defaultBitmapDrawableLarge = BitmapUtils.bitmapToDrawable(cachedBitmapUtils.getBitmap(DEFAULT_BITMAP_KEY));
+        defaultBitmapDrawableSmall = BitmapUtils.bitmapToDrawable(cachedBitmapUtils.getBitmap(DEFAULT_BITMAP_KEY));
+        //图片大小尺寸的长宽值
+        widthHeightLarge = MeasureUtils.dp2px(context, 160);//160dp*160dp
+        widthHeightSmall = MeasureUtils.dp2px(context, 80);//80dp*80dp
     }
 
     @Override
@@ -78,10 +85,6 @@ public class AsyncImageAdapter extends BaseAdapter {
             holder.titleTextView = (TextView) view.findViewById(R.id.image_async_item_title);
             holder.contentTextView = (TextView) view.findViewById(R.id.image_async_item_content);
             view.setTag(holder);
-            for (int i = 0 ; i < 5 ; i++){
-                //设置背景为默认图片, 从cachedBitmapUtils缓存中取
-                holder.imageView[i].setBackgroundDrawable(BitmapUtils.bitmapToDrawable(cachedBitmapUtils.getBitmap(DEFAULT_BITMAP_KEY)));
-            }
         }else{
             holder = (ViewHolder) view.getTag();
             for (int i = 0 ; i < 5 ; i++){
@@ -98,19 +101,32 @@ public class AsyncImageAdapter extends BaseAdapter {
         holder.url = item.getUrls();
         holder.key = item.getKeys();
 
+        Bitmap bitmap;//图片
+
         for (int i = 0 ; i < 5 ; i++) {
             //从内存缓存中取位图
-            Bitmap bitmap = bitmapLoader.get(item.getUrl(i), item.getKey(i));
+            bitmap = bitmapLoader.get(item.getUrl(i), item.getKey(i));
             if (bitmap != null && !bitmap.isRecycled()) {
                 //若内存缓存中存在, 则直接设置图片
                 holder.imageView[i].setImageBitmapImmediate(bitmap);
+                //去除默认背景图(防OverDraw)
+                holder.imageView[i].setBackgroundColor(Color.TRANSPARENT);
             }else {
                 //若内存缓存中不存在, 交由BitmapLoader.load异步加载
-                //图片需要显示的尺寸, 大图160dp, 小图80dp
-                int widthHeight = i == 0 ? MeasureUtils.dp2px(context, 160) : MeasureUtils.dp2px(context, 80);
-                //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
-                //将ImageView作为参数传入, 便于在回调函数中设置图片
-                bitmapLoader.load(item.getUrl(i), item.getKey(i), widthHeight, widthHeight, holder.imageView[i], mOnLoadCompleteListener);
+                //第一张图为160*160dp, 其余80*80dp
+                if (i == 0){
+                    //设置默认背景图(大)
+                    holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableLarge);
+                    //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
+                    //将ImageView作为参数传入, 便于在回调函数中设置图片
+                    bitmapLoader.load(item.getUrl(i), item.getKey(i), widthHeightLarge, widthHeightLarge, holder.imageView[i], mOnLoadCompleteListener);
+                }else{
+                    //设置默认背景图(小)
+                    holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableSmall);
+                    //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
+                    //将ImageView作为参数传入, 便于在回调函数中设置图片
+                    bitmapLoader.load(item.getUrl(i), item.getKey(i), widthHeightSmall, widthHeightSmall, holder.imageView[i], mOnLoadCompleteListener);
+                }
             }
         }
         return view;
@@ -127,6 +143,8 @@ public class AsyncImageAdapter extends BaseAdapter {
             if (bitmap != null && !bitmap.isRecycled()) {
                 //若图片存在且未被回收, 设置图片(渐渐显示)
                 imageView.setImageBitmapGradual(bitmap);
+                //去除默认背景图(防OverDraw)
+                imageView.setBackgroundColor(Color.TRANSPARENT);
             } else {
                 //若图片不存在, 可以考虑重新发起加载请求
                 //loader.load(url, key, widthHeight, widthHeight, params, mOnLoadCompleteListener);
