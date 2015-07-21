@@ -96,7 +96,7 @@ public class HttpURLConnectionClient {
 	 */
 	public HttpURLConnectionTask get(String url, String key, HttpURLConnectionResponse response){
 		HttpURLConnectionTask task = initConnectionTask(this, HttpURLConnectionTask.TYPE_GET, url, null, timeout, response);
-		return (HttpURLConnectionTask) queue.put(key, task);
+		return (HttpURLConnectionTask) queue.asyncPut(key, task);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public class HttpURLConnectionClient {
 	 */
 	public HttpURLConnectionTask post(String url, String key, String request, HttpURLConnectionResponse response){
 		HttpURLConnectionTask task = initConnectionTask(this, HttpURLConnectionTask.TYPE_POST, url, request, timeout, response);
-		return (HttpURLConnectionTask) queue.put(key, task);
+		return (HttpURLConnectionTask) queue.asyncPut(key, task);
 	}
 	
 	/**

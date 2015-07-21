@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * 任务队列 (必须在主线程实例化)<br/>
@@ -40,7 +42,10 @@ public class TQueue {
     private int volumeMax = Integer.MAX_VALUE;//最大任务量
 	
 	//Variable//////////////////////////////////////////////////////
-	
+
+    ExecutorService dispatchThreadPool;//调度任务线程池
+    ExecutorService taskThreadPool;//任务线程池
+
 	private LinkedHashMap<String, TTask> waittingTasks;//等待队列
     private LinkedHashMap<String, TTask> runningTasks;//执行队列
 	
@@ -65,16 +70,16 @@ public class TQueue {
 	 */
 	
 	/**
-	 * 队列中增加任务并执行
+	 * [异步]队列中增加任务并执行
 	 * @param task
 	 */
-	public TTask put(final String key, final TTask task){
-        new Thread(new Runnable() {
+	public TTask asyncPut(final String key, final TTask task){
+        executeDispatch(new Runnable() {
             @Override
             public void run() {
-                syncPut(key, task);
+                put(key, task);
             }
-        }).start();
+        });
 		return task;
 	}
 
@@ -83,7 +88,7 @@ public class TQueue {
      * 线程同步操作, 可能会阻塞<br/>
      * @param task
      */
-    public void syncPut(String key, TTask task) {
+    public void put(String key, TTask task) {
         //给任务设置队列对象(用于回调)
         task.setQueue(this);
         task.setKey(key);
@@ -137,14 +142,14 @@ public class TQueue {
 	public void notifyDispatchTask(){
 		dispatchCounter++;//调用计数
 		//开启线程执行调度任务
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				synchronized (TQueue.this) {
-					dispatchTask();
-				}
-			}
-		}).start();
+		executeDispatch(new Runnable() {
+            @Override
+            public void run() {
+                synchronized (TQueue.this) {
+                    dispatchTask();
+                }
+            }
+        });
 	}
 	
 	/**
@@ -236,22 +241,22 @@ public class TQueue {
 	}
 
 	/**
-	 * 取消指定标签的任务
+	 * [异步]取消指定标签的任务
 	 */
-	public void cancel(final String key){
-        new Thread(new Runnable() {
+	public void asyncCancel(final String key){
+        executeDispatch(new Runnable() {
             @Override
             public void run() {
-                syncCancel(key);
+                cancel(key);
             }
-        }).start();
+        });
 	}
 
     /**
      * [同步]取消指定标签的任务<br/>
      * 线程同步操作, 可能会阻塞<br/>
      */
-    public void syncCancel(String key) {
+    public void cancel(String key) {
         synchronized (TQueue.this) {
             if (runningTasks.containsKey(key)){
                 TTask task;
@@ -278,7 +283,7 @@ public class TQueue {
 	 * 取消所有任务
 	 */
 	public void cancelAll(){
-        new Thread(new Runnable() {
+        executeDispatch(new Runnable() {
             @Override
             public void run() {
                 synchronized (TQueue.this) {
@@ -296,22 +301,22 @@ public class TQueue {
                     waittingTasks.clear();
                 }
             }
-        }).start();
+        });
 	}
 
     /**
-     * 优先处理指定任务<br/>
+     * [异步]优先处理指定任务<br/>
      * 将指定任务排到第一位<br/>
      *
      * @param key
      */
-    public void preferred(final String key){
-        new Thread(new Runnable() {
+    public void asyncPreferred(final String key){
+        executeDispatch(new Runnable() {
             @Override
             public void run() {
-                syncPreferred(key);
+                preferred(key);
             }
-        }).start();
+        });
     }
 
     /**
@@ -321,7 +326,7 @@ public class TQueue {
      *
      * @param key
      */
-    public void syncPreferred(String key) {
+    public void preferred(String key) {
         synchronized (TQueue.this){
             if (reverse) {
                 waittingTasks.get(key);
@@ -332,6 +337,17 @@ public class TQueue {
                 }
             }
         }
+    }
+
+    /**
+     * [重要]销毁队列
+     */
+    public void destroy(){
+        cancelAll();
+        if (taskThreadPool != null)
+            taskThreadPool.shutdown();
+        if (dispatchThreadPool != null)
+            dispatchThreadPool.shutdown();
     }
 
     /**
@@ -493,11 +509,35 @@ public class TQueue {
         }
     }
 
+    /**
+     * 线程执行调度任务
+     * @param runnable
+     */
+    private void executeDispatch(Runnable runnable){
+        if (dispatchThreadPool == null){
+            dispatchThreadPool = Executors.newSingleThreadExecutor();
+        }
+        dispatchThreadPool.execute(runnable);
+    }
+
     /**************************************************************************
      * HANDLER
      * TQueue实例化在主线程, TTask启动时利用TQueue中的Handler, 将
      * onPreExecute和onPostExecute加入主线程队列执行
      */
+
+    /**
+     * [由TTask调用]<br/>
+     * 用线程池执行任务
+     *
+     * @param runnable
+     */
+    protected void ttask_execute(Runnable runnable){
+        if (taskThreadPool == null){
+            taskThreadPool = Executors.newCachedThreadPool();
+        }
+        taskThreadPool.execute(runnable);
+    }
 
     /**
      * [由TTask调用]<br/>

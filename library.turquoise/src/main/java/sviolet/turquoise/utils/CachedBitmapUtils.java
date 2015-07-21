@@ -114,9 +114,21 @@ public class CachedBitmapUtils {
     }
 
     /**
-     * 将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
+     * [异步]将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
      * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
      * 已进入回收站的Bitmap会被立即回收.
+     *
+     * @param key
+     */
+    public void asyncUnused(String key){
+        mBitmapCache.asyncUnused(key);
+    }
+
+    /**
+     * [同步]将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
+     * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
+     * 已进入回收站的Bitmap会被立即回收.<Br/>
+     * 同步操作, 可能会阻塞
      *
      * @param key
      */

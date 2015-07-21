@@ -37,7 +37,6 @@ public abstract class TTask {
 	//var//////////////////////////////////////////
 
 	private int state = STATE_WAITTING;//执行状态
-	private Thread taskThread;//任务线程
 	private Timer timeOutTimer;//超时计时器
 	
 	/*********************************************
@@ -91,15 +90,6 @@ public abstract class TTask {
 	public TTask setParams(Object params) {
 		this.params = params;
 		return this;
-	}
-	
-	/**
-	 * 获取任务执行的线程<br>
-	 * 任务开始前/结束后返回null<br>
-	 * @return
-	 */
-	public Thread getTaskThread(){
-		return taskThread;
 	}
 	
 	/**
@@ -244,7 +234,10 @@ public abstract class TTask {
             return;
         onPreExecute(params);
 		resetTimeOutTimer();
-		taskThread = new Thread(new Runnable() {
+		if (queue == null){
+			throw new CommonException("[TTask]can not start a TTask without TQueue");
+		}
+		queue.ttask_execute(new Runnable() {
 			@Override
 			public void run() {
                 synchronized (TTask.this) {
@@ -262,10 +255,8 @@ public abstract class TTask {
                 if (queue != null){
 					queue.ttask_postComplete(TTask.this);
 				}
-                taskThread = null;
 			}
 		});
-		taskThread.start();
 	}
 
     /**
@@ -332,7 +323,6 @@ public abstract class TTask {
 	 */
 	protected void onDestroy(){
 		queue = null;
-		taskThread = null;//任务线程
 		timeOutTimer = null;//超时计时器
 		params = null;
 		result = null;

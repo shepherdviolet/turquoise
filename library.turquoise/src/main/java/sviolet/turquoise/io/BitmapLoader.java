@@ -329,11 +329,11 @@ public abstract class BitmapLoader {
     public void destroy() {
         checkIsOpen();
         if (mNetLoadQueue != null) {
-            mNetLoadQueue.cancelAll();
+            mNetLoadQueue.destroy();
             mNetLoadQueue = null;
         }
         if (mDiskCacheQueue != null) {
-            mDiskCacheQueue.cancelAll();
+            mDiskCacheQueue.destroy();
             mDiskCacheQueue = null;
         }
         if (mDiskLruCache != null) {

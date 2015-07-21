@@ -56,7 +56,7 @@ public class AsyncImageActivity extends TActivity {
                     .setRamCache(0.125f)//缓存占1/8内存, 约30-40张
                     .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
                     .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
-                    .setLogger(getLogger())//打印日志
+//                    .setLogger(getLogger())//打印日志
                     .open();//启动(必须)
             //设置适配器, 传入图片加载器, 图片解码工具
             listView.setAdapter(new AsyncImageAdapter(this, makeItemList(), mBitmapLoader, getCachedBitmapUtils()));
