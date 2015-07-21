@@ -433,35 +433,40 @@ public abstract class BitmapLoader {
 
         @Override
         public void onPostExecute(Object result, boolean isCancel) {
-            if (mOnLoadCompleteListener != null) {
-                String cacheKey = getCacheKey(url, key);
-                //若任务被取消
-                if (isCancel) {
+            String cacheKey = getCacheKey(url, key);
+            //若任务被取消
+            if (isCancel) {
+                if (mOnLoadCompleteListener != null)
                     mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
+                if (mCachedBitmapUtils != null)
                     mCachedBitmapUtils.unused(cacheKey);
-                    if (logger != null) {
-                        logger.d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
-                    }
-                    return;
+                if (logger != null) {
+                    logger.d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
                 }
-                switch ((int) result) {
-                    case RESULT_SUCCEED:
+                return;
+            }
+            switch ((int) result) {
+                case RESULT_SUCCEED:
+                    if (mOnLoadCompleteListener != null && mCachedBitmapUtils != null)
                         mOnLoadCompleteListener.onLoadSucceed(url, key, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
-                        if (logger != null) {
-                            logger.d("[BitmapLoader]load:succeed:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
-                        }
-                        break;
-                    case RESULT_FAILED:
+                    if (logger != null) {
+                        logger.d("[BitmapLoader]load:succeed:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                    }
+                    break;
+                case RESULT_FAILED:
+                    if (mOnLoadCompleteListener != null)
                         mOnLoadCompleteListener.onLoadFailed(url, key, getParams());
+                    if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
-                        break;
-                    case RESULT_CANCELED:
+                    break;
+                case RESULT_CANCELED:
+                    if (mOnLoadCompleteListener != null)
                         mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
+                    if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
-                        break;
-                    default:
-                        break;
-                }
+                    break;
+                default:
+                    break;
             }
         }
     }
@@ -555,35 +560,40 @@ public abstract class BitmapLoader {
 
         @Override
         public void onPostExecute(Object result, boolean isCancel) {
-            if (mOnLoadCompleteListener != null) {
-                String cacheKey = getCacheKey(url, key);
-                //若任务被取消
-                if (isCancel) {
+            String cacheKey = getCacheKey(url, key);
+            //若任务被取消
+            if (isCancel) {
+                if (mOnLoadCompleteListener != null)
                     mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
+                if (mCachedBitmapUtils != null)
                     mCachedBitmapUtils.unused(cacheKey);
-                    if (logger != null) {
-                        logger.d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
-                    }
-                    return;
+                if (logger != null) {
+                    logger.d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
                 }
-                switch ((int) result) {
-                    case RESULT_SUCCEED:
+                return;
+            }
+            switch ((int) result) {
+                case RESULT_SUCCEED:
+                    if (mOnLoadCompleteListener != null && mCachedBitmapUtils != null)
                         mOnLoadCompleteListener.onLoadSucceed(url, key, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
-                        if (logger != null) {
-                            logger.d("[BitmapLoader]load:succeed:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
-                        }
-                        break;
-                    case RESULT_FAILED:
+                    if (logger != null) {
+                        logger.d("[BitmapLoader]load:succeed:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                    }
+                    break;
+                case RESULT_FAILED:
+                    if (mOnLoadCompleteListener != null)
                         mOnLoadCompleteListener.onLoadFailed(url, key, getParams());
+                    if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
-                        break;
-                    case RESULT_CANCELED:
+                    break;
+                case RESULT_CANCELED:
+                    if (mOnLoadCompleteListener != null)
                         mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
+                    if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
-                        break;
-                    default:
-                        break;
-                }
+                    break;
+                default:
+                    break;
             }
         }
     }
