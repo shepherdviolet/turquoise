@@ -1,8 +1,11 @@
 package sviolet.turquoise.utils.crypt;
 
+import android.annotation.SuppressLint;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 
 import javax.crypto.BadPaddingException;
@@ -12,6 +15,14 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
+/**
+ * 
+ * Android专用固定AES加密
+ * 
+ * @author S.Violet (ZhuQinChao)
+ *
+ */
 
 public class AESCipher{
 	
@@ -30,15 +41,22 @@ public class AESCipher{
 	/**
 	 * 生成随机密钥(不同系统平台相同password生成结果不同,跨平台可以使用MD5/SHA1生成密钥)<p>
 	 * 
-	 * android4.2以上(API17),系统改为真随机,使用该代码生成密钥每次都不同，需固定请使用sviolet.lib.android.crypt
+	 * android专用，该代码生成的密钥为固定
 	 * 
 	 * @param password 随机种子
 	 * @return
 	 * @throws NoSuchAlgorithmException
+	 * @throws NoSuchProviderException 
 	 */
-	public static byte[] makeRandomKey(byte[] password) throws NoSuchAlgorithmException{
+	@SuppressLint("TrulyRandom")
+	public static byte[] makeRandomKey(byte[] password) throws NoSuchAlgorithmException, NoSuchProviderException{
 		KeyGenerator kgen = KeyGenerator.getInstance("AES"); 
-		SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");  
+		SecureRandom secureRandom = null;
+		if (android.os.Build.VERSION.SDK_INT >=  17) {  
+			secureRandom = SecureRandom.getInstance("SHA1PRNG", "Crypto");  
+	    } else {  
+	    	secureRandom = SecureRandom.getInstance("SHA1PRNG");  
+	    }   
         secureRandom.setSeed(password); 
 		kgen.init(128,secureRandom); 
 		SecretKey secretKey = kgen.generateKey(); 
