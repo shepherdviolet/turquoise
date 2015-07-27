@@ -239,7 +239,6 @@ public class BitmapUtils {
         //回收源Bitmap
         if (recycle && bitmap != null && !bitmap.isRecycled()) {
             bitmap.recycle();
-            System.gc();
         }
         return result;
     }
@@ -258,7 +257,6 @@ public class BitmapUtils {
         //回收源Bitmap
         if (recycle && !bitmap.isRecycled()) {
             bitmap.recycle();
-            System.gc();
         }
         return result;
     }
@@ -278,7 +276,6 @@ public class BitmapUtils {
         //回收源Bitmap
         if (recycle && !bitmap.isRecycled()) {
             bitmap.recycle();
-            System.gc();
         }
         return result;
     }
@@ -318,7 +315,6 @@ public class BitmapUtils {
         //回收源Bitmap
         if (recycle && !bitmap.isRecycled()) {
             bitmap.recycle();
-            System.gc();
         }
         return result;
     }
@@ -415,7 +411,6 @@ public class BitmapUtils {
                     //回收源Bitmap
                     if (recycle && !bitmap.isRecycled()) {
                         bitmap.recycle();
-                        System.gc();
                     }
                 } catch (IOException ignored) {
                 }
@@ -484,7 +479,6 @@ public class BitmapUtils {
                     //回收源Bitmap
                     if (recycle && !bitmap.isRecycled()) {
                         bitmap.recycle();
-                        System.gc();
                     }
                 } catch (IOException ignored) {
                 }

@@ -154,7 +154,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         //回收资源
         if (bitmap != null && !bitmap.isRecycled()) {
             bitmap.recycle();
-            System.gc();
         }
         //打印内存使用情况
         if (logger != null)
@@ -202,8 +201,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
     @Override
     public Bitmap remove(String key) {
-        //GC标志
-        boolean needGc = false;
         Bitmap bitmap;
         Bitmap recyclerBitmap;
         synchronized (this) {
@@ -218,16 +215,10 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         //回收资源
         if (bitmap != null && !bitmap.isRecycled()) {
             bitmap.recycle();
-            needGc = true;
         }
         //回收"回收站"中的资源
         if (recyclerBitmap != null && !recyclerBitmap.isRecycled()) {
             recyclerBitmap.recycle();
-            needGc = true;
-        }
-        //GC
-        if (needGc) {
-            System.gc();
         }
         //返回空
         return null;
@@ -262,8 +253,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             setSize(0);
             recyclerSize = 0;
         }
-        //GC
-        System.gc();
         //打印日志
         if (logger != null){
             logger.i("[BitmapCache] recycled:" + counter);
@@ -381,7 +370,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
                     //回收不再使用的Bitmap
                     if (value != null && !value.isRecycled()) {
                         value.recycle();
-                        System.gc();
                     }
                     //清除标记
                     unusedMap.remove(key);
@@ -392,7 +380,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
                         if (recyclerBitmap != null && !recyclerBitmap.isRecycled()) {
                             recyclerSize -= sizeOf(key, recyclerBitmap);
                             recyclerBitmap.recycle();
-                            System.gc();
                         }
                     }
                     //放入回收站

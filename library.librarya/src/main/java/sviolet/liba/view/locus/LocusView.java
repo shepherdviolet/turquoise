@@ -634,8 +634,6 @@ public class LocusView extends View {
 		recycleBitmap(locus_line_semicircle_error);
 		recycleBitmap(locus_arrow);
 		recycleBitmap(locus_line_error);
-
-		System.gc();
 	}
 	
 	public void recycleBitmap(Bitmap bitmap){

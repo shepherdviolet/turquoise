@@ -304,12 +304,30 @@ public class CommonUtils {
 	}
 
 	/**
-	 * 快速打开联系人列表
+	 * 账号选择
+	 * 
+	 * @param acNum
+	 * @param acNickName
+	 * @return
 	 */
-	public static void openContacts(Activity context) {
-		Intent it = new Intent(Intent.ACTION_PICK);
-		it.setType(ContactsContract.Contacts.CONTENT_TYPE);
-		context.startActivityForResult(it, 108);
+	public static String convertSelectorAccount(String acNum, String acNickName) {
+		if (CommonUtils.isEmpty(acNickName))
+			return acNum;
+		else
+			return acNum + "/" + acNickName;
+	}
+
+	/**
+	 * 从选择的账号信息中得到账号
+	 * 
+	 * @param selectorAccNum
+	 * @return
+	 */
+	public static String getRealAccNum(String selectorAccNum) {
+		if (selectorAccNum.contains("/"))
+			return selectorAccNum.split("/")[0];
+		else
+			return selectorAccNum;
 	}
 
 	/**
@@ -325,7 +343,7 @@ public class CommonUtils {
 
 	/**
 	 * 从电话薄账户获取手机号码
-	 * 
+	 *
 	 * @param context
 	 * @param data
 	 * @return
@@ -355,68 +373,4 @@ public class CommonUtils {
 		}
 		return s;
 	}
-
-	/**
-	 * 打电话
-	 * 
-	 * @param number
-	 */
-	public static void call(Activity activity, String number) {
-		Intent intent = new Intent();
-		intent.setAction(Intent.ACTION_CALL);
-		intent.setData(Uri.parse("tel:" + number));
-		activity.startActivity(intent);
-	}
-	
-	/**
-	 * 打电话(不直接拨打)
-	 * 
-	 * @param number
-	 */
-	public static void dial(Activity activity, String number) {
-		Intent intent = new Intent();
-		intent.setAction(Intent.ACTION_DIAL);
-		intent.setData(Uri.parse("tel:" + number));
-		activity.startActivity(intent);
-	}
-	
-	/**
-	 * 账号选择
-	 * 
-	 * @param acNum
-	 * @param acNickName
-	 * @return
-	 */
-	public static String convertSelectorAccount(String acNum, String acNickName) {
-		if (CommonUtils.isEmpty(acNickName))
-			return acNum;
-		else
-			return acNum + "/" + acNickName;
-	}
-
-	/**
-	 * 从选择的账号信息中得到账号
-	 * 
-	 * @param selectorAccNum
-	 * @return
-	 */
-	public static String getRealAccNum(String selectorAccNum) {
-		if (selectorAccNum.contains("/"))
-			return selectorAccNum.split("/")[0];
-		else
-			return selectorAccNum;
-	}
-
-	/**
-	 * 打开浏览器
-	 * 
-	 * @param activity
-	 * @param url
-	 */
-	public static void openBrowser(Activity activity, String url) {
-		Uri uri = Uri.parse(url);
-		Intent it = new Intent(Intent.ACTION_VIEW, uri);
-		activity.startActivity(it);
-	}
-
 }
