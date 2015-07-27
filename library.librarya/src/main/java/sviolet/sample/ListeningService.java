@@ -1,4 +1,4 @@
-package sviolet.demoa;
+package sviolet.sample;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

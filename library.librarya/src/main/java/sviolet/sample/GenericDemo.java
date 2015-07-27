@@ -1,4 +1,4 @@
-package sviolet.demoa;
+package sviolet.sample;
 
 import java.lang.reflect.ParameterizedType;
 

@@ -1,4 +1,4 @@
-package sviolet.demoa;
+package sviolet.sample;
 
 /**
  * 线程安全的动态单例Demo<p>

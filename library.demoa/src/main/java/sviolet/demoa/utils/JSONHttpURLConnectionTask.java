@@ -1,4 +1,4 @@
-package sviolet.demoa.net;
+package sviolet.demoa.utils;
 
 import java.io.IOException;
 import java.io.InputStream;

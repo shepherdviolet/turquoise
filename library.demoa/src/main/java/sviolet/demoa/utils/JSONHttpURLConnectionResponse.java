@@ -1,4 +1,4 @@
-package sviolet.demoa.net;
+package sviolet.demoa.utils;
 
 import org.json.JSONObject;
 
