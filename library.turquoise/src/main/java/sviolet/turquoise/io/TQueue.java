@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 
 /**
  * 任务队列 (必须在主线程实例化)<br/>
@@ -517,7 +518,10 @@ public class TQueue {
         if (dispatchThreadPool == null){
             dispatchThreadPool = Executors.newSingleThreadExecutor();
         }
-        dispatchThreadPool.execute(runnable);
+        try {
+            dispatchThreadPool.execute(runnable);
+        }catch(RejectedExecutionException ignored){
+        }
     }
 
     /**************************************************************************
@@ -536,7 +540,10 @@ public class TQueue {
         if (taskThreadPool == null){
             taskThreadPool = Executors.newCachedThreadPool();
         }
-        taskThreadPool.execute(runnable);
+        try {
+            taskThreadPool.execute(runnable);
+        }catch(RejectedExecutionException ignored){
+        }
     }
 
     /**
