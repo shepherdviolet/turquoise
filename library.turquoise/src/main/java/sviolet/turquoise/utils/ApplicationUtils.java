@@ -19,29 +19,6 @@ import java.io.File;
 public class ApplicationUtils {
 
     /**
-     * 应用对应的磁盘缓存路径<br/>
-     * 扩展储存存在时, 返回/sdcard/Android/data/<application package>/cache/uniqueName
-     * 扩展储存不存在, 返回/data/data/<application package>/cache/uniqueName
-     *
-     * @param context
-     * @param uniqueName 缓存路径下的子目录
-     */
-    public static File getDiskCacheDir(Context context, String uniqueName) {
-        String cachePath = null;
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
-                || !Environment.isExternalStorageRemovable()) {
-            try {
-                cachePath = context.getExternalCacheDir().getPath();
-            }catch(NullPointerException ignored){
-            }
-        }
-        if (cachePath == null){
-            cachePath = context.getCacheDir().getPath();
-        }
-        return new File(cachePath + File.separator + uniqueName);
-    }
-
-    /**
      * 获得应用版本<br/>
      * 默认返回1
      *

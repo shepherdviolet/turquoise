@@ -17,6 +17,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.text.TextPaint;
 import android.util.Base64;
+import android.view.View;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -513,6 +514,24 @@ public class BitmapUtils {
         intent.setData(uri);
         context.sendBroadcast(intent);
     }
+
+    /**
+     * 获取View的Bitmap缓存图
+     * @param view view
+     */
+    public static Bitmap getViewCache(View view){
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bitmap = view.getDrawingCache();
+        Bitmap result = bitmap.copy(Config.ARGB_8888, true);
+        view.destroyDrawingCache();
+        view.setDrawingCacheEnabled(false);
+        return result;
+    }
+
+    /**********************************************
+     * interface
+     */
 
     /**
      * 图片保存结束监听

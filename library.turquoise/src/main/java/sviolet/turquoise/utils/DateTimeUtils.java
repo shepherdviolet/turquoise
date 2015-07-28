@@ -2,6 +2,7 @@ package sviolet.turquoise.utils;
 
 import android.os.SystemClock;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -140,6 +141,21 @@ public class DateTimeUtils {
         SimpleDateFormat formater = new SimpleDateFormat(template, Locale.SIMPLIFIED_CHINESE);
         return formater.format(date);
     }
+
+	/*******************************************
+	 *  String转换为日期
+	 */
+
+	/**
+	 * 将字符串按格式转换为Date
+	 * @param dateStr 日期字符串
+	 * @param pattern 格式, 例如yyyy-MM-dd HH-mm-ss
+	 * @throws ParseException
+	 */
+	public static Date parseDate(String dateStr, String pattern) throws ParseException {
+		SimpleDateFormat formater = new SimpleDateFormat(pattern, Locale.SIMPLIFIED_CHINESE);
+		return formater.parse(dateStr);
+	}
 
     /********************************************
      * 日期计算

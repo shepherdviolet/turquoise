@@ -12,6 +12,7 @@ import sviolet.turquoise.app.Logger;
 import sviolet.turquoise.io.cache.DiskLruCache;
 import sviolet.turquoise.utils.ApplicationUtils;
 import sviolet.turquoise.utils.CachedBitmapUtils;
+import sviolet.turquoise.utils.DirectoryUtils;
 
 /**
  * [抽象类]图片双缓存网络加载器<br/>
@@ -186,7 +187,7 @@ public abstract class BitmapLoader {
      * @throws IOException 磁盘缓存启动失败抛出异常
      */
     public BitmapLoader open() throws IOException {
-        this.mDiskLruCache = DiskLruCache.open(ApplicationUtils.getDiskCacheDir(context, diskCacheName),
+        this.mDiskLruCache = DiskLruCache.open(DirectoryUtils.getCacheDir(context, diskCacheName),
                 ApplicationUtils.getAppVersion(context), 1, diskCacheSize);
         this.mCachedBitmapUtils = new CachedBitmapUtils(context, ramCacheSizePercent);
         this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency).setVolumeMax(diskLoadVolume).waitCancelingTask(true).overrideSameKeyTask(false);
@@ -364,7 +365,7 @@ public abstract class BitmapLoader {
      * @throws IOException
      */
     public static void wipeDiskCache(Context context, String diskCacheName) throws IOException {
-        DiskLruCache.deleteContents(ApplicationUtils.getDiskCacheDir(context, diskCacheName));
+        DiskLruCache.deleteContents(DirectoryUtils.getCacheDir(context, diskCacheName));
     }
 
     /******************************************
