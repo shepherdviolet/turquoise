@@ -79,7 +79,8 @@ public class GuideActivity extends TActivity {
                 应磁盘缓存区无读写操作, 否则会抛出异常.
             */
             try {
-                BitmapLoader.wipeDiskCache(this, "AsyncImageActivity");
+//                BitmapLoader.wipeDiskCache(this, "AsyncImageActivity");//若有外部储存, 清除外部缓存, 否则清除内部缓存
+                BitmapLoader.wipeInnerDiskCache(this, "AsyncImageActivity");//强制清除内部储存的缓存
                 Toast.makeText(getApplicationContext(), "cache wipe complete", Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 Toast.makeText(getApplicationContext(), "cache wipe failed", Toast.LENGTH_SHORT).show();
