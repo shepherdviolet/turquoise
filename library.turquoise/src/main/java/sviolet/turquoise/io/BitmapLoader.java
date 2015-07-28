@@ -92,6 +92,7 @@ public abstract class BitmapLoader {
     private int diskLoadVolume = 10;//磁盘加载等待队列容量
     private int netLoadConcurrency = 3;//网络加载任务并发量
     private int netLoadVolume = 10;//网络加载等待队列容量
+    private File cacheDir;//缓存路径
     private Logger logger;//日志打印器
 
     /**
@@ -138,6 +139,7 @@ public abstract class BitmapLoader {
     public BitmapLoader(Context context, String diskCacheName) {
         this.context = context;
         this.diskCacheName = diskCacheName;
+        cacheDir = DirectoryUtils.getCacheDir(context, diskCacheName);
     }
 
     /**
@@ -171,6 +173,15 @@ public abstract class BitmapLoader {
     }
 
     /**
+     * 设置磁盘缓存路径为内部储存<br/>
+     * 若不设置, 则优先选择外部储存, 当外部储存不存在时使用内部储存
+     */
+    public BitmapLoader setDiskCacheInner(){
+        cacheDir = new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + diskCacheName);
+        return this;
+    }
+
+    /**
      * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
      */
     public BitmapLoader setLogger(Logger logger) {
@@ -187,8 +198,7 @@ public abstract class BitmapLoader {
      * @throws IOException 磁盘缓存启动失败抛出异常
      */
     public BitmapLoader open() throws IOException {
-        this.mDiskLruCache = DiskLruCache.open(DirectoryUtils.getCacheDir(context, diskCacheName),
-                ApplicationUtils.getAppVersion(context), 1, diskCacheSize);
+        this.mDiskLruCache = DiskLruCache.open(cacheDir, ApplicationUtils.getAppVersion(context), 1, diskCacheSize);
         this.mCachedBitmapUtils = new CachedBitmapUtils(context, ramCacheSizePercent);
         this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency).setVolumeMax(diskLoadVolume).waitCancelingTask(true).overrideSameKeyTask(false);
         this.mNetLoadQueue = new TQueue(true, netLoadConcurrency).setVolumeMax(netLoadVolume).waitCancelingTask(true).overrideSameKeyTask(false);
@@ -356,6 +366,7 @@ public abstract class BitmapLoader {
 
     /**
      * [慎用]清除磁盘缓存数据<br/>
+     * 若外部储存存在, 则清除外部储存的缓存, 否则清除内部储存的缓存<Br/>
      * <br/>
      * 注意:在该方法调用期间, 若对该磁盘缓存区进行读写操作, 可能会
      * 抛出异常. 请确保调用期间该磁盘缓存区不被使用.
@@ -366,6 +377,21 @@ public abstract class BitmapLoader {
      */
     public static void wipeDiskCache(Context context, String diskCacheName) throws IOException {
         DiskLruCache.deleteContents(DirectoryUtils.getCacheDir(context, diskCacheName));
+    }
+
+    /**
+     * [慎用]清除磁盘缓存数据<br/>
+     * 强制清除内部储存的缓存<br/>
+     * <br/>
+     * 注意:在该方法调用期间, 若对该磁盘缓存区进行读写操作, 可能会
+     * 抛出异常. 请确保调用期间该磁盘缓存区不被使用.
+     *
+     * @param context context
+     * @param diskCacheName 缓存目录名
+     * @throws IOException
+     */
+    public static void wipeInnerDiskCache(Context context, String diskCacheName) throws IOException {
+        DiskLruCache.deleteContents(new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + diskCacheName));
     }
 
     /******************************************
