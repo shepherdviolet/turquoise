@@ -11,6 +11,42 @@ import java.io.File;
  */
 public class DirectoryUtils {
 
+    /************************
+     * 应用文件目录
+     */
+
+    /**
+     * 应用对应外部文件路径
+     * @param context context
+     * @return
+     */
+    public static File getExternalFilesDir(Context context){
+        return context.getExternalFilesDir(null);
+    }
+
+    /**
+     * 应用对应外部文件路径
+     * @param context context
+     * @param type Environment.DIRECTORY_...
+     * @return
+     */
+    public static File getExternalFilesDir(Context context, String type){
+        return context.getExternalFilesDir(type);
+    }
+
+    /**
+     * 应用对应内部文件路径
+     * @param context
+     * @return
+     */
+    public static File getFileDir(Context context){
+        return context.getFilesDir();
+    }
+
+    /************************
+     * 缓存目录
+     */
+
     /**
      * 应用对应的缓存路径, 动态选择优先外部储存<br/>
      * 外部储存存在时, 返回/sdcard/Android/data/<application package>/cache/subDir
