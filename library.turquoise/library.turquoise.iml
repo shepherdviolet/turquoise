@@ -89,6 +89,7 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" exported="" name="dom4j-1.6.1" level="project" />
     <orderEntry type="library" exported="" name="gson-2.2.4" level="project" />
   </component>
 </module>
