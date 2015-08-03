@@ -9,24 +9,24 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import java.lang.reflect.Field;
-
 import sviolet.turquoise.annotation.ActivitySettings;
-import sviolet.turquoise.annotation.ResourceId;
 import sviolet.turquoise.utils.CachedBitmapUtils;
 import sviolet.turquoise.utils.ApplicationUtils;
 import sviolet.turquoise.utils.DeviceUtils;
+import sviolet.turquoise.utils.InjectUtils;
 
 /**
  * [组件扩展]Activity<br>
  * <br>
+ * 0.Activity注释式设置<br>
+ * <br/>
  * 1.Activity布局文件注入<br>
  * 注入Activity@ResourceId注释对应的布局文件<br>
  * <br>
  * 2.成员View对象注入<br>
  * 注入带@ResourceId注释的成员View对象<br>
  * <br>
- * 3.Activity注释式设置<br>
+ *
  * @see sviolet.turquoise.annotation.ActivitySettings;
  *
  * @author S.Violet
@@ -45,8 +45,7 @@ public abstract class TActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         windowSetting();//窗口设置
         super.onCreate(savedInstanceState);
-        injectContentView();// 注入Activity布局
-        injectViewId(getClass());// 注入成员View
+        InjectUtils.inject(this);
 
         //将自身加入TApplication
         if (getApplication() instanceof TApplication){
@@ -127,54 +126,6 @@ public abstract class TActivity extends Activity {
             }
         }
         return false;
-    }
-
-    /**
-     * 根据Activity的@ResourceId标签, 注入Activity的布局文件
-     */
-    protected void injectContentView() {
-        if (this.getClass().isAnnotationPresent(ResourceId.class)) {
-            try {
-                int layoutId = this.getClass().getAnnotation(ResourceId.class).value();
-                super.setContentView(layoutId);
-            } catch (Exception e) {
-                throw new InjectException("[TActivity]inject ContentView failed", e);
-            }
-        }
-    }
-
-    /**
-     * 根据Activity中成员变量的@ResourceId标签, 注入对应ID的View对象
-     */
-    protected void injectViewId(Class<?> clazz) {
-
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields)
-            if (field.isAnnotationPresent(ResourceId.class))
-                injectView(field);
-
-        Class superClazz = clazz.getSuperclass();
-        if (!TActivity.class.equals(superClazz)) {
-            injectViewId(superClazz);
-        }
-    }
-
-    /**
-     * 根据field的标签注入View对象
-     *
-     * @param field field
-     */
-    private void injectView(Field field) {
-        try {
-            int resourceId = field.getAnnotation(ResourceId.class).value();
-            View view = findViewById(resourceId);
-            if (view == null)
-                throw new InjectException("[TActivity]inject view [" + field.getName() + "] failed, can't find resource");
-            field.setAccessible(true);
-            field.set(this, view);
-        } catch (IllegalAccessException | IllegalArgumentException e) {
-            throw new InjectException("[TActivity]inject view [" + field.getName() + "] failed", e);
-        }
     }
 
     @Override
