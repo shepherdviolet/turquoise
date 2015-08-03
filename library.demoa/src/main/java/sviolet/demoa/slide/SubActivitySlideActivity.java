@@ -5,8 +5,8 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.annotation.ActivitySettings;
-import sviolet.turquoise.annotation.ResourceId;
+import sviolet.turquoise.annotation.app.ActivitySettings;
+import sviolet.turquoise.annotation.inject.ResourceId;
 import sviolet.turquoise.app.TActivity;
 import sviolet.turquoise.utils.MeasureUtils;
 import sviolet.turquoise.view.listener.OnSlideStopListener;

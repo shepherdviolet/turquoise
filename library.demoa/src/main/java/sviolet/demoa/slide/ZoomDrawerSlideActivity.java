@@ -11,8 +11,8 @@ import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.common.EmulateListAdapter;
 import sviolet.demoa.slide.view.MySlideView;
 import sviolet.demoa.slide.view.ZoomRelativeLayoutDrawer;
-import sviolet.turquoise.annotation.ActivitySettings;
-import sviolet.turquoise.annotation.ResourceId;
+import sviolet.turquoise.annotation.app.ActivitySettings;
+import sviolet.turquoise.annotation.inject.ResourceId;
 import sviolet.turquoise.app.TActivity;
 import sviolet.turquoise.utils.MeasureUtils;
 

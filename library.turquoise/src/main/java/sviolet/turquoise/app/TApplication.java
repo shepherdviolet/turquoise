@@ -17,9 +17,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import sviolet.turquoise.annotation.ApplicationSettings;
-import sviolet.turquoise.annotation.DebugSettings;
-import sviolet.turquoise.annotation.ReleaseSettings;
+import sviolet.turquoise.annotation.app.ApplicationSettings;
+import sviolet.turquoise.annotation.app.DebugSettings;
+import sviolet.turquoise.annotation.app.ReleaseSettings;
 import sviolet.turquoise.utils.ApplicationUtils;
 
 /**

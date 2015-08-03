@@ -1,4 +1,4 @@
-package sviolet.turquoise.annotation;
+package sviolet.turquoise.annotation.inject;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * [TActivity注释]资源ID
+ * [InjectUtils注释]资源ID
  * 
  * @author S.Violet
  */

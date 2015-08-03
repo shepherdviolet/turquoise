@@ -16,8 +16,8 @@ import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
 import sviolet.demoa.image.AsyncImageActivity;
 import sviolet.demoa.slide.SlideActivity;
-import sviolet.turquoise.annotation.ActivitySettings;
-import sviolet.turquoise.annotation.ResourceId;
+import sviolet.turquoise.annotation.app.ActivitySettings;
+import sviolet.turquoise.annotation.inject.ResourceId;
 import sviolet.turquoise.app.TActivity;
 import sviolet.turquoise.io.BitmapLoader;
 

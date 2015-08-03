@@ -4,20 +4,19 @@ import android.app.Activity;
 import android.view.View;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-import sviolet.turquoise.annotation.ResourceId;
+import sviolet.turquoise.annotation.inject.OnClickMethod;
+import sviolet.turquoise.annotation.inject.ResourceId;
 import sviolet.turquoise.app.InjectException;
 
 /**
- * Activity的布局/View/监听器注入工具<br/>
- * 根据Activity的@ResourceId / @OnClick ...标签注入对象<br/>
+ * Activity的注释式注入工具<br/>
  * <br/>
- * 1.Activity布局文件注入<br>
- * 注入Activity@ResourceId注释对应的布局文件<br>
- * <br>
- * 2.成员View对象注入<br>
- * 注入带@ResourceId注释的成员View对象<br>
- * <br>
+ * 1.根据"类"的@ResourceId注释注入对应的Activity布局文件<br/>
+ * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
+ * 3.根据"成员方法"的@OnClickMethod注释绑定对应View的点击监听器, 方法仅有一个View参数时传入OnClickListener的View参数<Br/>
  *
  * Created by S.Violet on 2015/8/3.
  */
@@ -28,14 +27,16 @@ public class InjectUtils {
      * @param activity
      */
     public static void inject(Activity activity){
-        InjectUtils.injectContentView(activity);// 注入Activity布局
-        InjectUtils.injectViewId(activity);// 注入成员View
+        InjectUtils.injectClassAnnotation(activity);// 注入类的注释
+        InjectUtils.injectFieldAnnotation(activity);// 注入成员变量的注释
+        InjectUtils.injectMethodAnnotation(activity);// 注入成员方法的注释
     }
 
     /**
-     * 根据Activity的@ResourceId标签, 注入Activity的布局文件
+     * 根据"类"的注释注入<Br/>
+     * 1.根据"类"的@ResourceId注释注入对应的Activity布局文件<br/>
      */
-    public static void injectContentView(Activity activity) {
+    public static void injectClassAnnotation(Activity activity) {
         if (activity.getClass().isAnnotationPresent(ResourceId.class)) {
             try {
                 int layoutId = activity.getClass().getAnnotation(ResourceId.class).value();
@@ -47,23 +48,25 @@ public class InjectUtils {
     }
 
     /**
-     * 根据Activity中成员变量的@ResourceId标签, 注入对应ID的View对象
+     * 根据成员变量的注释注入<br/>
+     * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
      */
-    public static void injectViewId(Activity activity){
-        injectViewId(activity, activity.getClass());
+    public static void injectFieldAnnotation(Activity activity){
+        injectFieldAnnotation(activity, activity.getClass());
     }
 
     /**
-     * 根据Activity中成员变量的@ResourceId标签, 注入对应ID的View对象
+     * 根据成员变量的注释注入<br/>
      */
-    private static void injectViewId(Activity activity, Class<?> clazz) {
-
+    private static void injectFieldAnnotation(Activity activity, Class<?> clazz) {
         Field[] fields = clazz.getDeclaredFields();
+        int resourceId;
+        View view;
         for (Field field : fields) {
             if (field.isAnnotationPresent(ResourceId.class)) {
                 try {
-                    int resourceId = field.getAnnotation(ResourceId.class).value();
-                    View view = activity.findViewById(resourceId);
+                    resourceId = field.getAnnotation(ResourceId.class).value();
+                    view = activity.findViewById(resourceId);
                     if (view == null)
                         throw new InjectException("[InjectUtils]inject view [" + field.getName() + "] failed, can't find resource");
                     field.setAccessible(true);
@@ -73,10 +76,57 @@ public class InjectUtils {
                 }
             }
         }
-
         Class superClazz = clazz.getSuperclass();
         if (!Activity.class.equals(superClazz)) {
-            injectViewId(activity, superClazz);
+            injectFieldAnnotation(activity, superClazz);
+        }
+    }
+
+    /**
+     * 根据成员方法的注释注入<br/>
+     * 3.根据"成员方法"的@OnClickMethod注释绑定对应View的点击监听器<Br/>
+     */
+    public static void injectMethodAnnotation(Activity activity){
+        injectMethodAnnotation(activity, activity.getClass());
+    }
+
+    /**
+     * 根据成员方法的注释注入<br/>
+     */
+    private static void injectMethodAnnotation(final Activity activity, Class<?> clazz){
+        Method[] methods = clazz.getDeclaredMethods();
+        int resourceId;
+        View view;
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(OnClickMethod.class)){
+                resourceId = method.getAnnotation(OnClickMethod.class).value();
+                view = activity.findViewById(resourceId);
+                if (view == null)
+                    throw new InjectException("[InjectUtils]inject [" + method.getName() + "]'s OnClickMethod failed, can't find resource");
+                final Method finalMethod = method;
+                view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            final Class<?>[] parameterTypes = finalMethod.getParameterTypes();
+                            finalMethod.setAccessible(true);
+                            if (parameterTypes.length == 1 && View.class.equals(parameterTypes[0])) {
+                                finalMethod.invoke(activity, v);
+                            }else{
+                                finalMethod.invoke(activity, new Object[parameterTypes.length]);
+                            }
+                        }catch(IllegalAccessException e){
+                            throw new InjectException("[InjectUtils]invoke method [" + finalMethod.getName() + "] failed");
+                        }catch(InvocationTargetException e){
+                            throw new InjectException("[InjectUtils]invoke method [" + finalMethod.getName() + "] failed");
+                        }
+                    }
+                });
+            }
+        }
+        Class superClazz = clazz.getSuperclass();
+        if (!Activity.class.equals(superClazz)) {
+            injectMethodAnnotation(activity, superClazz);
         }
     }
 

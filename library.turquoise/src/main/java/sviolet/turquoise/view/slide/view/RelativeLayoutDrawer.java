@@ -1,6 +1,5 @@
 package sviolet.turquoise.view.slide.view;
 
-import sviolet.turquoise.annotation.ResourceId;
 import sviolet.turquoise.view.listener.OnInitCompleteListener;
 import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.SlideView;

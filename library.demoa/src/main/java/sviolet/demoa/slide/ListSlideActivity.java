@@ -6,8 +6,8 @@ import android.widget.ListView;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.slide.view.MySlideListAdapter;
-import sviolet.turquoise.annotation.ActivitySettings;
-import sviolet.turquoise.annotation.ResourceId;
+import sviolet.turquoise.annotation.app.ActivitySettings;
+import sviolet.turquoise.annotation.inject.ResourceId;
 import sviolet.turquoise.app.TActivity;
 
 /**

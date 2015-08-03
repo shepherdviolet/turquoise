@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import sviolet.turquoise.annotation.ActivitySettings;
+import sviolet.turquoise.annotation.app.ActivitySettings;
 import sviolet.turquoise.utils.CachedBitmapUtils;
 import sviolet.turquoise.utils.ApplicationUtils;
 import sviolet.turquoise.utils.DeviceUtils;
@@ -27,7 +27,7 @@ import sviolet.turquoise.utils.InjectUtils;
  * 注入带@ResourceId注释的成员View对象<br>
  * <br>
  *
- * @see sviolet.turquoise.annotation.ActivitySettings;
+ * @see ActivitySettings ;
  *
  * @author S.Violet
  */

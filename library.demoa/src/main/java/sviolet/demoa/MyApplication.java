@@ -1,8 +1,8 @@
 package sviolet.demoa;
 
-import sviolet.turquoise.annotation.ApplicationSettings;
-import sviolet.turquoise.annotation.DebugSettings;
-import sviolet.turquoise.annotation.ReleaseSettings;
+import sviolet.turquoise.annotation.app.ApplicationSettings;
+import sviolet.turquoise.annotation.app.DebugSettings;
+import sviolet.turquoise.annotation.app.ReleaseSettings;
 import sviolet.turquoise.app.TApplication;
 
 @ApplicationSettings(
