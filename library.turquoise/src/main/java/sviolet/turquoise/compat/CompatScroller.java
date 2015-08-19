@@ -1,9 +1,4 @@
 /*
- * for lower API, from android.widget.Scroller (API 22)
- * 兼容低版本的Scroller, 取自android.widget.Scroller (API 22)
- */
-
-/*
  * Copyright (C) 2006 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,15 +19,16 @@ package sviolet.turquoise.compat;
 import android.content.Context;
 import android.hardware.SensorManager;
 import android.os.Build;
-import android.util.FloatMath;
 import android.view.ViewConfiguration;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
+import android.widget.OverScroller;
+import android.widget.Scroller;
 
 
 /**
- * <p>This class encapsulates scrolling. You can use scrollers ({@link CompatScroller}
- * or OverScroller to collect the data you need to produce a scrolling
+ * <p>This class encapsulates scrolling. You can use scrollers ({@link Scroller}
+ * or {@link OverScroller}) to collect the data you need to produce a scrolling
  * animation&mdash;for example, in response to a fling gesture. Scrollers track
  * scroll offsets for you over time, but they don't automatically apply those
  * positions to your view. It's your responsibility to get and apply new
@@ -40,7 +36,7 @@ import android.view.animation.Interpolator;
  *
  * <p>Here is a simple example:</p>
  *
- * <pre> private CompatScroller mScroller = new CompatScroller(context);
+ * <pre> private Scroller mScroller = new Scroller(context);
  * ...
  * public void zoomIn() {
  *     // Revert any animation currently in progress
@@ -65,7 +61,7 @@ import android.view.animation.Interpolator;
  *    ...
  * }</pre>
  */
-public class CompatScroller {
+public class CompatScroller  {
     private final Interpolator mInterpolator;
 
     private int mMode;
@@ -151,14 +147,14 @@ public class CompatScroller {
     }
 
     /**
-     * Create a CompatScroller with the default duration and interpolator.
+     * Create a Scroller with the default duration and interpolator.
      */
     public CompatScroller(Context context) {
         this(context, null);
     }
 
     /**
-     * Create a CompatScroller with the specified interpolator. If the interpolator is
+     * Create a Scroller with the specified interpolator. If the interpolator is
      * null, the default (viscous) interpolator will be used. "Flywheel" behavior will
      * be in effect for apps targeting Honeycomb or newer.
      */
@@ -168,7 +164,7 @@ public class CompatScroller {
     }
 
     /**
-     * Create a CompatScroller with the specified interpolator. If the interpolator is
+     * Create a Scroller with the specified interpolator. If the interpolator is
      * null, the default (viscous) interpolator will be used. Specify whether or
      * not to support progressive "flywheel" behavior in flinging.
      */
@@ -189,7 +185,7 @@ public class CompatScroller {
     /**
      * The amount of friction applied to flings. The default value
      * is {@link ViewConfiguration#getScrollFriction}.
-     * 
+     *
      * @param friction A scalar dimension-less value representing the coefficient of
      *         friction.
      */
@@ -197,60 +193,60 @@ public class CompatScroller {
         mDeceleration = computeDeceleration(friction);
         mFlingFriction = friction;
     }
-    
+
     private float computeDeceleration(float friction) {
         return SensorManager.GRAVITY_EARTH   // g (m/s^2)
-                      * 39.37f               // inch/meter
-                      * mPpi                 // pixels per inch
-                      * friction;
+                * 39.37f               // inch/meter
+                * mPpi                 // pixels per inch
+                * friction;
     }
 
     /**
-     * 
+     *
      * Returns whether the scroller has finished scrolling.
-     * 
+     *
      * @return True if the scroller has finished scrolling, false otherwise.
      */
     public final boolean isFinished() {
         return mFinished;
     }
-    
+
     /**
      * Force the finished field to a particular value.
-     *  
+     *
      * @param finished The new finished value.
      */
     public final void forceFinished(boolean finished) {
         mFinished = finished;
     }
-    
+
     /**
      * Returns how long the scroll event will take, in milliseconds.
-     * 
+     *
      * @return The duration of the scroll in milliseconds.
      */
     public final int getDuration() {
         return mDuration;
     }
-    
+
     /**
      * Returns the current X offset in the scroll. 
-     * 
+     *
      * @return The new X offset as an absolute distance from the origin.
      */
     public final int getCurrX() {
         return mCurrX;
     }
-    
+
     /**
      * Returns the current Y offset in the scroll. 
-     * 
+     *
      * @return The new Y offset as an absolute distance from the origin.
      */
     public final int getCurrY() {
         return mCurrY;
     }
-    
+
     /**
      * Returns the current velocity.
      *
@@ -264,34 +260,34 @@ public class CompatScroller {
 
     /**
      * Returns the start X offset in the scroll. 
-     * 
+     *
      * @return The start X offset as an absolute distance from the origin.
      */
     public final int getStartX() {
         return mStartX;
     }
-    
+
     /**
      * Returns the start Y offset in the scroll. 
-     * 
+     *
      * @return The start Y offset as an absolute distance from the origin.
      */
     public final int getStartY() {
         return mStartY;
     }
-    
+
     /**
      * Returns where the scroll will end. Valid only for "fling" scrolls.
-     * 
+     *
      * @return The final X offset as an absolute distance from the origin.
      */
     public final int getFinalX() {
         return mFinalX;
     }
-    
+
     /**
      * Returns where the scroll will end. Valid only for "fling" scrolls.
-     * 
+     *
      * @return The final Y offset as an absolute distance from the origin.
      */
     public final int getFinalY() {
@@ -301,52 +297,52 @@ public class CompatScroller {
     /**
      * Call this when you want to know the new location.  If it returns true,
      * the animation is not yet finished.
-     */ 
+     */
     public boolean computeScrollOffset() {
         if (mFinished) {
             return false;
         }
 
         int timePassed = (int)(AnimationUtils.currentAnimationTimeMillis() - mStartTime);
-    
+
         if (timePassed < mDuration) {
             switch (mMode) {
-            case SCROLL_MODE:
-                final float x = mInterpolator.getInterpolation(timePassed * mDurationReciprocal);
-                mCurrX = mStartX + Math.round(x * mDeltaX);
-                mCurrY = mStartY + Math.round(x * mDeltaY);
-                break;
-            case FLING_MODE:
-                final float t = (float) timePassed / mDuration;
-                final int index = (int) (NB_SAMPLES * t);
-                float distanceCoef = 1.f;
-                float velocityCoef = 0.f;
-                if (index < NB_SAMPLES) {
-                    final float t_inf = (float) index / NB_SAMPLES;
-                    final float t_sup = (float) (index + 1) / NB_SAMPLES;
-                    final float d_inf = SPLINE_POSITION[index];
-                    final float d_sup = SPLINE_POSITION[index + 1];
-                    velocityCoef = (d_sup - d_inf) / (t_sup - t_inf);
-                    distanceCoef = d_inf + (t - t_inf) * velocityCoef;
-                }
+                case SCROLL_MODE:
+                    final float x = mInterpolator.getInterpolation(timePassed * mDurationReciprocal);
+                    mCurrX = mStartX + Math.round(x * mDeltaX);
+                    mCurrY = mStartY + Math.round(x * mDeltaY);
+                    break;
+                case FLING_MODE:
+                    final float t = (float) timePassed / mDuration;
+                    final int index = (int) (NB_SAMPLES * t);
+                    float distanceCoef = 1.f;
+                    float velocityCoef = 0.f;
+                    if (index < NB_SAMPLES) {
+                        final float t_inf = (float) index / NB_SAMPLES;
+                        final float t_sup = (float) (index + 1) / NB_SAMPLES;
+                        final float d_inf = SPLINE_POSITION[index];
+                        final float d_sup = SPLINE_POSITION[index + 1];
+                        velocityCoef = (d_sup - d_inf) / (t_sup - t_inf);
+                        distanceCoef = d_inf + (t - t_inf) * velocityCoef;
+                    }
 
-                mCurrVelocity = velocityCoef * mDistance / mDuration * 1000.0f;
-                
-                mCurrX = mStartX + Math.round(distanceCoef * (mFinalX - mStartX));
-                // Pin to mMinX <= mCurrX <= mMaxX
-                mCurrX = Math.min(mCurrX, mMaxX);
-                mCurrX = Math.max(mCurrX, mMinX);
-                
-                mCurrY = mStartY + Math.round(distanceCoef * (mFinalY - mStartY));
-                // Pin to mMinY <= mCurrY <= mMaxY
-                mCurrY = Math.min(mCurrY, mMaxY);
-                mCurrY = Math.max(mCurrY, mMinY);
+                    mCurrVelocity = velocityCoef * mDistance / mDuration * 1000.0f;
 
-                if (mCurrX == mFinalX && mCurrY == mFinalY) {
-                    mFinished = true;
-                }
+                    mCurrX = mStartX + Math.round(distanceCoef * (mFinalX - mStartX));
+                    // Pin to mMinX <= mCurrX <= mMaxX
+                    mCurrX = Math.min(mCurrX, mMaxX);
+                    mCurrX = Math.max(mCurrX, mMinX);
 
-                break;
+                    mCurrY = mStartY + Math.round(distanceCoef * (mFinalY - mStartY));
+                    // Pin to mMinY <= mCurrY <= mMaxY
+                    mCurrY = Math.min(mCurrY, mMaxY);
+                    mCurrY = Math.max(mCurrY, mMinY);
+
+                    if (mCurrX == mFinalX && mCurrY == mFinalY) {
+                        mFinished = true;
+                    }
+
+                    break;
             }
         }
         else {
@@ -356,12 +352,12 @@ public class CompatScroller {
         }
         return true;
     }
-    
+
     /**
      * Start scrolling by providing a starting point and the distance to travel.
      * The scroll will use the default value of 250 milliseconds for the
      * duration.
-     * 
+     *
      * @param startX Starting horizontal scroll offset in pixels. Positive
      *        numbers will scroll the content to the left.
      * @param startY Starting vertical scroll offset in pixels. Positive numbers
@@ -378,7 +374,7 @@ public class CompatScroller {
     /**
      * Start scrolling by providing a starting point, the distance to travel,
      * and the duration of the scroll.
-     * 
+     *
      * @param startX Starting horizontal scroll offset in pixels. Positive
      *        numbers will scroll the content to the left.
      * @param startY Starting vertical scroll offset in pixels. Positive numbers
@@ -406,7 +402,7 @@ public class CompatScroller {
     /**
      * Start scrolling based on a fling gesture. The distance travelled will
      * depend on the initial velocity of the fling.
-     * 
+     *
      * @param startX Starting point of the scroll (X)
      * @param startY Starting point of the scroll (Y)
      * @param velocityX Initial velocity of the fling (X) measured in pixels per
@@ -423,14 +419,14 @@ public class CompatScroller {
      *        point.
      */
     public void fling(int startX, int startY, int velocityX, int velocityY,
-            int minX, int maxX, int minY, int maxY) {
+                      int minX, int maxX, int minY, int maxY) {
         // Continue a scroll or fling in progress
         if (mFlywheel && !mFinished) {
             float oldVel = getCurrVelocity();
 
             float dx = (float) (mFinalX - mStartX);
             float dy = (float) (mFinalY - mStartY);
-            float hyp = FloatMath.sqrt(dx * dx + dy * dy);
+            float hyp = (float) Math.hypot(dx, dy);
 
             float ndx = dx / hyp;
             float ndy = dy / hyp;
@@ -447,8 +443,8 @@ public class CompatScroller {
         mMode = FLING_MODE;
         mFinished = false;
 
-        float velocity = FloatMath.sqrt(velocityX * velocityX + velocityY * velocityY);
-     
+        float velocity = (float) Math.hypot(velocityX, velocityY);
+
         mVelocity = velocity;
         mDuration = getSplineFlingDuration(velocity);
         mStartTime = AnimationUtils.currentAnimationTimeMillis();
@@ -460,7 +456,7 @@ public class CompatScroller {
 
         double totalDistance = getSplineFlingDistance(velocity);
         mDistance = (int) (totalDistance * Math.signum(velocity));
-        
+
         mMinX = minX;
         mMaxX = maxX;
         mMinY = minY;
@@ -470,13 +466,13 @@ public class CompatScroller {
         // Pin to mMinX <= mFinalX <= mMaxX
         mFinalX = Math.min(mFinalX, mMaxX);
         mFinalX = Math.max(mFinalX, mMinX);
-        
+
         mFinalY = startY + (int) Math.round(totalDistance * coeffY);
         // Pin to mMinY <= mFinalY <= mMaxY
         mFinalY = Math.min(mFinalY, mMaxY);
         mFinalY = Math.max(mFinalY, mMinY);
     }
-    
+
     private double getSplineDeceleration(float velocity) {
         return Math.log(INFLEXION * Math.abs(velocity) / (mFlingFriction * mPhysicalCoeff));
     }
@@ -505,7 +501,7 @@ public class CompatScroller {
         mCurrY = mFinalY;
         mFinished = true;
     }
-    
+
     /**
      * Extend the scroll animation. This allows a running animation to scroll
      * further and longer, when used with {@link #setFinalX(int)} or {@link #setFinalY(int)}.
