@@ -2,6 +2,8 @@ package sviolet.turquoise.utils;
 
 import android.app.Activity;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -104,29 +106,49 @@ public class InjectUtils {
                 if (view == null)
                     throw new InjectException("[InjectUtils]inject [" + method.getName() + "]'s OnClickMethod failed, can't find resource");
                 final Method finalMethod = method;
-                view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        try {
-                            final Class<?>[] parameterTypes = finalMethod.getParameterTypes();
-                            finalMethod.setAccessible(true);
-                            if (parameterTypes.length == 1 && View.class.equals(parameterTypes[0])) {
-                                finalMethod.invoke(activity, v);
-                            }else{
-                                finalMethod.invoke(activity, new Object[parameterTypes.length]);
-                            }
-                        }catch(IllegalAccessException e){
-                            throw new InjectException("[InjectUtils]invoke method [" + finalMethod.getName() + "] failed");
-                        }catch(InvocationTargetException e){
-                            throw new InjectException("[InjectUtils]invoke method [" + finalMethod.getName() + "] failed");
+                if(view instanceof ListView) {
+                    ((ListView)view).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            invokeMethod(finalMethod, activity, view);
                         }
-                    }
-                });
+                    });
+                }else{
+                    view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            invokeMethod(finalMethod, activity, v);
+                        }
+                    });
+                }
             }
         }
         Class superClazz = clazz.getSuperclass();
         if (!Activity.class.equals(superClazz)) {
             injectMethodAnnotation(activity, superClazz);
+        }
+    }
+
+    /**
+     * 执行方法
+     *
+     * @param finalMethod 方法
+     * @param obj 执行的实例
+     * @param v 参数(View)
+     */
+    private static void invokeMethod(Method finalMethod, Object obj, View v) {
+        try {
+            final Class<?>[] parameterTypes = finalMethod.getParameterTypes();
+            finalMethod.setAccessible(true);
+            if (parameterTypes.length == 1 && View.class.equals(parameterTypes[0])) {
+                finalMethod.invoke(obj, v);
+            }else{
+                finalMethod.invoke(obj, new Object[parameterTypes.length]);
+            }
+        }catch(IllegalAccessException e){
+            throw new InjectException("[InjectUtils]invoke method [" + finalMethod.getName() + "] failed");
+        }catch(InvocationTargetException e){
+            throw new InjectException("[InjectUtils]invoke method [" + finalMethod.getName() + "] failed");
         }
     }
 

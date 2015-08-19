@@ -18,16 +18,15 @@ import sviolet.turquoise.utils.InjectUtils;
 /**
  * [组件扩展]Activity<br>
  * <br>
- * 0.Activity注释式设置<br>
+ * 0.Activity注释式设置<br/>
+ * @see ActivitySettings ;
  * <br/>
- * 1.Activity布局文件注入<br>
- * 注入Activity@ResourceId注释对应的布局文件<br>
- * <br>
- * 2.成员View对象注入<br>
- * 注入带@ResourceId注释的成员View对象<br>
+ * 1.InjectUtils注释式注入控件对象/绑定监听<br/>
+ * @see InjectUtils ;
  * <br>
  *
- * @see ActivitySettings ;
+ *
+ *
  *
  * @author S.Violet
  */
