@@ -352,6 +352,17 @@ public class TQueue {
     }
 
     /**
+     * 强制销毁队列
+     */
+    public void forceDestroy(){
+        cancelAll();
+        if (taskThreadPool != null)
+            taskThreadPool.shutdownNow();
+        if (dispatchThreadPool != null)
+            dispatchThreadPool.shutdownNow();
+    }
+
+    /**
      * [慎用]等待取消中的任务(默认false)<br/>
      * <br/>
      * 若设置为true, STATE_CANCELING状态的任务将不会被调度器从
