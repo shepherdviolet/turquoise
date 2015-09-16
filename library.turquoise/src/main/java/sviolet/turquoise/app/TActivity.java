@@ -1,6 +1,7 @@
 package sviolet.turquoise.app;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -233,6 +234,7 @@ public abstract class TActivity extends Activity {
      * @param permissions 权限列表 android.Manifest.permission....
      * @param listener 监听器
      */
+    @TargetApi(Build.VERSION_CODES.M)
     public void requestPermissions(final String[] permissions, OnRequestPermissionListener listener) {
 
         final int requestCode;
