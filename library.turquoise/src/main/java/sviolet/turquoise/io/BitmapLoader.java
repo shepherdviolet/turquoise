@@ -260,6 +260,11 @@ public abstract class BitmapLoader {
      */
     protected abstract void onException(Throwable throwable);
 
+    /**
+     * 写入缓存文件时的异常处理, 通常只需要打印日志或提醒即可
+     */
+    protected abstract void onCacheWriteException(Throwable throwable);
+
     /******************************************
      * public
      */
@@ -573,15 +578,25 @@ public abstract class BitmapLoader {
                 Bitmap bitmap = loadFromNet(url, key, this);
                 //判断
                 if (bitmap != null && !bitmap.isRecycled()) {
-                    BitmapUtils.syncSaveBitmap(bitmap, outputStream, imageFormat, imageQuality, false, null);
-                    //尝试flush输出流
-                    try {outputStream.flush();} catch (Exception ignored) {}
-                    //写入缓存成功commit
-                    editor.commit();
-                    //写缓存日志
-                    mDiskLruCache.flush();
-                    //尝试关闭输出流
-                    try {outputStream.close();} catch (Exception ignored) {}
+                    //写入文件缓存即使失败也不影响返回Bitmap
+                    try {
+                        //把图片写入缓存
+                        BitmapUtils.syncSaveBitmap(bitmap, outputStream, imageFormat, imageQuality, false, null);
+                        //尝试flush输出流
+                        try {
+                            outputStream.flush();
+                        } catch (Exception ignored) {
+                        }
+                        //写入缓存成功commit
+                        editor.commit();
+                        //写缓存日志
+                        mDiskLruCache.flush();
+                    }catch(Exception e){
+                        onCacheWriteException(e);
+                    }finally {
+                        //尝试关闭输出流
+                        try {outputStream.close();} catch (Exception ignored) {}
+                    }
                     //若任务尚未被取消
                     if (!isCancel()) {
                         //加入内存缓存

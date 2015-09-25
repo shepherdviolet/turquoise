@@ -74,4 +74,12 @@ public class MyBitmapLoader extends BitmapLoader {
     protected void onException(Throwable throwable) {
         throwable.printStackTrace();
     }
+
+    /**
+     * 写入到文件缓存失败
+     */
+    @Override
+    protected void onCacheWriteException(Throwable throwable) {
+        throwable.printStackTrace();
+    }
 }
