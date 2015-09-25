@@ -11,6 +11,7 @@ import sviolet.turquoise.app.CommonException;
 import sviolet.turquoise.app.Logger;
 import sviolet.turquoise.io.cache.DiskLruCache;
 import sviolet.turquoise.utils.ApplicationUtils;
+import sviolet.turquoise.utils.BitmapUtils;
 import sviolet.turquoise.utils.CachedBitmapUtils;
 import sviolet.turquoise.utils.DirectoryUtils;
 
@@ -37,6 +38,7 @@ import sviolet.turquoise.utils.DirectoryUtils;
             .setRamCache(0.125f)
             .setDiskCache(50, 5, 15)
             .setNetLoad(3, 15)
+            .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
             .setLogger(getLogger())
             .open();//必须调用
     } catch (IOException e) {
@@ -92,6 +94,8 @@ public abstract class BitmapLoader {
     private int diskLoadVolume = 10;//磁盘加载等待队列容量
     private int netLoadConcurrency = 3;//网络加载任务并发量
     private int netLoadVolume = 10;//网络加载等待队列容量
+    private Bitmap.CompressFormat imageFormat = Bitmap.CompressFormat.JPEG;//缓存图片保存格式
+    private int imageQuality = 100;//缓存图片保存质量
     private File cacheDir;//缓存路径
     private Logger logger;//日志打印器
 
@@ -108,6 +112,7 @@ public abstract class BitmapLoader {
                     .setRamCache(0.125f)
                     .setDiskCache(50, 10, 15)
                     .setNetLoad(3, 15)
+                    .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
                     .setLogger(getLogger())
                     .open();//必须调用
             } catch (IOException e) {
@@ -182,6 +187,19 @@ public abstract class BitmapLoader {
     }
 
     /**
+     * 设置缓存文件的图片保存格式和质量<br/>
+     * 默认Bitmap.CompressFormat.JPEG, 100
+     *
+     * @param format 图片格式
+     * @param quality 图片质量 0-100
+     */
+    public BitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality){
+        this.imageFormat = format;
+        this.imageQuality = quality;
+        return this;
+    }
+
+    /**
      * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
      */
     public BitmapLoader setLogger(Logger logger) {
@@ -224,14 +242,18 @@ public abstract class BitmapLoader {
     protected abstract String getCacheKey(String url, String key);
 
     /**
-     * 实现根据参数从网络下载图片并写入cacheOutputStream输出流<Br/>
-     * 网络加载成功返回true, 加载失败返回false<Br/>
+     * 实现根据参数从网络下载图片, 解析为Bitmap并返回<Br/>
+     * 网络加载成功返回Bitmap, 加载失败返回null<Br/>
      * 可根据task.getState() >= TTask.STATE_CANCELING判断任务当前是否被取消<br/>
      * BitmapLoader中任务的取消为软取消, 仅将任务置为完成+取消状态,
      * 若网络加载不针对取消状态做处理, 取消中的任务将会占用并发量,
      * 导致新的加载请求无法执行(一直在等待队列).
+     * @param url url
+     * @param key key
+     * @param task 任务实例
+     * @return 是否成功
      */
-    protected abstract boolean loadFromNet(String url, String key, OutputStream cacheOutputStream, TTask task);
+    protected abstract Bitmap loadFromNet(String url, String key, TTask task);
 
     /**
      * 实现异常处理
@@ -547,8 +569,11 @@ public abstract class BitmapLoader {
                 }
                 //获得输出流, 用于写入缓存
                 outputStream = editor.newOutputStream(0);
-                //从网络加载图片, 并写入缓存的输出流
-                if (loadFromNet(url, key, outputStream, this)) {
+                //从网络加载Bitmap
+                Bitmap bitmap = loadFromNet(url, key, this);
+                //判断
+                if (bitmap != null && !bitmap.isRecycled()) {
+                    BitmapUtils.syncSaveBitmap(bitmap, outputStream, imageFormat, imageQuality, false, null);
                     //尝试flush输出流
                     try {outputStream.flush();} catch (Exception ignored) {}
                     //写入缓存成功commit
@@ -557,15 +582,10 @@ public abstract class BitmapLoader {
                     mDiskLruCache.flush();
                     //尝试关闭输出流
                     try {outputStream.close();} catch (Exception ignored) {}
-                    //得到缓存文件
-                    File cacheFile = mDiskLruCache.getFile(cacheKey, 0);
-                    if (cacheFile != null) {
-                        //若缓存文件存在, 则读取
-                        mCachedBitmapUtils.decodeFromFile(cacheKey, cacheFile.getAbsolutePath(), reqWidth, reqHeight);
-                        //若此时任务已被取消, 则废弃位图
-                        if (isCancel()){
-                            mCachedBitmapUtils.unused(cacheKey);
-                        }
+                    //若任务尚未被取消
+                    if (!isCancel()) {
+                        //加入内存缓存
+                        mCachedBitmapUtils.cacheBitmap(cacheKey, bitmap);
                         return RESULT_SUCCEED;
                     }
                 } else {
