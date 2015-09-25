@@ -54,7 +54,7 @@ public class MyBitmapLoader extends BitmapLoader {
      * [此处模拟网络加载]<br/>
      */
     @Override
-    protected boolean loadFromNet(String url, String key, OutputStream cacheOutputStream, TTask task) {
+    protected Bitmap loadFromNet(String url, String key, TTask task) {
         //模拟网络耗时
         try {
             Thread.sleep(random.nextInt(500));
@@ -62,10 +62,9 @@ public class MyBitmapLoader extends BitmapLoader {
         }
         //模拟网络加载, 从资源中获取图片
         Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index]);
-        //写入输出流
-        BitmapUtils.syncSaveBitmap(bitmap, cacheOutputStream, Bitmap.CompressFormat.JPEG, 70, true, null);
+
         index = (index + 1) % 5;
-        return true;
+        return bitmap;
     }
 
     /**

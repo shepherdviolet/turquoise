@@ -1,5 +1,6 @@
 package sviolet.demoa.image;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ListView;
 
@@ -57,6 +58,7 @@ public class AsyncImageActivity extends TActivity {
                     .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
                     .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
                     .setDiskCacheInner()//强制使用内部储存
+                    .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
 //                    .setLogger(getLogger())//打印日志
                     .open();//启动(必须)
             //设置适配器, 传入图片加载器, 图片解码工具
