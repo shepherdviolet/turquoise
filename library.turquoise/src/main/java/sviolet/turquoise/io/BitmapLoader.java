@@ -6,6 +6,8 @@ import android.graphics.Bitmap;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.app.CommonException;
 import sviolet.turquoise.app.Logger;
@@ -242,18 +244,43 @@ public abstract class BitmapLoader {
     protected abstract String getCacheKey(String url, String key);
 
     /**
-     * 实现根据参数从网络下载图片, 解析为Bitmap并返回<Br/>
-     * 网络加载成功返回Bitmap, 加载失败返回null<Br/>
-     * 可根据task.getState() >= TTask.STATE_CANCELING判断任务当前是否被取消<br/>
-     * BitmapLoader中任务的取消为软取消, 仅将任务置为完成+取消状态,
-     * 若网络加载不针对取消状态做处理, 取消中的任务将会占用并发量,
-     * 导致新的加载请求无法执行(一直在等待队列).
+     * 实现根据url和key参数从网络下载图片数据, 依照需求尺寸reqWidth和reqHeight解析为合适大小的Bitmap,
+     * 并调用结果容器resultHolder.set(Bitmap)方法将Bitmap返回, 若加载失败则set(null)<br/>
+     * <br/>
+     * 注意:<br/>
+     * 1.网络请求注意做超时处理,否则任务可能会一直等待<br/>
+     * 2.数据解析为Bitmap时,请根据需求尺寸reqWidth和reqHeight解析, 以节省内存<br/>
+     * <br/>
+     * 线程会阻塞等待,直到resultHolder.set(Bitmap)方法执行.若任务被cancel,阻塞也会被中断,且即使后续
+     * 网络请求返回了Bitmap,也会被Bitmap.recycle().<br/>
+     * <br/>
+     * 无论同步还是异步的情况,均使用resultHolder.set(Bitmap)返回结果<br/>
+     * 同步网络请求:<br/>
+     *
+     *      //网络加载代码
+     *      ......
+     *      resultHolder.set(bitmap);
+     *
+     * <br/>
+     * 异步网络请求:<br/>
+     *
+     *      //异步处理的情况
+     *      new Thread(new Runnable(){
+     *          public void run() {
+     *              //网络加载代码
+     *              ......
+     *              resultHolder.set(bitmap);
+     *          }
+     *      }).start();
+     *
+     *
      * @param url url
      * @param key key
-     * @param task 任务实例
-     * @return 是否成功
+     * @param reqWidth 请求宽度
+     * @param reqHeight 请求高度
+     * @param resultHolder 结果容器
      */
-    protected abstract Bitmap loadFromNet(String url, String key, TTask task);
+    protected abstract void loadFromNet(String url, String key, int reqWidth, int reqHeight, ResultHolder resultHolder);
 
     /**
      * 实现异常处理
@@ -540,6 +567,7 @@ public abstract class BitmapLoader {
         private int reqWidth;
         private int reqHeight;
         private OnLoadCompleteListener mOnLoadCompleteListener;
+        private ResultHolder resultHolder;
 
         public NetLoadTask(String url, String key, int reqWidth, int reqHeight, OnLoadCompleteListener mOnLoadCompleteListener) {
             this.url = url;
@@ -574,8 +602,12 @@ public abstract class BitmapLoader {
                 }
                 //获得输出流, 用于写入缓存
                 outputStream = editor.newOutputStream(0);
+                //结果容器
+                resultHolder = new ResultHolder();
                 //从网络加载Bitmap
-                Bitmap bitmap = loadFromNet(url, key, this);
+                loadFromNet(url, key, reqWidth, reqHeight, resultHolder);
+                //阻塞等待并获取结果Bitmap
+                Bitmap bitmap = resultHolder.get();
                 //判断
                 if (bitmap != null && !bitmap.isRecycled()) {
                     //写入文件缓存即使失败也不影响返回Bitmap
@@ -658,6 +690,16 @@ public abstract class BitmapLoader {
                     break;
             }
         }
+
+        /**
+         * 当任务被取消时, 中断阻塞等待
+         */
+        @Override
+        public void onCancel() {
+            super.onCancel();
+            if (resultHolder != null)
+                resultHolder.interrupt();
+        }
     }
 
     /**
@@ -680,21 +722,79 @@ public abstract class BitmapLoader {
          * @param params 由load传入的参数, 并非Bitmap
          * @param bitmap 加载成功的位图, 可能为null
          */
-        public void onLoadSucceed(String url, String key, Object params, Bitmap bitmap);
+        void onLoadSucceed(String url, String key, Object params, Bitmap bitmap);
 
         /**
          * 加载失败
          *
          * @param params 由load传入的参数, 并非Bitmap
          */
-        public void onLoadFailed(String url, String key, Object params);
+        void onLoadFailed(String url, String key, Object params);
 
         /**
          * 加载取消
          *
          * @param params 由load传入的参数, 并非Bitmap
          */
-        public void onLoadCanceled(String url, String key, Object params);
+        void onLoadCanceled(String url, String key, Object params);
+    }
+
+    /**
+     * 结果容器<br/>
+     * get方法会阻塞, 一直到set方法执行后
+     */
+    public class ResultHolder{
+
+        private boolean hasInterrupted = false;//是否被打断
+        private boolean hasSet = false;//是否设置了值
+
+        private Bitmap result;//结果
+
+        private final ReentrantLock lock = new ReentrantLock();
+        private final Condition condition = lock.newCondition();
+
+        public void set(Bitmap result){
+            lock.lock();
+            try{
+                //若get()阻塞被中断后, set(Bitmap),为防止内存泄露,将Bitmap回收
+                if (hasInterrupted) {
+                    if (result != null && !result.isRecycled()) {
+                        result.recycle();
+                    }
+                    return;
+                }
+                this.result = result;
+                this.hasSet = true;
+                condition.signalAll();
+            }finally {
+                lock.unlock();
+            }
+        }
+
+        private Bitmap get(){
+            lock.lock();
+            try{
+                if (!hasSet && !hasInterrupted)
+                    condition.await();
+                return result;
+            } catch (InterruptedException ignored) {
+                hasInterrupted = true;
+            } finally {
+                lock.unlock();
+            }
+            return null;
+        }
+
+        private void interrupt(){
+            lock.lock();
+            try{
+                hasInterrupted = true;
+                condition.signalAll();
+            } finally {
+                lock.unlock();
+            }
+        }
+
     }
 
 }

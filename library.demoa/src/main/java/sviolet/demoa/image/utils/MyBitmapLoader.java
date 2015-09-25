@@ -1,15 +1,14 @@
 package sviolet.demoa.image.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.io.BitmapLoader;
-import sviolet.turquoise.io.TTask;
 import sviolet.turquoise.utils.BitmapUtils;
 import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
@@ -26,6 +25,7 @@ public class MyBitmapLoader extends BitmapLoader {
     private Random random = new Random(System.currentTimeMillis());
     private int index = 0;
     private int resourceIds[] = {R.mipmap.async_image_1, R.mipmap.async_image_2, R.mipmap.async_image_3, R.mipmap.async_image_4, R.mipmap.async_image_5};
+    private ExecutorService pool = Executors.newCachedThreadPool();
 
     public MyBitmapLoader(Context context, String cacheName) throws IOException {
         super(context, cacheName);
@@ -54,17 +54,37 @@ public class MyBitmapLoader extends BitmapLoader {
      * [此处模拟网络加载]<br/>
      */
     @Override
-    protected Bitmap loadFromNet(String url, String key, TTask task) {
-        //模拟网络耗时
-        try {
-            Thread.sleep(random.nextInt(500));
-        } catch (InterruptedException e) {
-        }
-        //模拟网络加载, 从资源中获取图片
-        Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index]);
+    protected void loadFromNet(String url, String key, final int reqWidth, final int reqHeight, final ResultHolder resultHolder) {
+
+        ///////////////////////////////////////////////////
+        //同步方式
+
+//        //模拟网络耗时
+//        try {
+//            Thread.sleep(random.nextInt(500));
+//        } catch (InterruptedException e) {
+//        }
+//        //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
+//        resultHolder.set(BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight));
+
+        ///////////////////////////////////////////////////
+        //异步方式
+
+        pool.execute(new Runnable() {
+            @Override
+            public void run() {
+                //模拟网络耗时
+                try {
+                    Thread.sleep(random.nextInt(1000));
+                } catch (InterruptedException e) {
+                }
+                //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
+                resultHolder.set(BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight));
+            }
+        });
+
 
         index = (index + 1) % 5;
-        return bitmap;
     }
 
     /**
