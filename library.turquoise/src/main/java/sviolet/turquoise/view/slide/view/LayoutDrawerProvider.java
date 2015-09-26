@@ -1,6 +1,6 @@
 package sviolet.turquoise.view.slide.view;
 
-import sviolet.turquoise.utils.MeasureUtils;
+import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.listener.OnInitCompleteListener;
 import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.SlideException;

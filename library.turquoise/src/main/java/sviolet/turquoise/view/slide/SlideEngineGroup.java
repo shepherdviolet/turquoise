@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import sviolet.turquoise.app.DeprecatedException;
+import sviolet.turquoise.exception.DeprecatedException;
 
 /**
  * SlideEngine组, 滑动引擎组<br>

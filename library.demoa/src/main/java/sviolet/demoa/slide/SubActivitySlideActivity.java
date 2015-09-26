@@ -5,10 +5,10 @@ import android.view.KeyEvent;
 import android.widget.Toast;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.annotation.app.ActivitySettings;
-import sviolet.turquoise.annotation.inject.ResourceId;
-import sviolet.turquoise.app.TActivity;
-import sviolet.turquoise.utils.MeasureUtils;
+import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.TActivity;
+import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
 import sviolet.turquoise.view.slide.view.RelativeLayoutDrawer;

@@ -6,9 +6,9 @@ import android.widget.ListView;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.slide.view.MySlideListAdapter;
-import sviolet.turquoise.annotation.app.ActivitySettings;
-import sviolet.turquoise.annotation.inject.ResourceId;
-import sviolet.turquoise.app.TActivity;
+import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.TActivity;
 
 /**
  * Item可滑动的ListView Demo

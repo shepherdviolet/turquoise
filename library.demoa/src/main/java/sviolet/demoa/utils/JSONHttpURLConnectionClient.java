@@ -8,9 +8,9 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sviolet.turquoise.io.net.HttpURLConnectionClient;
-import sviolet.turquoise.io.net.HttpURLConnectionResponse;
-import sviolet.turquoise.io.net.HttpURLConnectionTask;
+import sviolet.turquoise.utils.net.HttpURLConnectionClient;
+import sviolet.turquoise.utils.net.HttpURLConnectionResponse;
+import sviolet.turquoise.utils.net.HttpURLConnectionTask;
 
 /**
  * [DEMO]

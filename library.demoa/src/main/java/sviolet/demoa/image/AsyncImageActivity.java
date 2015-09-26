@@ -13,10 +13,10 @@ import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.image.utils.AsyncImageAdapter;
 import sviolet.demoa.image.utils.AsyncImageItem;
 import sviolet.demoa.image.utils.MyBitmapLoader;
-import sviolet.turquoise.annotation.app.ActivitySettings;
-import sviolet.turquoise.annotation.inject.ResourceId;
-import sviolet.turquoise.app.TActivity;
-import sviolet.turquoise.io.BitmapLoader;
+import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.TActivity;
+import sviolet.turquoise.utils.bitmap.BitmapLoader;
 
 @DemoDescription(
         title = "AsyncImageList",

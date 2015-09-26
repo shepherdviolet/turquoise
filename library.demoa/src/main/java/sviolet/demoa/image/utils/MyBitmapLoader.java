@@ -8,8 +8,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.io.BitmapLoader;
-import sviolet.turquoise.utils.BitmapUtils;
+import sviolet.turquoise.utils.bitmap.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
 

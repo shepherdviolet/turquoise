@@ -2,7 +2,7 @@ package sviolet.turquoise.view.slide.logic;
 
 import android.content.Context;
 
-import sviolet.turquoise.app.DeprecatedException;
+import sviolet.turquoise.exception.DeprecatedException;
 import sviolet.turquoise.view.slide.SlideView;
 
 /**

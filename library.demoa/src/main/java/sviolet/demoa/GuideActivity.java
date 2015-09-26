@@ -16,10 +16,10 @@ import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
 import sviolet.demoa.image.AsyncImageActivity;
 import sviolet.demoa.slide.SlideActivity;
-import sviolet.turquoise.annotation.app.ActivitySettings;
-import sviolet.turquoise.annotation.inject.ResourceId;
-import sviolet.turquoise.app.TActivity;
-import sviolet.turquoise.io.BitmapLoader;
+import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.TActivity;
+import sviolet.turquoise.utils.bitmap.BitmapLoader;
 
 /**************************************************************
  * Demo配置
@@ -32,7 +32,8 @@ import sviolet.turquoise.io.BitmapLoader;
 // Demo列表
 @DemoList({
         SlideActivity.class,
-        AsyncImageActivity.class
+        AsyncImageActivity.class,
+        TempActivity.class
 })
 
 /**************************************************************

@@ -1,7 +1,6 @@
 package sviolet.demoa.slide.view;
 
-import sviolet.turquoise.utils.MeasureUtils;
-import sviolet.turquoise.view.listener.OnSlideStopListener;
+import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.view.slide.SlideView;
 import sviolet.turquoise.view.slide.logic.LinearFlingEngine;

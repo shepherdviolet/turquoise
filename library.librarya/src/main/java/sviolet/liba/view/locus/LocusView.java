@@ -17,7 +17,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import sviolet.turquoise.utils.BitmapUtils;
+import sviolet.turquoise.utils.bitmap.BitmapUtils;
 
 /**
  * 轨迹密码控件(务必调用destroy()销毁)<p>

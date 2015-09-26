@@ -1,7 +1,7 @@
 package sviolet.liba.view;
 
 import sviolet.liba.R;
-import sviolet.turquoise.utils.BitmapUtils;
+import sviolet.turquoise.utils.bitmap.BitmapUtils;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

@@ -10,7 +10,7 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import sviolet.turquoise.utils.DeviceUtils;
+import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
  * 渐渐显示出来的ImageView<br/>

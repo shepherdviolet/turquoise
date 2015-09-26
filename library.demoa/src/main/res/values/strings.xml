@@ -22,4 +22,6 @@
 
     <string name="image_async_title">AsyncImageList</string>
 
+    <string name="temp_main_title">Temp</string>
+
 </resources>

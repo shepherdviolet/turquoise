@@ -1,13 +1,12 @@
 package sviolet.demoa.slide.view;
 
-import sviolet.turquoise.utils.DeviceUtils;
+import sviolet.turquoise.utils.sys.DeviceUtils;
 import sviolet.turquoise.view.slide.view.LayoutDrawerProvider;
 import sviolet.turquoise.view.slide.view.RelativeLayoutDrawer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 
 /**

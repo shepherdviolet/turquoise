@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 
 import java.util.List;
 
-import sviolet.turquoise.utils.MeasureUtils;
+import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.view.slide.SlideEngine;
 import sviolet.turquoise.view.slide.SlideEngineGroup;

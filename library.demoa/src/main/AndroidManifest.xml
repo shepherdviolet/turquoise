@@ -46,6 +46,9 @@
             android:theme="@style/AppTheme_Translucent"/>
         <activity android:name=".image.AsyncImageActivity"
             android:label="@string/image_async_title"/>
+
+        <activity android:name=".TempActivity"
+            android:label="@string/temp_main_title"/>
     </application>
 
 </manifest>

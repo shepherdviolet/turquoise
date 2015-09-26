@@ -10,9 +10,9 @@ import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.common.EmulateListAdapter;
 import sviolet.demoa.slide.view.CardSlideTitleView;
 import sviolet.demoa.slide.view.CardSlideView;
-import sviolet.turquoise.annotation.app.ActivitySettings;
-import sviolet.turquoise.annotation.inject.ResourceId;
-import sviolet.turquoise.app.TActivity;
+import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.TActivity;
 import sviolet.turquoise.view.slide.view.AdaptListView;
 
 /**

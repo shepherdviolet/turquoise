@@ -1,9 +1,9 @@
 package sviolet.demoa;
 
-import sviolet.turquoise.annotation.app.ApplicationSettings;
-import sviolet.turquoise.annotation.app.DebugSettings;
-import sviolet.turquoise.annotation.app.ReleaseSettings;
-import sviolet.turquoise.app.TApplication;
+import sviolet.turquoise.enhance.annotation.setting.ApplicationSettings;
+import sviolet.turquoise.enhance.annotation.setting.DebugSettings;
+import sviolet.turquoise.enhance.annotation.setting.ReleaseSettings;
+import sviolet.turquoise.enhance.TApplication;
 
 @ApplicationSettings(
         DEBUG = true //Debug模式, 装载DebugSetting配置

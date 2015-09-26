@@ -29,7 +29,7 @@ public class MD5Utils {
 	 * @return
 	 */
 	public static String getFileMD5String(final File file) {
-		if(sviolet.turquoise.utils.DeviceUtils.getVersionSDK() < 11)
+		if(sviolet.turquoise.utils.sys.DeviceUtils.getVersionSDK() < 11)
 			return getFileMD5ByIO(file);//API10使用普通IO(NIO很慢)
 		else
 			return getFileMD5ByNIO(file);//API11以上使用NIO,效率高

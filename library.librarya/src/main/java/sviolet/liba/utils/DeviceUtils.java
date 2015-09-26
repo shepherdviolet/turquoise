@@ -5,7 +5,7 @@ import android.util.DisplayMetrics;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.ZoomDensity;
 
-import sviolet.turquoise.utils.MeasureUtils;
+import sviolet.turquoise.utils.sys.MeasureUtils;
 
 /**
  * @author SunPeng

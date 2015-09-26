@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnPreDrawListener;
 
 import sviolet.turquoise.R;
-import sviolet.turquoise.utils.ApplicationUtils;
-import sviolet.turquoise.utils.MeasureUtils;
+import sviolet.turquoise.utils.sys.ApplicationUtils;
+import sviolet.turquoise.utils.sys.MeasureUtils;
 
 /**
  * ShadowLayout逻辑实现
