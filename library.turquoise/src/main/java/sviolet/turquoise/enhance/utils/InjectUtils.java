@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 
 import sviolet.turquoise.enhance.annotation.inject.OnClickMethod;
 import sviolet.turquoise.enhance.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.InjectException;
 
 /**
  * Activity的注释式注入工具<br/>
