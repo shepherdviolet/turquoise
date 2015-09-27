@@ -54,7 +54,7 @@ public class AsyncImageActivity extends TActivity {
             */
             //初始化图片加载器
             mBitmapLoader = new MyBitmapLoader(this, "AsyncImageActivity")
-                    .setRamCache(0.125f)//缓存占1/8内存, 约30-40张
+                    .setRamCache(0.125f, 0.125f)//缓存和回收站各占1/8内存, 约30-40张
                     .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
                     .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
                     .setDiskCacheInner()//强制使用内部储存

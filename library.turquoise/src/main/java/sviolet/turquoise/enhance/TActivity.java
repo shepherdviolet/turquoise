@@ -415,12 +415,13 @@ public abstract class TActivity extends Activity {
      * 获得Activity内置的Bitmap工具, 带内存缓存/回收功能,
      * 且当Activity.onDestroy时会回收其所有的Bitmap
      *
-     * @param percent 缓存区占应用可用内存比例 (0, 0.5)
+     * @param cachePercent Bitmap缓存区占用应用可用内存的比例 (0, 1]
+     * @param recyclerPercent Bitmap回收站占用应用可用内存的比例 [0, 1]
      */
-    public CachedBitmapUtils getCachedBitmapUtils(float percent){
+    public CachedBitmapUtils getCachedBitmapUtils(float cachePercent, float recyclerPercent){
         if (mCachedBitmapUtils == null){
             //创建实例
-            mCachedBitmapUtils = new CachedBitmapUtils(this, percent);
+            mCachedBitmapUtils = new CachedBitmapUtils(this, cachePercent, recyclerPercent);
             //设置日志打印器
             mCachedBitmapUtils.getBitmapCache().setLogger(getLogger());
         }

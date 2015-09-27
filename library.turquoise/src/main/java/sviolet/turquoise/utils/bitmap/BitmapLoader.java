@@ -36,7 +36,8 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
     private BitmapLoader mBitmapLoader;
     try {
         mBitmapLoader = new MyBitmapLoader(this, "bitmap")
-            .setRamCache(0.125f)
+            .setRamCache(0.125f, 0.125f)//不采用SafeBitmapDrawableFactory,启用回收站
+            //.setRamCache(0.125f, 0)//采用SafeBitmapDrawableFactory包装Bitmap使用,回收站设置为0禁用
             .setDiskCache(50, 5, 15)
             .setNetLoad(3, 15)
             .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
@@ -47,7 +48,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
     }
  * <br/>
  * [上述代码说明]:<br/>
- * 位图内存缓存占用应用最大可用内存的12.5%(回收站最大可能占用额外的12.5%),
+ * 位图内存缓存占用应用最大可用内存的12.5%,回收站最大可能占用额外的12.5%,
  * 内存缓存能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 影响显示效果,
  * 设置过大, 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
  * 在路径/sdcard/Android/data/<application package>/cache/bitmap或
@@ -66,14 +67,31 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * 情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
  * <br/>
  * ****************************************************************<br/>
- * [Exception]: [BitmapCache]recycler Out Of Memory!!!<br/>
+ * <Br/>
+ * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
+ * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
+ * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+ * <Br/>
+ * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
+ * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
+ * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
+ * 请适度设置.<br/>
+ * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站.需要配合
+ * SafeBitmapDrawableFactory使用<br/>
+ * <br/>
+ * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
  * 当回收站内存占用超过设定值 (即内存总消耗超过设定值的两倍) 时, 会触发此异常<Br/>
  * 解决方案:<br/>
  * 1.请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
  * Bitmap只有被设置为此状态, 才会被回收(recycle()), 否则在缓存区满后, 会进入回收站,
  * 但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
- * 2.给BitmapCache设置合理的最大占用内存(或占比), 分配过小可能会导致不够用而报错,
- * 分配过大可能使应用其他占用内存受限.<br/>
+ * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
+ * 其他占用内存受限.<br/>
+ * <br/>
+ * Tips:<br/>
+ * 1.使用SafeBitmapDrawableFactory将Bitmap包装为SafeBitmapDrawable设置给ImageView使用,
+ * 可有效避免"trying to use a recycled bitmap"异常, SafeBitmapDrawable在原Bitmap被回收
+ * 时,会绘制预先设置的默认图.采用这种方式可以将回收站recyclerMaxSize设置为0, 禁用回收站.<Br/>
  *
  * Created by S.Violet on 2015/7/3.
  */
@@ -91,6 +109,7 @@ public abstract class BitmapLoader {
     private String diskCacheName;//磁盘缓存名
     private long diskCacheSize = 1024 * 1024 * 10;//磁盘缓存大小(Mb)
     private float ramCacheSizePercent = 0.125f;//内存缓存大小(占应用可用内存比例)
+    private float ramCacheRecyclerSizePercent = 0.125f;//内存缓存回收站大小(占应用可用内存比例)
     private int diskLoadConcurrency = 5;//磁盘加载任务并发量
     private int diskLoadVolume = 10;//磁盘加载等待队列容量
     private int netLoadConcurrency = 3;//网络加载任务并发量
@@ -101,44 +120,6 @@ public abstract class BitmapLoader {
     private Logger logger;//日志打印器
 
     /**
-     * 1.实现抽象类BitmapLoader -> MyBitmapLoader <br/>
-     * 2.实例化MyBitmapLoader(必须) <br/>
-     * 3.setRamCache/setDiskCache/setNetLoad/setLogger设置参数(可选) <br/>
-     * 4.open() 启用BitmapLoader(必须, 否则抛异常)<br/>
-     * <br/>
-     * [代码示例]:<Br/>
-            private BitmapLoader mBitmapLoader;
-            try {
-                mBitmapLoader = new MyBitmapLoader(this, "bitmap")
-                    .setRamCache(0.125f)
-                    .setDiskCache(50, 10, 15)
-                    .setNetLoad(3, 15)
-                    .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
-                    .setLogger(getLogger())
-                    .open();//必须调用
-            } catch (IOException e) {
-                //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
-            }
-     * <br/>
-     * [上述代码说明]:<br/>
-     * 位图内存缓存占用应用最大可用内存的12.5%(回收站最大可能占用额外的12.5%),
-     * 内存缓存能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 影响显示效果,
-     * 设置过大, 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
-     * 在路径/sdcard/Android/data/<application package>/cache/bitmap或
-     * /data/data/<application package>/cache/bitmap下存放磁盘缓存数据,
-     * 缓存最大容量50M, 磁盘缓存容量根据实际情况设置, 磁盘缓存加载最大并发量10,
-     * 并发量应考虑图片质量/大小, 若图片较大, 应考虑减少并发量, 磁盘缓存等待队列
-     * 容量15, 即只会加载最后请求的15个任务, 更早的加载请求会被取消, 等待队列容
-     * 量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1-
-     * 2倍为宜, 设置过少会导致屏幕中图片未全部加载完, 例如屏幕中最多可能展示10
-     * 张图片, 则设置15-20较为合适, 若设置了10, 屏幕中会有2张图未加载. <br/>
-     * 网络加载并发量为3, 根据网络情况和图片大小决定, 过多的并发量会阻塞网络, 过
-     * 少会导致图片加载太慢, 网络加载等待队列容量15, 建议与磁盘缓存等待队列容量
-     * 相等, 根据屏幕中最多可能展示的图片数决定(略大于), 设置过少会导致屏幕中图
-     * 片未全部加载完.<br/>
-     * 设置日志打印器后, BitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
-     * 情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
-     * <br/>
      * @param context 上下文
      * @param diskCacheName 磁盘缓存目录名
      */
@@ -171,10 +152,19 @@ public abstract class BitmapLoader {
     }
 
     /**
-     * @param ramCacheSizePercent 内存缓存最大容量占应用可用内存的比例 (0, 0.5f], 默认0.125, 建议不超过0.25
+     * @see sviolet.turquoise.utils.cache.BitmapCache
+     *
+     * Tips:<br/>
+     * 1.使用SafeBitmapDrawableFactory将Bitmap包装为SafeBitmapDrawable设置给ImageView使用,
+     * 可有效避免"trying to use a recycled bitmap"异常, SafeBitmapDrawable在原Bitmap被回收
+     * 时,会绘制预先设置的默认图.采用这种方式可以将回收站recyclerMaxSize设置为0, 禁用回收站.<Br/>
+     *
+     * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1]
+     * @param ramCacheRecyclerSizePercent 内存缓存回收站占用应用可用内存的比例 [0, 1], 使用SafeBitmapDrawableFactory时设置为0禁用回收站
      */
-    public BitmapLoader setRamCache(float ramCacheSizePercent){
+    public BitmapLoader setRamCache(float ramCacheSizePercent, float ramCacheRecyclerSizePercent){
         this.ramCacheSizePercent = ramCacheSizePercent;
+        this.ramCacheRecyclerSizePercent = ramCacheRecyclerSizePercent;
         return this;
     }
 
@@ -218,7 +208,7 @@ public abstract class BitmapLoader {
      */
     public BitmapLoader open() throws IOException {
         this.mDiskLruCache = DiskLruCache.open(cacheDir, ApplicationUtils.getAppVersion(context), 1, diskCacheSize);
-        this.mCachedBitmapUtils = new CachedBitmapUtils(context, ramCacheSizePercent);
+        this.mCachedBitmapUtils = new CachedBitmapUtils(context, ramCacheSizePercent, ramCacheRecyclerSizePercent);
         this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency).setVolumeMax(diskLoadVolume).waitCancelingTask(true).overrideSameKeyTask(false);
         this.mNetLoadQueue = new TQueue(true, netLoadConcurrency).setVolumeMax(netLoadVolume).waitCancelingTask(true).overrideSameKeyTask(false);
         if(logger != null)
