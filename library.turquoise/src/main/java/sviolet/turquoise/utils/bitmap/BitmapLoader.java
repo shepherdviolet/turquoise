@@ -41,6 +41,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
             .setDiskCache(50, 5, 15)
             .setNetLoad(3, 15)
             .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
+            .setDiskCacheInner()//强制使用内部储存
             .setLogger(getLogger())
             .open();//必须调用
     } catch (IOException e) {
