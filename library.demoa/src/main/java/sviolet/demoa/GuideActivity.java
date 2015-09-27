@@ -14,7 +14,7 @@ import java.io.IOException;
 import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
-import sviolet.demoa.image.AsyncImageActivity;
+import sviolet.demoa.image.ImageActivity;
 import sviolet.demoa.slide.SlideActivity;
 import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.annotation.inject.ResourceId;
@@ -32,7 +32,7 @@ import sviolet.turquoise.utils.bitmap.BitmapLoader;
 // Demo列表
 @DemoList({
         SlideActivity.class,
-        AsyncImageActivity.class,
+        ImageActivity.class,
         TempActivity.class
 })
 

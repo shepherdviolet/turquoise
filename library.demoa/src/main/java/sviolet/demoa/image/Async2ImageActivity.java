@@ -10,24 +10,24 @@ import java.util.List;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
-import sviolet.demoa.image.utils.AsyncImageAdapter;
+import sviolet.demoa.image.utils.AsyncImageAdapter2;
 import sviolet.demoa.image.utils.AsyncImageItem;
 import sviolet.demoa.image.utils.MyBitmapLoader;
-import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
-import sviolet.turquoise.enhance.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.TActivity;
+import sviolet.turquoise.enhance.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.bitmap.BitmapLoader;
 
 @DemoDescription(
-        title = "AsyncImageList",
+        title = "AsyncImageList2",
         type = "Image",
-        info = "an Async. Image ListView powered by Common BitmapLoader"
+        info = "an Async. Image ListView powered by BitmapLoader and SafeBitmapDrawable"
 )
 
 /**
  * 图片动态加载Demo<br/>
  * 内存/磁盘双缓存<br/>
- * BitmapLoader采用普通方式, 启用缓存回收站<br/>
+ * BitmapLoader禁用缓存回收站, 配合SafeBitmapDrawable防止Bitmap被回收绘制异常
  *
  * Created by S.Violet on 2015/7/7.
  */
@@ -36,7 +36,7 @@ import sviolet.turquoise.utils.bitmap.BitmapLoader;
         statusBarColor = 0xFF209090,
         navigationBarColor = 0xFF209090
 )
-public class AsyncImageActivity extends TActivity {
+public class Async2ImageActivity extends TActivity {
 
     @ResourceId(R.id.image_async_listview)
     private ListView listView;
@@ -55,7 +55,11 @@ public class AsyncImageActivity extends TActivity {
             */
             //初始化图片加载器
             mBitmapLoader = new MyBitmapLoader(this, "AsyncImageActivity")
-                    .setRamCache(0.1f, 0.1f)//缓存和回收站各占10%内存
+                    /**
+                     * 采用SafeBitmapDrawable方式无需回收站
+                     */
+                    .setRamCache(0.15f, 0)//缓存占15%内存, 禁用回收站
+//                    .setRamCache(0.01f, 0)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
                     .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
                     .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
                     .setDiskCacheInner()//强制使用内部储存
@@ -63,7 +67,10 @@ public class AsyncImageActivity extends TActivity {
 //                    .setLogger(getLogger())//打印日志
                     .open();//启动(必须)
             //设置适配器, 传入图片加载器, 图片解码工具
-            listView.setAdapter(new AsyncImageAdapter(this, makeItemList(), mBitmapLoader, getCachedBitmapUtils()));
+            /**
+             * 用AsyncImageAdapter2
+             */
+            listView.setAdapter(new AsyncImageAdapter2(this, makeItemList(), mBitmapLoader, getCachedBitmapUtils()));
         } catch (IOException e) {
             //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
             e.printStackTrace();

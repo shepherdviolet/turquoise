@@ -44,8 +44,12 @@
         <activity android:name=".slide.SubActivitySlideActivity"
             android:label="@string/slide_activity_title"
             android:theme="@style/AppTheme_Translucent"/>
+        <activity android:name=".image.ImageActivity"
+            android:label="@string/image_title"/>
         <activity android:name=".image.AsyncImageActivity"
             android:label="@string/image_async_title"/>
+        <activity android:name=".image.Async2ImageActivity"
+            android:label="@string/image_async2_title"/>
 
         <activity android:name=".TempActivity"
             android:label="@string/temp_main_title"/>

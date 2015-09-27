@@ -20,7 +20,9 @@
 
     <string name="slide_activity_title">SlideActivity</string>
 
+    <string name="image_title">Image Demo</string>
     <string name="image_async_title">AsyncImageList</string>
+    <string name="image_async2_title">AsyncImageList2</string>
 
     <string name="temp_main_title">Temp</string>
 
