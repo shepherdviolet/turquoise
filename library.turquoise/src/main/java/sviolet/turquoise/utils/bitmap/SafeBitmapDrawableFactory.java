@@ -42,6 +42,8 @@ public class SafeBitmapDrawableFactory {
      * 创建安全的BitmapDrawable
      */
     public SafeBitmapDrawable create(Bitmap bitmap){
+        if (bitmap == null)
+            return null;
         return new SafeBitmapDrawable(bitmap, defaultBitmap);
     }
 
@@ -49,6 +51,8 @@ public class SafeBitmapDrawableFactory {
      * 创建安全的BitmapDrawable
      */
     public SafeBitmapDrawable create(Resources res){
+        if (res == null)
+            return null;
         return new SafeBitmapDrawable(res, defaultBitmap);
     }
 
@@ -56,6 +60,8 @@ public class SafeBitmapDrawableFactory {
      * 创建安全的BitmapDrawable
      */
     public SafeBitmapDrawable create(Resources res, Bitmap bitmap){
+        if (bitmap == null || res == null)
+            return null;
         return new SafeBitmapDrawable(res, bitmap, defaultBitmap);
     }
 
