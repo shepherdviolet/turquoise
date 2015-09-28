@@ -1,4 +1,4 @@
-package sviolet.lib.model.math;
+package sviolet.turquoise.model.math;
 
 /**
  * Float平均值<p>
