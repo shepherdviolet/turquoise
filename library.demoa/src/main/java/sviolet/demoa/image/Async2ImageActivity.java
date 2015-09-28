@@ -12,7 +12,7 @@ import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.image.utils.AsyncImageAdapter2;
 import sviolet.demoa.image.utils.AsyncImageItem;
-import sviolet.demoa.image.utils.MyBitmapLoader;
+import sviolet.demoa.image.utils.BitmapLoaderImplementor;
 import sviolet.turquoise.enhance.TActivity;
 import sviolet.turquoise.enhance.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
@@ -54,7 +54,7 @@ public class Async2ImageActivity extends TActivity {
             会导致快速滑动时, 下载更多的图, 增加流量消耗.
             */
             //初始化图片加载器
-            mBitmapLoader = new MyBitmapLoader(this, "AsyncImageActivity")
+            mBitmapLoader = new BitmapLoader(this, "AsyncImageActivity", new BitmapLoaderImplementor(this))
                     /**
                      * 采用SafeBitmapDrawable方式无需回收站
                      */

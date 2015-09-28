@@ -12,7 +12,7 @@ import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.image.utils.AsyncImageAdapter;
 import sviolet.demoa.image.utils.AsyncImageItem;
-import sviolet.demoa.image.utils.MyBitmapLoader;
+import sviolet.demoa.image.utils.BitmapLoaderImplementor;
 import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.TActivity;
@@ -54,7 +54,7 @@ public class AsyncImageActivity extends TActivity {
             会导致快速滑动时, 下载更多的图, 增加流量消耗.
             */
             //初始化图片加载器
-            mBitmapLoader = new MyBitmapLoader(this, "AsyncImageActivity")
+            mBitmapLoader = new BitmapLoader(this, "AsyncImageActivity", new BitmapLoaderImplementor(this))
                     .setRamCache(0.1f, 0.1f)//缓存和回收站各占10%内存
                     .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
                     .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25

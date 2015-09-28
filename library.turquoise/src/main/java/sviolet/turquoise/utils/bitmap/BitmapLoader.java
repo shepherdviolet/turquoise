@@ -27,15 +27,15 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * <Br/>
  * ****************************************************************<br/>
  * [使用说明]<br/>
- * 1.实现抽象类BitmapLoader -> MyBitmapLoader <br/>
- * 2.实例化MyBitmapLoader(必须) <br/>
+ * 1.实现接口BitmapLoader.Implementor -> BitmapLoaderImplementor <br/>
+ * 2.实例化BitmapLoader(Context,String,BitmapLoader.Implementor) <br/>
  * 3.setRamCache/setDiskCache/setNetLoad/setLogger设置参数(可选) <br/>
  * 4.open() 启用BitmapLoader(必须, 否则抛异常)<br/>
  * <br/>
  * [代码示例]:<Br/>
     private BitmapLoader mBitmapLoader;
     try {
-        mBitmapLoader = new MyBitmapLoader(this, "bitmap")
+        mBitmapLoader = new MyBitmapLoader(this, "bitmap", new BitmapLoaderImplementor())
             .setRamCache(0.125f, 0.125f)//不采用SafeBitmapDrawableFactory,启用回收站
             //.setRamCache(0.125f, 0)//采用SafeBitmapDrawableFactory包装Bitmap使用,回收站设置为0禁用
             .setDiskCache(50, 5, 15)
@@ -96,7 +96,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *
  * Created by S.Violet on 2015/7/3.
  */
-public abstract class BitmapLoader {
+public class BitmapLoader {
 
     private CachedBitmapUtils mCachedBitmapUtils;//带缓存的Bitmap工具
     private DiskLruCache mDiskLruCache;//磁盘缓存器
@@ -106,8 +106,9 @@ public abstract class BitmapLoader {
 
     //SETTINGS//////////////////////////////////////////////
 
-    private Context context;
-    private String diskCacheName;//磁盘缓存名
+    private Context context;//(必须)
+    private String diskCacheName;//磁盘缓存名(必须)
+    private Implementor implementor;//实现器(必须)
     private long diskCacheSize = 1024 * 1024 * 10;//磁盘缓存大小(Mb)
     private float ramCacheSizePercent = 0.125f;//内存缓存大小(占应用可用内存比例)
     private float ramCacheRecyclerSizePercent = 0.125f;//内存缓存回收站大小(占应用可用内存比例)
@@ -123,10 +124,15 @@ public abstract class BitmapLoader {
     /**
      * @param context 上下文
      * @param diskCacheName 磁盘缓存目录名
+     * @param implementor 实现器
      */
-    public BitmapLoader(Context context, String diskCacheName) {
+    public BitmapLoader(Context context, String diskCacheName, Implementor implementor) {
+        if (implementor == null){
+            throw new RuntimeException("[BitmapLoader]implementor is null !!", new NullPointerException());
+        }
         this.context = context;
         this.diskCacheName = diskCacheName;
+        this.implementor = implementor;
         cacheDir = DirectoryUtils.getCacheDir(context, diskCacheName);
     }
 
@@ -218,69 +224,77 @@ public abstract class BitmapLoader {
     }
 
     /******************************************
-     * abstract
+     * inner class
      */
 
     /**
-     * [实现提示]:<br/>
-     * 可以直接使用key值作为cacheKey, 也可以将url或者key进行摘要
-     * 计算, 得到摘要值作为cacheKey, 根据实际情况实现.  <Br/>
-     * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
-     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
-     * 这个cacheKey标识唯一的资源<br/>
-     *
-     * @return 实现根据URL连接和指定Key, 计算并返回缓存Key
+     * 实现器<br/>
+     * 1.实现cacheKey的生成规则<br/>
+     * 2.实现网络加载图片<br/>
+     * 3.实现异常处理<br/>
      */
-    protected abstract String getCacheKey(String url, String key);
+    public interface Implementor{
+        /**
+         * [实现提示]:<br/>
+         * 可以直接使用key值作为cacheKey, 也可以将url或者key进行摘要
+         * 计算, 得到摘要值作为cacheKey, 根据实际情况实现.  <Br/>
+         * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
+         * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+         * 这个cacheKey标识唯一的资源<br/>
+         *
+         * @return 实现根据URL连接和指定Key, 计算并返回缓存Key
+         */
+        public String getCacheKey(String url, String key);
 
-    /**
-     * 实现根据url和key参数从网络下载图片数据, 依照需求尺寸reqWidth和reqHeight解析为合适大小的Bitmap,
-     * 并调用结果容器resultHolder.set(Bitmap)方法将Bitmap返回, 若加载失败则set(null)<br/>
-     * <br/>
-     * 注意:<br/>
-     * 1.网络请求注意做超时处理,否则任务可能会一直等待<br/>
-     * 2.数据解析为Bitmap时,请根据需求尺寸reqWidth和reqHeight解析, 以节省内存<br/>
-     * <br/>
-     * 线程会阻塞等待,直到resultHolder.set(Bitmap)方法执行.若任务被cancel,阻塞也会被中断,且即使后续
-     * 网络请求返回了Bitmap,也会被Bitmap.recycle().<br/>
-     * <br/>
-     * 无论同步还是异步的情况,均使用resultHolder.set(Bitmap)返回结果<br/>
-     * 同步网络请求:<br/>
-     *
-     *      //网络加载代码
-     *      ......
-     *      resultHolder.set(bitmap);
-     *
-     * <br/>
-     * 异步网络请求:<br/>
-     *
-     *      //异步处理的情况
-     *      new Thread(new Runnable(){
-     *          public void run() {
-     *              //网络加载代码
-     *              ......
-     *              resultHolder.set(bitmap);
-     *          }
-     *      }).start();
-     *
-     *
-     * @param url url
-     * @param key key
-     * @param reqWidth 请求宽度
-     * @param reqHeight 请求高度
-     * @param resultHolder 结果容器
-     */
-    protected abstract void loadFromNet(String url, String key, int reqWidth, int reqHeight, ResultHolder resultHolder);
+        /**
+         * 实现根据url和key参数从网络下载图片数据, 依照需求尺寸reqWidth和reqHeight解析为合适大小的Bitmap,
+         * 并调用结果容器resultHolder.set(Bitmap)方法将Bitmap返回, 若加载失败则set(null)<br/>
+         * <br/>
+         * 注意:<br/>
+         * 1.网络请求注意做超时处理,否则任务可能会一直等待<br/>
+         * 2.数据解析为Bitmap时,请根据需求尺寸reqWidth和reqHeight解析, 以节省内存<br/>
+         * <br/>
+         * 线程会阻塞等待,直到resultHolder.set(Bitmap)方法执行.若任务被cancel,阻塞也会被中断,且即使后续
+         * 网络请求返回了Bitmap,也会被Bitmap.recycle().<br/>
+         * <br/>
+         * 无论同步还是异步的情况,均使用resultHolder.set(Bitmap)返回结果<br/>
+         * 同步网络请求:<br/>
+         *
+         *      //网络加载代码
+         *      ......
+         *      resultHolder.set(bitmap);
+         *
+         * <br/>
+         * 异步网络请求:<br/>
+         *
+         *      //异步处理的情况
+         *      new Thread(new Runnable(){
+         *          public void run() {
+         *              //网络加载代码
+         *              ......
+         *              resultHolder.set(bitmap);
+         *          }
+         *      }).start();
+         *
+         *
+         * @param url url
+         * @param key key
+         * @param reqWidth 请求宽度
+         * @param reqHeight 请求高度
+         * @param resultHolder 结果容器
+         */
+        public void loadFromNet(String url, String key, int reqWidth, int reqHeight, ResultHolder resultHolder);
 
-    /**
-     * 实现异常处理
-     */
-    protected abstract void onException(Throwable throwable);
+        /**
+         * 实现异常处理
+         */
+        public void onException(Throwable throwable);
 
-    /**
-     * 写入缓存文件时的异常处理, 通常只需要打印日志或提醒即可
-     */
-    protected abstract void onCacheWriteException(Throwable throwable);
+        /**
+         * 实现写入缓存文件时的异常处理, 通常只需要打印日志或提醒即可
+         */
+        public void onCacheWriteException(Throwable throwable);
+    }
 
     /******************************************
      * public
@@ -306,7 +320,7 @@ public abstract class BitmapLoader {
     public void load(String url, String key, int reqWidth, int reqHeight, Object params, OnLoadCompleteListener mOnLoadCompleteListener) {
         checkIsOpen();
         //计算缓存key
-        String cacheKey = getCacheKey(url, key);
+        String cacheKey = implementor.getCacheKey(url, key);
         if (logger != null) {
             logger.d("[BitmapLoader]load:start:  url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
         }
@@ -338,7 +352,7 @@ public abstract class BitmapLoader {
     public Bitmap get(String url, String key) {
         checkIsOpen();
         //计算缓存key
-        String cacheKey = getCacheKey(url, key);
+        String cacheKey = implementor.getCacheKey(url, key);
         //尝试从内存缓存中取Bitmap
         Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
         if (bitmap != null && !bitmap.isRecycled()) {
@@ -366,7 +380,7 @@ public abstract class BitmapLoader {
     public void unused(String url, String key) {
         checkIsOpen();
         //计算缓存key
-        String cacheKey = getCacheKey(url, key);
+        String cacheKey = implementor.getCacheKey(url, key);
         //网络加载队列取消
         mNetLoadQueue.cancel(cacheKey);
         //磁盘缓存加载队列取消
@@ -396,7 +410,7 @@ public abstract class BitmapLoader {
                 mDiskLruCache.close();
                 mDiskLruCache = null;
             } catch (IOException e) {
-                onException(e);
+                implementor.onException(e);
             }
         }
         if (mCachedBitmapUtils != null) {
@@ -475,11 +489,11 @@ public abstract class BitmapLoader {
         public Object doInBackground(Object params) {
             //异常检查
             if (mDiskLruCache == null || mCachedBitmapUtils == null) {
-                onException(new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
+                implementor.onException(new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
-            String cacheKey = getCacheKey(url, key);
+            String cacheKey = implementor.getCacheKey(url, key);
             try {
                 //得到缓存文件
                 File cacheFile = mDiskLruCache.getFile(cacheKey, 0);
@@ -497,14 +511,14 @@ public abstract class BitmapLoader {
                     return RESULT_CONTINUE;
                 }
             } catch (IOException e) {
-                onException(e);
+                implementor.onException(e);
             }
             return RESULT_FAILED;
         }
 
         @Override
         public void onPostExecute(Object result, boolean isCancel) {
-            String cacheKey = getCacheKey(url, key);
+            String cacheKey = implementor.getCacheKey(url, key);
             //若任务被取消
             if (isCancel) {
                 if (mOnLoadCompleteListener != null)
@@ -576,11 +590,11 @@ public abstract class BitmapLoader {
         public Object doInBackground(Object params) {
             //检查异常
             if (mDiskLruCache == null || mCachedBitmapUtils == null) {
-                onException(new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
+                implementor.onException(new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
-            String cacheKey = getCacheKey(url, key);
+            String cacheKey = implementor.getCacheKey(url, key);
             OutputStream outputStream = null;
             DiskLruCache.Editor editor;
             try {
@@ -595,7 +609,7 @@ public abstract class BitmapLoader {
                 //结果容器
                 resultHolder = new ResultHolder();
                 //从网络加载Bitmap
-                loadFromNet(url, key, reqWidth, reqHeight, resultHolder);
+                implementor.loadFromNet(url, key, reqWidth, reqHeight, resultHolder);
                 //阻塞等待并获取结果Bitmap
                 Bitmap bitmap = resultHolder.get();
                 //判断
@@ -614,7 +628,7 @@ public abstract class BitmapLoader {
                         //写缓存日志
                         mDiskLruCache.flush();
                     }catch(Exception e){
-                        onCacheWriteException(e);
+                        implementor.onCacheWriteException(e);
                     }finally {
                         //尝试关闭输出流
                         try {outputStream.close();} catch (Exception ignored) {}
@@ -637,14 +651,14 @@ public abstract class BitmapLoader {
                     try {outputStream.close();} catch (Exception ignored) {}
                 }
             } catch (IOException e) {
-                onException(e);
+                implementor.onException(e);
             }
             return RESULT_FAILED;
         }
 
         @Override
         public void onPostExecute(Object result, boolean isCancel) {
-            String cacheKey = getCacheKey(url, key);
+            String cacheKey = implementor.getCacheKey(url, key);
             //若任务被取消
             if (isCancel) {
                 if (mOnLoadCompleteListener != null)

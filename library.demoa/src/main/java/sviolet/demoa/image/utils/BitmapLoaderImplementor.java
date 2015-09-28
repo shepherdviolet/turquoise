@@ -2,7 +2,6 @@ package sviolet.demoa.image.utils;
 
 import android.content.Context;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,10 +13,10 @@ import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
 
 /**
- * 实现BitmapLoader
+ * BitmapLoader实现器
  * Created by S.Violet on 2015/7/7.
  */
-public class MyBitmapLoader extends BitmapLoader {
+public class BitmapLoaderImplementor implements BitmapLoader.Implementor {
 
     private Context context;
 
@@ -27,8 +26,7 @@ public class MyBitmapLoader extends BitmapLoader {
     private int resourceIds[] = {R.mipmap.async_image_1, R.mipmap.async_image_2, R.mipmap.async_image_3, R.mipmap.async_image_4, R.mipmap.async_image_5};
     private ExecutorService pool = Executors.newCachedThreadPool();
 
-    public MyBitmapLoader(Context context, String cacheName) throws IOException {
-        super(context, cacheName);
+    public BitmapLoaderImplementor(Context context){
         this.context = context;
     }
 
@@ -39,7 +37,7 @@ public class MyBitmapLoader extends BitmapLoader {
      * 因此, 需要实现这个方法, 根据url和key生成一个cacheKey返回<br/>
      */
     @Override
-    protected String getCacheKey(String url, String key) {
+    public String getCacheKey(String url, String key) {
         //用url做摘要
         return ByteUtils.byteToHex(DigestCipher.digest(url, DigestCipher.TYPE_MD5));
         //直接用自定义key
@@ -54,7 +52,7 @@ public class MyBitmapLoader extends BitmapLoader {
      * [此处模拟网络加载]<br/>
      */
     @Override
-    protected void loadFromNet(String url, String key, final int reqWidth, final int reqHeight, final ResultHolder resultHolder) {
+    public void loadFromNet(String url, String key, final int reqWidth, final int reqHeight, final BitmapLoader.ResultHolder resultHolder) {
 
         ///////////////////////////////////////////////////
         //同步方式
@@ -91,7 +89,7 @@ public class MyBitmapLoader extends BitmapLoader {
      * 异常处理
      */
     @Override
-    protected void onException(Throwable throwable) {
+    public void onException(Throwable throwable) {
         throwable.printStackTrace();
     }
 
@@ -99,7 +97,7 @@ public class MyBitmapLoader extends BitmapLoader {
      * 写入到文件缓存失败
      */
     @Override
-    protected void onCacheWriteException(Throwable throwable) {
+    public void onCacheWriteException(Throwable throwable) {
         throwable.printStackTrace();
     }
 }
