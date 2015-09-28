@@ -11,7 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/library.demoa" />
-            <option value="$PROJECT_DIR$/library.librarya" />
+            <option value="$PROJECT_DIR$/library.recycler" />
             <option value="$PROJECT_DIR$/library.turquoise" />
           </set>
         </option>

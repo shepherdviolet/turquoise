@@ -10,7 +10,7 @@
 ## Modules
 > library.turquoise : the "Turquoise" library module  |  库本体 <br/>
 > library.demoa : demos of "Turquoise" library  |  示例程序 <br/>
-> library.librarya : a messy library. IGNORE PLEASE  |  废代码, 请无视 <br/>
+> library.recycler : some messy code. IGNORE PLEASE  |  未整理的凌乱代码, 请无视 <br/>
 
 ## Export & Use *.aar
 >1.build library <br/>

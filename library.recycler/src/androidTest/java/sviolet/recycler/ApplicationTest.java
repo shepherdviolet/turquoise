@@ -1,4 +1,4 @@
-package sviolet.librarya;
+package sviolet.recycler;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

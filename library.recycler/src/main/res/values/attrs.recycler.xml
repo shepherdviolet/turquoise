@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <!-- /SVIOLET.LIBRARYA/src/sviolet/liba/view/slidelist/SlideListItem.java -->
+    <!-- /SVIOLET.RECYCLER/src/sviolet/liba/view/slidelist/SlideListItem.java -->
     <declare-styleable name="SlideListItem">
         <attr name="SlideListItem_slideRange" format="dimension" /><!-- 侧滑距离 -->
         <attr name="SlideListItem_shadowWidth" format="float" /><!-- 纵向阴影宽度 -->
@@ -14,7 +14,7 @@
         <attr name="abordTouchEvent" /><!-- 阻断触摸事件(不向下分发) -->
 	</declare-styleable>
     
-    <!-- /SVIOLET.LIBRARYA/src/sviolet/liba/view/RippleView.java -->
+    <!-- /SVIOLET.RECYCLER/src/sviolet/liba/view/RippleView.java -->
     <declare-styleable name="RippleView">
         <attr name="colour"/><!-- 颜色 -->
         <attr name="duration"/><!-- 持续时间 -->
@@ -33,30 +33,30 @@
         </attr>
     </declare-styleable>
 
-    <!-- /SVIOLET.LIBRARYA/src/sviolet/liba/view/AsyncImageView.java -->
+    <!-- /SVIOLET.RECYCLER/src/sviolet/liba/view/AsyncImageView.java -->
     <declare-styleable name="AsyncImageView">
         <attr name="src" /><!-- 图片资源ID -->
         <attr name="colour"/><!-- 颜色 -->
     </declare-styleable>
     
-    <!-- /SVIOLET.LIBRARYA/src/sviolet/liba/view/GifView.java -->
+    <!-- /SVIOLET.RECYCLER/src/sviolet/liba/view/GifView.java -->
     <declare-styleable name="GifView">
         <attr name="src" /><!-- 图片资源ID -->
         <attr name="duration" /><!-- 持续时间 -->
         <attr name="repeat" /><!-- 是否重复 -->
     </declare-styleable>
     
-    <!-- /SVIOLET.LIBRARYA/src/sviolet/liba/view/RotateImageView.java -->
+    <!-- /SVIOLET.RECYCLER/src/sviolet/liba/view/RotateImageView.java -->
     <declare-styleable name="RotateImageView">
         <attr name="src" /><!-- 图片资源ID -->
     </declare-styleable>
     
-    <!-- /SVIOLET.LIBRARYA/src/sviolet/liba/view/RotateTextView.java -->
+    <!-- /SVIOLET.RECYCLER/src/sviolet/liba/view/RotateTextView.java -->
     <declare-styleable name="RotateTextView">
         <attr name="angle" /><!-- 图片资源ID -->
     </declare-styleable>
     
-    <!-- /SVIOLET.LIBRARYA/src/sviolet/liba/view/ScrapeTextView.java -->
+    <!-- /SVIOLET.RECYCLER/src/sviolet/liba/view/ScrapeTextView.java -->
     <declare-styleable name="ScrapeTextView">
 		<attr name="width" /><!-- 宽度 -->
 		<attr name="height"/><!-- 高度 -->
