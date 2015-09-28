@@ -122,4 +122,54 @@
         <!-- 阴影位移Y -->
     </declare-styleable>
 
+    <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/RippleView.java -->
+    <declare-styleable name="RippleView">
+        <attr name="colour"/><!-- 颜色 -->
+        <attr name="duration"/><!-- 持续时间 -->
+        <attr name="framerate"/><!-- 动画刷新帧间隔 -->
+        <attr name="alpha" /><!-- 透明度 -->
+        <attr name="padding" /><!-- 内边距 -->
+        <attr name="zoomScale" /><!-- 缩放比例 -->
+        <attr name="zoomDuration"/><!-- 缩放动画持续时间 -->
+        <attr name="center" /><!-- 中心居中 -->
+        <attr name="zoomEnable" /><!-- 允许缩放 -->
+        <attr name="longpressEnabled" /><!-- 允许长按 -->
+        <attr name="abordTouchEvent" /><!-- 阻断触摸事件(不向下分发) -->
+        <attr name="RippleView_type" format="enum"><!-- 波纹类型 -->
+            <enum name="largeRipple" value="0"/><!-- 大波纹(填满矩形) -->
+            <enum name="smallRipple" value="1" /><!-- 小波纹 -->
+        </attr>
+    </declare-styleable>
+
+    <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/GifView.java -->
+    <declare-styleable name="GifView">
+        <attr name="src" /><!-- 图片资源ID -->
+        <attr name="duration" /><!-- 持续时间 -->
+        <attr name="repeat" /><!-- 是否重复 -->
+    </declare-styleable>
+
+    <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/RotateImageView.java -->
+    <declare-styleable name="RotateImageView">
+        <attr name="src" /><!-- 图片资源ID -->
+    </declare-styleable>
+
+    <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/RotateTextView.java -->
+    <declare-styleable name="RotateTextView">
+        <attr name="angle" /><!-- 图片资源ID -->
+    </declare-styleable>
+
+    <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/ScrapeTextView.java -->
+    <declare-styleable name="ScrapeTextView">
+        <attr name="width" /><!-- 宽度 -->
+        <attr name="height"/><!-- 高度 -->
+        <attr name="widthProportion" /><!-- 宽度占屏幕宽度的比例 -->
+        <attr name="heightProportion" /><!-- 高度占屏幕高度的比例 -->
+        <attr name="widthHeightRatio" /><!-- 宽度/高度的比例, 适用于widthProportion/heightProportion -->
+        <attr name="strokeWidth" /><!-- 画笔宽度 -->
+        <attr name="touchEnabled" /><!-- 允许触摸 -->
+        <attr name="colour" /><!-- 颜色 -->
+        <attr name="text"/><!-- 文本 -->
+        <attr name="src" /><!-- 图片资源ID -->
+    </declare-styleable>
+
 </resources>

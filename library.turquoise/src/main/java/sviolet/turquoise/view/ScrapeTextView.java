@@ -1,6 +1,5 @@
-package sviolet.liba.view;
+package sviolet.turquoise.view;
 
-import sviolet.liba.R;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 
 import android.annotation.SuppressLint;
@@ -23,6 +22,8 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import sviolet.turquoise.R;
 
 /**
  * 刮刮乐TextView<<destroy()销毁>><p>

@@ -1,9 +1,9 @@
-package sviolet.liba.view.physical.logic;
+package sviolet.turquoise.model.physical;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import sviolet.liba.view.physical.model.Inputer;
+import sviolet.turquoise.model.physical.abs.Inputer;
 
 /**
  * 

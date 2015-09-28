@@ -1,6 +1,5 @@
-package sviolet.liba.view;
+package sviolet.turquoise.view;
 
-import sviolet.liba.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -9,6 +8,8 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
+import sviolet.turquoise.R;
 
 /**
  * 

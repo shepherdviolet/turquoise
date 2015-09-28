@@ -1,4 +1,4 @@
-package sviolet.liba.view;
+package sviolet.turquoise.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -15,7 +15,7 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
 
-import sviolet.liba.R;
+import sviolet.turquoise.R;
 
 /**
  * 水波纹触摸效果控件(RelativeLayout)<p>

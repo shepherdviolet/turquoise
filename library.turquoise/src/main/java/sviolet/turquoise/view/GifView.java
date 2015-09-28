@@ -1,14 +1,15 @@
-package sviolet.liba.view;
+package sviolet.turquoise.view;
 
 import java.io.InputStream;
 
-import sviolet.liba.R;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Movie;
 import android.util.AttributeSet;
 import android.view.View;
+
+import sviolet.turquoise.R;
 
 /**
  * GIF动画显示控件<br>

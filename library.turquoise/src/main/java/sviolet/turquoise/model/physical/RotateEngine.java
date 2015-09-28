@@ -1,13 +1,11 @@
-package sviolet.liba.view.physical.logic;
+package sviolet.turquoise.model.physical;
 
-import sviolet.liba.view.physical.model.Engine;
-
-
+import sviolet.turquoise.model.physical.abs.Engine;
 
 /**
- * 
+ *
  * 旋转引擎<<stop()关闭>>
- * 
+ *
  * @author S.Violet (ZhuQinChao)
  *
  */
@@ -40,30 +38,30 @@ import sviolet.liba.view.physical.model.Engine;
  */
 
 public class RotateEngine extends Engine {
-	
+
 	//参数
 	private float acceleration;//加速度(+:顺时针,-:逆时针)
 	private boolean willStop = false;//速度为0时是否停止
-	
+
 	//输出
 	private float angle = 0;//当前角度(0-360F)
 	private float angleAmount = 0;//累计角度
 	private float angleStep = 0;//步进(度)
 	private float speed;//当前速度
-	
+
 	//标志
 	private boolean isStop = false;//临时停止标志
-	
+
 	///////////////////////////////////////////////////////////////////
 	//                  输入输出
 	///////////////////////////////////////////////////////////////////
-	
+
 	//输入处理
 	@Override
 	protected void onInput(long time) {
 		calculate(time);
 	}
-	
+
 	//处理输出
 	@Override
 	public void onOutput() {
@@ -75,13 +73,13 @@ public class RotateEngine extends Engine {
 		}
 		isStop = false;//清除stop标志
 	}
-	
+
 	//处理停止
 	@Override
 	public void onStop() {
 		super.onStop();
 	}
-	
+
 	//处理触摸滑动
 	@Override
 	public void onHandleMove(float step) {
@@ -90,18 +88,18 @@ public class RotateEngine extends Engine {
 		this.angle = this.angleAmount % 360;
 		output();
 	}
-	
+
 	//处理触摸释放(加速度)
 	@Override
 	public void onHandleRelease(float acceleration) {
 		this.acceleration = acceleration;
 	}
-	
+
 	///////////////////////////////////////////////////////////////////
 
 	/**
 	 * 初始角度为0
-	 * 
+	 *
 	 * @param initSpeed 初始速度
 	 * @param acceleration 加速度
 	 * @param willStop 速度为0时是否停止
@@ -109,7 +107,7 @@ public class RotateEngine extends Engine {
 	public RotateEngine(float initSpeed, float acceleration, boolean willStop){
 		init(initSpeed, acceleration, willStop);
 	}
-	
+
 	/**
 	 * @param initAngle 初始角度
 	 * @param initSpeed 初始速度
@@ -119,10 +117,10 @@ public class RotateEngine extends Engine {
 	public RotateEngine(float initAngle, float initSpeed, float acceleration, boolean willStop){
 		init(initAngle, initSpeed, acceleration, willStop);
 	}
-	
+
 	/**
 	 * 初始化(初始角度为0)
-	 * 
+	 *
 	 * @param initSpeed 初始速度
 	 * @param acceleration 加速度
 	 * @param willStop 速度为0时是否停止
@@ -130,10 +128,10 @@ public class RotateEngine extends Engine {
 	public void init(float initSpeed, float acceleration, boolean willStop){
 		init(0, initSpeed, acceleration, willStop);
 	}
-	
+
 	/**
 	 * 初始化
-	 * 
+	 *
 	 * @param initAngle 初始角度
 	 * @param initSpeed 初始速度
 	 * @param acceleration 加速度
@@ -145,23 +143,23 @@ public class RotateEngine extends Engine {
 		this.speed = initSpeed;
 		this.acceleration = acceleration;
 		this.willStop = willStop;
-		
+
 		this.isStop = false;
 	}
-	
+
 	/**
 	 * 运动时改变加速度
-	 * 
+	 *
 	 * @param acceleration 重设加速度
 	 */
 	public void changeAcceleration(float acceleration){
 		this.acceleration = acceleration;
 		this.isStop = false;
 	}
-	
+
 	/**
 	 * 运动时改变加速度(并重设起始角度)
-	 * 
+	 *
 	 * @param acceleration 重设加速度
 	 * @param angle 重设起始角度
 	 */
@@ -171,45 +169,45 @@ public class RotateEngine extends Engine {
 		this.angleAmount = angle;
 		this.isStop = false;
 	}
-	
+
 	/**
 	 * 获取当前角度(0-360)
-	 * 
+	 *
 	 * @return
 	 */
 	public float getAngle(){
 		return angle;
 	}
-	
+
 	/**
 	 * 获取累计角度
-	 * 
+	 *
 	 * @return
 	 */
 	public float getAngleCounter(){
 		return angleAmount;
 	}
-	
+
 	/**
 	 * 获取最后一次的步进角度
-	 * 
+	 *
 	 * @return
 	 */
 	public float getAngleStep(){
 		return angleStep;
 	}
-	
+
 	/**
 	 * 计算
-	 * 
+	 *
 	 * @param time
 	 */
 	private void calculate(long time){
-		
+
 		float _passtime = ((float)time) / 1000;
-		
+
 		float _speed = speed + _passtime * acceleration;
-		
+
 		if(willStop){
 			if((_speed >= 0 && speed <= 0) || (_speed <= 0 && speed >= 0)){
 				float _stopTime = Math.abs(speed) / Math.abs(acceleration);
@@ -220,15 +218,15 @@ public class RotateEngine extends Engine {
 				}
 			}
 		}
-		
-		float _angleAmount = angleAmount + 
+
+		float _angleAmount = angleAmount +
 				speed * _passtime + (acceleration * _passtime * _passtime) / 2;
-		
+
 		angleStep = _angleAmount - angleAmount;
 		angleAmount = _angleAmount;
 		angle = _angleAmount % 360;
 		speed = _speed;
-		
+
 		output();//通知主线程输出显示
 	}
 }

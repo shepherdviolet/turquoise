@@ -1,6 +1,6 @@
-package sviolet.liba.view.physical.logic;
+package sviolet.turquoise.model.physical;
 
-import sviolet.liba.view.physical.model.Engine;
+import sviolet.turquoise.model.physical.abs.Engine;
 
 /**
  * 
