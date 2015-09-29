@@ -555,7 +555,7 @@ public class AsyncBitmapLoader {
                 } else {
                     return RESULT_CONTINUE;
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 implementor.onException(e);
             }
             return RESULT_FAILED;
@@ -668,7 +668,8 @@ public class AsyncBitmapLoader {
                         BitmapUtils.syncSaveBitmap(bitmap, outputStream, imageFormat, imageQuality, false, null);
                         //尝试flush输出流
                         try {
-                            outputStream.flush();
+                            if (outputStream != null)
+                                outputStream.flush();
                         } catch (Exception ignored) {
                         }
                         //写入缓存成功commit
@@ -677,9 +678,6 @@ public class AsyncBitmapLoader {
                         mDiskLruCache.flush();
                     }catch(Exception e){
                         implementor.onCacheWriteException(e);
-                    }finally {
-                        //尝试关闭输出流
-                        try {outputStream.close();} catch (Exception ignored) {}
                     }
                     //若任务尚未被取消
                     if (!isCancel()) {
@@ -690,17 +688,19 @@ public class AsyncBitmapLoader {
                     return RESULT_CANCELED;
                 } else {
                     //网络加载失败
-                    //尝试flush输出流
-                    try {outputStream.flush();} catch (Exception ignored) {}
                     //写入缓存失败abort
                     editor.abort();
                     //写缓存日志
                     mDiskLruCache.flush();
-                    //尝试关闭输出流
-                    try {outputStream.close();} catch (Exception ignored) {}
                 }
-            } catch (IOException e) {
+            } catch (Exception e) {
                 implementor.onException(e);
+            }finally {
+                try {
+                    if (outputStream != null)
+                        outputStream.close();
+                } catch (Exception ignored) {
+                }
             }
             return RESULT_FAILED;
         }
