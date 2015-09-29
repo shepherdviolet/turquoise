@@ -42,6 +42,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
             .setNetLoad(3, 15)
             .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
             .setDiskCacheInner()//强制使用内部储存
+            //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
             .setLogger(getLogger())
             .open();//必须调用
     } catch (IOException e) {
@@ -66,6 +67,12 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * 片未全部加载完.<br/>
  * 设置日志打印器后, AsyncBitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
  * 情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
+ * <Br/>
+ * Tips::<br/>
+ * <br/>
+ * 1.当一个页面中需要同时加载相同图片,却发现只加载出一个,其余的都被取消(onLoadCanceled).
+ *   尝试设置setDuplicateLoadEnable(true);<Br/>
+ * <br/>
  * <br/>
  * ****************************************************************<br/>
  * <Br/>
@@ -205,10 +212,26 @@ public class AsyncBitmapLoader {
     }
 
     /**
-     * 图片重复加载<br/>
-     * false:默认值,
-     *
-     * true:
+     * 相同图片同时加载<br/>
+     * <br/>
+     * ----------------------------------------------<br/>
+     * <br/>
+     * false:禁用(默认)<Br/>
+     * 适用于大多数场合,同一个页面不会出现相同图片(相同的url和key)的情况.<br/>
+     * <br/>
+     * 为优化性能,同一张图片并发加载时,采用TQueue的同名任务取消策略,取消多余的并发任务,只保留一个任务完成.
+     * 因此,同一个页面同时加载同一张图片时,最终只有一张图片完成加载,其他会被取消.在使用ListView等场合时,
+     * 可以避免在频繁滑动时重复执行加载,以优化性能.<br/>
+     * <br/>
+     * ----------------------------------------------<br/>
+     * true:启用<br/>
+     * 适用于同一个页面会出现相同图片(相同的url和key)的场合,性能可能会下降,不适合高并发加载,不适合ListView
+     * 等View复用控件的场合.<br/>
+     * <br/>
+     * 为了满足在一个屏幕中同时显示多张相同图片(相同的url和key)的情况,在同一张图片并发加载时,采用TQueue的
+     * 同名任务跟随策略,其中一个任务执行,其他同名任务等待其完成后,同时回调OnLoadCompleteListener,并传入
+     * 同一个结果(Bitmap).这种方式在高并发场合,例如:频繁滑动ListView,任务会持有大量的对象用以回调,而绝大
+     * 多数的View已不再显示在屏幕上.<Br/>
      *
      */
     public AsyncBitmapLoader setDuplicateLoadEnable(boolean duplicateLoadEnable){
