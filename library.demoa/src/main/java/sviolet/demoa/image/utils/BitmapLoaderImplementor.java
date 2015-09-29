@@ -73,7 +73,7 @@ public class BitmapLoaderImplementor implements AsyncBitmapLoader.Implementor {
             public void run() {
                 //模拟网络耗时
                 try {
-                    Thread.sleep(random.nextInt(1000));
+                    Thread.sleep(random.nextInt(500));
                 } catch (InterruptedException e) {
                 }
                 //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
