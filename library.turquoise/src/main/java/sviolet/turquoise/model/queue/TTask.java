@@ -1,5 +1,7 @@
 package sviolet.turquoise.model.queue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -31,6 +33,8 @@ public abstract class TTask {
 	private long timeOutSet = -1;//任务超时设置
 	private String key;//标签
 	private boolean cancelable = true;//是否允许被取消(中止)
+
+	private List<TTask> follower;//跟随的任务
 	
 	//var//////////////////////////////////////////
 
@@ -123,7 +127,31 @@ public abstract class TTask {
     public String getKey(){
         return key;
     }
-	
+
+	/**
+	 * 添加一个跟随的任务<br/>
+	 *
+	 * 当任务完成时, 会回调跟随任务的onFollow
+	 *
+	 * @param task 跟随的任务
+	 */
+	protected void addFollower(TTask task){
+		synchronized (TTask.this) {
+			if (follower == null)
+				follower = new ArrayList<TTask>();
+			follower.add(task);
+            if (task.getFollower() != null){
+                for (int i = 0 ; i < task.getFollower().size() ; i++){
+                    follower.add(task.getFollower().get(i));
+                }
+            }
+		}
+	}
+
+    protected List<TTask> getFollower(){
+        return follower;
+    }
+
 	/*********************************************
 	 * public
 	 */
@@ -236,25 +264,25 @@ public abstract class TTask {
 			throw new RuntimeException("[TTask]can not start a TTask without TQueue");
 		}
 		queue.ttask_execute(new Runnable() {
-			@Override
-			public void run() {
+            @Override
+            public void run() {
                 synchronized (TTask.this) {
                     if (checkCancelState())
                         return;
                     state = STATE_EXECUTING;
                 }
-				result = TTask.this.doInBackground(params);
+                result = TTask.this.doInBackground(params);
                 cancelTimeOutTimer();
                 synchronized (TTask.this) {
                     if (checkCancelState())
                         return;
                     state = STATE_POST_EXECUTE;
                 }
-                if (queue != null){
-					queue.ttask_postComplete(TTask.this);
-				}
-			}
-		});
+                if (queue != null) {
+                    queue.ttask_postComplete(TTask.this);
+                }
+            }
+        });
 	}
 
     /**
@@ -272,6 +300,33 @@ public abstract class TTask {
 		if(queue != null){
 			queue.notifyDispatchTask();
 		}
+
+        //执行跟随者
+        if (follower != null){
+            try{
+                for (int i = 0 ; i < follower.size() ; i++){
+                    follower.get(i).afterFollowed(result, isCancel());
+                }
+            }catch(Exception ignored){
+            }
+        }
+
+        //销毁
+        onDestroy();
+    }
+
+    /**
+     * 跟踪完成后的流程
+     */
+    protected void afterFollowed(Object result, boolean isCanceled){
+        onPostExecute(result, isCanceled);
+        synchronized (TTask.this) {
+            if (state <= STATE_COMPLETE) {
+                state = STATE_COMPLETE;
+            } else {
+                state = STATE_CANCELED;
+            }
+        }
         onDestroy();
     }
 

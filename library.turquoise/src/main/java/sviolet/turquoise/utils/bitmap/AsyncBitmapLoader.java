@@ -17,27 +17,27 @@ import sviolet.turquoise.utils.sys.ApplicationUtils;
 import sviolet.turquoise.utils.sys.DirectoryUtils;
 
 /**
- * [抽象类]图片双缓存网络加载器<br/>
+ * [抽象类]图片双缓存网络异步加载器<br/>
  * <br/>
  * Bitmap内存缓存+磁盘缓存+网络加载+防OOM<br/>
  * <br/>
- * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
+ * AsyncBitmapLoader中每个位图资源都由url和key共同标识, url和key在AsyncBitmapLoader内部
  * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
  * 这个cacheKey标识唯一的资源<br/>
  * <Br/>
  * ****************************************************************<br/>
  * [使用说明]<br/>
- * 1.实现接口BitmapLoader.Implementor -> BitmapLoaderImplementor <br/>
- * 2.实例化BitmapLoader(Context,String,BitmapLoader.Implementor) <br/>
+ * 1.实现接口AsyncBitmapLoader.Implementor -> BitmapLoaderImplementor <br/>
+ * 2.实例化AsyncBitmapLoader(Context,String,AsyncBitmapLoader.Implementor) <br/>
  * 3.setRamCache/setDiskCache/setNetLoad/setLogger设置参数(可选) <br/>
- * 4.open() 启用BitmapLoader(必须, 否则抛异常)<br/>
+ * 4.open() 启用AsyncBitmapLoader(必须, 否则抛异常)<br/>
  * <br/>
  * [代码示例]:<Br/>
-    private BitmapLoader mBitmapLoader;
+    private AsyncBitmapLoader mAsyncBitmapLoader;
     try {
-        mBitmapLoader = new MyBitmapLoader(this, "bitmap", new BitmapLoaderImplementor())
-            .setRamCache(0.125f, 0.125f)//不采用SafeBitmapDrawableFactory,启用回收站
-            //.setRamCache(0.125f, 0)//采用SafeBitmapDrawableFactory包装Bitmap使用,回收站设置为0禁用
+        mAsyncBitmapLoader = new AsyncBitmapLoader(this, "bitmap", new BitmapLoaderImplementor())
+            .setRamCache(0.125f, 0.125f)//启用回收站
+            //.setRamCache(0.125f, 0)//回收站设置为0禁用
             .setDiskCache(50, 5, 15)
             .setNetLoad(3, 15)
             .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
@@ -64,7 +64,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * 少会导致图片加载太慢, 网络加载等待队列容量15, 建议与磁盘缓存等待队列容量
  * 相等, 根据屏幕中最多可能展示的图片数决定(略大于), 设置过少会导致屏幕中图
  * 片未全部加载完.<br/>
- * 设置日志打印器后, BitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
+ * 设置日志打印器后, AsyncBitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
  * 情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
  * <br/>
  * ****************************************************************<br/>
@@ -77,26 +77,20 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
  * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
  * 请适度设置.<br/>
- * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站.需要配合
- * SafeBitmapDrawableFactory使用<br/>
+ * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
  * <br/>
  * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
- * 当回收站内存占用超过设定值 (即内存总消耗超过设定值的两倍) 时, 会触发此异常<Br/>
+ * 当回收站内存占用超过设定值时, 会触发此异常<Br/>
  * 解决方案:<br/>
  * 1.请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
  * Bitmap只有被设置为此状态, 才会被回收(recycle()), 否则在缓存区满后, 会进入回收站,
  * 但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
  * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
  * 其他占用内存受限.<br/>
- * <br/>
- * Tips:<br/>
- * 1.使用SafeBitmapDrawableFactory将Bitmap包装为SafeBitmapDrawable设置给ImageView使用,
- * 可有效避免"trying to use a recycled bitmap"异常, SafeBitmapDrawable在原Bitmap被回收
- * 时,会绘制预先设置的默认图.采用这种方式可以将回收站recyclerMaxSize设置为0, 禁用回收站.<Br/>
  *
  * Created by S.Violet on 2015/7/3.
  */
-public class BitmapLoader {
+public class AsyncBitmapLoader {
 
     private CachedBitmapUtils mCachedBitmapUtils;//带缓存的Bitmap工具
     private DiskLruCache mDiskLruCache;//磁盘缓存器
@@ -118,6 +112,7 @@ public class BitmapLoader {
     private int netLoadVolume = 10;//网络加载等待队列容量
     private Bitmap.CompressFormat imageFormat = Bitmap.CompressFormat.JPEG;//缓存图片保存格式
     private int imageQuality = 100;//缓存图片保存质量
+    private int keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;//TQueue同名任务冲突策略
     private File cacheDir;//缓存路径
     private Logger logger;//日志打印器
 
@@ -126,9 +121,9 @@ public class BitmapLoader {
      * @param diskCacheName 磁盘缓存目录名
      * @param implementor 实现器
      */
-    public BitmapLoader(Context context, String diskCacheName, Implementor implementor) {
+    public AsyncBitmapLoader(Context context, String diskCacheName, Implementor implementor) {
         if (implementor == null){
-            throw new RuntimeException("[BitmapLoader]implementor is null !!", new NullPointerException());
+            throw new RuntimeException("[AsyncBitmapLoader]implementor is null !!", new NullPointerException());
         }
         this.context = context;
         this.diskCacheName = diskCacheName;
@@ -140,7 +135,7 @@ public class BitmapLoader {
      * @param netLoadConcurrency 网络加载任务并发量, 默认3
      * @param netLoadVolume 网络加载等待队列容量, 默认10
      */
-    public BitmapLoader setNetLoad(int netLoadConcurrency, int netLoadVolume){
+    public AsyncBitmapLoader setNetLoad(int netLoadConcurrency, int netLoadVolume){
         this.netLoadConcurrency = netLoadConcurrency;
         this.netLoadVolume = netLoadVolume;
         return this;
@@ -151,7 +146,7 @@ public class BitmapLoader {
      * @param diskLoadConcurrency 磁盘加载任务并发量, 默认5
      * @param diskLoadVolume 磁盘加载等待队列容量, 默认10
      */
-    public BitmapLoader setDiskCache(int diskCacheSizeMib, int diskLoadConcurrency, int diskLoadVolume){
+    public AsyncBitmapLoader setDiskCache(int diskCacheSizeMib, int diskLoadConcurrency, int diskLoadVolume){
         this.diskCacheSize = 1024L * 1024L * diskCacheSizeMib;
         this.diskLoadConcurrency = diskLoadConcurrency;
         this.diskLoadVolume = diskLoadVolume;
@@ -159,17 +154,29 @@ public class BitmapLoader {
     }
 
     /**
-     * @see sviolet.turquoise.utils.cache.BitmapCache
-     *
-     * Tips:<br/>
-     * 1.使用SafeBitmapDrawableFactory将Bitmap包装为SafeBitmapDrawable设置给ImageView使用,
-     * 可有效避免"trying to use a recycled bitmap"异常, SafeBitmapDrawable在原Bitmap被回收
-     * 时,会绘制预先设置的默认图.采用这种方式可以将回收站recyclerMaxSize设置为0, 禁用回收站.<Br/>
+     * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
+     * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
+     * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+     * <Br/>
+     * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
+     * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
+     * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
+     * 请适度设置.<br/>
+     * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
+     * <br/>
+     * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
+     * 当回收站内存占用超过设定值时, 会触发此异常<Br/>
+     * 解决方案:<br/>
+     * 1.请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
+     * Bitmap只有被设置为此状态, 才会被回收(recycle()), 否则在缓存区满后, 会进入回收站,
+     * 但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
+     * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
+     * 其他占用内存受限.<br/>
      *
      * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1]
      * @param ramCacheRecyclerSizePercent 内存缓存回收站占用应用可用内存的比例 [0, 1], 使用SafeBitmapDrawableFactory时设置为0禁用回收站
      */
-    public BitmapLoader setRamCache(float ramCacheSizePercent, float ramCacheRecyclerSizePercent){
+    public AsyncBitmapLoader setRamCache(float ramCacheSizePercent, float ramCacheRecyclerSizePercent){
         this.ramCacheSizePercent = ramCacheSizePercent;
         this.ramCacheRecyclerSizePercent = ramCacheRecyclerSizePercent;
         return this;
@@ -179,7 +186,7 @@ public class BitmapLoader {
      * 设置磁盘缓存路径为内部储存<br/>
      * 若不设置, 则优先选择外部储存, 当外部储存不存在时使用内部储存
      */
-    public BitmapLoader setDiskCacheInner(){
+    public AsyncBitmapLoader setDiskCacheInner(){
         cacheDir = new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + diskCacheName);
         return this;
     }
@@ -191,16 +198,32 @@ public class BitmapLoader {
      * @param format 图片格式
      * @param quality 图片质量 0-100
      */
-    public BitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality){
+    public AsyncBitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality){
         this.imageFormat = format;
         this.imageQuality = quality;
         return this;
     }
 
     /**
+     * 图片重复加载<br/>
+     * false:默认值,
+     *
+     * true:
+     *
+     */
+    public AsyncBitmapLoader setDuplicateLoadEnable(boolean duplicateLoadEnable){
+        if (duplicateLoadEnable){
+            keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_FOLLOW;
+        }else{
+            keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;
+        }
+        return this;
+    }
+
+    /**
      * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
      */
-    public BitmapLoader setLogger(Logger logger) {
+    public AsyncBitmapLoader setLogger(Logger logger) {
         this.logger = logger;
         if (mCachedBitmapUtils != null)
             mCachedBitmapUtils.getBitmapCache().setLogger(logger);
@@ -208,16 +231,16 @@ public class BitmapLoader {
     }
 
     /**
-     * [重要]启用BitmapLoader, 在实例化并设置完BitmapLoader后, 必须调用此
+     * [重要]启用AsyncBitmapLoader, 在实例化并设置完AsyncBitmapLoader后, 必须调用此
      * 方法, 开启磁盘缓存/内存缓存. 否则会抛出异常.<Br/>
      *
      * @throws IOException 磁盘缓存启动失败抛出异常
      */
-    public BitmapLoader open() throws IOException {
+    public AsyncBitmapLoader open() throws IOException {
         this.mDiskLruCache = DiskLruCache.open(cacheDir, ApplicationUtils.getAppVersion(context), 1, diskCacheSize);
         this.mCachedBitmapUtils = new CachedBitmapUtils(context, ramCacheSizePercent, ramCacheRecyclerSizePercent);
-        this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency).setVolumeMax(diskLoadVolume).waitCancelingTask(true).overrideSameKeyTask(false);
-        this.mNetLoadQueue = new TQueue(true, netLoadConcurrency).setVolumeMax(netLoadVolume).waitCancelingTask(true).overrideSameKeyTask(false);
+        this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency).setVolumeMax(diskLoadVolume).waitCancelingTask(true).setKeyConflictPolicy(keyConflictPolicy);
+        this.mNetLoadQueue = new TQueue(true, netLoadConcurrency).setVolumeMax(netLoadVolume).waitCancelingTask(true).setKeyConflictPolicy(keyConflictPolicy);
         if(logger != null)
             mCachedBitmapUtils.getBitmapCache().setLogger(logger);
         return this;
@@ -238,7 +261,7 @@ public class BitmapLoader {
          * [实现提示]:<br/>
          * 可以直接使用key值作为cacheKey, 也可以将url或者key进行摘要
          * 计算, 得到摘要值作为cacheKey, 根据实际情况实现.  <Br/>
-         * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
+         * AsyncBitmapLoader中每个位图资源都由url和key共同标识, url和key在AsyncBitmapLoader内部
          * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
          * 这个cacheKey标识唯一的资源<br/>
          *
@@ -303,10 +326,10 @@ public class BitmapLoader {
     /**
      * 加载图片, 加载成功后回调mOnLoadCompleteListener<br/>
      * 回调方法的params参数为此方法传入的params, 并非Bitmap<Br/>
-     * 回调方法中使用Bitmap, 调用BitmapLoader.get()方法从内存缓存
+     * 回调方法中使用Bitmap, 调用AsyncBitmapLoader.get()方法从内存缓存
      * 中取.<br/>
      * <br/>
-     * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
+     * AsyncBitmapLoader中每个位图资源都由url和key共同标识, url和key在AsyncBitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
      *
@@ -322,7 +345,7 @@ public class BitmapLoader {
         //计算缓存key
         String cacheKey = implementor.getCacheKey(url, key);
         if (logger != null) {
-            logger.d("[BitmapLoader]load:start:  url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+            logger.d("[AsyncBitmapLoader]load:start:  url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
         }
         //尝试内存缓存中取Bitmap
         Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
@@ -330,7 +353,7 @@ public class BitmapLoader {
             //缓存中存在直接回调:成功
             mOnLoadCompleteListener.onLoadSucceed(url, key, params, bitmap);
             if (logger != null) {
-                logger.d("[BitmapLoader]load:succeed:  from:BitmapCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                logger.d("[AsyncBitmapLoader]load:succeed:  from:BitmapCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
             }
             return;
         }
@@ -341,7 +364,7 @@ public class BitmapLoader {
     /**
      * 从内存缓存中取Bitmap, 若不存在或已被回收, 则返回null<br/>
      * <br/>
-     * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
+     * AsyncBitmapLoader中每个位图资源都由url和key共同标识, url和key在AsyncBitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
      *
@@ -370,7 +393,7 @@ public class BitmapLoader {
      * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
      * 已进入回收站的Bitmap会被立即回收.<br/>
      * <br/>
-     * BitmapLoader中每个位图资源都由url和key共同标识, url和key在BitmapLoader内部
+     * AsyncBitmapLoader中每个位图资源都由url和key共同标识, url和key在AsyncBitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
      *
@@ -388,7 +411,7 @@ public class BitmapLoader {
         //将位图标识为不再使用
         mCachedBitmapUtils.unused(cacheKey);
         if (logger != null) {
-            logger.d("[BitmapLoader]unused:  url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+            logger.d("[AsyncBitmapLoader]unused:  url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
         }
     }
 
@@ -418,7 +441,7 @@ public class BitmapLoader {
             mCachedBitmapUtils = null;
         }
         if (logger != null) {
-            logger.d("[BitmapLoader]destroy");
+            logger.d("[AsyncBitmapLoader]destroy");
         }
     }
 
@@ -489,7 +512,7 @@ public class BitmapLoader {
         public Object doInBackground(Object params) {
             //异常检查
             if (mDiskLruCache == null || mCachedBitmapUtils == null) {
-                implementor.onException(new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
+                implementor.onException(new RuntimeException("[AsyncBitmapLoader]cachedBitmapUtils is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
@@ -503,11 +526,10 @@ public class BitmapLoader {
                     //若此时任务已被取消, 则废弃位图
                     if (isCancel()){
                         mCachedBitmapUtils.unused(cacheKey);
+                        return RESULT_CANCELED;
                     }
                     return RESULT_SUCCEED;
                 } else {
-                    //若缓存文件不存在, 加入网络加载队列
-                    mNetLoadQueue.put(cacheKey, new NetLoadTask(url, key, reqWidth, reqHeight, mOnLoadCompleteListener).setParams(getParams()));
                     return RESULT_CONTINUE;
                 }
             } catch (IOException e) {
@@ -526,7 +548,7 @@ public class BitmapLoader {
                 if (mCachedBitmapUtils != null)
                     mCachedBitmapUtils.unused(cacheKey);
                 if (logger != null) {
-                    logger.d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                    logger.d("[AsyncBitmapLoader]load:canceled:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
                 }
                 return;
             }
@@ -535,7 +557,7 @@ public class BitmapLoader {
                     if (mOnLoadCompleteListener != null && mCachedBitmapUtils != null)
                         mOnLoadCompleteListener.onLoadSucceed(url, key, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
                     if (logger != null) {
-                        logger.d("[BitmapLoader]load:succeed:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                        logger.d("[AsyncBitmapLoader]load:succeed:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 case RESULT_FAILED:
@@ -550,6 +572,9 @@ public class BitmapLoader {
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
                     break;
+                case RESULT_CONTINUE:
+                    //若缓存文件不存在, 加入网络加载队列
+                    mNetLoadQueue.put(cacheKey, new NetLoadTask(url, key, reqWidth, reqHeight, mOnLoadCompleteListener).setParams(getParams()));
                 default:
                     break;
             }
@@ -590,7 +615,7 @@ public class BitmapLoader {
         public Object doInBackground(Object params) {
             //检查异常
             if (mDiskLruCache == null || mCachedBitmapUtils == null) {
-                implementor.onException(new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
+                implementor.onException(new RuntimeException("[AsyncBitmapLoader]cachedBitmapUtils is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
@@ -639,6 +664,7 @@ public class BitmapLoader {
                         mCachedBitmapUtils.cacheBitmap(cacheKey, bitmap);
                         return RESULT_SUCCEED;
                     }
+                    return RESULT_CANCELED;
                 } else {
                     //网络加载失败
                     //尝试flush输出流
@@ -666,7 +692,7 @@ public class BitmapLoader {
                 if (mCachedBitmapUtils != null)
                     mCachedBitmapUtils.unused(cacheKey);
                 if (logger != null) {
-                    logger.d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                    logger.d("[AsyncBitmapLoader]load:canceled:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
                 }
                 return;
             }
@@ -675,7 +701,7 @@ public class BitmapLoader {
                     if (mOnLoadCompleteListener != null && mCachedBitmapUtils != null)
                         mOnLoadCompleteListener.onLoadSucceed(url, key, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
                     if (logger != null) {
-                        logger.d("[BitmapLoader]load:succeed:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                        logger.d("[AsyncBitmapLoader]load:succeed:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 case RESULT_FAILED:
@@ -707,12 +733,12 @@ public class BitmapLoader {
     }
 
     /**
-     * 检查BitmapLoader是否open(), 若未open()则抛出异常<br/>
-     * 遇到此异常, 请检查代码, BitmapLoader实例化/设置后必须调用open()方法启动.
+     * 检查AsyncBitmapLoader是否open(), 若未open()则抛出异常<br/>
+     * 遇到此异常, 请检查代码, AsyncBitmapLoader实例化/设置后必须调用open()方法启动.
      */
     private void checkIsOpen(){
         if (mDiskLruCache == null || mCachedBitmapUtils == null || mDiskCacheQueue == null || mNetLoadQueue == null){
-            throw new RuntimeException("[BitmapLoader]can't use BitmapLoader without BitmapLoader.open()!!!");
+            throw new RuntimeException("[AsyncBitmapLoader]can't use AsyncBitmapLoader without AsyncBitmapLoader.open()!!!");
         }
     }
 

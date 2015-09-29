@@ -33,14 +33,31 @@ import java.util.concurrent.RejectedExecutionException;
  */
 
 public class TQueue {
-	
+
+    /**
+     * 替代策略
+     * 新的任务替换老的任务, 并取消老的任务
+     */
+    public static final int KEY_CONFLICT_POLICY_DISPLACE = 0;
+    /**
+     * 跟随策略
+     * 新的任务跟随老的任务, 当老的任务完成后, 跟随者也得到相应的回调
+     */
+    public static final int KEY_CONFLICT_POLICY_FOLLOW = 1;
+    /**
+     * 取消策略
+     * 新的任务取消, 老的任务继续执行
+     */
+    public static final int KEY_CONFLICT_POLICY_CANCEL = 2;
+
 	//Setting//////////////////////////////////////////////////////
 
 	private boolean reverse = false;//逆序
     private boolean waitCancelingTask = false;//等待取消中的任务
-    private boolean overrideSameKeyTask = true;//覆盖同名任务
 	private int concurrencyVolumeMax = 1;//最大并发量
     private int volumeMax = Integer.MAX_VALUE;//最大任务量
+
+    private int keyConflictPolicy = KEY_CONFLICT_POLICY_DISPLACE;//任务(key)冲突策略
 	
 	//Variable//////////////////////////////////////////////////////
 
@@ -81,7 +98,7 @@ public class TQueue {
                 put(key, task);
             }
         });
-		return task;
+        return task;
 	}
 
     /**
@@ -96,15 +113,18 @@ public class TQueue {
         synchronized (TQueue.this){
             //是否存在同名任务
             if (waittingTasks.containsKey(key)){
-                if (overrideSameKeyTask){
+                if (keyConflictPolicy == KEY_CONFLICT_POLICY_DISPLACE){
                     //移除同名原有任务, 加入新任务
                     TTask removeTask = waittingTasks.remove(key);
                     removeTask.cancel();
                     waittingTasks.put(key, task);//加入等待队列
-                }else{
-                    //取消同名新任务
-                    task.cancel();//取消新任务
+                }else if(keyConflictPolicy == KEY_CONFLICT_POLICY_FOLLOW){
+                    //新的任务作为跟随老任务
+                    waittingTasks.get(key).addFollower(task);
                     return;
+                }else{
+                    //新任务取消
+                    task.cancel();
                 }
             }else {
                 //等待队列超出限制时, 清除优先级最低的任务
@@ -384,20 +404,22 @@ public class TQueue {
     }
 
     /**
-     * 同名任务处理策略, 覆盖同名任务(默认true)<br/>
-     * <br/>
-     * true:覆盖同名任务<br/>
-     * 等待队列或执行队列加入同名任务时, 将队列中原有任务取消并移除,
-     * 加入新的任务.<br/>
+     * 同名(key)任务冲突处理策略<br/>
+     * 当新任务加入队列时, 发现等待队列或执行任务中, 存在与新任务同名(key)老任务的情况<br/>
      * <Br/>
-     * false:不覆盖同名任务<br/>
-     * 等待队列或执行队列加入同名任务时, 取消新加入的任务, 保持队列中
-     * 原有任务的状态.<br/>
+     * KEY_CONFLICT_POLICY_DISPLACE = 0;<br/>
+     * 替代策略:默认值,将老任务取消(cancel)并移除队列, 将新任务加入队列<br/>
+     * <Br/>
+     * KEY_CONFLICT_POLICY_FOLLOW = 1;<br/>
+     * 跟随策略:新任务自身不执行, 作为老任务的跟随者, 当老任务完成后, 会回调跟随者的onPostExecute方法,
+     * 并传入相同的结果<Br/>
+     * KEY_CONFLICT_POLICY_CANCEL = 2;<br/>
+     * 取消策略:新任务不执行直接取消(cancel), 老任务继续执行<Br/>
      *
-     * @param overrideSameKeyTask 默认true
+     * @param keyConflictPolicy 策略
      */
-    public TQueue overrideSameKeyTask(boolean overrideSameKeyTask){
-        this.overrideSameKeyTask = overrideSameKeyTask;
+    public TQueue setKeyConflictPolicy(int keyConflictPolicy){
+        this.keyConflictPolicy = keyConflictPolicy;
         return this;
     }
 
@@ -472,7 +494,7 @@ public class TQueue {
             //是否存在同名任务
             if (runningTasks.containsKey(key)){
                 //是否覆盖同名任务
-                if (overrideSameKeyTask){
+                if (keyConflictPolicy == KEY_CONFLICT_POLICY_DISPLACE){
                     TTask oldTask = runningTasks.remove(key);
                     oldTask.cancel();
                     //启动任务
@@ -481,8 +503,11 @@ public class TQueue {
                         runningTasks.put(key, task);
                         concurrencyVolume++;//并发数+1
                     }
+                }else if(keyConflictPolicy == KEY_CONFLICT_POLICY_FOLLOW){
+                    //新的任务跟随老的任务
+                    runningTasks.get(key).addFollower(task);
                 }else{
-                    //取消同名新任务
+                    //新任务取消
                     task.cancel();
                 }
             }else {

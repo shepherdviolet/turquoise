@@ -16,12 +16,12 @@ import sviolet.demoa.image.utils.BitmapLoaderImplementor;
 import sviolet.turquoise.enhance.TActivity;
 import sviolet.turquoise.enhance.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
-import sviolet.turquoise.utils.bitmap.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.AsyncBitmapLoader;
 
 @DemoDescription(
         title = "AsyncImageList2",
         type = "Image",
-        info = "an Async. Image ListView powered by BitmapLoader and SafeBitmapDrawable"
+        info = "an Async. Image ListView powered by AsyncBitmapLoader and SafeBitmapDrawable"
 )
 
 /**
@@ -41,7 +41,7 @@ public class Async2ImageActivity extends TActivity {
     @ResourceId(R.id.image_async_listview)
     private ListView listView;
 
-    private BitmapLoader mBitmapLoader;//图片加载器
+    private AsyncBitmapLoader mAsyncBitmapLoader;//图片加载器
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class Async2ImageActivity extends TActivity {
             会导致快速滑动时, 下载更多的图, 增加流量消耗.
             */
             //初始化图片加载器
-            mBitmapLoader = new BitmapLoader(this, "AsyncImageActivity", new BitmapLoaderImplementor(this))
+            mAsyncBitmapLoader = new AsyncBitmapLoader(this, "AsyncImageActivity", new BitmapLoaderImplementor(this))
                     /**
                      * 采用SafeBitmapDrawable方式无需回收站
                      */
@@ -70,7 +70,7 @@ public class Async2ImageActivity extends TActivity {
             /**
              * 用AsyncImageAdapter2
              */
-            listView.setAdapter(new AsyncImageAdapter2(this, makeItemList(), mBitmapLoader, getCachedBitmapUtils()));
+            listView.setAdapter(new AsyncImageAdapter2(this, makeItemList(), mAsyncBitmapLoader, getCachedBitmapUtils()));
         } catch (IOException e) {
             //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
             e.printStackTrace();
@@ -81,7 +81,7 @@ public class Async2ImageActivity extends TActivity {
     protected void onDestroy() {
         super.onDestroy();
         //销毁图片加载器(回收位图占用内存)
-        mBitmapLoader.destroy();
+        mAsyncBitmapLoader.destroy();
     }
 
     /**

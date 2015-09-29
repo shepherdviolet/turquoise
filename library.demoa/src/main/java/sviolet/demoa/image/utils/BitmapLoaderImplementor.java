@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.utils.bitmap.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.AsyncBitmapLoader;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
@@ -16,7 +16,7 @@ import sviolet.turquoise.utils.crypt.DigestCipher;
  * BitmapLoader实现器
  * Created by S.Violet on 2015/7/7.
  */
-public class BitmapLoaderImplementor implements BitmapLoader.Implementor {
+public class BitmapLoaderImplementor implements AsyncBitmapLoader.Implementor {
 
     private Context context;
 
@@ -52,7 +52,7 @@ public class BitmapLoaderImplementor implements BitmapLoader.Implementor {
      * [此处模拟网络加载]<br/>
      */
     @Override
-    public void loadFromNet(String url, String key, final int reqWidth, final int reqHeight, final BitmapLoader.ResultHolder resultHolder) {
+    public void loadFromNet(String url, String key, final int reqWidth, final int reqHeight, final AsyncBitmapLoader.ResultHolder resultHolder) {
 
         ///////////////////////////////////////////////////
         //同步方式

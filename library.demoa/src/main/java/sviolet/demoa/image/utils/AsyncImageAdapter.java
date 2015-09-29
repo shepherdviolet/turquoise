@@ -14,7 +14,7 @@ import java.util.List;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.enhance.TActivity;
-import sviolet.turquoise.utils.bitmap.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.AsyncBitmapLoader;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.utils.sys.MeasureUtils;
@@ -30,20 +30,20 @@ public class AsyncImageAdapter extends BaseAdapter {
 
     private Context context;
     private List<AsyncImageItem> itemList;
-    private BitmapLoader bitmapLoader;
+    private AsyncBitmapLoader asyncBitmapLoader;
     private Drawable defaultBitmapDrawableLarge, defaultBitmapDrawableSmall;
     private int widthHeightLarge, widthHeightSmall;
 
     /**
      * @param context context
      * @param itemList 数据
-     * @param bitmapLoader 用于图片动态加载缓存
+     * @param asyncBitmapLoader 用于图片动态加载缓存
      * @param cachedBitmapUtils 用于解码默认图(TActivity.getCachedBitmapUtils())
      */
-    public AsyncImageAdapter(Context context, List<AsyncImageItem> itemList, BitmapLoader bitmapLoader, CachedBitmapUtils cachedBitmapUtils){
+    public AsyncImageAdapter(Context context, List<AsyncImageItem> itemList, AsyncBitmapLoader asyncBitmapLoader, CachedBitmapUtils cachedBitmapUtils){
         this.context = context;
         this.itemList = itemList;
-        this.bitmapLoader = bitmapLoader;
+        this.asyncBitmapLoader = asyncBitmapLoader;
 
         //用CachedBitmapUtils解码的默认图, 会缓存在其内建BtimapCache中, 在TActivity.onDestroy()时会回收资源
         cachedBitmapUtils.decodeFromResource(DEFAULT_BITMAP_KEY, context.getResources(), R.mipmap.async_image_null);
@@ -91,7 +91,7 @@ public class AsyncImageAdapter extends BaseAdapter {
                 //去除ImageView中原有图片
                 holder.imageView[i].setImageBitmapImmediate(null);
                 //将之前的位图资源置为unused状态以便回收资源 [重要]
-                bitmapLoader.unused(holder.url[i], holder.key[i]);
+                asyncBitmapLoader.unused(holder.url[i], holder.key[i]);
             }
         }
         AsyncImageItem item = itemList.get(position);
@@ -105,7 +105,7 @@ public class AsyncImageAdapter extends BaseAdapter {
 
         for (int i = 0 ; i < 5 ; i++) {
             //从内存缓存中取位图
-            bitmap = bitmapLoader.get(item.getUrl(i), item.getKey(i));
+            bitmap = asyncBitmapLoader.get(item.getUrl(i), item.getKey(i));
             if (bitmap != null && !bitmap.isRecycled()) {
                 //若内存缓存中存在, 则直接设置图片
                 holder.imageView[i].setImageBitmapImmediate(bitmap);
@@ -119,13 +119,13 @@ public class AsyncImageAdapter extends BaseAdapter {
                     holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableLarge);
                     //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
                     //将ImageView作为参数传入, 便于在回调函数中设置图片
-                    bitmapLoader.load(item.getUrl(i), item.getKey(i), widthHeightLarge, widthHeightLarge, holder.imageView[i], mOnLoadCompleteListener);
+                    asyncBitmapLoader.load(item.getUrl(i), item.getKey(i), widthHeightLarge, widthHeightLarge, holder.imageView[i], mOnLoadCompleteListener);
                 }else{
                     //设置默认背景图(小)
                     holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableSmall);
                     //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
                     //将ImageView作为参数传入, 便于在回调函数中设置图片
-                    bitmapLoader.load(item.getUrl(i), item.getKey(i), widthHeightSmall, widthHeightSmall, holder.imageView[i], mOnLoadCompleteListener);
+                    asyncBitmapLoader.load(item.getUrl(i), item.getKey(i), widthHeightSmall, widthHeightSmall, holder.imageView[i], mOnLoadCompleteListener);
                 }
             }
         }
@@ -135,7 +135,7 @@ public class AsyncImageAdapter extends BaseAdapter {
     /**
      * 图片异步加载回调
      */
-    private BitmapLoader.OnLoadCompleteListener mOnLoadCompleteListener = new BitmapLoader.OnLoadCompleteListener() {
+    private AsyncBitmapLoader.OnLoadCompleteListener mOnLoadCompleteListener = new AsyncBitmapLoader.OnLoadCompleteListener() {
         @Override
         public void onLoadSucceed(String url, String key, Object params, Bitmap bitmap) {
             //参数为load传入的ImageView

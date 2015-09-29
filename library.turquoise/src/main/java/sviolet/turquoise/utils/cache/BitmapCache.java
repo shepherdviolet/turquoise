@@ -16,7 +16,7 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
  * Bitmap内存缓存<br/>
- * <br/>
+ * <Br/>
  * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
  * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
  * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
@@ -25,8 +25,7 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
  * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
  * 请适度设置.<br/>
- * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站.需要配合
- * SafeBitmapDrawableFactory使用<br/>
+ * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
  * <br/>
  * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
  * 当回收站内存占用超过设定值时, 会触发此异常<Br/>
@@ -37,10 +36,6 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
  * 其他占用内存受限.<br/>
  * <br/>
- * Tips:<br/>
- * 1.使用SafeBitmapDrawableFactory将Bitmap包装为SafeBitmapDrawable设置给ImageView使用,
- * 可有效避免"trying to use a recycled bitmap"异常, SafeBitmapDrawable在原Bitmap被回收
- * 时,会绘制预先设置的默认图.采用这种方式可以将回收站recyclerMaxSize设置为0, 禁用回收站.<Br/>
  */
 public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
@@ -64,7 +59,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 创建缓存实例<Br/>
      * 缓存区容量为默认值DEFAULT_CACHE_MEMORY_PERCENT = 0.125f<Br/>
      * 回收站容量为默认值DEFAULT_CACHE_MEMORY_PERCENT = 0.125f<Br/>
-     * <br/>
+     * <Br/>
      * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
      * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
      * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
@@ -73,8 +68,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
      * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
      * 请适度设置.<br/>
-     * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站.需要配合
-     * SafeBitmapDrawableFactory使用<br/>
+     * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
      * <br/>
      * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
      * 当回收站内存占用超过设定值时, 会触发此异常<Br/>
@@ -85,10 +79,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      * <br/>
-     * Tips:<br/>
-     * 1.使用SafeBitmapDrawableFactory将Bitmap包装为SafeBitmapDrawable设置给ImageView使用,
-     * 可有效避免"trying to use a recycled bitmap"异常, SafeBitmapDrawable在原Bitmap被回收
-     * 时,会绘制预先设置的默认图.采用这种方式可以将回收站recyclerMaxSize设置为0, 禁用回收站.<Br/>
      *
      * @param context
      * @return
@@ -114,8 +104,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
      * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
      * 请适度设置.<br/>
-     * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站.需要配合
-     * SafeBitmapDrawableFactory使用<br/>
+     * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
      * <br/>
      * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
      * 当回收站内存占用超过设定值时, 会触发此异常<Br/>
@@ -126,10 +115,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      * <br/>
-     * Tips:<br/>
-     * 1.使用SafeBitmapDrawableFactory将Bitmap包装为SafeBitmapDrawable设置给ImageView使用,
-     * 可有效避免"trying to use a recycled bitmap"异常, SafeBitmapDrawable在原Bitmap被回收
-     * 时,会绘制预先设置的默认图.采用这种方式可以将回收站recyclerMaxSize设置为0, 禁用回收站.<Br/>
      *
      * @param context
      * @param cachePercent Bitmap缓存区占用应用可用内存的比例 (0, 1]
@@ -159,8 +144,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
      * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
      * 请适度设置.<br/>
-     * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站.需要配合
-     * SafeBitmapDrawableFactory使用<br/>
+     * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
      * <br/>
      * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
      * 当回收站内存占用超过设定值时, 会触发此异常<Br/>
@@ -171,10 +155,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      * <br/>
-     * Tips:<br/>
-     * 1.使用SafeBitmapDrawableFactory将Bitmap包装为SafeBitmapDrawable设置给ImageView使用,
-     * 可有效避免"trying to use a recycled bitmap"异常, SafeBitmapDrawable在原Bitmap被回收
-     * 时,会绘制预先设置的默认图.采用这种方式可以将回收站recyclerMaxSize设置为0, 禁用回收站.<Br/>
      *
      * @param cacheMaxSize Bitmap缓存区占用最大内存 单位byte (0, ?)
      * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte [0, ?), 使用SafeBitmapDrawableFactory时设置为0禁用回收站
@@ -192,8 +172,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
      * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
      * 请适度设置.<br/>
-     * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站.需要配合
-     * SafeBitmapDrawableFactory使用<br/>
+     * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
      * <br/>
      * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
      * 当回收站内存占用超过设定值时, 会触发此异常<Br/>
@@ -204,10 +183,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      * <br/>
-     * Tips:<br/>
-     * 1.使用SafeBitmapDrawableFactory将Bitmap包装为SafeBitmapDrawable设置给ImageView使用,
-     * 可有效避免"trying to use a recycled bitmap"异常, SafeBitmapDrawable在原Bitmap被回收
-     * 时,会绘制预先设置的默认图.采用这种方式可以将回收站recyclerMaxSize设置为0, 禁用回收站.<Br/>
      *
      * @param cacheMaxSize Bitmap缓存区占用最大内存 单位byte
      * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte, 使用SafeBitmapDrawableFactory时设置为0禁用回收站

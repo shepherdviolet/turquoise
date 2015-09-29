@@ -22,7 +22,7 @@ import sviolet.demoa.common.DemoList;
 @DemoDescription(
         title = "image Demo",
         type = "View",
-        info = "Demo of BitmapLoader"
+        info = "Demo of AsyncBitmapLoader"
 )
 public class ImageActivity extends GuideActivity {
 }
