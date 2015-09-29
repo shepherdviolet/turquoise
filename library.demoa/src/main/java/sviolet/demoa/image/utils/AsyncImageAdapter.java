@@ -141,10 +141,11 @@ public class AsyncImageAdapter extends BaseAdapter {
         public void onLoadSucceed(String url, String key, Object params, Bitmap bitmap) {
             //参数为load传入的ImageView
             GradualImageView imageView = ((GradualImageView) params);
-            //从imageView中获取当前应该显示图片的url和key [重要]
+            //从imageView中获取当前应该显示图片的url和key, 高并发场合需要
             String currentUrl = ((String[])imageView.getTag())[0];
             String currentKey = ((String[])imageView.getTag())[1];
             /**
+             * 高并发场合需要<br/>
              * ListView中的View是复用的, 一个图片加载任务完成时, 同一个ImageView可能已经需要显示其他图片
              * 了, 因此判断url和key是否相符, 若不相符则直接return
              */
