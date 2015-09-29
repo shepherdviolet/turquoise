@@ -112,7 +112,27 @@ public class TQueue {
         task.setKey(key);
         synchronized (TQueue.this){
             //是否存在同名任务
-            if (waittingTasks.containsKey(key)){
+            if (runningTasks.containsKey(key)){
+                if (keyConflictPolicy == KEY_CONFLICT_POLICY_DISPLACE){
+                    TTask oldTask;
+                    if (waitCancelingTask){
+                        oldTask = runningTasks.get(key);
+                    }else{
+                        oldTask = runningTasks.remove(key);
+                    }
+                    if (oldTask != null)
+                        oldTask.cancel();
+
+                    trimWattingTasks();
+                    waittingTasks.put(key, task);//加入等待队列
+                }else if(keyConflictPolicy == KEY_CONFLICT_POLICY_FOLLOW){
+                    //新的任务跟随老的任务
+                    runningTasks.get(key).addFollower(task);
+                }else{
+                    //新任务取消
+                    task.cancel();
+                }
+            }else if (waittingTasks.containsKey(key)){
                 if (keyConflictPolicy == KEY_CONFLICT_POLICY_DISPLACE){
                     //移除同名原有任务, 加入新任务
                     TTask removeTask = waittingTasks.remove(key);
@@ -127,31 +147,38 @@ public class TQueue {
                     task.cancel();
                 }
             }else {
-                //等待队列超出限制时, 清除优先级最低的任务
-                if (waittingTasks.size() >= volumeMax) {
-                    if (reverse) {
-                        //取队列顶部(最早任务)
-                        Map.Entry<String, TTask> firstEntry = null;
-                        for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
-                            firstEntry = entry;
-                            break;
-                        }
-                        TTask cancelTask = waittingTasks.remove(firstEntry.getKey());
-                        cancelTask.cancel();
-                    } else {
-                        //取队列底部(最新任务)
-                        Map.Entry<String, TTask> lastEntry = null;
-                        for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
-                            lastEntry = entry;
-                        }
-                        TTask cancelTask = waittingTasks.remove(lastEntry.getKey());
-                        cancelTask.cancel();
-                    }
-                }
+                trimWattingTasks();
                 waittingTasks.put(key, task);//加入等待队列
             }
         }
         notifyDispatchTask();//触发任务调度
+    }
+
+    /**
+     * 等待队列满时, 清除一个优先级最低的任务
+     */
+    private void trimWattingTasks() {
+        //等待队列超出限制时, 清除优先级最低的任务
+        if (waittingTasks.size() >= volumeMax) {
+            if (reverse) {
+                //取队列顶部(最早任务)
+                Map.Entry<String, TTask> firstEntry = null;
+                for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
+                    firstEntry = entry;
+                    break;
+                }
+                TTask cancelTask = waittingTasks.remove(firstEntry.getKey());
+                cancelTask.cancel();
+            } else {
+                //取队列底部(最新任务)
+                Map.Entry<String, TTask> lastEntry = null;
+                for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
+                    lastEntry = entry;
+                }
+                TTask cancelTask = waittingTasks.remove(lastEntry.getKey());
+                cancelTask.cancel();
+            }
+        }
     }
 
     /**
