@@ -91,19 +91,20 @@ public class AsyncImageAdapter extends BaseAdapter {
                 //去除ImageView中原有图片
                 holder.imageView[i].setImageBitmapImmediate(null);
                 //将之前的位图资源置为unused状态以便回收资源 [重要]
-                asyncBitmapLoader.unused(holder.url[i], holder.key[i]);
+                String url = ((String[])holder.imageView[i].getTag())[0];
+                String key = ((String[])holder.imageView[i].getTag())[1];
+                asyncBitmapLoader.unused(url, key);
             }
         }
         AsyncImageItem item = itemList.get(position);
         holder.titleTextView.setText(item.getTitle());
         holder.contentTextView.setText(item.getContent());
-        //将url和key记录在holder中, 用于后续执行unused
-        holder.url = item.getUrls();
-        holder.key = item.getKeys();
 
         Bitmap bitmap;//图片
 
         for (int i = 0 ; i < 5 ; i++) {
+            //将url和key存入imageView的TAG中, 来标识当前的图片[重要]
+            holder.imageView[i].setTag(new String[]{item.getUrl(i), item.getKey(i)});
             //从内存缓存中取位图
             bitmap = asyncBitmapLoader.get(item.getUrl(i), item.getKey(i));
             if (bitmap != null && !bitmap.isRecycled()) {
@@ -140,6 +141,22 @@ public class AsyncImageAdapter extends BaseAdapter {
         public void onLoadSucceed(String url, String key, Object params, Bitmap bitmap) {
             //参数为load传入的ImageView
             GradualImageView imageView = ((GradualImageView) params);
+            //从imageView中获取当前应该显示图片的url和key [重要]
+            String currentUrl = ((String[])imageView.getTag())[0];
+            String currentKey = ((String[])imageView.getTag())[1];
+            /**
+             * ListView中的View是复用的, 一个图片加载任务完成时, 同一个ImageView可能已经需要显示其他图片
+             * 了, 因此判断url和key是否相符, 若不相符则直接return
+             */
+            if (url != null && !url.equals(currentUrl)){
+                ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载的Bitmap与应该显示的图片不符:" + url + " key:" + key);
+                return;
+            }
+            if (key != null && !key.equals(currentKey)){
+                ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载的Bitmap与应该显示的图片不符:" + url + " key:" + key);
+                return;
+            }
+
             if (bitmap != null && !bitmap.isRecycled()) {
                 //若图片存在且未被回收, 设置图片(渐渐显示)
                 imageView.setImageBitmapGradual(bitmap);
@@ -169,8 +186,6 @@ public class AsyncImageAdapter extends BaseAdapter {
         TextView titleTextView;
         TextView contentTextView;
         GradualImageView[] imageView = new GradualImageView[5];
-        String[] url = new String[5];
-        String[] key = new String[5];
     }
 
 }
