@@ -144,6 +144,10 @@ class AbstractBitmapLoader {
         cacheDir = DirectoryUtils.getCacheDir(context, diskCacheName);
     }
 
+    /************************************************************************************
+     * Settings
+     */
+
     /**
      * @param netLoadConcurrency 网络加载任务并发量, 默认3
      * @param netLoadVolume 网络加载等待队列容量, 默认10
@@ -275,8 +279,8 @@ class AbstractBitmapLoader {
         return this;
     }
 
-    /******************************************
-     * public
+    /************************************************************************************
+     * FUNCTION
      */
 
     /**
@@ -356,7 +360,7 @@ class AbstractBitmapLoader {
      *
      * @param url 图片URL地址
      */
-    public void unused(String url) {
+    void unused(String url) {
         checkIsOpen();
         //计算缓存key
         String cacheKey = implementor.getCacheKey(url);
@@ -374,7 +378,7 @@ class AbstractBitmapLoader {
     /**
      * [重要]将所有资源回收销毁, 请在Activity.onDestroy()时调用该方法
      */
-    public void destroy() {
+    void destroy() {
         checkIsOpen();
         if (mNetLoadQueue != null) {
             mNetLoadQueue.destroy();
@@ -400,6 +404,10 @@ class AbstractBitmapLoader {
             logger.d("[AbstractBitmapLoader]destroy");
         }
     }
+
+    /****************************************************************************
+     * static function
+     */
 
     /**
      * [慎用]清除磁盘缓存数据<br/>
@@ -431,7 +439,7 @@ class AbstractBitmapLoader {
         DiskLruCache.deleteContents(new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + diskCacheName));
     }
 
-    /******************************************
+    /************************************************************************
      * inner
      */
 
@@ -538,7 +546,7 @@ class AbstractBitmapLoader {
     /**
      * 网络加载任务
      */
-    private class NetLoadTask extends TTask {
+    class NetLoadTask extends TTask {
 
         private static final int RESULT_SUCCEED = 0;
         private static final int RESULT_FAILED = 1;

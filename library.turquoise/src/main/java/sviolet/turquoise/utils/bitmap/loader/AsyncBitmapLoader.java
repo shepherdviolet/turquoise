@@ -105,6 +105,10 @@ public class AsyncBitmapLoader extends AbstractBitmapLoader {
         super(context, diskCacheName, implementor);
     }
 
+    ////////////////////////////////////////////////////////////////////////
+    //开放的方法
+    ////////////////////////////////////////////////////////////////////////
+
     @Override
     public void load(String url, int reqWidth, int reqHeight, Object params, OnBitmapLoadedListener mOnBitmapLoadedListener) {
         super.load(url, reqWidth, reqHeight, params, mOnBitmapLoadedListener);
@@ -113,6 +117,16 @@ public class AsyncBitmapLoader extends AbstractBitmapLoader {
     @Override
     public Bitmap get(String url) {
         return super.get(url);
+    }
+
+    @Override
+    public void unused(String url) {
+        super.unused(url);
+    }
+
+    @Override
+    public void destroy() {
+        super.destroy();
     }
 
     ////////////////////////////////////////////////////////////////////////
