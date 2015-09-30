@@ -93,7 +93,6 @@ public class AsyncImageActivity extends TActivity {
         AsyncImageItem item = new AsyncImageItem();
         for (int i = 0 ; i < 5 ; i++) {
             item.setUrl(i, "http://a.b.c/" + String.valueOf(id) + "-" + String.valueOf(i));
-            item.setKey(i, null);
         }
         item.setTitle("Title of AsyncImageList " + String.valueOf(id));
         item.setContent("Content of asyncImagelist content of asyncimagelist content of asyncImagelist " + String.valueOf(id));

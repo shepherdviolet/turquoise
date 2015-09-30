@@ -91,9 +91,8 @@ public class AsyncImageAdapter extends BaseAdapter {
                 //去除ImageView中原有图片
                 holder.imageView[i].setImageBitmapImmediate(null);
                 //将之前的位图资源置为unused状态以便回收资源 [重要]
-                String url = ((String[])holder.imageView[i].getTag())[0];
-                String key = ((String[])holder.imageView[i].getTag())[1];
-                asyncBitmapLoader.unused(url, key);
+                String url = (String) holder.imageView[i].getTag();
+                asyncBitmapLoader.unused(url);
             }
         }
         AsyncImageItem item = itemList.get(position);
@@ -103,10 +102,10 @@ public class AsyncImageAdapter extends BaseAdapter {
         Bitmap bitmap;//图片
 
         for (int i = 0 ; i < 5 ; i++) {
-            //将url和key存入imageView的TAG中, 来标识当前的图片[重要]
-            holder.imageView[i].setTag(new String[]{item.getUrl(i), item.getKey(i)});
+            //将url存入imageView的TAG中, 来标识当前的图片[重要]
+            holder.imageView[i].setTag(item.getUrl(i));
             //从内存缓存中取位图
-            bitmap = asyncBitmapLoader.get(item.getUrl(i), item.getKey(i));
+            bitmap = asyncBitmapLoader.get(item.getUrl(i));
             if (bitmap != null && !bitmap.isRecycled()) {
                 //若内存缓存中存在, 则直接设置图片
                 holder.imageView[i].setImageBitmapImmediate(bitmap);
@@ -120,13 +119,13 @@ public class AsyncImageAdapter extends BaseAdapter {
                     holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableLarge);
                     //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
                     //将ImageView作为参数传入, 便于在回调函数中设置图片
-                    asyncBitmapLoader.load(item.getUrl(i), item.getKey(i), widthHeightLarge, widthHeightLarge, holder.imageView[i], mOnLoadCompleteListener);
+                    asyncBitmapLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge, holder.imageView[i], mOnLoadCompleteListener);
                 }else{
                     //设置默认背景图(小)
                     holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableSmall);
                     //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
                     //将ImageView作为参数传入, 便于在回调函数中设置图片
-                    asyncBitmapLoader.load(item.getUrl(i), item.getKey(i), widthHeightSmall, widthHeightSmall, holder.imageView[i], mOnLoadCompleteListener);
+                    asyncBitmapLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall, holder.imageView[i], mOnLoadCompleteListener);
                 }
             }
         }
@@ -138,23 +137,18 @@ public class AsyncImageAdapter extends BaseAdapter {
      */
     private AsyncBitmapLoader.OnLoadCompleteListener mOnLoadCompleteListener = new AsyncBitmapLoader.OnLoadCompleteListener() {
         @Override
-        public void onLoadSucceed(String url, String key, Object params, Bitmap bitmap) {
+        public void onLoadSucceed(String url, Object params, Bitmap bitmap) {
             //参数为load传入的ImageView
             GradualImageView imageView = ((GradualImageView) params);
-            //从imageView中获取当前应该显示图片的url和key, 高并发场合需要
-            String currentUrl = ((String[])imageView.getTag())[0];
-            String currentKey = ((String[])imageView.getTag())[1];
+            //从imageView中获取当前应该显示图片的url, 高并发场合需要
+            String currentUrl = (String)imageView.getTag();
             /**
              * 高并发场合需要<br/>
              * ListView中的View是复用的, 一个图片加载任务完成时, 同一个ImageView可能已经需要显示其他图片
-             * 了, 因此判断url和key是否相符, 若不相符则直接return
+             * 了, 因此判断url是否相符, 若不相符则直接return
              */
             if (url != null && !url.equals(currentUrl)){
-                ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载的Bitmap与应该显示的图片不符:" + url + " key:" + key);
-                return;
-            }
-            if (key != null && !key.equals(currentKey)){
-                ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载的Bitmap与应该显示的图片不符:" + url + " key:" + key);
+                ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载的Bitmap与应该显示的图片不符:" + url);
                 return;
             }
 
@@ -165,20 +159,20 @@ public class AsyncImageAdapter extends BaseAdapter {
                 imageView.setBackgroundColor(Color.TRANSPARENT);
             } else {
                 //若图片不存在, 可以考虑重新发起加载请求
-                //loader.load(url, key, widthHeight, widthHeight, params, mOnLoadCompleteListener);
+                //loader.load(url, widthHeight, widthHeight, params, mOnLoadCompleteListener);
                 //此Demo不做重发
                 if (context instanceof TActivity) {
-                    ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载成功后找不到位图url:" + url + " key:" + key);
+                    ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载成功后找不到位图url:" + url);
                 }
-                Toast.makeText(context, "[AsyncImageAdapter]加载成功后找不到位图url:" + url + " key:" + key, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "[AsyncImageAdapter]加载成功后找不到位图url:" + url, Toast.LENGTH_SHORT).show();
             }
         }
         @Override
-        public void onLoadFailed(String url, String key, Object params) {
+        public void onLoadFailed(String url, Object params) {
             //加载失败处理
         }
         @Override
-        public void onLoadCanceled(String url, String key, Object params) {
+        public void onLoadCanceled(String url, Object params) {
             //加载取消处理
         }
     };

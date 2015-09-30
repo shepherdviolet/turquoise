@@ -31,28 +31,36 @@ public class BitmapLoaderImplementor implements AsyncBitmapLoader.Implementor {
     }
 
     /**
-     * BitmapLoader根据url和key共同确定一个资源, 通常url用于网路加载连接,
-     * key为辅助参数, 根据实际情况使用, BitmapLoader内部使用cacheKey来
-     * 确定一个资源, 包括队列中的任务名, 缓存中的key值, 磁盘缓存中的文件名等,
-     * 因此, 需要实现这个方法, 根据url和key生成一个cacheKey返回<br/>
+     * [实现提示]:<br/>
+     * 通常将url进行摘要计算, 得到摘要值作为cacheKey, 根据实际情况实现.  <Br/>
+     * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
+     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+     * 这个cacheKey标识唯一的资源<br/>
+     *
+     * @return 实现根据URL计算并返回缓存Key
      */
     @Override
-    public String getCacheKey(String url, String key) {
+    public String getCacheKey(String url) {
         //用url做摘要
         return ByteUtils.byteToHex(DigestCipher.digest(url, DigestCipher.TYPE_MD5));
-        //直接用自定义key
-//        return key;
-        //也可以url+key组合做摘要
     }
 
     /**
-     * 根据url和key从网络加载图片, 并写入cacheOutputStream<br/>
-     * task可以用来判断任务是否被取消, 建议在网络加载中, 判断task.isCancel()
-     * 来终止网络加载.<br/>
-     * [此处模拟网络加载]<br/>
+     * 实现根据url参数从网络下载图片数据, 依照需求尺寸reqWidth和reqHeight解析为合适大小的Bitmap,
+     * 并调用结果容器resultHolder.set(Bitmap)方法将Bitmap返回, 若加载失败则set(null)<br/>
+     * <br/>
+     * 注意:<br/>
+     * 1.网络请求注意做超时处理,否则任务可能会一直等待<br/>
+     * 2.数据解析为Bitmap时,请根据需求尺寸reqWidth和reqHeight解析, 以节省内存<br/>
+     * <br/>
+     * 线程会阻塞等待,直到resultHolder.set(Bitmap)方法执行.若任务被cancel,阻塞也会被中断,且即使后续
+     * 网络请求返回了Bitmap,也会被Bitmap.recycle().<br/>
+     * <br/>
+     * 无论同步还是异步的情况,均使用resultHolder.set(Bitmap)返回结果<br/>
+     * 同步网络请求:<br/>
      */
     @Override
-    public void loadFromNet(String url, String key, final int reqWidth, final int reqHeight, final AsyncBitmapLoader.ResultHolder resultHolder) {
+    public void loadFromNet(String url, final int reqWidth, final int reqHeight, final AsyncBitmapLoader.ResultHolder resultHolder) {
 
         ///////////////////////////////////////////////////
         //同步方式
