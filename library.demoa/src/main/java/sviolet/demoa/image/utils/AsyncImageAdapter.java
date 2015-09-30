@@ -14,10 +14,10 @@ import java.util.List;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.enhance.TActivity;
-import sviolet.turquoise.utils.bitmap.AsyncBitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.AsyncBitmapLoader;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
-import sviolet.turquoise.utils.bitmap.listener.OnBitmapLoadedListener;
+import sviolet.turquoise.utils.bitmap.loader.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.GradualImageView;
 

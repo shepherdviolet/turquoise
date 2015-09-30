@@ -16,7 +16,7 @@ import sviolet.demoa.image.utils.MyBitmapLoaderImplementor;
 import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.TActivity;
-import sviolet.turquoise.utils.bitmap.AsyncBitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.AsyncBitmapLoader;
 
 @DemoDescription(
         title = "AsyncImageList",

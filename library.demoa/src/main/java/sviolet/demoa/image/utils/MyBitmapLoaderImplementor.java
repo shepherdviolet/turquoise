@@ -7,9 +7,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.utils.bitmap.AbstractBitmapLoader;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.implementor.BitmapLoaderImplementor;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderResultHolder;
 import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
 
@@ -61,7 +61,7 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
      * 同步网络请求:<br/>
      */
     @Override
-    public void loadFromNet(String url, final int reqWidth, final int reqHeight, final AbstractBitmapLoader.ResultHolder resultHolder) {
+    public void loadFromNet(String url, final int reqWidth, final int reqHeight, final BitmapLoaderResultHolder resultHolder) {
 
         ///////////////////////////////////////////////////
         //同步方式

@@ -9,7 +9,7 @@ import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.TActivity;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.SafeBitmapDrawableFactory;
+import sviolet.turquoise.utils.bitmap.loader.SafeBitmapDrawableFactory;
 
 /**
  * 临时调试用Activity
