@@ -17,6 +17,7 @@ import sviolet.turquoise.enhance.TActivity;
 import sviolet.turquoise.utils.bitmap.AsyncBitmapLoader;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
+import sviolet.turquoise.utils.bitmap.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.GradualImageView;
 
@@ -119,13 +120,13 @@ public class AsyncImageAdapter extends BaseAdapter {
                     holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableLarge);
                     //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
                     //将ImageView作为参数传入, 便于在回调函数中设置图片
-                    asyncBitmapLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge, holder.imageView[i], mOnLoadCompleteListener);
+                    asyncBitmapLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge, holder.imageView[i], mOnBitmapLoadedListener);
                 }else{
                     //设置默认背景图(小)
                     holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableSmall);
                     //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
                     //将ImageView作为参数传入, 便于在回调函数中设置图片
-                    asyncBitmapLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall, holder.imageView[i], mOnLoadCompleteListener);
+                    asyncBitmapLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall, holder.imageView[i], mOnBitmapLoadedListener);
                 }
             }
         }
@@ -135,7 +136,7 @@ public class AsyncImageAdapter extends BaseAdapter {
     /**
      * 图片异步加载回调
      */
-    private AsyncBitmapLoader.OnLoadCompleteListener mOnLoadCompleteListener = new AsyncBitmapLoader.OnLoadCompleteListener() {
+    private OnBitmapLoadedListener mOnBitmapLoadedListener = new OnBitmapLoadedListener() {
         @Override
         public void onLoadSucceed(String url, Object params, Bitmap bitmap) {
             //参数为load传入的ImageView

@@ -7,8 +7,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.utils.bitmap.AsyncBitmapLoader;
+import sviolet.turquoise.utils.bitmap.AbstractBitmapLoader;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
+import sviolet.turquoise.utils.bitmap.implementor.BitmapLoaderImplementor;
 import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
 
@@ -16,7 +17,7 @@ import sviolet.turquoise.utils.crypt.DigestCipher;
  * BitmapLoader实现器
  * Created by S.Violet on 2015/7/7.
  */
-public class BitmapLoaderImplementor implements AsyncBitmapLoader.Implementor {
+public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
 
     private Context context;
 
@@ -26,7 +27,7 @@ public class BitmapLoaderImplementor implements AsyncBitmapLoader.Implementor {
     private int resourceIds[] = {R.mipmap.async_image_1, R.mipmap.async_image_2, R.mipmap.async_image_3, R.mipmap.async_image_4, R.mipmap.async_image_5};
     private ExecutorService pool = Executors.newCachedThreadPool();
 
-    public BitmapLoaderImplementor(Context context){
+    public MyBitmapLoaderImplementor(Context context){
         this.context = context;
     }
 
@@ -60,7 +61,7 @@ public class BitmapLoaderImplementor implements AsyncBitmapLoader.Implementor {
      * 同步网络请求:<br/>
      */
     @Override
-    public void loadFromNet(String url, final int reqWidth, final int reqHeight, final AsyncBitmapLoader.ResultHolder resultHolder) {
+    public void loadFromNet(String url, final int reqWidth, final int reqHeight, final AbstractBitmapLoader.ResultHolder resultHolder) {
 
         ///////////////////////////////////////////////////
         //同步方式
