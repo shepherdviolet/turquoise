@@ -1,4 +1,4 @@
-package sviolet.turquoise.utils.bitmap;
+package sviolet.turquoise.utils.bitmap.loader;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,23 +6,25 @@ import android.graphics.Bitmap;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.enhance.utils.Logger;
 import sviolet.turquoise.model.queue.TQueue;
 import sviolet.turquoise.model.queue.TTask;
-import sviolet.turquoise.utils.bitmap.implementor.BitmapLoaderImplementor;
-import sviolet.turquoise.utils.bitmap.listener.OnBitmapLoadedListener;
+import sviolet.turquoise.utils.bitmap.BitmapUtils;
+import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.utils.cache.DiskLruCache;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 import sviolet.turquoise.utils.sys.DirectoryUtils;
 
 /**
- * 基本实现类, 未实现load/get方法, 请勿直接使用<br/>
- * 请使用:<Br/>
+ * 图片双缓存网络异步加载器<br/>
+ * <br/>
+ * Bitmap内存缓存+磁盘缓存+网络加载+防OOM<br/>
+ * <br/>
+ * 请使用:<br/>
  * 1.AsyncBitmapLoader<br/>
- * 2.AsyncBitmapDrawableLoader<Br/>
+ * 2.AsyncBitmapDrawableLoader<br/>
+ * <Br/>
  * ****************************************************************<br/>
  * <br/>
  * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
@@ -30,10 +32,59 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * 这个cacheKey标识唯一的资源<br/>
  * <Br/>
  * ****************************************************************<br/>
+ * [AsyncBitmapLoader使用说明]<br/>
+ * 1.实现接口BitmapLoaderImplementor -> MyBitmapLoaderImplementor <br/>
+ * 2.实例化AsyncBitmapLoader(Context,String,BitmapLoaderImplementor) <br/>
+ * 3.setRamCache/setDiskCache/setNetLoad/setLogger设置参数(可选) <br/>
+ * 4.open() 启用AsyncBitmapLoader(必须, 否则抛异常)<br/>
+ * <br/>
+ * [AsyncBitmapLoader代码示例]:<Br/>
+     private AsyncBitmapLoader mAsyncBitmapLoader;
+     try {
+         mAsyncBitmapLoader = new AsyncBitmapLoader(this, "bitmap", new MyBitmapLoaderImplementor())
+         .setRamCache(0.125f, 0.125f)//启用回收站
+         //.setRamCache(0.125f, 0)//回收站设置为0禁用
+         .setDiskCache(50, 5, 15)
+         .setNetLoad(3, 15)
+         .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
+         .setDiskCacheInner()//强制使用内部储存
+         //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
+         .setLogger(getLogger())
+         .open();//必须调用
+     } catch (IOException e) {
+        //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
+     }
+ * <br/>
+ * [上述代码说明]:<br/>
+ * 位图内存缓存占用应用最大可用内存的12.5%,回收站最大可能占用额外的12.5%,
+ * 内存缓存能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 影响显示效果,
+ * 设置过大, 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
+ * 在路径/sdcard/Android/data/<application package>/cache/bitmap或
+ * /data/data/<application package>/cache/bitmap下存放磁盘缓存数据,
+ * 缓存最大容量50M, 磁盘缓存容量根据实际情况设置, 磁盘缓存加载最大并发量10,
+ * 并发量应考虑图片质量/大小, 若图片较大, 应考虑减少并发量, 磁盘缓存等待队列
+ * 容量15, 即只会加载最后请求的15个任务, 更早的加载请求会被取消, 等待队列容
+ * 量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1-
+ * 2倍为宜, 设置过少会导致屏幕中图片未全部加载完, 例如屏幕中最多可能展示10
+ * 张图片, 则设置15-20较为合适, 若设置了10, 屏幕中会有2张图未加载. <br/>
+ * 网络加载并发量为3, 根据网络情况和图片大小决定, 过多的并发量会阻塞网络, 过
+ * 少会导致图片加载太慢, 网络加载等待队列容量15, 建议与磁盘缓存等待队列容量
+ * 相等, 根据屏幕中最多可能展示的图片数决定(略大于), 设置过少会导致屏幕中图
+ * 片未全部加载完.<br/>
+ * 设置日志打印器后, AsyncBitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
+ * 情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
+ * <Br/>
+ * ****************************************************************<br/>
+ * Tips::<br/>
+ * <br/>
+ * 1.当一个页面中需要同时加载相同图片,却发现只加载出一个,其余的都被取消(onLoadCanceled).
+ *   尝试设置setDuplicateLoadEnable(true);<Br/>
+ * <br/>
+ * ****************************************************************<br/>
  * <Br/>
  * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
  * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
- * 使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+ * 使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
  * <Br/>
  * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
  * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
@@ -52,19 +103,19 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *
  * Created by S.Violet on 2015/7/3.
  */
-public class AbstractBitmapLoader {
+class AbstractBitmapLoader {
 
-    CachedBitmapUtils mCachedBitmapUtils;//带缓存的Bitmap工具
+    private CachedBitmapUtils mCachedBitmapUtils;//带缓存的Bitmap工具
     private DiskLruCache mDiskLruCache;//磁盘缓存器
 
-    TQueue mDiskCacheQueue;//磁盘缓存加载队列
+    private TQueue mDiskCacheQueue;//磁盘缓存加载队列
     private TQueue mNetLoadQueue;//网络加载队列
 
     //SETTINGS//////////////////////////////////////////////
 
     private Context context;//(必须)
     private String diskCacheName;//磁盘缓存名(必须)
-    BitmapLoaderImplementor implementor;//实现器(必须)
+    private BitmapLoaderImplementor implementor;//实现器(必须)
     private long diskCacheSize = 1024 * 1024 * 10;//磁盘缓存大小(Mb)
     private float ramCacheSizePercent = 0.125f;//内存缓存大小(占应用可用内存比例)
     private float ramCacheRecyclerSizePercent = 0.125f;//内存缓存回收站大小(占应用可用内存比例)
@@ -76,11 +127,9 @@ public class AbstractBitmapLoader {
     private int imageQuality = 100;//缓存图片保存质量
     private int keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;//TQueue同名任务冲突策略
     private File cacheDir;//缓存路径
-    Logger logger;//日志打印器
+    private Logger logger;//日志打印器
 
     /**
-     * 请勿直接使用
-     *
      * @param context 上下文
      * @param diskCacheName 磁盘缓存目录名
      * @param implementor 实现器
@@ -229,6 +278,70 @@ public class AbstractBitmapLoader {
     /******************************************
      * public
      */
+
+    /**
+     * 加载图片, 加载成功后回调mOnLoadCompleteListener<br/>
+     * 回调方法的params参数为此方法传入的params, 并非Bitmap<Br/>
+     * 回调方法中使用Bitmap, 调用AsyncBitmapLoader.get()方法从内存缓存
+     * 中取.<br/>
+     * <br/>
+     * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
+     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+     * 这个cacheKey标识唯一的资源<br/>
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     *
+     * @param url 图片URL地址
+     * @param reqWidth 需求宽度 px
+     * @param reqHeight 需求高度 px
+     * @param params 参数, 会带入mOnLoadCompleteListener回调方法
+     * @param mOnBitmapLoadedListener 回调监听器
+     */
+    void load(String url, int reqWidth, int reqHeight, Object params, OnBitmapLoadedListener mOnBitmapLoadedListener) {
+        checkIsOpen();
+        //计算缓存key
+        String cacheKey = implementor.getCacheKey(url);
+        if (logger != null) {
+            logger.d("[AsyncBitmapLoader]load:start:  url<" + url + "> cacheKey<" + cacheKey + ">");
+        }
+        //尝试内存缓存中取Bitmap
+        Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
+        if (bitmap != null && !bitmap.isRecycled()) {
+            //缓存中存在直接回调:成功
+            mOnBitmapLoadedListener.onLoadSucceed(url, params, bitmap);
+            if (logger != null) {
+                logger.d("[AsyncBitmapLoader]load:succeed:  from:BitmapCache url<" + url + "> cacheKey<" + cacheKey + ">");
+            }
+            return;
+        }
+        //若缓存中不存在, 加入磁盘缓存加载队列
+        mDiskCacheQueue.put(cacheKey, new DiskCacheTask(url, reqWidth, reqHeight, mOnBitmapLoadedListener).setParams(params));
+    }
+
+    /**
+     * 从内存缓存中取Bitmap, 若不存在或已被回收, 则返回null<br/>
+     * <br/>
+     * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
+     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+     * 这个cacheKey标识唯一的资源<br/>
+     *
+     * @param url 图片URL地址
+     * @return 若不存在或已被回收, 则返回null
+     */
+    Bitmap get(String url) {
+        checkIsOpen();
+        //计算缓存key
+        String cacheKey = implementor.getCacheKey(url);
+        //尝试从内存缓存中取Bitmap
+        Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
+        if (bitmap != null && !bitmap.isRecycled()) {
+            //若存在且未被回收, 返回Bitmap
+            return bitmap;
+        }
+        //若不存在或已被回收, 返回null
+        return null;
+    }
 
     /**
      * [重要]将一个Bitmap标示为不再使用<Br/>
@@ -436,7 +549,7 @@ public class AbstractBitmapLoader {
         private int reqWidth;
         private int reqHeight;
         private OnBitmapLoadedListener mOnBitmapLoadedListener;
-        private ResultHolder resultHolder;
+        private BitmapLoaderResultHolder resultHolder;
 
         public NetLoadTask(String url, int reqWidth, int reqHeight, OnBitmapLoadedListener mOnBitmapLoadedListener) {
             this.url = url;
@@ -471,7 +584,7 @@ public class AbstractBitmapLoader {
                 //获得输出流, 用于写入缓存
                 outputStream = editor.newOutputStream(0);
                 //结果容器
-                resultHolder = new ResultHolder();
+                resultHolder = new BitmapLoaderResultHolder();
                 //从网络加载Bitmap
                 implementor.loadFromNet(url, reqWidth, reqHeight, resultHolder);
                 //阻塞等待并获取结果Bitmap
@@ -579,64 +692,6 @@ public class AbstractBitmapLoader {
         if (mDiskLruCache == null || mCachedBitmapUtils == null || mDiskCacheQueue == null || mNetLoadQueue == null){
             throw new RuntimeException("[AbstractBitmapLoader]can't use AbstractBitmapLoader without AbstractBitmapLoader.open()!!!");
         }
-    }
-
-    /**
-     * 结果容器<br/>
-     * get方法会阻塞, 一直到set方法执行后
-     */
-    public class ResultHolder{
-
-        private boolean hasInterrupted = false;//是否被打断
-        private boolean hasSet = false;//是否设置了值
-
-        private Bitmap result;//结果
-
-        private final ReentrantLock lock = new ReentrantLock();
-        private final Condition condition = lock.newCondition();
-
-        public void set(Bitmap result){
-            lock.lock();
-            try{
-                //若get()阻塞被中断后, set(Bitmap),为防止内存泄露,将Bitmap回收
-                if (hasInterrupted) {
-                    if (result != null && !result.isRecycled()) {
-                        result.recycle();
-                    }
-                    return;
-                }
-                this.result = result;
-                this.hasSet = true;
-                condition.signalAll();
-            }finally {
-                lock.unlock();
-            }
-        }
-
-        private Bitmap get(){
-            lock.lock();
-            try{
-                if (!hasSet && !hasInterrupted)
-                    condition.await();
-                return result;
-            } catch (InterruptedException ignored) {
-                hasInterrupted = true;
-            } finally {
-                lock.unlock();
-            }
-            return null;
-        }
-
-        private void interrupt(){
-            lock.lock();
-            try{
-                hasInterrupted = true;
-                condition.signalAll();
-            } finally {
-                lock.unlock();
-            }
-        }
-
     }
 
 }

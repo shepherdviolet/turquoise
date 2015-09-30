@@ -1,4 +1,4 @@
-package sviolet.turquoise.utils.bitmap.listener;
+package sviolet.turquoise.utils.bitmap.loader;
 
 import android.graphics.Bitmap;
 

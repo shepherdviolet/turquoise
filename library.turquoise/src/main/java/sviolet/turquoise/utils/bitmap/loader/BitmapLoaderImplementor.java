@@ -1,6 +1,5 @@
-package sviolet.turquoise.utils.bitmap.implementor;
+package sviolet.turquoise.utils.bitmap.loader;
 
-import sviolet.turquoise.utils.bitmap.AbstractBitmapLoader;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 
 /**
@@ -66,7 +65,7 @@ public interface BitmapLoaderImplementor {
      * @param reqHeight 请求高度
      * @param resultHolder 结果容器
      */
-    public void loadFromNet(String url, int reqWidth, int reqHeight, AbstractBitmapLoader.ResultHolder resultHolder);
+    public void loadFromNet(String url, int reqWidth, int reqHeight, BitmapLoaderResultHolder resultHolder);
 
     /**
      * 实现异常处理
