@@ -21,7 +21,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * <br/>
  * Bitmap内存缓存+磁盘缓存+网络加载+防OOM<br/>
  * <br/>
- * AsyncBitmapLoader中每个位图资源都由url和key共同标识, url和key在AsyncBitmapLoader内部
+ * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
  * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
  * 这个cacheKey标识唯一的资源<br/>
  * <Br/>
@@ -78,7 +78,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * <Br/>
  * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
  * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
- * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+ * 使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
  * <Br/>
  * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
  * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
@@ -163,7 +163,7 @@ public class AsyncBitmapLoader {
     /**
      * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
      * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
-     * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+     * 使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
      * <Br/>
      * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
      * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
@@ -217,7 +217,7 @@ public class AsyncBitmapLoader {
      * ----------------------------------------------<br/>
      * <br/>
      * false:禁用(默认)<Br/>
-     * 适用于大多数场合,同一个页面不会出现相同图片(相同的url和key)的情况.<br/>
+     * 适用于大多数场合,同一个页面不会出现相同图片(相同的url)的情况.<br/>
      * <br/>
      * 为优化性能,同一张图片并发加载时,采用TQueue的同名任务取消策略,取消多余的并发任务,只保留一个任务完成.
      * 因此,同一个页面同时加载同一张图片时,最终只有一张图片完成加载,其他会被取消.在使用ListView等场合时,
@@ -225,10 +225,10 @@ public class AsyncBitmapLoader {
      * <br/>
      * ----------------------------------------------<br/>
      * true:启用<br/>
-     * 适用于同一个页面会出现相同图片(相同的url和key)的场合,性能可能会下降,不适合高并发加载,不适合ListView
+     * 适用于同一个页面会出现相同图片(相同的url)的场合,性能可能会下降,不适合高并发加载,不适合ListView
      * 等View复用控件的场合.<br/>
      * <br/>
-     * 为了满足在一个屏幕中同时显示多张相同图片(相同的url和key)的情况,在同一张图片并发加载时,采用TQueue的
+     * 为了满足在一个屏幕中同时显示多张相同图片(相同的url)的情况,在同一张图片并发加载时,采用TQueue的
      * 同名任务跟随策略,其中一个任务执行,其他同名任务等待其完成后,同时回调OnLoadCompleteListener,并传入
      * 同一个结果(Bitmap).这种方式在高并发场合,例如:频繁滑动ListView,任务会持有大量的对象用以回调,而绝大
      * 多数的View已不再显示在屏幕上.<Br/>
@@ -282,18 +282,17 @@ public class AsyncBitmapLoader {
     public interface Implementor{
         /**
          * [实现提示]:<br/>
-         * 可以直接使用key值作为cacheKey, 也可以将url或者key进行摘要
-         * 计算, 得到摘要值作为cacheKey, 根据实际情况实现.  <Br/>
-         * AsyncBitmapLoader中每个位图资源都由url和key共同标识, url和key在AsyncBitmapLoader内部
+         * 通常将url进行摘要计算, 得到摘要值作为cacheKey, 根据实际情况实现.  <Br/>
+         * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
          * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
          * 这个cacheKey标识唯一的资源<br/>
          *
-         * @return 实现根据URL连接和指定Key, 计算并返回缓存Key
+         * @return 实现根据URL计算并返回缓存Key
          */
-        public String getCacheKey(String url, String key);
+        public String getCacheKey(String url);
 
         /**
-         * 实现根据url和key参数从网络下载图片数据, 依照需求尺寸reqWidth和reqHeight解析为合适大小的Bitmap,
+         * 实现根据url参数从网络下载图片数据, 依照需求尺寸reqWidth和reqHeight解析为合适大小的Bitmap,
          * 并调用结果容器resultHolder.set(Bitmap)方法将Bitmap返回, 若加载失败则set(null)<br/>
          * <br/>
          * 注意:<br/>
@@ -324,12 +323,11 @@ public class AsyncBitmapLoader {
          *
          *
          * @param url url
-         * @param key key
          * @param reqWidth 请求宽度
          * @param reqHeight 请求高度
          * @param resultHolder 结果容器
          */
-        public void loadFromNet(String url, String key, int reqWidth, int reqHeight, ResultHolder resultHolder);
+        public void loadFromNet(String url, int reqWidth, int reqHeight, ResultHolder resultHolder);
 
         /**
          * 实现异常处理
@@ -352,53 +350,51 @@ public class AsyncBitmapLoader {
      * 回调方法中使用Bitmap, 调用AsyncBitmapLoader.get()方法从内存缓存
      * 中取.<br/>
      * <br/>
-     * AsyncBitmapLoader中每个位图资源都由url和key共同标识, url和key在AsyncBitmapLoader内部
+     * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
      *
      * @param url 图片URL地址
-     * @param key 图片自定义key
      * @param reqWidth 需求宽度 px
      * @param reqHeight 需求高度 px
      * @param params 参数, 会带入mOnLoadCompleteListener回调方法
      * @param mOnLoadCompleteListener 回调监听器
      */
-    public void load(String url, String key, int reqWidth, int reqHeight, Object params, OnLoadCompleteListener mOnLoadCompleteListener) {
+    public void load(String url, int reqWidth, int reqHeight, Object params, OnLoadCompleteListener mOnLoadCompleteListener) {
         checkIsOpen();
         //计算缓存key
-        String cacheKey = implementor.getCacheKey(url, key);
+        String cacheKey = implementor.getCacheKey(url);
         if (logger != null) {
-            logger.d("[AsyncBitmapLoader]load:start:  url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+            logger.d("[AsyncBitmapLoader]load:start:  url<" + url + "> cacheKey<" + cacheKey + ">");
         }
         //尝试内存缓存中取Bitmap
         Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
         if (bitmap != null && !bitmap.isRecycled()) {
             //缓存中存在直接回调:成功
-            mOnLoadCompleteListener.onLoadSucceed(url, key, params, bitmap);
+            mOnLoadCompleteListener.onLoadSucceed(url, params, bitmap);
             if (logger != null) {
-                logger.d("[AsyncBitmapLoader]load:succeed:  from:BitmapCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                logger.d("[AsyncBitmapLoader]load:succeed:  from:BitmapCache url<" + url + "> cacheKey<" + cacheKey + ">");
             }
             return;
         }
         //若缓存中不存在, 加入磁盘缓存加载队列
-        mDiskCacheQueue.put(cacheKey, new DiskCacheTask(url, key, reqWidth, reqHeight, mOnLoadCompleteListener).setParams(params));
+        mDiskCacheQueue.put(cacheKey, new DiskCacheTask(url, reqWidth, reqHeight, mOnLoadCompleteListener).setParams(params));
     }
 
     /**
      * 从内存缓存中取Bitmap, 若不存在或已被回收, 则返回null<br/>
      * <br/>
-     * AsyncBitmapLoader中每个位图资源都由url和key共同标识, url和key在AsyncBitmapLoader内部
+     * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
      *
      * @param url 图片URL地址
-     * @param key 图片自定义key
      * @return 若不存在或已被回收, 则返回null
      */
-    public Bitmap get(String url, String key) {
+    public Bitmap get(String url) {
         checkIsOpen();
         //计算缓存key
-        String cacheKey = implementor.getCacheKey(url, key);
+        String cacheKey = implementor.getCacheKey(url);
         //尝试从内存缓存中取Bitmap
         Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
         if (bitmap != null && !bitmap.isRecycled()) {
@@ -416,17 +412,16 @@ public class AsyncBitmapLoader {
      * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
      * 已进入回收站的Bitmap会被立即回收.<br/>
      * <br/>
-     * AsyncBitmapLoader中每个位图资源都由url和key共同标识, url和key在AsyncBitmapLoader内部
+     * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
      *
      * @param url 图片URL地址
-     * @param key 图片自定义key
      */
-    public void unused(String url, String key) {
+    public void unused(String url) {
         checkIsOpen();
         //计算缓存key
-        String cacheKey = implementor.getCacheKey(url, key);
+        String cacheKey = implementor.getCacheKey(url);
         //网络加载队列取消
         mNetLoadQueue.cancel(cacheKey);
         //磁盘缓存加载队列取消
@@ -434,7 +429,7 @@ public class AsyncBitmapLoader {
         //将位图标识为不再使用
         mCachedBitmapUtils.unused(cacheKey);
         if (logger != null) {
-            logger.d("[AsyncBitmapLoader]unused:  url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+            logger.d("[AsyncBitmapLoader]unused:  url<" + url + "> cacheKey<" + cacheKey + ">");
         }
     }
 
@@ -513,14 +508,12 @@ public class AsyncBitmapLoader {
         private static final int RESULT_CONTINUE = 3;
 
         private String url;
-        private String key;
         private int reqWidth;
         private int reqHeight;
         private OnLoadCompleteListener mOnLoadCompleteListener;
 
-        public DiskCacheTask(String url, String key, int reqWidth, int reqHeight, OnLoadCompleteListener mOnLoadCompleteListener) {
+        public DiskCacheTask(String url, int reqWidth, int reqHeight, OnLoadCompleteListener mOnLoadCompleteListener) {
             this.url = url;
-            this.key = key;
             this.reqWidth = reqWidth;
             this.reqHeight = reqHeight;
             this.mOnLoadCompleteListener = mOnLoadCompleteListener;
@@ -539,7 +532,7 @@ public class AsyncBitmapLoader {
                 return RESULT_CANCELED;
             }
             //计算缓存key
-            String cacheKey = implementor.getCacheKey(url, key);
+            String cacheKey = implementor.getCacheKey(url);
             try {
                 //得到缓存文件
                 File cacheFile = mDiskLruCache.getFile(cacheKey, 0);
@@ -563,41 +556,41 @@ public class AsyncBitmapLoader {
 
         @Override
         public void onPostExecute(Object result, boolean isCancel) {
-            String cacheKey = implementor.getCacheKey(url, key);
+            String cacheKey = implementor.getCacheKey(url);
             //若任务被取消
             if (isCancel) {
                 if (mOnLoadCompleteListener != null)
-                    mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
+                    mOnLoadCompleteListener.onLoadCanceled(url, getParams());
                 if (mCachedBitmapUtils != null)
                     mCachedBitmapUtils.unused(cacheKey);
                 if (logger != null) {
-                    logger.d("[AsyncBitmapLoader]load:canceled:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                    logger.d("[AsyncBitmapLoader]load:canceled:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                 }
                 return;
             }
             switch ((int) result) {
                 case RESULT_SUCCEED:
                     if (mOnLoadCompleteListener != null && mCachedBitmapUtils != null)
-                        mOnLoadCompleteListener.onLoadSucceed(url, key, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
+                        mOnLoadCompleteListener.onLoadSucceed(url, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
                     if (logger != null) {
-                        logger.d("[AsyncBitmapLoader]load:succeed:  from:DiskCache url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                        logger.d("[AsyncBitmapLoader]load:succeed:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 case RESULT_FAILED:
                     if (mOnLoadCompleteListener != null)
-                        mOnLoadCompleteListener.onLoadFailed(url, key, getParams());
+                        mOnLoadCompleteListener.onLoadFailed(url, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
                     break;
                 case RESULT_CANCELED:
                     if (mOnLoadCompleteListener != null)
-                        mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
+                        mOnLoadCompleteListener.onLoadCanceled(url, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
                     break;
                 case RESULT_CONTINUE:
                     //若缓存文件不存在, 加入网络加载队列
-                    mNetLoadQueue.put(cacheKey, new NetLoadTask(url, key, reqWidth, reqHeight, mOnLoadCompleteListener).setParams(getParams()));
+                    mNetLoadQueue.put(cacheKey, new NetLoadTask(url, reqWidth, reqHeight, mOnLoadCompleteListener).setParams(getParams()));
                 default:
                     break;
             }
@@ -615,15 +608,13 @@ public class AsyncBitmapLoader {
         private static final int RESULT_CONTINUE = 3;
 
         private String url;
-        private String key;
         private int reqWidth;
         private int reqHeight;
         private OnLoadCompleteListener mOnLoadCompleteListener;
         private ResultHolder resultHolder;
 
-        public NetLoadTask(String url, String key, int reqWidth, int reqHeight, OnLoadCompleteListener mOnLoadCompleteListener) {
+        public NetLoadTask(String url, int reqWidth, int reqHeight, OnLoadCompleteListener mOnLoadCompleteListener) {
             this.url = url;
-            this.key = key;
             this.reqWidth = reqWidth;
             this.reqHeight = reqHeight;
             this.mOnLoadCompleteListener = mOnLoadCompleteListener;
@@ -642,7 +633,7 @@ public class AsyncBitmapLoader {
                 return RESULT_CANCELED;
             }
             //计算缓存key
-            String cacheKey = implementor.getCacheKey(url, key);
+            String cacheKey = implementor.getCacheKey(url);
             OutputStream outputStream = null;
             DiskLruCache.Editor editor;
             try {
@@ -657,7 +648,7 @@ public class AsyncBitmapLoader {
                 //结果容器
                 resultHolder = new ResultHolder();
                 //从网络加载Bitmap
-                implementor.loadFromNet(url, key, reqWidth, reqHeight, resultHolder);
+                implementor.loadFromNet(url, reqWidth, reqHeight, resultHolder);
                 //阻塞等待并获取结果Bitmap
                 Bitmap bitmap = resultHolder.get();
                 //判断
@@ -707,35 +698,35 @@ public class AsyncBitmapLoader {
 
         @Override
         public void onPostExecute(Object result, boolean isCancel) {
-            String cacheKey = implementor.getCacheKey(url, key);
+            String cacheKey = implementor.getCacheKey(url);
             //若任务被取消
             if (isCancel) {
                 if (mOnLoadCompleteListener != null)
-                    mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
+                    mOnLoadCompleteListener.onLoadCanceled(url, getParams());
                 if (mCachedBitmapUtils != null)
                     mCachedBitmapUtils.unused(cacheKey);
                 if (logger != null) {
-                    logger.d("[AsyncBitmapLoader]load:canceled:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                    logger.d("[AsyncBitmapLoader]load:canceled:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                 }
                 return;
             }
             switch ((int) result) {
                 case RESULT_SUCCEED:
                     if (mOnLoadCompleteListener != null && mCachedBitmapUtils != null)
-                        mOnLoadCompleteListener.onLoadSucceed(url, key, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
+                        mOnLoadCompleteListener.onLoadSucceed(url, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
                     if (logger != null) {
-                        logger.d("[AsyncBitmapLoader]load:succeed:  from:NetLoad url<" + url + "> key<" + key + "> cacheKey<" + cacheKey + ">");
+                        logger.d("[AsyncBitmapLoader]load:succeed:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 case RESULT_FAILED:
                     if (mOnLoadCompleteListener != null)
-                        mOnLoadCompleteListener.onLoadFailed(url, key, getParams());
+                        mOnLoadCompleteListener.onLoadFailed(url, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
                     break;
                 case RESULT_CANCELED:
                     if (mOnLoadCompleteListener != null)
-                        mOnLoadCompleteListener.onLoadCanceled(url, key, getParams());
+                        mOnLoadCompleteListener.onLoadCanceled(url, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
                     break;
@@ -775,21 +766,21 @@ public class AsyncBitmapLoader {
          * @param params 由load传入的参数, 并非Bitmap
          * @param bitmap 加载成功的位图, 可能为null
          */
-        void onLoadSucceed(String url, String key, Object params, Bitmap bitmap);
+        void onLoadSucceed(String url, Object params, Bitmap bitmap);
 
         /**
          * 加载失败
          *
          * @param params 由load传入的参数, 并非Bitmap
          */
-        void onLoadFailed(String url, String key, Object params);
+        void onLoadFailed(String url, Object params);
 
         /**
          * 加载取消
          *
          * @param params 由load传入的参数, 并非Bitmap
          */
-        void onLoadCanceled(String url, String key, Object params);
+        void onLoadCanceled(String url, Object params);
     }
 
     /**
