@@ -10,6 +10,7 @@ import sviolet.demoa.common.DemoList;
 
 // Demo列表
 @DemoList({
+        CommonImageActivity.class,
         AsyncImageActivity.class,
         Async2ImageActivity.class
 })
@@ -22,7 +23,7 @@ import sviolet.demoa.common.DemoList;
 @DemoDescription(
         title = "image Demo",
         type = "View",
-        info = "Demo of AsyncBitmapLoader"
+        info = "Demo of bitmap package"
 )
 public class ImageActivity extends GuideActivity {
 }

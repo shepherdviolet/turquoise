@@ -73,6 +73,23 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * 片未全部加载完.<br/>
  * 设置日志打印器后, AsyncBitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
  * 情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
+ * <br/>
+ * <br/>
+ * [AsyncBitmapDrawableLoader代码示例]:<br/>
+     try {
+         mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
+             BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor())
+             .setRamCache(0.15f)//缓存占15%内存(与AsyncBitmapLoader不同之处)
+             .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
+             .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
+             .setDiskCacheInner()//强制使用内部储存
+             .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
+             //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
+             //.setLogger(getLogger())//打印日志
+             .open();//启动(必须)
+     } catch (IOException e) {
+        //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
+     }
  * <Br/>
  * ****************************************************************<br/>
  * Tips::<br/>

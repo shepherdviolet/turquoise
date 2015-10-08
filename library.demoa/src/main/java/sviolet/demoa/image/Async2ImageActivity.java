@@ -12,22 +12,23 @@ import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.image.utils.AsyncImageAdapter2;
 import sviolet.demoa.image.utils.AsyncImageItem;
-import sviolet.demoa.image.utils.BitmapLoaderImplementor;
+import sviolet.demoa.image.utils.MyBitmapLoaderImplementor;
 import sviolet.turquoise.enhance.TActivity;
 import sviolet.turquoise.enhance.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
-import sviolet.turquoise.utils.bitmap.AsyncBitmapLoader;
+import sviolet.turquoise.utils.bitmap.BitmapUtils;
+import sviolet.turquoise.utils.bitmap.loader.AsyncBitmapDrawableLoader;
 
 @DemoDescription(
         title = "AsyncImageList2",
         type = "Image",
-        info = "an Async. Image ListView powered by AsyncBitmapLoader and SafeBitmapDrawable"
+        info = "an Async. Image ListView powered by AsyncBitmapDrawableLoader"
 )
 
 /**
- * 图片动态加载Demo<br/>
+ * 图片动态加载Demo2<br/>
  * 内存/磁盘双缓存<br/>
- * BitmapLoader禁用缓存回收站, 配合SafeBitmapDrawable防止Bitmap被回收绘制异常
+ * 采用AsyncBitmapDrawableLoader实现
  *
  * Created by S.Violet on 2015/7/7.
  */
@@ -41,7 +42,7 @@ public class Async2ImageActivity extends TActivity {
     @ResourceId(R.id.image_async_listview)
     private ListView listView;
 
-    private AsyncBitmapLoader mAsyncBitmapLoader;//图片加载器
+    private AsyncBitmapDrawableLoader mAsyncBitmapDrawableLoader;//图片加载器
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,28 +50,26 @@ public class Async2ImageActivity extends TActivity {
 
         try {
             /*
-            由于该Demo图片密度大, 最多同时出现四个Item, 每个Item5张图, 因此
-            设置等待队列容量为25, 一般的情况下, 设置默认值10足够, 该值设置过大
-            会导致快速滑动时, 下载更多的图, 增加流量消耗.
+              1.由于该Demo图片密度大, 最多同时出现四个Item, 每个Item5张图, 因此设置等待队列容量为25,
+            一般的情况下, 设置默认值10足够, 该值设置过大会导致快速滑动时, 下载更多的图, 增加流量消耗.
+              2.loadingBitmap在AsyncBitmapDrawableLoader.destroy时会销毁, 因此直接用BitmapUtils解码.
             */
             //初始化图片加载器
-            mAsyncBitmapLoader = new AsyncBitmapLoader(this, "AsyncImageActivity", new BitmapLoaderImplementor(this))
-                    /**
-                     * 采用SafeBitmapDrawable方式无需回收站
-                     */
-                    .setRamCache(0.15f, 0)//缓存占15%内存, 禁用回收站
-//                    .setRamCache(0.01f, 0)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
+            mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
+                    BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor(this))
+                    .setRamCache(0.15f)//缓存占15%内存(与AsyncBitmapLoader不同之处)
+//                    .setRamCache(0.01f)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
                     .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
                     .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
                     .setDiskCacheInner()//强制使用内部储存
                     .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
-//                    .setLogger(getLogger())//打印日志
+                    //.setLogger(getLogger())//打印日志
                     .open();//启动(必须)
             //设置适配器, 传入图片加载器, 图片解码工具
             /**
              * 用AsyncImageAdapter2
              */
-            listView.setAdapter(new AsyncImageAdapter2(this, makeItemList(), mAsyncBitmapLoader, getCachedBitmapUtils()));
+            listView.setAdapter(new AsyncImageAdapter2(this, makeItemList(), mAsyncBitmapDrawableLoader));
         } catch (IOException e) {
             //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
             e.printStackTrace();
@@ -81,7 +80,8 @@ public class Async2ImageActivity extends TActivity {
     protected void onDestroy() {
         super.onDestroy();
         //销毁图片加载器(回收位图占用内存)
-        mAsyncBitmapLoader.destroy();
+        //同时会销毁loadingBitmap
+        mAsyncBitmapDrawableLoader.destroy();
     }
 
     /**
@@ -100,9 +100,8 @@ public class Async2ImageActivity extends TActivity {
         AsyncImageItem item = new AsyncImageItem();
         for (int i = 0 ; i < 5 ; i++) {
             item.setUrl(i, "http://a.b.c/" + String.valueOf(id) + "-" + String.valueOf(i));
-            item.setKey(i, null);
         }
-        item.setTitle("Title of AsyncImageList " + String.valueOf(id));
+        item.setTitle("Title of AsyncImageList2 " + String.valueOf(id));
         item.setContent("Content of asyncImagelist content of asyncimagelist content of asyncImagelist " + String.valueOf(id));
         return item;
     }

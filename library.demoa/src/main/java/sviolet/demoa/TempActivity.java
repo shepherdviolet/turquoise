@@ -9,7 +9,7 @@ import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.TActivity;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.loader.SafeBitmapDrawableFactory;
+import sviolet.turquoise.utils.bitmap.loader.AsyncBitmapDrawable;
 
 /**
  * 临时调试用Activity
@@ -36,8 +36,8 @@ public class TempActivity extends TActivity {
         super.onResume();
         final Bitmap bitmap = BitmapUtils.decodeFromResource(getResources(), R.mipmap.ic_launcher);
         final Bitmap defaultBitmap = BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null);
-        SafeBitmapDrawableFactory factory = new SafeBitmapDrawableFactory(defaultBitmap);
-        imageView.setImageDrawable(factory.create(bitmap));
+        AsyncBitmapDrawable asyncBitmapDrawable = new AsyncBitmapDrawable(bitmap, defaultBitmap);
+        imageView.setImageDrawable(asyncBitmapDrawable);
 //        imageView.setImageBitmap(bitmap);
 //        imageView.setImageResource(R.mipmap.ic_launcher);
 
@@ -50,6 +50,15 @@ public class TempActivity extends TActivity {
                 imageView.postInvalidate();
             }
         }, 1000);
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                bitmap.recycle();
+                defaultBitmap.recycle();
+                imageView.postInvalidate();
+            }
+        }, 3000);
     }
 
 }

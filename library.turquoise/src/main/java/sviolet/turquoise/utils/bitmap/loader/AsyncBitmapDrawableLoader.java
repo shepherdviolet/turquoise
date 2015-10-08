@@ -67,20 +67,20 @@ import sviolet.turquoise.enhance.utils.Logger;
  * <br/>
  * <br/>
  * [AsyncBitmapDrawableLoader代码示例]:<br/>
-    try {
-        mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
-            BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor())
-            .setRamCache(0.15f)//缓存占15%内存(与AsyncBitmapLoader不同之处)
-            .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
-            .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
-            .setDiskCacheInner()//强制使用内部储存
-            .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
-            //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
-            //.setLogger(getLogger())//打印日志
-            .open();//启动(必须)
-    } catch (IOException e) {
-            //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
-    }
+     try {
+         mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
+             BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor())
+             .setRamCache(0.15f)//缓存占15%内存(与AsyncBitmapLoader不同之处)
+             .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
+             .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
+             .setDiskCacheInner()//强制使用内部储存
+             .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
+             //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
+             //.setLogger(getLogger())//打印日志
+             .open();//启动(必须)
+     } catch (IOException e) {
+        //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
+     }
  * <Br/>
  * ****************************************************************<br/>
  * Tips::<br/>
@@ -111,29 +111,70 @@ import sviolet.turquoise.enhance.utils.Logger;
  *
  * Created by S.Violet on 2015/7/3.
  */
-public class AsyncBitmapLoader extends AbstractBitmapLoader {
+public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
+
+    private Bitmap loadingBitmap;//加载状态的图片
 
     /**
+     * 内存缓存区默认0.125f
+     *
      * @param context 上下文
      * @param diskCacheName 磁盘缓存目录名
+     * @param loadingBitmap 加载时的图片(可为空, AsyncBitmapDrawableLoader.destroy时会回收该Bitmap)
      * @param implementor 实现器
      */
-    public AsyncBitmapLoader(Context context, String diskCacheName, BitmapLoaderImplementor implementor) {
+    public AsyncBitmapDrawableLoader(Context context, String diskCacheName, Bitmap loadingBitmap, BitmapLoaderImplementor implementor) {
         super(context, diskCacheName, implementor);
+        this.loadingBitmap = loadingBitmap;
+        setRamCache(0.125f);
     }
 
     ////////////////////////////////////////////////////////////////////////
     //开放的方法
     ////////////////////////////////////////////////////////////////////////
 
-    @Override
-    public void load(String url, int reqWidth, int reqHeight, Object params, OnBitmapLoadedListener mOnBitmapLoadedListener) {
-        super.load(url, reqWidth, reqHeight, params, mOnBitmapLoadedListener);
+    /**
+     * 加载图片, 立即返回AsyncBitmapDrawable<br/>
+     * AsyncBitmapDrawable为异步的BitmapDrawable, 在加载时会显示加载图, 加载成功后会自动刷新为目标图片<br/>
+     * ImageView.setImageDrawable()方法直接设置图片使用, 请勿获取其中的Bitmap使用.<br/>
+     * <br/>
+     * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
+     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+     * 这个cacheKey标识唯一的资源<br/>
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     *
+     * @param url 图片URL地址
+     * @param reqWidth 需求宽度 px
+     * @param reqHeight 需求高度 px
+     */
+    public AsyncBitmapDrawable load(String url, int reqWidth, int reqHeight) {
+        return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this);
     }
 
-    @Override
-    public Bitmap get(String url) {
-        return super.get(url);
+    /**
+     * 从内存缓存中取AsyncBitmapDrawable, 若不存在或已被回收, 则返回null<br/>
+     * AsyncBitmapDrawable为异步的BitmapDrawable, 在加载时会显示加载图, 加载成功后会自动刷新为目标图片<br/>
+     * ImageView.setImageDrawable()方法直接设置图片使用, 请勿获取其中的Bitmap使用.<br/>
+     * <br/>
+     * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
+     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+     * 这个cacheKey标识唯一的资源<br/>
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     *
+     * @param url 图片URL地址
+     * @param reqWidth 需求宽度 px
+     * @param reqHeight 需求高度 px
+     * @return 若不存在或已被回收, 则返回null
+     */
+    public AsyncBitmapDrawable get(String url, int reqWidth, int reqHeight) {
+        Bitmap bitmap = super.get(url);
+        if (bitmap == null)
+            return null;
+        return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this, bitmap);
     }
 
     @Override
@@ -144,6 +185,18 @@ public class AsyncBitmapLoader extends AbstractBitmapLoader {
     @Override
     public void destroy() {
         super.destroy();
+        //回收加载图
+        if (loadingBitmap != null && !loadingBitmap.isRecycled()){
+            loadingBitmap.recycle();
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+    //GETTER
+    ////////////////////////////////////////////////////////////////////////
+
+    Bitmap getLoadingBitmap(){
+        return loadingBitmap;
     }
 
     ////////////////////////////////////////////////////////////////////////
@@ -151,42 +204,49 @@ public class AsyncBitmapLoader extends AbstractBitmapLoader {
     ////////////////////////////////////////////////////////////////////////
 
     @Override
-    public AsyncBitmapLoader setDiskCache(int diskCacheSizeMib, int diskLoadConcurrency, int diskLoadVolume) {
-        return (AsyncBitmapLoader) super.setDiskCache(diskCacheSizeMib, diskLoadConcurrency, diskLoadVolume);
+    public AsyncBitmapDrawableLoader setDiskCache(int diskCacheSizeMib, int diskLoadConcurrency, int diskLoadVolume) {
+        return (AsyncBitmapDrawableLoader) super.setDiskCache(diskCacheSizeMib, diskLoadConcurrency, diskLoadVolume);
     }
 
     @Override
-    public AsyncBitmapLoader setDiskCacheInner() {
-        return (AsyncBitmapLoader) super.setDiskCacheInner();
+    public AsyncBitmapDrawableLoader setDiskCacheInner() {
+        return (AsyncBitmapDrawableLoader) super.setDiskCacheInner();
     }
 
     @Override
-    public AsyncBitmapLoader setDuplicateLoadEnable(boolean duplicateLoadEnable) {
-        return (AsyncBitmapLoader) super.setDuplicateLoadEnable(duplicateLoadEnable);
+    public AsyncBitmapDrawableLoader setDuplicateLoadEnable(boolean duplicateLoadEnable) {
+        return (AsyncBitmapDrawableLoader) super.setDuplicateLoadEnable(duplicateLoadEnable);
     }
 
     @Override
-    public AsyncBitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality) {
-        return (AsyncBitmapLoader) super.setImageQuality(format, quality);
+    public AsyncBitmapDrawableLoader setImageQuality(Bitmap.CompressFormat format, int quality) {
+        return (AsyncBitmapDrawableLoader) super.setImageQuality(format, quality);
     }
 
     @Override
-    public AsyncBitmapLoader setLogger(Logger logger) {
-        return (AsyncBitmapLoader) super.setLogger(logger);
+    public AsyncBitmapDrawableLoader setLogger(Logger logger) {
+        return (AsyncBitmapDrawableLoader) super.setLogger(logger);
     }
 
     @Override
-    public AsyncBitmapLoader setNetLoad(int netLoadConcurrency, int netLoadVolume) {
-        return (AsyncBitmapLoader) super.setNetLoad(netLoadConcurrency, netLoadVolume);
+    public AsyncBitmapDrawableLoader setNetLoad(int netLoadConcurrency, int netLoadVolume) {
+        return (AsyncBitmapDrawableLoader) super.setNetLoad(netLoadConcurrency, netLoadVolume);
+    }
+
+    /**
+     * 缓存区:缓存区满后, 会清理被标记为unused/最早创建/最少使用的Bitmap. 并立刻回收(recycle()),
+     * 及时地使用unused(url)方法将不再使用的Bitmap置为unused状态, 可以使得Bitmap尽快被回收.
+     * <br/>
+     * AsyncBitmapDrawableLoader禁用了BitmapCache回收站<br/>
+     *
+     * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1], 默认值0.125f
+     */
+    public AsyncBitmapDrawableLoader setRamCache(float ramCacheSizePercent) {
+        return (AsyncBitmapDrawableLoader) super.setRamCache(ramCacheSizePercent, 0);
     }
 
     @Override
-    public AsyncBitmapLoader setRamCache(float ramCacheSizePercent, float ramCacheRecyclerSizePercent) {
-        return (AsyncBitmapLoader) super.setRamCache(ramCacheSizePercent, ramCacheRecyclerSizePercent);
-    }
-
-    @Override
-    public AsyncBitmapLoader open() throws IOException {
-        return (AsyncBitmapLoader) super.open();
+    public AsyncBitmapDrawableLoader open() throws IOException {
+        return (AsyncBitmapDrawableLoader) super.open();
     }
 }
