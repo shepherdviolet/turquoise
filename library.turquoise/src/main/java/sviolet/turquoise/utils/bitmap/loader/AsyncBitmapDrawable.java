@@ -114,27 +114,6 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
     }
 
     /******************************************************************
-     * function
-     */
-
-    /**
-     * [建议使用]不再使用图片, 有利于Bitmap尽快回收<br/>
-     * <br/>
-     * 加载器模式时:会调用加载器的unused方法弃用图片<br/>
-     * 默认图模式时:会直接回收掉Bitmap(不包括默认图)<br/>
-     */
-    public void unused(){
-        if (loader != null){
-            //加载器模式
-            loader.unused(url);
-        }else{
-            if (getBitmap() != null && !getBitmap().isRecycled()){
-                getBitmap().recycle();
-            }
-        }
-    }
-
-    /******************************************************************
      * override
      */
 

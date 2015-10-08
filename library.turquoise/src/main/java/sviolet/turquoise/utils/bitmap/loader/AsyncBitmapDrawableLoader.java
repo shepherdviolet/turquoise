@@ -184,11 +184,6 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
     }
 
     @Override
-    public void unused(String url) {
-        super.unused(url);
-    }
-
-    @Override
     public void destroy() {
         super.destroy();
         //回收加载图
