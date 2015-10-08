@@ -78,6 +78,7 @@ public class AsyncImageAdapter2 extends BaseAdapter {
         holder.contentTextView.setText(item.getContent());
 
         for (int i = 0 ; i < 5 ; i++) {
+            //获取之前的AsyncBitmapDrawable, 用于标记unused
             AsyncBitmapDrawable drawable = (AsyncBitmapDrawable) holder.imageView[i].getDrawable();
             //第一张图为160*160dp, 其余80*80dp
             if (i == 0) {
@@ -85,6 +86,7 @@ public class AsyncImageAdapter2 extends BaseAdapter {
             } else {
                 holder.imageView[i].setImageDrawableImmediate(asyncBitmapDrawableLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall));
             }
+            //标记unused, 有利于资源回收
             if (drawable != null)
                 drawable.unused();
         }
