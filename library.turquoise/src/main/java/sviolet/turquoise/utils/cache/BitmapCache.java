@@ -351,6 +351,8 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             setSize(0);
             recyclerSize = 0;
         }
+        //gc
+        System.gc();
         //打印日志
         if (logger != null){
             logger.i("[BitmapCache] recycled:" + counter);
