@@ -10,105 +10,157 @@ import sviolet.turquoise.enhance.utils.Logger;
 /**
  * 图片双缓存网络异步加载器<br/>
  * <br/>
- * Bitmap内存缓存+磁盘缓存+网络加载+防OOM<br/>
+ * ****************************************************************<br/>
+ * * * * * 种类:<br/>
+ * ****************************************************************<br/>
  * <br/>
- * 请使用:<br/>
  * 1.AsyncBitmapLoader<br/>
+ *      加载Bitmap, 适用性广泛, 使用较复杂, 需要手动回收资源(unused).<br/>
  * 2.AsyncBitmapDrawableLoader<br/>
+ *      加载AsyncBitmapDrawable, 使用简单.<br/>
  * <Br/>
+ * ****************************************************************<br/>
+ * * * * * AsyncBitmapLoader使用说明:<br/>
  * ****************************************************************<br/>
  * <br/>
- * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
- * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
- * 这个cacheKey标识唯一的资源<br/>
- * <Br/>
- * ****************************************************************<br/>
- * [使用说明]<br/>
- * 1.实现接口BitmapLoaderImplementor -> MyBitmapLoaderImplementor <br/>
+ * -------------------初始化设置----------------<br/>
+ * <br/>
+ * 1.实现接口BitmapLoaderImplementor<br/>
  * 2.实例化AsyncBitmapLoader(Context,String,BitmapLoaderImplementor) <br/>
- * 3.setRamCache/setDiskCache/setNetLoad/setLogger设置参数(可选) <br/>
- * 4.open() 启用AsyncBitmapLoader(必须, 否则抛异常)<br/>
+ * 3.设置参数:<br/>
+ *   try {
+ *       mAsyncBitmapLoader = new AsyncBitmapLoader(this, "bitmap", new MyBitmapLoaderImplementor())
+ *          .setRamCache(0.125f, 0.125f)//设置内存缓存大小,启用回收站
+ *          //.setRamCache(0.125f, 0)//回收站设置为0禁用
+ *          .setDiskCache(50, 5, 15)//设置磁盘缓存容量50M, 磁盘加载并发数5, 等待队列15
+ *          .setNetLoad(3, 15)//设置网络加载并发数3, 等待队列15
+ *          .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置磁盘缓存保存格式和质量
+ *          //.setDiskCacheInner()//强制使用内部储存
+ *          //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
+ *          //.setLogger(getLogger())
+ *          .open();//必须调用
+ *   } catch (IOException e) {
+ *      //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
+ *   }
  * <br/>
- * [AsyncBitmapLoader代码示例]:<Br/>
-     private AsyncBitmapLoader mAsyncBitmapLoader;
-     try {
-         mAsyncBitmapLoader = new AsyncBitmapLoader(this, "bitmap", new MyBitmapLoaderImplementor())
-             .setRamCache(0.125f, 0.125f)//启用回收站
-             //.setRamCache(0.125f, 0)//回收站设置为0禁用
-             .setDiskCache(50, 5, 15)
-             .setNetLoad(3, 15)
-             .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
-             .setDiskCacheInner()//强制使用内部储存
-             //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
-             .setLogger(getLogger())
-             .open();//必须调用
-     } catch (IOException e) {
-        //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
-     }
- * <br/>
- * [上述代码说明]:<br/>
- * 位图内存缓存占用应用最大可用内存的12.5%,回收站最大可能占用额外的12.5%,
- * 内存缓存能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 影响显示效果,
- * 设置过大, 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
- * 在路径/sdcard/Android/data/<application package>/cache/bitmap或
- * /data/data/<application package>/cache/bitmap下存放磁盘缓存数据,
- * 缓存最大容量50M, 磁盘缓存容量根据实际情况设置, 磁盘缓存加载最大并发量10,
- * 并发量应考虑图片质量/大小, 若图片较大, 应考虑减少并发量, 磁盘缓存等待队列
- * 容量15, 即只会加载最后请求的15个任务, 更早的加载请求会被取消, 等待队列容
- * 量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1-
- * 2倍为宜, 设置过少会导致屏幕中图片未全部加载完, 例如屏幕中最多可能展示10
- * 张图片, 则设置15-20较为合适, 若设置了10, 屏幕中会有2张图未加载. <br/>
- * 网络加载并发量为3, 根据网络情况和图片大小决定, 过多的并发量会阻塞网络, 过
- * 少会导致图片加载太慢, 网络加载等待队列容量15, 建议与磁盘缓存等待队列容量
- * 相等, 根据屏幕中最多可能展示的图片数决定(略大于), 设置过少会导致屏幕中图
- * 片未全部加载完.<br/>
- * 设置日志打印器后, AsyncBitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
- * 情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
+ *      [上述代码说明]:<br/>
+ *      位图内存缓存占用应用最大可用内存的12.5%,回收站最大可能占用额外的12.5%,
+ *      内存缓存能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 图片显示不全,
+ *      设置过大, 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
+ *      在路径/sdcard/Android/data/<application package>/cache/bitmap或
+ *      /data/data/<application package>/cache/bitmap下存放磁盘缓存数据,
+ *      缓存最大容量50M, 磁盘缓存容量根据实际情况设置, 磁盘缓存加载最大并发量5,
+ *      并发量应考虑图片质量/大小, 若图片较大, 应考虑减少并发量, 磁盘缓存等待队列
+ *      容量15, 即只会加载最后请求的15个任务, 更早的加载请求会被取消, 等待队列容
+ *      量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1-
+ *      2倍为宜, 设置过少会导致屏幕中图片未全部加载完, 例如屏幕中最多可能展示10
+ *      张图片, 则设置15-20较为合适, 若设置了10, 屏幕中会有几张图未加载. <br/>
+ *      网络加载并发量为3, 根据网络情况和图片大小决定, 过多的并发量会阻塞网络, 过
+ *      少会导致图片加载太慢, 网络加载等待队列容量15, 建议与磁盘缓存等待队列容量
+ *      相等, 根据屏幕中最多可能展示的图片数决定(略大于), 设置过少会导致屏幕中图
+ *      片未全部加载完.<br/>
+ *      设置日志打印器后, AsyncBitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
+ *      情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
  * <br/>
  * <br/>
- * [AsyncBitmapDrawableLoader代码示例]:<br/>
-    try {
-        mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
-            BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor())
-            .setRamCache(0.15f)//缓存占15%内存(与AsyncBitmapLoader不同之处)
-            .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
-            .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
-            .setDiskCacheInner()//强制使用内部储存
-            .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
-            //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
-            //.setLogger(getLogger())//打印日志
-            .open();//启动(必须)
-    } catch (IOException e) {
-            //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
-    }
- * <Br/>
- * ****************************************************************<br/>
- * Tips::<br/>
+ * -------------------加载器使用----------------<br/>
  * <br/>
- * 1.当一个页面中需要同时加载相同图片,却发现只加载出一个,其余的都被取消(onLoadCanceled).
- *   尝试设置setDuplicateLoadEnable(true);<Br/>
+ * 1.load <br/>
+ *      加载图片,加载结束后回调OnBitmapLoadedListener<Br/>
+ * 2.get <br/>
+ *      从内存缓冲获取图片,若不存在返回null<br/>
+ * 3.unused [重要] <br/>
+ *      不再使用的图片须及时用该方法废弃,尤其是大量图片的场合,未被废弃(unused)的图片
+ *      将不会被AsyncBitmapLoader回收.请参看"名词解释".<br/>
+ * 4.destroy [重要] <br/>
+ *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<br/>
  * <br/>
  * ****************************************************************<br/>
- * <Br/>
- * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
- * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
- * 使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
- * <Br/>
- * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
- * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
- * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
- * 请适度设置.<br/>
- * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
+ * * * * * AsyncBitmapDrawableLoader使用说明:<br/>
+ * ****************************************************************<br/>
  * <br/>
- * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
- * 当回收站内存占用超过设定值时, 会触发此异常<Br/>
- * 解决方案:<br/>
- * 1.请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
- * Bitmap只有被设置为此状态, 才会被回收(recycle()), 否则在缓存区满后, 会进入回收站,
- * 但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
- * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
- * 其他占用内存受限.<br/>
- *
+ * -------------------初始化设置----------------<br/>
+ * <br/>
+ * 1.实现接口BitmapLoaderImplementor<br/>
+ * 2.实例化AsyncBitmapDrawableLoader(Context,String,Bitmap,BitmapLoaderImplementor) <br/>
+ * 3.设置参数:<br/>
+ try {
+ mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
+ BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor())
+ .setRamCache(0.15f)//缓存占15%内存(与AsyncBitmapLoader不同之处)
+ .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
+ .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
+ .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
+ //.setDiskCacheInner()//强制使用内部储存
+ //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
+ //.setLogger(getLogger())//打印日志
+ .open();//启动(必须)
+ } catch (IOException e) {
+ //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
+ }
+ * <br/>
+ *      [上述代码说明]:<br/>
+ *      通用设置说明省略<br/>
+ *      注意AsyncBitmapDrawableLoader中回收站是强制关闭的,因为配合AsyncBitmapDrawable使用无需回收站,
+ *      同样也无需unused方法<br/>
+ *      构造函数第三个参数loadingBitmap在AsyncBitmapDrawableLoader.destroy中销毁,因此只需BitmapUtils
+ *      解析即可,无需考虑手工回收.<br/>
+ * <br/>
+ * <Br/>
+ * -------------------加载器使用----------------<br/>
+ * <br/>
+ * 1.load <br/>
+ *      加载,立即返回AsyncBitmapDrawable,直接赋给ImageView即可,AsyncBitmapDrawable会自动处理后续工作
+ *      (显示图片,防止异常等).注意切不可获取AsyncBitmapDrawable中的Bitmap直接使用.<Br/>
+ * 2.get <br/>
+ *      从内存缓冲获取AsyncBitmapDrawable,若不存在返回null<br/>
+ * 3.destroy [重要] <br/>
+ *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<br/>
+ * <Br/>
+ * -------------------注意事项----------------<br/>
+ * <br/>
+ * 1.AsyncBitmapDrawableLoader无需使用unused方法,与AsyncBitmapLoader不同.<br/>
+ * 2.AsyncBitmapDrawableLoader强制禁用内存缓存回收站,与AsyncBitmapLoader不同.<br/>
+ * <br/>
+ * ****************************************************************<br/>
+ * * * * * 名词解释:<br/>
+ * ****************************************************************<br/>
+ * <Br/>
+ * url:<br/>
+ *      AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
+ *      将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+ *      这个cacheKey标识唯一的资源<br/>
+ * <Br/>
+ * 缓存区:<br/>
+ *      缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
+ *      使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
+ *      使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
+ * <Br/>
+ * 回收站:<br/>
+ *      用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
+ *      显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
+ *      recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
+ *      请适度设置.若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
+ *      AsyncBitmapDrawableLoader中禁用.<br/>
+ * <br/>
+ * ****************************************************************<br/>
+ * * * * * 错误处理:<br/>
+ * ****************************************************************<br/>
+ * <br/>
+ * 1.[BitmapCache]recycler Out Of Memory!!!<br/>
+ *      当回收站内存占用超过设定值时, 会触发此异常<Br/>
+ *      解决方案:<br/>
+ *      1).请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
+ *          Bitmap只有被设置为此状态, 才会被回收(recycle()), 否则在缓存区满后, 会进入回收站,
+ *          但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
+ *      2).设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
+ *          其他占用内存受限.<br/>
+ * <br/>
+ * 1.当一个页面中需要同时加载相同图片(相同url),却发现只加载出一个,其余的都被取消(onLoadCanceled).
+ *      解决方案:<br/>
+ *      尝试设置setDuplicateLoadEnable(true);<Br/>
+ * <Br/>
+ * <Br/>
  * Created by S.Violet on 2015/7/3.
  */
 public class AsyncBitmapLoader extends AbstractBitmapLoader {
