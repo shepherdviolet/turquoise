@@ -27,7 +27,7 @@ import sviolet.turquoise.utils.bitmap.loader.AsyncBitmapLoader;
 /**
  * 图片动态加载Demo<br/>
  * 内存/磁盘双缓存<br/>
- * BitmapLoader采用普通方式, 启用缓存回收站<br/>
+ * 采用AsyncBitmapLoader实现, 启用缓存回收站<br/>
  *
  * Created by S.Violet on 2015/7/7.
  */
