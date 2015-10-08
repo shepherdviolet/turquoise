@@ -1,4 +1,4 @@
-# Turquoise 1.5.0927
+# Turquoise 1.5.1008
 
 ## Description
 > Android Library contains Views/Utils/IOs...<br/>
