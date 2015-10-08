@@ -203,10 +203,11 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
 
     /**
-     * [重要]<br/>
-     * [异步]将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
+     * [重要]将一个Bitmap标示为不再使用,利于更快被回收<Br/>
+     * <br/>
+     * 将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
      * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
-     * 已进入回收站的Bitmap会被立即回收.
+     * 已进入回收站的Bitmap会被立即回收.<br/>
      *
      * @param key
      */
@@ -220,10 +221,12 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     }
 
     /**
-     * [重要]<br/>
-     * [同步]将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
+     * [重要]将一个Bitmap标示为不再使用,利于更快被回收<Br/>
+     * <br/>
+     * 将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
      * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
      * 已进入回收站的Bitmap会被立即回收.<br/>
+     * <br/>
      * 同步操作, 可能会阻塞<br/>
      *
      * @param key

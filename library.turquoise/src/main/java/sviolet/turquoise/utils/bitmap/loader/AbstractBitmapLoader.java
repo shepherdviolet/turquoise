@@ -152,7 +152,7 @@ class AbstractBitmapLoader {
      * @param netLoadConcurrency 网络加载任务并发量, 默认3
      * @param netLoadVolume 网络加载等待队列容量, 默认10
      */
-    public AbstractBitmapLoader setNetLoad(int netLoadConcurrency, int netLoadVolume){
+    AbstractBitmapLoader setNetLoad(int netLoadConcurrency, int netLoadVolume){
         this.netLoadConcurrency = netLoadConcurrency;
         this.netLoadVolume = netLoadVolume;
         return this;
@@ -163,7 +163,7 @@ class AbstractBitmapLoader {
      * @param diskLoadConcurrency 磁盘加载任务并发量, 默认5
      * @param diskLoadVolume 磁盘加载等待队列容量, 默认10
      */
-    public AbstractBitmapLoader setDiskCache(int diskCacheSizeMib, int diskLoadConcurrency, int diskLoadVolume){
+    AbstractBitmapLoader setDiskCache(int diskCacheSizeMib, int diskLoadConcurrency, int diskLoadVolume){
         this.diskCacheSize = 1024L * 1024L * diskCacheSizeMib;
         this.diskLoadConcurrency = diskLoadConcurrency;
         this.diskLoadVolume = diskLoadVolume;
@@ -193,7 +193,7 @@ class AbstractBitmapLoader {
      * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1]
      * @param ramCacheRecyclerSizePercent 内存缓存回收站占用应用可用内存的比例 [0, 1], 使用SafeBitmapDrawableFactory时设置为0禁用回收站
      */
-    public AbstractBitmapLoader setRamCache(float ramCacheSizePercent, float ramCacheRecyclerSizePercent){
+    AbstractBitmapLoader setRamCache(float ramCacheSizePercent, float ramCacheRecyclerSizePercent){
         this.ramCacheSizePercent = ramCacheSizePercent;
         this.ramCacheRecyclerSizePercent = ramCacheRecyclerSizePercent;
         return this;
@@ -203,7 +203,7 @@ class AbstractBitmapLoader {
      * 设置磁盘缓存路径为内部储存<br/>
      * 若不设置, 则优先选择外部储存, 当外部储存不存在时使用内部储存
      */
-    public AbstractBitmapLoader setDiskCacheInner(){
+    AbstractBitmapLoader setDiskCacheInner(){
         cacheDir = new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + diskCacheName);
         return this;
     }
@@ -215,7 +215,7 @@ class AbstractBitmapLoader {
      * @param format 图片格式
      * @param quality 图片质量 0-100
      */
-    public AbstractBitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality){
+    AbstractBitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality){
         this.imageFormat = format;
         this.imageQuality = quality;
         return this;
@@ -244,7 +244,7 @@ class AbstractBitmapLoader {
      * 多数的View已不再显示在屏幕上.<Br/>
      *
      */
-    public AbstractBitmapLoader setDuplicateLoadEnable(boolean duplicateLoadEnable){
+    AbstractBitmapLoader setDuplicateLoadEnable(boolean duplicateLoadEnable){
         if (duplicateLoadEnable){
             keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_FOLLOW;
         }else{
@@ -256,7 +256,7 @@ class AbstractBitmapLoader {
     /**
      * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
      */
-    public AbstractBitmapLoader setLogger(Logger logger) {
+    AbstractBitmapLoader setLogger(Logger logger) {
         this.logger = logger;
         if (mCachedBitmapUtils != null)
             mCachedBitmapUtils.getBitmapCache().setLogger(logger);
@@ -269,7 +269,7 @@ class AbstractBitmapLoader {
      *
      * @throws IOException 磁盘缓存启动失败抛出异常
      */
-    public AbstractBitmapLoader open() throws IOException {
+    AbstractBitmapLoader open() throws IOException {
         this.mDiskLruCache = DiskLruCache.open(cacheDir, ApplicationUtils.getAppVersion(context), 1, diskCacheSize);
         this.mCachedBitmapUtils = new CachedBitmapUtils(context, ramCacheSizePercent, ramCacheRecyclerSizePercent);
         this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency).setVolumeMax(diskLoadVolume).waitCancelingTask(true).setKeyConflictPolicy(keyConflictPolicy);
@@ -348,9 +348,9 @@ class AbstractBitmapLoader {
     }
 
     /**
-     * [重要]将一个Bitmap标示为不再使用<Br/>
+     * [重要]将一个Bitmap标示为不再使用,利于更快被回收<Br/>
      * <br/>
-     *  将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
+     * 将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
      * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
      * 已进入回收站的Bitmap会被立即回收.<br/>
      * <br/>
