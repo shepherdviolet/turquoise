@@ -153,6 +153,12 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
         return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this);
     }
 
+    void load(AsyncBitmapDrawable asyncBitmapDrawable){
+        if (asyncBitmapDrawable == null)
+            return;
+        super.load(asyncBitmapDrawable.getUrl(), asyncBitmapDrawable.getReqWidth(), asyncBitmapDrawable.getReqHeight(), null, asyncBitmapDrawable);
+    }
+
     /**
      * 从内存缓存中取AsyncBitmapDrawable, 若不存在或已被回收, 则返回null<br/>
      * AsyncBitmapDrawable为异步的BitmapDrawable, 在加载时会显示加载图, 加载成功后会自动刷新为目标图片<br/>

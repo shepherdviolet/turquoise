@@ -91,7 +91,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
         this.loader = loader;
 
         if (resetBitmap()) {
-            load(url, reqWidth, reqHeight, loader);
+            load();
         }
     }
 
@@ -145,7 +145,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
             super.draw(canvas);
         }catch(Exception e){
             if (resetBitmap()) {
-                load(url, reqWidth, reqHeight, loader);
+                load();
             }
         }
     }
@@ -197,10 +197,13 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
         }
     }
 
-    private void load(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader) {
+    /**
+     * 加载
+     */
+    private void load() {
         //加载开始
         loading = true;
-        loader.load(url, reqWidth, reqHeight, null, this);
+        loader.load(this);
     }
 
     /*****************************************************
@@ -248,4 +251,11 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
         return url;
     }
 
+    public int getReqWidth() {
+        return reqWidth;
+    }
+
+    public int getReqHeight() {
+        return reqHeight;
+    }
 }
