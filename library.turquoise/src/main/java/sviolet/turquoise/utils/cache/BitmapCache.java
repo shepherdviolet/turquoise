@@ -47,7 +47,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     //回收站 : 存放被清理出缓存但未被标记为unused的Bitmap
     private HashMap<String, Bitmap> recyclerMap;
     //不再使用标记
-    private LinkedHashMap<String, Boolean> unusedMap;
+    private HashMap<String, Boolean> unusedMap;
     //回收站分配空间
     private int recyclerMaxSize = 0;
     //回收站当前占用
@@ -190,7 +190,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
     private BitmapCache(int cacheMaxSize, int recyclerMaxSize) {
         super(cacheMaxSize);
-        this.unusedMap = new LinkedHashMap<String, Boolean>(0, 0.75f, true);
+        this.unusedMap = new HashMap<String, Boolean>();
         //分配回收站空间
         if (recyclerMaxSize > 0) {
             this.recyclerMaxSize = recyclerMaxSize;
@@ -450,32 +450,12 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
                 Map.Entry<String, Bitmap> toEvict = null;
 
-                //优先清理不再使用的图
-                if (!unusedMap.isEmpty()){
-                    for (Map.Entry<String, Boolean> entry : unusedMap.entrySet()) {
-                        if (getMap().containsKey(entry.getKey())) {
-                            key = entry.getKey();
-                            break;
-                        }
-                    }
-                    if (key != null){
-                        for (Map.Entry<String, Bitmap> entry : getMap().entrySet()) {
-                            if (key.equals(entry.getKey())) {
-                                toEvict = entry;
-                            }
-                            break;
-                        }
-                    }
-                }
-
-                if (toEvict == null) {
-                    for (Map.Entry<String, Bitmap> entry : getMap().entrySet()) {
-                        toEvict = entry;
-                        //LruCache中没有break
-                        //原来取最后一项, 即为最新加入或最近操作过的一项
-                        //此处改为取第一项, 即为最早加入或最少操作的一项
-                        break;
-                    }
+                for (Map.Entry<String, Bitmap> entry : getMap().entrySet()) {
+                    toEvict = entry;
+                    //LruCache中没有break
+                    //原来取最后一项, 即为最新加入或最近操作过的一项
+                    //此处改为取第一项, 即为最早加入或最少操作的一项
+                    break;
                 }
 
                 if (toEvict == null) {
