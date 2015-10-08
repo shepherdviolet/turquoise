@@ -2,6 +2,8 @@ package sviolet.demoa.image;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.widget.ListView;
 
 import java.io.IOException;
@@ -41,6 +43,8 @@ public class AsyncImageActivity extends TActivity {
     @ResourceId(R.id.image_async_listview)
     private ListView listView;
 
+    private AsyncImageAdapter adapter;
+
     private AsyncBitmapLoader mAsyncBitmapLoader;//图片加载器
 
     @Override
@@ -62,8 +66,10 @@ public class AsyncImageActivity extends TActivity {
                     .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
 //                    .setLogger(getLogger())//打印日志
                     .open();//启动(必须)
+
             //设置适配器, 传入图片加载器, 图片解码工具
-            listView.setAdapter(new AsyncImageAdapter(this, makeItemList(), mAsyncBitmapLoader, getCachedBitmapUtils()));
+            adapter = new AsyncImageAdapter(this, makeItemList(), mAsyncBitmapLoader, getCachedBitmapUtils());
+            listView.setAdapter(adapter);
         } catch (IOException e) {
             //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
             e.printStackTrace();
@@ -77,10 +83,45 @@ public class AsyncImageActivity extends TActivity {
         mAsyncBitmapLoader.destroy();
     }
 
-    /**
-     * 模拟数据生成
-     * @return
+    /****************************************************
+     * 定时刷新
+     * 解决网络加载失败,实现重新加载
+     * 通过刷新UI方式触发图片重新加载, 在静止时只会重新加载显示中的图片
      */
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handler.sendEmptyMessageDelayed(HANDLER_REFRESH, 2000L);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        handler.removeMessages(HANDLER_REFRESH);
+    }
+
+    private static final int HANDLER_REFRESH = 0;
+
+    private Handler handler = new Handler(new Handler.Callback() {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what){
+                case HANDLER_REFRESH:
+                    adapter.notifyDataSetChanged();//刷新UI, 触发图片重新加载
+                    handler.sendEmptyMessageDelayed(HANDLER_REFRESH, 2000L);
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+    });
+
+    /****************************************************
+     * 模拟数据生成
+     */
+
     private List<AsyncImageItem> makeItemList(){
         List<AsyncImageItem> list = new ArrayList<>();
         for (int i = 0 ; i < 100 ; i++){

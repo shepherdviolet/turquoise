@@ -82,11 +82,17 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
             public void run() {
                 //模拟网络耗时
                 try {
-                    Thread.sleep(random.nextInt(500));
+                    Thread.sleep(random.nextInt(400) + 100);
                 } catch (InterruptedException e) {
                 }
-                //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
-                resultHolder.set(BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight));
+                //模拟网络加载失败的情况
+                if(random.nextInt(10) > 2) {
+                    //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
+                    resultHolder.set(BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight));
+                }else{
+                    //失败
+                    resultHolder.set(null);
+                }
             }
         });
 

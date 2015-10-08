@@ -93,20 +93,20 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * 1.实现接口BitmapLoaderImplementor<br/>
  * 2.实例化AsyncBitmapDrawableLoader(Context,String,Bitmap,BitmapLoaderImplementor) <br/>
  * 3.设置参数:<br/>
-     try {
-         mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
-             BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor())
-             .setRamCache(0.15f)//缓存占15%内存(与AsyncBitmapLoader不同之处)
-             .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
-             .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
-             .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
-             //.setDiskCacheInner()//强制使用内部储存
-             //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
-             //.setLogger(getLogger())//打印日志
-             .open();//启动(必须)
-     } catch (IOException e) {
-        //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
-     }
+ *   try {
+ *       mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
+ *           BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor())
+ *           .setRamCache(0.15f)//缓存占15%内存(与AsyncBitmapLoader不同之处)
+ *           .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
+ *           .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
+ *           .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
+ *           //.setDiskCacheInner()//强制使用内部储存
+ *           //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
+ *           //.setLogger(getLogger())//打印日志
+ *           .open();//启动(必须)
+ *   } catch (IOException e) {
+ *      //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
+ *   }
  * <br/>
  *      [上述代码说明]:<br/>
  *      通用设置说明省略<br/>
@@ -156,7 +156,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * * * * * 错误处理:<br/>
  * ****************************************************************<br/>
  * <br/>
- * 1.[BitmapCache]recycler Out Of Memory!!!<br/>
+ * 1.Exception::[BitmapCache]recycler Out Of Memory!!!<br/>
  *      当回收站内存占用超过设定值时, 会触发此异常<Br/>
  *      解决方案:<br/>
  *      1).请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
@@ -165,9 +165,16 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *      2).设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
  *          其他占用内存受限.<br/>
  * <br/>
- * 1.当一个页面中需要同时加载相同图片(相同url),却发现只加载出一个,其余的都被取消(onLoadCanceled).
+ * 2.当一个页面中需要同时加载相同图片(相同url).<br/>
+ *      当同时加载相同图片时,若发现只加载出一个,其余的都被取消(onLoadCanceled).<br/>
  *      解决方案:<br/>
  *      尝试设置setDuplicateLoadEnable(true);<Br/>
+ * <Br/>
+ * 3.网络加载失败,需要重新加载.<br/>
+ *      推荐方案:<br/>
+ *      1).定时刷新UI(1-5s),以此触发显示中的图片重新加载.这样做的优点是,只重新加载显示中的图片.
+ *          适合ListView/GridView等View复用/适配器模式的场合,图片加载在适配器中实现,定时对适配
+ *          器(Adapter)进行刷新,即可达到重新加载的目的.<br/>
  * <Br/>
  * <Br/>
  * Created by S.Violet on 2015/7/3.
