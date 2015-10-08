@@ -5,7 +5,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -158,7 +157,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
     private boolean resetBitmap() {
         if (loader != null){
             //加载器模式
-            if (loader.getLoadingBitmap() != null && loader.getLoadingBitmap().isRecycled()) {
+            if (loader.getLoadingBitmap() == null || loader.getLoadingBitmap().isRecycled()) {
                 //加载图被回收时使用空图
                 setBitmap(null);
             } else {
@@ -169,7 +168,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
             return !loading;
         }else {
             //默认图模式
-            if (defaultBitmap != null && defaultBitmap.isRecycled()) {
+            if (defaultBitmap == null || defaultBitmap.isRecycled()) {
                 //默认图被回收时使用空图
                 setBitmap(null);
             } else {
@@ -215,7 +214,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      */
     @Override
     public void onLoadSucceed(String url, Object params, Bitmap bitmap) {
-        if (bitmap != null && bitmap.isRecycled())
+        if (bitmap == null || bitmap.isRecycled())
             resetBitmap();
         else
             setBitmap(bitmap);

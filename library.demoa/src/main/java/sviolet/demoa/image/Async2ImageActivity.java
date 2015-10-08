@@ -58,7 +58,7 @@ public class Async2ImageActivity extends TActivity {
             mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
                     BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor(this))
                     .setRamCache(0.10f)//缓存占15%内存(与AsyncBitmapLoader不同之处)
-//                    .setRamCache(0.002f)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
+//                    .setRamCache(0.004f)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
                     .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
                     .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
                     .setDiskCacheInner()//强制使用内部储存
