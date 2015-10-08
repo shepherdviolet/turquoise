@@ -55,7 +55,7 @@ public class CachedBitmapUtils {
      *
      * @param context
      * @param cachePercent Bitmap缓存区占用应用可用内存的比例 (0, 1]
-     * @param recyclerPercent Bitmap回收站占用应用可用内存的比例 [0, 1], 使用SafeBitmapDrawableFactory时设置为0禁用回收站
+     * @param recyclerPercent Bitmap回收站占用应用可用内存的比例 [0, 1], 设置为0禁用回收站
      * @return
      */
     public CachedBitmapUtils(Context context, float cachePercent, float recyclerPercent){
@@ -117,7 +117,7 @@ public class CachedBitmapUtils {
      * 其他占用内存受限.<br/>
      *
      * @param cacheMaxSize Bitmap缓存区占用最大内存 单位byte (0, ?)
-     * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte [0, ?), 使用SafeBitmapDrawableFactory时设置为0禁用回收站
+     * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte [0, ?), 设置为0禁用回收站
      */
     public CachedBitmapUtils(int cacheMaxSize, int recyclerMaxSize){
         mBitmapCache = BitmapCache.newInstance(cacheMaxSize, recyclerMaxSize);

@@ -119,7 +119,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      *
      * @param context
      * @param cachePercent Bitmap缓存区占用应用可用内存的比例 (0, 1]
-     * @param recyclerPercent Bitmap回收站占用应用可用内存的比例 [0, 1], 使用SafeBitmapDrawableFactory时设置为0禁用回收站
+     * @param recyclerPercent Bitmap回收站占用应用可用内存的比例 [0, 1], 设置为0禁用回收站
      * @return
      */
     public static BitmapCache newInstance(Context context, float cachePercent, float recyclerPercent) {
@@ -158,7 +158,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * <br/>
      *
      * @param cacheMaxSize Bitmap缓存区占用最大内存 单位byte (0, ?)
-     * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte [0, ?), 使用SafeBitmapDrawableFactory时设置为0禁用回收站
+     * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte [0, ?), 设置为0禁用回收站
      */
     public static BitmapCache newInstance(int cacheMaxSize, int recyclerMaxSize) {
         return new BitmapCache(cacheMaxSize, recyclerMaxSize);
@@ -186,7 +186,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * <br/>
      *
      * @param cacheMaxSize Bitmap缓存区占用最大内存 单位byte
-     * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte, 使用SafeBitmapDrawableFactory时设置为0禁用回收站
+     * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte, 设置为0禁用回收站
      */
     private BitmapCache(int cacheMaxSize, int recyclerMaxSize) {
         super(cacheMaxSize);

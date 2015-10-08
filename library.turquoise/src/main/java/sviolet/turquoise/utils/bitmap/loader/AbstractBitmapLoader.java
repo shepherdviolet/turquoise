@@ -190,8 +190,8 @@ class AbstractBitmapLoader {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      *
-     * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1]
-     * @param ramCacheRecyclerSizePercent 内存缓存回收站占用应用可用内存的比例 [0, 1], 使用SafeBitmapDrawableFactory时设置为0禁用回收站
+     * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1], 默认值0.125f
+     * @param ramCacheRecyclerSizePercent 内存缓存回收站占用应用可用内存的比例 [0, 1], 设置为0禁用回收站, 默认值0.125f
      */
     AbstractBitmapLoader setRamCache(float ramCacheSizePercent, float ramCacheRecyclerSizePercent){
         this.ramCacheSizePercent = ramCacheSizePercent;
