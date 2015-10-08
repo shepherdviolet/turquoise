@@ -28,6 +28,9 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
     private int reqWidth;
     private int reqHeight;
 
+    //加载器加载中
+    private boolean loading = false;
+
     //默认的图片
     private Bitmap defaultBitmap;
     //加载器
@@ -88,7 +91,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
         this.loader = loader;
 
         if (resetBitmap()) {
-            loader.load(url, reqWidth, reqHeight, null, this);
+            load(url, reqWidth, reqHeight, loader);
         }
     }
 
@@ -142,15 +145,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
             super.draw(canvas);
         }catch(Exception e){
             if (resetBitmap()) {
-                loader.load(url, reqWidth, reqHeight, null, this);
-            }
-            try {
-                //重新绘制
-                super.draw(canvas);
-            }catch(Exception e2){
-                //仍然出错绘制空图
-                setBitmap(null);
-                super.draw(canvas);
+                load(url, reqWidth, reqHeight, loader);
             }
         }
     }
@@ -158,7 +153,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
     /**
      * 重置图片为加载图或默认图
      *
-     * @return hasLoader
+     * @return needLoad true:需要加载图片
      */
     private boolean resetBitmap() {
         if (loader != null){
@@ -170,7 +165,8 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
                 //加载图可用使用加载图
                 setBitmap(loader.getLoadingBitmap());
             }
-            return true;
+            //若加载器已在加载, 则返回false
+            return !loading;
         }else {
             //默认图模式
             if (defaultBitmap != null && defaultBitmap.isRecycled()) {
@@ -201,6 +197,12 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
         }
     }
 
+    private void load(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader) {
+        //加载开始
+        loading = true;
+        loader.load(url, reqWidth, reqHeight, null, this);
+    }
+
     /*****************************************************
      * OnBitmapLoadedListener 回调
      */
@@ -214,6 +216,8 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
             resetBitmap();
         else
             setBitmap(bitmap);
+        //加载结束
+        loading = false;
     }
 
     /**
@@ -222,6 +226,8 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
     @Override
     public void onLoadFailed(String url, Object params) {
         resetBitmap();
+        //加载结束
+        loading = false;
     }
 
     /**
@@ -230,6 +236,8 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
     @Override
     public void onLoadCanceled(String url, Object params) {
         resetBitmap();
+        //加载结束
+        loading = false;
     }
 
     /**********************************************************
@@ -238,14 +246,6 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
 
     public String getUrl() {
         return url;
-    }
-
-    public int getReqWidth() {
-        return reqWidth;
-    }
-
-    public int getReqHeight() {
-        return reqHeight;
     }
 
 }
