@@ -122,22 +122,21 @@ public class TQueue {
                     }
                     if (oldTask != null)
                         oldTask.cancel();
-
-                    trimWattingTasks();
-                    waittingTasks.put(key, task);//加入等待队列
                 }else if(keyConflictPolicy == KEY_CONFLICT_POLICY_FOLLOW){
                     //新的任务跟随老的任务
                     runningTasks.get(key).addFollower(task);
+                    return;
                 }else{
                     //新任务取消
                     task.cancel();
+                    return;
                 }
-            }else if (waittingTasks.containsKey(key)){
+            }
+            if (waittingTasks.containsKey(key)){
                 if (keyConflictPolicy == KEY_CONFLICT_POLICY_DISPLACE){
                     //移除同名原有任务, 加入新任务
                     TTask removeTask = waittingTasks.remove(key);
                     removeTask.cancel();
-                    waittingTasks.put(key, task);//加入等待队列
                 }else if(keyConflictPolicy == KEY_CONFLICT_POLICY_FOLLOW){
                     //新的任务作为跟随老任务
                     waittingTasks.get(key).addFollower(task);
@@ -145,11 +144,13 @@ public class TQueue {
                 }else{
                     //新任务取消
                     task.cancel();
+                    return;
                 }
-            }else {
-                trimWattingTasks();
-                waittingTasks.put(key, task);//加入等待队列
             }
+
+            trimWattingTasks();
+            waittingTasks.put(key, task);//加入等待队列
+
         }
         notifyDispatchTask();//触发任务调度
     }
