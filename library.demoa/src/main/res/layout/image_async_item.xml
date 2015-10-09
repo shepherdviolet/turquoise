@@ -39,12 +39,12 @@
 
             <sviolet.turquoise.view.GradualImageView
                 android:id="@+id/image_async_item_imageview0"
-                android:layout_width="160dp"
-                android:layout_height="160dp" />
+                android:layout_width="162dp"
+                android:layout_height="162dp" />
 
             <LinearLayout
                 android:layout_width="80dp"
-                android:layout_height="160dp"
+                android:layout_height="162dp"
                 android:layout_marginLeft="2dp"
                 android:orientation="vertical">
 
@@ -63,7 +63,7 @@
 
             <LinearLayout
                 android:layout_width="80dp"
-                android:layout_height="160dp"
+                android:layout_height="162dp"
                 android:layout_marginLeft="2dp"
                 android:orientation="vertical">
 
