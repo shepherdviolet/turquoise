@@ -78,15 +78,25 @@ public class AsyncImageAdapter2 extends BaseAdapter {
         holder.contentTextView.setText(item.getContent());
 
         for (int i = 0 ; i < 5 ; i++) {
-            //第一张图为160*160dp, 其余80*80dp
+            /**
+             * [重要]必须在设置新图前, 将原来的AsyncBitmapDrawable置为不再使用, 这样能取消原图的加载任务,
+             * 保证需要显示的图能尽快加载出来, 使得滑动过程中的加载任务不占用等待队列, 防止滚动停止
+             * 后界面中有图片未加载<br/>
+             */
+            AsyncBitmapDrawable drawable = (AsyncBitmapDrawable) holder.imageView[i].getDrawable();
+            if (drawable != null)
+                drawable.unused();
+
             /**
              * asyncBitmapDrawableLoader.load()方法返回的AsyncBitmapDrawable直接赋给ImageView
              */
             if (i == 0) {
+                //第一张图为160*160dp, 其余80*80dp
                 holder.imageView[i].setImageDrawableImmediate(asyncBitmapDrawableLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge));
             } else {
                 holder.imageView[i].setImageDrawableImmediate(asyncBitmapDrawableLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall));
             }
+
         }
         return view;
     }
