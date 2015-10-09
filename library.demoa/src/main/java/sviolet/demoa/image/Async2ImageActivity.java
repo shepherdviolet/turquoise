@@ -67,6 +67,7 @@ public class Async2ImageActivity extends TActivity {
                     .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
                     .setDiskCacheInner()//强制使用内部储存
                     .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
+//                    .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
 //                    .setLogger(getLogger())//打印日志
                     .open();//启动(必须)
             //设置适配器, 传入图片加载器, 图片解码工具
