@@ -9,7 +9,6 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import sviolet.turquoise.model.queue.TQueue;
-import sviolet.turquoise.utils.conversion.BinaryUtils;
 
 /**
  * 简易Http/HttpsURLConnection请求会话实例<br>
@@ -315,7 +314,7 @@ public class HttpURLConnectionClient {
 	 * @return
 	 */
 	private boolean isPostType(int type){
-		return BinaryUtils.getFlag(type, 0);
+		return type == (type | 0x0001);
 	}
 	
 }

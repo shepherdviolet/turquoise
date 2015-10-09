@@ -17,7 +17,6 @@ import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
 import sviolet.turquoise.model.queue.TTask;
-import sviolet.turquoise.utils.conversion.BinaryUtils;
 
 /**
  * 简易Http/HttpsURLConnection请求任务(通常由SimpleHttpURLConnectionClient创建并管理)<br>
@@ -339,7 +338,7 @@ public class HttpURLConnectionTask extends TTask {
 	 * @return
 	 */
 	public boolean isPost(){
-		return BinaryUtils.getFlag(type, 0);
+		return type == (type | 0x0001);
 	}
 	
 	/**
