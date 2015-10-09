@@ -54,7 +54,7 @@ public class Async2ImageActivity extends TActivity {
 
         try {
             /*
-              1.由于该Demo图片密度大, 最多同时出现四个Item, 每个Item5张图, 因此设置等待队列容量为30,
+              1.由于该Demo图片密度大, 最多同时出现四个Item, 每个Item5张图, 因此设置等待队列容量为25,
             一般的情况下, 设置默认值10足够, 该值设置过大会导致快速滑动时, 下载更多的图, 增加流量消耗.
               2.loadingBitmap在AsyncBitmapDrawableLoader.destroy时会销毁, 因此直接用BitmapUtils解码.
             */
@@ -63,11 +63,11 @@ public class Async2ImageActivity extends TActivity {
                     BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor(this))
                     .setRamCache(0.10f)//缓存占15%内存(与AsyncBitmapLoader不同之处)
 //                    .setRamCache(0.004f)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
-                    .setDiskCache(50, 5, 30)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量30
-                    .setNetLoad(3, 30)//3线程网络加载, 等待队列容量30
+                    .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
+                    .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
                     .setDiskCacheInner()//强制使用内部储存
                     .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
-                    //.setLogger(getLogger())//打印日志
+//                    .setLogger(getLogger())//打印日志
                     .open();//启动(必须)
             //设置适配器, 传入图片加载器, 图片解码工具
             adapter = new AsyncImageAdapter2(this, makeItemList(), mAsyncBitmapDrawableLoader);
@@ -136,7 +136,7 @@ public class Async2ImageActivity extends TActivity {
     private AsyncImageItem makeItem(int id){
         AsyncImageItem item = new AsyncImageItem();
         for (int i = 0 ; i < 5 ; i++) {
-            item.setUrl(i, "http://a.b.c/" + String.valueOf(id) + "-" + String.valueOf(i));
+            item.setUrl(i, "http://a/" + String.valueOf(id) + "-" + String.valueOf(i));
         }
         item.setTitle("Title of AsyncImageList2 " + String.valueOf(id));
         item.setContent("Content of asyncImagelist content of asyncimagelist content of asyncImagelist " + String.valueOf(id));

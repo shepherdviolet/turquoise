@@ -1,6 +1,7 @@
 package sviolet.demoa.image.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
@@ -61,7 +62,7 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
      * 同步网络请求:<br/>
      */
     @Override
-    public void loadFromNet(String url, final int reqWidth, final int reqHeight, final BitmapLoaderResultHolder resultHolder) {
+    public void loadFromNet(final String url, final int reqWidth, final int reqHeight, final BitmapLoaderResultHolder resultHolder) {
 
         ///////////////////////////////////////////////////
         //同步方式
@@ -88,7 +89,9 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
                 //模拟网络加载失败的情况
                 if(random.nextInt(10) > 2) {
                     //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
-                    resultHolder.set(BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight));
+                    Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight);
+//                    Bitmap bitmap = BitmapUtils.drawTextOnResource(context.getResources(), resourceIds[index], reqWidth, reqHeight, url, 0, 50, 50f, 0xFF000000);
+                    resultHolder.set(bitmap);
                 }else{
                     //失败
                     resultHolder.set(null);
