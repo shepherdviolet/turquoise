@@ -113,6 +113,18 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
         this.loader = loader;
     }
 
+    /**
+     * [重要]尝试取消加载任务<Br/>
+     * <br/>
+     * 当图片不再显示时,及时unused有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.
+     * 例如:ListView高速滑动时,中间很多项是来不及加载的,也无需显示图片,及时取消加载任务,可
+     * 以跳过中间项的加载,使滚动停止后需要显示的项尽快加载出来.<br/>
+     */
+    public void unused(){
+        if (loader != null)
+            loader.unused(url);
+    }
+
     /******************************************************************
      * override
      */

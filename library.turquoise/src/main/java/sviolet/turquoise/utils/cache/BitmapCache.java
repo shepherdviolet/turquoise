@@ -203,7 +203,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
 
     /**
-     * [重要]将一个Bitmap标示为不再使用,利于更快被回收<Br/>
+     * [重要]将一个Bitmap标示为不再使用,利于回收(Bitmap.recycle)<Br/>
      * <br/>
      * 将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
      * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
@@ -221,7 +221,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     }
 
     /**
-     * [重要]将一个Bitmap标示为不再使用,利于更快被回收<Br/>
+     * [重要]将一个Bitmap标示为不再使用,利于回收(Bitmap.recycle)<Br/>
      * <br/>
      * 将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
      * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.

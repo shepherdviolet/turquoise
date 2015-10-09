@@ -15,7 +15,7 @@ import sviolet.turquoise.enhance.utils.Logger;
  * ****************************************************************<br/>
  * <br/>
  * 1.AsyncBitmapLoader<br/>
- *      加载Bitmap, 适用性广泛, 使用较复杂, 需要手动回收资源(unused).<br/>
+ *      加载Bitmap, 适用性广泛, 使用较复杂.<br/>
  * 2.AsyncBitmapDrawableLoader<br/>
  *      加载AsyncBitmapDrawable, 使用简单.<br/>
  * <Br/>
@@ -72,9 +72,20 @@ import sviolet.turquoise.enhance.utils.Logger;
  * 3.unused [重要] <br/>
  *      不再使用的图片须及时用该方法废弃,尤其是大量图片的场合,未被废弃(unused)的图片
  *      将不会被AsyncBitmapLoader回收.请参看"名词解释".<br/>
+ *      该方法能取消加载任务,有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<br/>
  * 4.destroy [重要] <br/>
  *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<br/>
+ * <Br/>
+ * -------------------注意事项----------------<br/>
  * <br/>
+ * 1.ListView等View复用的场合,应先unused废弃原Bitmap,再设置新的:
+ *      holder.imageView.setImageBitmap(null);//置空(或默认图)
+ *      String oldUrl = (String) holder.imageView.getTag();//原图的url
+ *      if(oldUrl != null)
+ *          asyncBitmapLoader.unused(oldUrl);//将原图标识为不再使用,并取消原加载任务
+ *      holder.imageView.setTag(newUrl);//记录新图的url,用于下次unused
+ *      asyncBitmapLoader.load(newUrl, reqWidth, reqHeight, holder.imageView, mOnBitmapLoadedListener);//加载图片
+ * <Br/>
  * ****************************************************************<br/>
  * * * * * AsyncBitmapDrawableLoader使用说明:<br/>
  * ****************************************************************<br/>
@@ -114,13 +125,19 @@ import sviolet.turquoise.enhance.utils.Logger;
  *      (显示图片,防止异常等).注意切不可获取AsyncBitmapDrawable中的Bitmap直接使用.<Br/>
  * 2.get <br/>
  *      从内存缓冲获取AsyncBitmapDrawable,若不存在返回null<br/>
- * 3.destroy [重要] <br/>
+ * 3.unused [重要] <br/>
+ *      当图片不再显示时,及时unused有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<br/>
+ * 4.destroy [重要] <br/>
  *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<br/>
  * <Br/>
  * -------------------注意事项----------------<br/>
  * <br/>
- * 1.AsyncBitmapDrawableLoader无需使用unused方法,与AsyncBitmapLoader不同.<br/>
- * 2.AsyncBitmapDrawableLoader强制禁用内存缓存回收站,与AsyncBitmapLoader不同.<br/>
+ * 1.AsyncBitmapDrawableLoader不需要内存缓存回收站,与AsyncBitmapLoader不同.<br/>
+ * 2.ListView等View复用的场合,应先unused废弃原AsyncBitmapDrawable,再设置新的:
+ *      AsyncBitmapDrawable drawable = (AsyncBitmapDrawable) holder.imageView.getDrawable();
+ *      if (drawable != null)
+ *          drawable.unused();
+ *      holder.imageView.setImageDrawable(asyncBitmapDrawableLoader.load(url, reqWidth, reqHeight));
  * <br/>
  * ****************************************************************<br/>
  * * * * * 名词解释:<br/>
@@ -240,6 +257,26 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
         if (bitmap == null)
             return null;
         return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this, bitmap);
+    }
+
+    /**
+     * [重要]尝试取消加载任务(可使用AysncBitmapDrawable.unused)<Br/>
+     * <br/>
+     * 当图片不再显示时,及时unused有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.
+     * 例如:ListView高速滑动时,中间很多项是来不及加载的,也无需显示图片,及时取消加载任务,可
+     * 以跳过中间项的加载,使滚动停止后需要显示的项尽快加载出来.<br/>
+     * <br/>
+     * <br/>
+     * URL::<Br/>
+     * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
+     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+     * 这个cacheKey标识唯一的资源<br/>
+     *
+     * @param url 图片URL地址
+     */
+    @Override
+    public void unused(String url) {
+        super.unused(url);
     }
 
     @Override
