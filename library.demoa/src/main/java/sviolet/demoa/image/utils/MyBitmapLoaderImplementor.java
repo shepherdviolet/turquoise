@@ -87,7 +87,7 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
                 } catch (InterruptedException e) {
                 }
                 //模拟网络加载失败的情况
-                if(random.nextInt(10) > 2) {
+                if(random.nextInt(10) > 1) {
                     //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
                     Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight);
 //                    Bitmap bitmap = BitmapUtils.drawTextOnResource(context.getResources(), resourceIds[index], reqWidth, reqHeight, url, 0, 50, 50f, 0xFF000000);
