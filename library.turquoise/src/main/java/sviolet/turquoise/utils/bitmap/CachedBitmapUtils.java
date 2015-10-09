@@ -450,18 +450,23 @@ public class CachedBitmapUtils {
 
     /**
      * (自动cache)从资源文件中解码图片,并绘制文字(根据宽高需求"整数倍"缩放图片,节省内存)
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
      *
      * @param  key 标签
      * @param res       getResource()
      * @param resId     资源ID
+     * @param reqWidth  需求宽度 px
+     * @param reqHeight 需求高度 px
      * @param text      需要绘制的文字
      * @param x         文字在X方向的位移
      * @param y         文字在Y方向的位移
      * @param textSize  字体大小
      * @param textColor 字体颜色
      */
-    public Bitmap drawTextOnResource(String key, Resources res, int resId, String text, float x, float y, float textSize, int textColor) {
-        Bitmap result = BitmapUtils.drawTextOnResource(res, resId, text, x, y, textSize, textColor);
+    public Bitmap drawTextOnResource(String key, Resources res, int resId, int reqWidth, int reqHeight, String text, float x, float y, float textSize, int textColor) {
+        Bitmap result = BitmapUtils.drawTextOnResource(res, resId, reqWidth, reqHeight, text, x, y, textSize, textColor);
         cacheBitmap(key, result);
         return result;
     }

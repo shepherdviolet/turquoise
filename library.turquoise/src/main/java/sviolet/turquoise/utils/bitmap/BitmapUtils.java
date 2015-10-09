@@ -26,8 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
-
 /**
  * Bitmap工具<br/>
  *<Br/>
@@ -331,18 +329,23 @@ public class BitmapUtils {
 
 
     /**
-     * (自动cache)从资源文件中解码图片,并绘制文字
+     * 从资源文件中解码图片,并绘制文字
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
      *
      * @param res       getResource()
      * @param resId     资源ID
+     * @param reqWidth  需求宽度 px
+     * @param reqHeight 需求高度 px
      * @param text      需要绘制的文字
      * @param x         文字在X方向的位移
      * @param y         文字在Y方向的位移
      * @param textSize  字体大小
      * @param textColor 字体颜色
      */
-    public static Bitmap drawTextOnResource(Resources res, int resId, String text, float x, float y, float textSize, int textColor) {
-        Bitmap resBitmap = BitmapFactory.decodeResource(res, resId);
+    public static Bitmap drawTextOnResource(Resources res, int resId, int reqWidth, int reqHeight, String text, float x, float y, float textSize, int textColor) {
+        Bitmap resBitmap = decodeFromResource(res, resId, reqWidth, reqHeight);
         if (text == null)
             return resBitmap;
         //copy, 防止出现immutable bitmap异常
