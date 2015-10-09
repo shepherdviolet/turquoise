@@ -46,7 +46,7 @@ public class TQueue {
     public static final int KEY_CONFLICT_POLICY_FOLLOW = 1;
     /**
      * 取消策略
-     * 新的任务取消, 老的任务继续执行
+     * 新的任务取消, 老的任务继续执行(若老任务已被取消, 则移除老任务, 加入新任务)
      */
     public static final int KEY_CONFLICT_POLICY_CANCEL = 2;
 
@@ -107,6 +107,11 @@ public class TQueue {
      * @param task
      */
     public void put(String key, TTask task) {
+        if (key == null)
+            throw new RuntimeException("[TQueue]key is null", new NullPointerException());
+        if (task == null)
+            throw new RuntimeException("[TQueue]task is null", new NullPointerException());
+
         //给任务设置队列对象(用于回调)
         task.setQueue(this);
         task.setKey(key);
@@ -122,14 +127,21 @@ public class TQueue {
                     }
                     if (oldTask != null)
                         oldTask.cancel();
+                    //继续执行,新任务加入等待队列
                 }else if(keyConflictPolicy == KEY_CONFLICT_POLICY_FOLLOW){
                     //新的任务跟随老的任务
                     runningTasks.get(key).addFollower(task);
                     return;
-                }else{
-                    //新任务取消
-                    task.cancel();
-                    return;
+                }else{//KEY_CONFLICT_POLICY_CANCEL
+                    if (runningTasks.get(key).isCancel()){
+                        //若正在执行的原任务已被取消, 则移除原任务
+                        runningTasks.remove(key);
+                        //继续执行,新任务加入等待队列
+                    }else {
+                        //新任务取消
+                        task.cancel();
+                        return;
+                    }
                 }
             }
             if (waittingTasks.containsKey(key)){
@@ -137,11 +149,18 @@ public class TQueue {
                     //移除同名原有任务, 加入新任务
                     TTask removeTask = waittingTasks.remove(key);
                     removeTask.cancel();
+                    //继续执行,新任务加入等待队列
                 }else if(keyConflictPolicy == KEY_CONFLICT_POLICY_FOLLOW){
-                    //新的任务作为跟随老任务
-                    waittingTasks.get(key).addFollower(task);
+                    //获取老任务
+                    for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()){
+                        if(key.equals(entry.getKey())){
+                            //新的任务跟随老任务
+                            entry.getValue().addFollower(task);
+                            break;
+                        }
+                    }
                     return;
-                }else{
+                }else{//KEY_CONFLICT_POLICY_CANCEL
                     //新任务取消
                     task.cancel();
                     return;
