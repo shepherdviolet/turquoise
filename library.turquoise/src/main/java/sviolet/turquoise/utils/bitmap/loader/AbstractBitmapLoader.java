@@ -348,8 +348,14 @@ class AbstractBitmapLoader {
     AbstractBitmapLoader open() throws IOException {
         this.mDiskLruCache = DiskLruCache.open(cacheDir, ApplicationUtils.getAppVersion(context), 1, diskCacheSize);
         this.mCachedBitmapUtils = new CachedBitmapUtils(context, ramCacheSizePercent, ramCacheRecyclerSizePercent);
-        this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency).setVolumeMax(diskLoadVolume).waitCancelingTask(true).setKeyConflictPolicy(keyConflictPolicy);
-        this.mNetLoadQueue = new TQueue(true, netLoadConcurrency).setVolumeMax(netLoadVolume).waitCancelingTask(true).setKeyConflictPolicy(keyConflictPolicy);
+        this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency)
+                .setVolumeMax(diskLoadVolume)
+                .waitCancelingTask(true)
+                .setKeyConflictPolicy(keyConflictPolicy);
+        this.mNetLoadQueue = new TQueue(true, netLoadConcurrency)
+                .setVolumeMax(netLoadVolume)
+                .waitCancelingTask(true)
+                .setKeyConflictPolicy(keyConflictPolicy);
         if(logger != null)
             mCachedBitmapUtils.getBitmapCache().setLogger(logger);
         return this;
