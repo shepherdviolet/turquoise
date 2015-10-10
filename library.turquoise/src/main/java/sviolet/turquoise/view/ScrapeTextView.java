@@ -328,7 +328,6 @@ public class ScrapeTextView extends TextView {
 	 * @author Administrator
 	 *
 	 */
-	@SuppressLint("HandlerLeak")
 	class MyThread extends Thread {
 
 		public MyThread() {
@@ -340,13 +339,12 @@ public class ScrapeTextView extends TextView {
 			//创建 handler前先初始化Looper.
 			Looper.prepare();
 
-			calculateHandler = new Handler() {
+			calculateHandler = new Handler(new Handler.Callback() {
 				@Override
-				public void dispatchMessage(Message msg) {
-					super.dispatchMessage(msg);
+				public boolean handleMessage(Message msg) {
 					// 只处理最后一次的百分比
 					if ((Integer) (msg.obj) != messageCount) {
-						return;
+						return true;
 					}
 					// 取出像素点
 					synchronized (mBitmap) {
@@ -363,34 +361,35 @@ public class ScrapeTextView extends TextView {
 						}
 					}
 					scrapePercent = num / (double) sum;
-					
+
 					if(!hasCallback && onPercentListener != null)
 						if(scrapePercent >= callbackPercent)
 							mHandler.sendEmptyMessage(HANDLER_PERCENT_CALLBACK);
+					return true;
 				}
-			};
+			});
+
 			//启动该线程的消息队列
 			Looper.loop();
 		}
 	}
 	
 	private static final int HANDLER_PERCENT_CALLBACK = 1;
-	
-	@SuppressLint("HandlerLeak")
-	private final Handler mHandler = new Handler(){
+
+	private final Handler mHandler = new Handler(new Handler.Callback() {
 		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
+		public boolean handleMessage(Message msg) {
 			switch (msg.what) {
-			case HANDLER_PERCENT_CALLBACK:
-				if(onPercentListener != null)
-					onPercentListener.run();
-				break;
-			default:
-				break;
+				case HANDLER_PERCENT_CALLBACK:
+					if(onPercentListener != null)
+						onPercentListener.run();
+					break;
+				default:
+					break;
 			}
+			return true;
 		}
-	};
+	});
 	
 	/**
 	 * 当刮开指定比例时回调监听器

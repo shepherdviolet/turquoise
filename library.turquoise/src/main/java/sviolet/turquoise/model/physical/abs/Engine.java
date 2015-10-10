@@ -155,26 +155,25 @@ public abstract class Engine {
 	////////////////////////////////////////////////////////
 	
 	private final int WHAT_OUTPUT = 1;
-	
-	@SuppressLint("HandlerLeak")
-	private final Handler handler = new Handler(){
+
+	private final Handler handler = new Handler(new Handler.Callback() {
 		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-			
+		public boolean handleMessage(Message msg) {
 			messageCounter--;
 			if(messageCounter > 0)
-				return;
-			
+				return true;
+
 			synchronized (Engine.this) {
 				switch (msg.what) {
-				case WHAT_OUTPUT:
-					onOutput();
-					break;
-				default:
-					break;
+					case WHAT_OUTPUT:
+						onOutput();
+						break;
+					default:
+						break;
 				}
 			}
+			return true;
 		}
-	};
+	});
+
 }

@@ -257,24 +257,23 @@ public class RippleView extends RelativeLayout{
 	
 	private static final int HANDLER_REFRESH_VIEW = 0;//刷新动画
 	private static final int HANDLER_ANIMATION_FIHISH = 1;//动画结束回调
-	
-    @SuppressLint("HandlerLeak")
-	private final Handler handler = new Handler(){
+
+	private final Handler handler = new Handler(new Handler.Callback() {
 		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
+		public boolean handleMessage(Message msg) {
 			switch(msg.what){
-			case HANDLER_REFRESH_VIEW:
-				invalidate();
-				break;
-			case HANDLER_ANIMATION_FIHISH:
-				onAnimationFinish();
-				break;
-			default:
-				break;
+				case HANDLER_REFRESH_VIEW:
+					invalidate();
+					break;
+				case HANDLER_ANIMATION_FIHISH:
+					onAnimationFinish();
+					break;
+				default:
+					break;
 			}
+			return true;
 		}
-    };
+	});
 		
     /**
      * 波纹动画结束监听器<p>
