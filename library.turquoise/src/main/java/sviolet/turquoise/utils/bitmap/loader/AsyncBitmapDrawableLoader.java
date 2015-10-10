@@ -260,7 +260,9 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
     }
 
     /**
-     * [重要]尝试取消加载任务(可使用AysncBitmapDrawable.unused)<Br/>
+     * 尝试取消加载任务<br/>
+     * <br/>
+     * [[[注意]]] 建议使用AysncBitmapDrawable.unused()
      * <br/>
      * 当图片不再显示时,及时unused有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.
      * 例如:ListView高速滑动时,中间很多项是来不及加载的,也无需显示图片,及时取消加载任务,可
@@ -275,6 +277,7 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
      * @param url 图片URL地址
      */
     @Override
+    @Deprecated
     public void unused(String url) {
         super.unused(url);
     }

@@ -4,9 +4,14 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Handler;
+import android.os.Message;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import sviolet.turquoise.utils.sys.DateTimeUtils;
+import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
  * 异步BitmapDrawable<br/>
@@ -27,13 +32,22 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
     private int reqWidth;
     private int reqHeight;
 
+    //默认的图片
+    private Bitmap defaultBitmap;
+
+    //加载器
+    private AsyncBitmapDrawableLoader loader;
     //加载器加载中
     private boolean loading = false;
 
-    //默认的图片
-    private Bitmap defaultBitmap;
-    //加载器
-    private AsyncBitmapDrawableLoader loader;
+    //渐变动画刷新间隔
+    private static final long GRADUAL_EFFECT_REFRESH_INTERVAL = 50L;//ms
+    //图片逐渐显示效果时间(0关闭效果)
+    private long gradualEffectDuration = 0;//ms
+    //图片逐渐显示效果开始时间
+    private long gradualEffectStartTime = 0;//ms
+    //图片当前透明度
+    private int alpha = 255;
 
     /**
      * [默认图模式]<br/>
@@ -121,8 +135,22 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      * 以跳过中间项的加载,使滚动停止后需要显示的项尽快加载出来.<br/>
      */
     public void unused(){
+        //取消加载任务
         if (loader != null)
             loader.unused(url);
+        //停止动态效果刷新
+        destroyHandler();
+    }
+
+    /**
+     * 启用图片逐渐显示效果(会增大性能开销)<Br/>
+     * 仅在图片加载成功时生效<br/>
+     *
+     * @param duration 动画时间(ms), 大于0生效
+     */
+    public AsyncBitmapDrawable enableGradualEffect(long duration){
+        this.gradualEffectDuration = duration;
+        return this;
     }
 
     /******************************************************************
@@ -140,12 +168,33 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
         }
     }
 
+    @Override
+    public void setAlpha(int alpha) {
+        //记录当前透明度
+        this.alpha = alpha;
+        super.setAlpha(alpha);
+    }
+
+    @Override
+    public int getAlpha() {
+        if (DeviceUtils.getVersionSDK() >= 19)
+            return super.getAlpha();
+        else
+            return alpha;
+    }
+
     /**
      * 重置图片为加载图或默认图
      *
      * @return needLoad true:需要加载图片
      */
     private boolean resetBitmap() {
+        //重置图片时,取消渐变动画
+        destroyHandler();
+        //重置图片时,变为不透明
+        if (gradualEffectDuration > 0 && getAlpha() < 255)
+            setAlpha(255);
+
         if (loader != null){
             //加载器模式
             if (loader.getLoadingBitmap() == null || loader.getLoadingBitmap().isRecycled()) {
@@ -205,10 +254,16 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      */
     @Override
     public void onLoadSucceed(String url, Object params, Bitmap bitmap) {
-        if (bitmap == null || bitmap.isRecycled())
+        if (bitmap == null || bitmap.isRecycled()) {
             resetBitmap();
-        else
+        }else {
+            if (gradualEffectDuration > 0){
+                setAlpha(0);
+                gradualEffectStartTime = DateTimeUtils.getUptimeMillis();
+                getHandler().sendEmptyMessageDelayed(HANDLER_REFRESH, GRADUAL_EFFECT_REFRESH_INTERVAL);
+            }
             setBitmap(bitmap);
+        }
         //加载结束
         loading = false;
     }
@@ -248,4 +303,59 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
     public int getReqHeight() {
         return reqHeight;
     }
+
+    /**********************************************************
+     * handler
+     */
+
+    private static final int HANDLER_REFRESH = 0;//渐变动画刷新
+
+    private Handler handler;
+
+    private Handler getHandler(){
+        if (handler == null){
+            synchronized (this) {
+                if (handler == null) {
+                    handler = new Handler(new HandlerCallback());
+                }
+            }
+        }
+        return handler;
+    }
+
+    private void destroyHandler(){
+        if (handler != null){
+            synchronized (this){
+                if (handler != null){
+                    handler.removeCallbacksAndMessages(null);
+                    handler = null;
+                }
+            }
+        }
+    }
+
+    private class HandlerCallback implements Handler.Callback {
+        @Override
+        public boolean handleMessage(Message msg) {
+            switch (msg.what){
+                case HANDLER_REFRESH:
+                    //计算透明度
+                    long passTime = DateTimeUtils.getUptimeMillis() - gradualEffectStartTime;
+                    int alpha = (int) (((double)passTime / (double)gradualEffectDuration) * 255);
+                    if (alpha > 255){
+                        alpha = 255;
+                    }else{
+                        //继续刷新
+                        getHandler().sendEmptyMessageDelayed(HANDLER_REFRESH, GRADUAL_EFFECT_REFRESH_INTERVAL);
+                    }
+                    //设置透明度
+                    setAlpha(alpha);
+                    break;
+                default:
+                    break;
+            }
+            return true;
+        }
+    };
+
 }
