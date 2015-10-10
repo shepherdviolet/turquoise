@@ -17,25 +17,40 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
  * Bitmap内存缓存<br/>
- * <Br/>
- * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
- * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
- * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
- * <Br/>
- * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
- * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
- * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
- * 请适度设置.<br/>
- * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
  * <br/>
- * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
- * 当回收站内存占用超过设定值时, 会触发此异常<Br/>
- * 解决方案:<br/>
- * 1.请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
- * Bitmap只有被设置为此状态, 才会被回收(recycle()), 否则在缓存区满后, 会进入回收站,
- * 但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
- * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
- * 其他占用内存受限.<br/>
+ * ****************************************************************<br/>
+ * * * * * 名词解释:<br/>
+ * ****************************************************************<br/>
+ * <br/>
+ * KEY:<Br/>
+ *      Bitmap在缓存中的唯一标识.每个不同的图(Bitmap)必须分配不同的key.当Bitmap加入缓存时,若
+ *      已存在同名(key)Bitmap,会覆盖原有Bitmap,即原有Bitmap从缓存中移除,并回收(recycle).<br/>
+ * <Br/>
+ * 缓存区:<Br/>
+ *      缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
+ *      使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
+ *      使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+ * <Br/>
+ * 回收站:<Br/>
+ *      用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
+ *      显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
+ *      recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
+ *      请适度设置.<br/>
+ *      若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
+ * <br/>
+ * ****************************************************************<br/>
+ * * * * * 错误处理:<br/>
+ * ****************************************************************<br/>
+ * <br/>
+ * 1.Exception::[BitmapCache]recycler Out Of Memory!!!<br/>
+ *      当回收站内存占用超过设定值时, 会触发此异常<Br/>
+ *      解决方案:<br/>
+ *      1).请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
+ *          Bitmap只有被设置为此状态, 才会被回收(recycle()), 否则在缓存区满后, 会进入回收站,
+ *          但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
+ *      2).设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
+ *          其他占用内存受限.<br/>
+ * <br/>
  * <br/>
  */
 public class BitmapCache extends CompatLruCache<String, Bitmap> {

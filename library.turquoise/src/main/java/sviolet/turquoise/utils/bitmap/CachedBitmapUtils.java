@@ -13,12 +13,51 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  * <br/>
  * 内置BitmapCache图片内存缓存器:<br/>
  * @see BitmapCache
- * 调用Bitmap处理工具类:<br/>
+ * 图片处理调用BitmapUtils工具类:<br/>
  * @see BitmapUtils
  * <br/>
- * 1.在解码/转换/编辑时, 若管理器中已存在同名(key)的Bitmap, 程序会先回收掉原有的Bitmap<br/>
- * 2.所有转换/编辑方法都会回收源Bitmap(与BitmapUtils可选不同)<br/>
- * 3.输入key=null时, 会分配Bitmap一个默认的不重复的标签<Br/>
+ * ****************************************************************<br/>
+ * * * * * 注意事项:<br/>
+ * ****************************************************************<br/>
+ * <br/>
+ * 1.若key送空(null), 会自动为Bitmap分配一个默认的不重复的标签<Br/>
+ * 2.在解码/转换/编辑时, 若管理器中已存在同名(key)的Bitmap, 程序会先回收掉原有的Bitmap<br/>
+ * 3.所有转换/编辑方法都会回收源Bitmap(与BitmapUtils可选不同)<br/>
+ * <br/>
+ * ****************************************************************<br/>
+ * * * * * 名词解释:<br/>
+ * ****************************************************************<br/>
+ * <br/>
+ * KEY:<Br/>
+ *      Bitmap在缓存中的唯一标识.每个不同的图(Bitmap)必须分配不同的key.当Bitmap加入缓存时,若
+ *      已存在同名(key)Bitmap,会覆盖原有Bitmap,即原有Bitmap从缓存中移除,并回收(recycle).<br/>
+ * <Br/>
+ * 缓存区:<Br/>
+ *      缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
+ *      使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
+ *      使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+ * <Br/>
+ * 回收站:<Br/>
+ *      用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
+ *      显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
+ *      recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
+ *      请适度设置.<br/>
+ *      若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
+ * <br/>
+ * ****************************************************************<br/>
+ * * * * * 错误处理:<br/>
+ * ****************************************************************<br/>
+ * <br/>
+ * 1.Exception::[BitmapCache]recycler Out Of Memory!!!<br/>
+ *      当回收站内存占用超过设定值时, 会触发此异常<Br/>
+ *      解决方案:<br/>
+ *      1).请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
+ *          Bitmap只有被设置为此状态, 才会被回收(recycle()), 否则在缓存区满后, 会进入回收站,
+ *          但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
+ *      2).设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
+ *          其他占用内存受限.<br/>
+ * <br/>
+ * <br/>
  *
  * Created by S.Violet on 2015/7/1.
  */
@@ -145,10 +184,10 @@ public class CachedBitmapUtils {
 
     /**
      * 将一个Bitmap放入缓存<Br/>
-     * 放入前会强制回收已存在的同名Bitmap(包括缓存和回收站),
-     * 不当的使用可能会导致异常 : 回收了正在使用的Bitmap
+     * 放入前会强制回收已存在的同名(key)Bitmap(包括缓存和回收站),不当的使用可能会导致
+     * 异常 : 回收了正在使用的Bitmap<br/>
      *
-     * @param key
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param bitmap
      * @return
      */
@@ -156,6 +195,7 @@ public class CachedBitmapUtils {
         if (bitmap == null) {
             return;
         }
+        //若key为空, 自动分配一个
         if (key == null || key.equals("")){
             key = DEFAULT_KEY_PREFIX + defaultKeyIndex;
             defaultKeyIndex++;
@@ -205,7 +245,7 @@ public class CachedBitmapUtils {
     /**
      * 从资源文件中解码图片
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param res   getResource()
      * @param resId 资源文件ID
      */
@@ -221,7 +261,7 @@ public class CachedBitmapUtils {
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param res       getResource()
      * @param resId     资源文件ID
      * @param reqWidth  需求宽度 px
@@ -236,7 +276,7 @@ public class CachedBitmapUtils {
     /**
      * 从文件中解码图片
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param path 文件路径
      */
     public Bitmap decodeFromFile(String key, String path) {
@@ -251,7 +291,7 @@ public class CachedBitmapUtils {
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param path      文件路径
      * @param reqWidth  需求宽度 px
      * @param reqHeight 需求高度 px
@@ -265,7 +305,7 @@ public class CachedBitmapUtils {
     /**
      * 将二进制数据解码为图片
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param data 二进制数据
      */
     public Bitmap decodeFromByteArray(String key, byte[] data) {
@@ -280,7 +320,7 @@ public class CachedBitmapUtils {
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param data      二进制数据
      * @param reqWidth  需求宽度 px
      * @param reqHeight 需求高度 px
@@ -294,7 +334,7 @@ public class CachedBitmapUtils {
     /**
      * 将Base64数据解码为图片
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param base64 Base64数据
      */
     public Bitmap decodeFromBase64(String key, byte[] base64) {
@@ -309,7 +349,7 @@ public class CachedBitmapUtils {
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param base64    Base64数据
      * @param reqWidth  需求宽度 px
      * @param reqHeight 需求高度 px
@@ -323,7 +363,7 @@ public class CachedBitmapUtils {
     /**
      * 将Base64数据解码为图片
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param base64 Base64数据
      */
     public Bitmap decodeFromBase64(String key, String base64) {
@@ -338,7 +378,7 @@ public class CachedBitmapUtils {
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param base64    Base64数据
      * @param reqWidth  需求宽度 px
      * @param reqHeight 需求高度 px
@@ -352,7 +392,7 @@ public class CachedBitmapUtils {
     /**
      * 从输入流中解码图片
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param inputStream 输入流
      */
     public Bitmap decodeFromStream(String key, InputStream inputStream) {
@@ -370,7 +410,7 @@ public class CachedBitmapUtils {
      * InputStream只能使用一次, 因此不能通过第一次解码获得图片长宽,
      * 计算缩放因子, 再解码获得图片这种方式<br/>
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param inputStream 输入流
      * @param inSampleSize 缩放因子 (1:原大小 2:缩小一倍 ...)
      */
@@ -396,7 +436,7 @@ public class CachedBitmapUtils {
     /**
      * 按比例缩放图片[回收源Bitmap]
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param bitmap
      * @param scale   缩放比例
      */
@@ -409,7 +449,7 @@ public class CachedBitmapUtils {
     /**
      * 按比例缩放图片[回收源Bitmap]
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param bitmap
      * @param scaleX  x缩放比例
      * @param scaleY  y缩放比例
@@ -423,7 +463,7 @@ public class CachedBitmapUtils {
     /**
      * 将图片缩放至指定宽高[回收源Bitmap]
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param bitmap
      * @param width   指定宽 >0
      * @param height  指定高 >0
@@ -437,7 +477,7 @@ public class CachedBitmapUtils {
     /**
      * 图片圆角处理[回收源Bitmap]
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param bitmap 原图(会被回收)
      * @param radius 圆角半径
      * @param type BitmapUtils.RoundedCornerType 指定哪些角需要圆角处理
@@ -455,7 +495,7 @@ public class CachedBitmapUtils {
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
      *
-     * @param  key 标签
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param res       getResource()
      * @param resId     资源ID
      * @param reqWidth  需求宽度 px
@@ -478,8 +518,8 @@ public class CachedBitmapUtils {
      * immutable bitmap pass to canvas异常解决:<br/>
      * 在绘制前复制: bitmap.copy(Bitmap.Config.ARGB_8888, true);<br/>
      *
-     * @param  key 标签
-     * @param bitmap
+     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
+     * @param bitmap 原图
      * @param text      绘制的文本
      * @param x         位置
      * @param y         位置
