@@ -1,9 +1,11 @@
 package sviolet.turquoise.utils.bitmap.loader;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.enhance.utils.Logger;
 
@@ -189,6 +191,8 @@ import sviolet.turquoise.enhance.utils.Logger;
  */
 public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
 
+    private WeakReference<Resources> resources;
+
     private Bitmap loadingBitmap;//加载状态的图片
 
     /**
@@ -202,6 +206,7 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
     public AsyncBitmapDrawableLoader(Context context, String diskCacheName, Bitmap loadingBitmap, BitmapLoaderImplementor implementor) {
         super(context, diskCacheName, implementor);
         this.loadingBitmap = loadingBitmap;
+        this.resources = new WeakReference<Resources>(context.getResources());
         setRamCache(0.125f);
     }
 
@@ -226,7 +231,10 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
      * @param reqHeight 需求高度 px
      */
     public AsyncBitmapDrawable load(String url, int reqWidth, int reqHeight) {
-        return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this);
+        if (getResources() == null)
+            return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this);
+        else
+            return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this, getResources());
     }
 
     void load(AsyncBitmapDrawable asyncBitmapDrawable){
@@ -256,7 +264,10 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
         Bitmap bitmap = super.get(url);
         if (bitmap == null)
             return null;
-        return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this, bitmap);
+        if (getResources() == null)
+            return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this, bitmap);
+        else
+            return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this, getResources(), bitmap);
     }
 
     /**
@@ -297,6 +308,13 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
 
     Bitmap getLoadingBitmap(){
         return loadingBitmap;
+    }
+
+    Resources getResources(){
+        if (resources != null){
+            return resources.get();
+        }
+        return null;
     }
 
     ////////////////////////////////////////////////////////////////////////

@@ -56,6 +56,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      * @param bitmap 图
      * @param defaultBitmap 默认图
      */
+    @Deprecated
     public AsyncBitmapDrawable(Bitmap bitmap, Bitmap defaultBitmap) {
         super(bitmap);
         this.defaultBitmap = defaultBitmap;
@@ -68,6 +69,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      * @param res resource
      * @param defaultBitmap 默认图
      */
+    @Deprecated
     public AsyncBitmapDrawable(Resources res, Bitmap defaultBitmap) {
         super(res);
         this.defaultBitmap = defaultBitmap;
@@ -108,6 +110,18 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
         }
     }
 
+    AsyncBitmapDrawable(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader, Resources resources) {
+        super(resources);
+        this.url = url;
+        this.reqWidth = reqWidth;
+        this.reqHeight = reqHeight;
+        this.loader = loader;
+
+        if (resetBitmap()) {
+            load();
+        }
+    }
+
     /**
      * [加载器模式]<br/>
      * 初始显示加载器(AsyncBitmapDrawableLoader)的加载图(loadingBitmap),当图片加载完毕,显示加载出来的图片,
@@ -121,6 +135,14 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      */
     AsyncBitmapDrawable(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader, Bitmap bitmap) {
         super(bitmap);
+        this.url = url;
+        this.reqWidth = reqWidth;
+        this.reqHeight = reqHeight;
+        this.loader = loader;
+    }
+
+    AsyncBitmapDrawable(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader, Resources resources, Bitmap bitmap) {
+        super(resources, bitmap);
         this.url = url;
         this.reqWidth = reqWidth;
         this.reqHeight = reqHeight;
