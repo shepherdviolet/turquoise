@@ -46,6 +46,8 @@
             android:theme="@style/AppTheme_Translucent"/>
         <activity android:name=".image.ImageActivity"
             android:label="@string/image_title"/>
+        <activity android:name=".image.CommonImageActivity"
+            android:label="@string/image_title"/>
         <activity android:name=".image.AsyncImageActivity"
             android:label="@string/image_async_title"/>
         <activity android:name=".image.Async2ImageActivity"
