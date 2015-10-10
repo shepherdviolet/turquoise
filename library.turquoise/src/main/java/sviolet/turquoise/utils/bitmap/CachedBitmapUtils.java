@@ -513,10 +513,7 @@ public class CachedBitmapUtils {
     }
 
     /**
-     * 在Bitmap上绘制文字<br/>
-     * <br/>
-     * immutable bitmap pass to canvas异常解决:<br/>
-     * 在绘制前复制: bitmap.copy(Bitmap.Config.ARGB_8888, true);<br/>
+     * 在Bitmap上绘制文字[回收源Bitmap]<br/>
      *
      * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param bitmap 原图
@@ -527,7 +524,7 @@ public class CachedBitmapUtils {
      * @param textColor 字体颜色
      */
     public Bitmap drawText(String key, Bitmap bitmap, String text, float x, float y, float textSize, int textColor) {
-        Bitmap result = BitmapUtils.drawText(bitmap, text, x, y, textSize, textColor);
+        Bitmap result = BitmapUtils.drawText(bitmap, text, x, y, textSize, textColor, true);
         cacheBitmap(key, result);
         return result;
     }

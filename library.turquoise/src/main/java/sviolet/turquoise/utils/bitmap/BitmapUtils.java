@@ -351,21 +351,14 @@ public class BitmapUtils {
      * @param textColor 字体颜色
      */
     public static Bitmap drawTextOnResource(Resources res, int resId, int reqWidth, int reqHeight, String text, float x, float y, float textSize, int textColor) {
-        Bitmap resBitmap = decodeFromResource(res, resId, reqWidth, reqHeight);
+        Bitmap bitmap = decodeFromResource(res, resId, reqWidth, reqHeight);
         if (text == null)
-            return resBitmap;
-        //copy, 防止出现immutable bitmap异常
-        Bitmap bitmap = resBitmap.copy(Config.ARGB_8888, true);
-        resBitmap.recycle();
-        drawText(bitmap, text, x, y, textSize, textColor);
-        return bitmap;
+            return bitmap;
+        return drawText(bitmap, text, x, y, textSize, textColor, true);
     }
 
     /**
      * 在Bitmap上绘制文字<br/>
-     * <br/>
-     * immutable bitmap pass to canvas异常解决:<br/>
-     * 在绘制前复制: bitmap.copy(Bitmap.Config.ARGB_8888, true);<br/>
      *
      * @param bitmap
      * @param text      绘制的文本
@@ -373,14 +366,20 @@ public class BitmapUtils {
      * @param y         位置
      * @param textSize  字体大小
      * @param textColor 字体颜色
+     * @param recycle 是否回收源Bitmap
      */
-    public static Bitmap drawText(Bitmap bitmap, String text, float x, float y, float textSize, int textColor) {
-        Canvas canvas = new Canvas(bitmap);
+    public static Bitmap drawText(Bitmap bitmap, String text, float x, float y, float textSize, int textColor, boolean recycle) {
+        //copy, 防止出现immutable bitmap异常
+        Bitmap result = bitmap.copy(Config.ARGB_8888, true);
+        if (recycle)
+            bitmap.recycle();
+
+        Canvas canvas = new Canvas(result);
         TextPaint textPaint = new TextPaint();
         textPaint.setTextSize(textSize);
         textPaint.setColor(textColor);
         canvas.drawText(text, x, y, textPaint);
-        return bitmap;
+        return result;
     }
 
     /**
