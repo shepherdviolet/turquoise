@@ -438,11 +438,12 @@ public class CachedBitmapUtils {
      * 图片圆角处理[回收源Bitmap]
      *
      * @param  key 标签
-     * @param bitmap
-     * @param radius  圆角半径
+     * @param bitmap 原图(会被回收)
+     * @param radius 圆角半径
+     * @param type BitmapUtils.RoundedCornerType 指定哪些角需要圆角处理
      */
-    public Bitmap toRoundedCorner(String key, Bitmap bitmap, float radius) {
-        Bitmap result = BitmapUtils.toRoundedCorner(bitmap, radius, true);
+    public Bitmap toRoundedCorner(String key, Bitmap bitmap, float radius, BitmapUtils.RoundedCornerType type) {
+        Bitmap result = BitmapUtils.toRoundedCorner(bitmap, radius, type, true);
         cacheBitmap(key, result);
         return result;
     }

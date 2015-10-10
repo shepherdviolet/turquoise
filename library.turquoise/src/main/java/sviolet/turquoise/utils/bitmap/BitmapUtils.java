@@ -303,16 +303,22 @@ public class BitmapUtils {
     /**
      * 图片圆角处理
      *
-     * @param bitmap
+     * @param bitmap 原图
      * @param radius  圆角半径
+     * @param type BitmapUtils.RoundedCornerType 指定哪些角需要圆角处理
      * @param recycle 是否回收源Bitmap
      */
-    public static Bitmap toRoundedCorner(Bitmap bitmap, float radius, boolean recycle) {
+    public static Bitmap toRoundedCorner(Bitmap bitmap, float radius, RoundedCornerType type, boolean recycle) {
         Bitmap result = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
         Canvas canvas = new Canvas(result);
         final int color = 0xff424242;
         final Paint paint = new Paint();
-        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+//        final Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());//四个角全部圆角处理
+        final Rect rect = new Rect(
+                - bitmap.getWidth() * matchBinaryFlag(type.value(), 0x1000),
+                - bitmap.getHeight() * matchBinaryFlag(type.value(), 0x0100),
+                bitmap.getWidth() + bitmap.getWidth() * matchBinaryFlag(type.value(), 0x0010),
+                bitmap.getHeight() + bitmap.getHeight() * matchBinaryFlag(type.value(), 0x0001));
         final RectF rectF = new RectF(rect);
         paint.setAntiAlias(true);
         canvas.drawARGB(0, 0, 0, 0);
@@ -583,6 +589,44 @@ public class BitmapUtils {
             }
         }
         return inSampleSize;
+    }
+
+    /**
+     * 判断input是否符合flag
+     * @return 1:符合 0:不符
+     */
+    private static int matchBinaryFlag(int input, int flag){
+        return input == (input | flag) ? 1 : 0;
+    }
+
+    /***********************************************
+     * inner class
+     */
+
+    /**
+     * 圆角处理类型,
+     * 用于指定哪些角做圆角处理.
+     */
+    public enum RoundedCornerType{
+        All(0x0000),//四个角全部圆角处理
+        TopLeft_And_TopRight(0x0001),//上面两个角圆角处理
+        BottomLeft_And_BottomRight(0x0100),//下面两个角圆角处理
+        TopLeft_And_BottomLeft(0x0010),//左边两个角圆角处理
+        TopRight_And_BottomRight(0x1000),//右边两个角圆角处理
+        TopLeft(0x0011),//左上角圆角处理
+        TopRight(0x1001),//右上角圆角处理
+        BottomRight(0x1100),//右下角圆角处理
+        BottomLeft(0x0110);//左下角圆角处理
+
+        private int params;
+
+        RoundedCornerType(int params){
+            this.params = params;
+        }
+
+        public int value() {
+            return params;
+        }
     }
 
 }
