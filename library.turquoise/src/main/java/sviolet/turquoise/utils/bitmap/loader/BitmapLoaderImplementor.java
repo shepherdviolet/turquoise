@@ -65,7 +65,7 @@ public interface BitmapLoaderImplementor {
      * @param reqHeight 请求高度
      * @param resultHolder 结果容器
      */
-    public void loadFromNet(String url, int reqWidth, int reqHeight, BitmapLoaderResultHolder resultHolder);
+    public void loadFromNet(String url, int reqWidth, int reqHeight, BitmapLoaderHolder resultHolder);
 
     /**
      * 实现异常处理

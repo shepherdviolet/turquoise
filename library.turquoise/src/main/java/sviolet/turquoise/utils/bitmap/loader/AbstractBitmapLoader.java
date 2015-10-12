@@ -660,7 +660,7 @@ class AbstractBitmapLoader {
         private int reqWidth;
         private int reqHeight;
         private OnBitmapLoadedListener mOnBitmapLoadedListener;
-        private BitmapLoaderResultHolder resultHolder;
+        private BitmapLoaderHolder holder;
 
         public NetLoadTask(String url, int reqWidth, int reqHeight, OnBitmapLoadedListener mOnBitmapLoadedListener) {
             this.url = url;
@@ -695,11 +695,11 @@ class AbstractBitmapLoader {
                 //获得输出流, 用于写入缓存
                 outputStream = editor.newOutputStream(0);
                 //结果容器
-                resultHolder = new BitmapLoaderResultHolder();
+                holder = new BitmapLoaderHolder();
                 //从网络加载Bitmap
-                implementor.loadFromNet(url, reqWidth, reqHeight, resultHolder);
+                implementor.loadFromNet(url, reqWidth, reqHeight, holder);
                 //阻塞等待并获取结果Bitmap
-                Bitmap bitmap = resultHolder.get();
+                Bitmap bitmap = holder.getResult();
                 //判断
                 if (bitmap != null && !bitmap.isRecycled()) {
                     //写入文件缓存即使失败也不影响返回Bitmap
@@ -732,6 +732,10 @@ class AbstractBitmapLoader {
                     editor.abort();
                     //写缓存日志
                     mDiskLruCache.flush();
+                    //异常处理
+                    if (holder.getThrowable() != null){
+                        implementor.onException(holder.getThrowable());
+                    }
                 }
             } catch (Exception e) {
                 implementor.onException(e);
@@ -785,13 +789,29 @@ class AbstractBitmapLoader {
         }
 
         /**
-         * 当任务被取消时, 中断阻塞等待
+         * 当任务被取消时
          */
         @Override
         public void onCancel() {
             super.onCancel();
-            if (resultHolder != null)
-                resultHolder.interrupt();
+            if (holder != null)
+                holder.cancel();
+//            if (holder != null)
+//                holder.interrupt();
+        }
+
+        /**
+         * 销毁
+         */
+        @Override
+        protected void onDestroy() {
+            super.onDestroy();
+
+            if (holder != null)
+                holder.destroy();
+
+            this.mOnBitmapLoadedListener = null;
+            this.holder = null;
         }
     }
 
