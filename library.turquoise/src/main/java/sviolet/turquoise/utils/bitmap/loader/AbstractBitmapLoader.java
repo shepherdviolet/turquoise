@@ -699,13 +699,13 @@ class AbstractBitmapLoader {
                 //从网络加载Bitmap
                 implementor.loadFromNet(url, reqWidth, reqHeight, holder);
                 //阻塞等待并获取结果Bitmap
-                Bitmap bitmap = holder.getResult();
-                //判断
-                if (bitmap != null && !bitmap.isRecycled()) {
+                int result = holder.getResult();
+                if (result == BitmapLoaderHolder.RESULT_SUCCEED && holder.getBitmap() != null && !holder.getBitmap().isRecycled()){
+                    //结果为加载成功,且Bitmap正常的情况
                     //写入文件缓存即使失败也不影响返回Bitmap
                     try {
                         //把图片写入缓存
-                        BitmapUtils.syncSaveBitmap(bitmap, outputStream, imageFormat, imageQuality, false, null);
+                        BitmapUtils.syncSaveBitmap(holder.getBitmap(), outputStream, imageFormat, imageQuality, false, null);
                         //尝试flush输出流
                         try {
                             if (outputStream != null)
@@ -719,15 +719,16 @@ class AbstractBitmapLoader {
                     }catch(Exception e){
                         implementor.onCacheWriteException(e);
                     }
-                    //若任务尚未被取消
+                    //若加载任务尚未被取消
                     if (!isCancel()) {
                         //加入内存缓存
-                        mCachedBitmapUtils.cacheBitmap(cacheKey, bitmap);
+                        mCachedBitmapUtils.cacheBitmap(cacheKey, holder.getBitmap());
                         return RESULT_SUCCEED;
                     }
+                    //若加载任务被取消,即使返回结果是加载成功,也只会存入缓存,不会返回成功的结果
                     return RESULT_CANCELED;
                 } else {
-                    //网络加载失败
+                    //若加载失败/取消
                     //写入缓存失败abort
                     editor.abort();
                     //写缓存日志
@@ -736,6 +737,9 @@ class AbstractBitmapLoader {
                     if (holder.getThrowable() != null){
                         implementor.onException(holder.getThrowable());
                     }
+                    //加载取消结果返回
+                    if (result == BitmapLoaderHolder.RESULT_CANCELED)
+                        return RESULT_CANCELED;
                 }
             } catch (Exception e) {
                 implementor.onException(e);
@@ -746,6 +750,7 @@ class AbstractBitmapLoader {
                 } catch (Exception ignored) {
                 }
             }
+            //加载失败
             return RESULT_FAILED;
         }
 
