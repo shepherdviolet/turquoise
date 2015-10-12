@@ -30,7 +30,7 @@ import sviolet.turquoise.utils.bitmap.loader.AsyncBitmapDrawableLoader;
 /**
  * 图片动态加载Demo2<br/>
  * 内存/磁盘双缓存<br/>
- * 采用AsyncBitmapDrawableLoader实现
+ * 采用AsyncBitmapDrawableLoader实现, AsyncBitmapDrawable自带加载失败重载
  *
  * Created by S.Violet on 2015/7/7.
  */
@@ -86,41 +86,6 @@ public class Async2ImageActivity extends TActivity {
         //同时会销毁loadingBitmap
         mAsyncBitmapDrawableLoader.destroy();
     }
-
-    /****************************************************
-     * 定时刷新
-     * 解决网络加载失败,实现重新加载
-     * 通过刷新UI方式触发图片重新加载, 在静止时只会重新加载显示中的图片
-     */
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        handler.sendEmptyMessageDelayed(HANDLER_REFRESH, 2000L);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        handler.removeMessages(HANDLER_REFRESH);
-    }
-
-    private static final int HANDLER_REFRESH = 0;
-
-    private Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what){
-                case HANDLER_REFRESH:
-                    adapter.notifyDataSetChanged();//刷新UI, 触发图片重新加载
-                    handler.sendEmptyMessageDelayed(HANDLER_REFRESH, 2000L);
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
-    });
 
     /****************************************************
      * 模拟数据生成

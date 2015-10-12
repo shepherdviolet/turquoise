@@ -15,7 +15,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *      2)setResultFailed(Throwable),加载失败,返回异常<br/>
  *      3)setResultCanceled(),加载取消<br/>
  *      若加载任务已被取消(isCancelling() = true),但仍使用setResultSucceed返回结果,则Bitmap会被存入
- *      磁盘缓存,BitmapLoader返回任务取消.<br/>
+ *      磁盘缓存,但BitmapLoader返回任务取消.<br/>
  * 2.判断任务是否取消中:isCancelling<br/>
  *      加载任务是否被取消.通常用于同步加载场合,从InputStream循环读取数据时,判断isCancelling(),若为
  *      true,则终止读取,并setResultCanceled()返回结果.<br/>

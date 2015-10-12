@@ -28,6 +28,10 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  */
 public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoadedListener{
 
+    private static final long RELOAD_DELAY = 2000;//图片加载失败重新加载时延
+    private static final int RELOAD_TIMES_LIMIT = 2;//图片加载失败重新加载次数限制
+    private int reloadTimes = 0;//图片重新加载次数
+
     private String url;
     private int reqWidth;
     private int reqHeight;
@@ -39,6 +43,8 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
     private AsyncBitmapDrawableLoader loader;
     //加载器加载中
     private boolean loading = false;
+    //是否被弃用
+    private boolean unused = false;
 
     //渐变动画刷新间隔
     private static final long GRADUAL_EFFECT_REFRESH_INTERVAL = 50L;//ms
@@ -160,7 +166,8 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
         //取消加载任务
         if (loader != null)
             loader.unused(url);
-        //停止动态效果刷新
+        this.unused = true;
+        //停止动态效果刷新和重加载
         destroyHandler();
     }
 
@@ -172,6 +179,14 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      */
     public AsyncBitmapDrawable enableGradualEffect(long duration){
         this.gradualEffectDuration = duration;
+        return this;
+    }
+
+    /**
+     * 设置图片加载失败后重新加载次数限制<Br/>
+     */
+    public AsyncBitmapDrawable setReloadTimes(int times){
+        this.reloadTimes = times;
         return this;
     }
 
@@ -212,7 +227,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      */
     private boolean resetBitmap() {
         //重置图片时,取消渐变动画
-        destroyHandler();
+        stopAnimation();
         //重置图片时,变为不透明
         if (gradualEffectDuration > 0 && getAlpha() < 255)
             setAlpha(255);
@@ -263,8 +278,10 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      */
     private void load() {
         //加载开始
-        loading = true;
-        loader.load(this);
+        if (loader != null && !loading) {
+            loading = true;
+            loader.load(this);
+        }
     }
 
     /*****************************************************
@@ -295,7 +312,13 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      */
     @Override
     public void onLoadFailed(String url, Object params) {
+        //重置图片
         resetBitmap();
+        //未被弃用的情况下重新加载图片
+        if (loader != null && !unused && reloadTimes < RELOAD_TIMES_LIMIT) {
+            reloadTimes++;
+            getHandler().sendEmptyMessageDelayed(HANDLER_RELOAD, RELOAD_DELAY);//重新加载图片
+        }
         //加载结束
         loading = false;
     }
@@ -331,6 +354,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      */
 
     private static final int HANDLER_REFRESH = 0;//渐变动画刷新
+    private static final int HANDLER_RELOAD = 1;//重新加载图片
 
     private Handler handler;
 
@@ -343,6 +367,16 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
             }
         }
         return handler;
+    }
+
+    private void stopAnimation(){
+        if (handler != null){
+            synchronized (this){
+                if (handler != null){
+                    handler.removeMessages(HANDLER_REFRESH);
+                }
+            }
+        }
     }
 
     private void destroyHandler(){
@@ -372,6 +406,13 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
                     }
                     //设置透明度
                     setAlpha(alpha);
+                    break;
+                case HANDLER_RELOAD:
+                    //未被弃用
+                    if (!unused){
+                        //重新加载图片
+                        load();
+                    }
                     break;
                 default:
                     break;

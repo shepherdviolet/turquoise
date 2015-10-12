@@ -179,6 +179,7 @@ import sviolet.turquoise.enhance.utils.Logger;
  *      尝试设置setDuplicateLoadEnable(true);<Br/>
  * <Br/>
  * 3.网络加载失败,需要重新加载.<br/>
+ *      使用AsyncBitmapDrawableLoader无需特殊处理, AsyncBitmapDrawable自带重新加载功能.<br/>
  *      推荐方案:<br/>
  *      1).定时刷新UI(1-5s),以此触发显示中的图片重新加载.这样做的优点是,只重新加载显示中的图片.
  *          适合ListView/GridView等View复用/适配器模式的场合,图片加载在适配器中实现,定时对适配
