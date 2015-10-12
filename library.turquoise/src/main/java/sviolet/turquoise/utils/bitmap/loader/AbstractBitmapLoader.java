@@ -218,7 +218,7 @@ class AbstractBitmapLoader {
     private int netLoadConcurrency = 3;//网络加载任务并发量
     private int netLoadVolume = 10;//网络加载等待队列容量
     private Bitmap.CompressFormat imageFormat = Bitmap.CompressFormat.JPEG;//缓存图片保存格式
-    private int imageQuality = 100;//缓存图片保存质量
+    private int imageQuality = 70;//缓存图片保存质量
     private int keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;//TQueue同名任务冲突策略
     private File cacheDir;//缓存路径
     private Logger logger;//日志打印器
@@ -304,7 +304,7 @@ class AbstractBitmapLoader {
 
     /**
      * 设置缓存文件的图片保存格式和质量<br/>
-     * 默认Bitmap.CompressFormat.JPEG, 100
+     * 默认Bitmap.CompressFormat.JPEG, 70
      *
      * @param format 图片格式
      * @param quality 图片质量 0-100
@@ -504,6 +504,8 @@ class AbstractBitmapLoader {
             mCachedBitmapUtils.recycleAll();
             mCachedBitmapUtils = null;
         }
+        if (implementor != null)
+            implementor.onDestroy();
         if (logger != null) {
             logger.d("[AbstractBitmapLoader]destroy");
         }

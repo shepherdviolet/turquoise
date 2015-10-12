@@ -56,24 +56,9 @@ public interface BitmapLoaderImplementor {
      * * * 代码示例::<br/>
      * *********************************************************************************<br/>
      * <br/>
-     * 5.无论同步还是异步的情况,均使用resultHolder.set(Bitmap)返回结果.<br/>
-     * 同步网络请求:<br/>
+     * 1.同步加载方式<br/>
+     *      @see SimpleBitmapLoaderImplementor
      *
-     *      //网络加载代码
-     *      ......
-     *      resultHolder.set(bitmap);
-     *
-     * <br/>
-     * 异步网络请求:<br/>
-     *
-     *      //异步处理的情况
-     *      new Thread(new Runnable(){
-     *          public void run() {
-     *              //网络加载代码
-     *              ......
-     *              resultHolder.set(bitmap);
-     *          }
-     *      }).start();
      *
      *
      * @param url url
@@ -92,5 +77,11 @@ public interface BitmapLoaderImplementor {
      * 实现写入缓存文件时的异常处理, 通常只需要打印日志或提醒即可
      */
     public void onCacheWriteException(Throwable throwable);
+
+    /**
+     * 当BitmapLoader销毁时,会回调该方法,便于回收在BitmapLoaderImplementor中创建的实例<br/>
+     * 可不实现<Br/>
+     */
+    public void onDestroy();
 
 }

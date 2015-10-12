@@ -15,6 +15,7 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
  * 异步BitmapDrawable<br/>
+ * 加载失败自动重新加载<br/>
  * <br/>
  * 1.加载器模式, AsyncBitmapDrawableLoader.load方法返回<br/>
  * --初始显示加载器(AsyncBitmapDrawableLoader)的加载图(loadingBitmap),当图片加载完毕,显示加载出来的图片,

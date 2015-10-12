@@ -1,4 +1,4 @@
-package sviolet.liba.utils;
+package sviolet.turquoise.utils.sys;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -6,58 +6,40 @@ import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
 
 /**
- * @author SunPeng
+ * 网络状态工具
  */
-public class NetUtils {
+public class NetStateUtils {
 
 	public static NetworkInfo getNetworkInfo(Context context) {
-		ConnectivityManager manager = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		return manager.getActiveNetworkInfo();
 	}
 
 	/**
 	 * 判断当前是否有网络连接
-	 * 
-	 * @param context
-	 * @return
 	 */
 	public static boolean checkNetwork(Context context) {
 		NetworkInfo networkInfo = getNetworkInfo(context);
-		if (networkInfo != null && networkInfo.isConnected())
-			return true;
-		else
-			return false;
+		return networkInfo != null && networkInfo.isConnected();
 	}
 
 	/**
 	 * 判断当前网络模式是否为CMWAP
 	 */
-	public static boolean isCmwapNet(Context context) {
+	public static boolean isCmwap(Context context) {
 		NetworkInfo networkInfo = getNetworkInfo(context);
 		if (networkInfo != null && networkInfo.isConnected()) {
-			if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE
-					&& "cmwap".equals(networkInfo.getExtraInfo()))
-				return true;
-			else
-				return false;
+			return networkInfo.getType() == ConnectivityManager.TYPE_MOBILE && "cmwap".equals(networkInfo.getExtraInfo());
 		}
 		return false;
 	}
 
 	/**
 	 * 判断当前网络是否为WIFI
-	 * 
-	 * @param context
-	 * @return
 	 */
 	public static boolean isWifi(Context context){
 		ConnectivityManager manager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-		
 		State state = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState();
-		if(state != null && state == State.CONNECTED)
-			return true;
-		else
-			return false;
+		return state != null && state == State.CONNECTED;
 	}
 }
