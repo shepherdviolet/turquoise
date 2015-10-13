@@ -57,9 +57,43 @@ public interface BitmapLoaderImplementor {
      * *********************************************************************************<br/>
      * <br/>
      * 1.同步加载方式<br/>
+     * <br/>
      *      @see SimpleBitmapLoaderImplementor
-     *
-     *
+     * <br/>
+     * 2.异步加载方式<br/>
+     * <br/>
+     *      public void loadFromNet(final String url, final int reqWidth, final int reqHeight, final BitmapLoaderHolder holder) {
+     *          //第三方网络工具
+     *          final HttpUtils httpUtils = new HttpUtils();
+     *          //相关设置
+     *          ......
+     *          //设置监听器
+     *          holder.setOnCancelListener(new Runnable(){
+     *              public void run(){
+     *                  //取消加载
+     *                  httpUtils.cancel();
+     *                  //返回取消结果[必须]
+     *                  holder.setResultCanceled();
+     *              }
+     *          });
+     *          //调用工具异步发送请求
+     *          try{
+     *              httpUtils.send( ... , new Callback(){
+     *                  ... onSucceed(byte[] result){
+     *                      //返回成功结果[必须]
+     *                      holder.setResultSucceed(BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight));
+     *                  }
+     *                  ... onFailed(...){
+     *                      //返回失败结果[必须]
+     *                      holder.setResultFailed(...);
+     *                  }
+     *              });
+     *          }catch(Exception e){
+     *              //返回失败结果[必须]
+     *              holder.setResultFailed(e);
+     *          }
+     *      }
+     * <Br/>
      *
      * @param url url
      * @param reqWidth 请求宽度

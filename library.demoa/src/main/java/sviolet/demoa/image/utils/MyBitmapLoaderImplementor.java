@@ -10,7 +10,8 @@ import java.util.concurrent.Executors;
 import sviolet.demoa.R;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderResultHolder;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderHolder;
+import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoaderImplementor;
 import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
 
@@ -34,7 +35,7 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
 
     /**
      * [实现提示]:<br/>
-     * 通常将url进行摘要计算, 得到摘要值作为cacheKey, 根据实际情况实现.  <Br/>
+     * 通常将url进行摘要计算, 得到摘要值作为cacheKey, 根据实际情况实现.<Br/>
      * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
@@ -49,31 +50,51 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
 
     /**
      * 实现根据url参数从网络下载图片数据, 依照需求尺寸reqWidth和reqHeight解析为合适大小的Bitmap,
-     * 并调用结果容器resultHolder.set(Bitmap)方法将Bitmap返回, 若加载失败则set(null)<br/>
+     * 并调用结果容器BitmapLoaderHolder.setResultSucceed/setResultFailed/setResultCanceled方法返回结果<br/>
      * <br/>
-     * 注意:<br/>
-     * 1.网络请求注意做超时处理,否则任务可能会一直等待<br/>
-     * 2.数据解析为Bitmap时,请根据需求尺寸reqWidth和reqHeight解析, 以节省内存<br/>
+     * *********************************************************************************<br/>
+     * * * 注意::<br/>
+     * *********************************************************************************<br/>
      * <br/>
-     * 线程会阻塞等待,直到resultHolder.set(Bitmap)方法执行.若任务被cancel,阻塞也会被中断,且即使后续
-     * 网络请求返回了Bitmap,也会被Bitmap.recycle().<br/>
+     * 1.网络请求必须做超时处理,否则任务会一直阻塞等待.<br/>
      * <br/>
-     * 无论同步还是异步的情况,均使用resultHolder.set(Bitmap)返回结果<br/>
-     * 同步网络请求:<br/>
+     * 2.数据解析为Bitmap时,请根据需求尺寸reqWidth和reqHeight解析,以节省内存.<br/>
+     * @see BitmapUtils <br/>
+     *      需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).<br/>
+     *      图片解码时根据需求尺寸适当缩,且保持原图长宽比例,解码后Bitmap实际尺寸不等于需求尺寸.设置为0不缩小图片.<Br/>
+     * <br/>
+     * 3.必须使用BitmapLoaderHolder.setResultSucceed/setResultFailed/setResultCanceled方法返回结果,
+     *      若不调用,图片加载任务中的BitmapLoaderHolder.getResult()会一直阻塞等待结果.<br/>
+     *      1)setResultSucceed(Bitmap),加载成功,返回Bitmap<br/>
+     *      2)setResultFailed(Throwable),加载失败,返回异常<br/>
+     *      3)setResultCanceled(),加载取消<br/>
+     *      若加载任务已被取消(isCancelling() = true),但仍使用setResultSucceed返回结果,则Bitmap会被存入
+     *      磁盘缓存,但BitmapLoader返回任务取消.<br/>
+     * <br/>
+     * 4.合理地处理加载任务取消的情况<br/>
+     *      1)当加载任务取消,终止网络加载,并用BitmapLoaderHolder.setResultCanceled()返回结果<br/>
+     *          采用此种方式,已加载的数据废弃,BitmapLoader作为任务取消处理,不会返回Bitmap.<br/>
+     *      2)当加载任务取消,继续完成网络加载,并用BitmapLoaderHolder.setResultSucceed(Bitmap)返回结果<br/>
+     *          采用此种方式,Bitmap会被存入磁盘缓存,但BitmapLoader仍作为任务取消处理,不会返回Bitmap.<br/>
+     * <br/>
+     * @param url url
+     * @param reqWidth 请求宽度
+     * @param reqHeight 请求高度
+     * @param holder 结果容器
      */
     @Override
-    public void loadFromNet(final String url, final int reqWidth, final int reqHeight, final BitmapLoaderResultHolder resultHolder) {
+    public void loadFromNet(final String url, final int reqWidth, final int reqHeight, final BitmapLoaderHolder holder) {
 
         ///////////////////////////////////////////////////
         //同步方式
 
 //        //模拟网络耗时
 //        try {
-//            Thread.sleep(random.nextInt(500));
+//            Thread.sleep(getRandomInt(400) + 100);
 //        } catch (InterruptedException e) {
 //        }
 //        //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
-//        resultHolder.set(BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight));
+//        holder.setResult(BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight));
 
         ///////////////////////////////////////////////////
         //异步方式
@@ -81,24 +102,59 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
         pool.execute(new Runnable() {
             @Override
             public void run() {
-                //模拟网络耗时
+
+                //模拟网络耗时////////////////////////////////////////////
+
+                long duration = getRandomInt(400) + 100;
+
+                //holder.canceled()判断方式取消任务
+
+//                for (int i = 0 ; i < duration ; i += 10) {
+//                    try {
+//                        Thread.sleep(10);
+//                    } catch (InterruptedException e) {
+//                    }
+//                    //任务取消处理
+//                    if (holder.isCancelling()){
+//                        //返回异常
+//                        holder.setResultCanceled();
+//                        //结束加载
+//                        return;
+//                    }
+//                }
+
+                //holder.setOnCancelListenner 设置监听器方式取消任务
+
+                final Thread thread = Thread.currentThread();
+                holder.setOnCancelListener(new Runnable() {
+                    @Override
+                    public void run() {
+                        thread.interrupt();
+                    }
+                });
                 try {
-                    Thread.sleep(random.nextInt(400) + 100);
+                    Thread.sleep(duration);
                 } catch (InterruptedException e) {
+                        //返回异常
+                        holder.setResultCanceled();
+                        //结束加载
+                        return;
                 }
+
+                //模拟网络加载/////////////////////////////////////////////
                 //模拟网络加载失败的情况
-                if(random.nextInt(10) > 1) {
+                if(getRandomInt(100) > 5) {
+                    //加载成功
                     //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
                     Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight);
 //                    Bitmap bitmap = BitmapUtils.drawTextOnResource(context.getResources(), resourceIds[index], reqWidth, reqHeight, url, 0, 50, 50f, 0xFF000000);
-                    resultHolder.set(bitmap);
+                    holder.setResultSucceed(bitmap);
                 }else{
-                    //失败
-                    resultHolder.set(null);
+                    //加载失败
+                    holder.setResultFailed(new RuntimeException("time out" + url));//返回异常
                 }
             }
         });
-
 
         index = (index + 1) % 5;
     }
@@ -117,5 +173,20 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
     @Override
     public void onCacheWriteException(Throwable throwable) {
         throwable.printStackTrace();
+    }
+
+    @Override
+    public void onDestroy() {
+        context = null;
+        random = null;
+        if (pool != null)
+            pool.shutdown();
+        pool = null;
+    }
+
+    private int getRandomInt(int max){
+        synchronized (this){
+            return random.nextInt(max);
+        }
     }
 }
