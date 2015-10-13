@@ -3,7 +3,7 @@ package sviolet.turquoise.view.slide.logic;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import sviolet.turquoise.compat.CompatScroller;
+import sviolet.turquoise.compat.CompatScroller23;
 import sviolet.turquoise.view.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.view.slide.SlideView;
 
@@ -33,7 +33,7 @@ import sviolet.turquoise.view.slide.SlideView;
 
 public class LinearFlingEngine extends LinearDragEngine {
 
-	protected CompatScroller mScroller = null;
+	protected CompatScroller23 mScroller = null;
 
 	protected OnVelocityOverflowListener mOnVelocityOverflowListener;//速度溢出监听器
 
@@ -48,7 +48,7 @@ public class LinearFlingEngine extends LinearDragEngine {
 	 */
 	public LinearFlingEngine(Context context, SlideView slideView) {
 		super(context, slideView);
-		mScroller = new CompatScroller(mContext);
+		mScroller = new CompatScroller23(mContext);
 	}
 
 	/************************************************************

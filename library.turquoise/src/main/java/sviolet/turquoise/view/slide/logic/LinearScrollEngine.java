@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import sviolet.turquoise.compat.CompatScroller;
+import sviolet.turquoise.compat.CompatScroller23;
 import sviolet.turquoise.view.slide.SlideView;
 
 /**
@@ -38,7 +38,7 @@ public class LinearScrollEngine extends LinearDragEngine {
 	
 	protected int stageDuration = DEF_STAGE_DURATION;//一个阶段的全程惯性滑动时间
 	
-	protected CompatScroller mScroller = null;
+	protected CompatScroller23 mScroller = null;
 
 	private OnClickListener mOnStaticTouchAreaTouchListener;//永久触摸区域触摸事件监听器
 	private OnClickListener mOnStaticTouchAreaClickListener;//永久触摸区域点击事件监听器
@@ -56,7 +56,7 @@ public class LinearScrollEngine extends LinearDragEngine {
 	 */
 	public LinearScrollEngine(Context context, SlideView slideView){
 		super(context, slideView);
-		mScroller = new CompatScroller(mContext);
+		mScroller = new CompatScroller23(mContext);
 	}
 
 	/******************************************************
