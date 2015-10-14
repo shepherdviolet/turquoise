@@ -23,33 +23,65 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  */
 public class TransitionBitmapDrawable extends TransitionDrawable {
 
-    public TransitionBitmapDrawable(Bitmap bitmap) {
+    //默认的图片
+    private BitmapDrawable defaultDrawable;
+
+    public TransitionBitmapDrawable(){
         super(new Drawable[]{new ColorDrawable(0x00000000), new ColorDrawable(0x00000000)});
+        startTransition(0);
+    }
+
+    public TransitionBitmapDrawable(Resources resources, Bitmap defaultBitmap) {
+        super(new Drawable[]{new ColorDrawable(0x00000000), new BitmapDrawable(resources, defaultBitmap)});
+        this.defaultDrawable =  new BitmapDrawable(resources, defaultBitmap);
+        startTransition(0);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        System.out.println("draw");
-        super.draw(canvas);
+        try {
+            super.draw(canvas);
+        }catch(Exception e){
+            onDrawError();
+        }
     }
 
-    /**
-     *
-     * @param resources
-     * @param bitmap
-     * @param duration
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    protected void onDrawError(){
+        resetToDefault();
+    }
+
+    protected void resetToDefault(){
+        if (defaultDrawable == null || defaultDrawable.getBitmap() == null || defaultDrawable.getBitmap().isRecycled()) {
+            //默认图被回收时使用空图
+            setDrawable(null, 0);
+        } else {
+            //默认图可用使用默认图
+            setDrawable(defaultDrawable, 0);
+        }
+    }
+
+    public void setBitmap(Resources resources, Bitmap bitmap){
+        setBitmap(resources, bitmap, 0);
+    }
+
     public void setBitmap(Resources resources, Bitmap bitmap, int duration){
 
         Drawable drawable;
 
         if (bitmap == null || bitmap.isRecycled()){
             drawable = newTransparentDrawable();
-        }else if (resources != null){
-            drawable = new BitmapDrawable(resources, bitmap);
         }else{
-            drawable = new BitmapDrawable(bitmap);
+            drawable = new BitmapDrawable(resources, bitmap);
+        }
+
+        setDrawable(drawable, duration);
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    protected void setDrawable(Drawable drawable, int duration){
+
+        if (drawable == null){
+            drawable = newTransparentDrawable();
         }
 
         try {
@@ -133,106 +165,6 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
         }
 
         startTransition(duration);
-
-//        try {
-//            //获得TransitionState构造器
-//            Constructor transitionStateConstructor = null;
-//            Class<?>[] transitionDrawableInnerClasses = TransitionDrawable.class.getDeclaredClasses();
-//            for (Class transitionStateClass : transitionDrawableInnerClasses) {
-//                if ("TransitionState".equals(transitionStateClass.getSimpleName())) {
-//                    transitionStateConstructor = transitionStateClass.getDeclaredConstructor(transitionStateClass, TransitionDrawable.class, Resources.class);
-//                    transitionStateConstructor.setAccessible(true);
-//                    break;
-//                }
-//            }
-//
-//            //获得layerState参数
-//            Field layerStateField = LayerDrawable.class.getDeclaredField("mLayerState");
-//            layerStateField.setAccessible(true);
-//            //获得mLayerState实例
-//            Object mLayerState = layerStateField.get(this);
-//
-//            //获得childDrawable参数
-//            Field childDrawableField = layerStateField.getType().getDeclaredField("mChildren");
-//            childDrawableField.setAccessible(true);
-//            //获得mChildren实例
-//            Object[] mChildren = (Object[]) childDrawableField.get(mLayerState);
-//            //获得childDrawable的类, 注意不能用childDrawableField.getType()
-//            Class childDrawableClass = mChildren[0].getClass();
-//            //获得childDrawable构造方法
-//            Constructor childDrawableConstructor = childDrawableClass.getDeclaredConstructor();
-//            childDrawableConstructor.setAccessible(true);
-//            //获得childDrawable中mDrawable参数
-//            Field mDrawableField = childDrawableClass.getDeclaredField("mDrawable");
-//            mDrawableField.setAccessible(true);
-//            //清理原有drawable的callback
-//            for (Object children : mChildren){
-//                Drawable mDrawable = (Drawable) mDrawableField.get(children);
-//                mDrawable.setCallback(null);
-//            }
-//
-//            //获得layerState构造器
-//            Constructor layerStateConstructor = layerStateField.getType().getDeclaredConstructor(layerStateField.getType(), LayerDrawable.class, Resources.class);
-//            layerStateConstructor.setAccessible(true);
-//            Object newLayerState = layerStateConstructor.newInstance(transitionStateConstructor.newInstance(null, null, null), this, null);
-//            //放入新的layerState
-//            layerStateField.set(this, newLayerState);
-//
-//            //获得layerState的mChildrenChangingConfigurations参数
-//            Field mChildrenChangingConfigurationsField = layerStateField.getType().getDeclaredField("mChildrenChangingConfigurations");
-//            mChildrenChangingConfigurationsField.setAccessible(true);
-//
-//            //新的mChildren实例
-//            Object newChildrenArray = Array.newInstance(childDrawableClass, 2);
-//            //第一个children
-//            Object newChildren = childDrawableConstructor.newInstance();
-//            Drawable drawable = newTransparentDrawable();
-//            drawable.setCallback(this);
-//            mDrawableField.set(newChildren, drawable);
-//            int mChildrenChangingConfigurations = (int) mChildrenChangingConfigurationsField.get(newLayerState);
-//            mChildrenChangingConfigurationsField.set(newLayerState, mChildrenChangingConfigurations | drawable.getChangingConfigurations());
-//            Array.set(newChildrenArray, 0, newChildren);
-//            //第二个children
-//            newChildren = childDrawableConstructor.newInstance();
-//            if (bitmap == null || bitmap.isRecycled()) {
-//                drawable = newTransparentDrawable();
-//            }else if (resources != null) {
-//                drawable = new BitmapDrawable(resources, bitmap);
-//            }else{
-//                drawable = new BitmapDrawable(bitmap);
-//            }
-//            drawable.setCallback(this);
-//            mDrawableField.set(newChildren, drawable);
-//            mChildrenChangingConfigurations = (int) mChildrenChangingConfigurationsField.get(newLayerState);
-//            mChildrenChangingConfigurationsField.set(newLayerState, mChildrenChangingConfigurations | drawable.getChangingConfigurations());
-//            Array.set(newChildrenArray, 1, newChildren);
-//
-//            Field mNumField = layerStateField.getType().getDeclaredField("mNum");
-//            mNumField.setAccessible(true);
-//            mNumField.set(newLayerState, 2);
-//            //放入新的mChildren
-//            childDrawableField.set(newLayerState, newChildrenArray);
-//
-//            Method ensurePaddingMethod = LayerDrawable.class.getDeclaredMethod("ensurePadding");
-//            ensurePaddingMethod.setAccessible(true);
-//            ensurePaddingMethod.invoke(this);
-//
-////            Method onStateChangeMethod = LayerDrawable.class.getDeclaredMethod("onStateChange", int[].class);
-////            onStateChangeMethod.setAccessible(true);
-////            onStateChangeMethod.invoke(this, getState());
-//
-//        }catch (Exception e){
-//            throw new RuntimeException("[AsyncBitmapDrawable]setBitmap error!", e);
-//        }
-//
-//        try {
-//            Method refreshPaddingMethod = LayerDrawable.class.getDeclaredMethod("refreshPadding");
-//            refreshPaddingMethod.setAccessible(true);
-//            refreshPaddingMethod.invoke(this);
-//        }catch (Exception e){
-//        }
-//
-//        startTransition(duration);
 
     }
 
