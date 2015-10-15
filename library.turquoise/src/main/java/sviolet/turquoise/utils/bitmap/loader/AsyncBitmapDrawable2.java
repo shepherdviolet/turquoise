@@ -281,7 +281,7 @@ public class AsyncBitmapDrawable2 extends BitmapDrawable implements OnBitmapLoad
         //加载开始
         if (loader != null && !loading) {
             loading = true;
-            loader.load(this);
+//            loader.load(this);
         }
     }
 
@@ -420,6 +420,6 @@ public class AsyncBitmapDrawable2 extends BitmapDrawable implements OnBitmapLoad
             }
             return true;
         }
-    };
+    }
 
 }

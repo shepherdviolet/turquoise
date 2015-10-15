@@ -107,6 +107,7 @@ import sviolet.turquoise.enhance.utils.Logger;
  *           //.setDiskCacheInner()//强制使用内部储存
  *           //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
  *           //.setLogger(getLogger())//打印日志
+ *           .setAnimationDuration(500)//AsyncBitmapDrawable由浅及深显示效果持续时间
  *           .open();//启动(必须)
  *   } catch (IOException e) {
  *      //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
@@ -196,6 +197,8 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
 
     private Bitmap loadingBitmap;//加载状态的图片
 
+    private int animationDuration = 500;//AsyncBitmapDrawable图片由浅及深显示的动画持续时间
+
     /**
      * 内存缓存区默认0.125f
      *
@@ -231,14 +234,11 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
      * @param reqWidth 需求宽度 px
      * @param reqHeight 需求高度 px
      */
-    public AsyncBitmapDrawable2 load(String url, int reqWidth, int reqHeight) {
-        if (getResources() == null)
-            return new AsyncBitmapDrawable2(url, reqWidth, reqHeight, this);
-        else
-            return new AsyncBitmapDrawable2(url, reqWidth, reqHeight, this, getResources());
+    public AsyncBitmapDrawable load(String url, int reqWidth, int reqHeight) {
+        return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this);
     }
 
-    void load(AsyncBitmapDrawable2 asyncBitmapDrawable){
+    void load(AsyncBitmapDrawable asyncBitmapDrawable){
         if (asyncBitmapDrawable == null)
             return;
         super.load(asyncBitmapDrawable.getUrl(), asyncBitmapDrawable.getReqWidth(), asyncBitmapDrawable.getReqHeight(), null, asyncBitmapDrawable);
@@ -261,14 +261,11 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
      * @param reqHeight 需求高度 px
      * @return 若不存在或已被回收, 则返回null
      */
-    public AsyncBitmapDrawable2 get(String url, int reqWidth, int reqHeight) {
+    public AsyncBitmapDrawable get(String url, int reqWidth, int reqHeight) {
         Bitmap bitmap = super.get(url);
         if (bitmap == null)
             return null;
-        if (getResources() == null)
-            return new AsyncBitmapDrawable2(url, reqWidth, reqHeight, this, bitmap);
-        else
-            return new AsyncBitmapDrawable2(url, reqWidth, reqHeight, this, getResources(), bitmap);
+        return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this, bitmap);
     }
 
     /**
@@ -318,6 +315,10 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
         return null;
     }
 
+    int getAnimationDuration(){
+        return animationDuration;
+    }
+
     ////////////////////////////////////////////////////////////////////////
     //变换返回值
     ////////////////////////////////////////////////////////////////////////
@@ -362,6 +363,17 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
      */
     public AsyncBitmapDrawableLoader setRamCache(float ramCacheSizePercent) {
         return (AsyncBitmapDrawableLoader) super.setRamCache(ramCacheSizePercent, 0);
+    }
+
+    /**
+     * 设置AsyncBitmapDrawable由浅及深显示动画效果持续时间
+     * @param duration 持续时间 ms 默认500
+     */
+    public AsyncBitmapDrawableLoader setAnimationDuration(int duration){
+        if (duration < 0)
+            duration = 0;
+        this.animationDuration = duration;
+        return this;
     }
 
     @Override

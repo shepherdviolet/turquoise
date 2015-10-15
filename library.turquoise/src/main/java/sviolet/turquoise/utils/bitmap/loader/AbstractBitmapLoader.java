@@ -114,6 +114,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *           //.setDiskCacheInner()//强制使用内部储存
  *           //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
  *           //.setLogger(getLogger())//打印日志
+ *           .setAnimationDuration(500)//AsyncBitmapDrawable由浅及深显示效果持续时间
  *           .open();//启动(必须)
  *   } catch (IOException e) {
  *      //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
