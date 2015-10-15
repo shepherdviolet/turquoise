@@ -114,8 +114,9 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
      * @param resources Resources
      * @param bitmap 显示的图片
      */
-    public void setBitmap(Resources resources, Bitmap bitmap){
+    public TransitionBitmapDrawable setBitmap(Resources resources, Bitmap bitmap){
         setBitmap(resources, bitmap, 0);
+        return this;
     }
 
     /**
@@ -125,7 +126,7 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
      * @param bitmap 显示的图片
      * @param duration 渐变持续时间
      */
-    public void setBitmap(Resources resources, Bitmap bitmap, int duration){
+    public TransitionBitmapDrawable setBitmap(Resources resources, Bitmap bitmap, int duration){
 
         Drawable drawable;
 
@@ -136,6 +137,8 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
         }
 
         setDrawable(drawable, duration);
+
+        return this;
     }
 
     /**

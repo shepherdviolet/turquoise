@@ -11,8 +11,8 @@ import sviolet.turquoise.enhance.TActivity;
 import sviolet.turquoise.enhance.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.loader.AsyncBitmapDrawable;
 import sviolet.turquoise.utils.sys.MeasureUtils;
+import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
 
 @DemoDescription(
         title = "Common Image Demo",
@@ -195,10 +195,11 @@ public class CommonImageActivity extends TActivity {
     private void initLine3(){
 
         /**
-         * AsyncBitmapDrawable 默认图模式用法
+         * TransitionBitmapDrawable用法
          * 优点:
          * 1.即使图片被回收, 也不会抛异常, 而是显示默认图
          * 2.即使默认图被回收, 也不会抛异常, 而是显示空图
+         * 3.淡入效果
          */
 
         //默认图
@@ -231,19 +232,25 @@ public class CommonImageActivity extends TActivity {
         //设置Drawable
         imageView31.setImageDrawable(
                 //异步BitmapDrawable
-                new AsyncBitmapDrawable(
+                new TransitionBitmapDrawable(
                         getResources(),
-                        bitmap31, //要显示的图
                         defaultBitmap3 //默认图, 可设置为null
+                ).setBitmap(
+                        getResources(),
+                        bitmap31, //显示的图
+                        1500 //淡入动画效果持续1500ms
                 )
         );
         //设置Drawable
         imageView32.setImageDrawable(
                 //异步BitmapDrawable
-                new AsyncBitmapDrawable(
+                new TransitionBitmapDrawable(
                         getResources(),
-                        bitmap32, //要显示的图
                         defaultBitmap3 //默认图, 可设置为null
+                ).setBitmap(
+                        getResources(),
+                        bitmap32, //显示的图
+                        1500 //淡入动画效果持续1500ms
                 )
         );
         /**

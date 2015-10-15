@@ -69,6 +69,7 @@ public class Async2ImageActivity extends TActivity {
                     .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
 //                    .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
 //                    .setLogger(getLogger())//打印日志
+                    .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
                     .open();//启动(必须)
             //设置适配器, 传入图片加载器, 图片解码工具
             adapter = new AsyncImageAdapter2(this, makeItemList(), mAsyncBitmapDrawableLoader);

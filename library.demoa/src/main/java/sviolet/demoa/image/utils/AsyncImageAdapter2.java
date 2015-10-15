@@ -93,9 +93,9 @@ public class AsyncImageAdapter2 extends BaseAdapter {
             if (i == 0) {
                 //第一张图为160*160dp, 其余80*80dp
                 //加载成功逐渐显示动画效果
-                holder.imageView[i].setImageDrawableImmediate(asyncBitmapDrawableLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge).enableGradualEffect(500));
+                holder.imageView[i].setImageDrawableImmediate(asyncBitmapDrawableLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge));
             } else {
-                holder.imageView[i].setImageDrawableImmediate(asyncBitmapDrawableLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall).enableGradualEffect(500));
+                holder.imageView[i].setImageDrawableImmediate(asyncBitmapDrawableLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall));
             }
 
         }
