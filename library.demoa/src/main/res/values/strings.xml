@@ -24,6 +24,7 @@
     <string name="image_common_title">Simple Image Demo</string>
     <string name="image_async_title">Async Image List</string>
     <string name="image_async2_title">Async Image List 2</string>
+    <string name="image_shadow_title">Shadow Demo</string>
 
     <string name="temp_main_title">Temp</string>
 

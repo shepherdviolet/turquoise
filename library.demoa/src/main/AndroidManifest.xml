@@ -53,6 +53,8 @@
             android:label="@string/image_async_title"/>
         <activity android:name=".image.Async2ImageActivity"
             android:label="@string/image_async2_title"/>
+        <activity android:name=".image.ShadowImageActivity"
+            android:label="@string/image_shadow_title"/>
 
         <activity android:name=".TempActivity"
             android:label="@string/temp_main_title"/>
