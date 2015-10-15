@@ -231,14 +231,14 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
      * @param reqWidth 需求宽度 px
      * @param reqHeight 需求高度 px
      */
-    public AsyncBitmapDrawable load(String url, int reqWidth, int reqHeight) {
+    public AsyncBitmapDrawable2 load(String url, int reqWidth, int reqHeight) {
         if (getResources() == null)
-            return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this);
+            return new AsyncBitmapDrawable2(url, reqWidth, reqHeight, this);
         else
-            return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this, getResources());
+            return new AsyncBitmapDrawable2(url, reqWidth, reqHeight, this, getResources());
     }
 
-    void load(AsyncBitmapDrawable asyncBitmapDrawable){
+    void load(AsyncBitmapDrawable2 asyncBitmapDrawable){
         if (asyncBitmapDrawable == null)
             return;
         super.load(asyncBitmapDrawable.getUrl(), asyncBitmapDrawable.getReqWidth(), asyncBitmapDrawable.getReqHeight(), null, asyncBitmapDrawable);
@@ -261,14 +261,14 @@ public class AsyncBitmapDrawableLoader extends AbstractBitmapLoader {
      * @param reqHeight 需求高度 px
      * @return 若不存在或已被回收, 则返回null
      */
-    public AsyncBitmapDrawable get(String url, int reqWidth, int reqHeight) {
+    public AsyncBitmapDrawable2 get(String url, int reqWidth, int reqHeight) {
         Bitmap bitmap = super.get(url);
         if (bitmap == null)
             return null;
         if (getResources() == null)
-            return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this, bitmap);
+            return new AsyncBitmapDrawable2(url, reqWidth, reqHeight, this, bitmap);
         else
-            return new AsyncBitmapDrawable(url, reqWidth, reqHeight, this, getResources(), bitmap);
+            return new AsyncBitmapDrawable2(url, reqWidth, reqHeight, this, getResources(), bitmap);
     }
 
     /**

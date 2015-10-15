@@ -27,7 +27,7 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  * <br/>
  * Created by S.Violet on 2015/9/29.
  */
-public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoadedListener{
+public class AsyncBitmapDrawable2 extends BitmapDrawable implements OnBitmapLoadedListener{
 
     private static final long RELOAD_DELAY = 2000;//图片加载失败重新加载时延
     private static final int RELOAD_TIMES_LIMIT = 2;//图片加载失败重新加载次数限制
@@ -64,7 +64,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      * @param defaultBitmap 默认图
      */
     @Deprecated
-    public AsyncBitmapDrawable(Bitmap bitmap, Bitmap defaultBitmap) {
+    public AsyncBitmapDrawable2(Bitmap bitmap, Bitmap defaultBitmap) {
         super(bitmap);
         this.defaultBitmap = defaultBitmap;
     }
@@ -77,7 +77,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      * @param defaultBitmap 默认图
      */
     @Deprecated
-    public AsyncBitmapDrawable(Resources res, Bitmap defaultBitmap) {
+    public AsyncBitmapDrawable2(Resources res, Bitmap defaultBitmap) {
         super(res);
         this.defaultBitmap = defaultBitmap;
     }
@@ -90,7 +90,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      * @param bitmap 图
      * @param defaultBitmap 默认图
      */
-    public AsyncBitmapDrawable(Resources res, Bitmap bitmap, Bitmap defaultBitmap) {
+    public AsyncBitmapDrawable2(Resources res, Bitmap bitmap, Bitmap defaultBitmap) {
         super(res, bitmap);
         this.defaultBitmap = defaultBitmap;
     }
@@ -105,7 +105,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      * @param reqHeight 需求高度
      * @param loader 加载器
      */
-    AsyncBitmapDrawable(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader) {
+    AsyncBitmapDrawable2(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader) {
         super();
         this.url = url;
         this.reqWidth = reqWidth;
@@ -117,7 +117,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
         }
     }
 
-    AsyncBitmapDrawable(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader, Resources resources) {
+    AsyncBitmapDrawable2(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader, Resources resources) {
         super(resources);
         this.url = url;
         this.reqWidth = reqWidth;
@@ -140,7 +140,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      * @param loader 加载器
      * @param bitmap 图
      */
-    AsyncBitmapDrawable(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader, Bitmap bitmap) {
+    AsyncBitmapDrawable2(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader, Bitmap bitmap) {
         super(bitmap);
         this.url = url;
         this.reqWidth = reqWidth;
@@ -148,7 +148,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
         this.loader = loader;
     }
 
-    AsyncBitmapDrawable(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader, Resources resources, Bitmap bitmap) {
+    AsyncBitmapDrawable2(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader, Resources resources, Bitmap bitmap) {
         super(resources, bitmap);
         this.url = url;
         this.reqWidth = reqWidth;
@@ -178,7 +178,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
      *
      * @param duration 动画时间(ms), 大于0生效
      */
-    public AsyncBitmapDrawable enableGradualEffect(long duration){
+    public AsyncBitmapDrawable2 enableGradualEffect(long duration){
         this.gradualEffectDuration = duration;
         return this;
     }
@@ -186,7 +186,7 @@ public class AsyncBitmapDrawable extends BitmapDrawable implements OnBitmapLoade
     /**
      * 设置图片加载失败后重新加载次数限制<Br/>
      */
-    public AsyncBitmapDrawable setReloadTimes(int times){
+    public AsyncBitmapDrawable2 setReloadTimes(int times){
         this.reloadTimes = times;
         return this;
     }
