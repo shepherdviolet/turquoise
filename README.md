@@ -1,10 +1,11 @@
-# Turquoise 1.0.151015
+# Turquoise 1.3 Beta Build151015
 
 ## Description
-> Android Library contains Views/Utils/IOs...<br/>
+> Android Library<br/>
 > 1.Configurable "Application"/"Activity"... | 可配置的两大组件<br/>
 > 2.SlideEngine | 滑动引擎<br/>
 > 3.BitmapLoader | 双缓存图片异步加载器<br/>
+> 4.some Utils | 工具<br/>
 > https://github.com/shepherdviolet/turquoise <br/>
 
 ## Modules
