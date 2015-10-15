@@ -196,7 +196,8 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
             ensurePaddingMethod.invoke(this);
 
         }catch (Exception e){
-            throw new RuntimeException("[AsyncBitmapDrawable]setBitmap:setDrawable error!", e);
+            onSetBitmapError(new RuntimeException("[AsyncBitmapDrawable]setBitmap:setDrawable error!", e));
+            return;
         }
 
         /**
@@ -208,7 +209,8 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
                 refreshPaddingMethod.setAccessible(true);
                 refreshPaddingMethod.invoke(this);
             } catch (Exception e) {
-                throw new RuntimeException("[AsyncBitmapDrawable]setBitmap:refreshPadding error!", e);
+                onSetBitmapError(new RuntimeException("[AsyncBitmapDrawable]setBitmap:refreshPadding error!", e));
+                return;
             }
         }
 
@@ -226,7 +228,8 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
                 callbackField.setAccessible(true);
                 callback = (Callback) callbackField.get(this);
             } catch (Exception e) {
-                throw new RuntimeException("[AsyncBitmapDrawable]setBitmap:getCallback error!", e);
+                onSetBitmapError(new RuntimeException("[AsyncBitmapDrawable]setBitmap:getCallback error!", e));
+                return;
             }
         }
 
@@ -259,7 +262,8 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
                 ensurePaddingMethod.setAccessible(true);
                 ensurePaddingMethod.invoke(callback, this);
             }catch (Exception e){
-                throw new RuntimeException("[AsyncBitmapDrawable]setBitmap:updateDrawable error!", e);
+                onSetBitmapError(new RuntimeException("[AsyncBitmapDrawable]setBitmap:ImageView:updateDrawable error!", e));
+                return;
             }
         }
 
@@ -283,6 +287,14 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
      */
     public Drawable newTransparentDrawable(){
         return new ColorDrawable(0x00000000);
+    }
+
+    /**
+     * 反射方式设置图片出错处理<br/>
+     * 默认为直接打印错误日志, 不抛出异常, 避免应用崩溃<br/>
+     */
+    protected void onSetBitmapError(RuntimeException e){
+        e.printStackTrace();
     }
 
 }

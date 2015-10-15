@@ -10,6 +10,41 @@ import java.lang.ref.WeakReference;
 import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
 
 /**
+ * 异步BitmapDrawable<br/>
+ * <br/>
+ * 由AsyncBitmapDrawableLoader.load方法返回.<br/>
+ * 初始阶段显示由AsyncBitmapDrawableLoader指定的加载图, 当图片加载成功, 会自动显示目标图,
+ * 若加载失败, 会尝试重新加载(有次数限制), 若显示的Bitmap被回收(recycle), 则会显示加载图
+ * 或透明图层.<br/>
+ * <br/>
+ * 注意::<br/>
+ * 不再使用时, 请及时调用unused方法, 以取消加载任务<br/>
+ * <br/>
+ * 其他说明:<br/>
+ * @see sviolet.turquoise.view.drawable.TransitionBitmapDrawable
+ * *********************************************************<br/>
+ * * * * 注意事项<br/>
+ * *********************************************************<br/>
+ * <br/>
+ * 1.由于通过反射机制实现核心代码, 在未来新API中可能会出现问题.<br/>
+ * <br/>
+ * *********************************************************<br/>
+ * * * * 控件支持情况<br/>
+ * *********************************************************<br/>
+ * <br/>
+ * ----支持控件-------------------------------<br/>
+ * <br/>
+ * 1.ImageView<Br/>
+ * 支持尺寸重新计算,控件大小动态调整,支持wrap_content参数<br/>
+ * <br/>
+ * ----存在问题-------------------------------<br/>
+ * <br/>
+ * 除支持控件外.<br/>
+ * 新设置的图片尺寸将和原来一致, 并不会根据实际情况重新调整尺寸, 特别是当控件尺寸设置为
+ * wrap_content时, 控件长宽可能会初始化为0, 导致新设置的图片无法显示, 建议控件尺寸设置
+ * 为固定值或给TransitionBitmapDrawable设置默认图, 新图片尺寸将与固定尺寸或默认图一致.<br/>
+ * <br/>
+ * <br/>
  * Created by S.Violet on 2015/10/15.
  */
 public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnBitmapLoadedListener {
@@ -82,6 +117,20 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
         this.reloadTimes = times;
         return this;
     }
+
+    /**********************************************************
+     * override
+     */
+
+    @Override
+    protected void onDrawError() {
+        resetToDefault();
+        reload();
+    }
+
+    /*****************************************************
+     * private
+     */
 
     /**
      * 加载
@@ -178,16 +227,6 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
 
     public int getReqHeight() {
         return reqHeight;
-    }
-
-    /**********************************************************
-     * override
-     */
-
-    @Override
-    protected void onDrawError() {
-        resetToDefault();
-        reload();
     }
 
     /**********************************************************

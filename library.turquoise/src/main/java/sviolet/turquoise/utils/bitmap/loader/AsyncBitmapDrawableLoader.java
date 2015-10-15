@@ -17,9 +17,11 @@ import sviolet.turquoise.enhance.utils.Logger;
  * ****************************************************************<br/>
  * <br/>
  * 1.AsyncBitmapLoader<br/>
- *      加载Bitmap, 适用性广泛, 使用较复杂.<br/>
+ *      加载Bitmap, 适用性广泛, 兼容性好, 使用较复杂.<br/>
  * 2.AsyncBitmapDrawableLoader<br/>
- *      加载AsyncBitmapDrawable, 使用简单.<br/>
+ *      加载AsyncBitmapDrawable, 使用简单, 但兼容性较差.<br/>
+ *      @see sviolet.turquoise.view.drawable.TransitionBitmapDrawable
+ *      @see AsyncBitmapDrawable
  * <Br/>
  * ****************************************************************<br/>
  * * * * * AsyncBitmapLoader使用说明:<br/>
@@ -128,7 +130,7 @@ import sviolet.turquoise.enhance.utils.Logger;
  *      (显示图片,防止异常等).注意切不可获取AsyncBitmapDrawable中的Bitmap直接使用.<Br/>
  * 2.get <br/>
  *      从内存缓冲获取AsyncBitmapDrawable,若不存在返回null<br/>
- * 3.unused [重要] <br/>
+ * 3.AsyncBitmapDrawable.unused [重要] <br/>
  *      当图片不再显示时,及时unused有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<br/>
  * 4.destroy [重要] <br/>
  *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<br/>
