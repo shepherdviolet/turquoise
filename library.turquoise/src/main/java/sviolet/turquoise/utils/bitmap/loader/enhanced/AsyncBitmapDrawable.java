@@ -50,7 +50,6 @@ import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
  */
 public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnBitmapLoadedListener {
 
-    private static final long RELOAD_DELAY = 2000;//图片加载失败重新加载时延
     private int reloadTimes = 0;//图片重新加载次数
 
     private String url;
@@ -106,8 +105,6 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
         if (getLoader() != null)
             getLoader().unused(url);
         this.unused = true;
-        //停止重加载
-        destroyHandler();
     }
 
     /**********************************************************
@@ -142,7 +139,7 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
         //未被弃用的情况下重新加载图片
         if (getLoader() != null && !unused && reloadTimes < getLoader().getReloadTimesMax()) {
             reloadTimes++;
-            getHandler().sendEmptyMessageDelayed(HANDLER_RELOAD, RELOAD_DELAY);//重新加载图片
+            load();
         }
     }
 
@@ -219,51 +216,6 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
 
     public int getReqHeight() {
         return reqHeight;
-    }
-
-    /**********************************************************
-     * handler
-     */
-
-    private static final int HANDLER_RELOAD = 1;//重新加载图片
-
-    private Handler handler;
-
-    private Handler getHandler(){
-        if (handler == null){
-            synchronized (this) {
-                if (handler == null) {
-                    handler = new Handler(new HandlerCallback());
-                }
-            }
-        }
-        return handler;
-    }
-
-    private void destroyHandler(){
-        if (handler != null){
-            synchronized (this){
-                if (handler != null){
-                    handler.removeCallbacksAndMessages(null);
-                    handler = null;
-                }
-            }
-        }
-    }
-
-    private class HandlerCallback implements Handler.Callback {
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what){
-                case HANDLER_RELOAD:
-                    //重新加载图片
-                    load();
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
     }
 
 }
