@@ -1,4 +1,4 @@
-# Turquoise 1.3beta-build151015
+# Turquoise 1.3.151016
 
 ## Description
 > Android Library<br/>

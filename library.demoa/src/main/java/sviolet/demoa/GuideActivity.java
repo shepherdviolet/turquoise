@@ -26,14 +26,13 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
  */
 //默认Demo
 //@DemoDefault(
-//        AsyncImageActivity.class
+//        TempActivity.class
 //)
 
 // Demo列表
 @DemoList({
         SlideActivity.class,
-        ImageActivity.class,
-        TempActivity.class
+        ImageActivity.class
 })
 
 /**************************************************************
