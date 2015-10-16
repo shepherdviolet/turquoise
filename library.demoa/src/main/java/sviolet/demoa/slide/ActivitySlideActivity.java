@@ -9,9 +9,9 @@ import android.widget.ListView;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.common.EmulateListAdapter;
-import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
-import sviolet.turquoise.enhance.annotation.inject.ResourceId;
-import sviolet.turquoise.enhance.TActivity;
+import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
+import sviolet.turquoise.enhanced.TActivity;
 
 /**
  * 可侧滑关闭Activity的demo(主界面)

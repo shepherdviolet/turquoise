@@ -1,4 +1,4 @@
-package sviolet.turquoise.enhance.annotation.setting;
+package sviolet.turquoise.enhanced.annotation.setting;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

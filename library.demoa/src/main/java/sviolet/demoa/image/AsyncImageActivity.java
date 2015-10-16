@@ -2,8 +2,6 @@ package sviolet.demoa.image;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.widget.ListView;
 
 import java.io.IOException;
@@ -15,9 +13,9 @@ import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.image.utils.AsyncImageAdapter;
 import sviolet.demoa.image.utils.AsyncImageItem;
 import sviolet.demoa.image.utils.MyBitmapLoaderImplementor;
-import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
-import sviolet.turquoise.enhance.annotation.inject.ResourceId;
-import sviolet.turquoise.enhance.TActivity;
+import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
+import sviolet.turquoise.enhanced.TActivity;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 
 @DemoDescription(

@@ -7,9 +7,9 @@ import android.widget.ImageView;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
-import sviolet.turquoise.enhance.TActivity;
-import sviolet.turquoise.enhance.annotation.inject.ResourceId;
-import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhanced.TActivity;
+import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
+import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;

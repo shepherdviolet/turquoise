@@ -1,4 +1,4 @@
-package sviolet.turquoise.utils.bitmap.loader;
+package sviolet.turquoise.utils.bitmap.loader.enhanced;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -7,7 +7,9 @@ import android.graphics.Bitmap;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.enhance.utils.Logger;
+import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
 
 /**
  * AsyncBitmapDrawableLoader<br/>
@@ -15,7 +17,7 @@ import sviolet.turquoise.enhance.utils.Logger;
  * <br/>
  * 加载AsyncBitmapDrawable, 使用简单, 但兼容性较差, 新API可能会出错. <br/>
  * AsyncBitmapDrawable支持加载图设置,异步显示,出错重加载,回收防崩溃.<br/>
- * @see sviolet.turquoise.utils.bitmap.loader.AsyncBitmapDrawable
+ * @see AsyncBitmapDrawable
  * <br/>
  * ****************************************************************<br/>
  * * * * * AsyncBitmapDrawableLoader使用说明:<br/>

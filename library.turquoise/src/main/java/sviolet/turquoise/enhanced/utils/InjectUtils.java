@@ -1,4 +1,4 @@
-package sviolet.turquoise.enhance.utils;
+package sviolet.turquoise.enhanced.utils;
 
 import android.app.Activity;
 import android.view.View;
@@ -9,9 +9,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import sviolet.turquoise.enhance.annotation.inject.OnClickMethod;
-import sviolet.turquoise.enhance.annotation.inject.ResourceId;
-import sviolet.turquoise.enhance.InjectException;
+import sviolet.turquoise.enhanced.annotation.inject.OnClickMethod;
+import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
 
 /**
  * Activity的注释式注入工具<br/>

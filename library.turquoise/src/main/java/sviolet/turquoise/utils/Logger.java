@@ -1,4 +1,4 @@
-package sviolet.turquoise.enhance.utils;
+package sviolet.turquoise.utils;
 
 import android.util.Log;
 

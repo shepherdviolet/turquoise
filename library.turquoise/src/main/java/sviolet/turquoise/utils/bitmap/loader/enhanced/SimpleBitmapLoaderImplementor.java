@@ -1,4 +1,4 @@
-package sviolet.turquoise.utils.bitmap.loader;
+package sviolet.turquoise.utils.bitmap.loader.enhanced;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,6 +9,8 @@ import java.net.ProtocolException;
 import java.net.URL;
 
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
 import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
 
@@ -20,7 +22,7 @@ import sviolet.turquoise.utils.crypt.DigestCipher;
  *
  * Created by S.Violet on 2015/10/12.
  */
-public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor{
+public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
 
     private int timeout;
 

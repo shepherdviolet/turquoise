@@ -1,4 +1,4 @@
-package sviolet.turquoise.utils.bitmap.loader;
+package sviolet.turquoise.utils.bitmap.loader.enhanced;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -7,6 +7,7 @@ import android.os.Message;
 
 import java.lang.ref.WeakReference;
 
+import sviolet.turquoise.utils.bitmap.loader.OnBitmapLoadedListener;
 import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
 
 /**

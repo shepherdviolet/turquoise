@@ -6,13 +6,12 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import sviolet.turquoise.compat.CompatLruCache;
-import sviolet.turquoise.enhance.utils.Logger;
+import sviolet.turquoise.utils.Logger;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**

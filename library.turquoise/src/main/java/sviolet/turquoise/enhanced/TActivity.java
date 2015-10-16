@@ -1,4 +1,4 @@
-package sviolet.turquoise.enhance;
+package sviolet.turquoise.enhanced;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -19,13 +19,13 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Map;
 
-import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
-import sviolet.turquoise.enhance.utils.Logger;
+import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
+import sviolet.turquoise.utils.Logger;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 import sviolet.turquoise.utils.CheckUtils;
 import sviolet.turquoise.utils.sys.DeviceUtils;
-import sviolet.turquoise.enhance.utils.InjectUtils;
+import sviolet.turquoise.enhanced.utils.InjectUtils;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 
 /**

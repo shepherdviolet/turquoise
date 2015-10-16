@@ -1,6 +1,7 @@
 package sviolet.turquoise.utils.bitmap.loader;
 
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
+import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor;
 
 /**
  * BitmapLoader实现器<br/>
@@ -9,6 +10,9 @@ import sviolet.turquoise.utils.bitmap.BitmapUtils;
  * 1.实现cacheKey的生成规则<br/>
  * 2.实现网络加载图片<br/>
  * 3.实现异常处理<br/>
+ * <br/>
+ * 简易实现:<br/>
+ * @see sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor
  */
 public interface BitmapLoaderImplementor {
 

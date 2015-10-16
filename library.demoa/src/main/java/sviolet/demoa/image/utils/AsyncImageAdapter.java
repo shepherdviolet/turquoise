@@ -13,7 +13,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.enhance.TActivity;
+import sviolet.turquoise.enhanced.TActivity;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;

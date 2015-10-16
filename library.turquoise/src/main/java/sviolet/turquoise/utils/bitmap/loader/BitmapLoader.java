@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import sviolet.turquoise.enhance.utils.Logger;
+import sviolet.turquoise.utils.Logger;
 import sviolet.turquoise.model.queue.TQueue;
 import sviolet.turquoise.model.queue.TTask;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;

@@ -1,4 +1,4 @@
-package sviolet.turquoise.enhance;
+package sviolet.turquoise.enhanced;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -17,10 +17,10 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import sviolet.turquoise.enhance.annotation.setting.ApplicationSettings;
-import sviolet.turquoise.enhance.annotation.setting.DebugSettings;
-import sviolet.turquoise.enhance.annotation.setting.ReleaseSettings;
-import sviolet.turquoise.enhance.utils.Logger;
+import sviolet.turquoise.enhanced.annotation.setting.ApplicationSettings;
+import sviolet.turquoise.enhanced.annotation.setting.DebugSettings;
+import sviolet.turquoise.enhanced.annotation.setting.ReleaseSettings;
+import sviolet.turquoise.utils.Logger;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 
 /**

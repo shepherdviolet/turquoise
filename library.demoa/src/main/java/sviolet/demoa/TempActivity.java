@@ -6,11 +6,11 @@ import android.os.Handler;
 import android.widget.ImageView;
 
 import sviolet.demoa.common.DemoDescription;
-import sviolet.turquoise.enhance.TActivity;
-import sviolet.turquoise.enhance.annotation.inject.ResourceId;
-import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhanced.TActivity;
+import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
+import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
-import sviolet.turquoise.utils.bitmap.loader.AsyncBitmapDrawableLoader;
+import sviolet.turquoise.utils.bitmap.loader.enhanced.AsyncBitmapDrawableLoader;
 
 /**
  * 临时调试用Activity
