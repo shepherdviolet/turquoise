@@ -51,7 +51,6 @@ import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
 public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnBitmapLoadedListener {
 
     private static final long RELOAD_DELAY = 2000;//图片加载失败重新加载时延
-    private static final int RELOAD_TIMES_LIMIT = 2;//图片加载失败重新加载次数限制
     private int reloadTimes = 0;//图片重新加载次数
 
     private String url;
@@ -111,14 +110,6 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
         destroyHandler();
     }
 
-    /**
-     * 设置图片加载失败后重新加载次数限制<Br/>
-     */
-    public AsyncBitmapDrawable setReloadTimes(int times){
-        this.reloadTimes = times;
-        return this;
-    }
-
     /**********************************************************
      * override
      */
@@ -149,7 +140,7 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
      */
     private void reload(){
         //未被弃用的情况下重新加载图片
-        if (getLoader() != null && !unused && reloadTimes < RELOAD_TIMES_LIMIT) {
+        if (getLoader() != null && !unused && reloadTimes < getLoader().getReloadTimesMax()) {
             reloadTimes++;
             getHandler().sendEmptyMessageDelayed(HANDLER_RELOAD, RELOAD_DELAY);//重新加载图片
         }

@@ -15,7 +15,7 @@ import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
 
 /**
- * 简易BitmapLoaderImplementor<br/>
+ * 简易BitmapLoaderImplementor实现<br/>
  * 1.实现HTTP加载图片<br/>
  * 2.实现sha1缓存key<br/>
  * 3.日志打印方式处理异常<br/>

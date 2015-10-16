@@ -39,6 +39,7 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
  *           //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
  *           //.setLogger(getLogger())//打印日志
  *           .setAnimationDuration(500)//AsyncBitmapDrawable由浅及深显示效果持续时间
+ *           .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
  *           .open();//启动(必须)
  *   } catch (IOException e) {
  *      //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
@@ -134,6 +135,8 @@ public class AsyncBitmapDrawableLoader {
     private Bitmap loadingBitmap;//加载状态的图片
 
     private int animationDuration = 500;//AsyncBitmapDrawable图片由浅及深显示的动画持续时间
+
+    private int reloadTimesMax = 2;//图片加载失败重新加载次数限制
 
     /**
      * 内存缓存区默认0.125f
@@ -271,6 +274,10 @@ public class AsyncBitmapDrawableLoader {
         return animationDuration;
     }
 
+    int getReloadTimesMax(){
+        return reloadTimesMax;
+    }
+
     ////////////////////////////////////////////////////////////////////////
     // 配置
     ////////////////////////////////////////////////////////////////////////
@@ -379,6 +386,16 @@ public class AsyncBitmapDrawableLoader {
         if (duration < 0)
             duration = 0;
         this.animationDuration = duration;
+        return this;
+    }
+
+    /**
+     * 设置图片加载失败后重新加载次数限制<Br/>
+     *
+     * @param times 重新加载次数限制 默认值2
+     */
+    public AsyncBitmapDrawableLoader setReloadTimesMax(int times){
+        this.reloadTimesMax = times;
         return this;
     }
 
