@@ -79,8 +79,8 @@ public class CommonImageActivity extends TActivity {
                         null,//此处送空, CachedBitmapUtils会自动分配一个不重复的key
                         getResources(),
                         R.mipmap.async_image_1,//资源ID
-                        MeasureUtils.dp2px(getApplicationContext(), 80),//需求80dp(实际宽不等于80dp)
-                        MeasureUtils.dp2px(getApplicationContext(), 80)//需求80dp(实际高不等于80dp)
+                        MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
+                        MeasureUtils.dp2px(getApplicationContext(), 100)//需求100dp(实际高不等于100dp)
                 )
         );
         imageView12.setImageBitmap(
@@ -88,8 +88,8 @@ public class CommonImageActivity extends TActivity {
                         "imageView12",//指定缓存中的key, 后续可以单独对指定图片操作, unused(key)/get(key)等
                         getResources(),
                         R.mipmap.async_image_2,//资源ID
-                        MeasureUtils.dp2px(getApplicationContext(), 80),//需求80dp(实际宽不等于80dp)
-                        MeasureUtils.dp2px(getApplicationContext(), 80)//需求80dp(实际高不等于80dp)
+                        MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
+                        MeasureUtils.dp2px(getApplicationContext(), 100)//需求100dp(实际高不等于100dp)
                 )
         );
 
@@ -125,8 +125,8 @@ public class CommonImageActivity extends TActivity {
         Bitmap bitmap21 = BitmapUtils.decodeFromResource(
                 getResources(),
                 R.mipmap.async_image_1,//资源ID
-                MeasureUtils.dp2px(getApplicationContext(), 80),//需求80dp(实际宽不等于80dp)
-                MeasureUtils.dp2px(getApplicationContext(), 80)//需求80dp(实际高不等于80dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100)//需求100dp(实际高不等于100dp)
         );
         //在图片上绘制文字
         //CachedBitmapUtils.drawText会将原Bitmap回收
@@ -135,7 +135,7 @@ public class CommonImageActivity extends TActivity {
                 bitmap21, //原图
                 "文字", //文字
                 MeasureUtils.dp2px(getApplicationContext(), 4), //文字距离图片左边的距离 4dp
-                MeasureUtils.dp2px(getApplicationContext(), 20), //文字底边距离图片上边的距离 10dp
+                MeasureUtils.dp2px(getApplicationContext(), 40), //文字底边距离图片上边的距离 40dp
                 50f, //字体大小
                 0xFF000000 //字体颜色
         );
@@ -149,8 +149,8 @@ public class CommonImageActivity extends TActivity {
         Bitmap bitmap22 = BitmapUtils.decodeFromResource(
                 getResources(),
                 R.mipmap.async_image_2,//资源ID
-                MeasureUtils.dp2px(getApplicationContext(), 80),//需求80dp(实际宽不等于80dp)
-                MeasureUtils.dp2px(getApplicationContext(), 80)//需求80dp(实际高不等于80dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100)//需求100dp(实际高不等于100dp)
         );
         //下边两个角做圆角处理
         //CachedBitmapUtils.drawText会将原Bitmap回收
@@ -165,12 +165,12 @@ public class CommonImageActivity extends TActivity {
         Bitmap bitmap23 = BitmapUtils.decodeFromResource(
                 getResources(),
                 R.mipmap.async_image_3,//资源ID
-                MeasureUtils.dp2px(getApplicationContext(), 80),//需求80dp(实际宽不等于80dp)
-                MeasureUtils.dp2px(getApplicationContext(), 80)//需求80dp(实际高不等于80dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100)//需求100dp(实际高不等于100dp)
         );
-        //长宽都缩小到原来的50%
+        //缩小Bitmap
         //CachedBitmapUtils.zoom会将原Bitmap回收
-        bitmap23 = getCachedBitmapUtils().zoom(null, bitmap23, 0.5f);
+        bitmap23 = getCachedBitmapUtils().zoom(null, bitmap23, 0.4f);
         imageView23.setImageBitmap(bitmap23);
 
         /**
@@ -189,8 +189,6 @@ public class CommonImageActivity extends TActivity {
     private ImageView imageView31;
     @ResourceId(R.id.image_common_imageview32)
     private ImageView imageView32;
-    @ResourceId(R.id.image_common_imageview33)
-    private ImageView imageView33;
 
     private void initLine3(){
 
@@ -209,8 +207,8 @@ public class CommonImageActivity extends TActivity {
                 null,
                 getResources(),
                 R.mipmap.async_image_null,//资源ID
-                MeasureUtils.dp2px(getApplicationContext(), 80),//需求80dp(实际宽不等于80dp)
-                MeasureUtils.dp2px(getApplicationContext(), 80)//需求80dp(实际高不等于80dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100)//需求100dp(实际高不等于100dp)
         );
 
         //显示的图1
@@ -218,16 +216,16 @@ public class CommonImageActivity extends TActivity {
                 null,
                 getResources(),
                 R.mipmap.async_image_1,//资源ID
-                MeasureUtils.dp2px(getApplicationContext(), 80),//需求80dp(实际宽不等于80dp)
-                MeasureUtils.dp2px(getApplicationContext(), 80)//需求80dp(实际高不等于80dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100)//需求100dp(实际高不等于100dp)
         );
         //显示的图2
         final Bitmap bitmap32 = getCachedBitmapUtils().decodeFromResource(
                 null,
                 getResources(),
                 R.mipmap.async_image_2,//资源ID
-                MeasureUtils.dp2px(getApplicationContext(), 80),//需求80dp(实际宽不等于80dp)
-                MeasureUtils.dp2px(getApplicationContext(), 80)//需求80dp(实际高不等于80dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100)//需求100dp(实际高不等于100dp)
         );
         //设置Drawable
         imageView31.setImageDrawable(

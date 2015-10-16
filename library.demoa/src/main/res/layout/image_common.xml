@@ -16,15 +16,13 @@
 
             <ImageView
                 android:id="@+id/image_common_imageview11"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="center" />
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
 
             <ImageView
                 android:id="@+id/image_common_imageview12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="center" />
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
 
         </LinearLayout>
 
@@ -35,21 +33,19 @@
 
             <ImageView
                 android:id="@+id/image_common_imageview21"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="center" />
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
 
             <ImageView
                 android:id="@+id/image_common_imageview22"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="center" />
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
 
             <ImageView
                 android:id="@+id/image_common_imageview23"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scaleType="center" />
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:scaleType="center"/>
 
         </LinearLayout>
 
@@ -60,21 +56,37 @@
 
             <ImageView
                 android:id="@+id/image_common_imageview31"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:scaleType="fitCenter" />
 
             <ImageView
                 android:id="@+id/image_common_imageview32"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:scaleType="fitCenter" />
 
+        </LinearLayout>
+
+        <!-- 第四行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
             <ImageView
-                android:id="@+id/image_common_imageview33"
-                android:layout_width="130dp"
-                android:layout_height="130dp"
-                android:scaleType="fitCenter" />
+                android:id="@+id/image_common_imageview41"
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
+
+            <ImageView
+                android:id="@+id/image_common_imageview42"
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
+
+            <ImageView
+                android:id="@+id/image_common_imageview43"
+                android:layout_width="100dp"
+                android:layout_height="100dp"/>
 
         </LinearLayout>
 
