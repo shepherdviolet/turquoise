@@ -19,7 +19,7 @@ import java.lang.reflect.Method;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
- * 由浅及深显示的BitmapDrawable [完善中,慎用]<Br/>
+ * 由浅及深显示的BitmapDrawable, 防回收崩溃 [完善中,慎用]<Br/>
  * <br/>
  * 1.setBitmap可动态改变显示的Bitmap<Br/>
  * 2.Bitmap被回收时,会显示默认图或透明图层<br/>
@@ -55,9 +55,16 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
     private BitmapDrawable defaultDrawable;
 
     /**
-     * 初始显示为透明图层的TransitionBitmapDrawable<br/>
+     * 由浅及深显示的BitmapDrawable, 防回收崩溃 [完善中,慎用]<Br/>
      * <br/>
-     * 当设置的Bitmap被回收(recycle), 会显示透明图层<br/>
+     * 1.setBitmap可动态改变显示的Bitmap<Br/>
+     * 2.Bitmap被回收时,会显示默认图或透明图层<br/>
+     * 3.setBitmap设置的图支持渐变效果,默认图无效果<br/>
+     * <br/>
+     * *********************************************************<br/>
+     * <Br/>
+     * 初始显示透明图层<br/>
+     * 当设置的Bitmap被回收(recycle), 显示透明图层<br/>
      */
     public TransitionBitmapDrawable(){
         super(new Drawable[]{new ColorDrawable(0x00000000), new ColorDrawable(0x00000000)});
@@ -65,8 +72,15 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
     }
 
     /**
-     * 初始显示为默认图的TransitionBitmapDrawable<br/>
+     * 由浅及深显示的BitmapDrawable, 防回收崩溃 [完善中,慎用]<Br/>
      * <br/>
+     * 1.setBitmap可动态改变显示的Bitmap<Br/>
+     * 2.Bitmap被回收时,会显示默认图或透明图层<br/>
+     * 3.setBitmap设置的图支持渐变效果,默认图无效果<br/>
+     * <br/>
+     * *********************************************************<br/>
+     * <br/>
+     * 初始显示默认图<br/>
      * 默认图的显示无渐变效果, 当设置的Bitmap被回收(recycle), 会显示默认图或透明图层<br/>
      *
      * @param resources getResources()

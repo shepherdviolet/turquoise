@@ -11,7 +11,7 @@ import sviolet.turquoise.utils.bitmap.loader.OnBitmapLoadedListener;
 import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
 
 /**
- * 异步BitmapDrawable<br/>
+ * 异步BitmapDrawable, 防回收崩溃<br/>
  * <br/>
  * 由AsyncBitmapDrawableLoader.load方法返回.<br/>
  * 初始阶段显示由AsyncBitmapDrawableLoader指定的加载图, 当图片加载成功, 会自动显示目标图,

@@ -66,7 +66,8 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
  * <Br/>
  * -------------------注意事项----------------<br/>
  * <br/>
- * 1.AsyncBitmapDrawableLoader不需要内存缓存回收站,与BitmapLoader不同.<br/>
+ * 1.AsyncBitmapDrawableLoader不需要内存缓存回收站,因为AsyncBitmapDrawable防回收崩溃,
+ *      与BitmapLoader不同.<br/>
  * 2.ListView等View复用的场合,应先unused废弃原AsyncBitmapDrawable,再设置新的:
  *      AsyncBitmapDrawable drawable = (AsyncBitmapDrawable) holder.imageView.getDrawable();
  *      if (drawable != null)
@@ -360,7 +361,7 @@ public class AsyncBitmapDrawableLoader {
      * 缓存区:缓存区满后, 会清理被标记为unused/最早创建/最少使用的Bitmap. 并立刻回收(recycle()),
      * 及时地使用unused(url)方法将不再使用的Bitmap置为unused状态, 可以使得Bitmap尽快被回收.
      * <br/>
-     * AsyncBitmapDrawableLoader禁用了BitmapCache回收站<br/>
+     * AsyncBitmapDrawableLoader禁用了BitmapCache回收站, 因为AsyncBitmapDrawable防回收崩溃<br/>
      *
      * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1], 默认值0.125f
      */

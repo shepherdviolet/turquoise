@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -12,7 +13,6 @@ import sviolet.demoa.R;
 import sviolet.turquoise.utils.bitmap.loader.enhanced.AsyncBitmapDrawable;
 import sviolet.turquoise.utils.bitmap.loader.enhanced.AsyncBitmapDrawableLoader;
 import sviolet.turquoise.utils.sys.MeasureUtils;
-import sviolet.turquoise.view.GradualImageView;
 
 /**
  * ListView适配器
@@ -60,13 +60,13 @@ public class AsyncImageAdapter2 extends BaseAdapter {
         View view = convertView;
         ViewHolder holder;
         if (view == null){
-            view = View.inflate(context, R.layout.image_async_item, null);
+            view = View.inflate(context, R.layout.image_async2_item, null);
             holder = new ViewHolder();
-            holder.imageView[0] = (GradualImageView) view.findViewById(R.id.image_async_item_imageview0);
-            holder.imageView[1] = (GradualImageView) view.findViewById(R.id.image_async_item_imageview1);
-            holder.imageView[2] = (GradualImageView) view.findViewById(R.id.image_async_item_imageview2);
-            holder.imageView[3] = (GradualImageView) view.findViewById(R.id.image_async_item_imageview3);
-            holder.imageView[4] = (GradualImageView) view.findViewById(R.id.image_async_item_imageview4);
+            holder.imageView[0] = (ImageView) view.findViewById(R.id.image_async_item_imageview0);
+            holder.imageView[1] = (ImageView) view.findViewById(R.id.image_async_item_imageview1);
+            holder.imageView[2] = (ImageView) view.findViewById(R.id.image_async_item_imageview2);
+            holder.imageView[3] = (ImageView) view.findViewById(R.id.image_async_item_imageview3);
+            holder.imageView[4] = (ImageView) view.findViewById(R.id.image_async_item_imageview4);
             holder.titleTextView = (TextView) view.findViewById(R.id.image_async_item_title);
             holder.contentTextView = (TextView) view.findViewById(R.id.image_async_item_content);
             view.setTag(holder);
@@ -93,9 +93,9 @@ public class AsyncImageAdapter2 extends BaseAdapter {
             if (i == 0) {
                 //第一张图为160*160dp, 其余80*80dp
                 //加载成功逐渐显示动画效果
-                holder.imageView[i].setImageDrawableImmediate(asyncBitmapDrawableLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge));
+                holder.imageView[i].setImageDrawable(asyncBitmapDrawableLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge));
             } else {
-                holder.imageView[i].setImageDrawableImmediate(asyncBitmapDrawableLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall));
+                holder.imageView[i].setImageDrawable(asyncBitmapDrawableLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall));
             }
 
         }
@@ -105,7 +105,7 @@ public class AsyncImageAdapter2 extends BaseAdapter {
     private class ViewHolder{
         TextView titleTextView;
         TextView contentTextView;
-        GradualImageView[] imageView = new GradualImageView[5];
+        ImageView[] imageView = new ImageView[5];
     }
 
 }
