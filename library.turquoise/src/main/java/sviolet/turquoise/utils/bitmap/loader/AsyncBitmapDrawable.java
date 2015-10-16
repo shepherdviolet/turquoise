@@ -176,7 +176,7 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
      * 当加载器加载成功
      */
     @Override
-    public void onLoadSucceed(String url, Object params, Bitmap bitmap) {
+    public void onLoadSucceed(String url, int reqWidth, int reqHeight, Object params, Bitmap bitmap) {
         //加载结束
         loading = false;
         if (bitmap == null || bitmap.isRecycled()) {
@@ -193,7 +193,7 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
      * 当加载器加载失败
      */
     @Override
-    public void onLoadFailed(String url, Object params) {
+    public void onLoadFailed(String url, int reqWidth, int reqHeight, Object params) {
         //加载结束
         loading = false;
         //重置图片
@@ -206,7 +206,7 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
      * 当加载器加载取消
      */
     @Override
-    public void onLoadCanceled(String url, Object params) {
+    public void onLoadCanceled(String url, int reqWidth, int reqHeight, Object params) {
         //加载结束
         loading = false;
         //重置图片

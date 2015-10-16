@@ -17,30 +17,22 @@ import sviolet.turquoise.utils.sys.ApplicationUtils;
 import sviolet.turquoise.utils.sys.DirectoryUtils;
 
 /**
+ * BitmapLoader<Br/>
  * 图片双缓存网络异步加载器<br/>
  * <br/>
- * ****************************************************************<br/>
- * * * * * 种类:<br/>
- * ****************************************************************<br/>
+ * 异步加载Bitmap, 适用性广泛, 兼容性好, 使用较复杂.<br/>
  * <br/>
- * 1.AsyncBitmapLoader<br/>
- *      加载Bitmap, 适用性广泛, 兼容性好, 使用较复杂.<br/>
- * 2.AsyncBitmapDrawableLoader<br/>
- *      加载AsyncBitmapDrawable, 使用简单, 但兼容性较差.<br/>
- *      @see sviolet.turquoise.view.drawable.TransitionBitmapDrawable
- *      @see AsyncBitmapDrawable
- * <Br/>
  * ****************************************************************<br/>
- * * * * * AsyncBitmapLoader使用说明:<br/>
+ * * * * * BitmapLoader使用说明:<br/>
  * ****************************************************************<br/>
  * <br/>
  * -------------------初始化设置----------------<br/>
  * <br/>
  * 1.实现接口BitmapLoaderImplementor<br/>
- * 2.实例化AsyncBitmapLoader(Context,String,BitmapLoaderImplementor) <br/>
+ * 2.实例化BitmapLoader(Context,String,BitmapLoaderImplementor) <br/>
  * 3.设置参数:<br/>
  *   try {
- *       mAsyncBitmapLoader = new AsyncBitmapLoader(this, "bitmap", new MyBitmapLoaderImplementor())
+ *       mBitmapLoader = new BitmapLoader(this, "bitmap", new MyBitmapLoaderImplementor())
  *          .setRamCache(0.125f, 0.125f)//设置内存缓存大小,启用回收站
  *          //.setRamCache(0.125f, 0)//回收站设置为0禁用
  *          .setDiskCache(50, 5, 15)//设置磁盘缓存容量50M, 磁盘加载并发数5, 等待队列15
@@ -70,7 +62,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *      少会导致图片加载太慢, 网络加载等待队列容量15, 建议与磁盘缓存等待队列容量
  *      相等, 根据屏幕中最多可能展示的图片数决定(略大于), 设置过少会导致屏幕中图
  *      片未全部加载完.<br/>
- *      设置日志打印器后, AsyncBitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
+ *      设置日志打印器后, BitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
  *      情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
  * <br/>
  * <br/>
@@ -82,7 +74,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *      从内存缓冲获取图片,若不存在返回null<br/>
  * 3.unused [重要] <br/>
  *      不再使用的图片须及时用该方法废弃,尤其是大量图片的场合,未被废弃(unused)的图片
- *      将不会被AsyncBitmapLoader回收.请参看"名词解释".<br/>
+ *      将不会被BitmapLoader回收.请参看"名词解释".<br/>
  *      该方法能取消加载任务,有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<br/>
  * 4.destroy [重要] <br/>
  *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<br/>
@@ -93,70 +85,16 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *      holder.imageView.setImageBitmap(null);//置空(或默认图)
  *      String oldUrl = (String) holder.imageView.getTag();//原图的url
  *      if(oldUrl != null)
- *          asyncBitmapLoader.unused(oldUrl);//将原图标识为不再使用,并取消原加载任务
+ *          bitmapLoader.unused(oldUrl);//将原图标识为不再使用,并取消原加载任务
  *      holder.imageView.setTag(newUrl);//记录新图的url,用于下次unused
- *      asyncBitmapLoader.load(newUrl, reqWidth, reqHeight, holder.imageView, mOnBitmapLoadedListener);//加载图片
+ *      bitmapLoader.load(newUrl, reqWidth, reqHeight, holder.imageView, mOnBitmapLoadedListener);//加载图片
  * <Br/>
- * ****************************************************************<br/>
- * * * * * AsyncBitmapDrawableLoader使用说明:<br/>
- * ****************************************************************<br/>
- * <br/>
- * -------------------初始化设置----------------<br/>
- * <br/>
- * 1.实现接口BitmapLoaderImplementor<br/>
- * 2.实例化AsyncBitmapDrawableLoader(Context,String,Bitmap,BitmapLoaderImplementor) <br/>
- * 3.设置参数:<br/>
- *   try {
- *       mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
- *           BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor())
- *           .setRamCache(0.15f)//缓存占15%内存(与AsyncBitmapLoader不同之处)
- *           .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
- *           .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
- *           .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
- *           //.setDiskCacheInner()//强制使用内部储存
- *           //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
- *           //.setLogger(getLogger())//打印日志
- *           .setAnimationDuration(500)//AsyncBitmapDrawable由浅及深显示效果持续时间
- *           .open();//启动(必须)
- *   } catch (IOException e) {
- *      //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
- *   }
- * <br/>
- *      [上述代码说明]:<br/>
- *      通用设置说明省略<br/>
- *      注意AsyncBitmapDrawableLoader中回收站是强制关闭的,因为配合AsyncBitmapDrawable使用无需回收站,
- *      同样也无需unused方法<br/>
- *      构造函数第三个参数loadingBitmap在AsyncBitmapDrawableLoader.destroy中销毁,因此只需BitmapUtils
- *      解析即可,无需考虑手工回收.<br/>
- * <br/>
- * <Br/>
- * -------------------加载器使用----------------<br/>
- * <br/>
- * 1.load <br/>
- *      加载,立即返回AsyncBitmapDrawable,直接赋给ImageView即可,AsyncBitmapDrawable会自动处理后续工作
- *      (显示图片,防止异常等).注意切不可获取AsyncBitmapDrawable中的Bitmap直接使用.<Br/>
- * 2.get <br/>
- *      从内存缓冲获取AsyncBitmapDrawable,若不存在返回null<br/>
- * 3.AsyncBitmapDrawable.unused [重要] <br/>
- *      当图片不再显示时,及时unused有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<br/>
- * 4.destroy [重要] <br/>
- *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<br/>
- * <Br/>
- * -------------------注意事项----------------<br/>
- * <br/>
- * 1.AsyncBitmapDrawableLoader不需要内存缓存回收站,与AsyncBitmapLoader不同.<br/>
- * 2.ListView等View复用的场合,应先unused废弃原AsyncBitmapDrawable,再设置新的:
- *      AsyncBitmapDrawable drawable = (AsyncBitmapDrawable) holder.imageView.getDrawable();
- *      if (drawable != null)
- *          drawable.unused();
- *      holder.imageView.setImageDrawable(asyncBitmapDrawableLoader.load(url, reqWidth, reqHeight));
- * <br/>
  * ****************************************************************<br/>
  * * * * * 名词解释:<br/>
  * ****************************************************************<br/>
  * <Br/>
  * url:<br/>
- *      AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
+ *      BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
  *      将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
  *      这个cacheKey标识唯一的资源<br/>
  * <Br/>
@@ -193,14 +131,12 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * 3.网络加载失败,需要重新加载.<br/>
  *      使用AsyncBitmapDrawableLoader无需特殊处理, AsyncBitmapDrawable自带重新加载功能.<br/>
  *      推荐方案:<br/>
- *      1).定时刷新UI(1-5s),以此触发显示中的图片重新加载.这样做的优点是,只重新加载显示中的图片.
- *          适合ListView/GridView等View复用/适配器模式的场合,图片加载在适配器中实现,定时对适配
- *          器(Adapter)进行刷新,即可达到重新加载的目的.<br/>
+ *      1).在网络加载失败(failed)时, 有限次地重新加载, 不应重新加载unused的任务.<br/>
  * <Br/>
  * <Br/>
  * Created by S.Violet on 2015/7/3.
  */
-class AbstractBitmapLoader {
+public class BitmapLoader {
 
     private CachedBitmapUtils mCachedBitmapUtils;//带缓存的Bitmap工具
     private DiskLruCache mDiskLruCache;//磁盘缓存器
@@ -231,9 +167,9 @@ class AbstractBitmapLoader {
      * @param diskCacheName 磁盘缓存目录名
      * @param implementor 实现器
      */
-    AbstractBitmapLoader(Context context, String diskCacheName, BitmapLoaderImplementor implementor) {
+    public BitmapLoader(Context context, String diskCacheName, BitmapLoaderImplementor implementor) {
         if (implementor == null){
-            throw new RuntimeException("[AbstractBitmapLoader]implementor is null !!", new NullPointerException());
+            throw new RuntimeException("[BitmapLoader]implementor is null !!", new NullPointerException());
         }
         this.context = context;
         this.diskCacheName = diskCacheName;
@@ -249,7 +185,7 @@ class AbstractBitmapLoader {
      * @param netLoadConcurrency 网络加载任务并发量, 默认3
      * @param netLoadVolume 网络加载等待队列容量, 默认10
      */
-    AbstractBitmapLoader setNetLoad(int netLoadConcurrency, int netLoadVolume){
+    public BitmapLoader setNetLoad(int netLoadConcurrency, int netLoadVolume){
         this.netLoadConcurrency = netLoadConcurrency;
         this.netLoadVolume = netLoadVolume;
         return this;
@@ -260,7 +196,7 @@ class AbstractBitmapLoader {
      * @param diskLoadConcurrency 磁盘加载任务并发量, 默认5
      * @param diskLoadVolume 磁盘加载等待队列容量, 默认10
      */
-    AbstractBitmapLoader setDiskCache(int diskCacheSizeMib, int diskLoadConcurrency, int diskLoadVolume){
+    public BitmapLoader setDiskCache(int diskCacheSizeMib, int diskLoadConcurrency, int diskLoadVolume){
         this.diskCacheSize = 1024L * 1024L * diskCacheSizeMib;
         this.diskLoadConcurrency = diskLoadConcurrency;
         this.diskLoadVolume = diskLoadVolume;
@@ -290,7 +226,7 @@ class AbstractBitmapLoader {
      * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1], 默认值0.125f
      * @param ramCacheRecyclerSizePercent 内存缓存回收站占用应用可用内存的比例 [0, 1], 设置为0禁用回收站, 默认值0.125f
      */
-    AbstractBitmapLoader setRamCache(float ramCacheSizePercent, float ramCacheRecyclerSizePercent){
+    public BitmapLoader setRamCache(float ramCacheSizePercent, float ramCacheRecyclerSizePercent){
         this.ramCacheSizePercent = ramCacheSizePercent;
         this.ramCacheRecyclerSizePercent = ramCacheRecyclerSizePercent;
         return this;
@@ -300,7 +236,7 @@ class AbstractBitmapLoader {
      * 设置磁盘缓存路径为内部储存<br/>
      * 若不设置, 则优先选择外部储存, 当外部储存不存在时使用内部储存
      */
-    AbstractBitmapLoader setDiskCacheInner(){
+    public BitmapLoader setDiskCacheInner(){
         cacheDir = new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + diskCacheName);
         return this;
     }
@@ -312,7 +248,7 @@ class AbstractBitmapLoader {
      * @param format 图片格式
      * @param quality 图片质量 0-100
      */
-    AbstractBitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality){
+    public BitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality){
         this.imageFormat = format;
         this.imageQuality = quality;
         return this;
@@ -341,7 +277,7 @@ class AbstractBitmapLoader {
      * 多数的View已不再显示在屏幕上.<Br/>
      *
      */
-    AbstractBitmapLoader setDuplicateLoadEnable(boolean duplicateLoadEnable){
+    public BitmapLoader setDuplicateLoadEnable(boolean duplicateLoadEnable){
         if (duplicateLoadEnable){
             keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_FOLLOW;
         }else{
@@ -353,7 +289,7 @@ class AbstractBitmapLoader {
     /**
      * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
      */
-    AbstractBitmapLoader setLogger(Logger logger) {
+    public BitmapLoader setLogger(Logger logger) {
         this.logger = logger;
         if (mCachedBitmapUtils != null)
             mCachedBitmapUtils.getBitmapCache().setLogger(logger);
@@ -366,7 +302,7 @@ class AbstractBitmapLoader {
      *
      * @throws IOException 磁盘缓存启动失败抛出异常
      */
-    AbstractBitmapLoader open() throws IOException {
+    public BitmapLoader open() throws IOException {
         this.mDiskLruCache = DiskLruCache.open(cacheDir, ApplicationUtils.getAppVersion(context), 1, diskCacheSize);
         this.mCachedBitmapUtils = new CachedBitmapUtils(context, ramCacheSizePercent, ramCacheRecyclerSizePercent);
         this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency)
@@ -390,7 +326,7 @@ class AbstractBitmapLoader {
      * 加载图片, 加载成功后回调mOnLoadCompleteListener<br/>
      * 回调方法的params参数为此方法传入的params, 并非Bitmap<Br/>
      * <br/>
-     * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
+     * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
      * <Br/>
@@ -403,20 +339,20 @@ class AbstractBitmapLoader {
      * @param params 参数,会带入mOnLoadCompleteListener回调方法,通常为ImageView,便于设置图片
      * @param mOnBitmapLoadedListener 回调监听器
      */
-    void load(String url, int reqWidth, int reqHeight, Object params, OnBitmapLoadedListener mOnBitmapLoadedListener) {
+    public void load(String url, int reqWidth, int reqHeight, Object params, OnBitmapLoadedListener mOnBitmapLoadedListener) {
         checkIsOpen();
         //计算缓存key
         String cacheKey = implementor.getCacheKey(url);
         if (logger != null) {
-            logger.d("[AsyncBitmapLoader]load:start:  url<" + url + "> cacheKey<" + cacheKey + ">");
+            logger.d("[BitmapLoader]load:start:  url<" + url + "> cacheKey<" + cacheKey + ">");
         }
         //尝试内存缓存中取Bitmap
         Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
         if (bitmap != null && !bitmap.isRecycled()) {
             //缓存中存在直接回调:成功
-            mOnBitmapLoadedListener.onLoadSucceed(url, params, bitmap);
+            mOnBitmapLoadedListener.onLoadSucceed(url, reqWidth, reqHeight, params, bitmap);
             if (logger != null) {
-                logger.d("[AsyncBitmapLoader]load:succeed:  from:BitmapCache url<" + url + "> cacheKey<" + cacheKey + ">");
+                logger.d("[BitmapLoader]load:succeed:  from:BitmapCache url<" + url + "> cacheKey<" + cacheKey + ">");
             }
             return;
         }
@@ -427,14 +363,14 @@ class AbstractBitmapLoader {
     /**
      * 从内存缓存中取Bitmap, 若不存在或已被回收, 则返回null<br/>
      * <br/>
-     * AsyncBitmapLoader中每个位图资源都由url唯一标识, url在AsyncBitmapLoader内部
+     * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
      *
      * @param url 图片URL地址
      * @return 若不存在或已被回收, 则返回null
      */
-    Bitmap get(String url) {
+    public Bitmap get(String url) {
         checkIsOpen();
         //计算缓存key
         String cacheKey = implementor.getCacheKey(url);
@@ -467,7 +403,7 @@ class AbstractBitmapLoader {
      *
      * @param url 图片URL地址
      */
-    void unused(String url) {
+    public void unused(String url) {
         checkIsOpen();
         //计算缓存key
         String cacheKey = implementor.getCacheKey(url);
@@ -478,14 +414,14 @@ class AbstractBitmapLoader {
         //将位图标识为不再使用
         mCachedBitmapUtils.unused(cacheKey);
         if (logger != null) {
-            logger.d("[AbstractBitmapLoader]unused:  url<" + url + "> cacheKey<" + cacheKey + ">");
+            logger.d("[BitmapLoader]unused:  url<" + url + "> cacheKey<" + cacheKey + ">");
         }
     }
 
     /**
      * [重要]将所有资源回收销毁, 请在Activity.onDestroy()时调用该方法
      */
-    void destroy() {
+    public void destroy() {
         checkIsOpen();
         if (mNetLoadQueue != null) {
             mNetLoadQueue.destroy();
@@ -510,7 +446,7 @@ class AbstractBitmapLoader {
         if (implementor != null)
             implementor.onDestroy();
         if (logger != null) {
-            logger.d("[AbstractBitmapLoader]destroy");
+            logger.d("[BitmapLoader]destroy");
         }
     }
 
@@ -583,7 +519,7 @@ class AbstractBitmapLoader {
         public Object doInBackground(Object params) {
             //异常检查
             if (mDiskLruCache == null || mCachedBitmapUtils == null) {
-                implementor.onException(new RuntimeException("[AbstractBitmapLoader]cachedBitmapUtils is null"));
+                implementor.onException(new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
@@ -615,31 +551,31 @@ class AbstractBitmapLoader {
             //若任务被取消
             if (isCancel) {
                 if (mOnBitmapLoadedListener != null)
-                    mOnBitmapLoadedListener.onLoadCanceled(url, getParams());
+                    mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
                 if (mCachedBitmapUtils != null)
                     mCachedBitmapUtils.unused(cacheKey);
                 if (logger != null) {
-                    logger.d("[AbstractBitmapLoader]load:canceled:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
+                    logger.d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                 }
                 return;
             }
             switch ((int) result) {
                 case RESULT_SUCCEED:
                     if (mOnBitmapLoadedListener != null && mCachedBitmapUtils != null)
-                        mOnBitmapLoadedListener.onLoadSucceed(url, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
+                        mOnBitmapLoadedListener.onLoadSucceed(url, reqWidth, reqHeight, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
                     if (logger != null) {
-                        logger.d("[AbstractBitmapLoader]load:succeed:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
+                        logger.d("[BitmapLoader]load:succeed:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 case RESULT_FAILED:
                     if (mOnBitmapLoadedListener != null)
-                        mOnBitmapLoadedListener.onLoadFailed(url, getParams());
+                        mOnBitmapLoadedListener.onLoadFailed(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
                     break;
                 case RESULT_CANCELED:
                     if (mOnBitmapLoadedListener != null)
-                        mOnBitmapLoadedListener.onLoadCanceled(url, getParams());
+                        mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
                     break;
@@ -666,7 +602,7 @@ class AbstractBitmapLoader {
         private int reqWidth;
         private int reqHeight;
         private OnBitmapLoadedListener mOnBitmapLoadedListener;
-        private BitmapLoaderHolder holder;
+        private BitmapLoaderMessenger messenger;
 
         public NetLoadTask(String url, int reqWidth, int reqHeight, OnBitmapLoadedListener mOnBitmapLoadedListener) {
             this.url = url;
@@ -684,7 +620,7 @@ class AbstractBitmapLoader {
         public Object doInBackground(Object params) {
             //检查异常
             if (mDiskLruCache == null || mCachedBitmapUtils == null) {
-                implementor.onException(new RuntimeException("[AbstractBitmapLoader]cachedBitmapUtils is null"));
+                implementor.onException(new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
@@ -701,17 +637,17 @@ class AbstractBitmapLoader {
                 //获得输出流, 用于写入缓存
                 outputStream = editor.newOutputStream(0);
                 //结果容器
-                holder = new BitmapLoaderHolder();
+                messenger = new BitmapLoaderMessenger();
                 //从网络加载Bitmap
-                implementor.loadFromNet(url, reqWidth, reqHeight, holder);
+                implementor.loadFromNet(url, reqWidth, reqHeight, messenger);
                 //阻塞等待并获取结果Bitmap
-                int result = holder.getResult();
-                if (result == BitmapLoaderHolder.RESULT_SUCCEED && holder.getBitmap() != null && !holder.getBitmap().isRecycled()){
+                int result = messenger.getResult();
+                if (result == BitmapLoaderMessenger.RESULT_SUCCEED && messenger.getBitmap() != null && !messenger.getBitmap().isRecycled()){
                     //结果为加载成功,且Bitmap正常的情况
                     //写入文件缓存即使失败也不影响返回Bitmap
                     try {
                         //把图片写入缓存
-                        BitmapUtils.syncSaveBitmap(holder.getBitmap(), outputStream, imageFormat, imageQuality, false, null);
+                        BitmapUtils.syncSaveBitmap(messenger.getBitmap(), outputStream, imageFormat, imageQuality, false, null);
                         //尝试flush输出流
                         try {
                             if (outputStream != null)
@@ -728,7 +664,7 @@ class AbstractBitmapLoader {
                     //若加载任务尚未被取消
                     if (!isCancel()) {
                         //加入内存缓存
-                        mCachedBitmapUtils.cacheBitmap(cacheKey, holder.getBitmap());
+                        mCachedBitmapUtils.cacheBitmap(cacheKey, messenger.getBitmap());
                         return RESULT_SUCCEED;
                     }
                     //若加载任务被取消,即使返回结果是加载成功,也只会存入缓存,不会返回成功的结果
@@ -740,11 +676,11 @@ class AbstractBitmapLoader {
                     //写缓存日志
                     mDiskLruCache.flush();
                     //异常处理
-                    if (holder.getThrowable() != null){
-                        implementor.onException(holder.getThrowable());
+                    if (messenger.getThrowable() != null){
+                        implementor.onException(messenger.getThrowable());
                     }
                     //加载取消结果返回
-                    if (result == BitmapLoaderHolder.RESULT_CANCELED)
+                    if (result == BitmapLoaderMessenger.RESULT_CANCELED)
                         return RESULT_CANCELED;
                 }
             } catch (Exception e) {
@@ -766,31 +702,31 @@ class AbstractBitmapLoader {
             //若任务被取消
             if (isCancel) {
                 if (mOnBitmapLoadedListener != null)
-                    mOnBitmapLoadedListener.onLoadCanceled(url, getParams());
+                    mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
                 if (mCachedBitmapUtils != null)
                     mCachedBitmapUtils.unused(cacheKey);
                 if (logger != null) {
-                    logger.d("[AbstractBitmapLoader]load:canceled:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
+                    logger.d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                 }
                 return;
             }
             switch ((int) result) {
                 case RESULT_SUCCEED:
                     if (mOnBitmapLoadedListener != null && mCachedBitmapUtils != null)
-                        mOnBitmapLoadedListener.onLoadSucceed(url, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
+                        mOnBitmapLoadedListener.onLoadSucceed(url, reqWidth, reqHeight, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
                     if (logger != null) {
-                        logger.d("[AbstractBitmapLoader]load:succeed:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
+                        logger.d("[BitmapLoader]load:succeed:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 case RESULT_FAILED:
                     if (mOnBitmapLoadedListener != null)
-                        mOnBitmapLoadedListener.onLoadFailed(url, getParams());
+                        mOnBitmapLoadedListener.onLoadFailed(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
                     break;
                 case RESULT_CANCELED:
                     if (mOnBitmapLoadedListener != null)
-                        mOnBitmapLoadedListener.onLoadCanceled(url, getParams());
+                        mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
                     break;
@@ -805,10 +741,10 @@ class AbstractBitmapLoader {
         @Override
         public void onCancel() {
             super.onCancel();
-            if (holder != null)
-                holder.cancel();
-//            if (holder != null)
-//                holder.interrupt();
+            if (messenger != null)
+                messenger.cancel();
+//            if (messenger != null)
+//                messenger.interrupt();
         }
 
         /**
@@ -818,11 +754,11 @@ class AbstractBitmapLoader {
         protected void onDestroy() {
             super.onDestroy();
 
-            if (holder != null)
-                holder.destroy();
+            if (messenger != null)
+                messenger.destroy();
 
             this.mOnBitmapLoadedListener = null;
-            this.holder = null;
+            this.messenger = null;
         }
     }
 
@@ -832,7 +768,7 @@ class AbstractBitmapLoader {
      */
     void checkIsOpen(){
         if (mDiskLruCache == null || mCachedBitmapUtils == null || mDiskCacheQueue == null || mNetLoadQueue == null){
-            throw new RuntimeException("[AbstractBitmapLoader]can't use AbstractBitmapLoader without AbstractBitmapLoader.open()!!!");
+            throw new RuntimeException("[BitmapLoader]can't use BitmapLoader without BitmapLoader.open()!!!");
         }
     }
 

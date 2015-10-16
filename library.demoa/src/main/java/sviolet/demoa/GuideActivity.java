@@ -16,10 +16,10 @@ import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
 import sviolet.demoa.image.ImageActivity;
 import sviolet.demoa.slide.SlideActivity;
-import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
-import sviolet.turquoise.enhance.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.TActivity;
-import sviolet.turquoise.utils.bitmap.loader.AsyncBitmapLoader;
+import sviolet.turquoise.enhance.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 
 /**************************************************************
  * Demo配置
@@ -80,8 +80,8 @@ public class GuideActivity extends TActivity {
                 应磁盘缓存区无读写操作, 否则会抛出异常.
             */
             try {
-//                AsyncBitmapLoader.wipeDiskCache(this, "AsyncImageActivity");//若有外部储存, 清除外部缓存, 否则清除内部缓存
-                AsyncBitmapLoader.wipeInnerDiskCache(this, "AsyncImageActivity");//强制清除内部储存的缓存
+//                BitmapLoader.wipeDiskCache(this, "AsyncImageActivity");//若有外部储存, 清除外部缓存, 否则清除内部缓存
+                BitmapLoader.wipeInnerDiskCache(this, "AsyncImageActivity");//强制清除内部储存的缓存
                 Toast.makeText(getApplicationContext(), "cache wipe complete", Toast.LENGTH_SHORT).show();
             } catch (IOException e) {
                 Toast.makeText(getApplicationContext(), "cache wipe failed", Toast.LENGTH_SHORT).show();

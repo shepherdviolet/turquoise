@@ -6,10 +6,12 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * BitmapLoader结果容器<br/>
+ * BitmapLoader通知器<br/>
+ * 用于BitmapLoader任务线程与异步网络请求间的通知<br/>
+ * <br/>
  * 用途:<Br/>
- * 1.返回结果:setResultSucceed/setResultFailed/setResultCanceled<br/>
- *      无论同步处理,还是异步处理,均通过这些方法返回结果,BitmapLoader加载任务中的getResult方法会阻塞,
+ * 1.返回处理结果:setResultSucceed/setResultFailed/setResultCanceled<br/>
+ *      无论同步处理,还是异步处理,均通过这些方法返回结果,BitmapLoader加载任务会阻塞,
  *      直到setResultSucceed/setResultFailed/setResultCanceled方法被调用.<br/>
  *      1)setResultSucceed(Bitmap),加载成功,返回Bitmap<br/>
  *      2)setResultFailed(Throwable),加载失败,返回异常<br/>
@@ -25,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * <Br/>
  *
  */
-public class BitmapLoaderHolder {
+public class BitmapLoaderMessenger {
 
     public static final int RESULT_NULL = 0;//无结果
     public static final int RESULT_SUCCEED = 1;//结果:加载成功
@@ -43,6 +45,10 @@ public class BitmapLoaderHolder {
 
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition condition = lock.newCondition();
+
+    BitmapLoaderMessenger(){
+        //不允许包外部进行实例化
+    }
 
     /**
      * [重要]返回结果:加载成功<br/>

@@ -13,7 +13,10 @@ import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
 
 /**
- * 简易BitmapLoaderImplementor
+ * 简易BitmapLoaderImplementor<br/>
+ * 1.实现HTTP加载图片<br/>
+ * 2.实现sha1缓存key<br/>
+ * 3.日志打印方式处理异常<br/>
  *
  * Created by S.Violet on 2015/10/12.
  */
@@ -34,7 +37,7 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor{
     }
 
     @Override
-    public void loadFromNet(String url, int reqWidth, int reqHeight, BitmapLoaderHolder holder) {
+    public void loadFromNet(String url, int reqWidth, int reqHeight, BitmapLoaderMessenger messenger) {
         InputStream inputStream = null;
         ByteArrayOutputStream outputStream = null;
         HttpURLConnection conn = null;
@@ -54,24 +57,24 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor{
                 byte[] data = outputStream.toByteArray();
                 if (data == null || data.length <= 0){
                     //设置结果返回[重要]
-                    holder.setResultFailed(new Exception("[SimpleBitmapLoaderImplementor]data is null"));
+                    messenger.setResultFailed(new Exception("[SimpleBitmapLoaderImplementor]data is null"));
                     return;
                 }
                 //设置结果返回[重要]
-                holder.setResultSucceed(BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight));
+                messenger.setResultSucceed(BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight));
                 return;
             }
         } catch (MalformedURLException e) {
             //设置结果返回[重要]
-            holder.setResultFailed(e);
+            messenger.setResultFailed(e);
             return;
         } catch (ProtocolException e) {
             //设置结果返回[重要]
-            holder.setResultFailed(e);
+            messenger.setResultFailed(e);
             return;
         } catch (IOException e) {
             //设置结果返回[重要]
-            holder.setResultFailed(e);
+            messenger.setResultFailed(e);
             return;
         }finally {
             if (outputStream != null) {
@@ -89,7 +92,7 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor{
                 conn.disconnect();
         }
         //设置结果返回[重要]
-        holder.setResultFailed(null);
+        messenger.setResultFailed(null);
     }
 
     @Override

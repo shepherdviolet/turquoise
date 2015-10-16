@@ -18,18 +18,18 @@ import sviolet.demoa.image.utils.MyBitmapLoaderImplementor;
 import sviolet.turquoise.enhance.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.TActivity;
-import sviolet.turquoise.utils.bitmap.loader.AsyncBitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 
 @DemoDescription(
         title = "AsyncImageList",
         type = "Image",
-        info = "an Async. Image ListView powered by Common AsyncBitmapLoader"
+        info = "an Async. Image ListView powered by Common BitmapLoader"
 )
 
 /**
  * 图片动态加载Demo<br/>
  * 内存/磁盘双缓存<br/>
- * 采用AsyncBitmapLoader实现, 启用缓存回收站<br/>
+ * 采用BitmapLoader实现, 启用缓存回收站<br/>
  *
  * Created by S.Violet on 2015/7/7.
  */
@@ -45,7 +45,7 @@ public class AsyncImageActivity extends TActivity {
 
     private AsyncImageAdapter adapter;
 
-    private AsyncBitmapLoader mAsyncBitmapLoader;//图片加载器
+    private BitmapLoader mBitmapLoader;//图片加载器
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class AsyncImageActivity extends TActivity {
             会导致快速滑动时, 下载更多的图, 增加流量消耗.
             */
             //初始化图片加载器
-            mAsyncBitmapLoader = new AsyncBitmapLoader(this, "AsyncImageActivity", new MyBitmapLoaderImplementor(this))
+            mBitmapLoader = new BitmapLoader(this, "AsyncImageActivity", new MyBitmapLoaderImplementor(this))
                     .setRamCache(0.15f, 0.15f)//缓存和回收站各占10%内存
                     .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
                     .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
@@ -69,7 +69,7 @@ public class AsyncImageActivity extends TActivity {
                     .open();//启动(必须)
 
             //设置适配器, 传入图片加载器, 图片解码工具
-            adapter = new AsyncImageAdapter(this, makeItemList(), mAsyncBitmapLoader, getCachedBitmapUtils());
+            adapter = new AsyncImageAdapter(this, makeItemList(), mBitmapLoader, getCachedBitmapUtils());
             listView.setAdapter(adapter);
         } catch (IOException e) {
             //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
@@ -81,43 +81,8 @@ public class AsyncImageActivity extends TActivity {
     protected void onDestroy() {
         super.onDestroy();
         //销毁图片加载器(回收位图占用内存)
-        mAsyncBitmapLoader.destroy();
+        mBitmapLoader.destroy();
     }
-
-    /****************************************************
-     * 定时刷新
-     * 解决网络加载失败,实现重新加载
-     * 通过刷新UI方式触发图片重新加载, 在静止时只会重新加载显示中的图片
-     */
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        handler.sendEmptyMessageDelayed(HANDLER_REFRESH, 2000L);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        handler.removeMessages(HANDLER_REFRESH);
-    }
-
-    private static final int HANDLER_REFRESH = 0;
-
-    private Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-            switch (msg.what){
-                case HANDLER_REFRESH:
-                    adapter.notifyDataSetChanged();//刷新UI, 触发图片重新加载
-                    handler.sendEmptyMessageDelayed(HANDLER_REFRESH, 2000L);
-                    break;
-                default:
-                    break;
-            }
-            return true;
-        }
-    });
 
     /****************************************************
      * 模拟数据生成

@@ -14,9 +14,9 @@ import java.util.List;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.enhance.TActivity;
-import sviolet.turquoise.utils.bitmap.loader.AsyncBitmapLoader;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.GradualImageView;
@@ -31,20 +31,20 @@ public class AsyncImageAdapter extends BaseAdapter {
 
     private Context context;
     private List<AsyncImageItem> itemList;
-    private AsyncBitmapLoader asyncBitmapLoader;
+    private BitmapLoader bitmapLoader;
     private Drawable defaultBitmapDrawableLarge, defaultBitmapDrawableSmall;
     private int widthHeightLarge, widthHeightSmall;
 
     /**
      * @param context context
      * @param itemList 数据
-     * @param asyncBitmapLoader 用于图片动态加载缓存
+     * @param bitmapLoader 用于图片动态加载缓存
      * @param cachedBitmapUtils 用于解码默认图(TActivity.getCachedBitmapUtils())
      */
-    public AsyncImageAdapter(Context context, List<AsyncImageItem> itemList, AsyncBitmapLoader asyncBitmapLoader, CachedBitmapUtils cachedBitmapUtils){
+    public AsyncImageAdapter(Context context, List<AsyncImageItem> itemList, BitmapLoader bitmapLoader, CachedBitmapUtils cachedBitmapUtils){
         this.context = context;
         this.itemList = itemList;
-        this.asyncBitmapLoader = asyncBitmapLoader;
+        this.bitmapLoader = bitmapLoader;
 
         //用CachedBitmapUtils解码的默认图, 会缓存在其内建BtimapCache中, 在TActivity.onDestroy()时会回收资源
         cachedBitmapUtils.decodeFromResource(DEFAULT_BITMAP_KEY, context.getResources(), R.mipmap.async_image_null);
@@ -91,9 +91,10 @@ public class AsyncImageAdapter extends BaseAdapter {
             for (int i = 0 ; i < 5 ; i++){
                 //去除ImageView中原有图片
                 holder.imageView[i].setImageBitmapImmediate(null);
+                //取出之前的TaskInfo
+                TaskInfo taskInfo = (TaskInfo) holder.imageView[i].getTag();
                 //将之前的位图资源置为unused状态以便回收资源 [重要]
-                String url = (String) holder.imageView[i].getTag();
-                asyncBitmapLoader.unused(url);
+                bitmapLoader.unused(taskInfo.url);
             }
         }
         AsyncImageItem item = itemList.get(position);
@@ -103,10 +104,10 @@ public class AsyncImageAdapter extends BaseAdapter {
         Bitmap bitmap;//图片
 
         for (int i = 0 ; i < 5 ; i++) {
-            //将url存入imageView的TAG中, 来标识当前的图片[重要]
-            holder.imageView[i].setTag(item.getUrl(i));
+            //将包含url的TaskInfo存入imageView的TAG中, 来标识当前的图片[重要]
+            holder.imageView[i].setTag(new TaskInfo(item.getUrl(i)));
             //从内存缓存中取位图
-            bitmap = asyncBitmapLoader.get(item.getUrl(i));
+            bitmap = bitmapLoader.get(item.getUrl(i));
             if (bitmap != null && !bitmap.isRecycled()) {
                 //若内存缓存中存在, 则直接设置图片
                 holder.imageView[i].setImageBitmapImmediate(bitmap);
@@ -120,13 +121,13 @@ public class AsyncImageAdapter extends BaseAdapter {
                     holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableLarge);
                     //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
                     //将ImageView作为参数传入, 便于在回调函数中设置图片
-                    asyncBitmapLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge, holder.imageView[i], mOnBitmapLoadedListener);
+                    bitmapLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge, holder.imageView[i], mOnBitmapLoadedListener);
                 }else{
                     //设置默认背景图(小)
                     holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableSmall);
                     //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
                     //将ImageView作为参数传入, 便于在回调函数中设置图片
-                    asyncBitmapLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall, holder.imageView[i], mOnBitmapLoadedListener);
+                    bitmapLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall, holder.imageView[i], mOnBitmapLoadedListener);
                 }
             }
         }
@@ -138,17 +139,17 @@ public class AsyncImageAdapter extends BaseAdapter {
      */
     private OnBitmapLoadedListener mOnBitmapLoadedListener = new OnBitmapLoadedListener() {
         @Override
-        public void onLoadSucceed(String url, Object params, Bitmap bitmap) {
+        public void onLoadSucceed(String url, int reqWidth, int reqHeight, Object params, Bitmap bitmap) {
             //参数为load传入的ImageView
             GradualImageView imageView = ((GradualImageView) params);
             //从imageView中获取当前应该显示图片的url, 高并发场合需要
-            String currentUrl = (String)imageView.getTag();
+            TaskInfo taskInfo = (TaskInfo)imageView.getTag();
             /**
              * 高并发场合需要<br/>
              * ListView中的View是复用的, 一个图片加载任务完成时, 同一个ImageView可能已经需要显示其他图片
              * 了, 因此判断url是否相符, 若不相符则直接return
              */
-            if (url != null && !url.equals(currentUrl)){
+            if (url != null && !url.equals(taskInfo.url)){
                 ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载的Bitmap与应该显示的图片不符:" + url);
                 return;
             }
@@ -169,12 +170,21 @@ public class AsyncImageAdapter extends BaseAdapter {
             }
         }
         @Override
-        public void onLoadFailed(String url, Object params) {
-            //加载失败处理
+        public void onLoadFailed(String url, int reqWidth, int reqHeight, Object params) {
+            //参数为load传入的ImageView
+            GradualImageView imageView = ((GradualImageView) params);
+            TaskInfo taskInfo = (TaskInfo)imageView.getTag();
+
+            //根据TaskInfo记录的重新加载次数, 判断是否重新加载
+            if (taskInfo.reloadTimes < TaskInfo.RELOAD_TIMES_MAX){
+                taskInfo.reloadTimes++;
+                //重新加载
+                bitmapLoader.load(url, reqWidth, reqHeight, params, this);
+            }
         }
         @Override
-        public void onLoadCanceled(String url, Object params) {
-            //加载取消处理
+        public void onLoadCanceled(String url, int reqWidth, int reqHeight, Object params) {
+            //加载取消处理, 通常不做处理
         }
     };
 
@@ -182,6 +192,21 @@ public class AsyncImageAdapter extends BaseAdapter {
         TextView titleTextView;
         TextView contentTextView;
         GradualImageView[] imageView = new GradualImageView[5];
+    }
+
+    /**
+     * 加载任务信息
+     */
+    private class TaskInfo{
+
+        static final int RELOAD_TIMES_MAX = 2;//最大重加载次数
+
+        String url;//加载url
+        int reloadTimes;//重加载次数
+
+        TaskInfo(String url){
+            this.url = url;
+        }
     }
 
 }
