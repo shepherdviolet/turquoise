@@ -36,20 +36,4 @@ dependencies {
 ```
 
 ## Releases
->https://github.com/shepherdviolet/turquoise/blob/master/aar/sviolet.turquoise-1.3beta-build151015.aar<br/>
-
-```java
-repositories {
-    ......
-    flatDir {
-        dirs 'libs'
-    }
-}
-```
-
-```java
-dependencies {
-    ......
-    compile(name:'sviolet.turquoise1.5.0714', ext:'aar')
-}
-```
+>https://github.com/shepherdviolet/turquoise/blob/master/aar/sviolet.turquoise-1.3.151016-beta.aar<br/>
