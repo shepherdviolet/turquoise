@@ -48,6 +48,7 @@ import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
  * <br/>
  * Created by S.Violet on 2015/10/15.
  */
+@Deprecated
 public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnBitmapLoadedListener {
 
     private int reloadTimes = 0;//图片重新加载次数
@@ -137,8 +138,8 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
      * 重加载(出现错误时,有次数限制)
      */
     private void reload(){
-        //未被弃用的情况下重新加载图片
-        if (getLoader() != null && !unused && reloadTimes < getLoader().getReloadTimesMax()) {
+        //判断重加载次数
+        if (getLoader() != null && reloadTimes < getLoader().getReloadTimesMax()) {
             reloadTimes++;
             load();
         }

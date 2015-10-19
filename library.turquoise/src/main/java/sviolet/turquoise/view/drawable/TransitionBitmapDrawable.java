@@ -49,6 +49,7 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  * <br/>
  * Created by S.Violet on 2015/10/13.
  */
+@Deprecated
 public class TransitionBitmapDrawable extends TransitionDrawable {
 
     //默认的图片

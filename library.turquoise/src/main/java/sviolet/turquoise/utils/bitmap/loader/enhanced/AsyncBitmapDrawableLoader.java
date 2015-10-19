@@ -122,6 +122,7 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
  * <Br/>
  * Created by S.Violet on 2015/7/3.
  */
+@Deprecated
 public class AsyncBitmapDrawableLoader {
 
     /**
@@ -255,6 +256,8 @@ public class AsyncBitmapDrawableLoader {
 //    }
 
     Bitmap getLoadingBitmap(){
+        if (loadingBitmap != null && loadingBitmap.isRecycled())
+            return null;
         return loadingBitmap;
     }
 
