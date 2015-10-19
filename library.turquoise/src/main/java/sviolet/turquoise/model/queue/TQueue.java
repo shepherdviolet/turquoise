@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 任务队列 (必须在主线程实例化)<br/>
@@ -68,6 +69,7 @@ public class TQueue {
     private LinkedHashMap<String, TTask> runningTasks;//执行队列
 	
 	private int dispatchCounter = 0;//防止dispatch重复执行
+    private final ReentrantLock dispatchLock = new ReentrantLock();//调度计数锁
 
     /**
      * reverse : 逆序队列<br/>
@@ -204,11 +206,21 @@ public class TQueue {
     /**
 	 * 通知队列进行调度<br>
 	 * <br>
-	 * 同时多次调用只会执行一次<br>
+	 * 同时多次调用只会执行两次<br>
 	 * Task会自动触发该方法<br>
 	 */
 	public void notifyDispatchTask(){
-		dispatchCounter++;//调用计数
+        dispatchLock.lock();
+        try{
+            dispatchCounter++;//调用计数
+            if(dispatchCounter > 2){
+                dispatchCounter--;//消费掉计数
+                return;
+            }
+        }finally{
+            dispatchLock.unlock();
+        }
+
 		//开启线程执行调度任务
 		executeDispatch(new Runnable() {
             @Override
@@ -487,11 +499,6 @@ public class TQueue {
 	 * 
 	 */
 	private void dispatchTask(){
-		//过滤多次调度请求
-		if(dispatchCounter > 1){
-			dispatchCounter--;//消费掉计数
-			return;
-		}
         //清理执行队列
         cleanRunningTasks();
         //当前执行队列任务数
@@ -525,8 +532,14 @@ public class TQueue {
                 concurrencyVolume = getCurrentRunningVolume();
             }
 		}
-		dispatchCounter--;//消费掉计数
-	}
+
+        dispatchLock.lock();
+        try {
+            dispatchCounter--;//消费掉计数
+        }finally {
+            dispatchLock.unlock();
+        }
+    }
 
     /**
      * 启动任务
