@@ -20,6 +20,7 @@ import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.OnBitmapLoadedListener;
+import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.utils.sys.NetStateUtils;
@@ -68,6 +69,8 @@ public class CommonImageActivity extends TActivity {
 
         if (bitmapLoader != null)
             bitmapLoader.destroy();
+        if (simpleBitmapLoader != null)
+            simpleBitmapLoader.destroy();
     }
 
     private final Handler handler = new Handler();
@@ -298,6 +301,7 @@ public class CommonImageActivity extends TActivity {
      ***************************************************************************************/
 
     private BitmapLoader bitmapLoader;
+    private SimpleBitmapLoader simpleBitmapLoader;
 
     @ResourceId(R.id.image_common_imageview41)
     private ImageView imageView41;
@@ -365,6 +369,63 @@ public class CommonImageActivity extends TActivity {
                 imageView41,//控件作为参数传入, 便于监听器中设置图片
                 mOnBitmapLoadedListener41 //结果监听器
         );
+
+//        bitmapLoader.unused(url41);//弃用Bitmap, 可回收资源/取消加载任务
+
+       /**
+         * 创建SimpleBitmapLoader实例, 配置并启动.
+         *
+         * 此处采用SimpleBitmapLoaderImplementor, 实现了简单的HTTP图片加载.
+         * 也可以自定义实现BitmapLoaderImplementor.
+         *
+         * destroy::
+         * 务必在onDestroy时销毁实例, bitmapLoader.destroy().
+         *
+         * unused::
+         * 由于该示例中, 图片始终显示在屏幕中, 不存在"废弃"图片, 因此没有使用
+         * loader.unused()方法废弃图片, 若实际情况中, 明确图片不再需要显示,
+         * 务必调用loader.unused()方法, 废弃图片, 便于资源回收
+         */
+
+        try {
+            simpleBitmapLoader = new SimpleBitmapLoader(this, "AsyncImageActivity",
+                    BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new SimpleBitmapLoaderImplementor(30000))
+                    .setRamCache(0.1f, 0.1f)//缓存和回收站各占15%内存
+//                    .setRamCache(0.004f, 0.004f)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
+                    .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
+                    .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
+                    .setDiskCacheInner()//强制使用内部储存
+                    .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
+//                    .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
+//                    .setLogger(getLogger())//打印日志
+                    .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
+                    .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
+                    .open();//启动(必须)
+        } catch (IOException e) {
+            //磁盘缓存打开失败的情况, 可进行适当提示
+            e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "缓存打开失败2", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        /**
+         * SimpleBitmapLoader加载图片
+         *
+         * 特别注意:用SimpleBitmapLoader加载的控件, 禁止使用View.setTag(),
+         * 例如此处ImageView, 不要使用ImageView.setTag(), 这样会使加载失败.
+         * 因为SimpleBitmapLoader将回调对象设置在View的tag里.
+         */
+
+        String url42 = "https://avatars1.githubusercontent.com/u/13911857?v=3&s=460";
+
+        simpleBitmapLoader.load(
+                url42,//URL
+                MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
+                MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际高不等于100dp)
+                imageView42//被加载控件
+        );
+
+//        simpleBitmapLoader.unused(imageView42);//弃用Bitmap, 可回收资源/取消加载任务
 
     }
 
