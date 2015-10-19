@@ -65,7 +65,8 @@ public class AsyncBitmapDrawable extends TransitionBitmapDrawable implements OnB
     //是否被弃用
     private boolean unused = false;
 
-    private int animationDuration = 500;//图片由浅及深显示的动画持续时间
+    //图片由浅及深显示的动画持续时间
+    private int animationDuration = 500;
 
     AsyncBitmapDrawable(String url, int reqWidth, int reqHeight, AsyncBitmapDrawableLoader loader) {
         super(loader.getResources(), loader.getLoadingBitmap());

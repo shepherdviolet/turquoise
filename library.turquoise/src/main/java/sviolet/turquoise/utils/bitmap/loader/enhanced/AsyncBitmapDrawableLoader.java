@@ -178,7 +178,7 @@ public class AsyncBitmapDrawableLoader {
     }
 
     void load(AsyncBitmapDrawable asyncBitmapDrawable){
-        if (asyncBitmapDrawable == null || bitmapLoader == null)
+        if (asyncBitmapDrawable == null)
             return;
         bitmapLoader.load(asyncBitmapDrawable.getUrl(), asyncBitmapDrawable.getReqWidth(), asyncBitmapDrawable.getReqHeight(), null, asyncBitmapDrawable);
     }
@@ -201,8 +201,6 @@ public class AsyncBitmapDrawableLoader {
      * @return 若不存在或已被回收, 则返回null
      */
     public AsyncBitmapDrawable get(String url, int reqWidth, int reqHeight) {
-        if (bitmapLoader == null)
-            return null;
         Bitmap bitmap = bitmapLoader.get(url);
         if (bitmap == null)
             return null;
@@ -227,8 +225,7 @@ public class AsyncBitmapDrawableLoader {
      * @param url 图片URL地址
      */
     void unused(String url) {
-        if (bitmapLoader != null)
-            bitmapLoader.unused(url);
+        bitmapLoader.unused(url);
     }
 
     /**
@@ -237,10 +234,8 @@ public class AsyncBitmapDrawableLoader {
      * 2.销毁加载图(loadingBitmap)<br/>
      */
     public void destroy() {
-        if (bitmapLoader != null) {
-            bitmapLoader.destroy();
-            bitmapLoader = null;
-        }
+        bitmapLoader.destroy();
+
         //回收加载图
         if (loadingBitmap != null && !loadingBitmap.isRecycled()){
             loadingBitmap.recycle();
@@ -288,8 +283,7 @@ public class AsyncBitmapDrawableLoader {
      * @param diskLoadVolume 磁盘加载等待队列容量, 默认10
      */
     public AsyncBitmapDrawableLoader setDiskCache(int diskCacheSizeMib, int diskLoadConcurrency, int diskLoadVolume) {
-        if (bitmapLoader != null)
-            bitmapLoader.setDiskCache(diskCacheSizeMib, diskLoadConcurrency, diskLoadVolume);
+        bitmapLoader.setDiskCache(diskCacheSizeMib, diskLoadConcurrency, diskLoadVolume);
         return this;
     }
 
@@ -298,8 +292,7 @@ public class AsyncBitmapDrawableLoader {
      * 若不设置, 则优先选择外部储存, 当外部储存不存在时使用内部储存
      */
     public AsyncBitmapDrawableLoader setDiskCacheInner() {
-        if (bitmapLoader != null)
-            bitmapLoader.setDiskCacheInner();
+        bitmapLoader.setDiskCacheInner();
         return this;
     }
 
@@ -327,8 +320,7 @@ public class AsyncBitmapDrawableLoader {
      *
      */
     public AsyncBitmapDrawableLoader setDuplicateLoadEnable(boolean duplicateLoadEnable) {
-        if (bitmapLoader != null)
-            bitmapLoader.setDuplicateLoadEnable(duplicateLoadEnable);
+        bitmapLoader.setDuplicateLoadEnable(duplicateLoadEnable);
         return this;
     }
 
@@ -340,8 +332,7 @@ public class AsyncBitmapDrawableLoader {
      * @param quality 图片质量 0-100
      */
     public AsyncBitmapDrawableLoader setImageQuality(Bitmap.CompressFormat format, int quality) {
-        if (bitmapLoader != null)
-            bitmapLoader.setImageQuality(format, quality);
+        bitmapLoader.setImageQuality(format, quality);
         return this;
     }
 
@@ -349,8 +340,7 @@ public class AsyncBitmapDrawableLoader {
      * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
      */
     public AsyncBitmapDrawableLoader setLogger(Logger logger) {
-        if (bitmapLoader != null)
-            bitmapLoader.setLogger(logger);
+        bitmapLoader.setLogger(logger);
         return this;
     }
 
@@ -359,8 +349,7 @@ public class AsyncBitmapDrawableLoader {
      * @param netLoadVolume 网络加载等待队列容量, 默认10
      */
     public AsyncBitmapDrawableLoader setNetLoad(int netLoadConcurrency, int netLoadVolume) {
-        if (bitmapLoader != null)
-            bitmapLoader.setNetLoad(netLoadConcurrency, netLoadVolume);
+        bitmapLoader.setNetLoad(netLoadConcurrency, netLoadVolume);
         return this;
     }
 
@@ -373,8 +362,7 @@ public class AsyncBitmapDrawableLoader {
      * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1], 默认值0.125f
      */
     public AsyncBitmapDrawableLoader setRamCache(float ramCacheSizePercent) {
-        if (bitmapLoader != null)
-            bitmapLoader.setRamCache(ramCacheSizePercent, 0);
+        bitmapLoader.setRamCache(ramCacheSizePercent, 0);
         return this;
     }
 
@@ -406,8 +394,7 @@ public class AsyncBitmapDrawableLoader {
      * @throws IOException 磁盘缓存启动失败抛出异常
      */
     public AsyncBitmapDrawableLoader open() throws IOException {
-        if (bitmapLoader != null)
-            bitmapLoader.open();
+        bitmapLoader.open();
         return this;
     }
 }

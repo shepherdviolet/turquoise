@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.utils.Logger;
 import sviolet.turquoise.model.queue.TQueue;
@@ -146,7 +147,7 @@ public class BitmapLoader {
 
     //SETTINGS//////////////////////////////////////////////
 
-    private Context context;//(必须)
+    private WeakReference<Context> context;
     private String diskCacheName;//磁盘缓存名(必须)
     private BitmapLoaderImplementor implementor;//实现器(必须)
     private long diskCacheSize = 1024 * 1024 * 10;//磁盘缓存大小(Mb)
@@ -171,7 +172,13 @@ public class BitmapLoader {
         if (implementor == null){
             throw new RuntimeException("[BitmapLoader]implementor is null !!", new NullPointerException());
         }
-        this.context = context;
+        if (context == null){
+            throw new RuntimeException("[BitmapLoader]context is null !!", new NullPointerException());
+        }
+        if (diskCacheName == null || "".equals(diskCacheName)){
+            throw new RuntimeException("[BitmapLoader]diskCacheName is null !!", new NullPointerException());
+        }
+        this.context = new WeakReference<Context>(context);
         this.diskCacheName = diskCacheName;
         this.implementor = implementor;
         cacheDir = DirectoryUtils.getCacheDir(context, diskCacheName);
@@ -237,7 +244,7 @@ public class BitmapLoader {
      * 若不设置, 则优先选择外部储存, 当外部储存不存在时使用内部储存
      */
     public BitmapLoader setDiskCacheInner(){
-        cacheDir = new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + diskCacheName);
+        cacheDir = new File(DirectoryUtils.getInnerCacheDir(getContext()).getAbsolutePath() + File.separator + diskCacheName);
         return this;
     }
 
@@ -303,8 +310,8 @@ public class BitmapLoader {
      * @throws IOException 磁盘缓存启动失败抛出异常
      */
     public BitmapLoader open() throws IOException {
-        this.mDiskLruCache = DiskLruCache.open(cacheDir, ApplicationUtils.getAppVersion(context), 1, diskCacheSize);
-        this.mCachedBitmapUtils = new CachedBitmapUtils(context, ramCacheSizePercent, ramCacheRecyclerSizePercent);
+        this.mDiskLruCache = DiskLruCache.open(cacheDir, ApplicationUtils.getAppVersion(getContext()), 1, diskCacheSize);
+        this.mCachedBitmapUtils = new CachedBitmapUtils(getContext(), ramCacheSizePercent, ramCacheRecyclerSizePercent);
         this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency)
                 .setVolumeMax(diskLoadVolume)
                 .waitCancelingTask(true)
@@ -422,7 +429,6 @@ public class BitmapLoader {
      * [重要]将所有资源回收销毁, 请在Activity.onDestroy()时调用该方法
      */
     public void destroy() {
-        checkIsOpen();
         if (mNetLoadQueue != null) {
             mNetLoadQueue.destroy();
             mNetLoadQueue = null;
@@ -770,6 +776,13 @@ public class BitmapLoader {
         if (mDiskLruCache == null || mCachedBitmapUtils == null || mDiskCacheQueue == null || mNetLoadQueue == null){
             throw new RuntimeException("[BitmapLoader]can't use BitmapLoader without BitmapLoader.open()!!!");
         }
+    }
+
+    private Context getContext(){
+        if (context != null){
+            return context.get();
+        }
+        return null;
     }
 
 }
