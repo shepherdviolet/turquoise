@@ -130,9 +130,13 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *      尝试设置setDuplicateLoadEnable(true);<Br/>
  * <Br/>
  * 3.网络加载失败,需要重新加载.<br/>
- *      使用AsyncBitmapDrawableLoader无需特殊处理, AsyncBitmapDrawable自带重新加载功能.<br/>
+ *      使用SimpleBitmapLoader/AsyncBitmapDrawableLoader无需特殊处理, 它们自带重新加载功能.<br/>
  *      推荐方案:<br/>
  *      1).在网络加载失败(failed)时, 有限次地重新加载, 不应重新加载unused的任务.<br/>
+ * <Br/>
+ * 4.Exception::[SimpleBitmapLoaderTask]don't use View.setTag() when view load by SimpleBitmapLoader!!<Br/>
+ *      使用SimpleBitmapLoader加载控件时, 控件禁止使用View.setTag()自行设置TAG,
+ *      因为SimpleBitmapLoader会把SimpleBitmapLoaderTask通过setTag()绑定在控件上!<Br/>
  * <Br/>
  * <Br/>
  * Created by S.Violet on 2015/7/3.
@@ -672,6 +676,10 @@ public class BitmapLoader {
                         //加入内存缓存
                         mCachedBitmapUtils.cacheBitmap(cacheKey, messenger.getBitmap());
                         return RESULT_SUCCEED;
+                    }
+                    //若任务被取消, 则回收加载出的bitmap
+                    if (messenger.getBitmap() != null && !messenger.getBitmap().isRecycled()){
+                        messenger.getBitmap().recycle();
                     }
                     //若加载任务被取消,即使返回结果是加载成功,也只会存入缓存,不会返回成功的结果
                     return RESULT_CANCELED;

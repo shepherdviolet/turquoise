@@ -183,35 +183,55 @@ public abstract class TTask {
 	}
 	
 	/**
-	 * 中止任务(手动)<br>
+	 * 中止任务<br>
 	 * 若设置cancelable = false, 则此方法无效<br>
+     * 超时的情况强制cancelable = true<br/>
 	 */
 	public void cancel(){
-		if(cancelable)
-			onCancel();
+		if(cancelable) {
+            //设置状态
+			synchronized (TTask.this) {
+				if (state == STATE_WAITTING) {
+					//取消等待中的任务, 直接置为已取消状态
+					state = STATE_CANCELED;
+				} else if (state < STATE_COMPLETE) {
+					//未完成的任务置为取消中
+					state = STATE_CANCELING;
+				}
+			}
+            //取消超时计时器
+			cancelTimeOutTimer();
+            //尝试异步执行onCancel
+			if (queue != null) {
+                //先做一次通知调度
+                queue.notifyDispatchTask();
+                //异步执行
+				queue.ttask_execute(new Runnable() {
+					@Override
+					public void run() {
+						onCancel();
+                        //尝试做通知调度
+                        if (queue != null)
+						    queue.notifyDispatchTask();
+					}
+				});
+			}else{
+                //同步执行
+                onCancel();
+			}
+		}
 	}
 	
 	/**
 	 * 当终止任务时调用(超时或手动中止)[复写]<br>
+     * 子线程执行<br/>
 	 * <br>
 	 * 复写该方法实现任务的中断, 例如网络请求abort等操作, 
 	 * 父类方法已调用setStopState()设置任务状态为结束,
 	 * 并置空线程对象, 通知队列调度
 	 */
 	public void onCancel(){
-        synchronized (TTask.this) {
-            if (state == STATE_WAITTING) {
-                //取消等待中的任务, 直接置为已取消状态
-                state = STATE_CANCELED;
-            } else if (state < STATE_COMPLETE) {
-                //未完成的任务置为取消中
-                state = STATE_CANCELING;
-            }
-        }
-		cancelTimeOutTimer();
-		if(queue != null){
-			queue.notifyDispatchTask();
-		}
+
 	}
 
     /**
@@ -355,7 +375,8 @@ public abstract class TTask {
 			@Override
 			public void run() {
 				if(state ==STATE_PRE_EXECUTE || state == STATE_EXECUTING){
-					TTask.this.onCancel();//直接调用onCancel无视cancelable
+                    cancelable = true;//超时强制允许取消
+					TTask.this.cancel();//取消任务
 				}
 			}
 		}, timeOutSet);
