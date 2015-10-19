@@ -166,6 +166,7 @@ public class BitmapLoader {
     private int keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;//TQueue同名任务冲突策略
     private File cacheDir;//缓存路径
     private Logger logger;//日志打印器
+    private boolean destroyed = false;//是否已被销毁
 
     /**
      * @param context 上下文
@@ -351,7 +352,8 @@ public class BitmapLoader {
      * @param mOnBitmapLoadedListener 回调监听器
      */
     public void load(String url, int reqWidth, int reqHeight, Object params, OnBitmapLoadedListener mOnBitmapLoadedListener) {
-        checkIsOpen();
+        if(checkIsOpen())
+            return;
         //计算缓存key
         String cacheKey = implementor.getCacheKey(url);
         if (logger != null) {
@@ -382,7 +384,8 @@ public class BitmapLoader {
      * @return 若不存在或已被回收, 则返回null
      */
     public Bitmap get(String url) {
-        checkIsOpen();
+        if(checkIsOpen())
+            return null;
         //计算缓存key
         String cacheKey = implementor.getCacheKey(url);
         //尝试从内存缓存中取Bitmap
@@ -415,7 +418,8 @@ public class BitmapLoader {
      * @param url 图片URL地址
      */
     public void unused(String url) {
-        checkIsOpen();
+        if(checkIsOpen())
+            return;
         //计算缓存key
         String cacheKey = implementor.getCacheKey(url);
         //网络加载队列取消
@@ -433,6 +437,9 @@ public class BitmapLoader {
      * [重要]将所有资源回收销毁, 请在Activity.onDestroy()时调用该方法
      */
     public void destroy() {
+
+        destroyed = true;
+
         if (mNetLoadQueue != null) {
             mNetLoadQueue.destroy();
             mNetLoadQueue = null;
@@ -777,13 +784,19 @@ public class BitmapLoader {
     }
 
     /**
-     * 检查BitmapLoader是否open(), 若未open()则抛出异常<br/>
+     * 检查BitmapLoader是否open(), 若未open()则抛出异常, 若已被销毁则返回true<br/>
      * 遇到此异常, 请检查代码, BitmapLoader实例化/设置后必须调用open()方法启动.
      */
-    void checkIsOpen(){
+    boolean checkIsOpen(){
+        if (destroyed){
+            if (logger != null)
+                logger.e("[BitmapLoader]can't use BitmapLoader after destroy");
+            return true;
+        }
         if (mDiskLruCache == null || mCachedBitmapUtils == null || mDiskCacheQueue == null || mNetLoadQueue == null){
             throw new RuntimeException("[BitmapLoader]can't use BitmapLoader without BitmapLoader.open()!!!");
         }
+        return false;
     }
 
     private Context getContext(){
