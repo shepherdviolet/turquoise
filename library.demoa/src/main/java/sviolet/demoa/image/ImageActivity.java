@@ -13,6 +13,7 @@ import sviolet.demoa.common.DemoList;
         CommonImageActivity.class,
         AsyncImageActivity.class,
         Async2ImageActivity.class,
+        Async3ImageActivity.class,
         ShadowImageActivity.class
 })
 
