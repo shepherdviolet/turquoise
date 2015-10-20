@@ -4,8 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
@@ -24,12 +22,27 @@ import sviolet.turquoise.utils.crypt.DigestCipher;
  */
 public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
 
-    private int timeout;
+    private int connectTimeout;
+    private int readTimeout;
 
-    public SimpleBitmapLoaderImplementor(int timeout){
-        if (timeout <= 0)
-            throw new NullPointerException("[SimpleBitmapLoaderImplementor] timeout <= 0");
-        this.timeout = timeout;
+    /**
+     * 连接超时10s, 读取超时30s
+     */
+    public SimpleBitmapLoaderImplementor(){
+        this(10000, 30000);
+    }
+
+    /**
+     * @param connectTimeout 连接超时ms
+     * @param readTimeout 读取超时ms
+     */
+    public SimpleBitmapLoaderImplementor(int connectTimeout, int readTimeout){
+        if (connectTimeout <= 0)
+            throw new NullPointerException("[SimpleBitmapLoaderImplementor] connectTimeout <= 0");
+        if (readTimeout <= 0)
+            throw new NullPointerException("[SimpleBitmapLoaderImplementor] readTimeout <= 0");
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
     }
 
     @Override
@@ -39,16 +52,39 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
     }
 
     @Override
-    public void loadFromNet(String url, int reqWidth, int reqHeight, BitmapLoaderMessenger messenger) {
+    public void loadFromNet(String url, int reqWidth, int reqHeight, final BitmapLoaderMessenger messenger) {
         InputStream inputStream = null;
         ByteArrayOutputStream outputStream = null;
         HttpURLConnection conn = null;
         try {
             URL httpUrl = new URL(url);
             conn = (HttpURLConnection) httpUrl.openConnection();
-            conn.setConnectTimeout(timeout);
+            conn.setConnectTimeout(connectTimeout);
+            conn.setReadTimeout(readTimeout);
             conn.setRequestMethod("GET");
+            //连接
             inputStream = conn.getInputStream();
+
+            //连接后判断取消状态
+            if (messenger.isCancelling()){
+                messenger.setResultCanceled();
+                return;
+            }
+
+            //设置取消监听
+            final InputStream finalInputStream = inputStream;
+            messenger.setOnCancelListener(new Runnable() {
+                @Override
+                public void run() {
+                    //强制关闭输入流
+                    try {
+                        finalInputStream.close();
+                    }catch (Exception ignored){}
+                    //强制设置结果为取消, 后续将无法改变
+                    messenger.setResultCanceled();
+                }
+            });
+
             if(conn.getResponseCode() == HttpURLConnection.HTTP_OK){
                 outputStream = new ByteArrayOutputStream();
                 byte[] buffer = new byte[1024];
@@ -66,17 +102,14 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
                 messenger.setResultSucceed(BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight));
                 return;
             }
-        } catch (MalformedURLException e) {
-            //设置结果返回[重要]
-            messenger.setResultFailed(e);
-            return;
-        } catch (ProtocolException e) {
-            //设置结果返回[重要]
-            messenger.setResultFailed(e);
-            return;
         } catch (IOException e) {
-            //设置结果返回[重要]
-            messenger.setResultFailed(e);
+            if (messenger.isCancelling()){
+                //设置结果返回[重要]
+                messenger.setResultCanceled();
+            }else {
+                //设置结果返回[重要]
+                messenger.setResultFailed(e);
+            }
             return;
         }finally {
             if (outputStream != null) {
