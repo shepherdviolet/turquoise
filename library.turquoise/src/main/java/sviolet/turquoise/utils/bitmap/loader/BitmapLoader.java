@@ -691,18 +691,21 @@ public class BitmapLoader {
                     //若加载任务被取消,即使返回结果是加载成功,也只会存入缓存,不会返回成功的结果
                     return RESULT_CANCELED;
                 } else {
-                    //若加载失败/取消
-                    //写入缓存失败abort
-                    editor.abort();
-                    //写缓存日志
-                    mDiskLruCache.flush();
-                    //异常处理
-                    if (messenger.getThrowable() != null){
-                        implementor.onException(messenger.getThrowable());
+                    try {
+                        //若加载失败/取消
+                        //写入缓存失败abort
+                        editor.abort();
+                        //写缓存日志
+                        mDiskLruCache.flush();
+                    }catch (Exception ignored){
                     }
                     //加载取消结果返回
                     if (result == BitmapLoaderMessenger.RESULT_CANCELED)
                         return RESULT_CANCELED;
+                    //异常处理
+                    if (messenger.getThrowable() != null){
+                        implementor.onException(messenger.getThrowable());
+                    }
                 }
             } catch (Exception e) {
                 implementor.onException(e);
