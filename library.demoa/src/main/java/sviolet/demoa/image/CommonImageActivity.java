@@ -332,7 +332,7 @@ public class CommonImageActivity extends TActivity {
          */
 
         try {
-            bitmapLoader = new BitmapLoader(this, "AsyncImageActivity", new SimpleBitmapLoaderImplementor(30000))
+            bitmapLoader = new BitmapLoader(this, "AsyncImageActivity", new SimpleBitmapLoaderImplementor(10000, 30000))
                     .setRamCache(0.1f, 0.1f)//缓存和回收站各占10%内存
                     .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
                     .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
@@ -389,7 +389,7 @@ public class CommonImageActivity extends TActivity {
 
         try {
             simpleBitmapLoader = new SimpleBitmapLoader(this, "AsyncImageActivity",
-                    BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new SimpleBitmapLoaderImplementor(30000))
+                    BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new SimpleBitmapLoaderImplementor(10000, 30000))
                     .setRamCache(0.1f, 0.1f)//缓存和回收站各占15%内存
 //                    .setRamCache(0.004f, 0.004f)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
                     .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
