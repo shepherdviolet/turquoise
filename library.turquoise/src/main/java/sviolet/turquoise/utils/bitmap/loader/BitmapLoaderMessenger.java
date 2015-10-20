@@ -12,7 +12,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * 用途:<Br/>
  * 1.返回处理结果:setResultSucceed/setResultFailed/setResultCanceled<br/>
  *      无论同步处理,还是异步处理,均通过这些方法返回结果,BitmapLoader加载任务会阻塞,
- *      直到setResultSucceed/setResultFailed/setResultCanceled方法被调用.<br/>
+ *      直到setResultSucceed/setResultFailed/setResultCanceled方法被调用.结果仅允许设置一次.<br/>
  *      1)setResultSucceed(Bitmap),加载成功,返回Bitmap<br/>
  *      2)setResultFailed(Throwable),加载失败,返回异常<br/>
  *      3)setResultCanceled(),加载取消<br/>
@@ -33,11 +33,11 @@ public class BitmapLoaderMessenger {
     public static final int RESULT_SUCCEED = 1;//结果:加载成功
     public static final int RESULT_FAILED = 2;//结果:加载失败
     public static final int RESULT_CANCELED = 3;//结果:加载取消
+    public static final int RESULT_INTERRUPTED = 3;//结果:加载取消
 
     private int result = RESULT_NULL;//结果状态
 
     private boolean isCancelling = false;//是否正在被取消(被cancel()方法取消)
-    private boolean hasInterrupted = false;//是否被中断(被interrupt方法中断)
 
     private Bitmap bitmap;//结果图
     private Throwable throwable;//异常
@@ -56,11 +56,8 @@ public class BitmapLoaderMessenger {
     public void setResultSucceed(Bitmap bitmap){
         lock.lock();
         try{
-            //若get()阻塞被中断后, set(Bitmap),为防止内存泄露,将Bitmap回收
-            if (hasInterrupted) {
-                if (bitmap != null && !bitmap.isRecycled()) {
-                    bitmap.recycle();
-                }
+            //仅允许设置一次结果
+            if (result != RESULT_NULL) {
                 return;
             }
             this.bitmap = bitmap;
@@ -78,8 +75,9 @@ public class BitmapLoaderMessenger {
     public void setResultFailed(Throwable t){
         lock.lock();
         try{
-            if (bitmap != null && !bitmap.isRecycled()) {
-                bitmap.recycle();
+            //仅允许设置一次结果
+            if (result != RESULT_NULL) {
+                return;
             }
             this.bitmap = null;
             this.throwable = t;
@@ -96,8 +94,9 @@ public class BitmapLoaderMessenger {
     public void setResultCanceled(){
         lock.lock();
         try{
-            if (bitmap != null && !bitmap.isRecycled()) {
-                bitmap.recycle();
+            //仅允许设置一次结果
+            if (result != RESULT_NULL) {
+                return;
             }
             this.bitmap = null;
             this.throwable = null;
@@ -140,11 +139,11 @@ public class BitmapLoaderMessenger {
     int getResult(){
         lock.lock();
         try{
-            if (result == RESULT_NULL && !hasInterrupted)
+            if (result == RESULT_NULL)
                 condition.await();
             return result;
         } catch (InterruptedException ignored) {
-            hasInterrupted = true;
+            result = RESULT_INTERRUPTED;//中断状态
         } finally {
             lock.unlock();
         }
@@ -194,7 +193,7 @@ public class BitmapLoaderMessenger {
         lock.lock();
         try{
             cancel();//先取消
-            hasInterrupted = true;//标识为被中断
+            result = RESULT_INTERRUPTED;//标识为被中断
             condition.signalAll();//中断阻塞
         } finally {
             lock.unlock();
