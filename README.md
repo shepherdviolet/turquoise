@@ -1,4 +1,5 @@
 # Turquoise 1.4.151020
+> https://github.com/shepherdviolet/turquoise <br/>
 
 ## Description
 > Android Library<br/>
@@ -6,7 +7,6 @@
 > 2.SlideEngine | 滑动引擎<br/>
 > 3.BitmapLoader | 双缓存图片异步加载器<br/>
 > 4.some Utils | 工具<br/>
-> https://github.com/shepherdviolet/turquoise <br/>
 
 ## Modules
 > library.turquoise : the "Turquoise" library module  |  库本体 <br/>
