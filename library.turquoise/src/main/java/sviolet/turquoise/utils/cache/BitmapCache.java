@@ -5,7 +5,9 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,7 +30,7 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  * 缓存区:<Br/>
  *      缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
  *      使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
- *      使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+ *      使用unused(key)方法将Bitmap置为不再使用(unused)状态, 使得Bitmap尽快被回收.
  * <Br/>
  * 回收站:<Br/>
  *      用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
@@ -365,11 +367,45 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             setSize(0);
             recyclerSize = 0;
         }
-        //gc
-        System.gc();
+
         //打印日志
         if (logger != null){
             logger.i("[BitmapCache] recycled:" + counter);
+        }
+    }
+
+    /**
+     * 强制清空缓存中不再使用(unused)的图片<br/>
+     * 用于暂时减少缓存的内存占用,请勿频繁调用<br/>
+     */
+    public void reduce() {
+        int counter = 0;
+        List<Bitmap> unusedBitmaps = new ArrayList<Bitmap>();
+
+        synchronized (this){
+            for (Map.Entry<String, Boolean> entry : unusedMap.entrySet()) {
+                //从缓存中移除
+                Bitmap bitmap = super.remove(entry.getKey());
+                //加入unusedBitmaps
+                if (bitmap != null)
+                    unusedBitmaps.add(bitmap);
+            }
+            //清空不再使用表
+            unusedBitmaps.clear();
+        }
+
+        for (Bitmap unusedBitmap : unusedBitmaps){
+            if (unusedBitmap != null && !unusedBitmap.isRecycled()){
+                unusedBitmap.recycle();
+                counter++;
+            }
+        }
+
+        unusedBitmaps.clear();
+
+        //打印日志
+        if (logger != null){
+            logger.i("[BitmapCache]reduce recycled:" + counter);
         }
     }
 
@@ -482,7 +518,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
                 setSize(size() - safeSizeOf(key, value));
 
                 //禁用回收站 或 被标记为不再使用 直接回收bitmap
-                if (recyclerMap == null || unusedMap.containsKey(key)) {
+                if (recyclerMap == null || unusedMap.containsKey(key) || value == null || value.isRecycled()) {
                     //回收不再使用的Bitmap
                     if (value != null && !value.isRecycled()) {
                         value.recycle();
