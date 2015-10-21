@@ -58,8 +58,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
     private static final float DEFAULT_CACHE_MEMORY_PERCENT = 0.125f;
 
-    //单线程线程池
-    private ExecutorService singleThreadPool;
     //回收站 : 存放被清理出缓存但未被标记为unused的Bitmap
     private HashMap<String, Bitmap> recyclerMap;
     //不再使用标记
@@ -227,26 +225,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      *
      * @param key
      */
-    public void asyncUnused(final String key){
-        execute(new Runnable() {
-            @Override
-            public void run() {
-                unused(key);
-            }
-        });
-    }
-
-    /**
-     * [重要]将一个Bitmap标示为不再使用,利于回收(Bitmap.recycle)<Br/>
-     * <br/>
-     * 将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
-     * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
-     * 已进入回收站的Bitmap会被立即回收.<br/>
-     * <br/>
-     * 同步操作, 可能会阻塞<br/>
-     *
-     * @param key
-     */
     public void unused(String key) {
         Bitmap bitmap = null;
         synchronized (this) {
@@ -410,15 +388,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     }
 
     /**
-     * 销毁缓存
-     */
-    public void destroy(){
-        removeAll();
-        if (singleThreadPool != null)
-            singleThreadPool.shutdown();
-    }
-
-    /**
      * 获得回收站占用内存byte
      *
      * @return
@@ -467,17 +436,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
     public void setLogger(Logger logger) {
         this.logger = logger;
-    }
-
-    /**
-     * 用单线程线程池执行任务
-     * @param runnable
-     */
-    private void execute(Runnable runnable){
-        if (singleThreadPool == null){
-            singleThreadPool = Executors.newSingleThreadExecutor();
-        }
-        singleThreadPool.execute(runnable);
     }
 
     /******************************************************
