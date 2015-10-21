@@ -437,6 +437,15 @@ public class CommonImageActivity extends TActivity {
 
 //        simpleBitmapLoader.unused(imageView42);//弃用Bitmap, 可回收资源/取消加载任务
 
+        //测试简易防回收崩溃
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                simpleBitmapLoader.destroy();
+                imageView42.postInvalidate();
+            }
+        }, 3000);
+
     }
 
     /**

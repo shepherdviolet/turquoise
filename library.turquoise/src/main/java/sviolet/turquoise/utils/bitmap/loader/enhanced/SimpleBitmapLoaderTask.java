@@ -211,7 +211,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
 
     protected Logger getLogger(){
         if (getLoader() != null){
-            getLoader().getLogger();
+            return getLoader().getLogger();
         }
         return null;
     }
