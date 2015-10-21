@@ -171,7 +171,7 @@ public class BitmapLoader {
     private int imageQuality = 70;//缓存图片保存质量
     private int keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;//TQueue同名任务冲突策略
     private File cacheDir;//缓存路径
-    private Logger logger;//日志打印器
+    private WeakReference<Logger> logger;//日志打印器
     private boolean destroyed = false;//是否已被销毁
 
     /**
@@ -308,7 +308,7 @@ public class BitmapLoader {
      * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
      */
     public BitmapLoader setLogger(Logger logger) {
-        this.logger = logger;
+        this.logger = new WeakReference<Logger>(logger);
         if (mCachedBitmapUtils != null)
             mCachedBitmapUtils.getBitmapCache().setLogger(logger);
         return this;
@@ -331,8 +331,8 @@ public class BitmapLoader {
                 .setVolumeMax(netLoadVolume)
                 .waitCancelingTask(true)
                 .setKeyConflictPolicy(keyConflictPolicy);
-        if(logger != null)
-            mCachedBitmapUtils.getBitmapCache().setLogger(logger);
+        if(getLogger() != null)
+            mCachedBitmapUtils.getBitmapCache().setLogger(getLogger());
         return this;
     }
 
@@ -362,16 +362,16 @@ public class BitmapLoader {
             return;
         //计算缓存key
         String cacheKey = implementor.getCacheKey(url);
-        if (logger != null) {
-            logger.d("[BitmapLoader]load:start:  url<" + url + "> cacheKey<" + cacheKey + ">");
+        if (getLogger() != null) {
+            getLogger().d("[BitmapLoader]load:start:  url<" + url + "> cacheKey<" + cacheKey + ">");
         }
         //尝试内存缓存中取Bitmap
         Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
         if (bitmap != null && !bitmap.isRecycled()) {
             //缓存中存在直接回调:成功
             mOnBitmapLoadedListener.onLoadSucceed(url, reqWidth, reqHeight, params, bitmap);
-            if (logger != null) {
-                logger.d("[BitmapLoader]load:succeed:  from:BitmapCache url<" + url + "> cacheKey<" + cacheKey + ">");
+            if (getLogger() != null) {
+                getLogger().d("[BitmapLoader]load:succeed:  from:BitmapCache url<" + url + "> cacheKey<" + cacheKey + ">");
             }
             return;
         }
@@ -434,8 +434,8 @@ public class BitmapLoader {
         mDiskCacheQueue.cancel(cacheKey);
         //将位图标识为不再使用
         mCachedBitmapUtils.unused(cacheKey);
-        if (logger != null) {
-            logger.d("[BitmapLoader]unused:  url<" + url + "> cacheKey<" + cacheKey + ">");
+        if (getLogger() != null) {
+            getLogger().d("[BitmapLoader]unused:  url<" + url + "> cacheKey<" + cacheKey + ">");
         }
     }
 
@@ -481,8 +481,8 @@ public class BitmapLoader {
         }
         if (implementor != null)
             implementor.onDestroy();
-        if (logger != null) {
-            logger.d("[BitmapLoader]destroy");
+        if (getLogger() != null) {
+            getLogger().d("[BitmapLoader]destroy");
         }
     }
 
@@ -590,8 +590,8 @@ public class BitmapLoader {
                     mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
                 if (mCachedBitmapUtils != null)
                     mCachedBitmapUtils.unused(cacheKey);
-                if (logger != null) {
-                    logger.d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
+                if (getLogger() != null) {
+                    getLogger().d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                 }
                 return;
             }
@@ -599,8 +599,8 @@ public class BitmapLoader {
                 case RESULT_SUCCEED:
                     if (mOnBitmapLoadedListener != null && mCachedBitmapUtils != null)
                         mOnBitmapLoadedListener.onLoadSucceed(url, reqWidth, reqHeight, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
-                    if (logger != null) {
-                        logger.d("[BitmapLoader]load:succeed:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
+                    if (getLogger() != null) {
+                        getLogger().d("[BitmapLoader]load:succeed:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 case RESULT_FAILED:
@@ -608,8 +608,8 @@ public class BitmapLoader {
                         mOnBitmapLoadedListener.onLoadFailed(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
-                    if (logger != null) {
-                        logger.d("[BitmapLoader]load:failed:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
+                    if (getLogger() != null) {
+                        getLogger().d("[BitmapLoader]load:failed:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 case RESULT_CANCELED:
@@ -617,8 +617,8 @@ public class BitmapLoader {
                         mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
-                    if (logger != null) {
-                        logger.d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
+                    if (getLogger() != null) {
+                        getLogger().d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 case RESULT_CONTINUE:
@@ -754,8 +754,8 @@ public class BitmapLoader {
                     mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
                 if (mCachedBitmapUtils != null)
                     mCachedBitmapUtils.unused(cacheKey);
-                if (logger != null) {
-                    logger.d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
+                if (getLogger() != null) {
+                    getLogger().d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                 }
                 return;
             }
@@ -763,8 +763,8 @@ public class BitmapLoader {
                 case RESULT_SUCCEED:
                     if (mOnBitmapLoadedListener != null && mCachedBitmapUtils != null)
                         mOnBitmapLoadedListener.onLoadSucceed(url, reqWidth, reqHeight, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
-                    if (logger != null) {
-                        logger.d("[BitmapLoader]load:succeed:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
+                    if (getLogger() != null) {
+                        getLogger().d("[BitmapLoader]load:succeed:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 case RESULT_FAILED:
@@ -772,8 +772,8 @@ public class BitmapLoader {
                         mOnBitmapLoadedListener.onLoadFailed(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
-                    if (logger != null) {
-                        logger.d("[BitmapLoader]load:failed:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
+                    if (getLogger() != null) {
+                        getLogger().d("[BitmapLoader]load:failed:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 case RESULT_CANCELED:
@@ -781,8 +781,8 @@ public class BitmapLoader {
                         mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
-                    if (logger != null) {
-                        logger.d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
+                    if (getLogger() != null) {
+                        getLogger().d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
                     break;
                 default:
@@ -823,8 +823,8 @@ public class BitmapLoader {
      */
     boolean checkIsOpen(){
         if (destroyed){
-            if (logger != null)
-                logger.e("[BitmapLoader]can't use BitmapLoader after destroy");
+            if (getLogger() != null)
+                getLogger().e("[BitmapLoader]can't use BitmapLoader after destroy");
             return true;
         }
         if (mDiskLruCache == null || mCachedBitmapUtils == null || mDiskCacheQueue == null || mNetLoadQueue == null){
@@ -837,6 +837,16 @@ public class BitmapLoader {
         if (context != null){
             return context.get();
         }
+        return null;
+    }
+
+    /**
+     * 获得其中的日志打印器
+     * @return
+     */
+    public Logger getLogger(){
+        if (logger != null)
+            return logger.get();
         return null;
     }
 

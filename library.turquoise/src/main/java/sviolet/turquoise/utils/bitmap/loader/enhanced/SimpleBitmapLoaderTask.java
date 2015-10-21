@@ -2,7 +2,6 @@ package sviolet.turquoise.utils.bitmap.loader.enhanced;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
@@ -10,13 +9,16 @@ import android.view.View;
 
 import java.lang.ref.WeakReference;
 
+import sviolet.turquoise.utils.Logger;
 import sviolet.turquoise.utils.bitmap.loader.OnBitmapLoadedListener;
+import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
 
 /**
  * BitmapLoader加载任务<br/>
  * 实现OnBitmapLoadedListener接口<br/>
  * <br/>
- * 不支持"防回收崩溃", 需配合BitmapLoader回收站使用.<br/>
+ * 简易的"防回收崩溃",必需配合BitmapLoader回收站使用.<br/>
+ * @see SafeBitmapDrawable
  * <br/>
  * ----已实现------------------------------------<br/>
  * <br/>
@@ -207,6 +209,13 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         return null;
     }
 
+    protected Logger getLogger(){
+        if (getLoader() != null){
+            getLoader().getLogger();
+        }
+        return null;
+    }
+
     protected Resources getResources(){
         if (getLoader() != null)
             return getLoader().getResources();
@@ -223,7 +232,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         if (getLoader() != null){
             Bitmap loadingBitmap = getLoader().getLoadingBitmap();
             if (loadingBitmap != null && !loadingBitmap.isRecycled()){
-                return new BitmapDrawable(getResources(), loadingBitmap);
+                return new SafeBitmapDrawable(getResources(), loadingBitmap).setLogger(getLogger());
             }
         }
         return new ColorDrawable(0x00000000);
@@ -334,7 +343,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         if (bitmap == null || bitmap.isRecycled()){
             return getLoadingDrawable();
         }else{
-            return new TransitionDrawable(new Drawable[]{getLoadingDrawable(), new BitmapDrawable(resources, bitmap)});
+            return new TransitionDrawable(new Drawable[]{getLoadingDrawable(), new SafeBitmapDrawable(resources, bitmap).setLogger(getLogger())});
         }
     }
 

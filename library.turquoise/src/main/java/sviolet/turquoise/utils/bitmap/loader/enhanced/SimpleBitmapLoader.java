@@ -12,13 +12,14 @@ import java.lang.ref.WeakReference;
 import sviolet.turquoise.utils.Logger;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
+import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
 
 /**
  * SimpleBitmapLoader<Br/>
  * 便捷图片双缓存网络异步加载器<br/>
  * <br/>
  * 代理强化BitmapLoader, 传入url和View, 自动完成异步加载显示, 错误重新加载, 默认图显示, 淡入效果等.<br/>
- * 不支持"防回收崩溃", 需启用回收站.<br/>
+ * 简易的"防回收崩溃",必需配合BitmapLoader回收站使用.<br/>
  * <br/>
  * ****************************************************************<br/>
  * * * * * SimpleBitmapLoader使用说明:<br/>
@@ -90,8 +91,10 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
  *      将会无法正常使用<br/>
  * 2.ListView等View复用的场合,可省略unused操作.<br/>
  *      load方法会先弃用(unused)先前绑定在控件上的加载任务.<br/>
- * 3.SimpleBitmapLoader不支持防回收崩溃,必须设置回收站.<br/>
- *      即Bitmap被意外回收(recycle),View绘制图片时会报错,与AsyncBitmapDrawableLoader不同.<br/>
+ * 3.SimpleBitmapLoader仅实现简易的"防回收崩溃",必须设置回收站.<br/>
+ *      采用SafeBitmapDrawable,当显示中的Bitmap被意外回收时,会绘制空白,但不会重新加载图片,
+ *      与AsyncBitmapDrawableLoader不同.配合回收站使用效果较好.<br/>
+ *      @see SafeBitmapDrawable
  * <Br/>
  * ****************************************************************<br/>
  * * * * * 名词解释:<br/>
@@ -305,6 +308,10 @@ public class SimpleBitmapLoader {
 
     public int getReloadTimesMax() {
         return reloadTimesMax;
+    }
+
+    protected Logger getLogger(){
+        return bitmapLoader.getLogger();
     }
 
     /**************************************************************
