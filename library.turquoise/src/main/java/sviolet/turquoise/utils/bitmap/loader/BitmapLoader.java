@@ -608,12 +608,18 @@ public class BitmapLoader {
                         mOnBitmapLoadedListener.onLoadFailed(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
+                    if (logger != null) {
+                        logger.d("[BitmapLoader]load:failed:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
+                    }
                     break;
                 case RESULT_CANCELED:
                     if (mOnBitmapLoadedListener != null)
                         mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
+                    if (logger != null) {
+                        logger.d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
+                    }
                     break;
                 case RESULT_CONTINUE:
                     //若缓存文件不存在, 加入网络加载队列
@@ -766,12 +772,18 @@ public class BitmapLoader {
                         mOnBitmapLoadedListener.onLoadFailed(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
+                    if (logger != null) {
+                        logger.d("[BitmapLoader]load:failed:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
+                    }
                     break;
                 case RESULT_CANCELED:
                     if (mOnBitmapLoadedListener != null)
                         mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
                     if (mCachedBitmapUtils != null)
                         mCachedBitmapUtils.unused(cacheKey);
+                    if (logger != null) {
+                        logger.d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
+                    }
                     break;
                 default:
                     break;
