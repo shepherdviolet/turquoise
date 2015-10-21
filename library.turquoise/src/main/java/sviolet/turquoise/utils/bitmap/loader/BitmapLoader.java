@@ -79,6 +79,11 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *      该方法能取消加载任务,有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<br/>
  * 4.destroy [重要] <br/>
  *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<br/>
+ * 5.reduce <br/>
+ *      强制清空缓存中不再使用(unused)的图片.<br/>
+ *      用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
+ *      通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
+ *      将缓存中已被标记为unused的图片回收掉, 减少内存占用.<br/>
  * <Br/>
  * -------------------注意事项----------------<br/>
  * <br/>
@@ -399,7 +404,7 @@ public class BitmapLoader {
     }
 
     /**
-     * [重要]尝试取消加载任务,并将指定Bitmap标示为不再使用,利于回收(Bitmap.recycle)<Br/>
+     * [重要]尝试取消加载任务,将指定Bitmap标示为不再使用,利于回收(Bitmap.recycle)<Br/>
      * <br/>
      * 当图片不再显示时,及时unused有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.
      * 例如:ListView高速滑动时,中间很多项是来不及加载的,也无需显示图片,及时取消加载任务,可
@@ -434,7 +439,19 @@ public class BitmapLoader {
     }
 
     /**
-     * [重要]将所有资源回收销毁, 请在Activity.onDestroy()时调用该方法
+     * 强制清空内存缓存中不再使用(unused)的图片<br/>
+     * <br/>
+     * 用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
+     * 通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
+     * 将缓存中已被标记为unused的图片回收掉, 减少内存占用.<br/>
+     */
+    public void reduce(){
+        if (mCachedBitmapUtils != null)
+            mCachedBitmapUtils.reduce();
+    }
+
+    /**
+     * [重要]将所有资源回收销毁, 建议在Activity.onDestroy()时调用该方法
      */
     public void destroy() {
 

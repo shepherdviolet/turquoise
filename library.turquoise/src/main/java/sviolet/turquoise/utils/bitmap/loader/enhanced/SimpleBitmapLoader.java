@@ -77,6 +77,11 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
  *      该方法能取消加载任务,有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<br/>
  * 3.destroy [重要] <br/>
  *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<br/>
+ * 4.reduce <br/>
+ *      强制清空缓存中不再使用(unused)的图片.<br/>
+ *      用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
+ *      通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
+ *      将缓存中已被标记为unused的图片回收掉, 减少内存占用.<br/>
  * <Br/>
  * -------------------注意事项----------------<br/>
  * <br/>
@@ -241,7 +246,18 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * [重要]将所有资源回收销毁, 请在Activity.onDestroy()时调用该方法<br/>
+     * 强制清空内存缓存中不再使用(unused)的图片<br/>
+     * <br/>
+     * 用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
+     * 通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
+     * 将缓存中已被标记为unused的图片回收掉, 减少内存占用.<br/>
+     */
+    public void reduce(){
+        bitmapLoader.reduce();
+    }
+
+    /**
+     * [重要]将所有资源回收销毁, 建议在Activity.onDestroy()时调用该方法<br/>
      * 1.销毁内部持有的BitmapLoader<br/>
      * 2.销毁加载图(loadingBitmap)<br/>
      */

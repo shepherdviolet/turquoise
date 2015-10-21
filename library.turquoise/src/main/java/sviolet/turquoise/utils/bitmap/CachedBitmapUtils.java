@@ -204,31 +204,27 @@ public class CachedBitmapUtils {
     }
 
     /**
-     * [重要]将一个Bitmap标示为不再使用,利于更快被回收<Br/>
-     * <br/>
-     * 将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
-     * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
-     * 已进入回收站的Bitmap会被立即回收.<br/>
-     *
-     * @param key
-     */
-    public void asyncUnused(String key){
-        mBitmapCache.asyncUnused(key);
-    }
-
-    /**
      * [重要]将一个Bitmap标示为不再使用,利于回收(Bitmap.recycle)<Br/>
      * <br/>
      * 将一个Bitmap标记为不再使用, 缓存中的Bitmap不会被立即回收, 在内存不足时,
      * 会进行缓存清理, 清理时会将最早的被标记为unused的Bitmap.recycle()回收掉.
      * 已进入回收站的Bitmap会被立即回收.<br/>
-     * <br/>
-     * 同步操作, 可能会阻塞
      *
      * @param key
      */
     public void unused(String key){
         mBitmapCache.unused(key);
+    }
+
+    /**
+     * 强制清空缓存中不再使用(unused)的图片<br/>
+     * <br/>
+     * 用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
+     * 通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
+     * 将缓存中已被标记为unused的图片回收掉, 减少内存占用.<br/>
+     */
+    public void reduce(){
+        mBitmapCache.reduce();
     }
 
     /**
