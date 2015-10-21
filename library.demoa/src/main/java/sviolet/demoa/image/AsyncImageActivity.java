@@ -76,6 +76,13 @@ public class AsyncImageActivity extends TActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        //Activity不再显示时, 压缩图片缓存占用空间, 非必须, 在内存紧张场合适用
+        mBitmapLoader.reduce();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         //销毁图片加载器(回收位图占用内存)

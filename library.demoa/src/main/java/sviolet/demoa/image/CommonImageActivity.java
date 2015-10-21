@@ -56,6 +56,16 @@ public class CommonImageActivity extends TActivity {
         initLine4();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        //Activity不再显示时, 压缩图片缓存占用空间, 非必须, 在内存紧张场合适用
+        if (bitmapLoader != null)
+            bitmapLoader.reduce();
+        if (simpleBitmapLoader != null)
+            simpleBitmapLoader.reduce();
+    }
+
     /**
      * 销毁资源<br/>
      * 自行创建的CachedBitmapUtils,BitmapCache,BitmapLoader,AsyncBitmapDrawableLoader需要在此销毁(destroy)<br/>
