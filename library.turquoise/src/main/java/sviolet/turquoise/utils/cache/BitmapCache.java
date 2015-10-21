@@ -348,7 +348,8 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
         //打印日志
         if (logger != null){
-            logger.i("[BitmapCache] recycled:" + counter);
+            logger.i("[BitmapCache]removeAll recycled:" + counter);
+            logger.i(getMemoryReport());
         }
     }
 
@@ -357,7 +358,8 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * <br/>
      * 用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
      * 通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
-     * 将缓存中已被标记为unused的图片回收掉, 减少内存占用.<br/>
+     * 将缓存中已被标记为unused的图片回收掉, 减少内存占用. 但这样会使得重新显示时, 加载
+     * 变慢(需要重新加载).<br/>
      */
     public void reduce() {
         int counter = 0;
@@ -368,15 +370,16 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
                 //从缓存中移除
                 Bitmap bitmap = super.remove(entry.getKey());
                 //加入unusedBitmaps
-                if (bitmap != null)
+                if (bitmap != null) {
                     unusedBitmaps.add(bitmap);
+                }
             }
             //清空不再使用表
-            unusedBitmaps.clear();
+            unusedMap.clear();
         }
 
         for (Bitmap unusedBitmap : unusedBitmaps){
-            if (unusedBitmap != null && !unusedBitmap.isRecycled()){
+            if (unusedBitmap != null && !unusedBitmap.isRecycled()) {
                 unusedBitmap.recycle();
                 counter++;
             }
@@ -387,6 +390,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         //打印日志
         if (logger != null){
             logger.i("[BitmapCache]reduce recycled:" + counter);
+            logger.i(getMemoryReport());
         }
     }
 
@@ -416,16 +420,18 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
     public String getMemoryReport() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("[BitmapCache]MemoryReport:  ");
-        stringBuilder.append("[max]: ");
-        stringBuilder.append(maxSize() / (1024 * 1024));
-        stringBuilder.append("  [CacheUsed]: ");
+        stringBuilder.append("[BitmapCache]MemoryReport: ");
+        stringBuilder.append("[Cache]: ");
         stringBuilder.append(size() / (1024 * 1024));
+        stringBuilder.append("m/");
+        stringBuilder.append(maxSize() / (1024 * 1024));
         stringBuilder.append("m ");
         stringBuilder.append(quantity());
-        stringBuilder.append("pcs  ");
-        stringBuilder.append("[RecyclerUsed]: ");
+        stringBuilder.append("pcs ");
+        stringBuilder.append("[Recycler]: ");
         stringBuilder.append(recyclerSize() / (1024 * 1024));
+        stringBuilder.append("m/");
+        stringBuilder.append(recyclerMaxSize / (1024 * 1024));
         stringBuilder.append("m ");
         stringBuilder.append(recyclerQuantity());
         stringBuilder.append("pcs");

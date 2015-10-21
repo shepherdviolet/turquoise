@@ -221,7 +221,8 @@ public class CachedBitmapUtils {
      * <br/>
      * 用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
      * 通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
-     * 将缓存中已被标记为unused的图片回收掉, 减少内存占用.<br/>
+     * 将缓存中已被标记为unused的图片回收掉, 减少内存占用. 但这样会使得重新显示时, 加载
+     * 变慢(需要重新加载).<br/>
      */
     public void reduce(){
         mBitmapCache.reduce();

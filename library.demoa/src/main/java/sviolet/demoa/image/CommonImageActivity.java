@@ -349,7 +349,7 @@ public class CommonImageActivity extends TActivity {
                     .setDiskCacheInner()//强制使用内部储存
                     .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
     //                    .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
-    //                    .setLogger(getLogger())//打印日志
+                    .setLogger(getLogger())//打印日志
                     .open();//启动(必须)
         } catch (IOException e) {
             //磁盘缓存打开失败的情况, 可进行适当提示
@@ -407,7 +407,7 @@ public class CommonImageActivity extends TActivity {
                     .setDiskCacheInner()//强制使用内部储存
                     .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
 //                    .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
-//                    .setLogger(getLogger())//打印日志
+                    .setLogger(getLogger())//打印日志
                     .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
                     .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
                     .open();//启动(必须)
