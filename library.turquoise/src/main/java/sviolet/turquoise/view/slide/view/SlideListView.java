@@ -8,10 +8,11 @@ import android.widget.ListView;
 import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
 
 /**
- * 内容可左右滑动的ListView<br/>
- * <br/>
+ * <pre>
+ * 内容可左右滑动的ListView
+ * 
  * 利用LinearGestureDriver判断是垂直方向拖动还是水平方向拖动
- *
+ * </pre>
  * Created by S.Violet on 2015/6/17.
  */
 public class SlideListView extends ListView {
