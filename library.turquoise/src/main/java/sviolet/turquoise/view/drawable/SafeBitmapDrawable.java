@@ -19,10 +19,8 @@ import sviolet.turquoise.utils.Logger;
  */
 public class SafeBitmapDrawable extends BitmapDrawable {
 
-    private WeakReference<Logger> logger;
-
-    public SafeBitmapDrawable() {
-    }
+    private WeakReference<Logger> logger;//日志打印器
+    private boolean drawEnable = true;//允许绘制
 
     public SafeBitmapDrawable(Resources res) {
         super(res);
@@ -54,11 +52,18 @@ public class SafeBitmapDrawable extends BitmapDrawable {
 
     @Override
     public void draw(Canvas canvas) {
-        try {
-            super.draw(canvas);
-        }catch (Exception e){
-            if (getLogger() != null){
-                getLogger().e("[SafeBitmapDrawable]draw error", e);
+        if (drawEnable) {
+            try {
+                super.draw(canvas);
+            } catch (Exception e) {
+                drawEnable = false;//禁止绘制
+                if (getLogger() != null) {
+                    getLogger().e("[SafeBitmapDrawable]draw error, catch exception", e);
+                }
+            }
+        }else{
+            if (getLogger() != null) {
+                getLogger().e("[SafeBitmapDrawable]draw skip, because of exception");
             }
         }
     }
