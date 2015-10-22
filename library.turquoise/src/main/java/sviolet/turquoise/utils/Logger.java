@@ -1,17 +1,11 @@
 package sviolet.turquoise.utils;
 
-import android.util.Log;
-
 /**
  * 日志打印器<br />
- * 控制日志级别权限
  *
  * Created by S.Violet on 2015/6/12.
  */
-public class Logger {
-
-    private String tag;
-    private boolean debugEnabled, infoEnabled, errorEnabled;
+public abstract class Logger {
 
     /**
      * @param tag 标签
@@ -19,49 +13,34 @@ public class Logger {
      * @param infoEnabled 允许info日志
      * @param errorEnabled 允许error日志
      */
-    public Logger(String tag, boolean debugEnabled, boolean infoEnabled, boolean errorEnabled){
-        this.tag = tag;
-        this.debugEnabled = debugEnabled;
-        this.infoEnabled = infoEnabled;
-        this.errorEnabled = errorEnabled;
+    public static Logger newInstance(String tag, boolean debugEnabled, boolean infoEnabled, boolean errorEnabled){
+        return new LoggerImpl(tag, debugEnabled, infoEnabled, errorEnabled);
     }
 
-    public void d(String msg){
-        if (debugEnabled)
-            if (msg == null)
-                Log.d(tag, "null");
-            else
-                Log.d(tag, msg);
-    }
+    /**
+     * @param msg debug日志
+     */
+    public abstract void d(String msg);
 
-    public void i(String msg){
-        if (infoEnabled)
-            if (msg == null)
-                Log.i(tag, "null");
-            else
-                Log.i(tag, msg);
-    }
+    /**
+     * @param msg info日志
+     */
+    public abstract void i(String msg);
 
-    public void e(String msg){
-        if (errorEnabled)
-            if (msg == null)
-                Log.e(tag, "null");
-            else
-                Log.e(tag, msg);
-    }
+    /**
+     * @param msg error日志
+     */
+    public abstract void e(String msg);
 
-    public void e(String msg, Throwable t){
-        if (errorEnabled)
-            if (msg == null)
-                Log.e(tag, "null", t);
-            else
-                Log.e(tag, msg, t);
-    }
+    /**
+     * @param msg error日志
+     * @param t 异常
+     */
+    public abstract void e(String msg, Throwable t);
 
-    public void e(Throwable t){
-        if (errorEnabled)
-            if (t != null)
-                t.printStackTrace();
-    }
+    /**
+     * @param t 异常
+     */
+    public abstract void e(Throwable t);
 
 }

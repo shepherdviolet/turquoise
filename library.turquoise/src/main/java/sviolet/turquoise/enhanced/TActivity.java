@@ -393,7 +393,7 @@ public abstract class TActivity extends Activity {
                 return ((TApplication) getApplication()).getLogger();
             }catch (Exception ignored){}
         }
-        return new Logger("", false, false, false);//返回无效的日志打印器
+        return Logger.newInstance("", false, false, false);//返回无效的日志打印器
     }
 
     /**

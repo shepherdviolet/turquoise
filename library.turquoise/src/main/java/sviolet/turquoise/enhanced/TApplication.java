@@ -105,7 +105,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
                 ApplicationUtils.enableStrictMode();
             }
             //日志打印权限
-            logger = new Logger(getDebugSettings().logTag(),
+            logger = Logger.newInstance(getDebugSettings().logTag(),
                     getDebugSettings().enableLogDebug(),
                     getDebugSettings().enableLogInfo(),
                     getDebugSettings().enableLogError());
@@ -115,7 +115,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
                 ApplicationUtils.enableStrictMode();
             }
             //日志打印权限
-            logger = new Logger(getReleaseSettings().logTag(),
+            logger = Logger.newInstance(getReleaseSettings().logTag(),
                     getReleaseSettings().enableLogDebug(),
                     getReleaseSettings().enableLogInfo(),
                     getReleaseSettings().enableLogError());
@@ -285,7 +285,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
      */
     public Logger getLogger(){
         if (logger == null){
-            logger = new Logger("", false, false, false);//返回无效的日志打印器
+            logger = Logger.newInstance("", false, false, false);//返回无效的日志打印器
         }
         return logger;
     }
