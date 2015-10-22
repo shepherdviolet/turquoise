@@ -60,7 +60,6 @@ public class TempActivity extends TActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                System.out.println("1");
                 drawable.setBitmap(getResources(), bitmap1, 500);
 //                Bitmap bitmap = getCachedBitmapUtils().decodeFromResource(null, getResources(), R.mipmap.async_image_1);
 //                drawable.addLayer(new BitmapDrawable(bitmap));
@@ -72,7 +71,6 @@ public class TempActivity extends TActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                System.out.println("2");
 //                drawable.setBitmap(getResources(), getCachedBitmapUtils().decodeFromResource(null, getResources(), R.mipmap.async_image_2, 100, 100), 500);
 //                Bitmap bitmap = getCachedBitmapUtils().decodeFromResource(null, getResources(), R.mipmap.async_image_1);
 //                drawable.addLayer(new BitmapDrawable(bitmap));
@@ -86,7 +84,6 @@ public class TempActivity extends TActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                System.out.println("3");
 //                drawable.setBitmap(getResources(), getCachedBitmapUtils().decodeFromResource(null, getResources(), R.mipmap.async_image_3, 50, 50), 500);
 //                Bitmap bitmap = getCachedBitmapUtils().decodeFromResource(null, getResources(), R.mipmap.async_image_1);
 //                drawable.addLayer(new BitmapDrawable(bitmap));

@@ -1,5 +1,7 @@
 package sviolet.demoa.utils;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -28,7 +30,7 @@ public class JSONHttpURLConnectionTask extends HttpURLConnectionTask {
 	 */
 	public void printLog(String msg){
 		if(msg != null)
-			System.out.println(msg);
+			Log.d("demoa", msg);
 	}
 	
 	/******************************************************************
