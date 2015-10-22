@@ -7,7 +7,7 @@ android {
         applicationId "sviolet.demoa"
         minSdkVersion 10
         targetSdkVersion 23
-        versionCode 13
+        versionCode 14
         versionName "1.4.151022"
     }
     buildTypes {
