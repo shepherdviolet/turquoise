@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -66,7 +67,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     private int recyclerSize = 0;
 
     //日志打印器
-    private Logger logger;
+    private WeakReference<Logger> logger;
 
     /**
      * 创建缓存实例<Br/>
@@ -239,8 +240,8 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             bitmap.recycle();
         }
         //打印内存使用情况
-        if (logger != null)
-            logger.i(getMemoryReport());
+        if (getLogger() != null)
+            getLogger().i(getMemoryReport());
     }
 
     /**
@@ -345,9 +346,9 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         }
 
         //打印日志
-        if (logger != null){
-            logger.i("[BitmapCache]removeAll recycled:" + counter);
-            logger.i(getMemoryReport());
+        if (getLogger() != null){
+            getLogger().i("[BitmapCache]removeAll recycled:" + counter);
+            getLogger().i(getMemoryReport());
         }
     }
 
@@ -386,9 +387,9 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         unusedBitmaps.clear();
 
         //打印日志
-        if (logger != null){
-            logger.i("[BitmapCache]reduce recycled:" + counter);
-            logger.i(getMemoryReport());
+        if (getLogger() != null){
+            getLogger().i("[BitmapCache]reduce recycled:" + counter);
+            getLogger().i(getMemoryReport());
         }
     }
 
@@ -442,7 +443,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * @param logger
      */
     public void setLogger(Logger logger) {
-        this.logger = logger;
+        this.logger = new WeakReference<Logger>(logger);
     }
 
     /******************************************************
@@ -523,8 +524,8 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             entryRemoved(true, key, value, null);
         }
         //打印内存使用情况
-        if (logger != null)
-            logger.i(getMemoryReport());
+        if (getLogger() != null)
+            getLogger().i(getMemoryReport());
     }
 
     @SuppressLint("NewApi")
@@ -538,6 +539,12 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             return value.getByteCount();
         }
         return value.getRowBytes() * value.getHeight();
+    }
+
+    private Logger getLogger(){
+        if (logger != null)
+            return logger.get();
+        return null;
     }
 
 }

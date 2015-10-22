@@ -481,6 +481,9 @@ public class BitmapLoader {
         mNetLoadQueue.cancelAll();
         //磁盘缓存加载队列取消
         mDiskCacheQueue.cancelAll();
+        
+        if (getLogger() != null)
+            getLogger().i("[BitmapLoader]cancel all tasks");
     }
 
     /**
