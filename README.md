@@ -36,7 +36,6 @@ dependencies {
 ```
 
 ## Releases
-> 1.3 rc <br/>
->https://github.com/shepherdviolet/turquoise/blob/master/aar/sviolet.turquoise-1.3.151016-rc.aar<br/>
-> 1.4 beta <br/>
->https://github.com/shepherdviolet/turquoise/blob/master/aar/sviolet.turquoise-1.4.151021-beta3.aar<br/>
+> 1.4 <br/>
+>https://github.com/shepherdviolet/turquoise/blob/master/release/sviolet.turquoise-1.4.151022-stable.aar<br/>
+>https://github.com/shepherdviolet/turquoise/blob/master/release/sviolet.turquoise-doc-1.4.151022.zip<br/>
