@@ -12,6 +12,7 @@ import java.lang.ref.WeakReference;
 import sviolet.turquoise.utils.Logger;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
+import sviolet.turquoise.utils.cache.BitmapCache;
 import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
 
 /**
@@ -293,6 +294,13 @@ public class SimpleBitmapLoader {
      */
     public boolean isDestroyed(){
         return bitmapLoader.isDestroyed();
+    }
+
+    /**
+     * 获得内存缓存器
+     */
+    public BitmapCache getBitmapCache(){
+        return bitmapLoader.getBitmapCache();
     }
 
     /*********************************************************************

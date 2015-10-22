@@ -13,6 +13,7 @@ import sviolet.turquoise.model.queue.TQueue;
 import sviolet.turquoise.model.queue.TTask;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
+import sviolet.turquoise.utils.cache.BitmapCache;
 import sviolet.turquoise.utils.cache.DiskLruCache;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 import sviolet.turquoise.utils.sys.DirectoryUtils;
@@ -881,12 +882,24 @@ public class BitmapLoader {
         return null;
     }
 
+    /*********************************************************************
+     * getter
+     */
+
     /**
      * 获得其中的日志打印器
-     * @return
      */
     public Logger getLogger(){
         return logger;
+    }
+
+    /**
+     * 获得内存缓存器
+     */
+    public BitmapCache getBitmapCache(){
+        if (checkIsOpen())
+            return null;
+        return mCachedBitmapUtils.getBitmapCache();
     }
 
 }
