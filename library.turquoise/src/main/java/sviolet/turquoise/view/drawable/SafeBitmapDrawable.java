@@ -63,7 +63,7 @@ public class SafeBitmapDrawable extends BitmapDrawable {
             }
         }else{
             if (getLogger() != null) {
-                getLogger().e("[SafeBitmapDrawable]draw skip, because of exception");
+                getLogger().d("[SafeBitmapDrawable]draw skip, because of exception");
             }
         }
     }
