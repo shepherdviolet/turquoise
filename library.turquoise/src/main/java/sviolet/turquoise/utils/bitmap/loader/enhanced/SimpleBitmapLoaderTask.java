@@ -237,6 +237,8 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
             Bitmap loadingBitmap = getLoader().getLoadingBitmap();
             if (loadingBitmap != null && !loadingBitmap.isRecycled()){
                 return new SafeBitmapDrawable(getResources(), loadingBitmap).setLogger(getLogger());
+            }else{
+                return new ColorDrawable(getLoader().getLoadingColor());
             }
         }
         return new ColorDrawable(0x00000000);

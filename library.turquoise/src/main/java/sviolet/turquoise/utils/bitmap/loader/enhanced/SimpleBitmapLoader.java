@@ -167,7 +167,8 @@ public class SimpleBitmapLoader {
 
     private WeakReference<Resources> resources;
 
-    private Bitmap loadingBitmap;//加载状态的图片
+    private Bitmap loadingBitmap;//加载状态的图片(二选一)
+    private int loadingColor = 0x00000000;//加载状态的颜色(二选一)
 
     private int animationDuration = 500;//AsyncBitmapDrawable图片由浅及深显示的动画持续时间
 
@@ -182,6 +183,18 @@ public class SimpleBitmapLoader {
     public SimpleBitmapLoader(Context context, String diskCacheName, Bitmap loadingBitmap, BitmapLoaderImplementor implementor) {
         bitmapLoader = new BitmapLoader(context, diskCacheName, implementor);
         this.loadingBitmap = loadingBitmap;
+        this.resources = new WeakReference<Resources>(context.getResources());
+    }
+
+    /**
+     * @param context 上下文
+     * @param diskCacheName 磁盘缓存目录名
+     * @param loadingColor 加载时的颜色, 0x????????
+     * @param implementor 实现器
+     */
+    public SimpleBitmapLoader(Context context, String diskCacheName, int loadingColor, BitmapLoaderImplementor implementor) {
+        bitmapLoader = new BitmapLoader(context, diskCacheName, implementor);
+        this.loadingColor = loadingColor;
         this.resources = new WeakReference<Resources>(context.getResources());
     }
 
@@ -342,6 +355,10 @@ public class SimpleBitmapLoader {
             return null;
         }
         return loadingBitmap;
+    }
+
+    protected int getLoadingColor(){
+        return loadingColor;
     }
 
     public int getReloadTimesMax() {
