@@ -88,20 +88,6 @@ public class TQueue {
 	/*****************************************************
 	 * Public
 	 */
-	
-	/**
-	 * [异步]队列中增加任务并执行
-	 * @param task
-	 */
-	public TTask asyncPut(final String key, final TTask task){
-        executeDispatch(new Runnable() {
-            @Override
-            public void run() {
-                put(key, task);
-            }
-        });
-        return task;
-	}
 
     /**
      * [同步]队列中增加任务并执行<br/>
@@ -320,18 +306,6 @@ public class TQueue {
 		return concurrencyVolumeMax;
 	}
 
-	/**
-	 * [异步]取消指定标签的任务
-	 */
-	public void asyncCancel(final String key){
-        executeDispatch(new Runnable() {
-            @Override
-            public void run() {
-                cancel(key);
-            }
-        });
-	}
-
     /**
      * [同步]取消指定标签的任务<br/>
      * 线程同步操作, 可能会阻塞<br/>
@@ -363,38 +337,30 @@ public class TQueue {
 	 * 取消所有任务
 	 */
 	public void cancelAll(){
-        executeDispatch(new Runnable() {
-            @Override
-            public void run() {
-                synchronized (TQueue.this) {
-                    for (Map.Entry<String, TTask> entry : runningTasks.entrySet()) {
-                        TTask task = entry.getValue();
-                        if (task != null)
-                            task.cancel();
-                    }
-                    for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
-                        TTask task = entry.getValue();
-                        if (task != null)
-                            task.cancel();
-                    }
-                    runningTasks.clear();
-                    waittingTasks.clear();
-                }
+        synchronized (TQueue.this) {
+            for (Map.Entry<String, TTask> entry : runningTasks.entrySet()) {
+                TTask task = entry.getValue();
+                if (task != null)
+                    task.cancel();
             }
-        });
+            for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
+                TTask task = entry.getValue();
+                if (task != null)
+                    task.cancel();
+            }
+            runningTasks.clear();
+            waittingTasks.clear();
+        }
 	}
 
     /**
-     * [异步]优先处理指定任务<br/>
-     * 将指定任务排到第一位<br/>
-     *
-     * @param key
+     * [异步]取消所有任务
      */
-    public void asyncPreferred(final String key){
+    public void asyncCancelAll(){
         executeDispatch(new Runnable() {
             @Override
             public void run() {
-                preferred(key);
+                cancelAll();
             }
         });
     }
