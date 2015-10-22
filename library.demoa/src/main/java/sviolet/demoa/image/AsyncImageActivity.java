@@ -63,6 +63,7 @@ public class AsyncImageActivity extends TActivity {
                     .setDiskCacheInner()//强制使用内部储存
                     .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
 //                    .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
+//                    .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
                     .setLogger(getLogger())//打印日志
                     .open();//启动(必须)
 
