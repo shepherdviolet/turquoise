@@ -71,6 +71,9 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
  *      通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
  *      将缓存中已被标记为unused的图片回收掉, 减少内存占用. 但这样会使得重新显示时, 加载
  *      变慢(需要重新加载).<br/>
+ * 6.cancelAllTasks <br/>
+ *      强制取消所有加载任务.不影响缓存,不弃用图片.<br/>
+ *      用于BitmapLoader未销毁的情况下, 结束网络访问.<br/>
  * <Br/>
  * -------------------注意事项----------------<br/>
  * <br/>
@@ -241,7 +244,7 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
-     * 强制清空内存缓存中不再使用(unused)的图片<br/>
+     * [特殊]强制清空内存缓存中不再使用(unused)的图片<br/>
      * <br/>
      * 用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
      * 通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
@@ -250,6 +253,15 @@ public class AsyncBitmapDrawableLoader {
      */
     public void reduce(){
         bitmapLoader.reduce();
+    }
+
+    /**
+     * [特殊]强制取消所有加载任务<br/>
+     * <br/>
+     * 仅取消加载任务,不影响缓存,不弃用图片<br/>
+     */
+    public void cancelAllTasks(){
+        bitmapLoader.cancelAllTasks();
     }
 
     /**
