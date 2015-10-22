@@ -36,6 +36,8 @@ dependencies {
 ```
 
 ## Releases
-> 1.4 <br/>
->https://github.com/shepherdviolet/turquoise/blob/master/release/sviolet.turquoise-1.4.151022-stable.aar<br/>
->https://github.com/shepherdviolet/turquoise/blob/master/release/sviolet.turquoise-doc-1.4.151022.zip<br/>
+```java
+1.4
+https://github.com/shepherdviolet/turquoise/blob/master/release/sviolet.turquoise-1.4.151022-stable.aar
+https://github.com/shepherdviolet/turquoise/blob/master/release/sviolet.turquoise-doc-1.4.151022.zip
+```
