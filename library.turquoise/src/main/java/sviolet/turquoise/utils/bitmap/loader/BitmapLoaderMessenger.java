@@ -6,6 +6,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
+ * <pre>
  * BitmapLoader通知器<br/>
  * 用于BitmapLoader任务线程与异步网络请求间的通知<br/>
  * <br/>
@@ -25,6 +26,9 @@ import java.util.concurrent.locks.ReentrantLock;
  *      加载任务被取消时,会回调该监听器.通常用于异步加载场合,例如使用异步网络框架,在该监听器回调方法中
  *      调用框架方法,终止网络请求.<br/>
  * <Br/>
+ * </pre>
+ *
+ * @author S.Violet
  *
  */
 public class BitmapLoaderMessenger {

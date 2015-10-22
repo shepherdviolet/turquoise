@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
+ * <pre>
  * 由浅及深显示的BitmapDrawable, 防回收崩溃 [完善中,慎用]<Br/>
  * <br/>
  * 1.setBitmap可动态改变显示的Bitmap<Br/>
@@ -47,6 +48,7 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  * wrap_content时, 控件长宽可能会初始化为0, 导致新设置的图片无法显示, 建议控件尺寸设置
  * 为固定值或给TransitionBitmapDrawable设置默认图, 新图片尺寸将与固定尺寸或默认图一致.<br/>
  * <br/>
+ * </pre>
  * Created by S.Violet on 2015/10/13.
  */
 @Deprecated
@@ -56,6 +58,7 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
     private BitmapDrawable defaultDrawable;
 
     /**
+     * <pre>
      * 由浅及深显示的BitmapDrawable, 防回收崩溃 [完善中,慎用]<Br/>
      * <br/>
      * 1.setBitmap可动态改变显示的Bitmap<Br/>
@@ -66,6 +69,7 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
      * <Br/>
      * 初始显示透明图层<br/>
      * 当设置的Bitmap被回收(recycle), 显示透明图层<br/>
+     * </pre>
      */
     public TransitionBitmapDrawable(){
         super(new Drawable[]{new ColorDrawable(0x00000000), new ColorDrawable(0x00000000)});
@@ -73,6 +77,7 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
     }
 
     /**
+     * <pre>
      * 由浅及深显示的BitmapDrawable, 防回收崩溃 [完善中,慎用]<Br/>
      * <br/>
      * 1.setBitmap可动态改变显示的Bitmap<Br/>
@@ -83,6 +88,7 @@ public class TransitionBitmapDrawable extends TransitionDrawable {
      * <br/>
      * 初始显示默认图<br/>
      * 默认图的显示无渐变效果, 当设置的Bitmap被回收(recycle), 会显示默认图或透明图层<br/>
+     * </pre>
      *
      * @param resources getResources()
      * @param defaultBitmap 默认图,立即显示,无渐变效果

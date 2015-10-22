@@ -4,6 +4,7 @@ import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor;
 
 /**
+ * <pre>
  * BitmapLoader实现器<br/>
  * <br/>
  * 实现BitmapLoader待实现的方法:<br/>
@@ -13,6 +14,10 @@ import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplemen
  * <br/>
  * 简易实现:<br/>
  * @see sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor
+ * </pre>
+ *
+ * @author S.Violet
+ *
  */
 public interface BitmapLoaderImplementor {
 
@@ -28,6 +33,7 @@ public interface BitmapLoaderImplementor {
     public String getCacheKey(String url);
 
     /**
+     * <pre>
      * 实现根据url参数从网络下载图片数据, 依照需求尺寸reqWidth和reqHeight解析为合适大小的Bitmap,
      * 并调用通知器BitmapLoaderMessenger.setResultSucceed/setResultFailed/setResultCanceled方法返回结果<br/>
      * <br/>
@@ -98,6 +104,7 @@ public interface BitmapLoaderImplementor {
      *          }
      *      }
      * <Br/>
+     * </pre>
      *
      * @param url url
      * @param reqWidth 请求宽度

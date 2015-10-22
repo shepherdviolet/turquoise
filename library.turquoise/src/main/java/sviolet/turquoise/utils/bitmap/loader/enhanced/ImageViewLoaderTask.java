@@ -1,7 +1,6 @@
 package sviolet.turquoise.utils.bitmap.loader.enhanced;
 
 import android.graphics.drawable.Drawable;
-import android.view.View;
 import android.widget.ImageView;
 
 /**
@@ -10,7 +9,7 @@ import android.widget.ImageView;
 public class ImageViewLoaderTask extends SimpleBitmapLoaderTask<ImageView> {
 
 
-    public ImageViewLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, ImageView view) {
+    ImageViewLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, ImageView view) {
         super(url, reqWidth, reqHeight, loader, view);
     }
 

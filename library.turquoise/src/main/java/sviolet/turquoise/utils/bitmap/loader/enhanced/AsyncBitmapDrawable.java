@@ -2,8 +2,6 @@ package sviolet.turquoise.utils.bitmap.loader.enhanced;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Message;
 
 import java.lang.ref.WeakReference;
 
@@ -11,6 +9,7 @@ import sviolet.turquoise.utils.bitmap.loader.OnBitmapLoadedListener;
 import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
 
 /**
+ * <pre>
  * 异步BitmapDrawable, 防回收崩溃<br/>
  * <br/>
  * 由AsyncBitmapDrawableLoader.load方法返回.<br/>
@@ -46,6 +45,10 @@ import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
  * 为固定值或给TransitionBitmapDrawable设置默认图, 新图片尺寸将与固定尺寸或默认图一致.<br/>
  * <br/>
  * <br/>
+ * </pre>
+ *
+ * @author S.Violet
+ *
  * Created by S.Violet on 2015/10/15.
  */
 @Deprecated

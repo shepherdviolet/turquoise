@@ -14,6 +14,7 @@ import sviolet.turquoise.utils.bitmap.loader.OnBitmapLoadedListener;
 import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
 
 /**
+ * <pre>
  * BitmapLoader加载任务<br/>
  * 实现OnBitmapLoadedListener接口<br/>
  * <br/>
@@ -36,6 +37,9 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  * ----注意事项-----------------------------------<br/>
  * <br/>
  * 该类占用了控件(View)的Tag用于绑定本身, 若控件设置另外的Tag(View.setTag())将会无法正常使用<br/>
+ * </pre>
+ *
+ * @author S.Violet
  *
  * Created by S.Violet on 2015/10/16.
  */

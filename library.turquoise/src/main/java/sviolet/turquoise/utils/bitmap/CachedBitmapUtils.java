@@ -9,6 +9,7 @@ import java.io.InputStream;
 import sviolet.turquoise.utils.cache.BitmapCache;
 
 /**
+ * <pre>
  * 内置内存缓存的Bitmap工具<br/>
  * <br/>
  * 内置BitmapCache图片内存缓存器:<br/>
@@ -58,6 +59,9 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  *          其他占用内存受限.<br/>
  * <br/>
  * <br/>
+ * </pre>
+ *
+ * @author S.Violet
  *
  * Created by S.Violet on 2015/7/1.
  */
@@ -70,6 +74,7 @@ public class CachedBitmapUtils {
     private BitmapCache mBitmapCache;
 
     /**
+     * <pre>
      * 创建缓存实例<Br/>
      * 根据实际情况设置缓存占比, 参考值0.125, 建议不超过0.25<Br/>
      * <Br/>
@@ -91,6 +96,7 @@ public class CachedBitmapUtils {
      * 但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
+     * </pre>
      *
      * @param context
      * @param cachePercent Bitmap缓存区占用应用可用内存的比例 (0, 1]
@@ -102,6 +108,7 @@ public class CachedBitmapUtils {
     }
 
     /**
+     * <pre>
      * 创建缓存实例<Br/>
      * 缓存区容量为默认值DEFAULT_CACHE_MEMORY_PERCENT = 0.125f<Br/>
      * 回收站容量为默认值DEFAULT_CACHE_MEMORY_PERCENT = 0.125f<Br/>
@@ -124,6 +131,7 @@ public class CachedBitmapUtils {
      * 但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
+     * </pre>
      *
      * @param context
      * @return
@@ -133,6 +141,7 @@ public class CachedBitmapUtils {
     }
 
     /**
+     * <pre>
      * 创建缓存实例<Br/>
      * 根据实际情况设置缓冲区占用最大内存<br/>
      * <Br/>
@@ -154,6 +163,7 @@ public class CachedBitmapUtils {
      * 但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
+     * </pre>
      *
      * @param cacheMaxSize Bitmap缓存区占用最大内存 单位byte (0, ?)
      * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte [0, ?), 设置为0禁用回收站

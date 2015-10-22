@@ -12,7 +12,7 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  */
 public class BackgroundLoaderTask extends SimpleBitmapLoaderTask<View> {
 
-    public BackgroundLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, View view) {
+    BackgroundLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, View view) {
         super(url, reqWidth, reqHeight, loader, view);
     }
 

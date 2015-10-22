@@ -13,6 +13,7 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
 import sviolet.turquoise.utils.cache.BitmapCache;
 
 /**
+ * <pre>
  * AsyncBitmapDrawableLoader<br/>
  * AsyncBitmapDrawable双缓存网络异步加载器<br/>
  * <br/>
@@ -135,6 +136,10 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  *      因为SimpleBitmapLoader会把SimpleBitmapLoaderTask通过setTag()绑定在控件上!<Br/>
  * <Br/>
  * <Br/>
+ * </pre>
+ *
+ * @author S.Violet
+ *
  * Created by S.Violet on 2015/7/3.
  */
 @Deprecated
@@ -174,6 +179,7 @@ public class AsyncBitmapDrawableLoader {
     ////////////////////////////////////////////////////////////////////////
 
     /**
+     * <pre>
      * 加载图片, 立即返回AsyncBitmapDrawable<br/>
      * AsyncBitmapDrawable为异步的BitmapDrawable, 在加载时会显示加载图, 加载成功后会自动刷新为目标图片<br/>
      * ImageView.setImageDrawable()方法直接设置图片使用, 请勿获取其中的Bitmap使用.<br/>
@@ -184,6 +190,7 @@ public class AsyncBitmapDrawableLoader {
      * <Br/>
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     * </pre>
      *
      * @param url 图片URL地址
      * @param reqWidth 需求宽度 px
@@ -200,6 +207,7 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
+     * <pre>
      * 从内存缓存中取AsyncBitmapDrawable, 若不存在或已被回收, 则返回null<br/>
      * AsyncBitmapDrawable为异步的BitmapDrawable, 在加载时会显示加载图, 加载成功后会自动刷新为目标图片<br/>
      * ImageView.setImageDrawable()方法直接设置图片使用, 请勿获取其中的Bitmap使用.<br/>
@@ -210,6 +218,7 @@ public class AsyncBitmapDrawableLoader {
      * <Br/>
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     * </pre>
      *
      * @param url 图片URL地址
      * @param reqWidth 需求宽度 px
@@ -224,6 +233,7 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
+     * <pre>
      * 尝试取消加载任务<br/>
      * <br/>
      * [[[注意]]] 使用AysncBitmapDrawable.unused()
@@ -237,6 +247,7 @@ public class AsyncBitmapDrawableLoader {
      * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
+     * </pre>
      *
      * @param url 图片URL地址
      */
@@ -350,6 +361,7 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
+     * <pre>
      * 相同图片同时加载<br/>
      * <br/>
      * ----------------------------------------------<br/>
@@ -370,6 +382,7 @@ public class AsyncBitmapDrawableLoader {
      * 同名任务跟随策略,其中一个任务执行,其他同名任务等待其完成后,同时回调OnLoadCompleteListener,并传入
      * 同一个结果(Bitmap).这种方式在高并发场合,例如:频繁滑动ListView,任务会持有大量的对象用以回调,而绝大
      * 多数的View已不再显示在屏幕上.<Br/>
+     * </pre>
      *
      */
     public AsyncBitmapDrawableLoader setDuplicateLoadEnable(boolean duplicateLoadEnable) {
