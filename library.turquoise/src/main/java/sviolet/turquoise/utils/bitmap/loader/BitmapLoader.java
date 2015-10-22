@@ -41,6 +41,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *          .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置磁盘缓存保存格式和质量
  *          //.setDiskCacheInner()//强制使用内部储存
  *          //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
+ *          //.setWipeOnNewVersion()//当APP更新时清空磁盘缓存
  *          //.setLogger(getLogger())
  *          .open();//必须调用
  *   } catch (IOException e) {
@@ -170,6 +171,7 @@ public class BitmapLoader {
     private Bitmap.CompressFormat imageFormat = Bitmap.CompressFormat.JPEG;//缓存图片保存格式
     private int imageQuality = 70;//缓存图片保存质量
     private int keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;//TQueue同名任务冲突策略
+    private int appVersionCode = 1;//应用版本versionCode
     private File cacheDir;//缓存路径
     private WeakReference<Logger> logger;//日志打印器
     private boolean destroyed = false;//是否已被销毁
@@ -305,6 +307,17 @@ public class BitmapLoader {
     }
 
     /**
+     * 设置App更新时清空磁盘缓存<br/>
+     * 默认:不清空缓存<br/>
+     * <br/>
+     * 当应用versionCode发生变化时, 会清空磁盘缓存. 注意是versionCode, 非versionName.<br/>
+     */
+    public BitmapLoader setWipeOnNewVersion(){
+        this.appVersionCode = ApplicationUtils.getAppVersion(getContext());
+        return this;
+    }
+
+    /**
      * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
      */
     public BitmapLoader setLogger(Logger logger) {
@@ -321,7 +334,7 @@ public class BitmapLoader {
      * @throws IOException 磁盘缓存启动失败抛出异常
      */
     public BitmapLoader open() throws IOException {
-        this.mDiskLruCache = DiskLruCache.open(cacheDir, ApplicationUtils.getAppVersion(getContext()), 1, diskCacheSize);
+        this.mDiskLruCache = DiskLruCache.open(cacheDir, appVersionCode, 1, diskCacheSize);
         this.mCachedBitmapUtils = new CachedBitmapUtils(getContext(), ramCacheSizePercent, ramCacheRecyclerSizePercent);
         this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency)
                 .setVolumeMax(diskLoadVolume)

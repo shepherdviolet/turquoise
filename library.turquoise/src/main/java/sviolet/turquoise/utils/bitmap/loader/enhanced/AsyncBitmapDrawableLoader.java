@@ -37,6 +37,7 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
  *           .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
  *           //.setDiskCacheInner()//强制使用内部储存
  *           //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
+ *           //.setWipeOnNewVersion()//当APP更新时清空磁盘缓存
  *           //.setLogger(getLogger())//打印日志
  *           .setAnimationDuration(500)//AsyncBitmapDrawable由浅及深显示效果持续时间
  *           .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
@@ -409,6 +410,17 @@ public class AsyncBitmapDrawableLoader {
      */
     public AsyncBitmapDrawableLoader setReloadTimesMax(int times){
         this.reloadTimesMax = times;
+        return this;
+    }
+
+    /**
+     * 设置App更新时清空磁盘缓存<br/>
+     * 默认:不清空缓存<br/>
+     * <br/>
+     * 当应用versionCode发生变化时, 会清空磁盘缓存. 注意是versionCode, 非versionName.<br/>
+     */
+    public AsyncBitmapDrawableLoader setWipeOnNewVersion(){
+        bitmapLoader.setWipeOnNewVersion();
         return this;
     }
 
