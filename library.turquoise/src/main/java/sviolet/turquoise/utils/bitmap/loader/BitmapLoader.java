@@ -176,7 +176,7 @@ public class BitmapLoader {
     private int keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;//TQueue同名任务冲突策略
     private int appVersionCode = 1;//应用版本versionCode
     private File cacheDir;//缓存路径
-    private WeakReference<Logger> logger;//日志打印器
+    private Logger logger;//日志打印器
     private boolean destroyed = false;//是否已被销毁
 
     /**
@@ -324,7 +324,7 @@ public class BitmapLoader {
      * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
      */
     public BitmapLoader setLogger(Logger logger) {
-        this.logger = new WeakReference<Logger>(logger);
+        this.logger = logger;
         if (mCachedBitmapUtils != null)
             mCachedBitmapUtils.getBitmapCache().setLogger(logger);
         return this;
@@ -886,9 +886,7 @@ public class BitmapLoader {
      * @return
      */
     public Logger getLogger(){
-        if (logger != null)
-            return logger.get();
-        return null;
+        return logger;
     }
 
 }

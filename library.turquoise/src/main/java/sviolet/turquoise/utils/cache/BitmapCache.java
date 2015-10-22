@@ -5,7 +5,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,7 +66,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     private int recyclerSize = 0;
 
     //日志打印器
-    private WeakReference<Logger> logger;
+    private Logger logger;
 
     /**
      * 创建缓存实例<Br/>
@@ -443,7 +442,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * @param logger
      */
     public void setLogger(Logger logger) {
-        this.logger = new WeakReference<Logger>(logger);
+        this.logger = logger;
     }
 
     /******************************************************
@@ -542,9 +541,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     }
 
     private Logger getLogger(){
-        if (logger != null)
-            return logger.get();
-        return null;
+        return logger;
     }
 
 }

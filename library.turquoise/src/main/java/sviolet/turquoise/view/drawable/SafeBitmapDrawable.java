@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.utils.Logger;
 
@@ -19,7 +18,7 @@ import sviolet.turquoise.utils.Logger;
  */
 public class SafeBitmapDrawable extends BitmapDrawable {
 
-    private WeakReference<Logger> logger;//日志打印器
+    private Logger logger;//日志打印器
     private boolean drawEnable = true;//允许绘制
 
     public SafeBitmapDrawable(Resources res) {
@@ -69,13 +68,11 @@ public class SafeBitmapDrawable extends BitmapDrawable {
     }
 
     public SafeBitmapDrawable setLogger(Logger logger){
-        this.logger = new WeakReference<Logger>(logger);
+        this.logger = logger;
         return this;
     }
 
     private Logger getLogger(){
-        if (logger != null)
-            return logger.get();
-        return null;
+        return logger;
     }
 }
