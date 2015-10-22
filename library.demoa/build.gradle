@@ -8,7 +8,7 @@ android {
         minSdkVersion 10
         targetSdkVersion 23
         versionCode 13
-        versionName "1.4.151021"
+        versionName "1.4.151022"
     }
     buildTypes {
         release {
