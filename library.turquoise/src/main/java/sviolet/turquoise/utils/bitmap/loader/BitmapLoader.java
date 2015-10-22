@@ -499,6 +499,13 @@ public class BitmapLoader {
         }
     }
 
+    /**
+     * 是否已被销毁(不可用状态)
+     */
+    public boolean isDestroyed(){
+        return destroyed;
+    }
+
     /****************************************************************************
      * static function
      */

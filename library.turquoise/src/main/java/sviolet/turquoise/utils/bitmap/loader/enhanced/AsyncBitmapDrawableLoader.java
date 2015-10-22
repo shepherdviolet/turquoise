@@ -266,6 +266,13 @@ public class AsyncBitmapDrawableLoader {
         }
     }
 
+    /**
+     * 是否已被销毁(不可用状态)
+     */
+    public boolean isDestroyed(){
+        return bitmapLoader.isDestroyed();
+    }
+
     ////////////////////////////////////////////////////////////////////////
     //GETTER
     ////////////////////////////////////////////////////////////////////////
