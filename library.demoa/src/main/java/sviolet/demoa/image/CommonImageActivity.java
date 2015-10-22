@@ -438,13 +438,13 @@ public class CommonImageActivity extends TActivity {
 //        simpleBitmapLoader.unused(imageView42);//弃用Bitmap, 可回收资源/取消加载任务
 
         //测试简易防回收崩溃
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                simpleBitmapLoader.destroy();
-                imageView42.postInvalidate();
-            }
-        }, 3000);
+//        handler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                simpleBitmapLoader.destroy();
+//                imageView42.postInvalidate();
+//            }
+//        }, 10000);
 
     }
 
@@ -456,7 +456,7 @@ public class CommonImageActivity extends TActivity {
         @Override
         public void onLoadSucceed(String url, int reqWidth, int reqHeight, Object params, Bitmap bitmap) {
             //加载成功
-            getLogger().i("41 load succeed");
+            getLogger().i("[demoa]41 load succeed");
 
             if (bitmap != null && !bitmap.isRecycled()) {
                 //获得传入的控件
@@ -472,7 +472,7 @@ public class CommonImageActivity extends TActivity {
         @Override
         public void onLoadFailed(String url, int reqWidth, int reqHeight, Object params) {
             //加载失败, 尝试重新加载
-            getLogger().i("41 load failed");
+            getLogger().i("[demoa]41 load failed");
             //获得传入的控件
             ImageView imageView = (ImageView) params;
             //获得控件tag中的参数
@@ -480,7 +480,7 @@ public class CommonImageActivity extends TActivity {
 
             //根据TaskInfo记录的重新加载次数, 判断是否重新加载
             if (taskInfo.reloadTimes < TaskInfo.RELOAD_TIMES_MAX){
-                getLogger().i("41 reload");
+                getLogger().i("[demoa]41 reload");
                 //计数+1
                 taskInfo.reloadTimes++;
                 //重新加载
@@ -490,7 +490,7 @@ public class CommonImageActivity extends TActivity {
         @Override
         public void onLoadCanceled(String url, int reqWidth, int reqHeight, Object params) {
             //取消通常不用处理
-            getLogger().i("41 load canceled");
+            getLogger().i("[demoa]41 load canceled");
         }
     };
 
