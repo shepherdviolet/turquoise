@@ -85,6 +85,8 @@ public class Async2ImageActivity extends TActivity {
         super.onStop();
         //Activity不再显示时, 压缩图片缓存占用空间, 非必须, 在内存紧张场合适用
         mAsyncBitmapDrawableLoader.reduce();
+        //Activity不再显示时, 取消所有加载任务
+//        simpleBitmapLoader.cancelAllTasks();
     }
 
     @Override
