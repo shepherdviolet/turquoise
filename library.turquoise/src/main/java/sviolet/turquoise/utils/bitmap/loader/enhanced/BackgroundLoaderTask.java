@@ -8,6 +8,7 @@ import android.view.View;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
+ * View背景异步加载控件<br/>
  * Created by S.Violet on 2015/10/19.
  */
 public class BackgroundLoaderTask extends SimpleBitmapLoaderTask<View> {

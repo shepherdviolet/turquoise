@@ -16,7 +16,7 @@ import sviolet.turquoise.utils.cache.BitmapCache;
 import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
 
 /**
- * <pre>
+ * 
  * SimpleBitmapLoader<Br/>
  * 便捷图片双缓存网络异步加载器<br/>
  * <br/>
@@ -32,6 +32,7 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  * 1.实现接口BitmapLoaderImplementor<br/>
  * 2.实例化SimpleBitmapLoader(Context,String,Bitmap,BitmapLoaderImplementor) <br/>
  * 3.设置参数:<br/>
+ * <pre>{@code
  *   try {
  *       mSimpleBitmapLoader = new SimpleBitmapLoader(this, "bitmap", loadingBitmap, new MyBitmapLoaderImplementor())
  *          .setRamCache(0.125f, 0.125f)//设置内存缓存大小,启用回收站
@@ -48,6 +49,7 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  *   } catch (IOException e) {
  *      //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
  *   }
+ * }</pre>
  * <br/>
  *      [上述代码说明]:<br/>
  *      位图内存缓存占用应用最大可用内存的12.5%,回收站最大可能占用额外的12.5%,
@@ -74,19 +76,23 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  * 1.load <br/>
  *      加载图片,自动完成异步加载显示,错误重新加载,默认图显示,淡入效果等.<Br/>
  *      加载任务会绑定在控件TAG上(View.setTag()),请勿给控件设置自定义Tag,会导致加载失败.<Br/>
- *      加载方法会弃用(unused)先前绑定在控件上的加载任务.请注意.<br/>
+ *      加载方法会弃用(unused)先前绑定在控件上的加载任务.请注意.<p/>
+ *
  * 2.unused [重要] <br/>
  *      不再使用的图片须及时用该方法废弃,尤其是大量图片的场合,未被废弃(unused)的图片
  *      将不会被BitmapLoader回收.请参看"名词解释".<br/>
- *      该方法能取消加载任务,有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<br/>
+ *      该方法能取消加载任务,有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<p/>
+ *
  * 3.destroy [重要] <br/>
- *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<br/>
+ *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<p/>
+ *
  * 4.reduce <br/>
  *      强制清空内存缓存中不再使用(unused)的图片.<br/>
  *      用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
  *      通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
  *      将缓存中已被标记为unused的图片回收掉, 减少内存占用. 但这样会使得重新显示时, 加载
- *      变慢(需要重新加载).<br/>
+ *      变慢(需要重新加载).<p/>
+ *
  * 5.cancelAllTasks <br/>
  *      强制取消所有加载任务.不影响缓存,不弃用图片.<br/>
  *      用于BitmapLoader未销毁的情况下, 结束网络访问.<br/>
@@ -151,7 +157,7 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  *      因为SimpleBitmapLoader会把SimpleBitmapLoaderTask通过setTag()绑定在控件上!<Br/>
  * <Br/>
  * <Br/>
- * </pre>
+ * 
  *
  * @author S.Violet
  *
@@ -203,7 +209,7 @@ public class SimpleBitmapLoader {
      */
 
     /**
-     * <pre>
+     * 
      * 异步加载ImageView<br/>
      * <br/>
      * 注意:<Br/>
@@ -216,7 +222,7 @@ public class SimpleBitmapLoader {
      * <Br/>
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
-     * </pre>
+     * 
      *
      * @param url url
      * @param reqWidth 需求宽度
@@ -228,7 +234,7 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * <pre>
+     * 
      * 异步加载背景图<br/>
      * <br/>
      * 注意:<Br/>
@@ -241,7 +247,7 @@ public class SimpleBitmapLoader {
      * <Br/>
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
-     * </pre>
+     * 
      *
      * @param url url
      * @param reqWidth 需求宽度
@@ -253,13 +259,13 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * <pre>
+     * 
      * [重要]弃用图片并取消加载任务<Br/>
      * <br/>
      *      不再使用的图片须及时用该方法废弃,尤其是大量图片的场合,未被废弃(unused)的图片
      *      将不会被BitmapLoader回收.请参看SimpleBitmapLoader"名词解释".<br/>
      *      该方法能取消加载任务,有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<br/>
-     * </pre>
+     * 
      */
     public void unused(View view){
         if (view == null)
@@ -393,7 +399,7 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * <pre>
+     * 
      * 相同图片同时加载<br/>
      * <br/>
      * ----------------------------------------------<br/>
@@ -414,7 +420,7 @@ public class SimpleBitmapLoader {
      * 同名任务跟随策略,其中一个任务执行,其他同名任务等待其完成后,同时回调OnLoadCompleteListener,并传入
      * 同一个结果(Bitmap).这种方式在高并发场合,例如:频繁滑动ListView,任务会持有大量的对象用以回调,而绝大
      * 多数的View已不再显示在屏幕上.<Br/>
-     * </pre>
+     * 
      *
      */
     public SimpleBitmapLoader setDuplicateLoadEnable(boolean duplicateLoadEnable) {
@@ -452,7 +458,7 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * <pre>
+     * 
      * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
      * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
      * 使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
@@ -471,7 +477,7 @@ public class SimpleBitmapLoader {
      * 但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
-     * </pre>
+     * 
      *
      * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1], 默认值0.125f
      * @param ramCacheRecyclerSizePercent 内存缓存回收站占用应用可用内存的比例 [0, 1], 设置为0禁用回收站, 默认值0.125f
