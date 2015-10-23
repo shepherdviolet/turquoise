@@ -11,17 +11,17 @@ import java.util.Map.Entry;
 import sviolet.turquoise.exception.DeprecatedException;
 
 /**
- * <pre>
- * SlideEngine组, 滑动引擎组
+ * 
+ * SlideEngine组, 滑动引擎组<p/>
  * 
  * 适用于GestureDriver和SlideEngine一对多的情况, 塞入复数个SlideEngine, 
- * GestrueDrive的输出由此引擎组分发到其中一个SlideEngine
+ * GestrueDrive的输出由此引擎组分发到其中一个SlideEngine<p/>
  * 
- * [View] TouchEvent--> [GestureDrive] <--bind--> [SlideEngineGroup] <--add [SlideEngine] notify--> [SlideView]
+ * [View] TouchEvent--> [GestureDrive] <--bind--> [SlideEngineGroup] <--add [SlideEngine] notify--> [SlideView]<p/>
  * 
  * SlideEngineGroup对于GestureDriver是一个虚拟的SlideEngine, 对于SlideEngine是一个虚拟的GestureDriver,
- * 但SlideEngineGroup实现GestureDriver接口不完整, 部分方法不可调用.
- * </pre>
+ * 但SlideEngineGroup实现GestureDriver接口不完整, 部分方法不可调用.<p/>
+ * 
  * @author S.Violet
  *
  */
@@ -122,12 +122,13 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	}
 
 	/**
-	 * <pre>
-	 * 添加一个内部引擎
-	 * 作用:
+	 * 
+	 * 添加一个内部引擎<p/>
+	 *
+	 * 作用:<br/>
 	 * 1.内部引擎拦截到事件后, 会调用外部引擎对应驱动的skipIntercept()方法,
-	 *      阻断外部引擎的本次事件拦截, 防止内部控件滑动时被外部拦截
-	 * </pre>
+	 *      阻断外部引擎的本次事件拦截, 防止内部控件滑动时被外部拦截<br/>
+	 * 
 	 * @param slideEngine 内部引擎
 	 */
 	@Override
@@ -192,10 +193,8 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	}
 	
 	/**
-	 * <pre>
 	 * SlideEngineGroup不是一个真正的GestureDriver, 
 	 * 不能使用bind绑定SlideEngine, 请用addSlideEngine()方法添加
-	 * </pre>
 	 * @param slideEngine
 	 */
 	@Deprecated
@@ -210,11 +209,11 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	}
 
 	/**
-	 * <pre>
+	 * 
 	 * SlideEngineGroup不是一个真正的GestureDriver, 
 	 * 不能调用他的onInterceptTouchEvent()方法, 
 	 * 请将它与一个GestureDriver绑定后使用
-	 * </pre>
+	 * 
 	 * @param event
 	 * @return
 	 */
@@ -225,11 +224,11 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	}
 
 	/**
-	 * <pre>
+	 * 
 	 * SlideEngineGroup不是一个真正的GestureDriver, 
 	 * 不能调用它的onTouchEvent()方法, 
 	 * 请将它与一个GestureDriver绑定后使用
-	 * </pre>
+	 * 
 	 * @param event
 	 * @return
 	 */
@@ -246,11 +245,11 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	//分发////////////////////////////////////
 
 	/**
-	 * <pre>
-	 * [实现]通用分发方法
 	 * 
-	 * 若对应事件的dispatch......方法未复写, 则通过此通用方法分发
-	 * </pre>
+	 * [实现]通用分发方法<p/>
+	 * 
+	 * 若对应事件的dispatch......方法未复写, 则通过此通用方法分发<p/>
+	 * 
 	 * @param handlingEngines 本次需要处理事件的Engine别名列表.
 	 * 		例:若需要分发给"a","b"两个引擎, 
 	 * 			handlingEngines.add("a");
@@ -260,11 +259,11 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	public abstract void dispatch(List<String> handlingEngines);
 
 	/**
-	 * <pre>
-	 * [实现]分发二维OnGestureDrive事件
 	 * 
-	 * 若不复写该方法, 则通过dispatch()通用方法分发
-	 * </pre>
+	 * [实现]分发二维OnGestureDrive事件<p/>
+	 * 
+	 * 若不复写该方法, 则通过dispatch()通用方法分发<p/>
+	 * 
 	 * @param handlingEngines 本次需要处理事件的Engine别名列表.
 	 * 		例:若需要分发给"a","b"两个引擎, 
 	 * 			handlingEngines.add("a");
@@ -276,11 +275,11 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	}
 	
 	/**
-	 * <pre>
-	 * [实现]分发一维OnGestureDrive事件
 	 * 
-	 * 若不复写该方法, 则通过dispatch()通用方法分发
-	 * </pre>
+	 * [实现]分发一维OnGestureDrive事件<p/>
+	 * 
+	 * 若不复写该方法, 则通过dispatch()通用方法分发<p/>
+	 * 
 	 * @param handlingEngines 本次需要处理事件的Engine别名列表.
 	 * 		例:若需要分发给"a","b"两个引擎, 
 	 * 			handlingEngines.add("a");
@@ -292,11 +291,11 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	}
 	
 	/**
-	 * <pre>
-	 * [实现]分发onGestureHold事件
 	 * 
-	 * 若不复写该方法, 则通过dispatch()通用方法分发
-	 * </pre>
+	 * [实现]分发onGestureHold事件<p/>
+	 * 
+	 * 若不复写该方法, 则通过dispatch()通用方法分发<p/>
+	 * 
 	 * @param handlingEngines 本次需要处理事件的Engine别名列表.
 	 * 		例:若需要分发给"a","b"两个引擎, 
 	 * 			handlingEngines.add("a");
@@ -308,11 +307,11 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	}
 	
 	/**
-	 * <pre>
-	 * [实现]分发onGestureRelease事件
 	 * 
-	 * 若不复写该方法, 则通过dispatch()通用方法分发
-	 * </pre>
+	 * [实现]分发onGestureRelease事件<p/>
+	 * 
+	 * 若不复写该方法, 则通过dispatch()通用方法分发<p/>
+	 * 
 	 * @param handlingEngines 本次需要处理事件的Engine别名列表.
 	 * 		例:若需要分发给"a","b"两个引擎, 
 	 * 			handlingEngines.add("a");
@@ -324,11 +323,11 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	}
 	
 	/**
-	 * <pre>
-	 * [实现]分发isSliding事件
 	 * 
-	 * 若不复写该方法, 则通过dispatch()通用方法分发
-	 * </pre>
+	 * [实现]分发isSliding事件<p/>
+	 * 
+	 * 若不复写该方法, 则通过dispatch()通用方法分发<p/>
+	 * 
 	 * @param handlingEngines 本次需要处理事件的Engine别名列表.
 	 * 		例:若需要分发给"a","b"两个引擎, 
 	 * 			handlingEngines.add("a");
@@ -340,11 +339,11 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	}
 	
 	/**
-	 * <pre>
-	 * [实现]分发otherIntercepted事件
 	 * 
-	 * 若不复写该方法, 则通过dispatch()通用方法分发
-	 * </pre>
+	 * [实现]分发otherIntercepted事件<p/>
+	 * 
+	 * 若不复写该方法, 则通过dispatch()通用方法分发<p/>
+	 * 
 	 * @param handlingEngines 本次需要处理事件的Engine别名列表.
 	 * 		例:若需要分发给"a","b"两个引擎, 
 	 * 			handlingEngines.add("a");
@@ -358,45 +357,45 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	//处理////////////////////////////////////
 	
 	/**
-	 * <pre>
-	 * [实现]处理二维OnGestureDrive事件
 	 * 
-	 * 若不复写该方法, 默认直接调用SlideEngine.OnGestureDrive(...);
-	 * </pre>
+	 * [实现]处理二维OnGestureDrive事件<p/>
+	 * 
+	 * 若不复写该方法, 默认直接调用SlideEngine.OnGestureDrive(...);<p/>
+	 * 
 	 */
 	public void handleGestureDrive(SlideEngine engine, String alias, int x, int y, int offsetX, int offsetY, int velocityX, int velocityY){
 		engine.onGestureDrive(x, y, offsetX, offsetY, velocityX, velocityY);
 	}
 	
 	/**
-	 * <pre>
-	 * [实现]处理一维OnGestureDrive事件
 	 * 
-	 * 若不复写该方法, 默认直接调用SlideEngine.OnGestureDrive(...);
-	 * </pre>
+	 * [实现]处理一维OnGestureDrive事件<p/>
+	 * 
+	 * 若不复写该方法, 默认直接调用SlideEngine.OnGestureDrive(...);<p/>
+	 * 
 	 */
 	public void handleGestureDrive(SlideEngine engine, String alias, int curr, int offset, int velocity){
 		engine.onGestureDrive(curr, offset, velocity);
 	}
 	
 	/**
-	 * <pre>
-	 * [实现]处理onGestureHold事件
 	 * 
-	 * 若不复写该方法, 默认直接调用SlideEngine.onGestureHold();
-	 * </pre>
+	 * [实现]处理onGestureHold事件<p/>
+	 * 
+	 * 若不复写该方法, 默认直接调用SlideEngine.onGestureHold();<p/>
+	 * 
 	 */
 	public void handleGestureHold(SlideEngine engine, String alias) {
 		engine.onGestureHold();
 	}
 	
 	/**
-	 * <pre>
-	 * [实现]处理onGestureRelease事件
 	 * 
-	 * 若不复写该方法, 默认直接调用SlideEngine.onGestureRelease(velocity);
-	 * 若该引擎本次未被驱动(onGestureDrive), 则SlideEngine.onGestureRelease(0);
-	 * </pre>
+	 * [实现]处理onGestureRelease事件<p/>
+	 * 
+	 * 若不复写该方法, 默认直接调用SlideEngine.onGestureRelease(velocity);<br/>
+	 * 若该引擎本次未被驱动(onGestureDrive), 则SlideEngine.onGestureRelease(0);<br/>
+	 * 
 	 */
 	public void handleGestureRelease(SlideEngine engine, String alias, int velocity) {
 		//若改引擎未被驱动, 则释放时速度为0
@@ -407,11 +406,11 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	}
 	
 	/**
-	 * <pre>
-	 * [实现]处理IsSliding事件
 	 * 
-	 * 若不复写该方法, 默认直接调用SlideEngine.isSliding();
-	 * </pre>
+	 * [实现]处理IsSliding事件<p/>
+	 * 
+	 * 若不复写该方法, 默认直接调用SlideEngine.isSliding();<p/>
+	 * 
 	 */
 	public boolean handleIsSliding(SlideEngine engine, String alias) {
 		return engine.isSliding();

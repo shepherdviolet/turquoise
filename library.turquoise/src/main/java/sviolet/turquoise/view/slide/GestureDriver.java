@@ -3,13 +3,15 @@ package sviolet.turquoise.view.slide;
 import android.view.MotionEvent;
 
 /**
- * <pre>
- * 手势驱动
- **************************************************************************************
- * 手势捕获示例:
- * 需要捕获触摸手势的控件复写如下方法:
- * ViewGroup::
+ * 手势驱动<p/>
  *
+ * *************************************************************************************<p/>
+ *
+ * 手势捕获示例:<br/>
+ * 需要捕获触摸手势的控件复写如下方法:<br/>
+ * ViewGroup::<p/>
+ *
+ * <pre>{@code
  *      //复写事件拦截
  *      public boolean onInterceptTouchEvent(MotionEvent ev) {
  * 	        boolean original = super.onInterceptTouchEvent(ev);
@@ -25,26 +27,28 @@ import android.view.MotionEvent;
  * 		        return true;
  * 	        return original;
  *      }
- * 
- **************************************************************************************
- * 永久触摸区域::
+ * }</pre>
+ * *************************************************************************************<p/>
+ *
+ * 永久触摸区域::<Br/>
  * 若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
  * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
- * 捕获触摸事件. 可用于控件边界的把手设计.
+ * 捕获触摸事件. 可用于控件边界的把手设计.<p/>
  * 
- **************************************************************************************
- * 输出定义::
- * 
- * velocity方向:
- * 手势上/左::负  手势下/右::正
- * 
- * curr方向:
- * 手势上/左::递减  手势下/右::递增
- * 
- * step方向:
- * 手势上/左::负  手势下/右::正
+ * *************************************************************************************<p/>
  *
- * </pre>
+ * 输出定义::<p/>
+ * 
+ * velocity方向:<Br/>
+ * 手势上/左::负  手势下/右::正<p/>
+ * 
+ * curr方向:<Br/>
+ * 手势上/左::递减  手势下/右::递增<p/>
+ * 
+ * step方向:<Br/>
+ * 手势上/左::负  手势下/右::正<p/>
+ *
+ * 
  * @author S.Violet
  *
  */
@@ -52,64 +56,64 @@ import android.view.MotionEvent;
 public interface GestureDriver {
 	
 	/**
-     * <pre>
-	 * 主动绑定, 绑定并触发对方的onBind被动绑定
+     * 
+	 * 主动绑定, 绑定并触发对方的onBind被动绑定<Br/>
 	 * 将这个手势驱动和滑动引擎互相绑定
-     * </pre>
+     * 
 	 * @param slideEngine
 	 */
 	public void bind(SlideEngine slideEngine);
 	
 	/**
-     * <pre>
-	 * 被动绑定
+     * 
+	 * 被动绑定<Br/>
 	 * 将这个手势驱动和滑动引擎互相绑定
-     * </pre>
+     * 
 	 * @param slideEngine
 	 */
 	public void onBind(SlideEngine slideEngine);
 	
 	/**
-     * <pre>
+     * 
 	 * 处理是否拦截触摸事件
-	 * </pre>
+	 * 
 	 * @param event
 	 * @return
 	 */
 	public boolean onInterceptTouchEvent(MotionEvent event);
 	
 	/**
-     * <pre>
+     * 
 	 * 处理触摸事件
-     * </pre>
+     * 
 	 * @param event
 	 * @return
 	 */
 	public boolean onTouchEvent(MotionEvent event);
 	
 	/**
-     * <pre>
+     * 
 	 * 获得手势驱动器当前的手势状态
-     * </pre>
+     * 
 	 * @return
 	 */
 	public int getState();
 	
 	/**
-     * <pre>
-	 * [特殊]跳过本次拦截
+     * 
+	 * [特殊]跳过本次拦截<p/>
 	 * 
 	 * 用于嵌套结构的SlideView, 内部的SlideView在拦截到事件后, 调用外部SlideView的
 	 * GestureDriver.skipIntercepted()方法, 以阻断外部SlideView对本次事件的拦截,
-	 * 防止内部SlideView在滑动时, 被外部拦截掉. 
+	 * 防止内部SlideView在滑动时, 被外部拦截掉. <p/>
 	 * 
 	 * 一个GestrueDriver被调用skipIntercepted()后, 不再拦截事件, 直到第二次ACTION_DOWN
-	 * 事件来临, 状态会被重置
+	 * 事件来临, 状态会被重置<p/>
 	 * 
-	 * [实现提示]
+	 * [实现提示]<br/>
 	 * 在onInterceptTouchEvent()中, ACTION_DOWN事件重置拦截标志, ACTION_MOVE/RELEASE
-	 * 事件判断拦截标志, 若被拦截则直接返回false, 放弃拦截
-     * </pre>
+	 * 事件判断拦截标志, 若被拦截则直接返回false, 放弃拦截<p/>
+     * 
 	 */
 	public void skipIntercepted();
 	
