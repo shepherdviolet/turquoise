@@ -27,45 +27,47 @@ import sviolet.turquoise.R;
 
 /**
  * 刮刮乐TextView<<destroy()销毁>><p>
- * xmlns:sviolet="http://schemas.android.com/apk/res/应用包名
- * 
+ *
+ * xmlns:sviolet="http://schemas.android.com/apk/res/应用包名<p>
+ *
+ * *********************************************************<p/>
+ *
+ *  例1:<br/>
+ *  <pre>{@code
+ *  <com.csii.yzbank.view.widget.ScrapeTextView
+ *      android:layout_width="300dp"
+ *      android:layout_height="100dp"
+ *      android:gravity="center"
+ *      android:textSize="25sp"
+ *      sviolet:height="100dp"
+ *      sviolet:width="300dp"
+ *      sviolet:color="#FF00FF"
+ *      sviolet:strokeWidth="50"/>
+ * }</pre>
+ *  例2:<br/>
+ *  长宽必须设置,但无用,控件长宽会根据widthProportion/widthHeightRatio自动调整<br/>
+ *  <pre>{@code
+ *  <com.csii.yzbank.view.widget.ScrapeTextView
+ *		android:layout_width="wrap_content"
+ *		android:layout_height="wrap_content"
+ *		android:gravity="center"
+ *		android:textSize="25sp"
+ *		android:textColor="#ee5a00"
+ *		sviolet:widthProportion="0.85"
+ *		sviolet:widthHeightRatio="1.66"
+ *		sviolet:color="#808080"
+ *		sviolet:strokeWidth="30dp"
+ *		sviolet:src="@drawable/lottery_0_ticket"/>
+ * }</pre>
+ * *********************************************************<p/>
+ *
+ *  方法:<br/>
+ * 	reset(String):重置覆盖面/内容<br/>
+ *	getPercent():获得刮开部分的比例<br/>
+ *	destroy():销毁控件<br/>
+ *
  * @author S.Violet (ZhuQinChao)
  *
- */
-
-/*
- * 例:
-	xmlns:sviolet="http://schemas.android.com/apk/res/包名"
-
-	    <com.csii.yzbank.view.widget.ScrapeTextView 
-        android:layout_width="300dp"
-        android:layout_height="100dp"
-        android:gravity="center"
-        android:textSize="25sp"
-        sviolet:height="100dp"
-        sviolet:width="300dp"
-        sviolet:color="#FF00FF"
-        sviolet:strokeWidth="50"/>
-
-    例2:
-    	长宽必须设置,但无用,控件长宽会根据widthProportion/widthHeightRatio自动调整
-    	
-		<com.csii.yzbank.view.widget.ScrapeTextView 
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:gravity="center"
-		android:textSize="25sp"
-		android:textColor="#ee5a00"
-		sviolet:widthProportion="0.85"
-		sviolet:widthHeightRatio="1.66"
-		sviolet:color="#808080"
-		sviolet:strokeWidth="30dp"
-		sviolet:src="@drawable/lottery_0_ticket"/>
-    
-    方法:
-   	reset(String):重置覆盖面/内容
-	getPercent():获得刮开部分的比例
-	destroy():销毁控件
  */
 
 public class ScrapeTextView extends TextView {

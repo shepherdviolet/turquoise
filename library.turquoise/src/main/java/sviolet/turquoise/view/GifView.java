@@ -12,10 +12,10 @@ import android.view.View;
 import sviolet.turquoise.R;
 
 /**
- * GIF动画显示控件<br>
- * sviolet:src gif资源
- * sviolet:repeat 动画是否重复 默认true
- * sviolet:duration 动画默认持续时间 默认1000(若GIF内置时间,则为GIF内置时间)
+ * GIF动画显示控件<br/>
+ * sviolet:src gif资源<br/>
+ * sviolet:repeat 动画是否重复 默认true<br/>
+ * sviolet:duration 动画默认持续时间 默认1000(若GIF内置时间,则为GIF内置时间)<br/>
  * 
  * @author S.Violet
  *

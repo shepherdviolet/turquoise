@@ -14,7 +14,9 @@ import sviolet.turquoise.R;
 /**
  * 
  * 可设置旋转角度的ImageView<<destroy()销毁>><p>
+ *
  * rotate()调整图片角度<p>
+ *
  * xmlns:sviolet="http://schemas.android.com/apk/res/应用包名
  * 
  * @author S.Violet (ZhuQinChao)

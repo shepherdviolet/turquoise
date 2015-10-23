@@ -18,38 +18,36 @@ import android.widget.RelativeLayout;
 import sviolet.turquoise.R;
 
 /**
- * 水波纹触摸效果控件(RelativeLayout)<p>
- * 默认abordTouchEvent=false;
+ * 水波纹触摸效果控件(RelativeLayout)
+ *
+ * 默认abordTouchEvent=false;<p/>
+ *
+ * action代表动画结束时, 之前的点击事件为无/单击/长按<p/>
+ *
+ * <pre>{@code
+ *		RippleView ripple = (RippleView) findViewById(R.id.ripple);
+ *		//波纹动画播放85%后触发
+ *		ripple.setOnAnimationFinishListener(0.85f, new RippleView.OnAnimationFinishListener() {
+ *			public void onAnimationFinished(int action) {
+ *
+ *			}
+ *		});
+ *
+ *  <!-- 本身也会触发onClick事件 -->
+ *  <sviolet.lib.android.view.RippleView
+ *      android:layout_width="300dp"
+ *      android:layout_height="50dp"
+ *      android:background="#209090">
+ *      <!-- 内部只能含一个View, RippleView的event会传递给该子View -->
+ *      <TextView
+ *          android:layout_width="wrap_content"
+ *          android:layout_height="wrap_content"/>
+ *  </sviolet.lib.android.view.RippleView>
+ *
+ *	}</pre>
  * 
  * @author S.Violet
  *
- */
-
-/*
- * action代表动画结束时, 之前的点击事件为无/单击/长按
- * 
-		RippleView ripple = (RippleView) findViewById(R.id.ripple);
-		//波纹动画播放85%后触发
-		ripple.setOnAnimationFinishListener(0.85f, new RippleView.OnAnimationFinishListener() {
-			@Override
-			public void onAnimationFinished(int action) {
-				
-			}
-		});
- */
-
-/*
- * 例:
- * <!-- 本身也会触发onClick事件 -->
-    <sviolet.lib.android.view.RippleView
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:background="#209090">
-        	<!-- 内部只能含一个View, RippleView的event会传递给该子View -->
-        	<TextView 
-        	    android:layout_width="wrap_content"
-        	    android:layout_height="wrap_content"/>
-        </sviolet.lib.android.view.RippleView>
  */
 
 public class RippleView extends RelativeLayout{
