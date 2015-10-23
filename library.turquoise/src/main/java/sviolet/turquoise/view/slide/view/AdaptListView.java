@@ -10,15 +10,15 @@ import android.view.MotionEvent;
 import android.widget.ListView;
 
 /**
- * <pre>
- * [适配控件]ListView
  * 
- * 通过GestureDriver驱动的ListView
+ * [适配控件]ListView<p/>
  * 
- * 用法::
- * 1.AdaptListView.getSlideEngine().bind(mGestureDriver);
- * 2.SlideEngineGroup.addSlideEngine(AdaptListView.getSlideEngine());
- * </pre>
+ * 通过GestureDriver驱动的ListView<p/>
+ * 
+ * 用法::<br/>
+ * 1.AdaptListView.getSlideEngine().bind(mGestureDriver);<br/>
+ * 2.SlideEngineGroup.addSlideEngine(AdaptListView.getSlideEngine());<p/>
+ * 
  * @author S.Violet
  *
  */
@@ -134,10 +134,10 @@ public class AdaptListView extends ListView implements SlideView{
 	}
 
 	/**
-	 * <pre>
-	 * 设置速度溢出监听器
-	 *     该实现方式与LinearFlingEngine不同, 必须使用此方法实现监听
-	 * </pre>
+	 * 
+	 * 设置速度溢出监听器<br/>
+	 * 该实现方式与LinearFlingEngine不同, 必须使用此方法实现监听
+	 * 
 	 * @param listener
 	 */
 	public void setOnVelocityOverflowListener(OnVelocityOverflowListener listener){

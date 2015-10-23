@@ -13,26 +13,31 @@ import android.view.ViewTreeObserver.OnPreDrawListener;
 import android.widget.LinearLayout;
 
 /**
- * <pre>
- * 滑动抽屉(LinearLayout)
  * 
- * 从屏幕侧边滑出的控件
+ * 滑动抽屉(LinearLayout)<p/>
  * 
- * Provider : sviolet.turquoise.view.slide.view.DrawerProvider
- *********************************************************************
- * 设置滑动参数::
- * Activity.onCreate中::
+ * 从屏幕侧边滑出的控件<p/>
+ * 
+ * Provider : {@link LayoutDrawerProvider}<p/>
  *
+ * ********************************************************************<p/>
+ *
+ * 设置滑动参数::<Br/>
+ * Activity.onCreate中::<p/>
+ *
+ * <pre>{@code
  *		layout = (LinearLayoutDrawer) findViewById(R.id.layout);
  *		layout
  *			.setSlideScrollDirection(LinearLayoutDrawer.DIRECTION_LEFT)//设置抽屉方向
  *			.setSlideScrollDuration(500)//设置惯性滑动事件
  *			.setSlideHandleWidth(30)//设置把手宽度(dp)
  *			.applySlideSetting();//应用设置
- * 
- *********************************************************************
- * XML配置::
+ * }</pre>
+ * ********************************************************************<p/>
  *
+ * XML配置::<p/>
+ *
+ * <pre>{@code
  *    <!-- 抽屉控件 -->
  *    <!-- scrollX/scrollY设置一个很大的值, 让子控件消失, 由engine的初始位置决定控件初始位置 -->
  *    <!-- [必须]background 设置透明背景, 使得ViewGroup得以绘制, 否则无法滑动 -->
@@ -54,15 +59,18 @@ import android.widget.LinearLayout;
  *			android:background="#209090"/>
  *
  *    </sviolet.turquoise.view.slide.view.LinearLayoutDrawer>
+ * }</pre>
  * 
- * 
- * 类似如下情况必须设置clickable="true"::
+ * 类似如下情况必须设置clickable="true"::<p/>
+ *
+ * <pre>{@code
  *        <TextView
  *		    android:id="@+id/textview"
  *		    android:layout_width="match_parent"
  *		    android:layout_height="match_parent"
  *			android:clickable="true"/>
- * </pre>
+ * }</pre>
+ *
  * @author S.Violet
  *
  */
@@ -100,16 +108,16 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	 */
 	
 	/**
-	 * <pre>
-	 * 设置滑动抽屉方向
 	 * 
-	 * 默认{@link #DIRECTION_LEFT}
+	 * 设置滑动抽屉方向<p/>
 	 * 
-	 * {@link #DIRECTION_TOP} 抽屉从顶部拉出
-	 * 	{@link #DIRECTION_BOTTOM} 抽屉从底部拉出
-	 * 	{@link #DIRECTION_LEFT} 抽屉从左边拉出
-	 * 	{@link #DIRECTION_RIGHT} 抽屉从右边拉出
-	 * </pre>
+	 * 默认{@link #DIRECTION_LEFT}<p/>
+	 * 
+	 * {@link #DIRECTION_TOP} 抽屉从顶部拉出<br/>
+	 * {@link #DIRECTION_BOTTOM} 抽屉从底部拉出<br/>
+	 * {@link #DIRECTION_LEFT} 抽屉从左边拉出<br/>
+	 * {@link #DIRECTION_RIGHT} 抽屉从右边拉出<br/>
+	 * 
 	 * @param scrollDirection 抽屉方向
 	 */
 	public LinearLayoutDrawer setSlideScrollDirection(int scrollDirection){
@@ -118,13 +126,13 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 	
 	/**
-	 * <pre>
-	 * 设置抽屉宽度(单位 dp), 即可滑动距离
 	 * 
-	 * 默认{@link #DRAWER_WIDTH_MATCH_PARENT} = {@value #DRAWER_WIDTH_MATCH_PARENT}
+	 * 设置抽屉宽度(单位 dp), 即可滑动距离<p/>
 	 * 
-	 * 默认抽屉宽度 = 控件的宽度或高度
-	 * </pre>
+	 * 默认{@link #DRAWER_WIDTH_MATCH_PARENT} = {@value #DRAWER_WIDTH_MATCH_PARENT}<p/>
+	 * 
+	 * 默认抽屉宽度 = 控件的宽度或高度<p/>
+	 * 
 	 * @param drawerWidth
 	 * @return
 	 */
@@ -134,16 +142,17 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 	
 	/**
-	 * <pre>
-	 * 设置把手宽度(单位 dp)
 	 * 
-	 * 默认{@value #DEF_HANDLE_WIDTH}
+	 * 设置把手宽度(单位 dp)<p/>
+	 * 
+	 * 默认{@value #DEF_HANDLE_WIDTH}<p/>
 	 * 
 	 * 把手是抽屉收起来后用于拉出抽屉的一块特殊范围, 由GestureDriver的永久触摸区域实现, 
-	 * 即控件边界处宽handleWidth的区域, 触摸起点在这个区域内, 可拉出抽屉.
+	 * 即控件边界处宽handleWidth的区域, 触摸起点在这个区域内, 可拉出抽屉.<p/>
+     *
 	 * 例如DIRECTION_RIGHT的抽屉, handleWidth=30, 则该控件右边界宽30dp的范围内开始
 	 * 触摸, 向左滑动即可拉出抽屉
-	 * </pre>
+	 * 
 	 * @param handleWidth
 	 * @return
 	 */
@@ -153,13 +162,13 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 	
 	/**
-	 * <pre>
-	 * 设置惯性滑动时间(全程) 单位ms
 	 * 
-	 * 默认{@value #DEF_SCROLL_DURATION}
+	 * 设置惯性滑动时间(全程) 单位ms<p/>
 	 * 
-	 * 抽屉从收起状态到拉出状态惯性滑动所需的时间
-	 * </pre>
+	 * 默认{@value #DEF_SCROLL_DURATION}<p/>
+	 * 
+	 * 抽屉从收起状态到拉出状态惯性滑动所需的时间<p/>
+	 * 
 	 * @param scrollDuration
 	 * @return
 	 */
@@ -169,14 +178,14 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 	
 	/**
-	 * <pre>
-	 * 设置抽屉初始状态:收起/拉出
 	 * 
-	 * 默认{@link #STAGE_PUSH_IN}
+	 * 设置抽屉初始状态:收起/拉出<p/>
 	 * 
-	 * {@link #STAGE_PUSH_IN}:抽屉初始状态:收起
-	 * {@link #STAGE_PULL_OUT}:抽屉初始状态:拉出
-	 * </pre>
+	 * 默认{@link #STAGE_PUSH_IN}<p/>
+	 * 
+	 * {@link #STAGE_PUSH_IN}:抽屉初始状态:收起<br/>
+	 * {@link #STAGE_PULL_OUT}:抽屉初始状态:拉出<br/>
+	 * 
 	 * @param initStage
 	 * @return
 	 */
@@ -186,11 +195,11 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 	
 	/**
-	 * <pre>
-	 * 设置抽屉是否允许越界拖动
+	 * 
+	 * 设置抽屉是否允许越界拖动<p/>
 	 * 
 	 * 默认{@value #DEF_OVER_SCROLL_ENABLED}
-	 * </pre>
+	 * 
 	 * @param overScrollEnabled
 	 * @return
 	 */
@@ -200,13 +209,13 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 	
 	/**
-	 * <pre>
-	 * 设置抽屉越界拖动阻尼[0,1)
 	 * 
-	 * 默认{@value #DEF_OVER_SCROLL_DAMP}
+	 * 设置抽屉越界拖动阻尼[0,1)<p/>
+	 * 
+	 * 默认{@value #DEF_OVER_SCROLL_DAMP}<p/>
 	 * 
 	 * 越界阻尼越大, 越界时拖动越慢
-	 * </pre>
+	 * 
 	 * @param overScrollDamp
 	 * @return
 	 */
@@ -227,15 +236,15 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 	
 	/**
-	 * <pre>
-	 * 设置把手触摸反馈效果幅度, 单位dp(按在把手上抽屉弹出一部分)
 	 * 
-	 * 默认{@link #FEEDBACK_RANGE_HALF_HANDLE_WIDTH}: 幅度 = 把手宽度(handleWidth) / 2
+	 * 设置把手触摸反馈效果幅度, 单位dp(按在把手上抽屉弹出一部分)<p/>
+	 * 
+	 * 默认{@link #FEEDBACK_RANGE_HALF_HANDLE_WIDTH}: 幅度 = 把手宽度(handleWidth) / 2 <p/>
 	 * 
 	 * 此处的幅度不同于LinearSlideEngine的永久触摸区域反馈幅度. 此处数值为正数, 单位为dp, 
 	 * 无需考虑方向(方向由抽屉方向决定), 而LinearSlideEngine的反馈幅度需要区别正负方向, 
 	 * 单位为像素px
-	 * </pre>
+	 * 
 	 * @param range 反馈效果幅度 >=0
 	 * @return
 	 */
@@ -245,12 +254,12 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 
 	/**
-	 * <pre>
-	 * 设置把手触摸事件监听器
+	 * 
+	 * 设置把手触摸事件监听器<p/>
 	 * 
 	 * 由于该监听事件回调后, 还会触发SlideEngine手势释放事件, 导致滚动目标重定向,
 	 * 该监听事件回调中若需要pullOut/pushIn, 必须使用强制执行方式
-	 * </pre>
+	 * 
 	 * @param listener
 	 */
 	public LinearLayoutDrawer setOnHandleTouchListener(OnClickListener listener){
@@ -259,12 +268,12 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 
 	/**
-	 * <pre>
-	 * 设置把手点击事件监听器
+	 * 
+	 * 设置把手点击事件监听器<p/>
 	 * 
 	 * 由于该监听事件回调后, 还会触发SlideEngine手势释放事件, 导致滚动目标重定向, 
 	 * 该监听事件回调中若需要pullOut/pushIn, 必须使用强制执行方式
-	 * </pre>
+	 * 
 	 * @param listener
 	 */
 	public LinearLayoutDrawer setOnHandleClickListener(OnClickListener listener){
@@ -273,12 +282,12 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 	
 	/**
-	 * <pre>
-	 * 设置把手长按事件监听器
+	 * 
+	 * 设置把手长按事件监听器<p/>
 	 * 
 	 * 由于该监听事件回调后, 还会触发SlideEngine手势释放事件, 导致滚动目标重定向, 
 	 * 该监听事件回调中若需要pullOut/pushIn, 必须使用强制执行方式
-	 * </pre>
+	 * 
 	 * @param listener
 	 */
 	public LinearLayoutDrawer setOnHandleLongPressListener(OnClickListener listener){
@@ -298,10 +307,10 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 
 	/**
-	 * <pre>
-	 * 设置持有监听器
+	 * 
+	 * 设置持有监听器<Br/>
 	 * 当手势滑动有效距离, 触发Engine拖动时触发
-	 * </pre>
+	 * 
 	 * @param listener
 	 * @return
 	 */
@@ -321,10 +330,11 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 
 	/**
-	 * <pre>
-	 * 应用滑动设置(使setSlide...生效)
+	 * 
+	 * 应用滑动设置(使setSlide...生效)<p/>
+     *
 	 * 非立即生效
-	 * </pre>
+	 * 
 	 */
 	public void applySlideSetting(){
 		postInitSlide();
@@ -403,11 +413,11 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 	
 	/**
-	 * <pre>
-	 * 拉出抽屉
+	 * 
+	 * 拉出抽屉<p/>
 	 * 
 	 * 设定强制执行后, 抽屉拉出完成前触摸无效, 滚动强制完成目标无法改变
-	 * </pre>
+	 * 
 	 * @param force 是否强制执行(锁定目标)
 	 */
 	public void pullOut(boolean force){
@@ -415,11 +425,11 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	}
 	
 	/**
-	 * <pre>
-	 * 关闭抽屉
+	 * 
+	 * 关闭抽屉<p/>
 	 * 
 	 * 设定强制执行后, 抽屉拉出完成前触摸无效, 滚动强制完成目标无法改变
-	 * </pre>
+	 * 
 	 * @param force 是否强制执行(锁定目标)
 	 */
 	public void pushIn(boolean force){
@@ -445,12 +455,12 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	 */
 	
 	/**
-	 * <pre>
-	 * 初始化滑动(通知)
+	 * 
+	 * 初始化滑动(通知)<p/>
 	 * 
 	 * 由于View渲染之前无法获取自身的宽高, 需要设置监听器, 在宽高计算出来后获取,
 	 * 获取到宽高后方可进行初始化操作
-	 * </pre>
+	 * 
 	 */
 	private void postInitSlide() {
 		//设置绘制监听器, 为了获得View自身宽高

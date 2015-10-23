@@ -84,16 +84,16 @@ public class LayoutDrawerProvider {
 	 */
 	
 	/**
-	 * <pre>
-	 * 设置滑动抽屉方向
 	 * 
-	 * 默认{@link #DIRECTION_LEFT}
+	 * 设置滑动抽屉方向<p/>
 	 * 
-	 * {@link #DIRECTION_TOP} 抽屉从顶部拉出
-	 * {@link #DIRECTION_BOTTOM} 抽屉从底部拉出
-	 * {@link #DIRECTION_LEFT} 抽屉从左边拉出
-	 * {@link #DIRECTION_RIGHT} 抽屉从右边拉出
-	 * </pre>
+	 * 默认{@link #DIRECTION_LEFT}<p/>
+	 * 
+	 * {@link #DIRECTION_TOP} 抽屉从顶部拉出<br/>
+	 * {@link #DIRECTION_BOTTOM} 抽屉从底部拉出<br/>
+	 * {@link #DIRECTION_LEFT} 抽屉从左边拉出<br/>
+	 * {@link #DIRECTION_RIGHT} 抽屉从右边拉出<br/>
+	 * 
 	 * 
 	 * @param scrollDirection 抽屉方向
 	 */
@@ -102,13 +102,13 @@ public class LayoutDrawerProvider {
 	}
 	
 	/**
-	 * <pre>
-	 * 设置抽屉宽度(单位 dp), 即可滑动距离
 	 * 
-	 * 默认{@link #DRAWER_WIDTH_MATCH_PARENT} = {@value #DRAWER_WIDTH_MATCH_PARENT}
+	 * 设置抽屉宽度(单位 dp), 即可滑动距离<p/>
 	 * 
-	 * 默认抽屉宽度 = 控件的宽度或高度
-	 * </pre>
+	 * 默认{@link #DRAWER_WIDTH_MATCH_PARENT} = {@value #DRAWER_WIDTH_MATCH_PARENT}<p/>
+	 * 
+	 * 默认抽屉宽度 = 控件的宽度或高度<p/>
+	 * 
 	 * 
 	 * @param drawerWidth
 	 * @return
@@ -118,16 +118,17 @@ public class LayoutDrawerProvider {
 	}
 	
 	/**
-	 * <pre>
-	 * 设置把手宽度(单位 dp)
 	 * 
-	 * 默认{@value #DEF_HANDLE_WIDTH}
+	 * 设置把手宽度(单位 dp)<p/>
+	 * 
+	 * 默认{@value #DEF_HANDLE_WIDTH}<p/>
 	 * 
 	 * 把手是抽屉收起来后用于拉出抽屉的一块特殊范围, 由GestureDriver的永久触摸区域实现, 
-	 * 即控件边界处宽handleWidth的区域, 触摸起点在这个区域内, 可拉出抽屉.
+	 * 即控件边界处宽handleWidth的区域, 触摸起点在这个区域内, 可拉出抽屉.<p/>
+	 *
 	 * 例如DIRECTION_RIGHT的抽屉, handleWidth=30, 则该控件右边界宽30dp的范围内开始
 	 * 触摸, 向左滑动即可拉出抽屉
-	 * </pre>
+	 * 
 	 * 
 	 * @param handleWidth
 	 * @return
@@ -137,13 +138,13 @@ public class LayoutDrawerProvider {
 	}
 	
 	/**
-	 * <pre>
-	 * 设置惯性滑动时间(全程) 单位ms
 	 * 
-	 * 默认{@value #DEF_SCROLL_DURATION}
+	 * 设置惯性滑动时间(全程) 单位ms<p/>
 	 * 
-	 * 抽屉从收起状态到拉出状态惯性滑动所需的时间
-	 * </pre>
+	 * 默认{@value #DEF_SCROLL_DURATION}<p/>
+	 * 
+	 * 抽屉从收起状态到拉出状态惯性滑动所需的时间<p/>
+	 * 
 	 * 
 	 * @param scrollDuration
 	 * @return
@@ -153,14 +154,14 @@ public class LayoutDrawerProvider {
 	}
 	
 	/**
-	 * <pre>
-	 * 设置抽屉初始状态:收起/拉出
 	 * 
-	 * 默认{@link #STAGE_PUSH_IN}
+	 * 设置抽屉初始状态:收起/拉出<p/>
 	 * 
-	 * {@link #STAGE_PUSH_IN}:抽屉初始状态:收起
-	 * {@link #STAGE_PULL_OUT}:抽屉初始状态:拉出
-	 * </pre>
+	 * 默认{@link #STAGE_PUSH_IN}<p/>
+	 * 
+	 * {@link #STAGE_PUSH_IN}:抽屉初始状态:收起<br/>
+	 * {@link #STAGE_PULL_OUT}:抽屉初始状态:拉出<Br/>
+	 * 
 	 * 
 	 * @param initStage
 	 * @return
@@ -170,11 +171,11 @@ public class LayoutDrawerProvider {
 	}
 	
 	/**
-	 * <pre>
-	 * 设置抽屉是否允许越界拖动
+	 * 
+	 * 设置抽屉是否允许越界拖动<p/>
 	 * 
 	 * 默认{@value #DEF_OVER_SCROLL_ENABLED}
-	 * </pre>
+	 * 
 	 * 
 	 * @param overScrollEnabled
 	 * @return
@@ -184,13 +185,13 @@ public class LayoutDrawerProvider {
 	}
 	
 	/**
-	 * <pre>
-	 * 设置抽屉越界拖动阻尼[0,1)
 	 * 
-	 * 默认{@value #DEF_OVER_SCROLL_DAMP}
+	 * 设置抽屉越界拖动阻尼[0,1)<p/>
+	 * 
+	 * 默认{@value #DEF_OVER_SCROLL_DAMP}<p/>
 	 * 
 	 * 越界阻尼越大, 越界时拖动越慢
-	 * </pre>
+	 * 
 	 * 
 	 * @param overScrollDamp
 	 * @return
@@ -210,15 +211,15 @@ public class LayoutDrawerProvider {
 	}
 	
 	/**
-	 * <pre>
-	 * 设置把手触摸反馈效果幅度, 单位dp(按在把手上抽屉弹出一部分)
 	 * 
-	 * 默认{@link #FEEDBACK_RANGE_HALF_HANDLE_WIDTH}: 幅度 = 把手宽度(handleWidth) / 2
+	 * 设置把手触摸反馈效果幅度, 单位dp(按在把手上抽屉弹出一部分)<p/>
+	 * 
+	 * 默认{@link #FEEDBACK_RANGE_HALF_HANDLE_WIDTH}: 幅度 = 把手宽度(handleWidth) / 2 <p/>
 	 * 
 	 * 此处的幅度不同于LinearSlideEngine的永久触摸区域反馈幅度. 此处数值为正数, 单位为dp, 
 	 * 无需考虑方向(方向由抽屉方向决定), 而LinearSlideEngine的反馈幅度需要区别正负方向, 
 	 * 单位为像素px
-	 * </pre>
+	 * 
 	 * 
 	 * @param range 反馈效果幅度 >=0
 	 * @return
@@ -228,12 +229,12 @@ public class LayoutDrawerProvider {
 	}
 
 	/**
-	 * <pre>
-	 * 设置把手触摸事件监听器
+	 * 
+	 * 设置把手触摸事件监听器<p/>
 	 * 
 	 * 由于该监听事件回调后, 还会触发SlideEngine手势释放事件, 导致滚动目标重定向,
 	 * 该监听事件回调中若需要pullOut/pushIn, 必须使用强制执行方式
-	 * </pre>
+	 * 
 	 *
 	 * @param listener
 	 */
@@ -242,12 +243,12 @@ public class LayoutDrawerProvider {
 	}
 
 	/**
-	 * <pre>
-	 * 设置把手点击事件监听器
+	 * 
+	 * 设置把手点击事件监听器<p/>
 	 * 
 	 * 由于该监听事件回调后, 还会触发SlideEngine手势释放事件, 导致滚动目标重定向, 
 	 * 该监听事件回调中若需要pullOut/pushIn, 必须使用强制执行方式
-	 * </pre>
+	 * 
 	 * 
 	 * @param listener
 	 */
@@ -256,12 +257,12 @@ public class LayoutDrawerProvider {
 	}
 	
 	/**
-	 * <pre>
-	 * 设置把手长按事件监听器
+	 * 
+	 * 设置把手长按事件监听器<p/>
 	 * 
 	 * 由于该监听事件回调后, 还会触发SlideEngine手势释放事件, 导致滚动目标重定向, 
 	 * 该监听事件回调中若需要pullOut/pushIn, 必须使用强制执行方式
-	 * </pre>
+	 * 
 	 * 
 	 * @param listener
 	 */
@@ -278,10 +279,10 @@ public class LayoutDrawerProvider {
 	}
 
 	/**
-	 * <pre>
-	 * 设置持有事件监听器
-	 *     当手势滑动有效距离, 触发Engine拖动时触发
-	 * </pre>
+	 * 
+	 * 设置持有事件监听器<Br/>
+	 * 当手势滑动有效距离, 触发Engine拖动时触发
+	 * 
 	 *
 	 * @param listener
 	 */
@@ -290,9 +291,9 @@ public class LayoutDrawerProvider {
 	}
 
 	/**
-	 * <pre>
+	 * 
 	 * 设置初始化完成监听器
-	 * </pre>
+	 * 
 	 * @param mOnInitCompleteListener
 	 */
 	public void setOnInitCompleteListener(OnInitCompleteListener mOnInitCompleteListener){
@@ -457,11 +458,11 @@ public class LayoutDrawerProvider {
 	}
 	
 	/**
-	 * <pre>
-	 * 拉出抽屉
+	 * 
+	 * 拉出抽屉<p/>
 	 * 
 	 * 设定强制执行后, 抽屉拉出完成前触摸无效, 滚动强制完成目标无法改变
-	 * </pre>
+	 * 
 	 * @param force 是否强制执行(锁定目标)
 	 */
 	protected void pullOut(boolean force){
@@ -470,11 +471,11 @@ public class LayoutDrawerProvider {
 	}
 	
 	/**
-	 * <pre>
-	 * 关闭抽屉
+	 * 
+	 * 关闭抽屉<p/>
 	 * 
 	 * 	设定强制执行后, 抽屉拉出完成前触摸无效, 滚动强制完成目标无法改变
-	 * </pre>
+	 * 
 	 * @param force 是否强制执行(锁定目标)
 	 */
 	protected void pushIn(boolean force){
