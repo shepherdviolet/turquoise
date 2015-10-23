@@ -13,13 +13,14 @@ import android.view.VelocityTracker;
 import android.view.ViewConfiguration;
 
 /**
+ * 
  * 线性手势驱动<br/>
  * <br/>
  * 基本设置:<br/>
  * setOrientation()<br/>
  * <br>
- * @see sviolet.turquoise.view.slide.SlideView
- **************************************************************************************<br>
+ * {@link sviolet.turquoise.view.slide.SlideView}<br/>
+ * *************************************************************************************<br>
  * 手势捕获示例:<br>
  * 需要捕获触摸手势的控件复写如下方法:<br>
  * ViewGroup::<br>
@@ -42,13 +43,13 @@ import android.view.ViewConfiguration;
 		return original;
 	}
  * <br>
- **************************************************************************************<br>
- * 	永久触摸区域::<br>
- * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
+ * *************************************************************************************<br>
+ * 永久触摸区域::<br>
+ * 若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
  * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
  * 捕获触摸事件. 可用于控件边界的把手设计.<br>
  * <br>
- **************************************************************************************<br>
+ * *************************************************************************************<br>
  * 输出定义::<br>
  * <br>
  * velocity方向:<br>
@@ -430,10 +431,10 @@ public class LinearGestureDriver implements GestureDriver {
 	}
 	
 	/**
-	 * 手势释放<br>
-	 * 1.通知引擎释放
-	 * 2.设置手势驱动释放状态
-	 * 3.重置其他特殊状态
+	 * 手势释放<br/>
+	 * 1.通知引擎释放<br/>
+	 * 2.设置手势驱动释放状态<br/>
+	 * 3.重置其他特殊状态<br/>
 	 */
 	private void release() {
 		//通知engine释放

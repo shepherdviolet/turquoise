@@ -8,14 +8,15 @@ import sviolet.turquoise.view.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.view.slide.SlideView;
 
 /**
+ * 
  * 线性滑动引擎(有惯性, 惯性滑动距离由松手时速度决定)<br>
  * <Br/>
  * 基本设置:<br/>
  * setMaxRange()<br/>
  * setInitPosition()<br/>
  * setSlidingDirection()<br/>
- * <br>
- * @see sviolet.turquoise.view.slide.SlideView
+ * <br/>
+ * {@link SlideView}<br/>
  **************************************************************************************<br>
  * 输出定义::<br>
  * <br>
@@ -26,7 +27,7 @@ import sviolet.turquoise.view.slide.SlideView;
  * stage方向:<br>
  * DIRECTION_LEFT_OR_TOP				:	手势上/左::递增  手势下/右::递减<br>
  * DIRECTION_RIGHT_OR_BOTTOM	: 	手势上/左::递减  手势下/右::递增<br>
- *
+ * 
  * @author S.Violet
  *
  */

@@ -8,6 +8,7 @@ import sviolet.turquoise.compat.CompatScroller23;
 import sviolet.turquoise.view.slide.SlideView;
 
 /**
+ * 
  * 线性滑动引擎(有惯性, 惯性滑动至停止点)<br>
  * <Br/>
  * 基本设置:<br/>
@@ -16,8 +17,8 @@ import sviolet.turquoise.view.slide.SlideView;
  * setSlidingDirection()<br/>
  * setStageDuration()<br/>
  * <br>
- * @see sviolet.turquoise.view.slide.SlideView
- **************************************************************************************<br>
+ * {@link sviolet.turquoise.view.slide.SlideView} <br/>
+ * *************************************************************************************<br>
  * 输出定义::<br>
  * <br>
  * position方向:<br>
@@ -80,7 +81,7 @@ public class LinearScrollEngine extends LinearDragEngine {
      * 设置永久触摸区域触摸反馈效果<br>
      * <br>
      * 永久触摸区域::<br>
-     * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
+     * 若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
      * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
      * 捕获触摸事件. 可用于控件边界的把手设计.<br>
      * <br>
@@ -99,10 +100,10 @@ public class LinearScrollEngine extends LinearDragEngine {
     /**
      * 设置永久触摸区域触摸事件监听器<br>
      * <br>
-     *  ACTION_Down时触发, 永久触摸区域触摸触发<br>
+     * ACTION_Down时触发, 永久触摸区域触摸触发<br>
      * <br>
      * 永久触摸区域::<br>
-     * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
+     * 若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
      * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
      * 捕获触摸事件. 可用于控件边界的把手设计.<br>
      *
@@ -115,10 +116,10 @@ public class LinearScrollEngine extends LinearDragEngine {
     /**
      * 设置永久触摸区域单击事件监听器<br>
      * <br>
-     *  ACTION_UP时触发, 永久触摸区域的触摸事件未发生有效位移<br>
+     * ACTION_UP时触发, 永久触摸区域的触摸事件未发生有效位移<br>
      * <br>
      * 永久触摸区域::<br>
-     * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
+     * 若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
      * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
      * 捕获触摸事件. 可用于控件边界的把手设计.<br>
      *
@@ -134,7 +135,7 @@ public class LinearScrollEngine extends LinearDragEngine {
      * 长按计时器触发, 且永久触摸区域的触摸事件未发生有效位移<br>
      * <br>
      * 永久触摸区域::<br>
-     * 	若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
+     * 若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
      * 会返回true以阻止事件向后方传递. 该区域内的触摸事件(down)强制拦截, 后方View无法
      * 捕获触摸事件. 可用于控件边界的把手设计.<br>
      *

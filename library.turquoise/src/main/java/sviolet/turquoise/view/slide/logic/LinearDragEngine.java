@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 /**
+ * 
  * 线性拖动引擎(无惯性)<br/>
  * <Br/>
  * 基本设置:<br/>
@@ -18,8 +19,8 @@ import android.view.View.OnClickListener;
  * setInitPosition()<br/>
  * setSlidingDirection()<br/>
  * <br>
- * @see sviolet.turquoise.view.slide.SlideView
- **************************************************************************************<br>
+ * {@link SlideView}<br/>
+ * *************************************************************************************<br>
  * 输出定义::<br>
  * <br>
  * position方向:<br>

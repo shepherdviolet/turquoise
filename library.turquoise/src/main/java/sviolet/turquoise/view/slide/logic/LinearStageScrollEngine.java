@@ -6,6 +6,7 @@ import sviolet.turquoise.exception.DeprecatedException;
 import sviolet.turquoise.view.slide.SlideView;
 
 /**
+ * 
  * 多页/多阶段式线性滑动引擎(有惯性, 惯性滑动至停止点)<br>
  * 滑动全程可分为多个等分阶段, 每个阶段停止, 类似于ViewPager<br>
  * <br/>
@@ -16,7 +17,7 @@ import sviolet.turquoise.view.slide.SlideView;
  * setSlidingDirection()<br/>
  * setStageDuration()<br/>
  * <br>
- * @see sviolet.turquoise.view.slide.SlideView
+ * {@link sviolet.turquoise.view.slide.SlideView} <br/>
  **************************************************************************************<br>
  * 输出定义::<br>
  * <br>
