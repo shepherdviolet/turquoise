@@ -13,7 +13,7 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
 import sviolet.turquoise.utils.cache.BitmapCache;
 
 /**
- * <pre>
+ * 
  * AsyncBitmapDrawableLoader<br/>
  * AsyncBitmapDrawable双缓存网络异步加载器<br/>
  * <br/>
@@ -30,6 +30,7 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  * 1.实现接口BitmapLoaderImplementor<br/>
  * 2.实例化AsyncBitmapDrawableLoader(Context,String,Bitmap,BitmapLoaderImplementor) <br/>
  * 3.设置参数:<br/>
+ * <pre>{@code
  *   try {
  *       mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
  *           BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor())
@@ -47,6 +48,7 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  *   } catch (IOException e) {
  *      //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
  *   }
+ * }</pre>
  * <br/>
  *      [上述代码说明]:<br/>
  *      通用设置说明省略, 参考BitmapLoader<br/>
@@ -60,19 +62,24 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  * <br/>
  * 1.load <br/>
  *      加载,立即返回AsyncBitmapDrawable,直接赋给ImageView即可,AsyncBitmapDrawable会自动处理后续工作
- *      (显示图片,防止异常等).注意切不可获取AsyncBitmapDrawable中的Bitmap直接使用.<Br/>
+ *      (显示图片,防止异常等).注意切不可获取AsyncBitmapDrawable中的Bitmap直接使用.<p/>
+ *
  * 2.get <br/>
- *      从内存缓冲获取AsyncBitmapDrawable,若不存在返回null<br/>
+ *      从内存缓冲获取AsyncBitmapDrawable,若不存在返回null<p/>
+ *
  * 3.AsyncBitmapDrawable.unused [重要] <br/>
- *      当图片不再显示时,及时unused有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<br/>
+ *      当图片不再显示时,及时unused有助于减少不必要的加载,节省流量,使需要显示的图片尽快加载.<p/>
+ *
  * 4.destroy [重要] <br/>
- *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<br/>
+ *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<p/>
+ *
  * 5.reduce <br/>
  *      强制清空内存缓存中不再使用(unused)的图片.<br/>
  *      用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
  *      通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
  *      将缓存中已被标记为unused的图片回收掉, 减少内存占用. 但这样会使得重新显示时, 加载
- *      变慢(需要重新加载).<br/>
+ *      变慢(需要重新加载).<p/>
+ *
  * 6.cancelAllTasks <br/>
  *      强制取消所有加载任务.不影响缓存,不弃用图片.<br/>
  *      用于BitmapLoader未销毁的情况下, 结束网络访问.<br/>
@@ -136,7 +143,7 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  *      因为SimpleBitmapLoader会把SimpleBitmapLoaderTask通过setTag()绑定在控件上!<Br/>
  * <Br/>
  * <Br/>
- * </pre>
+ * 
  *
  * @author S.Violet
  *
@@ -179,7 +186,7 @@ public class AsyncBitmapDrawableLoader {
     ////////////////////////////////////////////////////////////////////////
 
     /**
-     * <pre>
+     * 
      * 加载图片, 立即返回AsyncBitmapDrawable<br/>
      * AsyncBitmapDrawable为异步的BitmapDrawable, 在加载时会显示加载图, 加载成功后会自动刷新为目标图片<br/>
      * ImageView.setImageDrawable()方法直接设置图片使用, 请勿获取其中的Bitmap使用.<br/>
@@ -190,7 +197,7 @@ public class AsyncBitmapDrawableLoader {
      * <Br/>
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
-     * </pre>
+     * 
      *
      * @param url 图片URL地址
      * @param reqWidth 需求宽度 px
@@ -207,7 +214,7 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
-     * <pre>
+     * 
      * 从内存缓存中取AsyncBitmapDrawable, 若不存在或已被回收, 则返回null<br/>
      * AsyncBitmapDrawable为异步的BitmapDrawable, 在加载时会显示加载图, 加载成功后会自动刷新为目标图片<br/>
      * ImageView.setImageDrawable()方法直接设置图片使用, 请勿获取其中的Bitmap使用.<br/>
@@ -218,7 +225,7 @@ public class AsyncBitmapDrawableLoader {
      * <Br/>
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
-     * </pre>
+     * 
      *
      * @param url 图片URL地址
      * @param reqWidth 需求宽度 px
@@ -233,7 +240,7 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
-     * <pre>
+     * 
      * 尝试取消加载任务<br/>
      * <br/>
      * [[[注意]]] 使用AysncBitmapDrawable.unused()
@@ -247,7 +254,7 @@ public class AsyncBitmapDrawableLoader {
      * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
-     * </pre>
+     * 
      *
      * @param url 图片URL地址
      */
@@ -361,7 +368,7 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
-     * <pre>
+     * 
      * 相同图片同时加载<br/>
      * <br/>
      * ----------------------------------------------<br/>
@@ -382,7 +389,7 @@ public class AsyncBitmapDrawableLoader {
      * 同名任务跟随策略,其中一个任务执行,其他同名任务等待其完成后,同时回调OnLoadCompleteListener,并传入
      * 同一个结果(Bitmap).这种方式在高并发场合,例如:频繁滑动ListView,任务会持有大量的对象用以回调,而绝大
      * 多数的View已不再显示在屏幕上.<Br/>
-     * </pre>
+     * 
      *
      */
     public AsyncBitmapDrawableLoader setDuplicateLoadEnable(boolean duplicateLoadEnable) {
