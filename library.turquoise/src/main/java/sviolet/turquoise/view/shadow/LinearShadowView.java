@@ -19,70 +19,72 @@ import android.view.ViewTreeObserver.OnPreDrawListener;
  * 示例1:在LinearLayout中使用阴影<br>
  * 线性布局在被占满后, 会扩展到外面, 因此只需加在match_parent的控件后即可<br>
  * <br>
-	<sviolet.turquoise.view.slide.view.LinearLayoutDrawer
-		android:id="@+id/left_drawer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-		android:background="#00000000"
-		android:orientation="horizontal"
-        android:scrollX="10000dp"
-        android:scrollY="10000dp">
-        
-        <ListView
-		    android:id="@+id/left_drawer_listview"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-			android:background="#FFC0C0C0"/>
-        
-        <!-- 线性渐变阴影 -->
-	    <sviolet.turquoise.view.shadow.LinearShadowView
-	        android:layout_width="10dp"
-	        android:layout_height="match_parent"
-	        sviolet:color="#50000000"
-	        sviolet:LinearShadowView_direction="right"/>
-        
-    </sviolet.turquoise.view.slide.view.LinearLayoutDrawer>
- * <br>
+ * <pre>{@code
+ *	<sviolet.turquoise.view.slide.view.LinearLayoutDrawer
+ *		android:id="@+id/left_drawer"
+ *		android:layout_width="match_parent"
+ *		android:layout_height="match_parent"
+ *		android:background="#00000000"
+ *		android:orientation="horizontal"
+ *		android:scrollX="10000dp"
+ *		android:scrollY="10000dp">
+ *
+ *		<ListView
+ *			android:id="@+id/left_drawer_listview"
+ *			android:layout_width="match_parent"
+ *			android:layout_height="match_parent"
+ *			android:background="#FFC0C0C0"/>
+ *
+ *		<!-- 线性渐变阴影 -->
+ *		<sviolet.turquoise.view.shadow.LinearShadowView
+ *			android:layout_width="10dp"
+ *			android:layout_height="match_parent"
+ *			sviolet:color="#50000000"
+ *			sviolet:LinearShadowView_direction="right"/>
+ *
+ *	 </sviolet.turquoise.view.slide.view.LinearLayoutDrawer>
+ * }</pre><br>
  * <br>
  * 示例2:在RelativeLayout中使用阴影<br>
  * 关系布局在被占满后, 若使用诸如toRightOf在右侧添加控件, 会导致显示不出来,
  * 因此必须使用alignRight与之右对齐, 然后用marginRight将阴影移出去, 才能在
  * 超出屏幕范围外的地方放置阴影<br>
  * <br>
-	<sviolet.turquoise.view.slide.view.RelativeLayoutDrawer
-		android:id="@+id/left_drawer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-		android:background="#00000000"
-        android:scrollX="10000dp"
-        android:scrollY="10000dp">
-        
-        <ListView
-		    android:id="@+id/left_drawer_listview"
-		    android:layout_width="match_parent"
-		    android:layout_height="match_parent"
-			android:background="#FFC0C0C0"/>
-        
-        <!-- 线性渐变阴影 -->
-	    <sviolet.turquoise.view.shadow.LinearShadowView
-	        android:layout_width="10dp"
-	        android:layout_height="match_parent"
-	        android:layout_alignRight="@id/left_drawer_listview"
-	        android:layout_marginRight="-10dp"
-	        sviolet:color="#50000000"
-	        sviolet:LinearShadowView_direction="right"/>
-	    
-        <!-- 线性渐变阴影 -->
-	    <sviolet.turquoise.view.shadow.LinearShadowView
-	        android:layout_width="10dp"
-	        android:layout_height="match_parent"
-	        android:layout_alignLeft="@id/left_drawer_listview"
-	        android:layout_marginLeft="-10dp"
-	        sviolet:color="#50000000"
-	        sviolet:LinearShadowView_direction="left"/>
-        
-    </sviolet.turquoise.view.slide.view.RelativeLayoutDrawer>
- * 
+ * <pre>{@code
+ *	<sviolet.turquoise.view.slide.view.RelativeLayoutDrawer
+ *		android:id="@+id/left_drawer"
+ *		android:layout_width="match_parent"
+ *		android:layout_height="match_parent"
+ *		android:background="#00000000"
+ *		android:scrollX="10000dp"
+ *		android:scrollY="10000dp">
+ *
+ *		<ListView
+ *			android:id="@+id/left_drawer_listview"
+ *			android:layout_width="match_parent"
+ *			android:layout_height="match_parent"
+ *			android:background="#FFC0C0C0"/>
+ *
+ *		<!-- 线性渐变阴影 -->
+ *		<sviolet.turquoise.view.shadow.LinearShadowView
+ *			android:layout_width="10dp"
+ *			android:layout_height="match_parent"
+ *			android:layout_alignRight="@id/left_drawer_listview"
+ *			android:layout_marginRight="-10dp"
+ *			sviolet:color="#50000000"
+ *			sviolet:LinearShadowView_direction="right"/>
+ *
+ *		<!-- 线性渐变阴影 -->
+ *		<sviolet.turquoise.view.shadow.LinearShadowView
+ *			android:layout_width="10dp"
+ *			android:layout_height="match_parent"
+ *			android:layout_alignLeft="@id/left_drawer_listview"
+ *			android:layout_marginLeft="-10dp"
+ *			sviolet:color="#50000000"
+ *			sviolet:LinearShadowView_direction="left"/>
+ *
+ *	</sviolet.turquoise.view.slide.view.RelativeLayoutDrawer>
+ * }</pre>
  * 
  * @author S.Violet
  */
