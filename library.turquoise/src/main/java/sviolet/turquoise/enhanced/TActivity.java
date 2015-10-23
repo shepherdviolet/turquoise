@@ -32,10 +32,10 @@ import sviolet.turquoise.utils.sys.MeasureUtils;
  * [组件扩展]Activity<br>
  * <br>
  * 0.Activity注释式设置<br/>
- * @see ActivitySettings ;
+ * {@link ActivitySettings};<br/>
  * <br/>
  * 1.InjectUtils注释式注入控件对象/绑定监听<br/>
- * @see InjectUtils ;
+ * {@link InjectUtils};<br/>
  * <br>
  * 2.兼容低版本的新权限控制(api23)<br/>
  * 采用监听器方式处理权限请求结果<br/>

@@ -19,7 +19,7 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  * 实现OnBitmapLoadedListener接口<br/>
  * <br/>
  * 简易的"防回收崩溃",必需配合BitmapLoader回收站使用.<br/>
- * @see SafeBitmapDrawable
+ * {@link SafeBitmapDrawable}<br/>
  * <br/>
  * ----已实现------------------------------------<br/>
  * <br/>

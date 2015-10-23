@@ -100,7 +100,7 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  * 3.SimpleBitmapLoader仅实现简易的"防回收崩溃",必须设置回收站.<br/>
  *      采用SafeBitmapDrawable,当显示中的Bitmap被意外回收时,会绘制空白,但不会重新加载图片,
  *      与AsyncBitmapDrawableLoader不同.配合回收站使用效果较好.<br/>
- *      @see SafeBitmapDrawable
+ *      {@link SafeBitmapDrawable}<Br/>
  * <Br/>
  * ****************************************************************<br/>
  * * * * * 名词解释:<br/>
@@ -455,7 +455,7 @@ public class SimpleBitmapLoader {
      * <pre>
      * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
      * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
-     * 使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+     * 使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
      * <Br/>
      * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
      * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a

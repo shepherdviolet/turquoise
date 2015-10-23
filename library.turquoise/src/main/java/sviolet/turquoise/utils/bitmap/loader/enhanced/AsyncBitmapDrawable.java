@@ -21,7 +21,7 @@ import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
  * 不再使用时, 请及时调用unused方法, 以取消加载任务<br/>
  * <br/>
  * 其他说明:<br/>
- * @see sviolet.turquoise.view.drawable.TransitionBitmapDrawable
+ * {@link sviolet.turquoise.view.drawable.TransitionBitmapDrawable}<br/>
  * *********************************************************<br/>
  * * * * 注意事项<br/>
  * *********************************************************<br/>

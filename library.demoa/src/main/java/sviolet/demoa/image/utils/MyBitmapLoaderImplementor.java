@@ -58,7 +58,7 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
      * 1.网络请求必须做超时处理,否则任务会一直阻塞等待.<br/>
      * <br/>
      * 2.数据解析为Bitmap时,请根据需求尺寸reqWidth和reqHeight解析,以节省内存.<br/>
-     * @see BitmapUtils <br/>
+     * {@link BitmapUtils}<br/>
      *      需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).<br/>
      *      图片解码时根据需求尺寸适当缩,且保持原图长宽比例,解码后Bitmap实际尺寸不等于需求尺寸.设置为0不缩小图片.<Br/>
      * <br/>

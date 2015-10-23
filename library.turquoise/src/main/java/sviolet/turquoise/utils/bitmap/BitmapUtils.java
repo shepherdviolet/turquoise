@@ -28,9 +28,9 @@ import java.io.OutputStream;
 
 /**
  * Bitmap工具<br/>
- *<Br/>
- * Bitmap解码/编辑/转换工具, 不含回收缓存功能, 需要回收功能使用:
- * @see CachedBitmapUtils
+ * <Br/>
+ * Bitmap解码/编辑/转换工具, 不含回收缓存功能, 需要回收功能使用:<br/>
+ * {@link CachedBitmapUtils}
  *
  * @author S.Violet
  */

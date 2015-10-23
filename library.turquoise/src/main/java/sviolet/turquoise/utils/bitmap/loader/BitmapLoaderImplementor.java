@@ -4,7 +4,7 @@ import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor;
 
 /**
- * <pre>
+ * 
  * BitmapLoader实现器<br/>
  * <br/>
  * 实现BitmapLoader待实现的方法:<br/>
@@ -13,8 +13,7 @@ import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplemen
  * 3.实现异常处理<br/>
  * <br/>
  * 简易实现:<br/>
- * @see sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor
- * </pre>
+ * {@link sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor}
  *
  * @author S.Violet
  *
@@ -33,7 +32,7 @@ public interface BitmapLoaderImplementor {
     public String getCacheKey(String url);
 
     /**
-     * <pre>
+     * 
      * 实现根据url参数从网络下载图片数据, 依照需求尺寸reqWidth和reqHeight解析为合适大小的Bitmap,
      * 并调用通知器BitmapLoaderMessenger.setResultSucceed/setResultFailed/setResultCanceled方法返回结果<br/>
      * <br/>
@@ -44,7 +43,7 @@ public interface BitmapLoaderImplementor {
      * 1.网络请求必须做超时处理,否则任务会一直阻塞等待.<br/>
      * <br/>
      * 2.数据解析为Bitmap时,请根据需求尺寸reqWidth和reqHeight解析,以节省内存.<br/>
-     * @see BitmapUtils <br/>
+     * {@link BitmapUtils} <br/>
      *      需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).<br/>
      *      图片解码时根据需求尺寸适当缩,且保持原图长宽比例,解码后Bitmap实际尺寸不等于需求尺寸.设置为0不缩小图片.<Br/>
      * <br/>
@@ -68,10 +67,11 @@ public interface BitmapLoaderImplementor {
      * <br/>
      * 1.同步加载方式<br/>
      * <br/>
-     *      @see SimpleBitmapLoaderImplementor
+     *      {@link SimpleBitmapLoaderImplementor}<br/>
      * <br/>
      * 2.异步加载方式<br/>
      * <br/>
+     * <pre>{@code
      *      public void loadFromNet(final String url, final int reqWidth, final int reqHeight, final BitmapLoaderMessenger messenger) {
      *          //第三方网络工具
      *          final HttpUtils httpUtils = new HttpUtils();
@@ -103,8 +103,8 @@ public interface BitmapLoaderImplementor {
      *              messenger.setResultFailed(e);
      *          }
      *      }
+     * }</pre>
      * <Br/>
-     * </pre>
      *
      * @param url url
      * @param reqWidth 请求宽度

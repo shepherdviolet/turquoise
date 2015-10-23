@@ -19,7 +19,7 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  * <br/>
  * 加载AsyncBitmapDrawable, 使用简单, 但兼容性较差, 新API可能会出错. <br/>
  * AsyncBitmapDrawable支持加载图设置,异步显示,出错重加载,回收防崩溃.<br/>
- * @see AsyncBitmapDrawable
+ * {@link AsyncBitmapDrawable}<br/>
  * <br/>
  * ****************************************************************<br/>
  * * * * * AsyncBitmapDrawableLoader使用说明:<br/>
@@ -421,7 +421,7 @@ public class AsyncBitmapDrawableLoader {
 
     /**
      * 缓存区:缓存区满后, 会清理被标记为unused/最早创建/最少使用的Bitmap. 并立刻回收(recycle()),
-     * 及时地使用unused(url)方法将不再使用的Bitmap置为unused状态, 可以使得Bitmap尽快被回收.
+     * 及时地使用unused(url)方法将不再使用的Bitmap置为unused状态, 可以使得Bitmap尽快被回收.<br/>
      * <br/>
      * AsyncBitmapDrawableLoader禁用了BitmapCache回收站, 因为AsyncBitmapDrawable防回收崩溃<br/>
      *

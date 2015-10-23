@@ -6,7 +6,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * <pre>
+ * 
  * BitmapLoader通知器<br/>
  * 用于BitmapLoader任务线程与异步网络请求间的通知<br/>
  * <br/>
@@ -18,15 +18,17 @@ import java.util.concurrent.locks.ReentrantLock;
  *      2)setResultFailed(Throwable),加载失败,返回异常<br/>
  *      3)setResultCanceled(),加载取消<br/>
  *      若加载任务已被取消(isCancelling() = true),但仍使用setResultSucceed返回结果,则Bitmap会被存入
- *      磁盘缓存,但BitmapLoader返回任务取消.<br/>
+ *      磁盘缓存,但BitmapLoader返回任务取消.<p/>
+ *
  * 2.判断任务是否取消中:isCancelling<br/>
  *      加载任务是否被取消.通常用于同步加载场合,从InputStream循环读取数据时,判断isCancelling(),若为
- *      true,则终止读取,并setResultCanceled()返回结果.<br/>
+ *      true,则终止读取,并setResultCanceled()返回结果.<p/>
+ *
  * 3.设置任务取消监听器:setOnCancelListener<br/>
  *      加载任务被取消时,会回调该监听器.通常用于异步加载场合,例如使用异步网络框架,在该监听器回调方法中
  *      调用框架方法,终止网络请求.<br/>
  * <Br/>
- * </pre>
+ * 
  *
  * @author S.Violet
  *

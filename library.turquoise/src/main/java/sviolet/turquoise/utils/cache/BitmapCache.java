@@ -15,7 +15,7 @@ import sviolet.turquoise.utils.Logger;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
- * <pre>
+ * 
  * Bitmap内存缓存<br/>
  * <br/>
  * ****************************************************************<br/>
@@ -29,7 +29,7 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  * 缓存区:<Br/>
  *      缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
  *      使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
- *      使用unused(key)方法将Bitmap置为不再使用(unused)状态, 使得Bitmap尽快被回收.
+ *      使用unused(key)方法将Bitmap置为不再使用(unused)状态, 使得Bitmap尽快被回收.<br/>
  * <Br/>
  * 回收站:<Br/>
  *      用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
@@ -52,7 +52,7 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  *          其他占用内存受限.<br/>
  * <br/>
  * <br/>
- * </pre>
+ * 
  *
  * @author S.Violet
  *
@@ -74,14 +74,14 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     private Logger logger;
 
     /**
-     * <pre>
+     * 
      * 创建缓存实例<Br/>
      * 缓存区容量为默认值DEFAULT_CACHE_MEMORY_PERCENT = 0.125f<Br/>
      * 回收站容量为默认值DEFAULT_CACHE_MEMORY_PERCENT = 0.125f<Br/>
      * <Br/>
      * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
      * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
-     * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+     * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
      * <Br/>
      * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
      * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
@@ -98,7 +98,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      * <br/>
-     * </pre>
+     * 
      *
      * @param context
      * @return
@@ -113,13 +113,13 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     }
 
     /**
-     * <pre>
+     * 
      * 创建缓存实例<Br/>
      * 根据实际情况设置缓存占用应用可用内存的比例, 参考值0.125, 建议不超过0.25<Br/>
      * <Br/>
      * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
      * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
-     * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+     * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
      * <Br/>
      * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
      * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
@@ -136,7 +136,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      * <br/>
-     * </pre>
+     * 
      *
      * @param context
      * @param cachePercent Bitmap缓存区占用应用可用内存的比例 (0, 1]
@@ -155,13 +155,13 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     }
 
     /**
-     * <pre>
+     * 
      * 创建缓存实例<Br/>
      * 根据实际情况设置缓冲区占用最大内存, 建议不超过应用可用内存的1/4<br/>
      * <Br/>
      * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
      * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
-     * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+     * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
      * <Br/>
      * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
      * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
@@ -178,7 +178,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      * <br/>
-     * </pre>
+     * 
      *
      * @param cacheMaxSize Bitmap缓存区占用最大内存 单位byte (0, ?)
      * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte [0, ?), 设置为0禁用回收站
@@ -188,10 +188,10 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     }
 
     /**
-     * <pre>
+     * 
      * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
      * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
-     * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.
+     * 使用unused(key)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
      * <Br/>
      * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
      * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
@@ -208,7 +208,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      * <br/>
-     * </pre>
+     * 
      *
      * @param cacheMaxSize Bitmap缓存区占用最大内存 单位byte
      * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte, 设置为0禁用回收站

@@ -70,7 +70,7 @@ public class CommonImageActivity extends TActivity {
      * 销毁资源<br/>
      * 自行创建的CachedBitmapUtils,BitmapCache,BitmapLoader,AsyncBitmapDrawableLoader需要在此销毁(destroy)<br/>
      * Activity自带的CachedBitmapUtils无需手动销毁, TActivity会自动销毁<Br/>
-     * @see TActivity
+     * {@link TActivity}
      */
     @Override
     protected void onDestroy() {
