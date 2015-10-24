@@ -1,4 +1,4 @@
-# Turquoise 1.4.151023
+# Turquoise 1.4.151024
 > https://github.com/shepherdviolet/turquoise <br/>
 
 ## Description
@@ -13,11 +13,14 @@
 > library.demoa : demos of "Turquoise" library  |  示例程序 <br/>
 > library.recycler : some messy code. IGNORE PLEASE  |  未整理的凌乱代码, 请无视 <br/>
 
-## Export & Use *.aar
->1.build library <br/>
->2.get library.turquoise/build/outputs/library.turquoise-release.aar <br/>
->3.put .aar into your module (modulename/libs/) <br/>
->4.edit build.gradle <br/>
+## Export *.aar
+>1.build library.turquoise <br/>
+>2.get file from : library.turquoise/build/outputs/library.turquoise-release.aar <br/>
+>3.rename to "sviolet.turquoise-version.aar" <br/>
+
+## Use *.aar
+>1.put "sviolet.turquoise-version.aar" into your module of project (modulename/libs/) <br/>
+>2.edit module's build.gradle <br/>
 
 ```java
 repositories {
@@ -31,9 +34,15 @@ repositories {
 ```java
 dependencies {
     ......
-    compile(name:'library.turquoise-release', ext:'aar')
+    compile(name:'sviolet.turquoise-version', ext:'aar')
 }
 ```
 
+>3.build your project <br/>
+
 ## Releases
 > https://github.com/shepherdviolet/turquoise/tree/master/release<br/>
+> <br/>
+> import source: <br/>
+> (1)Project - External Libraries - "sviolet.turquoise-version" Right Button - Library Properties
+> (2)add "sviolet.turquoise-source-version.jar"
