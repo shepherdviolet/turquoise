@@ -43,5 +43,5 @@ dependencies {
 > https://github.com/shepherdviolet/turquoise/tree/master/release<br/>
 > <br/>
 > import source: <br/>
-> (1)Project - External Libraries - "sviolet.turquoise-version" Right Button - Library Properties
-> (2)add "sviolet.turquoise-source-version.jar"
+> (1)Project - External Libraries - "sviolet.turquoise-version" Right Button - Library Properties <br/>
+> (2)add "sviolet.turquoise-source-version.jar" <br/>
