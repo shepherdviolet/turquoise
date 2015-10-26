@@ -1,9 +1,4 @@
 /*
- * for lower API, from android.util.LruCache (API 12)
- * 兼容低版本的LruCache, 取自android.util.LruCache (API 12)
- */
-
-/*
  * Copyright (C) 2011 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
