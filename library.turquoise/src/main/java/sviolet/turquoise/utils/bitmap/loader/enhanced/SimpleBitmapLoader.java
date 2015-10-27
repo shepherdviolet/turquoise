@@ -230,7 +230,8 @@ public class SimpleBitmapLoader {
      * <br/>
      * 注意:<Br/>
      * 1.该方法会弃用(unused)先前绑定在控件上的加载任务<br/>
-     * 2.切勿自行给控件设置TAG(View.setTag()), 会无法加载!<br/>
+     * 2.一个View不会重复加载相同的url<br/>
+     * 3.切勿自行给控件设置TAG(View.setTag()), 会无法加载!<br/>
      * <br/>
      * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
@@ -246,6 +247,8 @@ public class SimpleBitmapLoader {
      * @param view 被加载的控件(禁止使用View.setTag())
      */
     public void load(String url, int reqWidth, int reqHeight, ImageView view){
+        if (checkInput(url, reqWidth, reqHeight, view))
+            return;
         new ImageViewLoaderTask(url, reqWidth, reqHeight, this, view);
     }
 
@@ -255,7 +258,8 @@ public class SimpleBitmapLoader {
      * <br/>
      * 注意:<Br/>
      * 1.该方法会弃用(unused)先前绑定在控件上的加载任务<br/>
-     * 2.切勿自行给控件设置TAG(View.setTag()), 会无法加载!<br/>
+     * 2.一个View不会重复加载相同的url<br/>
+     * 3.切勿自行给控件设置TAG(View.setTag()), 会无法加载!<br/>
      * <br/>
      * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
@@ -271,6 +275,8 @@ public class SimpleBitmapLoader {
      * @param view 被加载的控件(禁止使用View.setTag())
      */
     public void loadBackground(String url, int reqWidth, int reqHeight, View view){
+        if (checkInput(url, reqWidth, reqHeight, view))
+            return;
         new BackgroundLoaderTask(url, reqWidth, reqHeight, this, view);
     }
 
@@ -389,6 +395,29 @@ public class SimpleBitmapLoader {
 
     protected Logger getLogger(){
         return bitmapLoader.getLogger();
+    }
+
+    /**
+     * 检查输入<br/>
+     * 1.检查url和view是否为空<br/>
+     * 2.判断url与原有任务是否相同, 若相同则返回true, 不再次加载.<br/>
+     */
+    protected boolean checkInput(String url, int reqWidth, int reqHeight, View view){
+        //检查输入
+        if (view == null)
+            throw new RuntimeException("[SimpleBitmapLoader]view must not be null");
+        if (url == null)
+            throw new RuntimeException("[SimpleBitmapLoader]url must not be null");
+        //加载任务的url相同,且未被弃用, 则不新建任务
+        Object tag = view.getTag();
+        if (tag != null && tag instanceof SimpleBitmapLoaderTask){
+            if (!((SimpleBitmapLoaderTask) tag).isUnused() && url.equals(((SimpleBitmapLoaderTask) tag).getUrl())){
+                if (getLogger() != null)
+                    getLogger().i("[SimpleBitmapLoader]load skipped (url:" + url + "), because of the same url");
+                return true;
+            }
+        }
+        return false;
     }
 
     /**************************************************************

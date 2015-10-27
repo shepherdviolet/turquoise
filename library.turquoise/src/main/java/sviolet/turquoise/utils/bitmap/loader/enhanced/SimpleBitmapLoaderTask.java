@@ -278,6 +278,10 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         return reqHeight;
     }
 
+    protected boolean isUnused(){
+        return unused;
+    }
+
     /*****************************************************
      * OnBitmapLoadedListener 回调
      */
