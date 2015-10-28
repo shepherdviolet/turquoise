@@ -241,17 +241,18 @@ public class BitmapUtils {
      * @param recycle 是否回收源Bitmap
      */
     public static String bitmapToBase64(Bitmap bitmap, boolean recycle) {
+        if (bitmap == null || bitmap.isRecycled()){
+            throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
+        }
         String result = null;
         ByteArrayOutputStream byteArrayOutputStream = null;
         try {
-            if (bitmap != null) {
-                byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-                byteArrayOutputStream.flush();
-                byteArrayOutputStream.close();
-                byte[] bitmapBytes = byteArrayOutputStream.toByteArray();
-                result = Base64.encodeToString(bitmapBytes, Base64.DEFAULT);
-            }
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            byteArrayOutputStream.flush();
+            byteArrayOutputStream.close();
+            byte[] bitmapBytes = byteArrayOutputStream.toByteArray();
+            result = Base64.encodeToString(bitmapBytes, Base64.DEFAULT);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -278,14 +279,7 @@ public class BitmapUtils {
      * @param recycle 是否回收源Bitmap
      */
     public static Bitmap zoom(Bitmap bitmap, float scale, boolean recycle) {
-        Matrix matrix = new Matrix();
-        matrix.postScale(scale, scale);
-        Bitmap result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-        //回收源Bitmap
-        if (recycle && !bitmap.isRecycled()) {
-            bitmap.recycle();
-        }
-        return result;
+        return zoom(bitmap, scale, scale, recycle);
     }
 
     /**
@@ -297,6 +291,9 @@ public class BitmapUtils {
      * @param recycle 是否回收源Bitmap
      */
     public static Bitmap zoom(Bitmap bitmap, float scaleX, float scaleY, boolean recycle) {
+        if (bitmap == null || bitmap.isRecycled()){
+            throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
+        }
         Matrix matrix = new Matrix();
         matrix.postScale(scaleX, scaleY);
         Bitmap result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
@@ -328,6 +325,9 @@ public class BitmapUtils {
      * @param recycle 是否回收源Bitmap
      */
     public static Bitmap toRoundedCorner(Bitmap bitmap, float radius, RoundedCornerType type, boolean recycle) {
+        if (bitmap == null || bitmap.isRecycled()){
+            throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
+        }
         Bitmap result = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
         Canvas canvas = new Canvas(result);
         final int color = 0xff424242;
@@ -388,6 +388,9 @@ public class BitmapUtils {
      * @param recycle 是否回收源Bitmap
      */
     public static Bitmap drawText(Bitmap bitmap, String text, float x, float y, float textSize, int textColor, boolean recycle) {
+        if (bitmap == null || bitmap.isRecycled()){
+            throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
+        }
         //copy, 防止出现immutable bitmap异常
         Bitmap result = bitmap.copy(Config.ARGB_8888, true);
         if (recycle)
@@ -431,30 +434,34 @@ public class BitmapUtils {
      * @param onSaveCompleteListener 完成回调
      */
     public static void syncSaveBitmap(Bitmap bitmap, OutputStream outputStream, Bitmap.CompressFormat format, int quality, boolean recycle, OnSaveCompleteListener onSaveCompleteListener) {
+        if (bitmap == null || bitmap.isRecycled()){
+            throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
+        }
+        if (outputStream == null){
+            throw new NullPointerException("[BitmapUtils]outputStream is null");
+        }
         Throwable throwable = null;
-        if (outputStream != null && bitmap != null) {
-            try {
-                bitmap.compress(format, quality, outputStream);
-                outputStream.flush();
-                if (onSaveCompleteListener != null) {
-                    onSaveCompleteListener.onSaveSucceed();
-                }
-                return;
-            } catch (IOException e) {
-                throwable = e;
-            } finally {
-                try {
-                    outputStream.close();
-                    //回收源Bitmap
-                    if (recycle && !bitmap.isRecycled()) {
-                        bitmap.recycle();
-                    }
-                } catch (IOException ignored) {
-                }
-            }
+        try {
+            bitmap.compress(format, quality, outputStream);
+            outputStream.flush();
             if (onSaveCompleteListener != null) {
-                onSaveCompleteListener.onSaveFailed(throwable);
+                onSaveCompleteListener.onSaveSucceed();
             }
+            return;
+        } catch (IOException e) {
+            throwable = e;
+        } finally {
+            try {
+                outputStream.close();
+                //回收源Bitmap
+                if (recycle && !bitmap.isRecycled()) {
+                    bitmap.recycle();
+                }
+            } catch (IOException ignored) {
+            }
+        }
+        if (onSaveCompleteListener != null) {
+            onSaveCompleteListener.onSaveFailed(throwable);
         }
     }
 
@@ -490,39 +497,43 @@ public class BitmapUtils {
      * @param onSaveCompleteListener 完成回调
      */
     public static void syncSaveBitmap(Bitmap bitmap, String path, String fileName, Bitmap.CompressFormat format, int quality, boolean recycle, OnSaveCompleteListener onSaveCompleteListener) {
+        if (bitmap == null || bitmap.isRecycled()){
+            throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
+        }
+        if (path == null && fileName == null){
+            throw new NullPointerException("[BitmapUtils]path and fileName are null");
+        }
         OutputStream outputStream = null;
         Throwable throwable = null;
-        if (path != null && fileName != null && bitmap != null) {
-            File pathFile = new File(path);
-            if (!pathFile.exists()) {
-                pathFile.mkdir();
-            }
-            File file = new File(path + File.separator + fileName);
-            try {
-                outputStream = new FileOutputStream(file);
-                bitmap.compress(format, quality, outputStream);
-                outputStream.flush();
-                if (onSaveCompleteListener != null) {
-                    onSaveCompleteListener.onSaveSucceed();
-                }
-                return;
-            } catch (IOException e) {
-                throwable = e;
-            } finally {
-                try {
-                    if (outputStream != null) {
-                        outputStream.close();
-                    }
-                    //回收源Bitmap
-                    if (recycle && !bitmap.isRecycled()) {
-                        bitmap.recycle();
-                    }
-                } catch (IOException ignored) {
-                }
-            }
+        File pathFile = new File(path);
+        if (!pathFile.exists()) {
+            pathFile.mkdir();
+        }
+        File file = new File(path + File.separator + fileName);
+        try {
+            outputStream = new FileOutputStream(file);
+            bitmap.compress(format, quality, outputStream);
+            outputStream.flush();
             if (onSaveCompleteListener != null) {
-                onSaveCompleteListener.onSaveFailed(throwable);
+                onSaveCompleteListener.onSaveSucceed();
             }
+            return;
+        } catch (IOException e) {
+            throwable = e;
+        } finally {
+            try {
+                if (outputStream != null) {
+                    outputStream.close();
+                }
+                //回收源Bitmap
+                if (recycle && !bitmap.isRecycled()) {
+                    bitmap.recycle();
+                }
+            } catch (IOException ignored) {
+            }
+        }
+        if (onSaveCompleteListener != null) {
+            onSaveCompleteListener.onSaveFailed(throwable);
         }
     }
 
