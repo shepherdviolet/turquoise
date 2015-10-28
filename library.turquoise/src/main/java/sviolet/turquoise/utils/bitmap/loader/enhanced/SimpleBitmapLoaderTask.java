@@ -326,19 +326,21 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         if (getView() == null){
             return true;
         }
-        Drawable drawable = getDrawable(getView());
-        if (drawable == null){
-            //drawable不存在, 但记录的hashCode不为0, 表示View有意外变化
-            if (drawableHashCode != 0){
-                return true;
+        synchronized (this) {
+            Drawable drawable = getDrawable(getView());
+            if (drawable == null) {
+                //drawable不存在, 但记录的hashCode不为0, 表示View有意外变化
+                if (drawableHashCode != 0) {
+                    return true;
+                }
+            } else {
+                //drawable存在, 但与记录的hashCode不同, 表示View有意外变化
+                if (drawable.hashCode() != drawableHashCode) {
+                    return true;
+                }
             }
-        }else{
-            //drawable存在, 但与记录的hashCode不同, 表示View有意外变化
-            if (drawable.hashCode() != drawableHashCode){
-                return true;
-            }
+            return false;
         }
-        return false;
     }
 
     /*****************************************************
