@@ -418,10 +418,12 @@ public class SimpleBitmapLoader {
             throw new RuntimeException("[SimpleBitmapLoader]view must not be null");
         if (url == null)
             throw new RuntimeException("[SimpleBitmapLoader]url must not be null");
-        //加载任务的url相同,且未被弃用, 则不新建任务
+        //取View绑定的加载任务
         Object tag = view.getTag();
         if (tag != null && tag instanceof SimpleBitmapLoaderTask){
-            if (!((SimpleBitmapLoaderTask) tag).isUnused() && url.equals(((SimpleBitmapLoaderTask) tag).getUrl())){
+            //任务未被弃用 且 图片未被篡改 且 URL相同, 跳过加载
+            SimpleBitmapLoaderTask task = ((SimpleBitmapLoaderTask) tag);
+            if (!task.isUnused() && !task.checkViewModified() && url.equals(task.getUrl())){
                 if (getLogger() != null)
                     getLogger().i("[SimpleBitmapLoader]load skipped (url:" + url + "), because of the same url");
                 return true;

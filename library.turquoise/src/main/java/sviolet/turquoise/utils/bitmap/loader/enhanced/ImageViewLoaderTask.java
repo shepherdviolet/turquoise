@@ -38,4 +38,8 @@ public class ImageViewLoaderTask extends SimpleBitmapLoaderTask<ImageView> {
         view.setImageDrawable(drawable);
     }
 
+    @Override
+    protected Drawable getDrawable(ImageView view) {
+        return view.getDrawable();
+    }
 }

@@ -70,6 +70,9 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     private int reqWidth;
     private int reqHeight;
 
+    //记录由加载任务设置的Drawable的hashCode, 用于判断控件的Drawable是否意外改变
+    private int drawableHashCode = 0;
+
     //绑定的控件
     private WeakReference<V> view;
     //加载器
@@ -111,6 +114,33 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     /****************************************************************
      * private
      */
+
+    /**
+     * 给控件设置图片(Bitmap)<br/>
+     */
+    private void setBitmap(V view, Resources resources, Bitmap bitmap, int animationDuration){
+        //生成Drawable
+        Drawable drawable = createDrawable(resources, bitmap);
+        //记录hashCode
+        drawableHashCode = drawable.hashCode();
+        //控件设置Drawable
+        setDrawable(view, drawable);
+        //开始动画
+        if (drawable instanceof TransitionDrawable){
+            ((TransitionDrawable) drawable).startTransition(animationDuration);
+        }
+    }
+
+    /**
+     * 根据Bitmap创建Drawable, 注意null的情况
+     */
+    private Drawable createDrawable(Resources resources, Bitmap bitmap){
+        if (bitmap == null || bitmap.isRecycled()){
+            return getLoadingDrawable();
+        }else{
+            return new TransitionDrawable(new Drawable[]{getLoadingDrawable(), new SafeBitmapDrawable(resources, bitmap).setLogger(getLogger())});
+        }
+    }
 
     /**
      * 绑定控件<br/>
@@ -281,8 +311,34 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         return reqHeight;
     }
 
+    /**
+     * 是否被弃用
+     */
     protected boolean isUnused(){
         return unused;
+    }
+
+    /**
+     * 检查绑定的View是否有意外变化
+     */
+    protected boolean checkViewModified(){
+        //绑定的View不存在, 表示View有意外变化
+        if (getView() == null){
+            return true;
+        }
+        Drawable drawable = getDrawable(getView());
+        if (drawable == null){
+            //drawable不存在, 但记录的hashCode不为0, 表示View有意外变化
+            if (drawableHashCode != 0){
+                return true;
+            }
+        }else{
+            //drawable存在, 但与记录的hashCode不同, 表示View有意外变化
+            if (drawable.hashCode() != drawableHashCode){
+                return true;
+            }
+        }
+        return false;
     }
 
     /*****************************************************
@@ -350,38 +406,18 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
      */
 
     /**
-     * [可复写]<br/>
-     * 给控件设置图片(Bitmap)<br/>
-     */
-    protected void setBitmap(V view, Resources resources, Bitmap bitmap, int animationDuration){
-        //生成Drawable
-        Drawable drawable = createDrawable(resources, bitmap);
-        //控件设置Drawable
-        setDrawable(view, drawable);
-        //开始动画
-        if (drawable instanceof TransitionDrawable){
-            ((TransitionDrawable) drawable).startTransition(animationDuration);
-        }
-    }
-
-    /**
-     * [可复写]<br/>
-     * 根据Bitmap创建Drawable, 注意null的情况
-     */
-    protected Drawable createDrawable(Resources resources, Bitmap bitmap){
-        if (bitmap == null || bitmap.isRecycled()){
-            return getLoadingDrawable();
-        }else{
-            return new TransitionDrawable(new Drawable[]{getLoadingDrawable(), new SafeBitmapDrawable(resources, bitmap).setLogger(getLogger())});
-        }
-    }
-
-    /**
      * [复写]<br/>
      * 实现给控件设置图片(Drawable)
      * @param view 控件
      * @param drawable 图片
      */
     protected abstract void setDrawable(V view, Drawable drawable);
+
+    /**
+     * [复写]<br/>
+     * 实现从控件获取图片(Drawable), 用于判断控件的图片是否被意外改变
+     * @param view 控件
+     */
+    protected abstract Drawable getDrawable(V view);
 
 }

@@ -45,4 +45,9 @@ public class BackgroundLoaderTask extends SimpleBitmapLoaderTask<View> {
             view.setBackgroundDrawable(drawable);
         }
     }
+
+    @Override
+    protected Drawable getDrawable(View view) {
+        return view.getBackground();
+    }
 }
