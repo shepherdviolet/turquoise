@@ -649,7 +649,24 @@ public class BitmapLoader {
                 File cacheFile = mDiskLruCache.getFile(cacheKey, 0);
                 if (cacheFile != null) {
                     //若缓存文件存在, 从缓存中加载Bitmap
-                    mCachedBitmapUtils.decodeFromFile(cacheKey, cacheFile.getAbsolutePath(), reqWidth, reqHeight);
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = mCachedBitmapUtils.decodeFromFile(cacheKey, cacheFile.getAbsolutePath(), reqWidth, reqHeight);
+                    }catch(Exception e){
+                        //Bitmap加载失败
+                        if (getLogger() != null){
+                            getLogger().e("[BitmapLoader]disk load failed, bad file, trying to net load, url<" + url + "> cacheKey<" + cacheKey + ">", e);
+                        }
+                        //尝试从网络重新加载
+                        return RESULT_CONTINUE;
+                    }
+                    //加载出的Bitmap为空
+                    if (bitmap == null || bitmap.isRecycled()){
+                        mCachedBitmapUtils.unused(cacheKey);
+                        getLogger().e("[BitmapLoader]disk load failed, bitmap is null, trying to net load, url<" + url + "> cacheKey<" + cacheKey + ">");
+                        //尝试从网络重新加载
+                        return RESULT_CONTINUE;
+                    }
                     //若此时任务已被取消, 则废弃位图
                     if (isCancel()){
                         mCachedBitmapUtils.unused(cacheKey);
@@ -768,49 +785,67 @@ public class BitmapLoader {
                 implementor.loadFromNet(url, reqWidth, reqHeight, messenger);
                 //阻塞等待并获取结果Bitmap
                 int result = messenger.getResult();
-                if (result == BitmapLoaderMessenger.RESULT_SUCCEED && messenger.getBitmap() != null && !messenger.getBitmap().isRecycled()){
+                if (result == BitmapLoaderMessenger.RESULT_SUCCEED){
                     //结果为加载成功,且Bitmap正常的情况
-                    //写入文件缓存即使失败也不影响返回Bitmap
-                    try {
-                        //把图片写入缓存
-                        BitmapUtils.syncSaveBitmap(messenger.getBitmap(), outputStream, imageFormat, imageQuality, false, null);
-                        //尝试flush输出流
+                    if (messenger.getBitmap() != null && !messenger.getBitmap().isRecycled()) {
+                        //写入文件缓存即使失败也不影响返回Bitmap
                         try {
-                            if (outputStream != null)
-                                outputStream.flush();
-                        } catch (Exception ignored) {
+                            //把图片写入缓存
+                            BitmapUtils.syncSaveBitmap(messenger.getBitmap(), outputStream, imageFormat, imageQuality, false, null);
+                            //尝试flush输出流
+                            try {
+                                if (outputStream != null)
+                                    outputStream.flush();
+                            } catch (Exception ignored) {
+                            }
+                            //写入缓存成功commit
+                            editor.commit();
+                            //写缓存日志
+                            mDiskLruCache.flush();
+                        } catch (Exception e) {
+                            implementor.onCacheWriteException(e);
                         }
-                        //写入缓存成功commit
-                        editor.commit();
-                        //写缓存日志
-                        mDiskLruCache.flush();
-                    }catch(Exception e){
-                        implementor.onCacheWriteException(e);
+                        //若加载任务尚未被取消
+                        if (!isCancel()) {
+                            //加入内存缓存
+                            mCachedBitmapUtils.cacheBitmap(cacheKey, messenger.getBitmap());
+                            return RESULT_SUCCEED;
+                        }
+                        //若任务被取消, 则回收加载出的bitmap
+                        if (messenger.getBitmap() != null && !messenger.getBitmap().isRecycled()) {
+                            messenger.getBitmap().recycle();
+                        }
+                        //若加载任务被取消,即使返回结果是加载成功,也只会存入缓存,不会返回成功的结果
+                        return RESULT_CANCELED;
+                    }else{
+                        try {
+                            //写入缓存失败abort
+                            editor.abort();
+                            //写缓存日志
+                            mDiskLruCache.flush();
+                        }catch (Exception ignored){
+                        }
+                        if (getLogger() != null){
+                            getLogger().e("[BitmapLoader]net loaded bitmap is null or recycled, url<" + url + "> cacheKey<" + cacheKey + ">");
+                        }
                     }
-                    //若加载任务尚未被取消
-                    if (!isCancel()) {
-                        //加入内存缓存
-                        mCachedBitmapUtils.cacheBitmap(cacheKey, messenger.getBitmap());
-                        return RESULT_SUCCEED;
-                    }
-                    //若任务被取消, 则回收加载出的bitmap
-                    if (messenger.getBitmap() != null && !messenger.getBitmap().isRecycled()){
-                        messenger.getBitmap().recycle();
-                    }
-                    //若加载任务被取消,即使返回结果是加载成功,也只会存入缓存,不会返回成功的结果
-                    return RESULT_CANCELED;
-                } else {
+                } else if (result == BitmapLoaderMessenger.RESULT_CANCELED || result == BitmapLoaderMessenger.RESULT_INTERRUPTED) {
                     try {
-                        //若加载失败/取消
                         //写入缓存失败abort
                         editor.abort();
                         //写缓存日志
                         mDiskLruCache.flush();
                     }catch (Exception ignored){
                     }
-                    //加载取消结果返回
-                    if (result == BitmapLoaderMessenger.RESULT_CANCELED)
-                        return RESULT_CANCELED;
+                    return RESULT_CANCELED;
+                } else {
+                    try {
+                        //写入缓存失败abort
+                        editor.abort();
+                        //写缓存日志
+                        mDiskLruCache.flush();
+                    }catch (Exception ignored){
+                    }
                     //异常处理
                     if (messenger.getThrowable() != null){
                         implementor.onException(messenger.getThrowable());

@@ -221,9 +221,6 @@ public class CachedBitmapUtils {
      * @return
      */
     public void cacheBitmap(String key, Bitmap bitmap) {
-        if (bitmap == null) {
-            return;
-        }
         //若key为空, 自动分配一个
         if (key == null || key.equals("")){
             key = DEFAULT_KEY_PREFIX + defaultKeyIndex;

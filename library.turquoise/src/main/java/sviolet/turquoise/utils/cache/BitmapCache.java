@@ -256,6 +256,9 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * @param key
      */
     public void unused(String key) {
+        if (key == null){
+            throw new NullPointerException("[BitmapCache]key must not be null");
+        }
         Bitmap bitmap = null;
         synchronized (this) {
             //若Bitmap存在回收站中, 则直接清除回收资源
@@ -285,18 +288,28 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
     @Override
     public Bitmap get(String key) {
+        if (key == null){
+            throw new NullPointerException("[BitmapCache]key must not be null");
+        }
         synchronized (this) {
             //移除不再使用标记
             unusedMap.remove(key);
         }
         //返回Bitmap
-        return super.get(key);
+        Bitmap bitmap = super.get(key);
+        //排除被回收的Bitmap
+        if (bitmap != null && bitmap.isRecycled()){
+            //移除
+            remove(key);
+            return null;
+        }
+        return bitmap;
     }
 
     /**
      * 将一个Bitmap放入缓存<Br/>
      * 放入前会强制回收已存在的同名Bitmap(包括缓存和回收站),
-     * 不当的使用可能会导致异常 : 回收了正在使用的Bitmap
+     * 不当的使用可能会导致异常 : 回收了正在使用的Bitmap.
      *
      * @param key
      * @param value
@@ -304,6 +317,15 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
     @Override
     public Bitmap put(String key, Bitmap value) {
+        if (key == null){
+            throw new NullPointerException("[BitmapCache]key must not be null");
+        }
+        //排除null或被回收的Bitmap
+        if (value == null || value.isRecycled()) {
+            if (getLogger() != null)
+                getLogger().e("[BitmapCache]trying to put a null or recycled bitmap, key:" + key);
+            return null;
+        }
         //先强制移除并回收同名Bitmap
         remove(key);
         return super.put(key, value);
@@ -318,6 +340,9 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
     @Override
     public Bitmap remove(String key) {
+        if (key == null){
+            throw new NullPointerException("[BitmapCache]key must not be null");
+        }
         Bitmap bitmap;
         Bitmap recyclerBitmap = null;
         synchronized (this) {

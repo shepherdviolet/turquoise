@@ -58,7 +58,7 @@ public class BitmapLoaderMessenger {
     public static final int RESULT_SUCCEED = 1;//结果:加载成功
     public static final int RESULT_FAILED = 2;//结果:加载失败
     public static final int RESULT_CANCELED = 3;//结果:加载取消
-    public static final int RESULT_INTERRUPTED = 3;//结果:加载取消
+    public static final int RESULT_INTERRUPTED = 4;//结果:加载中断
 
     private int result = RESULT_NULL;//结果状态
 
