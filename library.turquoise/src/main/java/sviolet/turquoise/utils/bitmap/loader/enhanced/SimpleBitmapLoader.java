@@ -351,10 +351,17 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * 获得内存缓存器
+     * 获得内部的内存缓存器
      */
     public BitmapCache getBitmapCache(){
         return bitmapLoader.getBitmapCache();
+    }
+
+    /**
+     * 获得内部的BitmapLoader
+     */
+    public BitmapLoader getBitmapLoader(){
+        return bitmapLoader;
     }
 
     /*********************************************************************
