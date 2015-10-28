@@ -77,13 +77,12 @@ public class GuideActivity extends TActivity {
         super.onCreate(savedInstanceState);
 
         injectDemoListView();
+        injectDefaultDemo();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        injectDefaultDemo();
     }
 
     /**
