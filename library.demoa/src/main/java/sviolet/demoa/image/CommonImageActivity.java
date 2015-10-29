@@ -217,7 +217,7 @@ public class CommonImageActivity extends TActivity {
         );
         //缩小Bitmap
         //CachedBitmapUtils.zoom会将原Bitmap回收
-        bitmap23 = getCachedBitmapUtils().zoom(null, bitmap23, 0.4f);
+        bitmap23 = getCachedBitmapUtils().scale(null, bitmap23, 0.4f);
         imageView23.setImageBitmap(bitmap23);
 
         /**
