@@ -9,11 +9,36 @@ android {
         targetSdkVersion 23
         versionCode 14
         versionName "1.4.151028"
+
+        //true:多dex允许,突破类65535的限制
+        multiDexEnabled false
     }
     buildTypes {
         release {
-            minifyEnabled false
+            //混淆
+            minifyEnabled true
+            //Zipalign优化
+            zipAlignEnabled true
+            //移除无用resource
+            shrinkResources true
+            //proguard配置文件proguard-rules.pro
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            //自定义参数, 程序中BuildConfig._DEBUG获得
+            buildConfigField "boolean", "_DEBUG", "false"
+        }
+        debug {
+            //混淆
+            minifyEnabled false
+            //Zipalign优化
+            zipAlignEnabled false
+            //移除无用resource
+            shrinkResources false
+            //proguard配置文件proguard-rules.pro
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            //自定义参数, 程序中BuildConfig._DEBUG获得
+            buildConfigField "boolean", "_DEBUG", "true"
         }
     }
     productFlavors {

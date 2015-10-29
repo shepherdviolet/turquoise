@@ -326,7 +326,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         if (getView() == null){
             return true;
         }
-        synchronized (this) {
+        synchronized (getView()) {
             Drawable drawable = getDrawable(getView());
             if (drawable == null) {
                 //drawable不存在, 但记录的hashCode不为0, 表示View有意外变化

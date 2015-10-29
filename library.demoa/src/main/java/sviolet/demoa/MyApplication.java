@@ -25,7 +25,7 @@ import sviolet.turquoise.enhanced.annotation.setting.ReleaseSettings;
 import sviolet.turquoise.enhanced.TApplication;
 
 @ApplicationSettings(
-        DEBUG = true //Debug模式, 装载DebugSetting配置
+        DEBUG = BuildConfig._DEBUG //Debug模式, 装载DebugSetting配置
 )
 //发布配置
 @ReleaseSettings(
