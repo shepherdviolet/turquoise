@@ -265,7 +265,7 @@ public class ScrapeTextView extends TextView {
 		// 初始化初始覆盖面图形(0则为颜色模式)
 		if(resId != 0 && width > 0 && height > 0){
 			Bitmap bitmap = BitmapFactory.decodeResource(getResources(), resId);
-			oBitmap = BitmapUtils.zoom(bitmap, width, height, true);
+			oBitmap = BitmapUtils.scaleTo(bitmap, width, height, true);
 		}
 	}
 	

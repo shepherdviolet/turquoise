@@ -274,23 +274,23 @@ public class BitmapUtils {
     /**
      * 按比例缩放图片
      *
-     * @param bitmap
+     * @param bitmap 原图
      * @param scale   缩放比例
      * @param recycle 是否回收源Bitmap
      */
-    public static Bitmap zoom(Bitmap bitmap, float scale, boolean recycle) {
-        return zoom(bitmap, scale, scale, recycle);
+    public static Bitmap scale(Bitmap bitmap, float scale, boolean recycle) {
+        return scale(bitmap, scale, scale, recycle);
     }
 
     /**
      * 按比例缩放图片
      *
-     * @param bitmap
+     * @param bitmap 原图
      * @param scaleX  x缩放比例
      * @param scaleY  y缩放比例
      * @param recycle 是否回收源Bitmap
      */
-    public static Bitmap zoom(Bitmap bitmap, float scaleX, float scaleY, boolean recycle) {
+    public static Bitmap scale(Bitmap bitmap, float scaleX, float scaleY, boolean recycle) {
         if (bitmap == null || bitmap.isRecycled()){
             throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
         }
@@ -298,22 +298,49 @@ public class BitmapUtils {
         matrix.postScale(scaleX, scaleY);
         Bitmap result = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
         //回收源Bitmap
-        if (recycle && !bitmap.isRecycled()) {
+        if (bitmap != result && recycle && !bitmap.isRecycled()) {
             bitmap.recycle();
         }
         return result;
     }
 
     /**
-     * 将图片缩放至指定宽高<Br/>
+     * 将图片缩放至指定宽高<p/>
      *
-     * @param bitmap
-     * @param width   指定宽 >0
-     * @param height  指定高 >0
+     * <pre>{@code
+     * width>0 & height>0   : 宽高分别缩放到指定值<br/>
+     * width>0 & height<=0  : 宽缩放到指定值,高同比例缩放,保持宽高比<br/>
+     * width<=0 & height>0  : 高缩放到指定值,宽同比例缩放,保持宽高比<br/>
+     * width<=0 & height<=0 : 返回原图<br/>
+     * }</pre>
+     * @param bitmap 原图
+     * @param width   指定宽
+     * @param height  指定高
      * @param recycle 是否回收源Bitmap
      */
-    public static Bitmap zoom(Bitmap bitmap, int width, int height, boolean recycle) {
-        return zoom(bitmap, (float) width / (float) bitmap.getWidth(), (float) height / (float) bitmap.getHeight(), recycle);
+    public static Bitmap scaleTo(Bitmap bitmap, int width, int height, boolean recycle) {
+
+        float scaleX;
+        float scaleY;
+
+        if (width <= 0 && height <= 0){
+            //返回原图
+            return bitmap;
+        }else if(width > 0 && height <= 0){
+            //宽度缩放, 高度等比例缩放
+            scaleX = (float) width / (float) bitmap.getWidth();
+            scaleY = scaleX;
+        }else if (width <= 0 && height > 0){
+            //高度缩放, 宽度等比例缩放
+            scaleY = (float) height / (float) bitmap.getHeight();
+            scaleX = scaleY;
+        }else{
+            //不同比例缩放
+            scaleX = (float) width / (float) bitmap.getWidth();
+            scaleY = (float) height / (float) bitmap.getHeight();
+        }
+
+        return scale(bitmap, scaleX, scaleY, recycle);
     }
 
     /**
@@ -346,7 +373,7 @@ public class BitmapUtils {
         paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
         canvas.drawBitmap(bitmap, rect, rect, paint);
         //回收源Bitmap
-        if (recycle && !bitmap.isRecycled()) {
+        if (bitmap != result && recycle && !bitmap.isRecycled()) {
             bitmap.recycle();
         }
         return result;
@@ -393,7 +420,7 @@ public class BitmapUtils {
         }
         //copy, 防止出现immutable bitmap异常
         Bitmap result = bitmap.copy(Config.ARGB_8888, true);
-        if (recycle)
+        if (bitmap != result && recycle)
             bitmap.recycle();
 
         Canvas canvas = new Canvas(result);

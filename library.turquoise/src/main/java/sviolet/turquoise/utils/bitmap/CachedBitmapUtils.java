@@ -463,8 +463,8 @@ public class CachedBitmapUtils {
      * @param bitmap
      * @param scale   缩放比例
      */
-    public Bitmap zoom(String key, Bitmap bitmap, float scale) {
-        Bitmap result = BitmapUtils.zoom(bitmap, scale, true);
+    public Bitmap scale(String key, Bitmap bitmap, float scale) {
+        Bitmap result = BitmapUtils.scale(bitmap, scale, true);
         cacheBitmap(key, result);
         return result;
     }
@@ -477,22 +477,29 @@ public class CachedBitmapUtils {
      * @param scaleX  x缩放比例
      * @param scaleY  y缩放比例
      */
-    public Bitmap zoom(String key, Bitmap bitmap, float scaleX, float scaleY) {
-        Bitmap result = BitmapUtils.zoom(bitmap, scaleX, scaleY, true);
+    public Bitmap scale(String key, Bitmap bitmap, float scaleX, float scaleY) {
+        Bitmap result = BitmapUtils.scale(bitmap, scaleX, scaleY, true);
         cacheBitmap(key, result);
         return result;
     }
 
     /**
-     * 将图片缩放至指定宽高[回收源Bitmap]
+     * 将图片缩放至指定宽高[回收源Bitmap]<p/>
+     *
+     * <pre>{@code
+     * width>0 & height>0   : 宽高分别缩放到指定值<br/>
+     * width>0 & height<=0  : 宽缩放到指定值,高同比例缩放,保持宽高比<br/>
+     * width<=0 & height>0  : 高缩放到指定值,宽同比例缩放,保持宽高比<br/>
+     * width<=0 & height<=0 : 返回原图<br/>
+     * }</pre>
      *
      * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
      * @param bitmap
-     * @param width   指定宽 >0
-     * @param height  指定高 >0
+     * @param width   指定宽
+     * @param height  指定高
      */
-    public Bitmap zoom(String key, Bitmap bitmap, int width, int height) {
-        Bitmap result = BitmapUtils.zoom(bitmap, width, height, true);
+    public Bitmap scaleTo(String key, Bitmap bitmap, int width, int height) {
+        Bitmap result = BitmapUtils.scaleTo(bitmap, width, height, true);
         cacheBitmap(key, result);
         return result;
     }
