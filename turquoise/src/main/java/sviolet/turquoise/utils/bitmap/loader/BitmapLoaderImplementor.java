@@ -74,7 +74,10 @@ public interface BitmapLoaderImplementor {
      *      若加载任务已被取消(isCancelling() = true),但仍使用setResultSucceed返回结果,则Bitmap会被存入
      *      磁盘缓存,但BitmapLoader返回任务取消.<br/>
      * <br/>
-     * 4.合理地处理加载任务取消的情况<br/>
+     * 4.合理地处理加载任务取消的情况.<br/>
+     *      网络加载同步方式实现时,设置合理的连接超时,在循环读取数据时,判断messenger.isCancelling(),当取消时终止
+     *      读取,并setResultCanceled()返回.<br/>
+     *      异步网络框架实现时,设置取消监听器messenger.setOnCancelListener(),在回调方法中取消网络加载.<br/>
      *      1)当加载任务取消,终止网络加载,并用BitmapLoaderMessenger.setResultCanceled()返回结果<br/>
      *          采用此种方式,已加载的数据废弃,BitmapLoader作为任务取消处理,不会返回Bitmap.<br/>
      *      2)当加载任务取消,继续完成网络加载,并用BitmapLoaderMessenger.setResultSucceed(Bitmap)返回结果<br/>
