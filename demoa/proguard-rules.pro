@@ -47,8 +47,8 @@
 #忽略警告
 -ignorewarning
 #####################记录生成的日志数据,在本项目根目录输出################
-#列出apk包内所有class的内部结构
--dump buildlog/classes.txt
+#列出apk包内所有class的内部结构(日志较大)
+#-dump buildlog/classes.txt
 #未混淆的类和成员
 -printseeds buildlog/seeds.txt
 #列出从apk中删除的代码
