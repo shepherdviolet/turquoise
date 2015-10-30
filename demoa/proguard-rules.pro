@@ -48,13 +48,13 @@
 -ignorewarning
 #####################记录生成的日志数据,在本项目根目录输出################
 #列出apk包内所有class的内部结构
--dump classes.txt
+-dump buildlog/classes.txt
 #未混淆的类和成员
--printseeds seeds.txt
+-printseeds buildlog/seeds.txt
 #列出从apk中删除的代码
--printusage unused.txt
+-printusage buildlog/unused.txt
 #混淆前后的映射
--printmapping mapping.txt
+-printmapping buildlog/mapping.txt
 #####################避免混淆参数####################
 #避免混淆注释
 -keepattributes *Annotation*
@@ -71,7 +71,7 @@
 #忽略警告
 -dontwarn sviolet.turquoise.**
 #保留一个完整的包
--keep sviolet.turquoise.** {
+-keep class sviolet.turquoise.** {
     *;
  }
 #如果引用了v4或者v7包
@@ -109,7 +109,7 @@
     static final long serialVersionUID;
     private static final java.io.ObjectStreamField[] serialPersistentFields;
     !static !transient <fields>;
-    !private <fields><span></span>;
+    !private <fields>;
     !private <methods>;
     private void writeObject(java.io.ObjectOutputStream);
     private void readObject(java.io.ObjectInputStream);

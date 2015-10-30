@@ -20,7 +20,7 @@ android {
             //Zipalign优化
             zipAlignEnabled true
             //移除无用resource
-            shrinkResources true
+            shrinkResources false
             //proguard配置文件proguard-rules.pro
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
