@@ -1,4 +1,4 @@
-# Turquoise 1.4.151028
+# Turquoise 1.4.151030
 > https://github.com/shepherdviolet/turquoise <br/>
 
 ## Description
@@ -9,22 +9,22 @@
 > 4.some Utils | 工具<br/>
 
 ## Modules
-> library.turquoise : the "Turquoise" library module  |  库本体 <br/>
-> library.demoa : demos of "Turquoise" library  |  示例程序 <br/>
+> turquoise : the "Turquoise" library module  |  库本体 <br/>
+> demoa : demos of "Turquoise" library  |  示例程序 <br/>
 
 ## Export *.aar
->1.build library.turquoise <br/>
->2.get file from : library.turquoise/build/outputs/library.turquoise-release.aar <br/>
->3.rename to "sviolet.turquoise-version.aar" <br/>
+>1.build module "turquoise" <br/>
+>2.get file from : turquoise/build/outputs/turquoise-release.aar <br/>
+>3.rename to "turquoise-version.aar" <br/>
 
 ## Import *.aar as module
 >1.File - New - New Module - import .JAR/.AAR package - Next <br/>
->2.select the "sviolet.turquoise-version.aar" - Finish <br/>
+>2.select the file "turquoise-version.aar" - Finish <br/>
 >3.F4 - select your module - dependencies - Module Dependency <br/>
->4.select the "sviolet.turquoise" module <br/>
+>4.select the module "turquoise" <br/>
 
 ## Import *.aar as libs
->1.put "sviolet.turquoise-version.aar" into your module of project (modulename/libs/) <br/>
+>1.put "turquoise-version.aar" into your module of project (module-name/libs/) <br/>
 >2.edit module's build.gradle <br/>
 
 ```java
@@ -39,7 +39,7 @@ repositories {
 ```java
 dependencies {
     ......
-    compile(name:'sviolet.turquoise-version', ext:'aar')
+    compile(name:'turquoise-version', ext:'aar')
 }
 ```
 
@@ -49,5 +49,5 @@ dependencies {
 > https://github.com/shepherdviolet/turquoise/tree/master/release <br/>
 > <br/>
 > import source: <br/>
-> (1)Project - External Libraries - "sviolet.turquoise-version" Right Button - Library Properties <br/>
-> (2)add "sviolet.turquoise-source-version.jar" <br/>
+> (1)Project - External Libraries - "turquoise-version" Right Button - Library Properties <br/>
+> (2)add "turquoise-source-version.jar" <br/>

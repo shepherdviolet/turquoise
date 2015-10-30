@@ -1,1 +1,1 @@
-include ':library.demoa', ':library.turquoise'
+include ':demoa', ':turquoise'

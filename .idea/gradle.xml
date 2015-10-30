@@ -10,8 +10,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/library.demoa" />
-            <option value="$PROJECT_DIR$/library.turquoise" />
+            <option value="$PROJECT_DIR$/demoa" />
+            <option value="$PROJECT_DIR$/turquoise" />
           </set>
         </option>
       </GradleProjectSettings>
