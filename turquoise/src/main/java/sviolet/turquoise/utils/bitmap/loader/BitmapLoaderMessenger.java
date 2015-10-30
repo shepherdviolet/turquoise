@@ -34,8 +34,8 @@ import java.util.concurrent.locks.ReentrantLock;
  *      无论同步处理,还是异步处理,均通过这些方法返回结果,BitmapLoader加载任务会阻塞,
  *      直到setResultSucceed/setResultFailed/setResultCanceled方法被调用.结果仅允许设置一次.<br/>
  *      1)setResultSucceed(Bitmap),加载成功,返回Bitmap<br/>
- *      2)setResultFailed(Throwable),加载失败,返回异常<br/>
- *      3)setResultCanceled(),加载取消<br/>
+ *      2)setResultFailed(Throwable),加载失败,返回异常,触发重新加载<br/>
+ *      3)setResultCanceled(),加载取消,不触发重新加载<br/>
  *      若加载任务已被取消(isCancelling() = true),但仍使用setResultSucceed返回结果,则Bitmap会被存入
  *      磁盘缓存,但BitmapLoader返回任务取消.<p/>
  *
