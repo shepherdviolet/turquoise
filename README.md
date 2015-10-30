@@ -17,7 +17,13 @@
 >2.get file from : library.turquoise/build/outputs/library.turquoise-release.aar <br/>
 >3.rename to "sviolet.turquoise-version.aar" <br/>
 
-## Use *.aar
+## Import *.aar as module
+>1.File - New - New Module - import .JAR/.AAR package - Next <br/>
+>2.select the "sviolet.turquoise-version.aar" - Finish <br/>
+>3.F4 - select your module - dependencies - Module Dependency <br/>
+>4.select the "sviolet.turquoise" module <br/>
+
+## Import *.aar as libs
 >1.put "sviolet.turquoise-version.aar" into your module of project (modulename/libs/) <br/>
 >2.edit module's build.gradle <br/>
 
@@ -40,7 +46,7 @@ dependencies {
 >3.build your project <br/>
 
 ## Releases
-> https://github.com/shepherdviolet/turquoise/tree/master/release<br/>
+> https://github.com/shepherdviolet/turquoise/tree/master/release <br/>
 > <br/>
 > import source: <br/>
 > (1)Project - External Libraries - "sviolet.turquoise-version" Right Button - Library Properties <br/>
