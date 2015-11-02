@@ -138,7 +138,9 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         if (bitmap == null || bitmap.isRecycled()){
             return getLoadingDrawable();
         }else{
-            return new TransitionDrawable(new Drawable[]{getLoadingDrawable(), new SafeBitmapDrawable(resources, bitmap).setLogger(getLogger())});
+            TransitionDrawable drawable = new TransitionDrawable(new Drawable[]{getLoadingDrawable(), new SafeBitmapDrawable(resources, bitmap).setLogger(getLogger())});
+            drawable.setCrossFadeEnabled(true);//加载图消失
+            return drawable;
         }
     }
 
