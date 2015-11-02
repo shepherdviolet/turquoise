@@ -56,10 +56,7 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  * ----注意事项-----------------------------------<br/>
  * <br/>
  * 1.该类占用了控件(View)的Tag用于绑定本身, 若控件设置另外的Tag(View.setTag())将会无法正常使用<br/>
- * 2.若设置了加载图(loadingBitmap), 加载出来的TransitionDrawable尺寸将取加载图和目标图的最大值.
- *      例如:加载图100*50, 目标图80*70, 则TransitionDrawable尺寸为100*70.因此需要注意加载图和
- *      目标图尺寸不同的情况, 若加载图大, 目标图小, 且长宽比不同, 最终显示的图片长宽会等于加载图
- *      导致目标图显示被拉伸.设置"加载颜色"则不会出现这种问题.<br/>
+ * 2.若设置了加载图(loadingBitmap), 加载出来的TransitionDrawable尺寸等于目的图<br/>
  *
  * @author S.Violet
  *
@@ -139,9 +136,11 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
      */
     private Drawable createDrawable(Resources resources, Bitmap bitmap){
         if (bitmap == null || bitmap.isRecycled()){
-            return getLoadingDrawable();
+            //尺寸等于加载图
+            return getLoadingDrawable(false);
         }else{
-            TransitionDrawable drawable = new TransitionDrawable(new Drawable[]{getLoadingDrawable(), new SafeBitmapDrawable(resources, bitmap).setLogger(getLogger())});
+            //尺寸等于目的图
+            TransitionDrawable drawable = new TransitionDrawable(new Drawable[]{getLoadingDrawable(true), new SafeBitmapDrawable(resources, bitmap).setLogger(getLogger())});
             drawable.setCrossFadeEnabled(true);//加载图消失
             return drawable;
         }
@@ -286,11 +285,16 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         return null;
     }
 
-    protected Drawable getLoadingDrawable(){
+    protected Drawable getLoadingDrawable(boolean noDimension){
         if (getLoader() != null){
             Bitmap loadingBitmap = getLoader().getLoadingBitmap();
             if (loadingBitmap != null && !loadingBitmap.isRecycled()){
-                return new SafeBitmapDrawable(getResources(), loadingBitmap).setLogger(getLogger());
+                if (noDimension){
+                    //尺寸为match_parent的SafeBitmapDrawable
+                    return new NoDimensionSafeBitmapDrawable(getResources(), loadingBitmap).setLogger(getLogger());
+                }else {
+                    return new SafeBitmapDrawable(getResources(), loadingBitmap).setLogger(getLogger());
+                }
             }else{
                 return new ColorDrawable(getLoader().getLoadingColor());
             }
@@ -426,5 +430,34 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
      * @param view 控件
      */
     protected abstract Drawable getDrawable(V view);
+
+    /*****************************************************
+     * 内部类
+     */
+
+    /**
+     * 无尺寸(自适应尺寸)的SafeBitmapDrawable<p/>
+     *
+     * 通过复写getIntrinsicWidth/getIntrinsicHeight两个方法,返回-1,
+     * 使得该Drawable在计算尺寸时,作为match_parent处理.<p/>
+     *
+     * 用于TransitionDrawable,使得加载图尺寸等于目标图尺寸<p/>
+     */
+    private class NoDimensionSafeBitmapDrawable extends SafeBitmapDrawable{
+
+        public NoDimensionSafeBitmapDrawable(Resources res, Bitmap bitmap) {
+            super(res, bitmap);
+        }
+
+        @Override
+        public int getIntrinsicWidth() {
+            return -1;
+        }
+
+        @Override
+        public int getIntrinsicHeight() {
+            return -1;
+        }
+    }
 
 }

@@ -244,9 +244,10 @@ public class BitmapLoader {
      * @param diskCacheName 磁盘缓存目录名
      * @param connectTimeout 网络连接超时ms(SimpleBitmapLoaderImplementor)
      * @param readTimeout 网络读取超时ms(SimpleBitmapLoaderImplementor)
+     * @param forceCancel 取消任务时,强制终止网络加载(SimpleBitmapLoaderImplementor)
      */
-    public BitmapLoader(Context context, String diskCacheName, int connectTimeout, int readTimeout){
-        this(context, diskCacheName, new SimpleBitmapLoaderImplementor(connectTimeout, readTimeout));
+    public BitmapLoader(Context context, String diskCacheName, int connectTimeout, int readTimeout, boolean forceCancel){
+        this(context, diskCacheName, new SimpleBitmapLoaderImplementor(connectTimeout, readTimeout, forceCancel));
     }
 
     /************************************************************************************

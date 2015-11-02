@@ -43,25 +43,28 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
 
     private int connectTimeout;
     private int readTimeout;
+    private boolean forceCancel;
 
     /**
-     * 连接超时10s, 读取超时30s
+     * 连接超时10s, 读取超时30s, 取消任务时,强制终止网络加载
      */
     public SimpleBitmapLoaderImplementor(){
-        this(10000, 30000);
+        this(10000, 30000, true);
     }
 
     /**
      * @param connectTimeout 网络连接超时ms
      * @param readTimeout 网络读取超时ms
+     * @param forceCancel 取消任务时,强制终止网络加载(默认true)
      */
-    public SimpleBitmapLoaderImplementor(int connectTimeout, int readTimeout){
+    public SimpleBitmapLoaderImplementor(int connectTimeout, int readTimeout, boolean forceCancel){
         if (connectTimeout <= 0)
             throw new NullPointerException("[SimpleBitmapLoaderImplementor] connectTimeout <= 0");
         if (readTimeout <= 0)
             throw new NullPointerException("[SimpleBitmapLoaderImplementor] readTimeout <= 0");
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
+        this.forceCancel = forceCancel;
     }
 
     /**
@@ -96,19 +99,24 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
                 return;
             }
 
-            //设置取消监听
             final InputStream finalInputStream = inputStream;
-            messenger.setOnCancelListener(new Runnable() {
-                @Override
-                public void run() {
-                    //强制关闭输入流
-                    try {
-                        finalInputStream.close();
-                    }catch (Exception ignored){}
-                    //强制设置结果为取消, 后续将无法改变
-                    messenger.setResultCanceled();
-                }
-            });
+
+            if (forceCancel) {
+                //设置取消监听
+                //任务取消时,网络加载强制终止
+                messenger.setOnCancelListener(new Runnable() {
+                    @Override
+                    public void run() {
+                        //强制关闭输入流
+                        try {
+                            finalInputStream.close();
+                        } catch (Exception ignored) {
+                        }
+                        //强制设置结果为取消, 后续将无法改变
+                        messenger.setResultCanceled();
+                    }
+                });
+            }
 
             if(conn.getResponseCode() == HttpURLConnection.HTTP_OK){
                 outputStream = new ByteArrayOutputStream();

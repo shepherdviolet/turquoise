@@ -210,9 +210,10 @@ public class AsyncBitmapDrawableLoader {
      * @param loadingBitmap 加载时的图片(可为空, AsyncBitmapDrawableLoader.destroy时会回收该Bitmap)
      * @param connectTimeout 网络连接超时ms(SimpleBitmapLoaderImplementor)
      * @param readTimeout 网络读取超时ms(SimpleBitmapLoaderImplementor)
+     * @param forceCancel 取消任务时,强制终止网络加载(SimpleBitmapLoaderImplementor)
      */
-    public AsyncBitmapDrawableLoader(Context context, String diskCacheName, Bitmap loadingBitmap, int connectTimeout, int readTimeout) {
-        bitmapLoader = new BitmapLoader(context, diskCacheName, connectTimeout, readTimeout);
+    public AsyncBitmapDrawableLoader(Context context, String diskCacheName, Bitmap loadingBitmap, int connectTimeout, int readTimeout, boolean forceCancel) {
+        bitmapLoader = new BitmapLoader(context, diskCacheName, connectTimeout, readTimeout, forceCancel);
         this.loadingBitmap = loadingBitmap;
         this.resources = new WeakReference<Resources>(context.getResources());
         setRamCache(0.125f);
