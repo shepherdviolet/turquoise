@@ -55,8 +55,11 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  * <Br/>
  * ----注意事项-----------------------------------<br/>
  * <br/>
- * 该类占用了控件(View)的Tag用于绑定本身, 若控件设置另外的Tag(View.setTag())将会无法正常使用<br/>
- * 
+ * 1.该类占用了控件(View)的Tag用于绑定本身, 若控件设置另外的Tag(View.setTag())将会无法正常使用<br/>
+ * 2.若设置了加载图(loadingBitmap), 加载出来的TransitionDrawable尺寸将取加载图和目标图的最大值.
+ *      例如:加载图100*50, 目标图80*70, 则TransitionDrawable尺寸为100*70.因此需要注意加载图和
+ *      目标图尺寸不同的情况, 若加载图大, 目标图小, 且长宽比不同, 最终显示的图片长宽会等于加载图
+ *      导致目标图显示被拉伸.设置"加载颜色"则不会出现这种问题.<br/>
  *
  * @author S.Violet
  *

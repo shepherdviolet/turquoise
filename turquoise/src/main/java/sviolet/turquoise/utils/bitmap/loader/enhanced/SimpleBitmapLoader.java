@@ -126,6 +126,10 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  *      采用SafeBitmapDrawable,当显示中的Bitmap被意外回收时,会绘制空白,但不会重新加载图片,
  *      与AsyncBitmapDrawableLoader不同.配合回收站使用效果较好.<br/>
  *      {@link SafeBitmapDrawable}<Br/>
+ * 4.若设置了加载图(loadingBitmap), 加载出来的TransitionDrawable尺寸将取加载图和目标图的最大值.<br/>
+ *      例如:加载图100*50, 目标图80*70, 则TransitionDrawable尺寸为100*70.因此需要注意加载图和
+ *      目标图尺寸不同的情况, 若加载图大, 目标图小, 且长宽比不同, 最终显示的图片长宽会等于加载图
+ *      导致目标图显示被拉伸.设置"加载颜色"则不会出现这种问题.<br/>
  * <Br/>
  * ****************************************************************<br/>
  * * * * * 名词解释:<br/>
