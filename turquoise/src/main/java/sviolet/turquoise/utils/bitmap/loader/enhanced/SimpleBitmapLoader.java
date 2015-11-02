@@ -200,6 +200,8 @@ public class SimpleBitmapLoader {
     private int reloadTimesMax = 2;//图片加载失败重新加载次数限制
 
     /**
+     * 自定义实现网络加载过程/缓存名规则/异常处理
+     *
      * @param context 上下文
      * @param diskCacheName 磁盘缓存目录名
      * @param loadingBitmap 加载时的图片(可为空, SimpleBitmapLoader.destroy时会回收该Bitmap)
@@ -212,6 +214,8 @@ public class SimpleBitmapLoader {
     }
 
     /**
+     * 自定义实现网络加载过程/缓存名规则/异常处理
+     *
      * @param context 上下文
      * @param diskCacheName 磁盘缓存目录名
      * @param loadingColor 加载时的颜色, 0x????????
@@ -219,6 +223,36 @@ public class SimpleBitmapLoader {
      */
     public SimpleBitmapLoader(Context context, String diskCacheName, int loadingColor, BitmapLoaderImplementor implementor) {
         bitmapLoader = new BitmapLoader(context, diskCacheName, implementor);
+        this.loadingColor = loadingColor;
+        this.resources = new WeakReference<Resources>(context.getResources());
+    }
+
+    /**
+     * 采用{@link SimpleBitmapLoaderImplementor}简易实现网络加载过程/缓存名规则/异常处理
+     *
+     * @param context 上下文
+     * @param diskCacheName 磁盘缓存目录名
+     * @param loadingBitmap 加载时的图片(可为空, SimpleBitmapLoader.destroy时会回收该Bitmap)
+     * @param connectTimeout 网络连接超时ms(SimpleBitmapLoaderImplementor)
+     * @param readTimeout 网络读取超时ms(SimpleBitmapLoaderImplementor)
+     */
+    public SimpleBitmapLoader(Context context, String diskCacheName, Bitmap loadingBitmap, int connectTimeout, int readTimeout) {
+        bitmapLoader = new BitmapLoader(context, diskCacheName, connectTimeout, readTimeout);
+        this.loadingBitmap = loadingBitmap;
+        this.resources = new WeakReference<Resources>(context.getResources());
+    }
+
+    /**
+     * 采用{@link SimpleBitmapLoaderImplementor}简易实现网络加载过程/缓存名规则/异常处理
+     *
+     * @param context 上下文
+     * @param diskCacheName 磁盘缓存目录名
+     * @param loadingColor 加载时的颜色, 0x????????
+     * @param connectTimeout 网络连接超时ms(SimpleBitmapLoaderImplementor)
+     * @param readTimeout 网络读取超时ms(SimpleBitmapLoaderImplementor)
+     */
+    public SimpleBitmapLoader(Context context, String diskCacheName, int loadingColor, int connectTimeout, int readTimeout) {
+        bitmapLoader = new BitmapLoader(context, diskCacheName, connectTimeout, readTimeout);
         this.loadingColor = loadingColor;
         this.resources = new WeakReference<Resources>(context.getResources());
     }

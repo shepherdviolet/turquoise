@@ -186,6 +186,7 @@ public class AsyncBitmapDrawableLoader {
     private int reloadTimesMax = 2;//图片加载失败重新加载次数限制
 
     /**
+     * 自定义实现网络加载过程/缓存名规则/异常处理<Br/>
      * 内存缓存区默认0.125f
      *
      * @param context 上下文
@@ -195,6 +196,23 @@ public class AsyncBitmapDrawableLoader {
      */
     public AsyncBitmapDrawableLoader(Context context, String diskCacheName, Bitmap loadingBitmap, BitmapLoaderImplementor implementor) {
         bitmapLoader = new BitmapLoader(context, diskCacheName, implementor);
+        this.loadingBitmap = loadingBitmap;
+        this.resources = new WeakReference<Resources>(context.getResources());
+        setRamCache(0.125f);
+    }
+
+    /**
+     * 采用{@link SimpleBitmapLoaderImplementor}简易实现网络加载过程/缓存名规则/异常处理<br/>
+     * 内存缓存区默认0.125f
+     *
+     * @param context 上下文
+     * @param diskCacheName 磁盘缓存目录名
+     * @param loadingBitmap 加载时的图片(可为空, AsyncBitmapDrawableLoader.destroy时会回收该Bitmap)
+     * @param connectTimeout 网络连接超时ms(SimpleBitmapLoaderImplementor)
+     * @param readTimeout 网络读取超时ms(SimpleBitmapLoaderImplementor)
+     */
+    public AsyncBitmapDrawableLoader(Context context, String diskCacheName, Bitmap loadingBitmap, int connectTimeout, int readTimeout) {
+        bitmapLoader = new BitmapLoader(context, diskCacheName, connectTimeout, readTimeout);
         this.loadingBitmap = loadingBitmap;
         this.resources = new WeakReference<Resources>(context.getResources());
         setRamCache(0.125f);

@@ -52,8 +52,8 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
     }
 
     /**
-     * @param connectTimeout 连接超时ms
-     * @param readTimeout 读取超时ms
+     * @param connectTimeout 网络连接超时ms
+     * @param readTimeout 网络读取超时ms
      */
     public SimpleBitmapLoaderImplementor(int connectTimeout, int readTimeout){
         if (connectTimeout <= 0)
@@ -64,12 +64,18 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
         this.readTimeout = readTimeout;
     }
 
+    /**
+     * 实现缓存名算法
+     */
     @Override
     public String getCacheKey(String url) {
         //url->SHA1->hex->key
         return ByteUtils.byteToHex(DigestCipher.digest(url, DigestCipher.TYPE_SHA1));
     }
 
+    /**
+     * 实现网络加载过程
+     */
     @Override
     public void loadFromNet(String url, int reqWidth, int reqHeight, final BitmapLoaderMessenger messenger) {
         InputStream inputStream = null;
@@ -149,16 +155,25 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
         messenger.setResultFailed(null);
     }
 
+    /**
+     * 异常处理
+     */
     @Override
     public void onException(Throwable throwable) {
         throwable.printStackTrace();
     }
 
+    /**
+     * 写磁盘缓存异常处理
+     */
     @Override
     public void onCacheWriteException(Throwable throwable) {
         throwable.printStackTrace();
     }
 
+    /**
+     * 销毁成员变量
+     */
     @Override
     public void onDestroy() {
 

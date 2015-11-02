@@ -32,6 +32,7 @@ import sviolet.turquoise.model.queue.TQueue;
 import sviolet.turquoise.model.queue.TTask;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
+import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor;
 import sviolet.turquoise.utils.cache.BitmapCache;
 import sviolet.turquoise.utils.cache.DiskLruCache;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
@@ -214,6 +215,8 @@ public class BitmapLoader {
     private boolean destroyed = false;//是否已被销毁
 
     /**
+     * 自定义实现网络加载过程/缓存名规则/异常处理
+     *
      * @param context 上下文
      * @param diskCacheName 磁盘缓存目录名
      * @param implementor 实现器
@@ -232,6 +235,18 @@ public class BitmapLoader {
         this.diskCacheName = diskCacheName;
         this.implementor = implementor;
         cacheDir = DirectoryUtils.getCacheDir(context, diskCacheName);
+    }
+
+    /**
+     * 采用{@link SimpleBitmapLoaderImplementor}简易实现网络加载过程/缓存名规则/异常处理
+     *
+     * @param context 上下文
+     * @param diskCacheName 磁盘缓存目录名
+     * @param connectTimeout 网络连接超时ms(SimpleBitmapLoaderImplementor)
+     * @param readTimeout 网络读取超时ms(SimpleBitmapLoaderImplementor)
+     */
+    public BitmapLoader(Context context, String diskCacheName, int connectTimeout, int readTimeout){
+        this(context, diskCacheName, new SimpleBitmapLoaderImplementor(connectTimeout, readTimeout));
     }
 
     /************************************************************************************
