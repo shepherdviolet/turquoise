@@ -3,14 +3,17 @@
 
 ## Description
 > Android Library<br/>
-> 1.Configurable "Application"/"Activity"... | 可配置的两大组件<br/>
-> 2.SlideEngine | 滑动引擎<br/>
-> 3.BitmapLoader | 双缓存图片异步加载器<br/>
+> 1.SlideEngine | 滑动引擎<br/>
+> 2.BitmapLoader | 双缓存图片异步加载器<br/>
+> 3.Configurable "TApplication"/"TActivity"... | 可配置的两大组件<br/>
 > 4.some Utils | 工具<br/>
 
 ## Modules
 > turquoise : the "Turquoise" library module  |  库本体 <br/>
 > demoa : demos of "Turquoise" library  |  示例程序 <br/>
+
+## Package Releases (aar/source/javadoc)
+> https://github.com/shepherdviolet/releases/tree/master/turquoise-release <br/>
 
 ## Export *.aar
 >1.build module "turquoise" <br/>
@@ -45,9 +48,6 @@ dependencies {
 
 >3.build your project <br/>
 
-## Releases
-> https://github.com/shepherdviolet/turquoise/tree/master/release <br/>
-> <br/>
-> import source: <br/>
+## Import source(jar): <br/>
 > (1)Project - External Libraries - "turquoise-version" Right Button - Library Properties <br/>
 > (2)add "turquoise-source-version.jar" <br/>
