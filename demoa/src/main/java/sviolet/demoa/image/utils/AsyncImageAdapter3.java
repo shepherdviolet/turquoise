@@ -29,9 +29,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.utils.bitmap.loader.enhanced.AsyncBitmapDrawable;
-import sviolet.turquoise.utils.bitmap.loader.enhanced.AsyncBitmapDrawableLoader;
-import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 
 /**

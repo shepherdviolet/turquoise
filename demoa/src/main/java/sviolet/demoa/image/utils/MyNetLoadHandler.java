@@ -28,16 +28,14 @@ import java.util.concurrent.Executors;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
+import sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
-import sviolet.turquoise.utils.conversion.ByteUtils;
-import sviolet.turquoise.utils.crypt.DigestCipher;
 
 /**
  * BitmapLoader实现器
  * Created by S.Violet on 2015/7/7.
  */
-public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
+public class MyNetLoadHandler implements NetLoadHandler {
 
     private Context context;
 
@@ -47,23 +45,8 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
     private int resourceIds[] = {R.mipmap.async_image_1, R.mipmap.async_image_2, R.mipmap.async_image_3, R.mipmap.async_image_4, R.mipmap.async_image_5};
     private ExecutorService pool = Executors.newCachedThreadPool();
 
-    public MyBitmapLoaderImplementor(Context context){
+    public MyNetLoadHandler(Context context){
         this.context = context;
-    }
-
-    /**
-     * [实现提示]:<br/>
-     * 通常将url进行摘要计算, 得到摘要值作为cacheKey, 根据实际情况实现.<Br/>
-     * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
-     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
-     * 这个cacheKey标识唯一的资源<br/>
-     *
-     * @return 实现根据URL计算并返回缓存Key
-     */
-    @Override
-    public String getCacheKey(String url) {
-        //用url做摘要
-        return ByteUtils.byteToHex(DigestCipher.digest(url, DigestCipher.TYPE_MD5));
     }
 
     /**
@@ -175,22 +158,6 @@ public class MyBitmapLoaderImplementor implements BitmapLoaderImplementor {
         });
 
         index = (index + 1) % 5;
-    }
-
-    /**
-     * 异常处理
-     */
-    @Override
-    public void onException(Throwable throwable) {
-        throwable.printStackTrace();
-    }
-
-    /**
-     * 写入到文件缓存失败
-     */
-    @Override
-    public void onCacheWriteException(Throwable throwable) {
-        throwable.printStackTrace();
     }
 
     @Override

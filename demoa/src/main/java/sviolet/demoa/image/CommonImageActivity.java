@@ -29,8 +29,6 @@ import android.os.Handler;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.IOException;
-
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.turquoise.enhanced.TActivity;
@@ -39,8 +37,8 @@ import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.OnBitmapLoadedListener;
-import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoader;
-import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor;
+import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultNetLoadHandler;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.utils.sys.NetStateUtils;
 import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
@@ -113,7 +111,7 @@ public class CommonImageActivity extends TActivity {
     @ResourceId(R.id.image_common_imageview12)
     private ImageView imageView12;
 
-    private void initLine1(){
+    private void initLine1() {
 
         /**
          * res资源解码为图片<br/>
@@ -162,7 +160,7 @@ public class CommonImageActivity extends TActivity {
     @ResourceId(R.id.image_common_imageview23)
     private ImageView imageView23;
 
-    private void initLine2(){
+    private void initLine2() {
 
         /**
          * 绘制文字
@@ -237,7 +235,7 @@ public class CommonImageActivity extends TActivity {
     @ResourceId(R.id.image_common_imageview32)
     private ImageView imageView32;
 
-    private void initLine3(){
+    private void initLine3() {
 
         /**
          * TransitionBitmapDrawable用法
@@ -337,19 +335,16 @@ public class CommonImageActivity extends TActivity {
     @ResourceId(R.id.image_common_imageview42)
     private ImageView imageView42;
 
-    private void initLine4(){
+    private void initLine4() {
 
         //仅在wifi下显示
-        if (!NetStateUtils.isWifi(getApplicationContext())){
+        if (!NetStateUtils.isWifi(getApplicationContext())) {
             Toast.makeText(getApplicationContext(), "第四行图片请在wifi下查看", Toast.LENGTH_SHORT).show();
             return;
         }
 
         /**
          * 创建BitmapLoader实例, 配置并启动.
-         *
-         * 此处采用SimpleBitmapLoaderImplementor, 实现了简单的HTTP图片加载.
-         * 也可以自定义实现BitmapLoaderImplementor.
          *
          * destroy::
          * 务必在onDestroy时销毁实例, bitmapLoader.destroy().
@@ -360,23 +355,17 @@ public class CommonImageActivity extends TActivity {
          * 务必调用loader.unused()方法, 废弃图片, 便于资源回收
          */
 
-        try {
-            bitmapLoader = new BitmapLoader(this, "AsyncImageActivity", new SimpleBitmapLoaderImplementor(10000, 30000, true))
-                    .setRamCache(0.1f, 0.1f)//缓存和回收站各占10%内存
-                    .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
-                    .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
-                    .setDiskCacheInner()//强制使用内部储存
-                    .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
-    //                    .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
-//                    .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
-                    .setLogger(getLogger())//打印日志
-                    .open();//启动(必须)
-        } catch (IOException e) {
-            //磁盘缓存打开失败的情况, 可进行适当提示
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "缓存打开失败", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        bitmapLoader = new BitmapLoader(this, "AsyncImageActivity")
+//                .setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000, true))//设置超时时间, 也可以自定义实现网络加载
+                .setRamCache(0.1f, 0.1f)//缓存和回收站各占10%内存
+                .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
+                .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
+//                .setDiskCacheInner()//强制使用内部储存
+                .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
+//                .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
+//                .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
+                .setLogger(getLogger());//打印日志
+        bitmapLoader.open();//启动(必须)
 
         /**
          * BitmapLoader普通方式加载图片
@@ -402,11 +391,8 @@ public class CommonImageActivity extends TActivity {
 
 //        bitmapLoader.unused(url41);//弃用Bitmap, 可回收资源/取消加载任务
 
-       /**
+        /**
          * 创建SimpleBitmapLoader实例, 配置并启动.
-         *
-         * 此处采用SimpleBitmapLoaderImplementor, 实现了简单的HTTP图片加载.
-         * 也可以自定义实现BitmapLoaderImplementor.
          *
          * destroy::
          * 务必在onDestroy时销毁实例, bitmapLoader.destroy().
@@ -417,27 +403,21 @@ public class CommonImageActivity extends TActivity {
          * 务必调用loader.unused()方法, 废弃图片, 便于资源回收
          */
 
-        try {
-            simpleBitmapLoader = new SimpleBitmapLoader(this, "AsyncImageActivity",
-                    BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new SimpleBitmapLoaderImplementor(10000, 30000, true))
-                    .setRamCache(0.1f, 0.1f)//缓存和回收站各占15%内存
+        simpleBitmapLoader = new SimpleBitmapLoader(this, "AsyncImageActivity",
+                BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null))
+//                .setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000, true))//设置超时时间, 也可以自定义实现网络加载
+                .setRamCache(0.1f, 0.1f)//缓存和回收站各占15%内存
 //                    .setRamCache(0.004f, 0.004f)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
-                    .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
-                    .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
-                    .setDiskCacheInner()//强制使用内部储存
-                    .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
+                .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
+                .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
+//                    .setDiskCacheInner()//强制使用内部储存
+                .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
 //                    .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
 //                    .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
-                    .setLogger(getLogger())//打印日志
-                    .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
-                    .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
-                    .open();//启动(必须)
-        } catch (IOException e) {
-            //磁盘缓存打开失败的情况, 可进行适当提示
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "缓存打开失败2", Toast.LENGTH_SHORT).show();
-            return;
-        }
+                .setLogger(getLogger())//打印日志
+                .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
+                .setReloadTimesMax(2);//设置图片加载失败重新加载次数限制
+        simpleBitmapLoader.open();//启动(必须)
 
         /**
          * SimpleBitmapLoader加载图片
@@ -473,7 +453,7 @@ public class CommonImageActivity extends TActivity {
      * imageView41<br/>
      * 图片加载结束监听器<br/>
      */
-    private OnBitmapLoadedListener mOnBitmapLoadedListener41 = new OnBitmapLoadedListener(){
+    private OnBitmapLoadedListener mOnBitmapLoadedListener41 = new OnBitmapLoadedListener() {
         @Override
         public void onLoadSucceed(String url, int reqWidth, int reqHeight, Object params, Bitmap bitmap) {
             //加载成功
@@ -490,6 +470,7 @@ public class CommonImageActivity extends TActivity {
                 drawable.startTransition(500);
             }
         }
+
         @Override
         public void onLoadFailed(String url, int reqWidth, int reqHeight, Object params) {
             //加载失败, 尝试重新加载
@@ -497,10 +478,10 @@ public class CommonImageActivity extends TActivity {
             //获得传入的控件
             ImageView imageView = (ImageView) params;
             //获得控件tag中的参数
-            TaskInfo taskInfo = (TaskInfo)imageView.getTag();
+            TaskInfo taskInfo = (TaskInfo) imageView.getTag();
 
             //根据TaskInfo记录的重新加载次数, 判断是否重新加载
-            if (taskInfo.reloadTimes < TaskInfo.RELOAD_TIMES_MAX){
+            if (taskInfo.reloadTimes < TaskInfo.RELOAD_TIMES_MAX) {
                 getLogger().i("[demoa]41 reload");
                 //计数+1
                 taskInfo.reloadTimes++;
@@ -508,6 +489,7 @@ public class CommonImageActivity extends TActivity {
                 bitmapLoader.load(url, reqWidth, reqHeight, params, this);
             }
         }
+
         @Override
         public void onLoadCanceled(String url, int reqWidth, int reqHeight, Object params) {
             //取消通常不用处理
@@ -519,12 +501,12 @@ public class CommonImageActivity extends TActivity {
      * imageView41<br/>
      * 用于BitmapLoader普通加载方式, 记录控件的加载任务信息<br/>
      */
-    private class TaskInfo{
+    private class TaskInfo {
         static final int RELOAD_TIMES_MAX = 2;//最大重加载次数
         String url;//加载地址
         int reloadTimes;//重新加载次数
 
-        TaskInfo(String url){
+        TaskInfo(String url) {
             this.url = url;
         }
 

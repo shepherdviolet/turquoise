@@ -106,7 +106,7 @@ public class GuideActivity extends TActivity {
 //                BitmapLoader.wipeDiskCache(this, "AsyncImageActivity");//若有外部储存, 清除外部缓存, 否则清除内部缓存
                 BitmapLoader.wipeInnerDiskCache(this, "AsyncImageActivity");//强制清除内部储存的缓存
                 Toast.makeText(getApplicationContext(), "cache wipe complete", Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), "cache wipe failed", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }

@@ -23,7 +23,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ListView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +30,13 @@ import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.image.utils.AsyncImageAdapter3;
 import sviolet.demoa.image.utils.AsyncImageItem;
-import sviolet.demoa.image.utils.MyBitmapLoaderImplementor;
+import sviolet.demoa.image.utils.MyNetLoadHandler;
 import sviolet.turquoise.enhanced.TActivity;
 import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
 
 @DemoDescription(
         title = "AsyncImageList3",
@@ -69,34 +69,39 @@ public class Async3ImageActivity extends TActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
             /*
               1.由于该Demo图片密度大, 最多同时出现四个Item, 每个Item5张图, 因此设置等待队列容量为25,
             一般的情况下, 设置默认值10足够, 该值设置过大会导致快速滑动时, 下载更多的图, 增加流量消耗.
               2.loadingBitmap在SimpleBitmapLoader.destroy时会销毁, 因此直接用BitmapUtils解码.
             */
-            //初始化图片加载器
-            simpleBitmapLoader = new SimpleBitmapLoader(this, "AsyncImageActivity",
-                    BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor(this))
-                    .setRamCache(0.15f, 0.15f)//缓存和回收站各占15%内存
+
+        //初始化图片加载器
+        simpleBitmapLoader = new SimpleBitmapLoader(this, "AsyncImageActivity",
+                BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null))
+                .setNetLoadHandler(new MyNetLoadHandler(this))//自定义网络加载实现
+                .setRamCache(0.15f, 0.15f)//缓存和回收站各占15%内存
 //                    .setRamCache(0.004f, 0.004f)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
-                    .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
-                    .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
-                    .setDiskCacheInner()//强制使用内部储存
-                    .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
+                .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
+                .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
+//                    .setDiskCacheInner()//强制使用内部储存
+                .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
 //                    .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
 //                    .setWipeOnNewVersion()//设置
-                    .setLogger(getLogger())//打印日志
-                    .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
-                    .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
-                    .open();//启动(必须)
-            //设置适配器, 传入图片加载器, 图片解码工具
-            adapter = new AsyncImageAdapter3(this, makeItemList(), simpleBitmapLoader);
-            listView.setAdapter(adapter);
-        } catch (IOException e) {
-            //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
-            e.printStackTrace();
-        }
+                .setLogger(getLogger())//打印日志
+                .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
+                .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
+                .setDiskCacheExceptionHandler(new DefaultDiskCacheExceptionHandler(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (adapter != null)
+                            adapter.notifyDataSetChanged();
+                    }
+                }));//TODO 注释
+        simpleBitmapLoader.open();//启动(必须)
+
+        //设置适配器, 传入图片加载器, 图片解码工具
+        adapter = new AsyncImageAdapter3(this, makeItemList(), simpleBitmapLoader);
+        listView.setAdapter(adapter);
     }
 
     @Override
