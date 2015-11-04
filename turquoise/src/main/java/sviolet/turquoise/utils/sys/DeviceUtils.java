@@ -5,6 +5,8 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 
+import java.util.Locale;
+
 /**
  * 设备级工具<br/>
  * Created by S.Violet on 2015/6/3.
@@ -57,6 +59,38 @@ public class DeviceUtils {
      */
     public static String getVersionRelease() {
         return android.os.Build.VERSION.RELEASE;
+    }
+
+    /**
+     * 获得系统地区信息
+     */
+    public static Locale getLocale(Context context){
+        return context.getResources().getConfiguration().locale;
+    }
+
+    /**
+     * 获得系统语言<Br/>
+     * zh：汉语<br/>
+     * en：英语<br/>
+     */
+    public static String getLanguage(Context context){
+        return getLocale(context).getLanguage();
+    }
+
+    /**
+     * 获得系统国家<br/>
+     * CN：中国<br/>
+     * US：美国<br/>
+     */
+    public static String getCountry(Context context){
+        return getLocale(context).getCountry();
+    }
+
+    /**
+     * 判断系统语言环境是否为中国汉语(zh-CN)
+     */
+    public static boolean isLocaleZhCn(Context context){
+        return "CN".equals(getCountry(context)) && "zh".equals(getLanguage(context));
     }
 
 }
