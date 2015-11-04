@@ -312,7 +312,7 @@ public abstract class TTask {
      * 任务执行后的流程(主线程)
      */
     protected void afterProcess(){
-        onPostExecute(result, isCancel());
+        //设置结束状态
         synchronized (TTask.this) {
             if (state <= STATE_COMPLETE) {
                 state = STATE_COMPLETE;
@@ -320,9 +320,13 @@ public abstract class TTask {
                 state = STATE_CANCELED;
             }
         }
+        //通知调度
 		if(getQueue() != null){
             getQueue().notifyDispatchTask();
 		}
+
+        //执行结束后操作
+		onPostExecute(result, isCancel());
 
         //执行跟随者
         if (follower != null){
