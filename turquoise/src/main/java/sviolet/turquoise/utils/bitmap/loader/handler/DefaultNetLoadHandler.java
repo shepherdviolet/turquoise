@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utils.bitmap.loader.enhanced;
+package sviolet.turquoise.utils.bitmap.loader.handler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,20 +26,28 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
-import sviolet.turquoise.utils.conversion.ByteUtils;
-import sviolet.turquoise.utils.crypt.DigestCipher;
 
 /**
- * 简易BitmapLoaderImplementor实现<br/>
- * 1.实现HTTP加载图片<br/>
- * 2.实现sha1缓存key<br/>
- * 3.日志打印方式处理异常<br/>
+ * 网络加载处理器默认实现<p/>
+ *
+ * 实现根据url地址, 通过HTTP/GET方式, 从网络下载图片的过程, 实现任务取消时, 强制终止网络加载的功能(可选)<p/>
+ *
+ * 设置网络超时时间:<Br/>
+ * <pre>{@code
+ *      //连接超时5s, 读取超时20s
+ *      bitmapLoader.setNetLoadHandler(new DefaultNetLoadHandler(5000, 20000, true))
+ * }</pre>
+ * <br/>
+ * 加载任务取消时, 不强制终止网络加载:<br/>
+ * <pre>{@code
+ *      //加载任务取消时, 不强制终止网络加载
+ *      bitmapLoader.setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000, false))
+ * }</pre>
  *
  * Created by S.Violet on 2015/10/12.
  */
-public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
+public class DefaultNetLoadHandler implements NetLoadHandler {
 
     private int connectTimeout;
     private int readTimeout;
@@ -48,7 +56,7 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
     /**
      * 连接超时10s, 读取超时30s, 取消任务时,强制终止网络加载
      */
-    public SimpleBitmapLoaderImplementor(){
+    public DefaultNetLoadHandler(){
         this(10000, 30000, true);
     }
 
@@ -57,23 +65,14 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
      * @param readTimeout 网络读取超时ms
      * @param forceCancel 取消任务时,强制终止网络加载(默认true)
      */
-    public SimpleBitmapLoaderImplementor(int connectTimeout, int readTimeout, boolean forceCancel){
+    public DefaultNetLoadHandler(int connectTimeout, int readTimeout, boolean forceCancel){
         if (connectTimeout <= 0)
-            throw new NullPointerException("[SimpleBitmapLoaderImplementor] connectTimeout <= 0");
+            throw new NullPointerException("[DefaultNetLoadHandler] connectTimeout <= 0");
         if (readTimeout <= 0)
-            throw new NullPointerException("[SimpleBitmapLoaderImplementor] readTimeout <= 0");
+            throw new NullPointerException("[DefaultNetLoadHandler] readTimeout <= 0");
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
         this.forceCancel = forceCancel;
-    }
-
-    /**
-     * 实现缓存名算法
-     */
-    @Override
-    public String getCacheKey(String url) {
-        //url->SHA1->hex->key
-        return ByteUtils.byteToHex(DigestCipher.digest(url, DigestCipher.TYPE_SHA1));
     }
 
     /**
@@ -128,7 +127,7 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
                 byte[] data = outputStream.toByteArray();
                 if (data == null || data.length <= 0){
                     //设置结果返回[重要]
-                    messenger.setResultFailed(new Exception("[SimpleBitmapLoaderImplementor]data is null"));
+                    messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]data is null"));
                     return;
                 }
                 //设置结果返回[重要]
@@ -161,22 +160,6 @@ public class SimpleBitmapLoaderImplementor implements BitmapLoaderImplementor {
         }
         //设置结果返回[重要]
         messenger.setResultFailed(null);
-    }
-
-    /**
-     * 异常处理
-     */
-    @Override
-    public void onException(Throwable throwable) {
-        throwable.printStackTrace();
-    }
-
-    /**
-     * 写磁盘缓存异常处理
-     */
-    @Override
-    public void onCacheWriteException(Throwable throwable) {
-        throwable.printStackTrace();
     }
 
     /**

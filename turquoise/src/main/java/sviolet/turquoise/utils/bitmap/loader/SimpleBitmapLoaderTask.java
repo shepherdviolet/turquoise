@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utils.bitmap.loader.enhanced;
+package sviolet.turquoise.utils.bitmap.loader;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -29,7 +29,6 @@ import android.view.View;
 import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.utils.Logger;
-import sviolet.turquoise.utils.bitmap.loader.OnBitmapLoadedListener;
 import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
 
 /**

@@ -17,18 +17,21 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utils.bitmap.loader.enhanced;
+package sviolet.turquoise.utils.bitmap.loader;
 
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.utils.Logger;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
+import sviolet.turquoise.utils.bitmap.loader.handler.CommonExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultCommonExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultNetLoadHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DiskCacheExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler;
 import sviolet.turquoise.utils.cache.BitmapCache;
 
 /**
@@ -46,36 +49,25 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  * <br/>
  * -------------------初始化设置----------------<br/>
  * <br/>
- * 1.实现接口BitmapLoaderImplementor<br/>
- * 2.实例化AsyncBitmapDrawableLoader(Context,String,Bitmap,BitmapLoaderImplementor) <br/>
- * 3.设置参数:<br/>
  * <pre>{@code
- *   try {
- *       mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity",
- *           BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null), new MyBitmapLoaderImplementor())
- *           .setRamCache(0.15f)//缓存占15%内存(与BitmapLoader不同之处)
- *           .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
- *           .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
- *           .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
- *           //.setDiskCacheInner()//强制使用内部储存
- *           //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
- *           //.setWipeOnNewVersion()//当APP更新时清空磁盘缓存
- *           //.setLogger(getLogger())//打印日志
- *           .setAnimationDuration(500)//AsyncBitmapDrawable由浅及深显示效果持续时间
- *           .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
- *           .open();//启动(必须)
- *   } catch (IOException e) {
- *      //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
- *   }
+ *       mAsyncBitmapDrawableLoader = new AsyncBitmapDrawableLoader(this, "AsyncImageActivity", loadingBitmap)
+ *          //.setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000, true))//设置网络加载超时等配置
+ *          //.setNetLoadHandler(new MyNetLoadHandler(...))//自定义网络加载实现
+ *          //.setCommonExceptionHandler(new MyCommonExceptionHandler(...))//自定义普通异常处理
+ *          //.setDiskCacheExceptionHandler(new MyDiskCacheExceptionHandler(...))//自定义磁盘缓存异常处理
+ *          .setNetLoad(3, 15)//设置网络加载并发数3, 等待队列15
+ *          .setDiskCache(50, 5, 15)//设置磁盘缓存容量50M, 磁盘加载并发数5, 等待队列15
+ *          .setRamCache(0.125f)//设置内存缓存大小,禁用回收站(与BitmapLoader不同之处)
+ *          //.setDiskCacheInner()//强制使用内部储存
+ *          //.setDiskCacheDisabled()//禁用磁盘缓存
+ *          .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置磁盘缓存保存格式和质量
+ *          //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
+ *          //.setWipeOnNewVersion()//当APP更新时清空磁盘缓存
+ *          //.setLogger(getLogger())//设置日志打印器
+ *          .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
+ *          .setReloadTimesMax(2);//设置图片加载失败重新加载次数限制
+ *      mAsyncBitmapDrawableLoader.open();//启动(必须)
  * }</pre>
- * <br/>
- *      [上述代码说明]:<br/>
- *      通用设置说明省略, 参考BitmapLoader<br/>
- *      注意AsyncBitmapDrawableLoader中回收站是强制关闭的,因为配合AsyncBitmapDrawable使用无需回收站,
- *      同样也无需unused方法<br/>
- *      构造函数第三个参数loadingBitmap在AsyncBitmapDrawableLoader.destroy中销毁,因此只需BitmapUtils
- *      解析即可,无需考虑手工回收.<br/>
- * <br/>
  * <Br/>
  * -------------------加载器使用----------------<br/>
  * <br/>
@@ -186,34 +178,14 @@ public class AsyncBitmapDrawableLoader {
     private int reloadTimesMax = 2;//图片加载失败重新加载次数限制
 
     /**
-     * 自定义实现网络加载过程/缓存名规则/异常处理<Br/>
      * 内存缓存区默认0.125f
      *
      * @param context 上下文
      * @param diskCacheName 磁盘缓存目录名
      * @param loadingBitmap 加载时的图片(可为空, AsyncBitmapDrawableLoader.destroy时会回收该Bitmap)
-     * @param implementor 实现器
      */
-    public AsyncBitmapDrawableLoader(Context context, String diskCacheName, Bitmap loadingBitmap, BitmapLoaderImplementor implementor) {
-        bitmapLoader = new BitmapLoader(context, diskCacheName, implementor);
-        this.loadingBitmap = loadingBitmap;
-        this.resources = new WeakReference<Resources>(context.getResources());
-        setRamCache(0.125f);
-    }
-
-    /**
-     * 采用{@link SimpleBitmapLoaderImplementor}简易实现网络加载过程/缓存名规则/异常处理<br/>
-     * 内存缓存区默认0.125f
-     *
-     * @param context 上下文
-     * @param diskCacheName 磁盘缓存目录名
-     * @param loadingBitmap 加载时的图片(可为空, AsyncBitmapDrawableLoader.destroy时会回收该Bitmap)
-     * @param connectTimeout 网络连接超时ms(SimpleBitmapLoaderImplementor)
-     * @param readTimeout 网络读取超时ms(SimpleBitmapLoaderImplementor)
-     * @param forceCancel 取消任务时,强制终止网络加载(SimpleBitmapLoaderImplementor)
-     */
-    public AsyncBitmapDrawableLoader(Context context, String diskCacheName, Bitmap loadingBitmap, int connectTimeout, int readTimeout, boolean forceCancel) {
-        bitmapLoader = new BitmapLoader(context, diskCacheName, connectTimeout, readTimeout, forceCancel);
+    public AsyncBitmapDrawableLoader(Context context, String diskCacheName, Bitmap loadingBitmap) {
+        bitmapLoader = new BitmapLoader(context, diskCacheName);
         this.loadingBitmap = loadingBitmap;
         this.resources = new WeakReference<Resources>(context.getResources());
         setRamCache(0.125f);
@@ -336,10 +308,13 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
-     * 是否已被销毁(不可用状态)
+     * BitmapLoader是否可用状态<br/>
+     * 满足条件:<br/>
+     * 1.启用成功(open)<br/>
+     * 2.未销毁(destroy)<br/>
      */
-    public boolean isDestroyed(){
-        return bitmapLoader.isDestroyed();
+    public boolean isActive(){
+        return bitmapLoader.isActive();
     }
 
     /**
@@ -387,6 +362,14 @@ public class AsyncBitmapDrawableLoader {
     ////////////////////////////////////////////////////////////////////////
 
     /**
+     *
+     * 1.磁盘缓存最大容量(diskCacheSizeMib)根据实际情况设置,即磁盘缓存最大占用空间<br/>
+     * 2.磁盘加载任务并发量(diskLoadConcurrency)应考虑图片数量/大小, 若图片较大, 应考虑减少并发量<br/>
+     * 3.磁盘加载等待队列容量(diskLoadVolume)默认为10, 即只会加载最后请求的10个任务, 更早的加载请求
+     * 会被取消. 根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1.5-3倍为宜, 设置
+     * 过少会导致屏幕中图片未全部加载完成. 例如屏幕中最多可能展示10张图片, 则设置15-30较为合适, 若设置
+     * 了5, 屏幕中会有至少5张图未加载. <br/>
+     *
      * @param diskCacheSizeMib 磁盘缓存最大容量, 默认10, 单位Mb
      * @param diskLoadConcurrency 磁盘加载任务并发量, 默认5
      * @param diskLoadVolume 磁盘加载等待队列容量, 默认10
@@ -397,8 +380,13 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
-     * 设置磁盘缓存路径为内部储存<br/>
-     * 若不设置, 则优先选择外部储存, 当外部储存不存在时使用内部储存
+     * 磁盘缓存强制使用内部储存<p/>
+     *
+     * 外部储存:/sdcard/Android/data/<application package>/cache/diskCacheName<br/>
+     * 内部储存:/data/data/<application package>/cache/diskCacheName<p/>
+     *
+     * 默认设置(不调用该方法):<Br/>
+     * 自动选择, 若外部储存可用, 则优先使用外部储存.<br/>
      */
     public AsyncBitmapDrawableLoader setDiskCacheInner() {
         bitmapLoader.setDiskCacheInner();
@@ -406,7 +394,6 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
-     * 
      * 相同图片同时加载<br/>
      * <br/>
      * ----------------------------------------------<br/>
@@ -427,7 +414,6 @@ public class AsyncBitmapDrawableLoader {
      * 同名任务跟随策略,其中一个任务执行,其他同名任务等待其完成后,同时回调OnLoadCompleteListener,并传入
      * 同一个结果(Bitmap).这种方式在高并发场合,例如:频繁滑动ListView,任务会持有大量的对象用以回调,而绝大
      * 多数的View已不再显示在屏幕上.<Br/>
-     * 
      *
      */
     public AsyncBitmapDrawableLoader setDuplicateLoadEnable(boolean duplicateLoadEnable) {
@@ -436,10 +422,10 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
-     * 设置缓存文件的图片保存格式和质量<br/>
+     * 设置磁盘缓存文件的图片保存格式和质量<br/>
      * 默认Bitmap.CompressFormat.JPEG, 70
      *
-     * @param format 图片格式
+     * @param format 图片格式 Bitmap.CompressFormat
      * @param quality 图片质量 0-100
      */
     public AsyncBitmapDrawableLoader setImageQuality(Bitmap.CompressFormat format, int quality) {
@@ -456,6 +442,13 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
+     * 1.网络加载任务并发量(netLoadConcurrency)根据网络情况和图片大小决定, 过多的并发量会阻塞网络
+     * 过少会导致图片加载太慢<br/>
+     * 2.网络加载等待队列容量(netLoadVolume)默认为10, 即只会加载最后请求的10个任务, 更早的加载请求
+     * 会被取消. 根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1.5-3倍为宜, 设置
+     * 过少会导致屏幕中图片未全部加载完成. 例如屏幕中最多可能展示10张图片, 则设置15-30较为合适, 若设置
+     * 了5, 屏幕中会有至少5张图未加载. <br/>
+     *
      * @param netLoadConcurrency 网络加载任务并发量, 默认3
      * @param netLoadVolume 网络加载等待队列容量, 默认10
      */
@@ -465,10 +458,15 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
-     * 缓存区:缓存区满后, 会清理被标记为unused/最早创建/最少使用的Bitmap. 并立刻回收(recycle()),
-     * 及时地使用unused(url)方法将不再使用的Bitmap置为unused状态, 可以使得Bitmap尽快被回收.<br/>
+     * 缓存区:<br/>
+     *      缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
+     *      使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
+     *      使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
      * <br/>
      * AsyncBitmapDrawableLoader禁用了BitmapCache回收站, 因为AsyncBitmapDrawable防回收崩溃<br/>
+     * <br/>
+     * 1."内存缓存区"能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 图片显示不全, 设置过大,
+     * 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
      *
      * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1], 默认值0.125f
      */
@@ -499,10 +497,13 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
-     * 设置App更新时清空磁盘缓存<br/>
-     * 默认:不清空缓存<br/>
-     * <br/>
-     * 当应用versionCode发生变化时, 会清空磁盘缓存. 注意是versionCode, 非versionName.<br/>
+     * 设置App更新时清空磁盘缓存<p/>
+     *
+     * 当应用versionCode发生变化时, 会清空磁盘缓存. 注意是versionCode, 非versionName.<p/>
+     *
+     * 默认(不调用该方法):<Br/>
+     * APP更新时不清空缓存<br/>
+     *
      */
     public AsyncBitmapDrawableLoader setWipeOnNewVersion(){
         bitmapLoader.setWipeOnNewVersion();
@@ -510,13 +511,61 @@ public class AsyncBitmapDrawableLoader {
     }
 
     /**
+     * 禁用磁盘缓存(流量增大风险,特殊场合使用)<br/>
+     * 若内存缓存中不存在图片,则直接从网络加载,且加载后不存入磁盘缓存.通常用于磁盘缓存打不开的场合,
+     * 建议询问客户是否允许不使用磁盘缓存.<br/>
+     */
+    public AsyncBitmapDrawableLoader setDiskCacheDisabled(){
+        bitmapLoader.setDiskCacheDisabled();
+        return this;
+    }
+
+    /**
+     * 设置网络加载处理器<br/>
+     * 用于自定义实现网络加载.<p/>
+     *
+     * 不设置默认为:{@link DefaultNetLoadHandler}<p/>
+     *
+     * 基本设置方法(设置超时时间等):<br/>
+     * @see DefaultNetLoadHandler
+     */
+    public AsyncBitmapDrawableLoader setNetLoadHandler(NetLoadHandler mNetLoadHandler) {
+        bitmapLoader.setNetLoadHandler(mNetLoadHandler);
+        return this;
+    }
+
+    /**
+     * 设置普通异常处理器<br/>
+     * 用于自定义实现普通异常的处理, 通常用于打印错误日志<p/>
+     *
+     * 不设置默认为:{@link DefaultCommonExceptionHandler}<p/>
+     *
+     * @see DefaultCommonExceptionHandler
+     */
+    public AsyncBitmapDrawableLoader setCommonExceptionHandler(CommonExceptionHandler mCommonExceptionHandler) {
+        bitmapLoader.setCommonExceptionHandler(mCommonExceptionHandler);
+        return this;
+    }
+
+    /**
+     * 设置磁盘缓存异常处理器<br/>
+     * 用于自定义实现磁盘缓存打开失败, 磁盘缓存写入失败的处理<p/>
+     *
+     * 不设置默认为:{@link DefaultDiskCacheExceptionHandler}<p/>
+     *
+     * 基本设置方法(磁盘缓存访问失败处理方式):<br/>
+     * @see DefaultDiskCacheExceptionHandler
+     */
+    public AsyncBitmapDrawableLoader setDiskCacheExceptionHandler(DiskCacheExceptionHandler mDiskCacheExceptionHandler) {
+        bitmapLoader.setDiskCacheExceptionHandler(mDiskCacheExceptionHandler);
+        return this;
+    }
+
+    /**
      * [重要]启用BitmapLoader, 在实例化并设置完BitmapLoader后, 必须调用此
      * 方法, 开启磁盘缓存/内存缓存. 否则会抛出异常.<Br/>
-     *
-     * @throws IOException 磁盘缓存启动失败抛出异常
      */
-    public AsyncBitmapDrawableLoader open() throws IOException {
+    public void open(){
         bitmapLoader.open();
-        return this;
     }
 }

@@ -17,38 +17,21 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utils.bitmap.loader;
+package sviolet.turquoise.utils.bitmap.loader.handler;
 
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
 
 /**
- * 
- * BitmapLoader实现器<br/>
- * <br/>
- * 实现BitmapLoader待实现的方法:<br/>
- * 1.实现cacheKey的生成规则<br/>
- * 2.实现网络加载图片<br/>
- * 3.实现异常处理<br/>
- * <br/>
- * 简易实现:<br/>
- * {@link sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor}
+ * 网络加载处理器<p/>
+ *
+ * 实现BitmapLoader从网络加载图片的过程<p/>
+ *
+ * @see DefaultNetLoadHandler
  *
  * @author S.Violet
- *
  */
-public interface BitmapLoaderImplementor {
-
-    /**
-     * [实现提示]:<br/>
-     * 通常将url进行摘要计算, 得到摘要值作为cacheKey, 根据实际情况实现.<Br/>
-     * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
-     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
-     * 这个cacheKey标识唯一的资源<br/>
-     *
-     * @return 实现根据URL计算并返回缓存Key
-     */
-    public String getCacheKey(String url);
+public interface NetLoadHandler {
 
     /**
      * 
@@ -89,7 +72,7 @@ public interface BitmapLoaderImplementor {
      * <br/>
      * 1.同步加载方式<br/>
      * <br/>
-     *      {@link SimpleBitmapLoaderImplementor}<br/>
+     *      {@link DefaultNetLoadHandler}<br/>
      * <br/>
      * 2.异步加载方式<br/>
      * <br/>
@@ -136,17 +119,7 @@ public interface BitmapLoaderImplementor {
     public void loadFromNet(String url, int reqWidth, int reqHeight, BitmapLoaderMessenger messenger);
 
     /**
-     * 实现异常处理
-     */
-    public void onException(Throwable throwable);
-
-    /**
-     * 实现写入缓存文件时的异常处理, 通常只需要打印日志或提醒即可
-     */
-    public void onCacheWriteException(Throwable throwable);
-
-    /**
-     * 当BitmapLoader销毁时,会回调该方法,便于回收在BitmapLoaderImplementor中创建的实例<br/>
+     * 当BitmapLoader销毁时,会回调该方法,便于回收在NetLoadHandler中创建的实例<br/>
      * 可不实现<Br/>
      */
     public void onDestroy();

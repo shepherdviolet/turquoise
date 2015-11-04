@@ -17,29 +17,25 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utils.bitmap.loader.enhanced;
+package sviolet.turquoise.utils.bitmap.loader.handler;
 
-import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
+import android.content.Context;
+
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 
 /**
- * ImageView异步加载任务<br/>
- * Created by S.Violet on 2015/10/19.
+ * 普通异常处理器默认实现<p/>
+ *
+ * 实现了基本的错误信息打印, 无日志级别控制<br/>
+ *
+ * Created by S.Violet on 2015/11/4.
  */
-public class ImageViewLoaderTask extends SimpleBitmapLoaderTask<ImageView> {
-
-
-    ImageViewLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, ImageView view) {
-        super(url, reqWidth, reqHeight, loader, view);
-    }
+public class DefaultCommonExceptionHandler implements CommonExceptionHandler {
 
     @Override
-    protected void setDrawable(ImageView view, Drawable drawable) {
-        view.setImageDrawable(drawable);
+    public void onCommonException(Context context, BitmapLoader bitmapLoader, Throwable throwable) {
+        //直接输出错误信息
+        throwable.printStackTrace();
     }
 
-    @Override
-    protected Drawable getDrawable(ImageView view) {
-        return view.getDrawable();
-    }
 }

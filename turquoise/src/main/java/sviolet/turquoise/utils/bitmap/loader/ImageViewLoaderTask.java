@@ -17,37 +17,29 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utils.bitmap.loader.enhanced;
+package sviolet.turquoise.utils.bitmap.loader;
 
-import android.annotation.TargetApi;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.view.View;
-
-import sviolet.turquoise.utils.sys.DeviceUtils;
+import android.widget.ImageView;
 
 /**
- * View背景异步加载控件<br/>
+ * ImageView异步加载任务<br/>
  * Created by S.Violet on 2015/10/19.
  */
-public class BackgroundLoaderTask extends SimpleBitmapLoaderTask<View> {
+public class ImageViewLoaderTask extends SimpleBitmapLoaderTask<ImageView> {
 
-    BackgroundLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, View view) {
+
+    ImageViewLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, ImageView view) {
         super(url, reqWidth, reqHeight, loader, view);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    protected void setDrawable(View view, Drawable drawable) {
-        if (DeviceUtils.getVersionSDK() >= 16) {
-            view.setBackground(drawable);
-        }else{
-            view.setBackgroundDrawable(drawable);
-        }
+    protected void setDrawable(ImageView view, Drawable drawable) {
+        view.setImageDrawable(drawable);
     }
 
     @Override
-    protected Drawable getDrawable(View view) {
-        return view.getBackground();
+    protected Drawable getDrawable(ImageView view) {
+        return view.getDrawable();
     }
 }

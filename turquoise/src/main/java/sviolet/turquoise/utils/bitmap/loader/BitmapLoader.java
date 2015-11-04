@@ -32,9 +32,16 @@ import sviolet.turquoise.model.queue.TQueue;
 import sviolet.turquoise.model.queue.TTask;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
-import sviolet.turquoise.utils.bitmap.loader.enhanced.SimpleBitmapLoaderImplementor;
+import sviolet.turquoise.utils.bitmap.loader.handler.CommonExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultCommonExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultNetLoadHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DiskCacheExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler;
 import sviolet.turquoise.utils.cache.BitmapCache;
 import sviolet.turquoise.utils.cache.DiskLruCache;
+import sviolet.turquoise.utils.conversion.ByteUtils;
+import sviolet.turquoise.utils.crypt.DigestCipher;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 import sviolet.turquoise.utils.sys.DirectoryUtils;
 
@@ -51,46 +58,23 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * <br/>
  * -------------------初始化设置----------------<br/>
  * <br/>
- * 1.实现接口BitmapLoaderImplementor<br/>
- * 2.实例化BitmapLoader(Context,String,BitmapLoaderImplementor) <br/>
- * 3.设置参数:<br/>
  * <pre>{@code
- *   try {
- *       mBitmapLoader = new BitmapLoader(this, "bitmap", new MyBitmapLoaderImplementor())
- *          .setRamCache(0.125f, 0.125f)//设置内存缓存大小,启用回收站
- *          //.setRamCache(0.125f, 0)//回收站设置为0禁用
- *          .setDiskCache(50, 5, 15)//设置磁盘缓存容量50M, 磁盘加载并发数5, 等待队列15
+ *       mBitmapLoader = new BitmapLoader(this, "bitmap")
+ *          //.setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000, true))//设置网络加载超时等配置
+ *          //.setNetLoadHandler(new MyNetLoadHandler(...))//自定义网络加载实现
+ *          //.setCommonExceptionHandler(new MyCommonExceptionHandler(...))//自定义普通异常处理
+ *          //.setDiskCacheExceptionHandler(new MyDiskCacheExceptionHandler(...))//自定义磁盘缓存异常处理
  *          .setNetLoad(3, 15)//设置网络加载并发数3, 等待队列15
- *          .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置磁盘缓存保存格式和质量
+ *          .setDiskCache(50, 5, 15)//设置磁盘缓存容量50M, 磁盘加载并发数5, 等待队列15
+ *          .setRamCache(0.125f, 0.125f)//设置内存缓存大小,启用回收站
  *          //.setDiskCacheInner()//强制使用内部储存
+ *          //.setDiskCacheDisabled()//禁用磁盘缓存
+ *          .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置磁盘缓存保存格式和质量
  *          //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
  *          //.setWipeOnNewVersion()//当APP更新时清空磁盘缓存
- *          //.setLogger(getLogger())
- *          .open();//必须调用
- *   } catch (IOException e) {
- *      //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
- *   }
+ *          //.setLogger(getLogger());//设置日志打印器
+ *      mBitmapLoader.open();//必须调用
  * }</pre>
- * <br/>
- *      [上述代码说明]:<br/>
- *      位图内存缓存占用应用最大可用内存的12.5%,回收站最大可能占用额外的12.5%,
- *      内存缓存能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 图片显示不全,
- *      设置过大, 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
- *      在路径/sdcard/Android/data/<application package>/cache/bitmap或
- *      /data/data/<application package>/cache/bitmap下存放磁盘缓存数据,
- *      缓存最大容量50M, 磁盘缓存容量根据实际情况设置, 磁盘缓存加载最大并发量5,
- *      并发量应考虑图片质量/大小, 若图片较大, 应考虑减少并发量, 磁盘缓存等待队列
- *      容量15, 即只会加载最后请求的15个任务, 更早的加载请求会被取消, 等待队列容
- *      量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1-
- *      2倍为宜, 设置过少会导致屏幕中图片未全部加载完, 例如屏幕中最多可能展示10
- *      张图片, 则设置15-20较为合适, 若设置了10, 屏幕中会有几张图未加载. <br/>
- *      网络加载并发量为3, 根据网络情况和图片大小决定, 过多的并发量会阻塞网络, 过
- *      少会导致图片加载太慢, 网络加载等待队列容量15, 建议与磁盘缓存等待队列容量
- *      相等, 根据屏幕中最多可能展示的图片数决定(略大于), 设置过少会导致屏幕中图
- *      片未全部加载完.<br/>
- *      设置日志打印器后, BitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
- *      情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
- * <br/>
  * <br/>
  * -------------------加载器使用----------------<br/>
  * <br/>
@@ -198,7 +182,6 @@ public class BitmapLoader {
 
     private WeakReference<Context> context;
     private String diskCacheName;//磁盘缓存名(必须)
-    private BitmapLoaderImplementor implementor;//实现器(必须)
     private long diskCacheSize = 1024 * 1024 * 10;//磁盘缓存大小(Mb)
     private float ramCacheSizePercent = 0.125f;//内存缓存大小(占应用可用内存比例)
     private float ramCacheRecyclerSizePercent = 0.125f;//内存缓存回收站大小(占应用可用内存比例)
@@ -211,20 +194,28 @@ public class BitmapLoader {
     private int keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;//TQueue同名任务冲突策略
     private int appVersionCode = 1;//应用版本versionCode
     private File cacheDir;//缓存路径
+    private boolean diskCacheDisabled = false;//禁用磁盘缓存
     private Logger logger;//日志打印器
-    private boolean destroyed = false;//是否已被销毁
+
+    //处理器////////////////////////////////////////////////////////
+
+    private NetLoadHandler mNetLoadHandler;//网络加载处理器
+    private CommonExceptionHandler mCommonExceptionHandler;//普通异常处理器
+    private DiskCacheExceptionHandler mDiskCacheExceptionHandler;//磁盘缓存异常处理器
+
+    //BitmapLoader状态//////////////////////////////////////////////
+
+    private static final int STATE_INACTIVE = 0;//未启用状态
+    private static final int STATE_ACTIVE = 1;//可用状态
+    private static final int STATE_OPEN_FAILED = 2;//启用失败状态
+    private static final int STATE_DESTROYED = 3;//销毁状态
+    private int state = STATE_INACTIVE;
 
     /**
-     * 自定义实现网络加载过程/缓存名规则/异常处理
-     *
      * @param context 上下文
      * @param diskCacheName 磁盘缓存目录名
-     * @param implementor 实现器
      */
-    public BitmapLoader(Context context, String diskCacheName, BitmapLoaderImplementor implementor) {
-        if (implementor == null){
-            throw new RuntimeException("[BitmapLoader]implementor is null !!", new NullPointerException());
-        }
+    public BitmapLoader(Context context, String diskCacheName) {
         if (context == null){
             throw new RuntimeException("[BitmapLoader]context is null !!", new NullPointerException());
         }
@@ -233,21 +224,7 @@ public class BitmapLoader {
         }
         this.context = new WeakReference<Context>(context);
         this.diskCacheName = diskCacheName;
-        this.implementor = implementor;
         cacheDir = DirectoryUtils.getCacheDir(context, diskCacheName);
-    }
-
-    /**
-     * 采用{@link SimpleBitmapLoaderImplementor}简易实现网络加载过程/缓存名规则/异常处理
-     *
-     * @param context 上下文
-     * @param diskCacheName 磁盘缓存目录名
-     * @param connectTimeout 网络连接超时ms(SimpleBitmapLoaderImplementor)
-     * @param readTimeout 网络读取超时ms(SimpleBitmapLoaderImplementor)
-     * @param forceCancel 取消任务时,强制终止网络加载(SimpleBitmapLoaderImplementor)
-     */
-    public BitmapLoader(Context context, String diskCacheName, int connectTimeout, int readTimeout, boolean forceCancel){
-        this(context, diskCacheName, new SimpleBitmapLoaderImplementor(connectTimeout, readTimeout, forceCancel));
     }
 
     /************************************************************************************
@@ -255,6 +232,13 @@ public class BitmapLoader {
      */
 
     /**
+     * 1.网络加载任务并发量(netLoadConcurrency)根据网络情况和图片大小决定, 过多的并发量会阻塞网络
+     * 过少会导致图片加载太慢<br/>
+     * 2.网络加载等待队列容量(netLoadVolume)默认为10, 即只会加载最后请求的10个任务, 更早的加载请求
+     * 会被取消. 根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1.5-3倍为宜, 设置
+     * 过少会导致屏幕中图片未全部加载完成. 例如屏幕中最多可能展示10张图片, 则设置15-30较为合适, 若设置
+     * 了5, 屏幕中会有至少5张图未加载. <br/>
+     *
      * @param netLoadConcurrency 网络加载任务并发量, 默认3
      * @param netLoadVolume 网络加载等待队列容量, 默认10
      */
@@ -265,6 +249,14 @@ public class BitmapLoader {
     }
 
     /**
+     *
+     * 1.磁盘缓存最大容量(diskCacheSizeMib)根据实际情况设置,即磁盘缓存最大占用空间<br/>
+     * 2.磁盘加载任务并发量(diskLoadConcurrency)应考虑图片数量/大小, 若图片较大, 应考虑减少并发量<br/>
+     * 3.磁盘加载等待队列容量(diskLoadVolume)默认为10, 即只会加载最后请求的10个任务, 更早的加载请求
+     * 会被取消. 根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1.5-3倍为宜, 设置
+     * 过少会导致屏幕中图片未全部加载完成. 例如屏幕中最多可能展示10张图片, 则设置15-30较为合适, 若设置
+     * 了5, 屏幕中会有至少5张图未加载. <br/>
+     *
      * @param diskCacheSizeMib 磁盘缓存最大容量, 默认10, 单位Mb
      * @param diskLoadConcurrency 磁盘加载任务并发量, 默认5
      * @param diskLoadVolume 磁盘加载等待队列容量, 默认10
@@ -277,26 +269,22 @@ public class BitmapLoader {
     }
 
     /**
-     * 
-     * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
-     * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
-     * 使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
+     * 缓存区:<br/>
+     *      缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
+     *      使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
+     *      使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
      * <Br/>
-     * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
-     * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
-     * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
-     * 请适度设置.<br/>
-     * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
+     * 回收站:<br/>
+     *      用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
+     *      显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
+     *      recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
+     *      请适度设置.若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
+     *      AsyncBitmapDrawableLoader中禁用.<br/>
      * <br/>
-     * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
-     * 当回收站内存占用超过设定值时, 会触发此异常<Br/>
-     * 解决方案:<br/>
-     * 1.请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
-     * Bitmap只有被设置为此状态, 才会被回收(recycle()), 否则在缓存区满后, 会进入回收站,
-     * 但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
-     * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
-     * 其他占用内存受限.<br/>
-     * 
+     * <br/>
+     * 1."内存缓存区"能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 图片显示不全, 设置过大,
+     * 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
+     * 2."内存缓存回收站"通常设置与"内存缓存区"相同.<Br/>
      *
      * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1], 默认值0.125f
      * @param ramCacheRecyclerSizePercent 内存缓存回收站占用应用可用内存的比例 [0, 1], 设置为0禁用回收站, 默认值0.125f
@@ -308,8 +296,13 @@ public class BitmapLoader {
     }
 
     /**
-     * 设置磁盘缓存路径为内部储存<br/>
-     * 若不设置, 则优先选择外部储存, 当外部储存不存在时使用内部储存
+     * 磁盘缓存强制使用内部储存<p/>
+     *
+     * 外部储存:/sdcard/Android/data/<application package>/cache/diskCacheName<br/>
+     * 内部储存:/data/data/<application package>/cache/diskCacheName<p/>
+     *
+     * 默认设置(不调用该方法):<Br/>
+     * 自动选择, 若外部储存可用, 则优先使用外部储存.<br/>
      */
     public BitmapLoader setDiskCacheInner(){
         cacheDir = new File(DirectoryUtils.getInnerCacheDir(getContext()).getAbsolutePath() + File.separator + diskCacheName);
@@ -317,10 +310,20 @@ public class BitmapLoader {
     }
 
     /**
-     * 设置缓存文件的图片保存格式和质量<br/>
+     * 禁用磁盘缓存(流量增大风险,特殊场合使用)<br/>
+     * 若内存缓存中不存在图片,则直接从网络加载,且加载后不存入磁盘缓存.通常用于磁盘缓存打不开的场合,
+     * 建议询问客户是否允许不使用磁盘缓存.<br/>
+     */
+    public BitmapLoader setDiskCacheDisabled(){
+        this.diskCacheDisabled = true;
+        return this;
+    }
+
+    /**
+     * 设置磁盘缓存文件的图片保存格式和质量<br/>
      * 默认Bitmap.CompressFormat.JPEG, 70
      *
-     * @param format 图片格式
+     * @param format 图片格式 Bitmap.CompressFormat
      * @param quality 图片质量 0-100
      */
     public BitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality){
@@ -330,7 +333,6 @@ public class BitmapLoader {
     }
 
     /**
-     * 
      * 相同图片同时加载<br/>
      * <br/>
      * ----------------------------------------------<br/>
@@ -363,13 +365,57 @@ public class BitmapLoader {
     }
 
     /**
-     * 设置App更新时清空磁盘缓存<br/>
-     * 默认:不清空缓存<br/>
-     * <br/>
-     * 当应用versionCode发生变化时, 会清空磁盘缓存. 注意是versionCode, 非versionName.<br/>
+     * 设置App更新时清空磁盘缓存<p/>
+     *
+     * 当应用versionCode发生变化时, 会清空磁盘缓存. 注意是versionCode, 非versionName.<p/>
+     *
+     * 默认(不调用该方法):<Br/>
+     * APP更新时不清空缓存<br/>
+     *
      */
     public BitmapLoader setWipeOnNewVersion(){
         this.appVersionCode = ApplicationUtils.getAppVersion(getContext());
+        return this;
+    }
+
+    /**
+     * 设置网络加载处理器<br/>
+     * 用于自定义实现网络加载.<p/>
+     *
+     * 不设置默认为:{@link DefaultNetLoadHandler}<p/>
+     *
+     * 基本设置方法(设置超时时间等):<br/>
+     * @see DefaultNetLoadHandler
+     */
+    public BitmapLoader setNetLoadHandler(NetLoadHandler mNetLoadHandler) {
+        this.mNetLoadHandler = mNetLoadHandler;
+        return this;
+    }
+
+    /**
+     * 设置普通异常处理器<br/>
+     * 用于自定义实现普通异常的处理, 通常用于打印错误日志<p/>
+     *
+     * 不设置默认为:{@link DefaultCommonExceptionHandler}<p/>
+     *
+     * @see DefaultCommonExceptionHandler
+     */
+    public BitmapLoader setCommonExceptionHandler(CommonExceptionHandler mCommonExceptionHandler) {
+        this.mCommonExceptionHandler = mCommonExceptionHandler;
+        return this;
+    }
+
+    /**
+     * 设置磁盘缓存异常处理器<br/>
+     * 用于自定义实现磁盘缓存打开失败, 磁盘缓存写入失败的处理<p/>
+     *
+     * 不设置默认为:{@link DefaultDiskCacheExceptionHandler}<p/>
+     *
+     * 基本设置方法(磁盘缓存访问失败处理方式):<br/>
+     * @see DefaultDiskCacheExceptionHandler
+     */
+    public BitmapLoader setDiskCacheExceptionHandler(DiskCacheExceptionHandler mDiskCacheExceptionHandler) {
+        this.mDiskCacheExceptionHandler = mDiskCacheExceptionHandler;
         return this;
     }
 
@@ -386,12 +432,21 @@ public class BitmapLoader {
     /**
      * [重要]启用BitmapLoader, 在实例化并设置完BitmapLoader后, 必须调用此
      * 方法, 开启磁盘缓存/内存缓存. 否则会抛出异常.<Br/>
-     *
-     * @throws IOException 磁盘缓存启动失败抛出异常
      */
-    public BitmapLoader open() throws IOException {
-        this.mDiskLruCache = DiskLruCache.open(cacheDir, appVersionCode, 1, diskCacheSize);
+    public void open(){
+        //打开磁盘缓存
+        if (!diskCacheDisabled) {
+            try {
+                this.mDiskLruCache = DiskLruCache.open(cacheDir, appVersionCode, 1, diskCacheSize);
+            } catch (Exception e) {
+                state = STATE_OPEN_FAILED;
+                getDiskCacheExceptionHandler().onCacheOpenException(getContext(), this, e);
+                return;
+            }
+        }
+        //打开内存缓存
         this.mCachedBitmapUtils = new CachedBitmapUtils(getContext(), ramCacheSizePercent, ramCacheRecyclerSizePercent);
+        //打开队列
         this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency)
                 .setVolumeMax(diskLoadVolume)
                 .waitCancelingTask(true)
@@ -400,9 +455,11 @@ public class BitmapLoader {
                 .setVolumeMax(netLoadVolume)
                 .waitCancelingTask(true)
                 .setKeyConflictPolicy(keyConflictPolicy);
+        //设置日志打印器
         if(getLogger() != null)
             mCachedBitmapUtils.getBitmapCache().setLogger(getLogger());
-        return this;
+        //设置状态为可用
+        state = STATE_ACTIVE;
     }
 
     /************************************************************************************
@@ -432,7 +489,7 @@ public class BitmapLoader {
         if(checkIsOpen())
             return;
         //计算缓存key
-        String cacheKey = implementor.getCacheKey(url);
+        String cacheKey = getCacheKey(url);
         if (getLogger() != null) {
             getLogger().d("[BitmapLoader]load:start:  url<" + url + "> cacheKey<" + cacheKey + ">");
         }
@@ -446,8 +503,15 @@ public class BitmapLoader {
             }
             return;
         }
-        //若缓存中不存在, 加入磁盘缓存加载队列
-        mDiskCacheQueue.put(cacheKey, new DiskCacheTask(url, reqWidth, reqHeight, mOnBitmapLoadedListener).setParams(params));
+        //若缓存中不存在, 加入加载队列
+        if (!diskCacheDisabled) {
+            //加入磁盘缓存加载队列
+            mDiskCacheQueue.put(cacheKey, new DiskCacheTask(url, reqWidth, reqHeight, mOnBitmapLoadedListener).setParams(params));
+        }else{
+            getLogger().d("[BitmapLoader]load:diskCacheDisabled:  url<" + url + "> cacheKey<" + cacheKey + ">");
+            //磁盘缓存禁用场合, 直接加入网络加载队列
+            mNetLoadQueue.put(cacheKey, new NetLoadTask(url, reqWidth, reqHeight, mOnBitmapLoadedListener).setParams(params));
+        }
     }
 
     /**
@@ -466,7 +530,7 @@ public class BitmapLoader {
         if(checkIsOpen())
             return null;
         //计算缓存key
-        String cacheKey = implementor.getCacheKey(url);
+        String cacheKey = getCacheKey(url);
         //尝试从内存缓存中取Bitmap
         Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
         if (bitmap != null && !bitmap.isRecycled()) {
@@ -502,7 +566,7 @@ public class BitmapLoader {
         if(checkIsOpen())
             return;
         //计算缓存key
-        String cacheKey = implementor.getCacheKey(url);
+        String cacheKey = getCacheKey(url);
         //网络加载队列取消
         mNetLoadQueue.cancel(cacheKey);
         //磁盘缓存加载队列取消
@@ -550,7 +614,7 @@ public class BitmapLoader {
      */
     public void destroy() {
 
-        destroyed = true;
+        state = STATE_DESTROYED;
 
         if (mNetLoadQueue != null) {
             mNetLoadQueue.destroy();
@@ -564,26 +628,28 @@ public class BitmapLoader {
             try {
                 mDiskLruCache.close();
                 mDiskLruCache = null;
-            } catch (IOException e) {
-                implementor.onException(e);
+            } catch (IOException ignored) {
             }
         }
         if (mCachedBitmapUtils != null) {
             mCachedBitmapUtils.recycleAll();
             mCachedBitmapUtils = null;
         }
-        if (implementor != null)
-            implementor.onDestroy();
+        if (mNetLoadHandler != null)
+            mNetLoadHandler.onDestroy();
         if (getLogger() != null) {
             getLogger().d("[BitmapLoader]destroy");
         }
     }
 
     /**
-     * 是否已被销毁(不可用状态)
+     * BitmapLoader是否可用状态<br/>
+     * 满足条件:<br/>
+     * 1.启用成功(open)<br/>
+     * 2.未销毁(destroy)<br/>
      */
-    public boolean isDestroyed(){
-        return destroyed;
+    public boolean isActive(){
+        return state == STATE_ACTIVE;
     }
 
     /****************************************************************************
@@ -599,9 +665,9 @@ public class BitmapLoader {
      *
      * @param context context
      * @param diskCacheName 缓存目录名
-     * @throws IOException
+     * @throws Exception
      */
-    public static void wipeDiskCache(Context context, String diskCacheName) throws IOException {
+    public static void wipeDiskCache(Context context, String diskCacheName) throws Exception {
         DiskLruCache.deleteContents(DirectoryUtils.getCacheDir(context, diskCacheName));
     }
 
@@ -614,9 +680,9 @@ public class BitmapLoader {
      *
      * @param context context
      * @param diskCacheName 缓存目录名
-     * @throws IOException
+     * @throws Exception
      */
-    public static void wipeInnerDiskCache(Context context, String diskCacheName) throws IOException {
+    public static void wipeInnerDiskCache(Context context, String diskCacheName) throws Exception {
         DiskLruCache.deleteContents(new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + diskCacheName));
     }
 
@@ -654,12 +720,16 @@ public class BitmapLoader {
         @Override
         public Object doInBackground(Object params) {
             //异常检查
-            if (mDiskLruCache == null || mCachedBitmapUtils == null) {
-                implementor.onException(new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
+            if (mDiskLruCache == null) {
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mDiskLruCache is null"));
+                return RESULT_CANCELED;
+            }
+            if (mCachedBitmapUtils == null) {
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mCachedBitmapUtils is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
-            String cacheKey = implementor.getCacheKey(url);
+            String cacheKey = getCacheKey(url);
             try {
                 //得到缓存文件
                 File cacheFile = mDiskLruCache.getFile(cacheKey, 0);
@@ -693,14 +763,14 @@ public class BitmapLoader {
                     return RESULT_CONTINUE;
                 }
             } catch (Exception e) {
-                implementor.onException(e);
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, e);
             }
             return RESULT_FAILED;
         }
 
         @Override
         public void onPostExecute(Object result, boolean isCancel) {
-            String cacheKey = implementor.getCacheKey(url);
+            String cacheKey = getCacheKey(url);
             //若任务被取消
             if (isCancel) {
                 if (mOnBitmapLoadedListener != null)
@@ -778,48 +848,68 @@ public class BitmapLoader {
         @Override
         public Object doInBackground(Object params) {
             //检查异常
-            if (mDiskLruCache == null || mCachedBitmapUtils == null) {
-                implementor.onException(new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
+            if (!diskCacheDisabled && mDiskLruCache == null) {
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mDiskLruCache is null"));
+                return RESULT_CANCELED;
+            }
+            if (mCachedBitmapUtils == null) {
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
-            String cacheKey = implementor.getCacheKey(url);
+            String cacheKey = getCacheKey(url);
             OutputStream outputStream = null;
-            DiskLruCache.Editor editor;
+            DiskLruCache.Editor editor = null;
             try {
-                //打开缓存编辑对象
-                editor = mDiskLruCache.edit(cacheKey);
-                //若同时Edit一个缓存文件时, 会返回null, 取消任务
-                if (editor == null) {
-                    return RESULT_CANCELED;
-                }
-                //获得输出流, 用于写入缓存
-                outputStream = editor.newOutputStream(0);
                 //结果容器
                 messenger = new BitmapLoaderMessenger();
                 //从网络加载Bitmap
-                implementor.loadFromNet(url, reqWidth, reqHeight, messenger);
+                getNetLoadHandler().loadFromNet(url, reqWidth, reqHeight, messenger);
                 //阻塞等待并获取结果Bitmap
                 int result = messenger.getResult();
                 if (result == BitmapLoaderMessenger.RESULT_SUCCEED){
                     //结果为加载成功,且Bitmap正常的情况
                     if (messenger.getBitmap() != null && !messenger.getBitmap().isRecycled()) {
                         //写入文件缓存即使失败也不影响返回Bitmap
-                        try {
-                            //把图片写入缓存
-                            BitmapUtils.syncSaveBitmap(messenger.getBitmap(), outputStream, imageFormat, imageQuality, false, null);
-                            //尝试flush输出流
+                        if (!diskCacheDisabled) {
                             try {
-                                if (outputStream != null)
-                                    outputStream.flush();
-                            } catch (Exception ignored) {
+                                //打开缓存编辑对象
+                                editor = mDiskLruCache.edit(cacheKey);
+                                //若同时Edit一个缓存文件时, 会返回null, 取消任务
+                                if (editor == null) {
+                                    throw new Exception("[BitmapLoader]mDiskLruCache.edit(cacheKey) return null, multiple edit one file");
+                                }
+                                //获得输出流, 用于写入缓存
+                                outputStream = editor.newOutputStream(0);
+                                //把图片写入缓存
+                                BitmapUtils.syncSaveBitmap(messenger.getBitmap(), outputStream, imageFormat, imageQuality, false, null);
+                                //尝试flush输出流
+                                try {
+                                    if (outputStream != null)
+                                        outputStream.flush();
+                                } catch (Exception ignored) {
+                                }
+                                //写入缓存成功commit
+                                editor.commit();
+                                //写缓存日志
+                                mDiskLruCache.flush();
+                            } catch (Exception e) {
+                                try {
+                                    //写入缓存失败abort
+                                    if (editor != null)
+                                        editor.abort();
+                                    //写缓存日志
+                                    mDiskLruCache.flush();
+                                } catch (Exception ignored) {
+                                }
+                                getDiskCacheExceptionHandler().onCacheWriteException(getContext(), BitmapLoader.this, e);
+                            } finally {
+                                try {
+                                    if (outputStream != null)
+                                        outputStream.close();
+                                } catch (Exception ignored) {
+                                }
                             }
-                            //写入缓存成功commit
-                            editor.commit();
-                            //写缓存日志
-                            mDiskLruCache.flush();
-                        } catch (Exception e) {
-                            implementor.onCacheWriteException(e);
                         }
                         //若加载任务尚未被取消
                         if (!isCancel()) {
@@ -834,47 +924,20 @@ public class BitmapLoader {
                         //若加载任务被取消,即使返回结果是加载成功,也只会存入缓存,不会返回成功的结果
                         return RESULT_CANCELED;
                     }else{
-                        try {
-                            //写入缓存失败abort
-                            editor.abort();
-                            //写缓存日志
-                            mDiskLruCache.flush();
-                        }catch (Exception ignored){
-                        }
                         if (getLogger() != null){
                             getLogger().e("[BitmapLoader]net loaded bitmap is null or recycled, url<" + url + "> cacheKey<" + cacheKey + ">");
                         }
                     }
                 } else if (result == BitmapLoaderMessenger.RESULT_CANCELED || result == BitmapLoaderMessenger.RESULT_INTERRUPTED) {
-                    try {
-                        //写入缓存失败abort
-                        editor.abort();
-                        //写缓存日志
-                        mDiskLruCache.flush();
-                    }catch (Exception ignored){
-                    }
                     return RESULT_CANCELED;
                 } else {
-                    try {
-                        //写入缓存失败abort
-                        editor.abort();
-                        //写缓存日志
-                        mDiskLruCache.flush();
-                    }catch (Exception ignored){
-                    }
                     //异常处理
                     if (messenger.getThrowable() != null){
-                        implementor.onException(messenger.getThrowable());
+                        getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, messenger.getThrowable());
                     }
                 }
             } catch (Exception e) {
-                implementor.onException(e);
-            }finally {
-                try {
-                    if (outputStream != null)
-                        outputStream.close();
-                } catch (Exception ignored) {
-                }
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, e);
             }
             //加载失败
             return RESULT_FAILED;
@@ -882,7 +945,7 @@ public class BitmapLoader {
 
         @Override
         public void onPostExecute(Object result, boolean isCancel) {
-            String cacheKey = implementor.getCacheKey(url);
+            String cacheKey = getCacheKey(url);
             //若任务被取消
             if (isCancel) {
                 if (mOnBitmapLoadedListener != null)
@@ -952,19 +1015,40 @@ public class BitmapLoader {
         }
     }
 
+    /****************************************************
+     * private
+     */
+
     /**
-     * 检查BitmapLoader是否open(), 若未open()则抛出异常, 若已被销毁则返回true<br/>
+     * url -> cacheKey
+     */
+    private String getCacheKey(String url) {
+        //url->SHA1->hex->key
+        return ByteUtils.byteToHex(DigestCipher.digest(url, DigestCipher.TYPE_SHA1));
+    }
+
+    /**
+     * 检查BitmapLoader是否open(), 若未open()则抛出异常, 若已被销毁/启用失败则返回true<br/>
      * 遇到此异常, 请检查代码, BitmapLoader实例化/设置后必须调用open()方法启动.
      */
     boolean checkIsOpen(){
-        if (destroyed){
+        //已销毁
+        if (state == STATE_DESTROYED){
             if (getLogger() != null)
-                getLogger().e("[BitmapLoader]can't use BitmapLoader after destroy");
+                getLogger().e("[BitmapLoader]can't use destroyed BitmapLoader");
             return true;
         }
-        if (mDiskLruCache == null || mCachedBitmapUtils == null || mDiskCacheQueue == null || mNetLoadQueue == null){
+        //启用失败, 检查日志, 解决问题, 可重新open()
+        if (state == STATE_OPEN_FAILED){
+            if (getLogger() != null)
+                getLogger().e("[BitmapLoader]open failed, can't use, please checking logs");
+            return true;
+        }
+        //未启用
+        if (state == STATE_INACTIVE){
             throw new RuntimeException("[BitmapLoader]can't use BitmapLoader without BitmapLoader.open()!!!");
         }
+
         return false;
     }
 
@@ -973,6 +1057,39 @@ public class BitmapLoader {
             return context.get();
         }
         return null;
+    }
+
+    private NetLoadHandler getNetLoadHandler() {
+        if (mNetLoadHandler == null){
+            synchronized (this){
+                if (mNetLoadHandler == null){
+                    mNetLoadHandler = new DefaultNetLoadHandler();
+                }
+            }
+        }
+        return mNetLoadHandler;
+    }
+
+    private CommonExceptionHandler getCommonExceptionHandler() {
+        if (mCommonExceptionHandler == null){
+            synchronized (this){
+                if (mCommonExceptionHandler == null){
+                    mCommonExceptionHandler = new DefaultCommonExceptionHandler();
+                }
+            }
+        }
+        return mCommonExceptionHandler;
+    }
+
+    private DiskCacheExceptionHandler getDiskCacheExceptionHandler() {
+        if (mDiskCacheExceptionHandler == null){
+            synchronized (this){
+                if (mDiskCacheExceptionHandler == null){
+                    mDiskCacheExceptionHandler = new DefaultDiskCacheExceptionHandler();
+                }
+            }
+        }
+        return mDiskCacheExceptionHandler;
     }
 
     /*********************************************************************

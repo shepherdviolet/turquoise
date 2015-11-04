@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utils.bitmap.loader.enhanced;
+package sviolet.turquoise.utils.bitmap.loader;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -25,12 +25,15 @@ import android.graphics.Bitmap;
 import android.view.View;
 import android.widget.ImageView;
 
-import java.io.IOException;
 import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.utils.Logger;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderImplementor;
+import sviolet.turquoise.utils.bitmap.loader.handler.CommonExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultCommonExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultNetLoadHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DiskCacheExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler;
 import sviolet.turquoise.utils.cache.BitmapCache;
 import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
 
@@ -48,47 +51,25 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  * <br/>
  * -------------------初始化设置----------------<br/>
  * <br/>
- * 1.实现接口BitmapLoaderImplementor<br/>
- * 2.实例化SimpleBitmapLoader(Context,String,Bitmap,BitmapLoaderImplementor) <br/>
- * 3.设置参数:<br/>
  * <pre>{@code
- *   try {
- *       mSimpleBitmapLoader = new SimpleBitmapLoader(this, "bitmap", loadingBitmap, new MyBitmapLoaderImplementor())
- *          .setRamCache(0.125f, 0.125f)//设置内存缓存大小,启用回收站
- *          .setDiskCache(50, 5, 15)//设置磁盘缓存容量50M, 磁盘加载并发数5, 等待队列15
+ *       mSimpleBitmapLoader = new SimpleBitmapLoader(this, "bitmap", loadingBitmap)
+ *          //.setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000, true))//设置网络加载超时等配置
+ *          //.setNetLoadHandler(new MyNetLoadHandler(...))//自定义网络加载实现
+ *          //.setCommonExceptionHandler(new MyCommonExceptionHandler(...))//自定义普通异常处理
+ *          //.setDiskCacheExceptionHandler(new MyDiskCacheExceptionHandler(...))//自定义磁盘缓存异常处理
  *          .setNetLoad(3, 15)//设置网络加载并发数3, 等待队列15
- *          .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置磁盘缓存保存格式和质量
+ *          .setDiskCache(50, 5, 15)//设置磁盘缓存容量50M, 磁盘加载并发数5, 等待队列15
+ *          .setRamCache(0.125f, 0.125f)//设置内存缓存大小,启用回收站
  *          //.setDiskCacheInner()//强制使用内部储存
+ *          //.setDiskCacheDisabled()//禁用磁盘缓存
+ *          .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置磁盘缓存保存格式和质量
  *          //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
  *          //.setWipeOnNewVersion()//当APP更新时清空磁盘缓存
- *          //.setLogger(getLogger())
+ *          //.setLogger(getLogger())//设置日志打印器
  *          .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
- *          .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
- *          .open();//必须调用
- *   } catch (IOException e) {
- *      //磁盘缓存打开失败的情况, 可提示客户磁盘已满等
- *   }
+ *          .setReloadTimesMax(2);//设置图片加载失败重新加载次数限制
+ *      mSimpleBitmapLoader.open();//必须调用
  * }</pre>
- * <br/>
- *      [上述代码说明]:<br/>
- *      位图内存缓存占用应用最大可用内存的12.5%,回收站最大可能占用额外的12.5%,
- *      内存缓存能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 图片显示不全,
- *      设置过大, 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
- *      在路径/sdcard/Android/data/<application package>/cache/bitmap或
- *      /data/data/<application package>/cache/bitmap下存放磁盘缓存数据,
- *      缓存最大容量50M, 磁盘缓存容量根据实际情况设置, 磁盘缓存加载最大并发量5,
- *      并发量应考虑图片质量/大小, 若图片较大, 应考虑减少并发量, 磁盘缓存等待队列
- *      容量15, 即只会加载最后请求的15个任务, 更早的加载请求会被取消, 等待队列容
- *      量根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1-
- *      2倍为宜, 设置过少会导致屏幕中图片未全部加载完, 例如屏幕中最多可能展示10
- *      张图片, 则设置15-20较为合适, 若设置了10, 屏幕中会有几张图未加载. <br/>
- *      网络加载并发量为3, 根据网络情况和图片大小决定, 过多的并发量会阻塞网络, 过
- *      少会导致图片加载太慢, 网络加载等待队列容量15, 建议与磁盘缓存等待队列容量
- *      相等, 根据屏幕中最多可能展示的图片数决定(略大于), 设置过少会导致屏幕中图
- *      片未全部加载完.<br/>
- *      设置日志打印器后, BitmapLoader会打印出一些日志用于调试, 例如内存缓存使用
- *      情况, 图片加载日志等, 可根据日志调试/选择上述参数的值.<br/>
- * <br/>
  * <br/>
  * -------------------加载器使用----------------<br/>
  * <br/>
@@ -201,61 +182,23 @@ public class SimpleBitmapLoader {
     private int reloadTimesMax = 2;//图片加载失败重新加载次数限制
 
     /**
-     * 自定义实现网络加载过程/缓存名规则/异常处理
-     *
      * @param context 上下文
      * @param diskCacheName 磁盘缓存目录名
      * @param loadingBitmap 加载时的图片(可为空, SimpleBitmapLoader.destroy时会回收该Bitmap)
-     * @param implementor 实现器
      */
-    public SimpleBitmapLoader(Context context, String diskCacheName, Bitmap loadingBitmap, BitmapLoaderImplementor implementor) {
-        bitmapLoader = new BitmapLoader(context, diskCacheName, implementor);
+    public SimpleBitmapLoader(Context context, String diskCacheName, Bitmap loadingBitmap) {
+        bitmapLoader = new BitmapLoader(context, diskCacheName);
         this.loadingBitmap = loadingBitmap;
         this.resources = new WeakReference<Resources>(context.getResources());
     }
 
     /**
-     * 自定义实现网络加载过程/缓存名规则/异常处理
-     *
      * @param context 上下文
      * @param diskCacheName 磁盘缓存目录名
      * @param loadingColor 加载时的颜色, 0x????????
-     * @param implementor 实现器
      */
-    public SimpleBitmapLoader(Context context, String diskCacheName, int loadingColor, BitmapLoaderImplementor implementor) {
-        bitmapLoader = new BitmapLoader(context, diskCacheName, implementor);
-        this.loadingColor = loadingColor;
-        this.resources = new WeakReference<Resources>(context.getResources());
-    }
-
-    /**
-     * 采用{@link SimpleBitmapLoaderImplementor}简易实现网络加载过程/缓存名规则/异常处理
-     *
-     * @param context 上下文
-     * @param diskCacheName 磁盘缓存目录名
-     * @param loadingBitmap 加载时的图片(可为空, SimpleBitmapLoader.destroy时会回收该Bitmap)
-     * @param connectTimeout 网络连接超时ms(SimpleBitmapLoaderImplementor)
-     * @param readTimeout 网络读取超时ms(SimpleBitmapLoaderImplementor)
-     * @param forceCancel 取消任务时,强制终止网络加载(SimpleBitmapLoaderImplementor)
-     */
-    public SimpleBitmapLoader(Context context, String diskCacheName, Bitmap loadingBitmap, int connectTimeout, int readTimeout, boolean forceCancel) {
-        bitmapLoader = new BitmapLoader(context, diskCacheName, connectTimeout, readTimeout, forceCancel);
-        this.loadingBitmap = loadingBitmap;
-        this.resources = new WeakReference<Resources>(context.getResources());
-    }
-
-    /**
-     * 采用{@link SimpleBitmapLoaderImplementor}简易实现网络加载过程/缓存名规则/异常处理
-     *
-     * @param context 上下文
-     * @param diskCacheName 磁盘缓存目录名
-     * @param loadingColor 加载时的颜色, 0x????????
-     * @param connectTimeout 网络连接超时ms(SimpleBitmapLoaderImplementor)
-     * @param readTimeout 网络读取超时ms(SimpleBitmapLoaderImplementor)
-     * @param forceCancel 取消任务时,强制终止网络加载(SimpleBitmapLoaderImplementor)
-     */
-    public SimpleBitmapLoader(Context context, String diskCacheName, int loadingColor, int connectTimeout, int readTimeout, boolean forceCancel) {
-        bitmapLoader = new BitmapLoader(context, diskCacheName, connectTimeout, readTimeout, forceCancel);
+    public SimpleBitmapLoader(Context context, String diskCacheName, int loadingColor) {
+        bitmapLoader = new BitmapLoader(context, diskCacheName);
         this.loadingColor = loadingColor;
         this.resources = new WeakReference<Resources>(context.getResources());
     }
@@ -381,10 +324,13 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * 是否已被销毁(不可用状态)
+     * BitmapLoader是否可用状态<br/>
+     * 满足条件:<br/>
+     * 1.启用成功(open)<br/>
+     * 2.未销毁(destroy)<br/>
      */
-    public boolean isDestroyed(){
-        return bitmapLoader.isDestroyed();
+    public boolean isActive(){
+        return bitmapLoader.isActive();
     }
 
     /**
@@ -450,6 +396,9 @@ public class SimpleBitmapLoader {
      * 2.判断url与原有任务是否相同, 若相同则返回true, 不再次加载.<br/>
      */
     protected boolean checkInput(String url, int reqWidth, int reqHeight, View view){
+        //bitmapLoader状态异常
+        if (bitmapLoader.checkIsOpen())
+            return true;
         //检查输入
         if (view == null)
             throw new RuntimeException("[SimpleBitmapLoader]view must not be null");
@@ -474,6 +423,14 @@ public class SimpleBitmapLoader {
      */
 
     /**
+     *
+     * 1.磁盘缓存最大容量(diskCacheSizeMib)根据实际情况设置,即磁盘缓存最大占用空间<br/>
+     * 2.磁盘加载任务并发量(diskLoadConcurrency)应考虑图片数量/大小, 若图片较大, 应考虑减少并发量<br/>
+     * 3.磁盘加载等待队列容量(diskLoadVolume)默认为10, 即只会加载最后请求的10个任务, 更早的加载请求
+     * 会被取消. 根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1.5-3倍为宜, 设置
+     * 过少会导致屏幕中图片未全部加载完成. 例如屏幕中最多可能展示10张图片, 则设置15-30较为合适, 若设置
+     * 了5, 屏幕中会有至少5张图未加载. <br/>
+     *
      * @param diskCacheSizeMib 磁盘缓存最大容量, 默认10, 单位Mb
      * @param diskLoadConcurrency 磁盘加载任务并发量, 默认5
      * @param diskLoadVolume 磁盘加载等待队列容量, 默认10
@@ -484,8 +441,13 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * 设置磁盘缓存路径为内部储存<br/>
-     * 若不设置, 则优先选择外部储存, 当外部储存不存在时使用内部储存
+     * 磁盘缓存强制使用内部储存<p/>
+     *
+     * 外部储存:/sdcard/Android/data/<application package>/cache/diskCacheName<br/>
+     * 内部储存:/data/data/<application package>/cache/diskCacheName<p/>
+     *
+     * 默认设置(不调用该方法):<Br/>
+     * 自动选择, 若外部储存可用, 则优先使用外部储存.<br/>
      */
     public SimpleBitmapLoader setDiskCacheInner() {
         bitmapLoader.setDiskCacheInner();
@@ -493,7 +455,6 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * 
      * 相同图片同时加载<br/>
      * <br/>
      * ----------------------------------------------<br/>
@@ -514,7 +475,6 @@ public class SimpleBitmapLoader {
      * 同名任务跟随策略,其中一个任务执行,其他同名任务等待其完成后,同时回调OnLoadCompleteListener,并传入
      * 同一个结果(Bitmap).这种方式在高并发场合,例如:频繁滑动ListView,任务会持有大量的对象用以回调,而绝大
      * 多数的View已不再显示在屏幕上.<Br/>
-     * 
      *
      */
     public SimpleBitmapLoader setDuplicateLoadEnable(boolean duplicateLoadEnable) {
@@ -523,10 +483,10 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * 设置缓存文件的图片保存格式和质量<br/>
+     * 设置磁盘缓存文件的图片保存格式和质量<br/>
      * 默认Bitmap.CompressFormat.JPEG, 70
      *
-     * @param format 图片格式
+     * @param format 图片格式 Bitmap.CompressFormat
      * @param quality 图片质量 0-100
      */
     public SimpleBitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality) {
@@ -543,6 +503,13 @@ public class SimpleBitmapLoader {
     }
 
     /**
+     * 1.网络加载任务并发量(netLoadConcurrency)根据网络情况和图片大小决定, 过多的并发量会阻塞网络
+     * 过少会导致图片加载太慢<br/>
+     * 2.网络加载等待队列容量(netLoadVolume)默认为10, 即只会加载最后请求的10个任务, 更早的加载请求
+     * 会被取消. 根据屏幕中最多可能展示的图片数决定, 设定值为屏幕最多可能展示图片数的1.5-3倍为宜, 设置
+     * 过少会导致屏幕中图片未全部加载完成. 例如屏幕中最多可能展示10张图片, 则设置15-30较为合适, 若设置
+     * 了5, 屏幕中会有至少5张图未加载. <br/>
+     *
      * @param netLoadConcurrency 网络加载任务并发量, 默认3
      * @param netLoadVolume 网络加载等待队列容量, 默认10
      */
@@ -552,26 +519,22 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * 
-     * 缓存区:缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
-     * 使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
-     * 使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
+     * 缓存区:<br/>
+     *      缓存区满后, 会清理最早创建或最少使用的Bitmap. 若被清理的Bitmap已被置为unused不再
+     *      使用状态, 则Bitmap会被立刻回收(recycle()), 否则会进入回收站等待被unused. 因此, 必须及时
+     *      使用unused(url)方法将不再使用的Bitmap置为unused状态, 使得Bitmap尽快被回收.<br/>
      * <Br/>
-     * 回收站:用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
-     * 显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
-     * recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
-     * 请适度设置.<br/>
-     * 若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
+     * 回收站:<br/>
+     *      用于存放因缓存区满被清理,但仍在被使用的Bitmap(未被标记为unused).<br/>
+     *      显示中的Bitmap可能因为被引用(get)早,判定为优先度低而被清理出缓存区,绘制时出现"trying to use a
+     *      recycled bitmap"异常,设置合适大小的回收站有助于减少此类事件发生.但回收站的使用会增加内存消耗,
+     *      请适度设置.若设置为0禁用,缓存区清理时无视unused状态一律做回收(Bitmap.recycle)处理,且不进入回收站!!<br/>
+     *      AsyncBitmapDrawableLoader中禁用.<br/>
      * <br/>
-     * Exception: [BitmapCache]recycler Out Of Memory!!!<br/>
-     * 当回收站内存占用超过设定值时, 会触发此异常<Br/>
-     * 解决方案:<br/>
-     * 1.请合理使用BitmapCache.unused()方法, 将不再使用的Bitmap设置为"不再使用"状态,
-     * Bitmap只有被设置为此状态, 才会被回收(recycle()), 否则在缓存区满后, 会进入回收站,
-     * 但并不会释放资源, 这么做是为了防止回收掉正在使用的Bitmap而报错.<br/>
-     * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
-     * 其他占用内存受限.<br/>
-     * 
+     * <br/>
+     * 1."内存缓存区"能容纳2-3页的图片为宜. 设置过小, 存放不下一页的内容, 图片显示不全, 设置过大,
+     * 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
+     * 2."内存缓存回收站"通常设置与"内存缓存区"相同.<Br/>
      *
      * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1], 默认值0.125f
      * @param ramCacheRecyclerSizePercent 内存缓存回收站占用应用可用内存的比例 [0, 1], 设置为0禁用回收站, 默认值0.125f
@@ -582,7 +545,7 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * 设置AsyncBitmapDrawable由浅及深显示动画效果持续时间
+     * 设置图片由浅及深显示动画效果持续时间
      * @param duration 持续时间 ms 默认500
      */
     public SimpleBitmapLoader setAnimationDuration(int duration){
@@ -603,10 +566,13 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * 设置App更新时清空磁盘缓存<br/>
-     * 默认:不清空缓存<br/>
-     * <br/>
-     * 当应用versionCode发生变化时, 会清空磁盘缓存. 注意是versionCode, 非versionName.<br/>
+     * 设置App更新时清空磁盘缓存<p/>
+     *
+     * 当应用versionCode发生变化时, 会清空磁盘缓存. 注意是versionCode, 非versionName.<p/>
+     *
+     * 默认(不调用该方法):<Br/>
+     * APP更新时不清空缓存<br/>
+     *
      */
     public SimpleBitmapLoader setWipeOnNewVersion(){
         bitmapLoader.setWipeOnNewVersion();
@@ -614,14 +580,62 @@ public class SimpleBitmapLoader {
     }
 
     /**
+     * 禁用磁盘缓存(流量增大风险,特殊场合使用)<br/>
+     * 若内存缓存中不存在图片,则直接从网络加载,且加载后不存入磁盘缓存.通常用于磁盘缓存打不开的场合,
+     * 建议询问客户是否允许不使用磁盘缓存.<br/>
+     */
+    public SimpleBitmapLoader setDiskCacheDisabled(){
+        bitmapLoader.setDiskCacheDisabled();
+        return this;
+    }
+
+    /**
+     * 设置网络加载处理器<br/>
+     * 用于自定义实现网络加载.<p/>
+     *
+     * 不设置默认为:{@link DefaultNetLoadHandler}<p/>
+     *
+     * 基本设置方法(设置超时时间等):<br/>
+     * @see DefaultNetLoadHandler
+     */
+    public SimpleBitmapLoader setNetLoadHandler(NetLoadHandler mNetLoadHandler) {
+        bitmapLoader.setNetLoadHandler(mNetLoadHandler);
+        return this;
+    }
+
+    /**
+     * 设置普通异常处理器<br/>
+     * 用于自定义实现普通异常的处理, 通常用于打印错误日志<p/>
+     *
+     * 不设置默认为:{@link DefaultCommonExceptionHandler}<p/>
+     *
+     * @see DefaultCommonExceptionHandler
+     */
+    public SimpleBitmapLoader setCommonExceptionHandler(CommonExceptionHandler mCommonExceptionHandler) {
+        bitmapLoader.setCommonExceptionHandler(mCommonExceptionHandler);
+        return this;
+    }
+
+    /**
+     * 设置磁盘缓存异常处理器<br/>
+     * 用于自定义实现磁盘缓存打开失败, 磁盘缓存写入失败的处理<p/>
+     *
+     * 不设置默认为:{@link DefaultDiskCacheExceptionHandler}<p/>
+     *
+     * 基本设置方法(磁盘缓存访问失败处理方式):<br/>
+     * @see DefaultDiskCacheExceptionHandler
+     */
+    public SimpleBitmapLoader setDiskCacheExceptionHandler(DiskCacheExceptionHandler mDiskCacheExceptionHandler) {
+        bitmapLoader.setDiskCacheExceptionHandler(mDiskCacheExceptionHandler);
+        return this;
+    }
+
+    /**
      * [重要]启用BitmapLoader, 在实例化并设置完BitmapLoader后, 必须调用此
      * 方法, 开启磁盘缓存/内存缓存. 否则会抛出异常.<Br/>
-     *
-     * @throws IOException 磁盘缓存启动失败抛出异常
      */
-    public SimpleBitmapLoader open() throws IOException {
+    public void open(){
         bitmapLoader.open();
-        return this;
     }
 
 }
