@@ -36,7 +36,7 @@ import sviolet.turquoise.utils.sys.MeasureUtils;
  * ListView适配器
  * Created by S.Violet on 2015/7/7.
  */
-public class AsyncImageAdapter3 extends BaseAdapter {
+public class AsyncImageAdapter2 extends BaseAdapter {
 
     private Context context;
     private List<AsyncImageItem> itemList;
@@ -48,7 +48,7 @@ public class AsyncImageAdapter3 extends BaseAdapter {
      * @param itemList 数据
      * @param simpleBitmapLoader 用于图片动态加载缓存
      */
-    public AsyncImageAdapter3(Context context, List<AsyncImageItem> itemList, SimpleBitmapLoader simpleBitmapLoader){
+    public AsyncImageAdapter2(Context context, List<AsyncImageItem> itemList, SimpleBitmapLoader simpleBitmapLoader){
         this.context = context;
         this.itemList = itemList;
         this.simpleBitmapLoader = simpleBitmapLoader;

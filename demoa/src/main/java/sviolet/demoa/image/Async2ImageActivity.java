@@ -19,7 +19,6 @@
 
 package sviolet.demoa.image;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ListView;
 
@@ -28,7 +27,7 @@ import java.util.List;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
-import sviolet.demoa.image.utils.AsyncImageAdapter3;
+import sviolet.demoa.image.utils.AsyncImageAdapter2;
 import sviolet.demoa.image.utils.AsyncImageItem;
 import sviolet.demoa.image.utils.MyNetLoadHandler;
 import sviolet.turquoise.enhanced.TActivity;
@@ -39,13 +38,13 @@ import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
 
 @DemoDescription(
-        title = "AsyncImageList3",
+        title = "AsyncImageList2",
         type = "Image",
         info = "an Async. Image ListView powered by SimpleBitmapLoader"
 )
 
 /**
- * 图片动态加载Demo3<br/>
+ * 图片动态加载Demo2<br/>
  * 内存/磁盘双缓存<br/>
  * 采用SimpleBitmapLoader实现, 自带加载失败重载, 推荐此种方式
  *
@@ -56,12 +55,12 @@ import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHa
         statusBarColor = 0xFF209090,
         navigationBarColor = 0xFF209090
 )
-public class Async3ImageActivity extends TActivity {
+public class Async2ImageActivity extends TActivity {
 
     @ResourceId(R.id.image_async_listview)
     private ListView listView;
 
-    private AsyncImageAdapter3 adapter;
+    private AsyncImageAdapter2 adapter;
 
     private SimpleBitmapLoader simpleBitmapLoader;//图片加载器
 
@@ -98,7 +97,7 @@ public class Async3ImageActivity extends TActivity {
         simpleBitmapLoader.open();//启动(必须)
 
         //设置适配器, 传入图片加载器, 图片解码工具
-        adapter = new AsyncImageAdapter3(this, makeItemList(), simpleBitmapLoader);
+        adapter = new AsyncImageAdapter2(this, makeItemList(), simpleBitmapLoader);
         listView.setAdapter(adapter);
     }
 

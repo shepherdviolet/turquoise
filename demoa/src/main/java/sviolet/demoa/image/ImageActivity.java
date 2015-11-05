@@ -31,7 +31,7 @@ import sviolet.demoa.common.DemoList;
 @DemoList({
         CommonImageActivity.class,
         AsyncImageActivity.class,
-        Async3ImageActivity.class,
+        Async2ImageActivity.class,
         ShadowImageActivity.class
 })
 
