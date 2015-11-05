@@ -29,6 +29,7 @@ import java.util.concurrent.Executors;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
 
@@ -51,7 +52,7 @@ public class MyNetLoadHandler implements NetLoadHandler {
     }
 
     @Override
-    public void loadFromNet(final String url, final int reqWidth, final int reqHeight, final BitmapLoaderMessenger messenger) {
+    public void loadFromNet(final String url, final int reqWidth, final int reqHeight, BitmapLoader loader, final BitmapLoaderMessenger messenger) {
 
         ///////////////////////////////////////////////////
         //同步方式
@@ -120,7 +121,7 @@ public class MyNetLoadHandler implements NetLoadHandler {
                     //转为byteArray
                     byte[] data = null;
                     try {
-                        data = BitmapUtils.bitmapToByteArray(bitmap, Bitmap.CompressFormat.PNG, 100, true);
+                        data = BitmapUtils.bitmapToByteArray(bitmap, Bitmap.CompressFormat.JPEG, 70, true);
                     } catch (IOException e) {
                         messenger.setResultFailed(e);
                         return;
