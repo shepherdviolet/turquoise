@@ -129,6 +129,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
      * @param compressHeight 指定图片高度
      */
     public DefaultNetLoadHandler setCompress(Bitmap.CompressFormat compressFormat, int compressQuality, int compressWidth, int compressHeight){
+        this.compress = true;
         this.compressFormat = compressFormat;
         this.compressQuality = compressQuality;
         this.compressWidth = compressWidth;
