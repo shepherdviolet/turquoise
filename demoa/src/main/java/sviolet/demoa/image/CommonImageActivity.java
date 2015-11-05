@@ -36,6 +36,7 @@ import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultNetLoadHandler;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
 import sviolet.turquoise.utils.sys.MeasureUtils;
@@ -355,7 +356,7 @@ public class CommonImageActivity extends TActivity {
          */
 
         bitmapLoader = new BitmapLoader(this, "AsyncImageActivity")
-//                .setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000).setCompress(Bitmap.CompressFormat.JPEG, 70))//设置超时时间/原图压缩, 也可以自定义实现网络加载
+//                .setNetLoadHandler(new DefaultNetLoadHandler(5000, 20000).setCompress(Bitmap.CompressFormat.JPEG, 70, 100, 0))//设置超时时间/原图压缩, 也可以自定义实现网络加载
                 .setRamCache(0.1f, 0.1f)//缓存和回收站各占10%内存
                 .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
                 .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
@@ -402,7 +403,7 @@ public class CommonImageActivity extends TActivity {
 
         simpleBitmapLoader = new SimpleBitmapLoader(this, "AsyncImageActivity",
                 BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null))
-//                .setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000).setCompress(Bitmap.CompressFormat.JPEG, 70))//设置超时时间/原图压缩, 也可以自定义实现网络加载
+//                .setNetLoadHandler(new DefaultNetLoadHandler(5000, 20000).setCompress(Bitmap.CompressFormat.JPEG, 70, 100, 0))//设置超时时间/原图压缩, 也可以自定义实现网络加载
                 .setRamCache(0.1f, 0.1f)//缓存和回收站各占15%内存
 //                    .setRamCache(0.004f, 0.004f)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
                 .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
@@ -477,7 +478,6 @@ public class CommonImageActivity extends TActivity {
 
             //根据TaskInfo记录的重新加载次数, 判断是否重新加载
             if (taskInfo.reloadTimes < TaskInfo.RELOAD_TIMES_MAX) {
-                getLogger().i("[demoa]41 reload");
                 //计数+1
                 taskInfo.reloadTimes++;
                 //重新加载

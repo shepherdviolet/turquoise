@@ -39,7 +39,7 @@ public class SimpleBitmapLoaderTaskFactory {
     /**
      * 控件图片加载任务
      */
-    public static SimpleBitmapLoaderTask newTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, View view){
+    public static SimpleBitmapLoaderTask newLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, View view){
         if (view instanceof ImageView){
             return new ImageViewLoaderTask(url, reqWidth, reqHeight, loader, (ImageView)view);
         }
@@ -49,7 +49,7 @@ public class SimpleBitmapLoaderTaskFactory {
     /**
      * 控件背景图片加载任务
      */
-    public static SimpleBitmapLoaderTask newBackgroundTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, View view){
+    public static SimpleBitmapLoaderTask newBackgroundLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, View view){
         return new BackgroundLoaderTask(url, reqWidth, reqHeight, loader, view);
     }
 

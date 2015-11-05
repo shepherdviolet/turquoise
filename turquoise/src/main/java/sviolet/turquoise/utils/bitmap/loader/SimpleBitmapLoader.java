@@ -23,7 +23,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.view.View;
-import android.widget.ImageView;
 
 import java.lang.ref.WeakReference;
 
@@ -237,7 +236,11 @@ public class SimpleBitmapLoader {
     public void load(String url, int reqWidth, int reqHeight, View view){
         if (checkInput(url, reqWidth, reqHeight, view))
             return;
-        SimpleBitmapLoaderTaskFactory.newTask(url, reqWidth, reqHeight, this, view);
+        newLoaderTask(url, reqWidth, reqHeight, view);
+    }
+
+    protected void newLoaderTask(String url, int reqWidth, int reqHeight, View view){
+        SimpleBitmapLoaderTaskFactory.newLoaderTask(url, reqWidth, reqHeight, this, view);
     }
 
     /**
@@ -265,7 +268,11 @@ public class SimpleBitmapLoader {
     public void loadBackground(String url, int reqWidth, int reqHeight, View view){
         if (checkInput(url, reqWidth, reqHeight, view))
             return;
-        SimpleBitmapLoaderTaskFactory.newBackgroundTask(url, reqWidth, reqHeight, this, view);
+        newBackgroundLoaderTask(url, reqWidth, reqHeight, view);
+    }
+
+    protected void newBackgroundLoaderTask(String url, int reqWidth, int reqHeight, View view){
+        SimpleBitmapLoaderTaskFactory.newBackgroundLoaderTask(url, reqWidth, reqHeight, this, view);
     }
 
     /**
