@@ -61,7 +61,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * <br/>
  * <pre>{@code
  *       mBitmapLoader = new BitmapLoader(this, "bitmap")
- *          //.setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000, true))//设置网络加载超时等配置
+ *          //.setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000).setCompress(...))//设置网络加载超时/原图压缩等配置
  *          //.setNetLoadHandler(new MyNetLoadHandler(...))//自定义网络加载实现
  *          //.setBitmapDecodeHandler(new MyBitmapDecodeHandler(...))//自定义图片解码实现,或对图片进行特殊处理
  *          //.setCommonExceptionHandler(new MyCommonExceptionHandler(...))//自定义普通异常处理
@@ -866,7 +866,7 @@ public class BitmapLoader {
                 //结果容器
                 messenger = new BitmapLoaderMessenger();
                 //从网络加载图片数据
-                getNetLoadHandler().loadFromNet(url, reqWidth, reqHeight, messenger);
+                getNetLoadHandler().loadFromNet(url, reqWidth, reqHeight, BitmapLoader.this, messenger);
                 //阻塞等待并获取结果数据
                 int result = messenger.getResult();
                 if (result == BitmapLoaderMessenger.RESULT_SUCCEED){

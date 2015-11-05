@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.utils.bitmap.loader.handler;
 
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
 
 /**
@@ -75,7 +76,7 @@ public interface NetLoadHandler {
      * 2.异步加载方式<br/>
      * <br/>
      * <pre>{@code
-     *      public void loadFromNet(final String url, final int reqWidth, final int reqHeight, final BitmapLoaderMessenger messenger) {
+     *      public void loadFromNet(final String url, final int reqWidth, final int reqHeight, final BitmapLoader loader, final BitmapLoaderMessenger messenger) {
      *          //第三方网络工具
      *          final HttpUtils httpUtils = new HttpUtils();
      *          //相关设置
@@ -112,9 +113,10 @@ public interface NetLoadHandler {
      * @param url url
      * @param reqWidth 请求宽度
      * @param reqHeight 请求高度
+     * @param loader 图片加载器
      * @param messenger 通知器
      */
-    public void loadFromNet(String url, int reqWidth, int reqHeight, BitmapLoaderMessenger messenger);
+    public void loadFromNet(String url, int reqWidth, int reqHeight, BitmapLoader loader, BitmapLoaderMessenger messenger);
 
     /**
      * 当BitmapLoader销毁时,会回调该方法,便于回收在NetLoadHandler中创建的实例<br/>

@@ -56,7 +56,7 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  * <br/>
  * <pre>{@code
  *       mSimpleBitmapLoader = new SimpleBitmapLoader(this, "bitmap", loadingBitmap)
- *          //.setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000, true))//设置网络加载超时等配置
+ *          //.setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000).setCompress(...))//设置网络加载超时/原图压缩等配置
  *          //.setNetLoadHandler(new MyNetLoadHandler(...))//自定义网络加载实现
  *          //.setBitmapDecodeHandler(new MyBitmapDecodeHandler(...))//自定义图片解码实现,或对图片进行特殊处理
  *          //.setCommonExceptionHandler(new MyCommonExceptionHandler(...))//自定义普通异常处理
