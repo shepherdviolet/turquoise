@@ -149,7 +149,7 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  *      尝试设置setDuplicateLoadEnable(true);<Br/>
  * <Br/>
  * 3.网络加载失败,需要重新加载.<br/>
- *      使用SimpleBitmapLoader/AsyncBitmapDrawableLoader无需特殊处理, 它们自带重新加载功能.<br/>
+ *      使用SimpleBitmapLoader无需特殊处理, 它们自带重新加载功能.<br/>
  *      推荐方案:<br/>
  *      1).在网络加载失败(failed)时, 有限次地重新加载, 不应重新加载unused的任务.<br/>
  * <Br/>

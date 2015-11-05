@@ -235,40 +235,54 @@ public class BitmapUtils {
     }
 
     /**
-     * bitmap转为base64
+     * bitmap转为byteArray
      *
-     * @param bitmap
+     * @param bitmap 原图
      * @param recycle 是否回收源Bitmap
      */
-    public static String bitmapToBase64(Bitmap bitmap, boolean recycle) {
+    public static byte[] bitmapToByteArray(Bitmap bitmap, boolean recycle) throws IOException {
         if (bitmap == null || bitmap.isRecycled()){
             throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
         }
-        String result = null;
+
+        byte[] bitmapBytes = null;
         ByteArrayOutputStream byteArrayOutputStream = null;
         try {
             byteArrayOutputStream = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
             byteArrayOutputStream.flush();
-            byteArrayOutputStream.close();
-            byte[] bitmapBytes = byteArrayOutputStream.toByteArray();
-            result = Base64.encodeToString(bitmapBytes, Base64.DEFAULT);
+            bitmapBytes = byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw e;
         } finally {
             try {
                 if (byteArrayOutputStream != null) {
                     byteArrayOutputStream.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
             }
         }
+
         //回收源Bitmap
-        if (recycle && bitmap != null && !bitmap.isRecycled()) {
+        if (recycle && !bitmap.isRecycled()) {
             bitmap.recycle();
         }
-        return result;
+
+        return bitmapBytes;
+    }
+
+    /**
+     * bitmap转为base64
+     *
+     * @param bitmap 原图
+     * @param recycle 是否回收源Bitmap
+     */
+    public static String bitmapToBase64(Bitmap bitmap, boolean recycle) throws IOException {
+        byte[] byteArray = bitmapToByteArray(bitmap, recycle);
+        if (byteArray == null || byteArray.length <= 0){
+            return "";
+        }
+        return Base64.encodeToString(byteArray, Base64.DEFAULT);
     }
 
     /**
