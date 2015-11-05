@@ -28,7 +28,9 @@ import android.widget.ImageView;
 import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.bitmap.loader.handler.BitmapDecodeHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.CommonExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultBitmapDecodeHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultCommonExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultNetLoadHandler;
@@ -55,6 +57,7 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  *       mSimpleBitmapLoader = new SimpleBitmapLoader(this, "bitmap", loadingBitmap)
  *          //.setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000, true))//设置网络加载超时等配置
  *          //.setNetLoadHandler(new MyNetLoadHandler(...))//自定义网络加载实现
+ *          //.setBitmapDecodeHandler(new MyBitmapDecodeHandler(...))//自定义图片解码实现,或对图片进行特殊处理
  *          //.setCommonExceptionHandler(new MyCommonExceptionHandler(...))//自定义普通异常处理
  *          //.setDiskCacheExceptionHandler(new MyDiskCacheExceptionHandler(...))//自定义磁盘缓存异常处理
  *          .setNetLoad(3, 15)//设置网络加载并发数3, 等待队列15
@@ -62,7 +65,6 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  *          .setRamCache(0.125f, 0.125f)//设置内存缓存大小,启用回收站
  *          //.setDiskCacheInner()//强制使用内部储存
  *          //.setDiskCacheDisabled()//禁用磁盘缓存
- *          .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置磁盘缓存保存格式和质量
  *          //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
  *          //.setWipeOnNewVersion()//当APP更新时清空磁盘缓存
  *          //.setLogger(getLogger())//设置日志打印器
@@ -483,18 +485,6 @@ public class SimpleBitmapLoader {
     }
 
     /**
-     * 设置磁盘缓存文件的图片保存格式和质量<br/>
-     * 默认Bitmap.CompressFormat.JPEG, 70
-     *
-     * @param format 图片格式 Bitmap.CompressFormat
-     * @param quality 图片质量 0-100
-     */
-    public SimpleBitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality) {
-        bitmapLoader.setImageQuality(format, quality);
-        return this;
-    }
-
-    /**
      * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
      */
     public SimpleBitmapLoader setLogger(Logger logger) {
@@ -600,6 +590,21 @@ public class SimpleBitmapLoader {
      */
     public SimpleBitmapLoader setNetLoadHandler(NetLoadHandler mNetLoadHandler) {
         bitmapLoader.setNetLoadHandler(mNetLoadHandler);
+        return this;
+    }
+
+    /**
+     * 设置图片(Bitmap)解码处理器<br/>
+     * 用于自定义实现图片解码过程, 或对图片进行特殊处理(缩放/圆角等)<br/>
+     * 注意:网络加载或磁盘读取的数据均经过该处理器解码, 应尽量避免复杂的处理, 以免
+     * 影响加载性能.<br/>
+     *
+     * 不设置默认为:{@link DefaultBitmapDecodeHandler}<p/>
+     *
+     * @see DefaultBitmapDecodeHandler
+     */
+    public SimpleBitmapLoader setBitmapDecodeHandler(BitmapDecodeHandler mBitmapDecodeHandler){
+        bitmapLoader.setBitmapDecodeHandler(mBitmapDecodeHandler);
         return this;
     }
 

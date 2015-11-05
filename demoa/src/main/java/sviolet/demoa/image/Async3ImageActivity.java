@@ -84,8 +84,6 @@ public class Async3ImageActivity extends TActivity {
                 .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
                 .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
 //                    .setDiskCacheInner()//强制使用内部储存
-                .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
-//                    .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
 //                    .setWipeOnNewVersion()//设置
                 .setLogger(getLogger())//打印日志
                 .setAnimationDuration(400)//设置图片淡入动画持续时间400ms

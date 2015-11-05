@@ -22,6 +22,7 @@ package sviolet.demoa.image.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -32,7 +33,7 @@ import sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
 
 /**
- * BitmapLoader实现器
+ * BitmapLoader网络加载处理器, 自定义实现
  * Created by S.Violet on 2015/7/7.
  */
 public class MyNetLoadHandler implements NetLoadHandler {
@@ -49,40 +50,6 @@ public class MyNetLoadHandler implements NetLoadHandler {
         this.context = context;
     }
 
-    /**
-     * 实现根据url参数从网络下载图片数据, 依照需求尺寸reqWidth和reqHeight解析为合适大小的Bitmap,
-     * 并调用通知器BitmapLoaderMessenger.setResultSucceed/setResultFailed/setResultCanceled方法返回结果<br/>
-     * <br/>
-     * *********************************************************************************<br/>
-     * * * 注意::<br/>
-     * *********************************************************************************<br/>
-     * <br/>
-     * 1.网络请求必须做超时处理,否则任务会一直阻塞等待.<br/>
-     * <br/>
-     * 2.数据解析为Bitmap时,请根据需求尺寸reqWidth和reqHeight解析,以节省内存.<br/>
-     * {@link BitmapUtils}<br/>
-     *      需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).<br/>
-     *      图片解码时根据需求尺寸适当缩,且保持原图长宽比例,解码后Bitmap实际尺寸不等于需求尺寸.设置为0不缩小图片.<Br/>
-     * <br/>
-     * 3.必须使用BitmapLoaderMessenger.setResultSucceed/setResultFailed/setResultCanceled方法返回结果,
-     *      若不调用,图片加载任务中的BitmapLoaderMessenger.getResult()会一直阻塞等待结果.<br/>
-     *      1)setResultSucceed(Bitmap),加载成功,返回Bitmap<br/>
-     *      2)setResultFailed(Throwable),加载失败,返回异常<br/>
-     *      3)setResultCanceled(),加载取消<br/>
-     *      若加载任务已被取消(isCancelling() = true),但仍使用setResultSucceed返回结果,则Bitmap会被存入
-     *      磁盘缓存,但BitmapLoader返回任务取消.<br/>
-     * <br/>
-     * 4.合理地处理加载任务取消的情况<br/>
-     *      1)当加载任务取消,终止网络加载,并用BitmapLoaderMessenger.setResultCanceled()返回结果<br/>
-     *          采用此种方式,已加载的数据废弃,BitmapLoader作为任务取消处理,不会返回Bitmap.<br/>
-     *      2)当加载任务取消,继续完成网络加载,并用BitmapLoaderMessenger.setResultSucceed(Bitmap)返回结果<br/>
-     *          采用此种方式,Bitmap会被存入磁盘缓存,但BitmapLoader仍作为任务取消处理,不会返回Bitmap.<br/>
-     * <br/>
-     * @param url url
-     * @param reqWidth 请求宽度
-     * @param reqHeight 请求高度
-     * @param messenger 通知器
-     */
     @Override
     public void loadFromNet(final String url, final int reqWidth, final int reqHeight, final BitmapLoaderMessenger messenger) {
 
@@ -149,7 +116,17 @@ public class MyNetLoadHandler implements NetLoadHandler {
                     //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
 //                    Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight);
                     Bitmap bitmap = BitmapUtils.drawTextOnResource(context.getResources(), resourceIds[index], reqWidth, reqHeight, url, 0, 50, 50f, 0xFF000000);
-                    messenger.setResultSucceed(bitmap);
+
+                    //转为byteArray
+                    byte[] data = null;
+                    try {
+                        data = BitmapUtils.bitmapToByteArray(bitmap, Bitmap.CompressFormat.PNG, 100, true);
+                    } catch (IOException e) {
+                        messenger.setResultFailed(e);
+                        return;
+                    }
+
+                    messenger.setResultSucceed(data);
                 }else{
                     //加载失败
                     messenger.setResultFailed(new RuntimeException("time out : " + url));//返回异常

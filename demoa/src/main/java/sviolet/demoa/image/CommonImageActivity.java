@@ -361,8 +361,6 @@ public class CommonImageActivity extends TActivity {
                 .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
                 .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
 //                .setDiskCacheInner()//强制使用内部储存
-                .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
-//                .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
 //                .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
                 .setLogger(getLogger());//打印日志
         bitmapLoader.open();//启动(必须)
@@ -411,8 +409,6 @@ public class CommonImageActivity extends TActivity {
                 .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
                 .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
 //                    .setDiskCacheInner()//强制使用内部储存
-                .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置保存格式和质量
-//                    .setImageQuality(Bitmap.CompressFormat.PNG, 70)//设置保存格式和质量(透明图需要PNG)
 //                    .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
                 .setLogger(getLogger())//打印日志
                 .setAnimationDuration(400)//设置图片淡入动画持续时间400ms

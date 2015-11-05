@@ -30,9 +30,9 @@ import java.lang.ref.WeakReference;
 import sviolet.turquoise.utils.Logger;
 import sviolet.turquoise.model.queue.TQueue;
 import sviolet.turquoise.model.queue.TTask;
-import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
+import sviolet.turquoise.utils.bitmap.loader.handler.BitmapDecodeHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.CommonExceptionHandler;
+import sviolet.turquoise.utils.bitmap.loader.handler.DefaultBitmapDecodeHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultCommonExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultNetLoadHandler;
@@ -62,6 +62,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *       mBitmapLoader = new BitmapLoader(this, "bitmap")
  *          //.setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000, true))//设置网络加载超时等配置
  *          //.setNetLoadHandler(new MyNetLoadHandler(...))//自定义网络加载实现
+ *          //.setBitmapDecodeHandler(new MyBitmapDecodeHandler(...))//自定义图片解码实现,或对图片进行特殊处理
  *          //.setCommonExceptionHandler(new MyCommonExceptionHandler(...))//自定义普通异常处理
  *          //.setDiskCacheExceptionHandler(new MyDiskCacheExceptionHandler(...))//自定义磁盘缓存异常处理
  *          .setNetLoad(3, 15)//设置网络加载并发数3, 等待队列15
@@ -69,7 +70,6 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *          .setRamCache(0.125f, 0.125f)//设置内存缓存大小,启用回收站
  *          //.setDiskCacheInner()//强制使用内部储存
  *          //.setDiskCacheDisabled()//禁用磁盘缓存
- *          .setImageQuality(Bitmap.CompressFormat.JPEG, 70)//设置磁盘缓存保存格式和质量
  *          //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
  *          //.setWipeOnNewVersion()//当APP更新时清空磁盘缓存
  *          //.setLogger(getLogger());//设置日志打印器
@@ -172,7 +172,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  */
 public class BitmapLoader {
 
-    private CachedBitmapUtils mCachedBitmapUtils;//带缓存的Bitmap工具
+    private BitmapCache mBitmapCache;//Bitmap内存缓存器
     private DiskLruCache mDiskLruCache;//磁盘缓存器
 
     private TQueue mDiskCacheQueue;//磁盘缓存加载队列
@@ -189,8 +189,6 @@ public class BitmapLoader {
     private int diskLoadVolume = 10;//磁盘加载等待队列容量
     private int netLoadConcurrency = 3;//网络加载任务并发量
     private int netLoadVolume = 10;//网络加载等待队列容量
-    private Bitmap.CompressFormat imageFormat = Bitmap.CompressFormat.JPEG;//缓存图片保存格式
-    private int imageQuality = 70;//缓存图片保存质量
     private int keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;//TQueue同名任务冲突策略
     private int appVersionCode = 1;//应用版本versionCode
     private File cacheDir;//缓存路径
@@ -200,6 +198,7 @@ public class BitmapLoader {
     //处理器////////////////////////////////////////////////////////
 
     private NetLoadHandler mNetLoadHandler;//网络加载处理器
+    private BitmapDecodeHandler mBitmapDecodeHandler;//图片解码处理器
     private CommonExceptionHandler mCommonExceptionHandler;//普通异常处理器
     private DiskCacheExceptionHandler mDiskCacheExceptionHandler;//磁盘缓存异常处理器
 
@@ -320,19 +319,6 @@ public class BitmapLoader {
     }
 
     /**
-     * 设置磁盘缓存文件的图片保存格式和质量<br/>
-     * 默认Bitmap.CompressFormat.JPEG, 70
-     *
-     * @param format 图片格式 Bitmap.CompressFormat
-     * @param quality 图片质量 0-100
-     */
-    public BitmapLoader setImageQuality(Bitmap.CompressFormat format, int quality){
-        this.imageFormat = format;
-        this.imageQuality = quality;
-        return this;
-    }
-
-    /**
      * 相同图片同时加载<br/>
      * <br/>
      * ----------------------------------------------<br/>
@@ -393,6 +379,21 @@ public class BitmapLoader {
     }
 
     /**
+     * 设置图片(Bitmap)解码处理器<br/>
+     * 用于自定义实现图片解码过程, 或对图片进行特殊处理(缩放/圆角等)<br/>
+     * 注意:网络加载或磁盘读取的数据均经过该处理器解码, 应尽量避免复杂的处理, 以免
+     * 影响加载性能.<br/>
+     *
+     * 不设置默认为:{@link DefaultBitmapDecodeHandler}<p/>
+     *
+     * @see DefaultBitmapDecodeHandler
+     */
+    public BitmapLoader setBitmapDecodeHandler(BitmapDecodeHandler mBitmapDecodeHandler){
+        this.mBitmapDecodeHandler = mBitmapDecodeHandler;
+        return this;
+    }
+
+    /**
      * 设置普通异常处理器<br/>
      * 用于自定义实现普通异常的处理, 通常用于打印错误日志<p/>
      *
@@ -424,8 +425,8 @@ public class BitmapLoader {
      */
     public BitmapLoader setLogger(Logger logger) {
         this.logger = logger;
-        if (mCachedBitmapUtils != null)
-            mCachedBitmapUtils.getBitmapCache().setLogger(logger);
+        if (mBitmapCache != null)
+            mBitmapCache.setLogger(logger);
         return this;
     }
 
@@ -445,7 +446,7 @@ public class BitmapLoader {
             }
         }
         //打开内存缓存
-        this.mCachedBitmapUtils = new CachedBitmapUtils(getContext(), ramCacheSizePercent, ramCacheRecyclerSizePercent);
+        this.mBitmapCache = BitmapCache.newInstance(getContext(), ramCacheSizePercent, ramCacheRecyclerSizePercent);
         //打开队列
         this.mDiskCacheQueue = new TQueue(true, diskLoadConcurrency)
                 .setVolumeMax(diskLoadVolume)
@@ -457,7 +458,7 @@ public class BitmapLoader {
                 .setKeyConflictPolicy(keyConflictPolicy);
         //设置日志打印器
         if(getLogger() != null)
-            mCachedBitmapUtils.getBitmapCache().setLogger(getLogger());
+            mBitmapCache.setLogger(getLogger());
         //设置状态为可用
         state = STATE_ACTIVE;
     }
@@ -494,7 +495,7 @@ public class BitmapLoader {
             getLogger().d("[BitmapLoader]load:start:  url<" + url + "> cacheKey<" + cacheKey + ">");
         }
         //尝试内存缓存中取Bitmap
-        Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
+        Bitmap bitmap = mBitmapCache.get(cacheKey);
         if (bitmap != null && !bitmap.isRecycled()) {
             //缓存中存在直接回调:成功
             mOnBitmapLoadedListener.onLoadSucceed(url, reqWidth, reqHeight, params, bitmap);
@@ -532,7 +533,7 @@ public class BitmapLoader {
         //计算缓存key
         String cacheKey = getCacheKey(url);
         //尝试从内存缓存中取Bitmap
-        Bitmap bitmap = mCachedBitmapUtils.getBitmap(cacheKey);
+        Bitmap bitmap = mBitmapCache.get(cacheKey);
         if (bitmap != null && !bitmap.isRecycled()) {
             //若存在且未被回收, 返回Bitmap
             return bitmap;
@@ -572,7 +573,7 @@ public class BitmapLoader {
         //磁盘缓存加载队列取消
         mDiskCacheQueue.cancel(cacheKey);
         //将位图标识为不再使用
-        mCachedBitmapUtils.unused(cacheKey);
+        mBitmapCache.unused(cacheKey);
         if (getLogger() != null) {
             getLogger().d("[BitmapLoader]unused:  url<" + url + "> cacheKey<" + cacheKey + ">");
         }
@@ -589,7 +590,7 @@ public class BitmapLoader {
     public void reduce(){
         if(checkIsOpen())
             return;
-        mCachedBitmapUtils.reduce();
+        mBitmapCache.reduce();
     }
 
     /**
@@ -631,9 +632,9 @@ public class BitmapLoader {
             } catch (IOException ignored) {
             }
         }
-        if (mCachedBitmapUtils != null) {
-            mCachedBitmapUtils.recycleAll();
-            mCachedBitmapUtils = null;
+        if (mBitmapCache != null) {
+            mBitmapCache.removeAll();
+            mBitmapCache = null;
         }
         if (mNetLoadHandler != null)
             mNetLoadHandler.onDestroy();
@@ -724,8 +725,8 @@ public class BitmapLoader {
                 getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mDiskLruCache is null"));
                 return RESULT_CANCELED;
             }
-            if (mCachedBitmapUtils == null) {
-                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mCachedBitmapUtils is null"));
+            if (mBitmapCache == null) {
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mBitmapCache is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
@@ -733,11 +734,11 @@ public class BitmapLoader {
             try {
                 //得到缓存文件
                 File cacheFile = mDiskLruCache.getFile(cacheKey, 0);
-                if (cacheFile != null) {
+                if (cacheFile != null && cacheFile.exists()) {
                     //若缓存文件存在, 从缓存中加载Bitmap
                     Bitmap bitmap = null;
                     try {
-                        bitmap = mCachedBitmapUtils.decodeFromFile(cacheKey, cacheFile.getAbsolutePath(), reqWidth, reqHeight);
+                        bitmap = getBitmapDecodeHandler().onDecode(url, reqWidth, reqHeight, cacheFile.getAbsolutePath());
                     }catch(Exception e){
                         //Bitmap加载失败
                         if (getLogger() != null){
@@ -748,16 +749,16 @@ public class BitmapLoader {
                     }
                     //加载出的Bitmap为空
                     if (bitmap == null || bitmap.isRecycled()){
-                        mCachedBitmapUtils.unused(cacheKey);
-                        getLogger().e("[BitmapLoader]disk load failed, bitmap is null, trying to net load, url<" + url + "> cacheKey<" + cacheKey + ">");
+                        getLogger().e("[BitmapLoader]disk load failed, bitmap decode failed, trying to net load, url<" + url + "> cacheKey<" + cacheKey + ">");
                         //尝试从网络重新加载
                         return RESULT_CONTINUE;
                     }
                     //若此时任务已被取消, 则废弃位图
                     if (isCancel()){
-                        mCachedBitmapUtils.unused(cacheKey);
                         return RESULT_CANCELED;
                     }
+                    //存入内存缓存
+                    mBitmapCache.put(cacheKey, bitmap);
                     return RESULT_SUCCEED;
                 } else {
                     return RESULT_CONTINUE;
@@ -775,8 +776,8 @@ public class BitmapLoader {
             if (isCancel) {
                 if (mOnBitmapLoadedListener != null)
                     mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
-                if (mCachedBitmapUtils != null)
-                    mCachedBitmapUtils.unused(cacheKey);
+                if (mBitmapCache != null)
+                    mBitmapCache.unused(cacheKey);
                 if (getLogger() != null) {
                     getLogger().d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                 }
@@ -784,8 +785,8 @@ public class BitmapLoader {
             }
             switch ((int) result) {
                 case RESULT_SUCCEED:
-                    if (mOnBitmapLoadedListener != null && mCachedBitmapUtils != null)
-                        mOnBitmapLoadedListener.onLoadSucceed(url, reqWidth, reqHeight, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
+                    if (mOnBitmapLoadedListener != null && mBitmapCache != null)
+                        mOnBitmapLoadedListener.onLoadSucceed(url, reqWidth, reqHeight, getParams(), mBitmapCache.get(cacheKey));
                     if (getLogger() != null) {
                         getLogger().d("[BitmapLoader]load:succeed:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
@@ -793,8 +794,8 @@ public class BitmapLoader {
                 case RESULT_FAILED:
                     if (mOnBitmapLoadedListener != null)
                         mOnBitmapLoadedListener.onLoadFailed(url, reqWidth, reqHeight, getParams());
-                    if (mCachedBitmapUtils != null)
-                        mCachedBitmapUtils.unused(cacheKey);
+                    if (mBitmapCache != null)
+                        mBitmapCache.unused(cacheKey);
                     if (getLogger() != null) {
                         getLogger().d("[BitmapLoader]load:failed:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
@@ -802,8 +803,8 @@ public class BitmapLoader {
                 case RESULT_CANCELED:
                     if (mOnBitmapLoadedListener != null)
                         mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
-                    if (mCachedBitmapUtils != null)
-                        mCachedBitmapUtils.unused(cacheKey);
+                    if (mBitmapCache != null)
+                        mBitmapCache.unused(cacheKey);
                     if (getLogger() != null) {
                         getLogger().d("[BitmapLoader]load:canceled:  from:DiskCache url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
@@ -852,8 +853,8 @@ public class BitmapLoader {
                 getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mDiskLruCache is null"));
                 return RESULT_CANCELED;
             }
-            if (mCachedBitmapUtils == null) {
-                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]cachedBitmapUtils is null"));
+            if (mBitmapCache == null) {
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mBitmapCache is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
@@ -863,14 +864,14 @@ public class BitmapLoader {
             try {
                 //结果容器
                 messenger = new BitmapLoaderMessenger();
-                //从网络加载Bitmap
+                //从网络加载图片数据
                 getNetLoadHandler().loadFromNet(url, reqWidth, reqHeight, messenger);
-                //阻塞等待并获取结果Bitmap
+                //阻塞等待并获取结果数据
                 int result = messenger.getResult();
                 if (result == BitmapLoaderMessenger.RESULT_SUCCEED){
-                    //结果为加载成功,且Bitmap正常的情况
-                    if (messenger.getBitmap() != null && !messenger.getBitmap().isRecycled()) {
-                        //写入文件缓存即使失败也不影响返回Bitmap
+                    //结果为加载成功,且数据正常的情况
+                    if (messenger.getData() != null && messenger.getData().length > 0) {
+                        //写入文件缓存即使失败也不影响返回
                         if (!diskCacheDisabled) {
                             try {
                                 //打开缓存编辑对象
@@ -882,11 +883,10 @@ public class BitmapLoader {
                                 //获得输出流, 用于写入缓存
                                 outputStream = editor.newOutputStream(0);
                                 //把图片写入缓存
-                                BitmapUtils.syncSaveBitmap(messenger.getBitmap(), outputStream, imageFormat, imageQuality, false, null);
+                                outputStream.write(messenger.getData());
                                 //尝试flush输出流
                                 try {
-                                    if (outputStream != null)
-                                        outputStream.flush();
+                                    outputStream.flush();
                                 } catch (Exception ignored) {
                                 }
                                 //写入缓存成功commit
@@ -911,29 +911,37 @@ public class BitmapLoader {
                                 }
                             }
                         }
-                        //若加载任务尚未被取消
-                        if (!isCancel()) {
-                            //加入内存缓存
-                            mCachedBitmapUtils.cacheBitmap(cacheKey, messenger.getBitmap());
-                            return RESULT_SUCCEED;
+
+                        if (isCancel()) {
+                            //若加载任务被取消,即使返回结果是加载成功,也只会存入缓存,不会返回成功的结果
+                            return RESULT_CANCELED;
                         }
-                        //若任务被取消, 则回收加载出的bitmap
-                        if (messenger.getBitmap() != null && !messenger.getBitmap().isRecycled()) {
-                            messenger.getBitmap().recycle();
+
+                        //解码图片
+                        Bitmap bitmap = getBitmapDecodeHandler().onDecode(url, reqWidth, reqHeight, messenger.getData());
+
+                        if (bitmap == null || bitmap.isRecycled()){
+                            //图片解码失败
+                            getLogger().e("[BitmapLoader]net loaded failed, data decoding to Bitmap failed, url<" + url + "> cacheKey<" + cacheKey + ">, dataHex<<" + ByteUtils.byteToHex(messenger.getData()) + ">>");
+                            return RESULT_FAILED;
                         }
-                        //若加载任务被取消,即使返回结果是加载成功,也只会存入缓存,不会返回成功的结果
-                        return RESULT_CANCELED;
+
+                        //加入内存缓存
+                        mBitmapCache.put(cacheKey, bitmap);
+                        //加载成功
+                        return RESULT_SUCCEED;
+
                     }else{
                         if (getLogger() != null){
-                            getLogger().e("[BitmapLoader]net loaded bitmap is null or recycled, url<" + url + "> cacheKey<" + cacheKey + ">");
+                            getLogger().e("[BitmapLoader]net loaded failed, data is null, url<" + url + "> cacheKey<" + cacheKey + ">");
                         }
                     }
                 } else if (result == BitmapLoaderMessenger.RESULT_CANCELED || result == BitmapLoaderMessenger.RESULT_INTERRUPTED) {
                     return RESULT_CANCELED;
                 } else {
                     //异常处理
-                    if (messenger.getThrowable() != null){
-                        getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, messenger.getThrowable());
+                    if (messenger.getException() != null){
+                        throw messenger.getException();
                     }
                 }
             } catch (Exception e) {
@@ -950,8 +958,8 @@ public class BitmapLoader {
             if (isCancel) {
                 if (mOnBitmapLoadedListener != null)
                     mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
-                if (mCachedBitmapUtils != null)
-                    mCachedBitmapUtils.unused(cacheKey);
+                if (mBitmapCache != null)
+                    mBitmapCache.unused(cacheKey);
                 if (getLogger() != null) {
                     getLogger().d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                 }
@@ -959,8 +967,8 @@ public class BitmapLoader {
             }
             switch ((int) result) {
                 case RESULT_SUCCEED:
-                    if (mOnBitmapLoadedListener != null && mCachedBitmapUtils != null)
-                        mOnBitmapLoadedListener.onLoadSucceed(url, reqWidth, reqHeight, getParams(), mCachedBitmapUtils.getBitmap(cacheKey));
+                    if (mOnBitmapLoadedListener != null && mBitmapCache != null)
+                        mOnBitmapLoadedListener.onLoadSucceed(url, reqWidth, reqHeight, getParams(), mBitmapCache.get(cacheKey));
                     if (getLogger() != null) {
                         getLogger().d("[BitmapLoader]load:succeed:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
@@ -968,8 +976,8 @@ public class BitmapLoader {
                 case RESULT_FAILED:
                     if (mOnBitmapLoadedListener != null)
                         mOnBitmapLoadedListener.onLoadFailed(url, reqWidth, reqHeight, getParams());
-                    if (mCachedBitmapUtils != null)
-                        mCachedBitmapUtils.unused(cacheKey);
+                    if (mBitmapCache != null)
+                        mBitmapCache.unused(cacheKey);
                     if (getLogger() != null) {
                         getLogger().d("[BitmapLoader]load:failed:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
@@ -977,8 +985,8 @@ public class BitmapLoader {
                 case RESULT_CANCELED:
                     if (mOnBitmapLoadedListener != null)
                         mOnBitmapLoadedListener.onLoadCanceled(url, reqWidth, reqHeight, getParams());
-                    if (mCachedBitmapUtils != null)
-                        mCachedBitmapUtils.unused(cacheKey);
+                    if (mBitmapCache != null)
+                        mBitmapCache.unused(cacheKey);
                     if (getLogger() != null) {
                         getLogger().d("[BitmapLoader]load:canceled:  from:NetLoad url<" + url + "> cacheKey<" + cacheKey + ">");
                     }
@@ -1070,6 +1078,19 @@ public class BitmapLoader {
         return mNetLoadHandler;
     }
 
+    private BitmapDecodeHandler getBitmapDecodeHandler() {
+        if (mBitmapDecodeHandler == null){
+            synchronized (this){
+                if (mBitmapDecodeHandler == null){
+                    mBitmapDecodeHandler = new DefaultBitmapDecodeHandler();
+                }
+            }
+        }
+        return mBitmapDecodeHandler;
+    }
+
+
+
     private CommonExceptionHandler getCommonExceptionHandler() {
         if (mCommonExceptionHandler == null){
             synchronized (this){
@@ -1109,7 +1130,7 @@ public class BitmapLoader {
     public BitmapCache getBitmapCache(){
         if (checkIsOpen())
             return null;
-        return mCachedBitmapUtils.getBitmapCache();
+        return mBitmapCache;
     }
 
 }

@@ -25,13 +25,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
 
 /**
  * 网络加载处理器默认实现<p/>
  *
- * 实现根据url地址, 通过HTTP/GET方式, 从网络下载图片的过程, 实现任务取消时, 强制终止网络加载的功能(可选)<p/>
+ * 实现根据url地址, 通过HTTP/GET方式, 从网络下载图片数据的过程, 实现任务取消时, 强制终止网络加载的功能(可选)<p/>
  *
  * 设置网络超时时间:<Br/>
  * <pre>{@code
@@ -43,7 +42,11 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
  * <pre>{@code
  *      //加载任务取消时, 不强制终止网络加载
  *      bitmapLoader.setNetLoadHandler(new DefaultNetLoadHandler(10000, 30000, false))
- * }</pre>
+ * }</pre><p/>
+ *
+ * 注意: 在该"网络加载处理器"中特殊处理图片数据, 磁盘缓存将保存改变后的数据, 而非原始数据. 这点与在
+ * {@link BitmapDecodeHandler}中进行图片特殊处理不同, NetLoadHandler适合进行较为复杂的图片处理,
+ * 因为仅影响网络加载时的效率, 磁盘缓存加载时直接加载处理后的数据, 效率较高<p/>
  *
  * Created by S.Violet on 2015/10/12.
  */
@@ -124,14 +127,8 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
                 while((len = inputStream.read(buffer)) != -1){
                     outputStream.write(buffer, 0, len);
                 }
-                byte[] data = outputStream.toByteArray();
-                if (data == null || data.length <= 0){
-                    //设置结果返回[重要]
-                    messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]data is null"));
-                    return;
-                }
                 //设置结果返回[重要]
-                messenger.setResultSucceed(BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight));
+                messenger.setResultSucceed(outputStream.toByteArray());
                 return;
             }
         } catch (IOException e) {

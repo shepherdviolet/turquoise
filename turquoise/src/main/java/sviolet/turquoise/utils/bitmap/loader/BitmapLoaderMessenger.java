@@ -19,8 +19,6 @@
 
 package sviolet.turquoise.utils.bitmap.loader;
 
-import android.graphics.Bitmap;
-
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -33,10 +31,10 @@ import java.util.concurrent.locks.ReentrantLock;
  * 1.返回处理结果:setResultSucceed/setResultFailed/setResultCanceled<br/>
  *      无论同步处理,还是异步处理,均通过这些方法返回结果,BitmapLoader加载任务会阻塞,
  *      直到setResultSucceed/setResultFailed/setResultCanceled方法被调用.结果仅允许设置一次.<br/>
- *      1)setResultSucceed(Bitmap),加载成功,返回Bitmap<br/>
- *      2)setResultFailed(Throwable),加载失败,返回异常,触发重新加载<br/>
+ *      1)setResultSucceed(byte[]),加载成功,返回图片数据<br/>
+ *      2)setResultFailed(Exception),加载失败,返回异常,触发重新加载<br/>
  *      3)setResultCanceled(),加载取消,不触发重新加载<br/>
- *      若加载任务已被取消(isCancelling() = true),但仍使用setResultSucceed返回结果,则Bitmap会被存入
+ *      若加载任务已被取消(isCancelling() = true),但仍使用setResultSucceed返回结果,则数据会被存入
  *      磁盘缓存,但BitmapLoader返回任务取消.<p/>
  *
  * 2.判断任务是否取消中:isCancelling<br/>
@@ -64,8 +62,8 @@ public class BitmapLoaderMessenger {
 
     private boolean isCancelling = false;//是否正在被取消(被cancel()方法取消)
 
-    private Bitmap bitmap;//结果图
-    private Throwable throwable;//异常
+    private byte[] data;//结果数据
+    private Exception exception;//异常
     private Runnable onCancelListener;//取消监听器
 
     private final ReentrantLock lock = new ReentrantLock();
@@ -78,15 +76,15 @@ public class BitmapLoaderMessenger {
     /**
      * [重要]返回结果:加载成功<br/>
      */
-    public void setResultSucceed(Bitmap bitmap){
+    public void setResultSucceed(byte[] data){
         lock.lock();
         try{
             //仅允许设置一次结果
             if (result != RESULT_NULL) {
                 return;
             }
-            this.bitmap = bitmap;
-            this.throwable = null;
+            this.data = data;
+            this.exception = null;
             this.result = RESULT_SUCCEED;
             condition.signalAll();
         }finally {
@@ -97,15 +95,15 @@ public class BitmapLoaderMessenger {
     /**
      * [重要]返回结果:加载失败<br/>
      */
-    public void setResultFailed(Throwable t){
+    public void setResultFailed(Exception e){
         lock.lock();
         try{
             //仅允许设置一次结果
             if (result != RESULT_NULL) {
                 return;
             }
-            this.bitmap = null;
-            this.throwable = t;
+            this.data = null;
+            this.exception = e;
             this.result = RESULT_FAILED;
             condition.signalAll();
         }finally {
@@ -123,8 +121,8 @@ public class BitmapLoaderMessenger {
             if (result != RESULT_NULL) {
                 return;
             }
-            this.bitmap = null;
-            this.throwable = null;
+            this.data = null;
+            this.exception = null;
             this.result = RESULT_CANCELED;
             condition.signalAll();
         }finally {
@@ -175,19 +173,19 @@ public class BitmapLoaderMessenger {
         return RESULT_CANCELED;
     }
 
-    Bitmap getBitmap(){
+    byte[] getData(){
         lock.lock();
         try{
-            return bitmap;
+            return data;
         } finally {
             lock.unlock();
         }
     }
 
-    Throwable getThrowable(){
+    Exception getException(){
         lock.lock();
         try{
-            return throwable;
+            return exception;
         } finally {
             lock.unlock();
         }
@@ -231,8 +229,8 @@ public class BitmapLoaderMessenger {
     void destroy(){
         lock.lock();
         try{
-            this.bitmap = null;
-            this.throwable = null;
+            this.data = null;
+            this.exception = null;
             this.onCancelListener = null;
         } finally {
             lock.unlock();

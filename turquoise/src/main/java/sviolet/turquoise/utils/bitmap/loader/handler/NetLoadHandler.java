@@ -19,13 +19,17 @@
 
 package sviolet.turquoise.utils.bitmap.loader.handler;
 
-import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
 
 /**
  * 网络加载处理器<p/>
  *
- * 实现BitmapLoader从网络加载图片的过程<p/>
+ * 实现BitmapLoader从网络加载图片数据的过程. 自定义该处理器, 通常用于改变网络加载方式(第三方网络框架),
+ * 或对下载的图片数据进行特殊处理, 例如:缩放/圆角处理等.<p/>
+ *
+ * 注意: 在该"网络加载处理器"中特殊处理图片数据, 磁盘缓存将保存改变后的数据, 而非原始数据. 这点与在
+ * {@link BitmapDecodeHandler}中进行图片特殊处理不同, NetLoadHandler适合进行较为复杂的图片处理,
+ * 因为仅影响网络加载时的效率, 磁盘缓存加载时直接加载处理后的数据, 效率较高<p/>
  *
  * @see DefaultNetLoadHandler
  *
@@ -34,9 +38,8 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
 public interface NetLoadHandler {
 
     /**
-     * 
-     * 实现根据url参数从网络下载图片数据, 依照需求尺寸reqWidth和reqHeight解析为合适大小的Bitmap,
-     * 并调用通知器BitmapLoaderMessenger.setResultSucceed/setResultFailed/setResultCanceled方法返回结果<br/>
+     * 实现根据url参数从网络下载图片数据(byte[])并调用通知器
+     * BitmapLoaderMessenger.setResultSucceed/setResultFailed/setResultCanceled方法返回结果<br/>
      * <br/>
      * *********************************************************************************<br/>
      * * * 注意::<br/>
@@ -44,23 +47,18 @@ public interface NetLoadHandler {
      * <br/>
      * 1.网络请求必须做超时处理,否则任务会一直阻塞等待.<br/>
      * <br/>
-     * 2.数据解析为Bitmap时,请根据需求尺寸reqWidth和reqHeight解析,以节省内存.<br/>
-     * {@link BitmapUtils} <br/>
-     *      需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).<br/>
-     *      图片解码时根据需求尺寸适当缩,且保持原图长宽比例,解码后Bitmap实际尺寸不等于需求尺寸.设置为0不缩小图片.<Br/>
-     * <br/>
-     * 3.必须使用BitmapLoaderMessenger.setResultSucceed/setResultFailed/setResultCanceled方法返回结果,
+     * 2.必须使用BitmapLoaderMessenger.setResultSucceed/setResultFailed/setResultCanceled方法返回结果,
      *      若不调用,图片加载任务中的BitmapLoaderMessenger.getResult()会一直阻塞等待结果.<br/>
-     *      1)setResultSucceed(Bitmap),加载成功,返回Bitmap<br/>
-     *      2)setResultFailed(Throwable),加载失败,返回异常<br/>
+     *      1)setResultSucceed(byte[]),加载成功,返回图片数据<br/>
+     *      2)setResultFailed(Exception),加载失败,返回异常<br/>
      *      3)setResultCanceled(),加载取消<br/>
-     *      若加载任务已被取消(isCancelling() = true),但仍使用setResultSucceed返回结果,则Bitmap会被存入
+     *      若加载任务已被取消(isCancelling() = true),但仍使用setResultSucceed返回结果,则图片数据会被存入
      *      磁盘缓存,但BitmapLoader返回任务取消.<br/>
      * <br/>
-     * 4.合理地处理加载任务取消的情况.<br/>
-     *      网络加载同步方式实现时,设置合理的连接超时,在循环读取数据时,判断messenger.isCancelling(),当取消时终止
-     *      读取,并setResultCanceled()返回.<br/>
-     *      异步网络框架实现时,设置取消监听器messenger.setOnCancelListener(),在回调方法中取消网络加载.<br/>
+     * 3.合理地处理加载任务取消的情况.<br/>
+     *      网络加载同步方式实现时,设置合理的连接超时,在循环读取数据时,判断messenger.isCancelling(),
+     *      当取消时终止读取,并setResultCanceled()返回.异步网络框架实现时,设置取消监听器
+     *      messenger.setOnCancelListener(),在回调方法中取消网络加载.<br/>
      *      1)当加载任务取消,终止网络加载,并用BitmapLoaderMessenger.setResultCanceled()返回结果<br/>
      *          采用此种方式,已加载的数据废弃,BitmapLoader作为任务取消处理,不会返回Bitmap.<br/>
      *      2)当加载任务取消,继续完成网络加载,并用BitmapLoaderMessenger.setResultSucceed(Bitmap)返回结果<br/>
@@ -96,7 +94,7 @@ public interface NetLoadHandler {
      *              httpUtils.send( ... , new Callback(){
      *                  ... onSucceed(byte[] result){
      *                      //返回成功结果[必须]
-     *                      messenger.setResultSucceed(BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight));
+     *                      messenger.setResultSucceed(result);
      *                  }
      *                  ... onFailed(...){
      *                      //返回失败结果[必须]
