@@ -36,6 +36,7 @@ import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHa
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultNetLoadHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.DiskCacheExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler;
+import sviolet.turquoise.utils.bitmap.loader.task.SimpleBitmapLoaderTaskFactory;
 import sviolet.turquoise.utils.cache.BitmapCache;
 import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
 
@@ -210,10 +211,12 @@ public class SimpleBitmapLoader {
      */
 
     /**
-     * 
-     * 异步加载ImageView<br/>
-     * <br/>
-     * 注意:<Br/>
+     * 异步加载控件图片<p/>
+     *
+     * 目前支持控件, 详见{@link SimpleBitmapLoaderTaskFactory}:<br/>
+     * 1.ImageView<br/>
+     *
+     * <br/>注意:<Br/>
      * 1.该方法会弃用(unused)先前绑定在控件上的加载任务<br/>
      * 2.一个View不会重复加载相同的url<br/>
      * 3.切勿自行给控件设置TAG(View.setTag()), 会无法加载!<br/>
@@ -231,15 +234,15 @@ public class SimpleBitmapLoader {
      * @param reqHeight 需求高度
      * @param view 被加载的控件(禁止使用View.setTag())
      */
-    public void load(String url, int reqWidth, int reqHeight, ImageView view){
+    public void load(String url, int reqWidth, int reqHeight, View view){
         if (checkInput(url, reqWidth, reqHeight, view))
             return;
-        new ImageViewLoaderTask(url, reqWidth, reqHeight, this, view);
+        SimpleBitmapLoaderTaskFactory.newTask(url, reqWidth, reqHeight, this, view);
     }
 
     /**
      * 
-     * 异步加载背景图<br/>
+     * 异步加载控件背景图<br/>
      * <br/>
      * 注意:<Br/>
      * 1.该方法会弃用(unused)先前绑定在控件上的加载任务<br/>
@@ -262,7 +265,7 @@ public class SimpleBitmapLoader {
     public void loadBackground(String url, int reqWidth, int reqHeight, View view){
         if (checkInput(url, reqWidth, reqHeight, view))
             return;
-        new BackgroundLoaderTask(url, reqWidth, reqHeight, this, view);
+        SimpleBitmapLoaderTaskFactory.newBackgroundTask(url, reqWidth, reqHeight, this, view);
     }
 
     /**

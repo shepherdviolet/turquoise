@@ -36,7 +36,7 @@ import sviolet.turquoise.enhanced.TActivity;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
-import sviolet.turquoise.utils.bitmap.loader.OnBitmapLoadedListener;
+import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.GradualImageView;
 

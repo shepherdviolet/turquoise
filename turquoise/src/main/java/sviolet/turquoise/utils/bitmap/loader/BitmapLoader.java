@@ -38,6 +38,7 @@ import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHa
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultNetLoadHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.DiskCacheExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler;
+import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.cache.BitmapCache;
 import sviolet.turquoise.utils.cache.DiskLruCache;
 import sviolet.turquoise.utils.conversion.ByteUtils;

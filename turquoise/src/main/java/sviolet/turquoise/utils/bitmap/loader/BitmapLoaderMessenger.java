@@ -22,10 +22,13 @@ package sviolet.turquoise.utils.bitmap.loader;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler;
+
 /**
  * 
- * BitmapLoader通知器<br/>
- * 用于BitmapLoader任务线程与异步网络请求间的通知<br/>
+ * BitmapLoader异步结果通知器<p/>
+ *
+ * 用于{@link BitmapLoader}网络加载处理器{@link NetLoadHandler}中任务线程与网络请求线程间的结果通知<br/>
  * <br/>
  * 用途:<Br/>
  * 1.返回处理结果:setResultSucceed/setResultFailed/setResultCanceled<br/>

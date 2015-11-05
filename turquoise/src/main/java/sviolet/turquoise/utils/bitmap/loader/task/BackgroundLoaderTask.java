@@ -17,29 +17,39 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utils.bitmap.loader;
+package sviolet.turquoise.utils.bitmap.loader.task;
 
+import android.annotation.TargetApi;
 import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
+import android.os.Build;
+import android.view.View;
+
+import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoaderTask;
+import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
- * ImageView异步加载任务<br/>
+ * View背景异步加载任务<br/>
  * Created by S.Violet on 2015/10/19.
  */
-public class ImageViewLoaderTask extends SimpleBitmapLoaderTask<ImageView> {
+class BackgroundLoaderTask extends SimpleBitmapLoaderTask<View> {
 
-
-    ImageViewLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, ImageView view) {
+    BackgroundLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, View view) {
         super(url, reqWidth, reqHeight, loader, view);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    protected void setDrawable(ImageView view, Drawable drawable) {
-        view.setImageDrawable(drawable);
+    protected void setDrawable(View view, Drawable drawable) {
+        if (DeviceUtils.getVersionSDK() >= 16) {
+            view.setBackground(drawable);
+        }else{
+            view.setBackgroundDrawable(drawable);
+        }
     }
 
     @Override
-    protected Drawable getDrawable(ImageView view) {
-        return view.getDrawable();
+    protected Drawable getDrawable(View view) {
+        return view.getBackground();
     }
 }
