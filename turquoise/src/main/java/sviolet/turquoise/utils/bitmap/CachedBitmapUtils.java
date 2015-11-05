@@ -448,15 +448,6 @@ public class CachedBitmapUtils {
      *********************************************/
 
     /**
-     * bitmap转为base64[回收源Bitmap]
-     *
-     * @param bitmap
-     */
-    public String bitmapToBase64(Bitmap bitmap) {
-        return BitmapUtils.bitmapToBase64(bitmap, true);
-    }
-
-    /**
      * 按比例缩放图片[回收源Bitmap]
      *
      * @param key 唯一标识,若送空(null),会自动分配一个不重复的key

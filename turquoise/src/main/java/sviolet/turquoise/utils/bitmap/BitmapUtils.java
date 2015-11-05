@@ -238,9 +238,11 @@ public class BitmapUtils {
      * bitmap转为byteArray
      *
      * @param bitmap 原图
+     * @param format 图片转码格式
+     * @param quality 图片转码质量(0, 100]
      * @param recycle 是否回收源Bitmap
      */
-    public static byte[] bitmapToByteArray(Bitmap bitmap, boolean recycle) throws IOException {
+    public static byte[] bitmapToByteArray(Bitmap bitmap, Bitmap.CompressFormat format, int quality, boolean recycle) throws IOException {
         if (bitmap == null || bitmap.isRecycled()){
             throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
         }
@@ -249,7 +251,7 @@ public class BitmapUtils {
         ByteArrayOutputStream byteArrayOutputStream = null;
         try {
             byteArrayOutputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+            bitmap.compress(format, quality, byteArrayOutputStream);
             byteArrayOutputStream.flush();
             bitmapBytes = byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
@@ -275,10 +277,12 @@ public class BitmapUtils {
      * bitmap转为base64
      *
      * @param bitmap 原图
+     * @param format 图片转码格式
+     * @param quality 图片转码质量(0, 100]
      * @param recycle 是否回收源Bitmap
      */
-    public static String bitmapToBase64(Bitmap bitmap, boolean recycle) throws IOException {
-        byte[] byteArray = bitmapToByteArray(bitmap, recycle);
+    public static String bitmapToBase64(Bitmap bitmap, Bitmap.CompressFormat format, int quality, boolean recycle) throws IOException {
+        byte[] byteArray = bitmapToByteArray(bitmap, format, quality, recycle);
         if (byteArray == null || byteArray.length <= 0){
             return "";
         }
