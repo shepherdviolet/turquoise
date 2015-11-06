@@ -174,7 +174,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
                     outputStream.write(buffer, 0, len);
                 }
                 //设置结果返回[重要]
-                messenger.setResultSucceed(compress(outputStream.toByteArray(), url, reqWidth, reqHeight, loader, messenger));
+                messenger.setResultSucceed(onCompress(outputStream.toByteArray(), url, reqWidth, reqHeight, loader, messenger));
                 return;
             }
         } catch (IOException e) {
@@ -213,7 +213,10 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
 
     }
 
-    private byte[] compress(byte[] data, String url, int reqWidth, int reqHeight, BitmapLoader loader, BitmapLoaderMessenger messenger){
+    /**
+     * 压缩处理
+     */
+    protected byte[] onCompress(byte[] data, String url, int reqWidth, int reqHeight, BitmapLoader loader, BitmapLoaderMessenger messenger){
         //压缩原图片
         if (compress && data != null && data.length > 0){
             int decodeWidth;
@@ -257,6 +260,14 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
                 }
             }
 
+            //特殊压缩处理
+            bitmap = onSpecialCompress(bitmap, url, reqWidth, reqHeight, loader, messenger);
+            if (bitmap == null || bitmap.isRecycled()){
+                messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]compress: onSpecialCompress failed"));
+                return null;
+            }
+
+            //转码
             try {
                 data = BitmapUtils.bitmapToByteArray(bitmap, compressFormat, compressQuality, true);
             } catch (IOException e) {
@@ -266,4 +277,13 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
         }
         return data;
     }
+
+    /**
+     * 特殊压缩处理, 允许压缩的情况下可复写该方法<br/>
+     * 对bitmap进行特殊处理并返回<br/>
+     */
+    protected Bitmap onSpecialCompress(Bitmap bitmap, String url, int reqWidth, int reqHeight, BitmapLoader loader, BitmapLoaderMessenger messenger){
+        return bitmap;
+    }
+
 }
