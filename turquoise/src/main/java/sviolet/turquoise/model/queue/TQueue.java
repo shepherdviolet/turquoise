@@ -136,12 +136,18 @@ public class TQueue {
                         oldTask.cancel();
                     //继续执行,新任务加入等待队列
                 }else if(keyConflictPolicy == KEY_CONFLICT_POLICY_FOLLOW){
-                    //新的任务跟随老的任务
-                    runningTasks.get(key).addFollower(task);
-                    return;
+                    if (runningTasks.get(key).getState() >= TTask.STATE_COMPLETE){
+                        //若正在执行的原任务已被取消或已执行完毕, 则移除原任务
+                        runningTasks.remove(key);
+                        //继续执行,新任务加入等待队列
+                    }else {
+                        //新的任务跟随老的任务
+                        runningTasks.get(key).addFollower(task);
+                        return;
+                    }
                 }else{//KEY_CONFLICT_POLICY_CANCEL
-                    if (runningTasks.get(key).isCancel()){
-                        //若正在执行的原任务已被取消, 则移除原任务
+                    if (runningTasks.get(key).getState() >= TTask.STATE_COMPLETE){
+                        //若正在执行的原任务已被取消或已执行完毕, 则移除原任务
                         runningTasks.remove(key);
                         //继续执行,新任务加入等待队列
                     }else {
