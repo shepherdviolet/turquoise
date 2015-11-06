@@ -1134,10 +1134,12 @@ public class BitmapLoader {
                 getLogger().e("[BitmapLoader]can't use destroyed BitmapLoader");
             return true;
         }
-        //启用失败, 检查日志, 解决问题, 可重新open()
+        /*
+            出现该情况, 看DefaultDiskCacheExceptionHandler设置方法, 或直接调用openWithoutDiskCache()方法
+         */
         if (state == STATE_OPEN_FAILED){
             if (getLogger() != null)
-                getLogger().e("[BitmapLoader]open failed, can't use, please checking logs");
+                getLogger().e("[BitmapLoader]DiskCache open failed, can't use, see DefaultDiskCacheExceptionHandler or use openWithoutDiskCache()");
             return true;
         }
         //未启用
