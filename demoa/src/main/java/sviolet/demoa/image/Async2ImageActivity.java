@@ -87,13 +87,17 @@ public class Async2ImageActivity extends TActivity {
                 .setLogger(getLogger())//打印日志
                 .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
                 .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
-                .setDiskCacheExceptionHandler(new DefaultDiskCacheExceptionHandler(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (adapter != null)
-                            adapter.notifyDataSetChanged();
-                    }
-                }))//TODO 注释
+                .setDiskCacheExceptionHandler(new DefaultDiskCacheExceptionHandler(
+                                DefaultDiskCacheExceptionHandler.OpenFailedHandleMode.CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT
+                        )
+                        .setViewRefreshListener(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (adapter != null)
+                                    adapter.notifyDataSetChanged();
+                            }
+                        })
+                )//TODO 注释
                 .create();
 
         //设置适配器, 传入图片加载器, 图片解码工具

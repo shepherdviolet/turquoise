@@ -83,13 +83,17 @@ public class AsyncImageActivity extends TActivity {
 //                    .setDiskCacheInner()//强制使用内部储存
 //                    .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
                 .setLogger(getLogger())//打印日志
-                .setDiskCacheExceptionHandler(new DefaultDiskCacheExceptionHandler(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (adapter != null)
-                            adapter.notifyDataSetChanged();
-                    }
-                }))//TODO 注释
+                .setDiskCacheExceptionHandler(new DefaultDiskCacheExceptionHandler(
+                                DefaultDiskCacheExceptionHandler.OpenFailedHandleMode.CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT
+                        )
+                                .setViewRefreshListener(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (adapter != null)
+                                            adapter.notifyDataSetChanged();
+                                    }
+                                })
+                )//TODO 注释
                 .create();
 
         //设置适配器, 传入图片加载器, 图片解码工具

@@ -37,24 +37,186 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  */
 public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandler {
 
-    private Runnable onViewRefreshListener;
+    private OpenFailedHandleMode mode;//磁盘缓存打开失败处理模式
+    private Runnable viewRefreshListener;//显示刷新回调(CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT/OPEN_WITHOUT_DISK_CACHE_SILENCE)
 
+    /**
+     * 磁盘缓存打开失败时弹出对话框提示, 不继续加载图片
+     */
     public DefaultDiskCacheExceptionHandler() {
-
+        this(OpenFailedHandleMode.NOTICE_ONLY_BY_DIALOG);
     }
 
-    public DefaultDiskCacheExceptionHandler(Runnable onViewRefreshListener) {
-        this.onViewRefreshListener = onViewRefreshListener;
+    /**
+     * 磁盘缓存打开失败的处理模式:<p/>
+     *
+     * OpenFailedHandleMode.NOTICE_ONLY_BY_DIALOG : <br/>
+     * 仅弹出对话框提示, 停止加载图片<p/>
+     *
+     * OpenFailedHandleMode.NOTICE_ONLY_BY_TOAST : <br/>
+     * 仅弹出Toast提示, 停止加载图片<p/>
+     *
+     * OpenFailedHandleMode.CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT : <br/>
+     * 弹出对话框提示, 由用户选择是否继续加载图片(禁用磁盘缓存),
+     * 建议配合setViewRefreshListener()方法使用, 在启用磁盘缓存禁用模式后,
+     * 会回调该监听器, 用来刷新显示(重新加载图片).<p/>
+     *
+     * OpenFailedHandleMode.OPEN_WITHOUT_DISK_CACHE_SILENCE : <br/>
+     * 静默处理, 继续加载图片(禁用磁盘缓存),
+     * 建议配合setViewRefreshListener()方法使用, 在启用磁盘缓存禁用模式后,
+     * 会回调该监听器, 用来刷新显示(重新加载图片).<p/>
+     *
+     * @param mode 磁盘缓存打开失败的处理模式
+     */
+    public DefaultDiskCacheExceptionHandler(OpenFailedHandleMode mode) {
+        this.mode = mode;
+    }
+
+    /**
+     * 在启用磁盘缓存禁用模式后, 会回调该监听器, 用来刷新显示(重新加载图片).<p/>
+     *
+     * 适用于如下模式:<br/>
+     * OpenFailedHandleMode.CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT <br/>
+     * OpenFailedHandleMode.OPEN_WITHOUT_DISK_CACHE_SILENCE <br/>
+     *
+     * @param viewRefreshListener 在启用磁盘缓存禁用模式后, 会回调该监听器, 用来刷新显示(重新加载图片)
+     */
+    public DefaultDiskCacheExceptionHandler setViewRefreshListener(Runnable viewRefreshListener){
+        this.viewRefreshListener = viewRefreshListener;
+        return this;
     }
 
     @Override
-    public void onCacheOpenException(final Context context, final BitmapLoader bitmapLoader, Throwable throwable) {
+    public void onCacheOpenException(Context context, BitmapLoader bitmapLoader, Throwable throwable) {
+
+        //打印日志
+        if (bitmapLoader != null && bitmapLoader.getLogger() != null) {
+            bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]onFailed, use BitmapLoader.Builder.setDiskCacheExceptionHandler to custom processing", throwable);
+        }else{
+            throwable.printStackTrace();
+        }
+
+        //提示或开启磁盘缓存禁用模式
+        try {
+            switch (mode) {
+                case NOTICE_ONLY_BY_DIALOG://仅弹出对话框提示, 停止加载图片
+                    noticeOnlyByDialog(context, bitmapLoader);
+                    break;
+                case NOTICE_ONLY_BY_TOAST://仅弹出Toast提示, 停止加载图片
+                    noticeOnlyByToast(context, bitmapLoader);
+                    break;
+                case CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT://弹出对话框提示, 由用户选择是否继续加载图片(禁用磁盘缓存)
+                    choiceToOpenWithoutDiskCacheOrNot(context, bitmapLoader);
+                    break;
+                case OPEN_WITHOUT_DISK_CACHE_SILENCE://静默处理, 继续加载图片(禁用磁盘缓存)
+                    openWithoutDiskCacheSilence(bitmapLoader);
+                    break;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onCacheWriteException(Context context, BitmapLoader bitmapLoader, Throwable throwable) {
+        throwable.printStackTrace();
+    }
+
+    @Override
+    public void onDestroy() {
+
+    }
+
+    /**
+     * 磁盘缓存打开失败处理方式
+     */
+    public enum OpenFailedHandleMode{
+        NOTICE_ONLY_BY_DIALOG,//仅弹出对话框提示, 停止加载图片
+        NOTICE_ONLY_BY_TOAST,//仅弹出Toast提示, 停止加载图片
+        CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT,//弹出对话框提示, 由用户选择是否继续加载图片(禁用磁盘缓存)
+        OPEN_WITHOUT_DISK_CACHE_SILENCE//静默处理, 继续加载图片(禁用磁盘缓存)
+    }
+
+
+    private void noticeOnlyByDialog(final Context context, BitmapLoader bitmapLoader){
+        if (context == null){
+            if (bitmapLoader != null && bitmapLoader.getLogger() != null)
+                bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]context is null, can't show dialog");
+            return;
+        }
+
+        final String dialogTitle;
+        final String dialogMessage;
+        final String buttonMessageYes;
+
+        if (DeviceUtils.isLocaleZhCn(context)){
+            dialogTitle = "图片缓存访问失败, 无法加载图片";
+            dialogMessage = "1.检查内存是否已满.\n" +
+                    "2.尝试重启手机.";
+            buttonMessageYes = "确认";
+        }else{
+            dialogTitle = "ImageCache open failed, can't load image";
+            dialogMessage = "1.Check if the memory is full.\n" +
+                    "2.Try to reboot this device.";
+            buttonMessageYes = "confirm";
+        }
+
+        //提醒客户缓存访问失败, 由用户选择是否禁用磁盘缓存继续加载图片
+        Dialog alertDialog = new AlertDialog.Builder(context)
+                .setTitle(dialogTitle)
+                .setMessage(dialogMessage)
+                .setCancelable(false)
+                .setPositiveButton(buttonMessageYes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                })
+                .create();
+
+        //显示提示框
+        alertDialog.show();
+    }
+
+    private void noticeOnlyByToast(Context context, BitmapLoader bitmapLoader){
+        if (context == null){
+            if (bitmapLoader != null && bitmapLoader.getLogger() != null)
+                bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]context is null, can't show toast");
+            return;
+        }
+
+        final String toastMessage;
+
+        if (DeviceUtils.isLocaleZhCn(context)){
+            toastMessage = "图片缓存访问失败, 无法加载图片";
+        }else{
+            toastMessage = "ImageCache open failed, can't load image";
+        }
+
+        Toast.makeText(context, toastMessage, Toast.LENGTH_LONG).show();
+
+    }
+
+    private void openWithoutDiskCacheSilence (BitmapLoader bitmapLoader){
         if (bitmapLoader == null)
             return;
 
-        //打印日志
+        bitmapLoader.openWithoutDiskCache();//禁用磁盘缓存后启动
+
         if (bitmapLoader.getLogger() != null)
-            bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]onFailed, use BitmapLoader.Builder.setDiskCacheExceptionHandler to custom processing", throwable);
+            bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]openWithoutDiskCacheSilence");
+
+        if (viewRefreshListener != null)
+            viewRefreshListener.run();
+    }
+
+    private void choiceToOpenWithoutDiskCacheOrNot(final Context context, final BitmapLoader bitmapLoader) {
+
+        if (bitmapLoader == null) {
+            noticeOnlyByDialog(context, bitmapLoader);
+            return;
+        }
 
         if (context == null){
             if (bitmapLoader.getLogger() != null)
@@ -100,8 +262,8 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
                     public void onClick(DialogInterface dialog, int which) {
                         bitmapLoader.openWithoutDiskCache();//禁用磁盘缓存后启动
 
-                        if (onViewRefreshListener != null)
-                            onViewRefreshListener.run();
+                        if (viewRefreshListener != null)
+                            viewRefreshListener.run();
                     }
                 })
                 .setNegativeButton(buttonMessageNo, new DialogInterface.OnClickListener() {
@@ -116,13 +278,4 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
         alertDialog.show();
     }
 
-    @Override
-    public void onCacheWriteException(Context context, BitmapLoader bitmapLoader, Throwable throwable) {
-        throwable.printStackTrace();
-    }
-
-    @Override
-    public void onDestroy() {
-
-    }
 }
