@@ -60,4 +60,10 @@ public interface BitmapDecodeHandler {
      */
     public Bitmap onDecode(String url, int reqWidth, int reqHeight, String filePath) throws Exception;
 
+    /**
+     * 当BitmapLoader销毁时,会回调该方法,用于销毁处理器成员<br/>
+     * 可不实现<Br/>
+     */
+    public void onDestroy();
+
 }

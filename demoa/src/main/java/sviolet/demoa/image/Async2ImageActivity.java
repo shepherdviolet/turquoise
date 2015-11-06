@@ -75,7 +75,7 @@ public class Async2ImageActivity extends TActivity {
             */
 
         //初始化图片加载器
-        simpleBitmapLoader = new SimpleBitmapLoader(this, "AsyncImageActivity",
+        simpleBitmapLoader = new SimpleBitmapLoader.Builder(this, "AsyncImageActivity",
                 BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null))
                 .setNetLoadHandler(new MyNetLoadHandler(this))//自定义网络加载实现
                 .setRamCache(0.15f, 0.15f)//缓存和回收站各占15%内存
@@ -93,8 +93,8 @@ public class Async2ImageActivity extends TActivity {
                         if (adapter != null)
                             adapter.notifyDataSetChanged();
                     }
-                }));//TODO 注释
-        simpleBitmapLoader.open();//启动(必须)
+                }))//TODO 注释
+                .create();
 
         //设置适配器, 传入图片加载器, 图片解码工具
         adapter = new AsyncImageAdapter2(this, makeItemList(), simpleBitmapLoader);

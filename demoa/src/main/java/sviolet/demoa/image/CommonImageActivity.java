@@ -355,15 +355,15 @@ public class CommonImageActivity extends TActivity {
          * 务必调用loader.unused()方法, 废弃图片, 便于资源回收
          */
 
-        bitmapLoader = new BitmapLoader(this, "AsyncImageActivity")
+        bitmapLoader = new BitmapLoader.Builder(this, "AsyncImageActivity")
 //                .setNetLoadHandler(new DefaultNetLoadHandler(5000, 20000).setCompress(Bitmap.CompressFormat.JPEG, 70, 100, 0))//设置超时时间/原图压缩, 也可以自定义实现网络加载
                 .setRamCache(0.1f, 0.1f)//缓存和回收站各占10%内存
                 .setDiskCache(50, 5, 10)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量10
                 .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
 //                .setDiskCacheInner()//强制使用内部储存
 //                .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
-                .setLogger(getLogger());//打印日志
-        bitmapLoader.open();//启动(必须)
+                .setLogger(getLogger())//打印日志
+                .create();
 
         /**
          * BitmapLoader普通方式加载图片
@@ -401,7 +401,7 @@ public class CommonImageActivity extends TActivity {
          * 务必调用loader.unused()方法, 废弃图片, 便于资源回收
          */
 
-        simpleBitmapLoader = new SimpleBitmapLoader(this, "AsyncImageActivity",
+        simpleBitmapLoader = new SimpleBitmapLoader.Builder(this, "AsyncImageActivity",
                 BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null))
 //                .setNetLoadHandler(new DefaultNetLoadHandler(5000, 20000).setCompress(Bitmap.CompressFormat.JPEG, 70, 100, 0))//设置超时时间/原图压缩, 也可以自定义实现网络加载
                 .setRamCache(0.1f, 0.1f)//缓存和回收站各占15%内存
@@ -412,8 +412,8 @@ public class CommonImageActivity extends TActivity {
 //                    .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
                 .setLogger(getLogger())//打印日志
                 .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
-                .setReloadTimesMax(2);//设置图片加载失败重新加载次数限制
-        simpleBitmapLoader.open();//启动(必须)
+                .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
+                .create();
 
         /**
          * SimpleBitmapLoader加载图片

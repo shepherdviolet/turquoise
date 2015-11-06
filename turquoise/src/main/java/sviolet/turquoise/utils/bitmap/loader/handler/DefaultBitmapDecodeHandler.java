@@ -49,4 +49,9 @@ public class DefaultBitmapDecodeHandler implements BitmapDecodeHandler{
     public Bitmap onDecode(String url, int reqWidth, int reqHeight, String filePath) {
         return BitmapUtils.decodeFromFile(filePath, reqWidth, reqHeight);
     }
+
+    @Override
+    public void onDestroy() {
+
+    }
 }

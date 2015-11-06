@@ -75,7 +75,7 @@ public class AsyncImageActivity extends TActivity {
             */
 
         //初始化图片加载器
-        mBitmapLoader = new BitmapLoader(this, "AsyncImageActivity")
+        mBitmapLoader = new BitmapLoader.Builder(this, "AsyncImageActivity")
                 .setNetLoadHandler(new MyNetLoadHandler(this))//自定义网络加载实现
                 .setRamCache(0.15f, 0.15f)//缓存和回收站各占10%内存
                 .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
@@ -89,8 +89,8 @@ public class AsyncImageActivity extends TActivity {
                         if (adapter != null)
                             adapter.notifyDataSetChanged();
                     }
-                }));//TODO 注释
-        mBitmapLoader.open();//启动(必须)
+                }))//TODO 注释
+                .create();
 
         //设置适配器, 传入图片加载器, 图片解码工具
         adapter = new AsyncImageAdapter(this, makeItemList(), mBitmapLoader, getCachedBitmapUtils());

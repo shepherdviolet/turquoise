@@ -38,4 +38,8 @@ public class DefaultCommonExceptionHandler implements CommonExceptionHandler {
         throwable.printStackTrace();
     }
 
+    @Override
+    public void onDestroy() {
+
+    }
 }

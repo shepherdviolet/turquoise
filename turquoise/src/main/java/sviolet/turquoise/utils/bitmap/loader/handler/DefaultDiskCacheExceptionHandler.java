@@ -54,11 +54,11 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
 
         //打印日志
         if (bitmapLoader.getLogger() != null)
-            bitmapLoader.getLogger().e("[DefaultOnDiskCacheOpenFailedListener]onFailed, use BitmapLoader.setOnDiskCacheOpenFailedListener to custom processing", throwable);
+            bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]onFailed, use BitmapLoader.Builder.setDiskCacheExceptionHandler to custom processing", throwable);
 
         if (context == null){
             if (bitmapLoader.getLogger() != null)
-                bitmapLoader.getLogger().e("[DefaultOnDiskCacheOpenFailedListener]context is null, can't show dialog");
+                bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]context is null, can't show dialog");
             return;
         }
 
@@ -98,7 +98,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
                 .setPositiveButton(buttonMessageYes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        bitmapLoader.setDiskCacheDisabled().open();//禁用磁盘缓存后启动
+                        bitmapLoader.openWithoutDiskCache();//禁用磁盘缓存后启动
 
                         if (onViewRefreshListener != null)
                             onViewRefreshListener.run();
@@ -119,5 +119,10 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
     @Override
     public void onCacheWriteException(Context context, BitmapLoader bitmapLoader, Throwable throwable) {
         throwable.printStackTrace();
+    }
+
+    @Override
+    public void onDestroy() {
+
     }
 }

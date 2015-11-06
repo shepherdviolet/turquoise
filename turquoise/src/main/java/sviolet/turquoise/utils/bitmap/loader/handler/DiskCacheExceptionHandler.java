@@ -60,4 +60,10 @@ public interface DiskCacheExceptionHandler {
      */
     public void onCacheWriteException(Context context, BitmapLoader bitmapLoader, Throwable throwable);
 
+    /**
+     * 当BitmapLoader销毁时,会回调该方法,用于销毁处理器成员<br/>
+     * 可不实现<Br/>
+     */
+    public void onDestroy();
+
 }

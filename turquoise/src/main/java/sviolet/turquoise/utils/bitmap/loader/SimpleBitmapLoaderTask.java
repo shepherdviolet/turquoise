@@ -274,8 +274,8 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     }
 
     protected Resources getResources(){
-        if (getLoader() != null)
-            return getLoader().getResources();
+        if (getLoader() != null && getLoader().getContext() != null)
+            return getLoader().getContext().getResources();
         return null;
     }
 
