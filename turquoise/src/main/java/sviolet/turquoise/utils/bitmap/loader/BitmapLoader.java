@@ -162,6 +162,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *      使用SimpleBitmapLoader加载控件时, 控件禁止使用View.setTag()自行设置TAG,
  *      因为SimpleBitmapLoader会把SimpleBitmapLoaderTask通过setTag()绑定在控件上!<Br/>
  * <Br/>
+ * //TODO 磁盘缓存打开失败说明
  * <Br/>
  * 
  *
@@ -200,12 +201,15 @@ public class BitmapLoader {
 
     /**
      * [特殊]<br/>
-     * 禁用磁盘缓存后再次启动(流量增大风险,特殊场合使用)<p/>
+     * 禁用磁盘缓存后再次启动(流量增大风险)<p/>
      *
-     * 若内存缓存中不存在图片,则直接从网络加载,且加载后不存入磁盘缓存.用于磁盘缓存打不开的场合,
-     * 建议询问客户是否允许不使用磁盘缓存.<p/>
+     * 说明:<br/>
+     * 若内存缓存中不存在图片,则直接从网络加载,且加载后不存入磁盘缓存.<p/>
      *
-     * 注意:仅磁盘缓存打开失败的情况可用, 详情请看{@link DiskCacheExceptionHandler}.onCacheOpenException<Br/>
+     * 注意:仅磁盘缓存打开失败的情况可用, 在{@link DiskCacheExceptionHandler}.onCacheOpenException()
+     * 回调方法中调用.<p/>
+     *
+     * {@link DefaultDiskCacheExceptionHandler}已实现几种磁盘缓存打开失败的处理方式, 可直接配置使用.<br/>
      */
     public void openWithoutDiskCache(){
         if (state == STATE_OPEN_FAILED) {
