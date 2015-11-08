@@ -30,6 +30,7 @@ import java.util.concurrent.Executors;
 import sviolet.demoa.R;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
 
@@ -52,7 +53,7 @@ public class MyNetLoadHandler implements NetLoadHandler {
     }
 
     @Override
-    public void loadFromNet(final String url, final int reqWidth, final int reqHeight, BitmapLoader loader, final BitmapLoaderMessenger messenger) {
+    public void loadFromNet(final BitmapRequest request, BitmapLoader loader, final BitmapLoaderMessenger messenger) {
 
         ///////////////////////////////////////////////////
         //同步方式
@@ -116,7 +117,7 @@ public class MyNetLoadHandler implements NetLoadHandler {
                     //加载成功
                     //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
 //                    Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight);
-                    Bitmap bitmap = BitmapUtils.drawTextOnResource(context.getResources(), resourceIds[index], reqWidth, reqHeight, url, 0, 50, 50f, 0xFF000000);
+                    Bitmap bitmap = BitmapUtils.drawTextOnResource(context.getResources(), resourceIds[index], request.getReqWidth(), request.getReqHeight(), request.getUrl(), 0, 50, 50f, 0xFF000000);
 
                     //转为byteArray
                     byte[] data = null;
@@ -130,7 +131,7 @@ public class MyNetLoadHandler implements NetLoadHandler {
                     messenger.setResultSucceed(data);
                 }else{
                     //加载失败
-                    messenger.setResultFailed(new RuntimeException("time out : " + url));//返回异常
+                    messenger.setResultFailed(new RuntimeException("time out : " + request.getUrl()));//返回异常
                 }
             }
         });

@@ -26,6 +26,7 @@ import android.view.View;
 
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoaderTask;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
@@ -34,8 +35,8 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  */
 class BackgroundLoaderTask extends SimpleBitmapLoaderTask<View> {
 
-    BackgroundLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, View view) {
-        super(url, reqWidth, reqHeight, loader, view);
+    BackgroundLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, View view) {
+        super(request, loader, view);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)

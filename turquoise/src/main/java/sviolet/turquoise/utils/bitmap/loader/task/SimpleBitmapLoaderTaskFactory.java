@@ -24,6 +24,7 @@ import android.widget.ImageView;
 
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoaderTask;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 
 /**
  * SimpleBitmapLoader加载任务工厂<p/>
@@ -39,9 +40,9 @@ public class SimpleBitmapLoaderTaskFactory {
     /**
      * 控件图片加载任务
      */
-    public static SimpleBitmapLoaderTask newLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, View view){
+    public static SimpleBitmapLoaderTask newLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, View view){
         if (view instanceof ImageView){
-            return new ImageViewLoaderTask(url, reqWidth, reqHeight, loader, (ImageView)view);
+            return new ImageViewLoaderTask(request, loader, (ImageView)view);
         }
         throw new RuntimeException("[SimpleBitmapLoaderTaskFactory]This view is not supported to load by SimpleBitmapLoader, use BitmapLoader please");
     }
@@ -49,8 +50,8 @@ public class SimpleBitmapLoaderTaskFactory {
     /**
      * 控件背景图片加载任务
      */
-    public static SimpleBitmapLoaderTask newBackgroundLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, View view){
-        return new BackgroundLoaderTask(url, reqWidth, reqHeight, loader, view);
+    public static SimpleBitmapLoaderTask newBackgroundLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, View view){
+        return new BackgroundLoaderTask(request, loader, view);
     }
 
 }

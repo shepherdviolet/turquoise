@@ -29,6 +29,7 @@ import android.view.View;
 import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
 
@@ -64,12 +65,10 @@ import sviolet.turquoise.view.drawable.SafeBitmapDrawable;
  */
 public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmapLoadedListener {
 
-    private int reloadTimes = 0;//图片重新加载次数
+    private BitmapRequest request;
 
-    private String url;
-    private int reqWidth;
-    private int reqHeight;
-
+    //图片重新加载次数
+    private int reloadTimes = 0;
     //记录由加载任务设置的Drawable的hashCode, 用于判断控件的Drawable是否意外改变
     private int drawableHashCode = 0;
 
@@ -82,10 +81,15 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     //是否被弃用
     private boolean unused = false;
 
-    public SimpleBitmapLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, V view){
-        this.url = url;
-        this.reqWidth = reqWidth;
-        this.reqHeight = reqHeight;
+    public SimpleBitmapLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, V view){
+        if (request == null)
+            throw new RuntimeException("[SimpleBitmapLoaderTask]constractor: request must not be null");
+        if (loader == null)
+            throw new RuntimeException("[SimpleBitmapLoaderTask]constractor: loader must not be null");
+        if (view == null)
+            throw new RuntimeException("[SimpleBitmapLoaderTask]constractor:　view must not be null");
+
+        this.request = request;
         this.loader = new WeakReference<SimpleBitmapLoader>(loader);
 
         bindView(view);//绑定控件
@@ -103,7 +107,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     public void unused(){
         //废弃图片/取消任务
         if (getLoader() != null) {
-            getLoader().unused(url);
+            getLoader().unused(request.getUrl());
         }
         //解除绑定
         unbindView();
@@ -309,15 +313,15 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     }
 
     protected String getUrl(){
-        return url;
+        return request.getUrl();
     }
 
     protected int getReqWidth(){
-        return reqWidth;
+        return request.getReqWidth();
     }
 
     protected int getReqHeight(){
-        return reqHeight;
+        return request.getReqHeight();
     }
 
     /**
@@ -357,12 +361,12 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
      */
 
     @Override
-    public void onLoadSucceed(String url, int reqWidth, int reqHeight, Object params, Bitmap bitmap) {
+    public void onLoadSucceed(BitmapRequest request, Object params, Bitmap bitmap) {
         //加载结束
         loading = false;
 
         //检查
-        if (checkView(url)){
+        if (checkView(request.getUrl())){
             unused();
             return;
         }
@@ -379,12 +383,12 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     }
 
     @Override
-    public void onLoadFailed(String url, int reqWidth, int reqHeight, Object params) {
+    public void onLoadFailed(BitmapRequest request, Object params) {
         //加载结束
         loading = false;
 
         //检查
-        if (checkView(url)){
+        if (checkView(request.getUrl())){
             unused();
             return;
         }
@@ -396,12 +400,12 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     }
 
     @Override
-    public void onLoadCanceled(String url, int reqWidth, int reqHeight, Object params) {
+    public void onLoadCanceled(BitmapRequest request, Object params) {
         //加载结束
         loading = false;
 
         //检查
-        if (checkView(url)){
+        if (checkView(request.getUrl())){
             unused();
             return;
         }

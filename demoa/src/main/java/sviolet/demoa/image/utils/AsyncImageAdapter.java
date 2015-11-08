@@ -36,6 +36,7 @@ import sviolet.turquoise.enhanced.TActivity;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.GradualImageView;
@@ -158,7 +159,7 @@ public class AsyncImageAdapter extends BaseAdapter {
      */
     private OnBitmapLoadedListener mOnBitmapLoadedListener = new OnBitmapLoadedListener() {
         @Override
-        public void onLoadSucceed(String url, int reqWidth, int reqHeight, Object params, Bitmap bitmap) {
+        public void onLoadSucceed(BitmapRequest request, Object params, Bitmap bitmap) {
             //参数为load传入的ImageView
             GradualImageView imageView = ((GradualImageView) params);
             //从imageView中获取当前应该显示图片的url, 高并发场合需要
@@ -168,8 +169,8 @@ public class AsyncImageAdapter extends BaseAdapter {
              * ListView中的View是复用的, 一个图片加载任务完成时, 同一个ImageView可能已经需要显示其他图片
              * 了, 因此判断url是否相符, 若不相符则直接return
              */
-            if (url != null && !url.equals(taskInfo.url)){
-                ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载的Bitmap与应该显示的图片不符:" + url);
+            if (request.getUrl() != null && !request.getUrl().equals(taskInfo.url)){
+                ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载的Bitmap与应该显示的图片不符:" + request.getUrl());
                 return;
             }
 
@@ -183,13 +184,13 @@ public class AsyncImageAdapter extends BaseAdapter {
                 //loader.load(url, widthHeight, widthHeight, params, mOnLoadCompleteListener);
                 //此Demo不做重发
                 if (context instanceof TActivity) {
-                    ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载成功后找不到位图url:" + url);
+                    ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载成功后找不到位图url:" + request.getUrl());
                 }
-                Toast.makeText(context, "[AsyncImageAdapter]加载成功后找不到位图url:" + url, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "[AsyncImageAdapter]加载成功后找不到位图url:" + request.getUrl(), Toast.LENGTH_SHORT).show();
             }
         }
         @Override
-        public void onLoadFailed(String url, int reqWidth, int reqHeight, Object params) {
+        public void onLoadFailed(BitmapRequest request, Object params) {
             //参数为load传入的ImageView
             GradualImageView imageView = ((GradualImageView) params);
             TaskInfo taskInfo = (TaskInfo)imageView.getTag();
@@ -198,11 +199,11 @@ public class AsyncImageAdapter extends BaseAdapter {
             if (taskInfo.reloadTimes < TaskInfo.RELOAD_TIMES_MAX){
                 taskInfo.reloadTimes++;
                 //重新加载
-                bitmapLoader.load(url, reqWidth, reqHeight, params, this);
+                bitmapLoader.load(request, params, this);
             }
         }
         @Override
-        public void onLoadCanceled(String url, int reqWidth, int reqHeight, Object params) {
+        public void onLoadCanceled(BitmapRequest request, Object params) {
             //加载取消处理, 通常不做处理
         }
     };

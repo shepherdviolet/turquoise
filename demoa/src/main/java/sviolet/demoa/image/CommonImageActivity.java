@@ -36,6 +36,7 @@ import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultNetLoadHandler;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
@@ -451,7 +452,7 @@ public class CommonImageActivity extends TActivity {
      */
     private OnBitmapLoadedListener mOnBitmapLoadedListener41 = new OnBitmapLoadedListener() {
         @Override
-        public void onLoadSucceed(String url, int reqWidth, int reqHeight, Object params, Bitmap bitmap) {
+        public void onLoadSucceed(BitmapRequest request, Object params, Bitmap bitmap) {
             //加载成功
             getLogger().i("[demoa]41 load succeed");
 
@@ -468,7 +469,7 @@ public class CommonImageActivity extends TActivity {
         }
 
         @Override
-        public void onLoadFailed(String url, int reqWidth, int reqHeight, Object params) {
+        public void onLoadFailed(BitmapRequest request, Object params) {
             //加载失败, 尝试重新加载
             getLogger().i("[demoa]41 load failed");
             //获得传入的控件
@@ -481,12 +482,12 @@ public class CommonImageActivity extends TActivity {
                 //计数+1
                 taskInfo.reloadTimes++;
                 //重新加载
-                bitmapLoader.load(url, reqWidth, reqHeight, params, this);
+                bitmapLoader.load(request, params, this);
             }
         }
 
         @Override
-        public void onLoadCanceled(String url, int reqWidth, int reqHeight, Object params) {
+        public void onLoadCanceled(BitmapRequest request, Object params) {
             //取消通常不用处理
             getLogger().i("[demoa]41 load canceled");
         }

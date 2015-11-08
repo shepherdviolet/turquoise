@@ -21,6 +21,8 @@ package sviolet.turquoise.utils.bitmap.loader.handler;
 
 import android.graphics.Bitmap;
 
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
+
 /**
  * 图片(Bitmap)解码处理器<p/>
  *
@@ -42,23 +44,17 @@ public interface BitmapDecodeHandler {
      * [网络加载时调用]<Br/>
      * byteArray解码Bitmap
      *
-     * @param url 图片url
-     * @param reqWidth 请求宽度
-     * @param reqHeight 请求高度
      * @param data byteArray数据(不为空)
      */
-    public Bitmap onDecode(String url, int reqWidth, int reqHeight, byte[] data) throws Exception;
+    public Bitmap onDecode(BitmapRequest request, byte[] data) throws Exception;
 
     /**
      * [磁盘缓存加载时调用]<Br/>
      * 根据文件路径解码Bitmap
      *
-     * @param url 图片url
-     * @param reqWidth 请求宽度
-     * @param reqHeight 请求高度
      * @param filePath 文件路径
      */
-    public Bitmap onDecode(String url, int reqWidth, int reqHeight, String filePath) throws Exception;
+    public Bitmap onDecode(BitmapRequest request, String filePath) throws Exception;
 
     /**
      * 当BitmapLoader销毁时,会回调该方法,用于销毁处理器成员<br/>

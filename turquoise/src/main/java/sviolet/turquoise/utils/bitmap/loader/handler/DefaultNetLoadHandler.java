@@ -30,6 +30,7 @@ import java.net.URL;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 
 /**
  * 网络加载处理器默认实现<p/>
@@ -128,12 +129,12 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
      * 实现网络加载过程
      */
     @Override
-    public void loadFromNet(String url, int reqWidth, int reqHeight, BitmapLoader loader, final BitmapLoaderMessenger messenger) {
+    public void loadFromNet(BitmapRequest request, BitmapLoader loader, final BitmapLoaderMessenger messenger) {
         InputStream inputStream = null;
         ByteArrayOutputStream outputStream = null;
         HttpURLConnection conn = null;
         try {
-            URL httpUrl = new URL(url);
+            URL httpUrl = new URL(request.getUrl());
             conn = (HttpURLConnection) httpUrl.openConnection();
             conn.setConnectTimeout(connectTimeout);
             conn.setReadTimeout(readTimeout);
@@ -174,7 +175,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
                     outputStream.write(buffer, 0, len);
                 }
                 //设置结果返回[重要]
-                messenger.setResultSucceed(onCompress(outputStream.toByteArray(), url, reqWidth, reqHeight, loader, messenger));
+                messenger.setResultSucceed(onCompress(outputStream.toByteArray(), request, loader, messenger));
                 return;
             }
         } catch (IOException e) {
@@ -216,14 +217,17 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
     /**
      * 压缩处理
      */
-    protected byte[] onCompress(byte[] data, String url, int reqWidth, int reqHeight, BitmapLoader loader, BitmapLoaderMessenger messenger){
+    protected byte[] onCompress(byte[] data, BitmapRequest request, BitmapLoader loader, BitmapLoaderMessenger messenger){
         //压缩原图片
         if (compress && data != null && data.length > 0){
-            int decodeWidth;
-            int decodeHeight;
+            int decodeWidth = 0;
+            int decodeHeight = 0;
             if (compressWidth <= 0 && compressHeight <= 0){
-                decodeWidth = reqWidth;
-                decodeHeight = reqHeight;
+                //判断需求尺寸是否生效
+                if (request.hasReqDimension()) {
+                    decodeWidth = request.getReqWidth();
+                    decodeHeight = request.getReqHeight();
+                }
             } else if (compressWidth > 0 && compressHeight <= 0){
                 decodeWidth = compressWidth;
                 decodeHeight = compressWidth;
@@ -236,7 +240,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
             }
 
             if (loader.getLogger() != null){
-                loader.getLogger().d("[DefaultNetLoadHandler]compress start, url<" + url + "> decodeReqWidth:" + decodeWidth + " decodeReqHeight:" + decodeHeight);
+                loader.getLogger().d("[DefaultNetLoadHandler]compress start, url<" + request.getUrl() + "> decodeReqWidth:" + decodeWidth + " decodeReqHeight:" + decodeHeight);
             }
 
             Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, decodeWidth, decodeHeight);
@@ -246,7 +250,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
             }
 
             if (loader.getLogger() != null){
-                loader.getLogger().d("[DefaultNetLoadHandler]compress decoded, url<" + url + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
+                loader.getLogger().d("[DefaultNetLoadHandler]compress decoded, url<" + request.getUrl() + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
             }
 
             if (compressWidth > 0 || compressHeight > 0){
@@ -256,12 +260,12 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
                     return null;
                 }
                 if (loader.getLogger() != null){
-                    loader.getLogger().d("[DefaultNetLoadHandler]compress scaled, url<" + url + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
+                    loader.getLogger().d("[DefaultNetLoadHandler]compress scaled, url<" + request.getUrl() + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
                 }
             }
 
             //特殊压缩处理
-            bitmap = onSpecialCompress(bitmap, url, reqWidth, reqHeight, loader, messenger);
+            bitmap = onSpecialCompress(bitmap, request, loader, messenger);
             if (bitmap == null || bitmap.isRecycled()){
                 messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]compress: onSpecialCompress failed"));
                 return null;
@@ -282,7 +286,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
      * 特殊压缩处理, 允许压缩的情况下可复写该方法<br/>
      * 对bitmap进行特殊处理并返回<br/>
      */
-    protected Bitmap onSpecialCompress(Bitmap bitmap, String url, int reqWidth, int reqHeight, BitmapLoader loader, BitmapLoaderMessenger messenger){
+    protected Bitmap onSpecialCompress(Bitmap bitmap, BitmapRequest request, BitmapLoader loader, BitmapLoaderMessenger messenger){
         return bitmap;
     }
 

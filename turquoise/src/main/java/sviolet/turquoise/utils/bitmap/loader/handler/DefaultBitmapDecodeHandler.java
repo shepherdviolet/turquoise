@@ -22,6 +22,7 @@ package sviolet.turquoise.utils.bitmap.loader.handler;
 import android.graphics.Bitmap;
 
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 
 /**
  * 图片(Bitmap)解码处理器<p/>
@@ -41,13 +42,21 @@ import sviolet.turquoise.utils.bitmap.BitmapUtils;
 public class DefaultBitmapDecodeHandler implements BitmapDecodeHandler{
 
     @Override
-    public Bitmap onDecode(String url, int reqWidth, int reqHeight, byte[] data) {
-        return BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight);
+    public Bitmap onDecode(BitmapRequest request, byte[] data) {
+        //判断需求尺寸是否生效
+        if (request.hasReqDimension())
+            return BitmapUtils.decodeFromByteArray(data, request.getReqWidth(), request.getReqHeight());
+        else
+            return BitmapUtils.decodeFromByteArray(data);
     }
 
     @Override
-    public Bitmap onDecode(String url, int reqWidth, int reqHeight, String filePath) {
-        return BitmapUtils.decodeFromFile(filePath, reqWidth, reqHeight);
+    public Bitmap onDecode(BitmapRequest request, String filePath) {
+        //判断需求尺寸是否生效
+        if (request.hasReqDimension())
+            return BitmapUtils.decodeFromFile(filePath, request.getReqWidth(), request.getReqHeight());
+        else
+            return BitmapUtils.decodeFromFile(filePath);
     }
 
     @Override

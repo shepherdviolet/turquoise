@@ -24,6 +24,7 @@ import android.widget.ImageView;
 
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoaderTask;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 
 /**
  * ImageView异步加载任务<br/>
@@ -32,8 +33,8 @@ import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoaderTask;
 class ImageViewLoaderTask extends SimpleBitmapLoaderTask<ImageView> {
 
 
-    ImageViewLoaderTask(String url, int reqWidth, int reqHeight, SimpleBitmapLoader loader, ImageView view) {
-        super(url, reqWidth, reqHeight, loader, view);
+    ImageViewLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, ImageView view) {
+        super(request, loader, view);
     }
 
     @Override

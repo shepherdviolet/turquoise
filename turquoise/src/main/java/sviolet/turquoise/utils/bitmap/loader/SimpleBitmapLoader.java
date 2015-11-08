@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 
 import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.DiskCacheExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.task.SimpleBitmapLoaderTaskFactory;
@@ -205,9 +206,31 @@ public class SimpleBitmapLoader {
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
      * <Br/>
-     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
-     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
-     * 
+     * @see BitmapRequest
+     *
+     * @param url url
+     * @param view 被加载的控件(禁止使用View.setTag())
+     */
+    public void load(String url, View view){
+        load(new BitmapRequest(url), view);
+    }
+
+    /**
+     * 异步加载控件图片<p/>
+     *
+     * 目前支持控件, 详见{@link SimpleBitmapLoaderTaskFactory}:<br/>
+     * 1.ImageView<br/>
+     *
+     * <br/>注意:<Br/>
+     * 1.该方法会弃用(unused)先前绑定在控件上的加载任务<br/>
+     * 2.一个View不会重复加载相同的url<br/>
+     * 3.切勿自行给控件设置TAG(View.setTag()), 会无法加载!<br/>
+     * <br/>
+     * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
+     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+     * 这个cacheKey标识唯一的资源<br/>
+     * <Br/>
+     * @see BitmapRequest
      *
      * @param url url
      * @param reqWidth 需求宽度
@@ -215,13 +238,59 @@ public class SimpleBitmapLoader {
      * @param view 被加载的控件(禁止使用View.setTag())
      */
     public void load(String url, int reqWidth, int reqHeight, View view){
-        if (checkInput(url, reqWidth, reqHeight, view))
-            return;
-        newLoaderTask(url, reqWidth, reqHeight, view);
+        load(new BitmapRequest(url).setReqDimension(reqWidth, reqHeight), view);
     }
 
-    protected void newLoaderTask(String url, int reqWidth, int reqHeight, View view){
-        SimpleBitmapLoaderTaskFactory.newLoaderTask(url, reqWidth, reqHeight, this, view);
+    /**
+     * 异步加载控件图片<p/>
+     *
+     * 目前支持控件, 详见{@link SimpleBitmapLoaderTaskFactory}:<br/>
+     * 1.ImageView<br/>
+     *
+     * <br/>注意:<Br/>
+     * 1.该方法会弃用(unused)先前绑定在控件上的加载任务<br/>
+     * 2.一个View不会重复加载相同的url<br/>
+     * 3.切勿自行给控件设置TAG(View.setTag()), 会无法加载!<br/>
+     * <br/>
+     * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
+     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+     * 这个cacheKey标识唯一的资源<br/>
+     * <Br/>
+     * @see BitmapRequest
+     *
+     * @param request 图片加载请求参数
+     * @param view 被加载的控件(禁止使用View.setTag())
+     */
+    public void load(BitmapRequest request, View view){
+        if (checkInput(request, view))
+            return;
+        newLoaderTask(request, view);
+    }
+
+    protected void newLoaderTask(BitmapRequest request, View view){
+        SimpleBitmapLoaderTaskFactory.newLoaderTask(request, this, view);
+    }
+
+    /**
+     *
+     * 异步加载控件背景图<br/>
+     * <br/>
+     * 注意:<Br/>
+     * 1.该方法会弃用(unused)先前绑定在控件上的加载任务<br/>
+     * 2.一个View不会重复加载相同的url<br/>
+     * 3.切勿自行给控件设置TAG(View.setTag()), 会无法加载!<br/>
+     * <br/>
+     * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
+     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+     * 这个cacheKey标识唯一的资源<br/>
+     * <Br/>
+     * @see BitmapRequest
+     *
+     * @param url url
+     * @param view 被加载的控件(禁止使用View.setTag())
+     */
+    public void loadBackground(String url, View view) {
+        loadBackground(new BitmapRequest(url), view);
     }
 
     /**
@@ -237,23 +306,43 @@ public class SimpleBitmapLoader {
      * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
      * 这个cacheKey标识唯一的资源<br/>
      * <Br/>
-     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
-     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
-     * 
+     * @see BitmapRequest
      *
      * @param url url
      * @param reqWidth 需求宽度
      * @param reqHeight 需求高度
      * @param view 被加载的控件(禁止使用View.setTag())
      */
-    public void loadBackground(String url, int reqWidth, int reqHeight, View view){
-        if (checkInput(url, reqWidth, reqHeight, view))
-            return;
-        newBackgroundLoaderTask(url, reqWidth, reqHeight, view);
+    public void loadBackground(String url, int reqWidth, int reqHeight, View view) {
+        loadBackground(new BitmapRequest(url).setReqDimension(reqWidth, reqHeight), view);
     }
 
-    protected void newBackgroundLoaderTask(String url, int reqWidth, int reqHeight, View view){
-        SimpleBitmapLoaderTaskFactory.newBackgroundLoaderTask(url, reqWidth, reqHeight, this, view);
+    /**
+     *
+     * 异步加载控件背景图<br/>
+     * <br/>
+     * 注意:<Br/>
+     * 1.该方法会弃用(unused)先前绑定在控件上的加载任务<br/>
+     * 2.一个View不会重复加载相同的url<br/>
+     * 3.切勿自行给控件设置TAG(View.setTag()), 会无法加载!<br/>
+     * <br/>
+     * BitmapLoader中每个位图资源都由url唯一标识, url在BitmapLoader内部
+     * 将由getCacheKey()方法计算为一个cacheKey, 内存缓存/磁盘缓存/队列key都将使用
+     * 这个cacheKey标识唯一的资源<br/>
+     * <Br/>
+     * @see BitmapRequest
+     *
+     * @param request 图片加载请求参数
+     * @param view 被加载的控件(禁止使用View.setTag())
+     */
+    public void loadBackground(BitmapRequest request, View view){
+        if (checkInput(request, view))
+            return;
+        newBackgroundLoaderTask(request, view);
+    }
+
+    protected void newBackgroundLoaderTask(BitmapRequest request, View view){
+        SimpleBitmapLoaderTaskFactory.newBackgroundLoaderTask(request, this, view);
     }
 
     /**
@@ -441,23 +530,23 @@ public class SimpleBitmapLoader {
      * 1.检查url和view是否为空<br/>
      * 2.判断url与原有任务是否相同, 若相同则返回true, 不再次加载.<br/>
      */
-    protected boolean checkInput(String url, int reqWidth, int reqHeight, View view){
+    protected boolean checkInput(BitmapRequest request, View view){
         //bitmapLoader状态异常
         if (bitmapLoader.checkIsOpen())
             return true;
         //检查输入
         if (view == null)
-            throw new RuntimeException("[SimpleBitmapLoader]view must not be null");
-        if (url == null)
-            throw new RuntimeException("[SimpleBitmapLoader]url must not be null");
+            throw new RuntimeException("[SimpleBitmapLoader]load: view must not be null");
+        if (request == null)
+            throw new RuntimeException("[SimpleBitmapLoader]load: request must not be null");
         //取View绑定的加载任务
         Object tag = view.getTag();
         if (tag != null && tag instanceof SimpleBitmapLoaderTask){
             //任务未被弃用 且 图片未被篡改 且 URL相同, 跳过加载
             SimpleBitmapLoaderTask task = ((SimpleBitmapLoaderTask) tag);
-            if (!task.isUnused() && !task.checkViewModified() && url.equals(task.getUrl())){
+            if (!task.isUnused() && !task.checkViewModified() && request.getUrl().equals(task.getUrl())){
                 if (getLogger() != null)
-                    getLogger().i("[SimpleBitmapLoader]load skipped (url:" + url + "), because of the same url");
+                    getLogger().i("[SimpleBitmapLoader]load skipped (url:" + request.getUrl() + "), because of the same url");
                 return true;
             }
         }
