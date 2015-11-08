@@ -163,7 +163,9 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *      使用SimpleBitmapLoader加载控件时, 控件禁止使用View.setTag()自行设置TAG,
  *      因为SimpleBitmapLoader会把SimpleBitmapLoaderTask通过setTag()绑定在控件上!<Br/>
  * <Br/>
- * //TODO 磁盘缓存打开失败说明
+ * 5.界面提示"磁盘缓存访问失败", 或日志打印:
+ *      [DefaultDiskCacheExceptionHandler]DiskCache open failed, use BitmapLoader.Builder.setDiskCacheExceptionHandler to custom processing <br/>
+ *      可自定义磁盘缓存打开失败处理方式, {@link DefaultDiskCacheExceptionHandler}<Br/>
  * <Br/>
  * 
  *

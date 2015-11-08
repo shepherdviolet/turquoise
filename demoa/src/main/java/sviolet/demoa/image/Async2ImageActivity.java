@@ -93,11 +93,12 @@ public class Async2ImageActivity extends TActivity {
                         .setViewRefreshListener(new Runnable() {
                             @Override
                             public void run() {
+                                //当用户选择关闭磁盘缓存继续加载图片后, 会调用该回调, 刷新ListView, 使得图片重新加载
                                 if (adapter != null)
                                     adapter.notifyDataSetChanged();
                             }
                         })
-                )//TODO 注释
+                )//设置磁盘缓存打开失败处理方式为:提示并由用户选择是否关闭磁盘缓存继续加载, 并设置UI刷新监听
                 .create();
 
         //设置适配器, 传入图片加载器, 图片解码工具

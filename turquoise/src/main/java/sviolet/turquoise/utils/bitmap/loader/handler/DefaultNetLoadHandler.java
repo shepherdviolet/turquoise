@@ -40,19 +40,19 @@ import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
  * 设置网络超时时间:<Br/>
  * <pre>{@code
  *      //连接超时5s, 读取超时20s
- *      bitmapLoader.setNetLoadHandler(new DefaultNetLoadHandler(5000, 20000))
+ *      BitmapLoader.Builder.setNetLoadHandler(new DefaultNetLoadHandler(5000, 20000))
  * }</pre>
  * <br/>
  * 加载任务取消时, 不强制终止网络加载:<br/>
  * <pre>{@code
  *      //加载任务取消时, 不强制终止网络加载
- *      bitmapLoader.setNetLoadHandler(new DefaultNetLoadHandler().setForceCancel(false))
+ *      BitmapLoader.Builder.setNetLoadHandler(new DefaultNetLoadHandler().setForceCancel(false))
  * }</pre
  * <br/>
  * 设置原图压缩(节省磁盘空间):<br/>
  * <pre>{@code
  *      //加载任务取消时, 不强制终止网络加载
- *      bitmapLoader.setNetLoadHandler(new DefaultNetLoadHandler().setCompress(Bitmap.CompressFormat.JPEG, 70, 100, 0))
+ *      BitmapLoader.Builder.setNetLoadHandler(new DefaultNetLoadHandler().setCompress(Bitmap.CompressFormat.JPEG, 70, 100, 0))
  * }</pre><p/>
  *
  * 注意: 在该"网络加载处理器"中特殊处理图片数据, 磁盘缓存将保存改变后的数据, 而非原始数据. 这点与在

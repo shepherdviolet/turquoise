@@ -31,7 +31,40 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
 /**
  * 磁盘缓存异常处理器默认实现<p/>
  *
- * //TODO 实现完善 注释完善
+ * ***************************************************<p/>
+ *
+ * 设置磁盘缓存打开失败的处理模式:<p/>
+ *
+ * <pre>{@code
+ * BitmapLoader.Builder.setDiskCacheExceptionHandler(
+ *      new DefaultDiskCacheExceptionHandler(OpenFailedHandleMode) //设置处理模式
+ *          .setViewRefreshListener(new Runnable(){ //设置禁用磁盘缓存启动后刷新UI回调监听(可选)
+ *              public void run() {
+ *                  //例如ListView适配器刷新
+ *                  if (adapter != null)
+ *                      adapter.notifyDataSetChanged();
+ *              }
+ *          })
+ * )
+ * }</pre><p/>
+ *
+ * 可选模式:<p/>
+ *
+ * OpenFailedHandleMode.NOTICE_ONLY_BY_DIALOG : <br/>
+ * 仅弹出对话框提示, 停止加载图片<p/>
+ *
+ * OpenFailedHandleMode.NOTICE_ONLY_BY_TOAST : <br/>
+ * 仅弹出Toast提示, 停止加载图片<p/>
+ *
+ * OpenFailedHandleMode.CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT : <br/>
+ * 弹出对话框提示, 由用户选择是否禁用磁盘缓存继续加载图片,
+ * 建议配合setViewRefreshListener()方法使用, 在启用磁盘缓存禁用模式后,
+ * 会回调该监听器, 用来刷新显示(重新加载图片).<p/>
+ *
+ * OpenFailedHandleMode.OPEN_WITHOUT_DISK_CACHE_SILENCE : <br/>
+ * 静默处理(无提示), 禁用磁盘缓存继续加载图片, 慎用此种方式,
+ * 建议配合setViewRefreshListener()方法使用, 在启用磁盘缓存禁用模式后,
+ * 会回调该监听器, 用来刷新显示(重新加载图片).<p/>
  *
  * Created by S.Violet on 2015/11/4.
  */
@@ -57,12 +90,12 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
      * 仅弹出Toast提示, 停止加载图片<p/>
      *
      * OpenFailedHandleMode.CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT : <br/>
-     * 弹出对话框提示, 由用户选择是否继续加载图片(禁用磁盘缓存),
+     * 弹出对话框提示, 由用户选择是否禁用磁盘缓存继续加载图片,
      * 建议配合setViewRefreshListener()方法使用, 在启用磁盘缓存禁用模式后,
      * 会回调该监听器, 用来刷新显示(重新加载图片).<p/>
      *
      * OpenFailedHandleMode.OPEN_WITHOUT_DISK_CACHE_SILENCE : <br/>
-     * 静默处理, 继续加载图片(禁用磁盘缓存),
+     * 静默处理(无提示), 禁用磁盘缓存继续加载图片, 慎用此种方式,
      * 建议配合setViewRefreshListener()方法使用, 在启用磁盘缓存禁用模式后,
      * 会回调该监听器, 用来刷新显示(重新加载图片).<p/>
      *
@@ -91,7 +124,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
 
         //打印日志
         if (bitmapLoader != null && bitmapLoader.getLogger() != null) {
-            bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]onFailed, use BitmapLoader.Builder.setDiskCacheExceptionHandler to custom processing", throwable);
+            bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]DiskCache open failed, use BitmapLoader.Builder.setDiskCacheExceptionHandler to custom processing", throwable);
         }else{
             throwable.printStackTrace();
         }
@@ -118,6 +151,9 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
 
     }
 
+    /**
+     * 磁盘缓存写入异常, 打印日志
+     */
     @Override
     public void onCacheWriteException(Context context, BitmapLoader bitmapLoader, Throwable throwable) {
         throwable.printStackTrace();
@@ -137,7 +173,6 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
         CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT,//弹出对话框提示, 由用户选择是否继续加载图片(禁用磁盘缓存)
         OPEN_WITHOUT_DISK_CACHE_SILENCE//静默处理, 继续加载图片(禁用磁盘缓存)
     }
-
 
     private void noticeOnlyByDialog(final Context context, BitmapLoader bitmapLoader){
         if (context == null){
@@ -162,7 +197,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
             buttonMessageYes = "confirm";
         }
 
-        //提醒客户缓存访问失败, 由用户选择是否禁用磁盘缓存继续加载图片
+        //提醒客户缓存访问失败
         Dialog alertDialog = new AlertDialog.Builder(context)
                 .setTitle(dialogTitle)
                 .setMessage(dialogMessage)
@@ -170,7 +205,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
                 .setPositiveButton(buttonMessageYes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
+                        //无操作
                     }
                 })
                 .create();
@@ -194,6 +229,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
             toastMessage = "ImageCache open failed, can't load image";
         }
 
+        //Toast提示
         Toast.makeText(context, toastMessage, Toast.LENGTH_LONG).show();
 
     }
@@ -204,17 +240,17 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
 
         bitmapLoader.openWithoutDiskCache();//禁用磁盘缓存后启动
 
-        if (bitmapLoader.getLogger() != null)
-            bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]openWithoutDiskCacheSilence");
-
         if (viewRefreshListener != null)
             viewRefreshListener.run();
+
+        if (bitmapLoader.getLogger() != null)
+            bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]openWithoutDiskCacheSilence");
     }
 
     private void choiceToOpenWithoutDiskCacheOrNot(final Context context, final BitmapLoader bitmapLoader) {
-
+        //加载器为空, 只能提示
         if (bitmapLoader == null) {
-            noticeOnlyByDialog(context, bitmapLoader);
+            noticeOnlyByDialog(context, null);
             return;
         }
 
@@ -260,8 +296,9 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
                 .setPositiveButton(buttonMessageYes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        bitmapLoader.openWithoutDiskCache();//禁用磁盘缓存后启动
-
+                        //禁用磁盘缓存后启动
+                        bitmapLoader.openWithoutDiskCache();
+                        //刷新UI
                         if (viewRefreshListener != null)
                             viewRefreshListener.run();
                     }
@@ -269,6 +306,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
                 .setNegativeButton(buttonMessageNo, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        //提示不加载图片
                         Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show();
                     }
                 })
