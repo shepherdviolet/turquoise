@@ -1,4 +1,4 @@
-# Turquoise 1.0.151108
+# Turquoise 1.1.151108
 > https://github.com/shepherdviolet/turquoise <br/>
 
 ## Description
