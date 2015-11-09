@@ -13,7 +13,7 @@
 > demoa : demos of "Turquoise" library  |  示例程序 <br/>
 
 ## Package Releases (aar/source/javadoc)
-> https://github.com/shepherdviolet/releases/tree/master/turquoise-release <br/>
+> https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
 
 ## Export *.aar
 >1.build module "turquoise" <br/>
