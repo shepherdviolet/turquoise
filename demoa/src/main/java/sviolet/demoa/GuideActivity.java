@@ -95,6 +95,8 @@ public class GuideActivity extends TActivity {
         if (id == R.id.guide_menu_settings) {
             return true;
         } else if (id == R.id.guide_menu_about) {
+            //版本显示
+            Toast.makeText(this, "Turquoise Demo " + BuildConfig.VERSION_NAME, Toast.LENGTH_SHORT).show();
             return true;
         } else if (id == R.id.guide_menu_wipe_cache){
             /*
