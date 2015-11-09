@@ -1,4 +1,4 @@
-# Turquoise 1.1.151109
+# Turquoise 1.0.151109
 > https://github.com/shepherdviolet/turquoise <br/>
 
 ## Description
@@ -48,6 +48,6 @@ dependencies {
 
 >3.build your project <br/>
 
-## Import source(jar): <br/>
-> (1)Project - External Libraries - "turquoise-version" Right Button - Library Properties <br/>
-> (2)add "turquoise-source-version.jar" <br/>
+## Import source(jar)
+> 1.Project - External Libraries - "turquoise-version" Right Button - Library Properties <br/>
+> 2.add "turquoise-source-version.jar" <br/>
