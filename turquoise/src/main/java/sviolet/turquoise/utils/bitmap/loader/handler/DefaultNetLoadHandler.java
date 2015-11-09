@@ -49,10 +49,10 @@ import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
  *      BitmapLoader.Builder.setNetLoadHandler(new DefaultNetLoadHandler().setForceCancel(false))
  * }</pre
  * <br/>
- * 设置原图压缩(节省磁盘空间):<br/>
+ * 设置原图缩放(用于节省磁盘空间, 或固定原片尺寸):<br/>
  * <pre>{@code
- *      //加载任务取消时, 不强制终止网络加载
- *      BitmapLoader.Builder.setNetLoadHandler(new DefaultNetLoadHandler().setCompress(Bitmap.CompressFormat.JPEG, 70, 100, 0))
+ *      //设置原图缩放, 指定宽度100px, 高度自适应, 保存格式JPEG, 质量70
+ *      BitmapLoader.Builder.setNetLoadHandler(new DefaultNetLoadHandler().setScale(Bitmap.CompressFormat.JPEG, 70, 100, 0))
  * }</pre><p/>
  *
  * 注意: 在该"网络加载处理器"中特殊处理图片数据, 磁盘缓存将保存改变后的数据, 而非原始数据. 这点与在
@@ -66,9 +66,9 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
     private int connectTimeout;
     private int readTimeout;
     private boolean forceCancel = true;
-    private boolean compress = false;
-    private int compressWidth = 0;
-    private int compressHeight = 0;
+    private boolean scale = false;
+    private int scaleWidth = 0;
+    private int scaleHeight = 0;
     private Bitmap.CompressFormat compressFormat;
     private int compressQuality;
 
@@ -102,7 +102,10 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
     }
 
     /**
-     * 设置原图压缩, 减少磁盘缓存占用, 默认不压缩<p/>
+     * 设置原图缩放, 默认不缩放<p/>
+     *
+     * 将图片缩放为指定尺寸, 并转码为指定格式, 用于减少磁盘缓存占用, 或固定原图尺寸(格式).
+     * 注意:磁盘缓存将保存缩放后的图片数据.<Br/>
      *
      * <pre>{@code
      * width>0 & height>0   : 宽高分别缩放到指定值<br/>
@@ -113,15 +116,15 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
      *
      * @param compressFormat 图片压缩格式
      * @param compressQuality 图片压缩质量
-     * @param compressWidth 指定图片宽度
-     * @param compressHeight 指定图片高度
+     * @param scaleWidth 指定图片宽度
+     * @param scaleHeight 指定图片高度
      */
-    public DefaultNetLoadHandler setCompress(Bitmap.CompressFormat compressFormat, int compressQuality, int compressWidth, int compressHeight){
-        this.compress = true;
+    public DefaultNetLoadHandler setScale(Bitmap.CompressFormat compressFormat, int compressQuality, int scaleWidth, int scaleHeight){
+        this.scale = true;
         this.compressFormat = compressFormat;
         this.compressQuality = compressQuality;
-        this.compressWidth = compressWidth;
-        this.compressHeight = compressHeight;
+        this.scaleWidth = scaleWidth;
+        this.scaleHeight = scaleHeight;
         return this;
     }
 
@@ -175,7 +178,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
                     outputStream.write(buffer, 0, len);
                 }
                 //设置结果返回[重要]
-                messenger.setResultSucceed(onCompress(outputStream.toByteArray(), request, loader, messenger));
+                messenger.setResultSucceed(onScale(outputStream.toByteArray(), request, loader, messenger));
                 return;
             }
         } catch (IOException e) {
@@ -215,59 +218,59 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
     }
 
     /**
-     * 压缩处理
+     * 缩放处理
      */
-    protected byte[] onCompress(byte[] data, BitmapRequest request, BitmapLoader loader, BitmapLoaderMessenger messenger){
-        //压缩原图片
-        if (compress && data != null && data.length > 0){
+    protected byte[] onScale(byte[] data, BitmapRequest request, BitmapLoader loader, BitmapLoaderMessenger messenger){
+        //缩放原图片
+        if (scale && data != null && data.length > 0){
             int decodeWidth = 0;
             int decodeHeight = 0;
-            if (compressWidth <= 0 && compressHeight <= 0){
+            if (scaleWidth <= 0 && scaleHeight <= 0){
                 //判断需求尺寸是否生效
                 if (request.hasReqDimension()) {
                     decodeWidth = request.getReqWidth();
                     decodeHeight = request.getReqHeight();
                 }
-            } else if (compressWidth > 0 && compressHeight <= 0){
-                decodeWidth = compressWidth;
-                decodeHeight = compressWidth;
-            } else if (compressWidth <= 0 && compressHeight > 0) {
-                decodeWidth = compressHeight;
-                decodeHeight = compressHeight;
+            } else if (scaleWidth > 0 && scaleHeight <= 0){
+                decodeWidth = scaleWidth;
+                decodeHeight = scaleWidth;
+            } else if (scaleWidth <= 0 && scaleHeight > 0) {
+                decodeWidth = scaleHeight;
+                decodeHeight = scaleHeight;
             } else {
-                decodeWidth = compressWidth;
-                decodeHeight = compressHeight;
+                decodeWidth = scaleWidth;
+                decodeHeight = scaleHeight;
             }
 
             if (loader.getLogger() != null){
-                loader.getLogger().d("[DefaultNetLoadHandler]compress start, url<" + request.getUrl() + "> decodeReqWidth:" + decodeWidth + " decodeReqHeight:" + decodeHeight);
+                loader.getLogger().d("[DefaultNetLoadHandler]scale: start, url<" + request.getUrl() + "> decodeReqWidth:" + decodeWidth + " decodeReqHeight:" + decodeHeight);
             }
 
             Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, decodeWidth, decodeHeight);
             if (bitmap == null){
-                messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]compress: data decode to Bitmap failed"));
+                messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]scale: data decode to Bitmap failed"));
                 return null;
             }
 
             if (loader.getLogger() != null){
-                loader.getLogger().d("[DefaultNetLoadHandler]compress decoded, url<" + request.getUrl() + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
+                loader.getLogger().d("[DefaultNetLoadHandler]scale: decoded, url<" + request.getUrl() + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
             }
 
-            if (compressWidth > 0 || compressHeight > 0){
-                bitmap = BitmapUtils.scaleTo(bitmap, compressWidth, compressHeight, true);
+            if (scaleWidth > 0 || scaleHeight > 0){
+                bitmap = BitmapUtils.scaleTo(bitmap, scaleWidth, scaleHeight, true);
                 if (bitmap == null){
-                    messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]compress: bitmap scale failed"));
+                    messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]scale: bitmap scale failed"));
                     return null;
                 }
                 if (loader.getLogger() != null){
-                    loader.getLogger().d("[DefaultNetLoadHandler]compress scaled, url<" + request.getUrl() + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
+                    loader.getLogger().d("[DefaultNetLoadHandler]scale: scaled, url<" + request.getUrl() + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
                 }
             }
 
-            //特殊压缩处理
-            bitmap = onSpecialCompress(bitmap, request, loader, messenger);
+            //图片特殊处理
+            bitmap = onSpecialProcessing(bitmap, request, loader, messenger);
             if (bitmap == null || bitmap.isRecycled()){
-                messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]compress: onSpecialCompress failed"));
+                messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]scale: Bitmap onSpecialProcessing() failed"));
                 return null;
             }
 
@@ -275,7 +278,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
             try {
                 data = BitmapUtils.bitmapToByteArray(bitmap, compressFormat, compressQuality, true);
             } catch (IOException e) {
-                messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]compress: bitmap encode to byteArray failed", e));
+                messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]scale: bitmap encode to byteArray failed", e));
                 return null;
             }
         }
@@ -283,10 +286,10 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
     }
 
     /**
-     * 特殊压缩处理, 允许压缩的情况下可复写该方法<br/>
+     * 图片特殊处理, 仅在设置原图缩放的情况下生效<br/>
      * 对bitmap进行特殊处理并返回<br/>
      */
-    protected Bitmap onSpecialCompress(Bitmap bitmap, BitmapRequest request, BitmapLoader loader, BitmapLoaderMessenger messenger){
+    protected Bitmap onSpecialProcessing(Bitmap bitmap, BitmapRequest request, BitmapLoader loader, BitmapLoaderMessenger messenger){
         return bitmap;
     }
 
