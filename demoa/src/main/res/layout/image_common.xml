@@ -49,25 +49,6 @@
 
         </LinearLayout>
 
-        <!-- 第三行 -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/image_common_imageview31"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:scaleType="fitCenter" />
-
-            <ImageView
-                android:id="@+id/image_common_imageview32"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:scaleType="fitCenter" />
-
-        </LinearLayout>
-
         <!-- 第四行 -->
         <LinearLayout
             android:layout_width="match_parent"

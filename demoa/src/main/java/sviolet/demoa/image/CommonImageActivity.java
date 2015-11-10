@@ -37,12 +37,10 @@ import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
-import sviolet.turquoise.utils.bitmap.loader.handler.DefaultNetLoadHandler;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.utils.sys.NetStateUtils;
-import sviolet.turquoise.view.drawable.TransitionBitmapDrawable;
 
 @DemoDescription(
         title = "Common Image Demo",
@@ -70,7 +68,6 @@ public class CommonImageActivity extends TActivity {
 
         initLine1();
         initLine2();
-        initLine3();
         initLine4();
     }
 
@@ -225,103 +222,6 @@ public class CommonImageActivity extends TActivity {
 
 //        getCachedBitmapUtils().bitmapToBase64()//将Bitmap转为Base64数据
 
-    }
-
-    /***************************************************************************************
-     * 第三行:基础TransitionBitmapDrawable用法(慎用)
-     ***************************************************************************************/
-
-    @ResourceId(R.id.image_common_imageview31)
-    private ImageView imageView31;
-    @ResourceId(R.id.image_common_imageview32)
-    private ImageView imageView32;
-
-    private void initLine3() {
-
-        /**
-         * TransitionBitmapDrawable用法
-         * 优点:
-         * 1.即使图片被回收, 也不会抛异常, 而是显示默认图
-         * 2.即使默认图被回收, 也不会抛异常, 而是显示空图
-         * 3.淡入效果
-         */
-
-        //默认图
-        //一张默认图可以同时给多个AsyncBitmapDrawable使用
-        //默认图需要手动回收, 但由于使用Activity自带的CachedBitmapUtils, 因此会自动回收
-        final Bitmap defaultBitmap3 = getCachedBitmapUtils().decodeFromResource(
-                null,
-                getResources(),
-                R.mipmap.async_image_null,//资源ID
-                MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
-                MeasureUtils.dp2px(getApplicationContext(), 100)//需求100dp(实际高不等于100dp)
-        );
-
-        //显示的图1
-        final Bitmap bitmap31 = getCachedBitmapUtils().decodeFromResource(
-                null,
-                getResources(),
-                R.mipmap.async_image_1,//资源ID
-                MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
-                MeasureUtils.dp2px(getApplicationContext(), 100)//需求100dp(实际高不等于100dp)
-        );
-        //显示的图2
-        final Bitmap bitmap32 = getCachedBitmapUtils().decodeFromResource(
-                null,
-                getResources(),
-                R.mipmap.async_image_2,//资源ID
-                MeasureUtils.dp2px(getApplicationContext(), 100),//需求100dp(实际宽不等于100dp)
-                MeasureUtils.dp2px(getApplicationContext(), 100)//需求100dp(实际高不等于100dp)
-        );
-        //设置Drawable
-        imageView31.setImageDrawable(
-                //异步BitmapDrawable
-                new TransitionBitmapDrawable(
-                        getResources(),
-                        defaultBitmap3 //默认图, 可设置为null
-                ).setBitmap(
-                        getResources(),
-                        bitmap31, //显示的图
-                        1500 //淡入动画效果持续1500ms
-                )
-        );
-        //设置Drawable
-        imageView32.setImageDrawable(
-                //异步BitmapDrawable
-                new TransitionBitmapDrawable(
-                        getResources(),
-                        defaultBitmap3 //默认图, 可设置为null
-                ).setBitmap(
-                        getResources(),
-                        bitmap32, //显示的图
-                        1500 //淡入动画效果持续1500ms
-                )
-        );
-        /**
-         * 为模拟图片被意外回收的情况, 采用延时的方式, 先后把Bitmap回收掉
-         */
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                bitmap31.recycle();
-                imageView31.postInvalidate();
-            }
-        }, 1000);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                bitmap32.recycle();
-                imageView32.postInvalidate();
-            }
-        }, 2000);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                defaultBitmap3.recycle();
-                imageView31.postInvalidate();
-                imageView32.postInvalidate();
-            }
-        }, 3000);
     }
 
     /***************************************************************************************

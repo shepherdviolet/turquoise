@@ -93,16 +93,16 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  * 4.destroy [重要] <br/>
  *      清除全部图片及加载任务,通常在Activity.onDestroy中调用<p/>
  *
- * 5.reduce <br/>
+ * 5.reduce [特殊] <br/>
  *      强制清空内存缓存中不再使用(unused)的图片.<br/>
  *      用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
  *      通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
  *      将缓存中已被标记为unused的图片回收掉, 减少内存占用. 但这样会使得重新显示时, 加载
  *      变慢(需要重新加载).<p/>
  *
- * 6.cancelAllTasks <br/>
- *      强制取消所有加载任务.不影响缓存,不弃用图片.<br/>
- *      用于BitmapLoader未销毁的情况下, 结束网络访问.<p/>
+ * 6.cancelAllTasks [慎用] <br/>
+ *      强制取消所有加载任务.用于BitmapLoader未销毁的情况下, 结束磁盘和网络的访问. 这会
+ *      导致加载中的图片无法显示.<p/>
  *
  * -------------------注意事项----------------<br/>
  * <br/>
@@ -186,11 +186,10 @@ public class BitmapLoader {
     private Settings settings;//配置
     private boolean diskCacheDisabled = false;//禁用磁盘缓存
 
-    private static final int STATE_INACTIVE = 0;//未启用状态
-    private static final int STATE_ACTIVE = 1;//可用状态
-    private static final int STATE_OPEN_FAILED = 2;//启用失败状态
-    private static final int STATE_DESTROYED = 3;//销毁状态
-    private int state = STATE_INACTIVE;
+    private static final int STATE_ACTIVE = 0;//可用状态
+    private static final int STATE_OPEN_FAILED = 1;//启用失败状态
+    private static final int STATE_DESTROYED = 2;//销毁状态
+    private int state = STATE_ACTIVE;
 
     /**
      * 内部构造器, 利用settings构造实例
@@ -424,7 +423,7 @@ public class BitmapLoader {
     /**
      * [特殊]强制取消所有加载任务<br/>
      * <br/>
-     * 仅取消加载任务,不影响缓存,不弃用图片<br/>
+     * 用于BitmapLoader未销毁的情况下, 结束磁盘和网络的访问. 这会导致加载中的图片无法显示
      */
     public void cancelAllTasks(){
         if(checkIsOpen())
@@ -433,7 +432,7 @@ public class BitmapLoader {
         mNetLoadQueue.cancelAll();
         //磁盘缓存加载队列取消
         mDiskCacheQueue.cancelAll();
-        
+
         if (getLogger() != null)
             getLogger().i("[BitmapLoader]cancel all tasks");
     }
@@ -1163,26 +1162,23 @@ public class BitmapLoader {
      * 遇到此异常, 请检查代码, BitmapLoader实例化/设置后必须调用open()方法启动.
      */
     boolean checkIsOpen(){
-        //已销毁
-        if (state == STATE_DESTROYED){
-            if (getLogger() != null)
-                getLogger().e("[BitmapLoader]can't use destroyed BitmapLoader");
-            return true;
-        }
-        /*
-            出现该情况, 看DefaultDiskCacheExceptionHandler设置方法, 或直接调用openWithoutDiskCache()方法
-         */
-        if (state == STATE_OPEN_FAILED){
-            if (getLogger() != null)
-                getLogger().e("[BitmapLoader]DiskCache open failed, can't use, see DefaultDiskCacheExceptionHandler or use openWithoutDiskCache()");
-            return true;
-        }
-        //未启用
-        if (state == STATE_INACTIVE){
-            throw new RuntimeException("[BitmapLoader]can't use BitmapLoader without BitmapLoader.open()!!!");
+
+        switch(state){
+            case STATE_OPEN_FAILED:
+                /*
+                    出现该情况, 看DefaultDiskCacheExceptionHandler设置方法, 或直接调用openWithoutDiskCache()方法
+                */
+                if (getLogger() != null)
+                    getLogger().e("[BitmapLoader]DiskCache open failed, can't use, see DefaultDiskCacheExceptionHandler or use openWithoutDiskCache()");
+                return true;
+            case STATE_DESTROYED:
+                if (getLogger() != null)
+                    getLogger().e("[BitmapLoader]can't use destroyed BitmapLoader");
+                return true;
+            default:
+                return false;
         }
 
-        return false;
     }
 
     Context getContext(){
@@ -1255,8 +1251,6 @@ public class BitmapLoader {
      * 获得内存缓存器
      */
     public BitmapCache getBitmapCache(){
-        if (checkIsOpen())
-            return null;
         return mBitmapCache;
     }
 
