@@ -409,7 +409,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     }
 
     /**
-     * 强制清空缓存中不再使用(unused)的图片<br/>
+     * 强制回收缓存中不再使用(unused)的图片<br/>
      * <br/>
      * 用于暂时减少缓存的内存占用,请勿频繁调用.<br/>
      * 通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
