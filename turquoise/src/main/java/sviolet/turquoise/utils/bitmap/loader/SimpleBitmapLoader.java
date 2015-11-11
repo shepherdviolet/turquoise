@@ -93,7 +93,7 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  * 6.cancelAllTasks [慎用] <br/>
  *      强制取消所有加载任务.用于BitmapLoader未销毁的情况下, 结束磁盘和网络的访问. 这会导致
  *      加载中的图片无法显示. <br/>
- *      Caution: This will cause the loading Bitmap to be unable to display. <p/>
+ *      Not recommended: This will cause the loading Bitmap to be unable to display. <p/>
  *
  * -------------------注意事项----------------<br/>
  * <br/>
@@ -401,8 +401,10 @@ public class SimpleBitmapLoader {
      * [慎用]强制取消所有加载任务<p/>
      *
      * 用于BitmapLoader未销毁的情况下, 结束磁盘和网络的访问. 这会导致加载中的图片无法显示. <br/>
-     * Caution: This will cause the loading Bitmap to be unable to display. <br/>
+     *
+     * @deprecated Not recommended: This will cause the loading Bitmap to be unable to display.
      */
+    @Deprecated
     public void cancelAllTasks(){
         bitmapLoader.cancelAllTasks();
     }

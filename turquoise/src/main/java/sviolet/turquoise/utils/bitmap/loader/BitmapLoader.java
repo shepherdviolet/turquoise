@@ -99,10 +99,10 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *      通常是内存紧张的场合, 可以在Activity.onStop()中调用, Activity暂时不显示的情况下,
  *      将缓存中已被标记为unused的图片回收掉, 减少内存占用.<p/>
  *
- * 6.cancelAllTasks [慎用/Caution] <br/>
+ * 6.cancelAllTasks [慎用] <br/>
  *      强制取消所有加载任务.用于BitmapLoader未销毁的情况下, 结束磁盘和网络的访问. 这会导致
  *      加载中的图片无法显示. <br/>
- *      Caution: This will cause the loading Bitmap to be unable to display. <p/>
+ *      Not recommended: This will cause the loading Bitmap to be unable to display. <p/>
  *
  * -------------------注意事项----------------<br/>
  * <br/>
@@ -423,8 +423,10 @@ public class BitmapLoader {
      * [慎用]强制取消所有加载任务<p/>
      *
      * 用于BitmapLoader未销毁的情况下, 结束磁盘和网络的访问. 这会导致加载中的图片无法显示. <br/>
-     * Caution: This will cause the loading Bitmap to be unable to display. <br/>
+     *
+     * @deprecated Not recommended: This will cause the loading Bitmap to be unable to display.
      */
+    @Deprecated
     public void cancelAllTasks(){
         if(checkIsOpen())
             return;
