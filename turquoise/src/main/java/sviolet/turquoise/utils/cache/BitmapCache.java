@@ -117,18 +117,11 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      * <br/>
-     * 
      *
-     * @param context
-     * @return
+     * @param context 上下文
      */
     public static BitmapCache newInstance(Context context) {
-        //应用可用内存级别
-        final int memoryClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
-        //计算缓存大小
-        final int cacheSize = (int) (1024 * 1024 * memoryClass * DEFAULT_CACHE_MEMORY_PERCENT);
-        //实例化
-        return new BitmapCache(cacheSize, cacheSize);
+        return new BitmapCache(cachePercentToCacheSize(context, DEFAULT_CACHE_MEMORY_PERCENT), cachePercentToCacheSize(context, DEFAULT_CACHE_MEMORY_PERCENT));
     }
 
     /**
@@ -155,22 +148,13 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      * <br/>
-     * 
      *
-     * @param context
-     * @param cachePercent Bitmap缓存区占用应用可用内存的比例 (0, 1]
-     * @param recyclerPercent Bitmap回收站占用应用可用内存的比例 [0, 1], 设置为0禁用回收站
-     * @return
+     * @param context 上下文
+     * @param cachePercent Bitmap缓存区占用应用可用内存的比例 (0, 0.5]
+     * @param recyclerPercent Bitmap回收站占用应用可用内存的比例 [0, 0.5], 设置为0禁用回收站
      */
     public static BitmapCache newInstance(Context context, float cachePercent, float recyclerPercent) {
-        //应用可用内存级别
-        final int memoryClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
-        //计算缓存大小
-        final int cacheSize = (int) (1024 * 1024 * memoryClass * cachePercent);
-        //计算回收站大小
-        final int recyclerSize = (int) (1024 * 1024 * memoryClass * recyclerPercent);
-        //实例化
-        return new BitmapCache(cacheSize, recyclerSize);
+        return new BitmapCache(cachePercentToCacheSize(context, cachePercent), cachePercentToCacheSize(context, recyclerPercent));
     }
 
     /**
@@ -197,7 +181,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * 2.设置合理的缓存区及回收站大小, 分配过小可能会导致不够用而报错, 分配过大会使应用
      * 其他占用内存受限.<br/>
      * <br/>
-     * 
      *
      * @param cacheMaxSize Bitmap缓存区占用最大内存 单位byte (0, ?)
      * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte [0, ?), 设置为0禁用回收站
@@ -232,7 +215,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * @param cacheMaxSize Bitmap缓存区占用最大内存 单位byte
      * @param recyclerMaxSize Bitmap回收站占用最大内存 单位byte, 设置为0禁用回收站
      */
-    private BitmapCache(int cacheMaxSize, int recyclerMaxSize) {
+    protected BitmapCache(int cacheMaxSize, int recyclerMaxSize) {
         super(cacheMaxSize);
         this.unusedMap = new HashMap<String, Boolean>();
         //分配回收站空间
@@ -597,8 +580,34 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         return value.getRowBytes() * value.getHeight();
     }
 
+    /********************************************************
+     * private / protected
+     */
+
     private Logger getLogger(){
         return logger;
+    }
+
+    /**
+     * 根据缓存占内存的比例, 计算缓存占用大小(byte)<p/>
+     *
+     * cachePercent取值范围[0, 0.5], 超出范围则取极限值<br/>
+     *
+     * @param context 上下文
+     * @param cachePercent 缓存占内存比例 [0, 0.5]
+     * @return 缓存大小byte
+     */
+    protected static int cachePercentToCacheSize(Context context, float cachePercent){
+        //控制上下限
+        if (cachePercent < 0){
+            cachePercent = 0;
+        }else if (cachePercent > 0.5f){
+            cachePercent = 0.5f;
+        }
+        //应用可用内存级别
+        final int memoryClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
+        //计算缓存大小
+        return (int) (1024 * 1024 * memoryClass * cachePercent);
     }
 
 }
