@@ -159,11 +159,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *      推荐方案:<br/>
  *      1).在网络加载失败(failed)时, 有限次地重新加载, 不应重新加载unused的任务.<br/>
  * <Br/>
- * 4.Exception::[SimpleBitmapLoaderTask]don't use View.setTag() when view load by SimpleBitmapLoader!!<Br/>
- *      使用SimpleBitmapLoader加载控件时, 控件禁止使用View.setTag()自行设置TAG,
- *      因为SimpleBitmapLoader会把SimpleBitmapLoaderTask通过setTag()绑定在控件上!<Br/>
- * <Br/>
- * 5.界面提示"磁盘缓存访问失败", 或日志打印:
+ * 4.界面提示"磁盘缓存访问失败", 或日志打印:
  *      [DefaultDiskCacheExceptionHandler]DiskCache open failed, use BitmapLoader.Builder.setDiskCacheExceptionHandler to custom processing <br/>
  *      可自定义磁盘缓存打开失败处理方式, {@link DefaultDiskCacheExceptionHandler}<Br/>
  * <Br/>
