@@ -679,8 +679,8 @@ public class BitmapLoader {
          * 缓存占用应用可用内存过大, 影响性能或造成OOM. <br/>
          * 2."内存缓存回收站"通常设置与"内存缓存区"相同.<Br/>
          *
-         * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 1], 默认值0.125f
-         * @param ramCacheRecyclerSizePercent 内存缓存回收站占用应用可用内存的比例 [0, 1], 设置为0禁用回收站, 默认值0.125f
+         * @param ramCacheSizePercent 内存缓存区占用应用可用内存的比例 (0, 0.5], 默认值0.125f
+         * @param ramCacheRecyclerSizePercent 内存缓存回收站占用应用可用内存的比例 [0, 0.5], 设置为0禁用回收站, 默认值0.125f
          */
         public BuildType setRamCache(float ramCacheSizePercent, float ramCacheRecyclerSizePercent){
             settings.ramCacheSizePercent = ramCacheSizePercent;

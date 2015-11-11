@@ -584,7 +584,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * private / protected
      */
 
-    private Logger getLogger(){
+    protected Logger getLogger(){
         return logger;
     }
 
