@@ -76,9 +76,9 @@ public class CommonImageActivity extends TActivity {
         super.onStop();
         //Activity不再显示时, 压缩图片缓存占用空间, 非必须, 在内存紧张场合适用
         if (bitmapLoader != null)
-            bitmapLoader.reduce();
+            bitmapLoader.reduceMemoryCache();
         if (simpleBitmapLoader != null)
-            simpleBitmapLoader.reduce();
+            simpleBitmapLoader.reduceMemoryCache();
     }
 
     /**
