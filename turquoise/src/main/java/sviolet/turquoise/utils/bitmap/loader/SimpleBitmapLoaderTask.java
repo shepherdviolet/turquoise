@@ -86,12 +86,12 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
 
     //任务状态/////////////////////////////
 
-    public static final int STATE_INIT = 0;//初始状态
+    public static final int STATE_WAITING = 0;//等待加载
     public static final int STATE_LOADING = 1;//加载中
-    public static final int STATE_LOADED = 2;//加载完成
-    public static final int STATE_UNUSED = 3;//弃用
+    public static final int STATE_LOADED = 2;//加载成功
+    public static final int STATE_UNUSED = 3;//弃用任务
 
-    private int state = STATE_INIT;
+    private int state = STATE_WAITING;
 
     public SimpleBitmapLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, V view){
         if (request == null)
@@ -230,7 +230,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
             return;
         }
         //初始状态和加载完成状态允许加载
-        if (state == STATE_INIT || state == STATE_LOADED) {
+        if (state == STATE_WAITING || state == STATE_LOADED) {
             state = STATE_LOADING;
             getLoader().load(this);
         }
@@ -357,12 +357,12 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
 
     /**
      * 加载任务执行状态<br/>
-     * SimpleBitmapLoaderTask.STATE_INIT = 0;//初始状态<br/>
+     * SimpleBitmapLoaderTask.STATE_WAITING = 0;//等待加载<br/>
      * SimpleBitmapLoaderTask.STATE_LOADING = 1;//加载中<br/>
-     * SimpleBitmapLoaderTask.STATE_LOADED = 2;//加载完成<br/>
-     * SimpleBitmapLoaderTask.STATE_UNUSED = 3;//弃用<br/>
+     * SimpleBitmapLoaderTask.STATE_LOADED = 2;//加载成功<br/>
+     * SimpleBitmapLoaderTask.STATE_UNUSED = 3;//弃用任务<br/>
      */
-    public int getState(){
+    protected int getState(){
         return state;
     }
 
@@ -398,7 +398,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     @Override
     public void onLoadSucceed(BitmapRequest request, Object params, Bitmap bitmap) {
         //加载结束
-        state = STATE_LOADED;
+        state = STATE_WAITING;
 
         //检查
         if (checkView(request.getUrl())){
@@ -410,6 +410,8 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
             //重新加载
             reload();
         }else {
+            //加载成功
+            state = STATE_LOADED;
             //加载成功,设置图片
             setBitmap(getView(), getResources(), bitmap, getAnimationDuration());
         }
@@ -418,7 +420,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     @Override
     public void onLoadFailed(BitmapRequest request, Object params) {
         //加载结束
-        state = STATE_LOADED;
+        state = STATE_WAITING;
 
         //检查
         if (checkView(request.getUrl())){
@@ -433,7 +435,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     @Override
     public void onLoadCanceled(BitmapRequest request, Object params) {
         //加载结束
-        state = STATE_LOADED;
+        state = STATE_WAITING;
 
         //检查
         if (checkView(request.getUrl())){
