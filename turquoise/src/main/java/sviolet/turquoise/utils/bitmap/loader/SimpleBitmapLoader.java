@@ -549,7 +549,9 @@ public class SimpleBitmapLoader {
         if (tag != null && tag instanceof SimpleBitmapLoaderTask){
             //任务未被弃用 且 图片未被篡改 且 URL相同, 跳过加载
             SimpleBitmapLoaderTask task = ((SimpleBitmapLoaderTask) tag);
-            if (!task.isUnused() && !task.checkViewModified() && request.getUrl().equals(task.getUrl())){
+            if (task.getState() != SimpleBitmapLoaderTask.STATE_UNUSED
+                    && !task.checkViewModified()
+                    && request.getUrl().equals(task.getUrl())){
                 if (getLogger() != null)
                     getLogger().i("[SimpleBitmapLoader]load skipped (url:" + request.getUrl() + "), because of the same url");
                 return true;

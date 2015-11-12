@@ -71,6 +71,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     //专用TagKey, 用于将自身作为TAG绑定在View上
     public static final int TAG_KEY = 0xff77f777;
 
+    //图片加载请求参数
     private BitmapRequest request;
 
     //图片重新加载次数
@@ -82,10 +83,15 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     private WeakReference<V> view;
     //加载器
     private WeakReference<SimpleBitmapLoader> loader;
-    //加载器加载中
-    private boolean loading = false;
-    //是否被弃用
-    private boolean unused = false;
+
+    //任务状态/////////////////////////////
+
+    public static final int STATE_INIT = 0;//初始状态
+    public static final int STATE_LOADING = 1;//加载中
+    public static final int STATE_LOADED = 2;//加载完成
+    public static final int STATE_UNUSED = 3;//弃用
+
+    private int state = STATE_INIT;
 
     public SimpleBitmapLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, V view){
         if (request == null)
@@ -118,7 +124,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         //解除绑定
         unbindView();
         //置为弃用
-        unused = true;
+        state = STATE_UNUSED;
     }
 
     /****************************************************************
@@ -220,9 +226,12 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
      * 加载
      */
     protected void load() {
-        //加载开始
-        if (getLoader() != null && !loading && !unused) {
-            loading = true;
+        if (getLoader() == null){
+            return;
+        }
+        //初始状态和加载完成状态允许加载
+        if (state == STATE_INIT || state == STATE_LOADED) {
+            state = STATE_LOADING;
             getLoader().load(this);
         }
     }
@@ -347,10 +356,14 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     }
 
     /**
-     * 是否被弃用
+     * 加载任务执行状态<br/>
+     * SimpleBitmapLoaderTask.STATE_INIT = 0;//初始状态<br/>
+     * SimpleBitmapLoaderTask.STATE_LOADING = 1;//加载中<br/>
+     * SimpleBitmapLoaderTask.STATE_LOADED = 2;//加载完成<br/>
+     * SimpleBitmapLoaderTask.STATE_UNUSED = 3;//弃用<br/>
      */
-    protected boolean isUnused(){
-        return unused;
+    public int getState(){
+        return state;
     }
 
     /**
@@ -385,7 +398,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     @Override
     public void onLoadSucceed(BitmapRequest request, Object params, Bitmap bitmap) {
         //加载结束
-        loading = false;
+        state = STATE_LOADED;
 
         //检查
         if (checkView(request.getUrl())){
@@ -405,7 +418,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     @Override
     public void onLoadFailed(BitmapRequest request, Object params) {
         //加载结束
-        loading = false;
+        state = STATE_LOADED;
 
         //检查
         if (checkView(request.getUrl())){
@@ -420,7 +433,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     @Override
     public void onLoadCanceled(BitmapRequest request, Object params) {
         //加载结束
-        loading = false;
+        state = STATE_LOADED;
 
         //检查
         if (checkView(request.getUrl())){
