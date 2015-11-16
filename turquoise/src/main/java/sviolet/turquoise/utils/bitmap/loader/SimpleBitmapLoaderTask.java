@@ -36,7 +36,7 @@ import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 
 /**
- * 
+ *
  * BitmapLoader加载任务<br/>
  * 实现OnBitmapLoadedListener接口<br/>
  * <br/>
@@ -542,6 +542,12 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
             if (drawEnable) {
                 try {
                     super.draw(canvas);
+                    /*
+                        解决小米等手机, 绘制recycled的Bitmap时不会抛出异常的问题
+                     */
+                    if (getBitmap() != null && getBitmap().isRecycled()){
+                        throw new Exception("[SafeBitmapDrawable]draw: bitmap is recycled");
+                    }
                 } catch (Exception e) {
                     //禁止绘制
                     drawEnable = false;
