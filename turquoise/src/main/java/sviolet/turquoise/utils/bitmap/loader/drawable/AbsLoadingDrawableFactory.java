@@ -20,11 +20,16 @@
 package sviolet.turquoise.utils.bitmap.loader.drawable;
 
 /**
+ * [抽象]动态加载图工厂<p/>
+ *
+ * 实现newLoadingDrawable()方法, 创建动态图实例.<p/>
+ *
+ * 实现参考{@link DefaultLoadingDrawableFactory}
  *
  * Created by S.Violet on 2015/11/17.
  */
-public abstract class AbsLoadingDrawableFactory <T extends AbsLoadingDrawable>{
+public abstract class AbsLoadingDrawableFactory {
 
-    public abstract T newLoadingDrawable();
+    public abstract AbsLoadingDrawable newLoadingDrawable();
 
 }

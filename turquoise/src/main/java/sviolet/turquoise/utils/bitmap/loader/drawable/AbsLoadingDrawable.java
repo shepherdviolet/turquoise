@@ -28,13 +28,18 @@ import java.lang.ref.WeakReference;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoaderTask;
 
 /**
+ * [抽象]动态加载图<p/>
+ *
+ * 实现onDraw()方法, 绘制动态图. 父类已实现根据加载任务状态, 确定是否需要刷新显示.<p/>
+ *
+ * 实现参考{@link DefaultLoadingDrawableFactory.DefaultLoadingDrawable}
  *
  * Created by S.Violet on 2015/11/17.
  */
 
 public abstract class AbsLoadingDrawable extends Drawable {
 
-    private WeakReference<SimpleBitmapLoaderTask> loaderTask;
+    private WeakReference<SimpleBitmapLoaderTask> loaderTask;//加载任务
 
     public AbsLoadingDrawable setLoaderTask(SimpleBitmapLoaderTask loaderTask){
         this.loaderTask = new WeakReference<SimpleBitmapLoaderTask>(loaderTask);
@@ -49,6 +54,7 @@ public abstract class AbsLoadingDrawable extends Drawable {
     @Override
     public final void draw(Canvas canvas) {
         onDraw(canvas);
+        //任务加载中刷新显示
         if (isLoading()){
             invalidateSelf();
         }
