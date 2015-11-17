@@ -35,7 +35,7 @@ import sviolet.turquoise.utils.sys.DateTimeUtils;
  */
 public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
 
-    private Settings settings;
+    protected Settings settings;
 
     DefaultLoadingDrawableFactory(Settings settings){
         this.settings = settings;
@@ -75,17 +75,19 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         }
     }
 
-    static class Settings{
+    protected static class Settings{
 
-        static final int COLOR_DEF = 0xFFE0E0E0;
+        static final int COLOR_DEF = 0xFFC0C0C0;
         static final int RADIUS_DEF = 10;
         static final int INTERVAL_DEF = 40;
         static final int DURATION = 1000;
+        static final float OFFSET_Y_DEF = 0.5f;
 
         int color = COLOR_DEF;//圆点颜色
         int radius = RADIUS_DEF;//圆点半径
         int interval = INTERVAL_DEF;//点间隔
         long duration = DURATION;//动画时间
+        float offsetY = OFFSET_Y_DEF;//圆点Y轴方向位置
 
         Bitmap failedBitmap;//失败时显示的图
         Bitmap backgroundBitmap;//加载背景图
@@ -137,7 +139,7 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         }
 
         /**
-         * @param radius 加载动画点半径
+         * @param radius 加载动画点半径 px
          */
         public Builder setRadius(int radius){
             settings.radius = radius;
@@ -145,7 +147,7 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         }
 
         /**
-         * @param interval 加载动画点间隔
+         * @param interval 加载动画点间隔 px
          */
         public Builder setInterval(int interval){
             settings.interval = interval;
@@ -153,10 +155,18 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         }
 
         /**
-         * @param duration 加载动画时间
+         * @param duration 加载动画时间 ms
          */
         public Builder setDuration(long duration){
             settings.duration = duration;
+            return this;
+        }
+
+        /**
+         * @param offsetY 加载动画点的Y轴方向位置 [0, 1], 默认值0.5f
+         */
+        public Builder setOffsetY(float offsetY){
+            settings.offsetY = offsetY;
             return this;
         }
 
@@ -266,7 +276,7 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
             final int length = (QUANTITY - 1) * settings.interval;
 
             int x = width / 2 - length / 2;
-            int y = height / 2;
+            int y = (int) (height * settings.offsetY);
 
             for(int i = 0 ; i < QUANTITY ; i++){
                 canvas.drawCircle(x, y, i == currentPosition ? (float) (settings.radius * 1.3) : settings.radius, paint);
