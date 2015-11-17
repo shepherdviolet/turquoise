@@ -159,12 +159,17 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
             //获得加载图
             return getLoadingDrawable(false);
         }else{
-            //获得目的图的背景图
+            //目的图
+            Drawable targetDrawable = new ReloadableSafeBitmapDrawable(resources, bitmap)
+                    .setLoaderTask(this)
+                    .setLogger(getLogger());
+            //若淡入动画时间为0, 则直接返回
+            if (getAnimationDuration() <= 0){
+                return targetDrawable;
+            }
             TransitionDrawable drawable = new TransitionDrawable(new Drawable[]{
-                    getLoadingDrawable(true),
-                    new ReloadableSafeBitmapDrawable(resources, bitmap)
-                            .setLoaderTask(this)
-                            .setLogger(getLogger())
+                    getLoadingDrawable(true),//获得目的图的背景图
+                    targetDrawable
             });
             drawable.setCrossFadeEnabled(true);//加载图消失
             return drawable;
