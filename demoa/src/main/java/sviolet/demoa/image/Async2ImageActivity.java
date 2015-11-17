@@ -33,9 +33,10 @@ import sviolet.demoa.image.utils.MyNetLoadHandler;
 import sviolet.turquoise.enhanced.TActivity;
 import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
-import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.drawable.DefaultLoadingDrawableFactory;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
+import sviolet.turquoise.utils.sys.MeasureUtils;
 
 @DemoDescription(
         title = "AsyncImageList2",
@@ -76,7 +77,15 @@ public class Async2ImageActivity extends TActivity {
 
         //初始化图片加载器
         simpleBitmapLoader = new SimpleBitmapLoader.Builder(this, "AsyncImageActivity",
-                BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_null))
+                 new DefaultLoadingDrawableFactory.Builder(0xFFF0F0F0)//背景颜色
+                         .setColor(0xFFC0C0C0)//动画点颜色
+                         .setRadius(MeasureUtils.dp2px(getApplicationContext(), 2))//动画点半径
+                         .setInterval(MeasureUtils.dp2px(getApplicationContext(), 8))//动画点间隔
+                         .setDuration(1000)//动画时间(一个来回)
+//                         .setOffsetY(0.7f)//动画点在Y轴上的位置
+//                         .setFailedBitmap(BitmapUtils.decodeFromResource(getResources(), R.mipmap.ic_launcher))//加载失败图
+                         .create()
+        )
                 .setNetLoadHandler(new MyNetLoadHandler(this))//自定义网络加载实现
                 .setRamCache(0.15f, 0.15f)//缓存和回收站各占15%内存
 //                    .setRamCache(0.004f, 0.004f)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常

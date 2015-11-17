@@ -279,7 +279,7 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
             int y = (int) (height * settings.offsetY);
 
             for(int i = 0 ; i < QUANTITY ; i++){
-                canvas.drawCircle(x, y, i == currentPosition ? (float) (settings.radius * 1.3) : settings.radius, paint);
+                canvas.drawCircle(x, y, i == currentPosition ? (float) (settings.radius * 1.5) : settings.radius, paint);
                 x += settings.interval;
             }
         }
