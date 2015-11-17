@@ -22,16 +22,15 @@ package sviolet.turquoise.utils.bitmap.loader;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.view.View;
 
-import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.bitmap.loader.drawable.SafeBitmapDrawable;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 
@@ -157,13 +156,13 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
      */
     private Drawable createDrawable(Resources resources, Bitmap bitmap){
         if (bitmap == null || bitmap.isRecycled()){
-            //尺寸等于加载图
+            //获得加载图
             return getLoadingDrawable(false);
         }else{
-            //尺寸等于目的图
+            //获得目的图的背景图
             TransitionDrawable drawable = new TransitionDrawable(new Drawable[]{
                     getLoadingDrawable(true),
-                    new SafeBitmapDrawable(resources, bitmap)
+                    new ReloadableSafeBitmapDrawable(resources, bitmap)
                             .setLoaderTask(this)
                             .setLogger(getLogger())
             });
@@ -316,21 +315,32 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         return null;
     }
 
-    protected Drawable getLoadingDrawable(boolean noDimension){
+    /**
+     * @param forTransitionBackground 用于TransitionDrawable的背景图
+     */
+    protected Drawable getLoadingDrawable(boolean forTransitionBackground){
         if (getLoader() != null){
-            Bitmap loadingBitmap = getLoader().getLoadingBitmap();
-            if (loadingBitmap != null && !loadingBitmap.isRecycled()){
-                if (noDimension){
-                    //尺寸为match_parent的SafeBitmapDrawable
-                    return new NoDimensionSafeBitmapDrawable(getResources(), loadingBitmap)
+            if (getLoader().getLoadingDrawableFactory() != null){//动态加载图
+                if (forTransitionBackground) {
+                    //作为目的图背景时, 返回透明图
+                    return new ColorDrawable(0x00000000);
+                } else {
+                    //作为加载图时, 返回动态加载图
+                    return getLoader().getLoadingDrawableFactory().newLoadingDrawable().setLoaderTask(this);
+                }
+            } else if (getLoader().getLoadingBitmap() != null && !getLoader().getLoadingBitmap().isRecycled()){//加载图
+                if (forTransitionBackground){
+                    //作为目的图背景时, 返回尺寸为match_parent的SafeBitmapDrawable
+                    return new NoDimensionSafeBitmapDrawable(getResources(), getLoader().getLoadingBitmap())
                             .setLoaderTask(this)
                             .setLogger(getLogger());
-                }else {
-                    return new SafeBitmapDrawable(getResources(), loadingBitmap)
+                } else {
+                    //作为加载图时, 返回普通SafeBitmapDrawable
+                    return new ReloadableSafeBitmapDrawable(getResources(), getLoader().getLoadingBitmap())
                             .setLoaderTask(this)
                             .setLogger(getLogger());
                 }
-            }else{
+            }else{//加载颜色
                 return new ColorDrawable(getLoader().getLoadingColor());
             }
         }
@@ -362,7 +372,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
      * SimpleBitmapLoaderTask.STATE_LOADED = 2;//加载成功<br/>
      * SimpleBitmapLoaderTask.STATE_UNUSED = 3;//弃用任务<br/>
      */
-    protected int getState(){
+    public int getState(){
         return state;
     }
 
@@ -478,7 +488,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
      *
      * 用于TransitionDrawable,使得加载图尺寸等于目标图尺寸<p/>
      */
-    private static class NoDimensionSafeBitmapDrawable extends SafeBitmapDrawable{
+    private static class NoDimensionSafeBitmapDrawable extends ReloadableSafeBitmapDrawable{
 
         public NoDimensionSafeBitmapDrawable(Resources res, Bitmap bitmap) {
             super(res, bitmap);
@@ -495,78 +505,28 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         }
     }
 
-
     /**
-     * 安全的BitmapDrawable<br/>
-     * <br/>
-     * 简易地防回收崩溃, 当Bitmap被回收时, 绘制空白, 不会崩溃, 但并不会重新加载图片<Br/>
+     * 可重加载的SafeBitmapDrawable<p/>
      *
-     * Created by S.Violet on 2015/10/21.
+     * 实现了绘制错误重新加载的功能<br/>
      */
-    static class SafeBitmapDrawable extends BitmapDrawable {
+    static class ReloadableSafeBitmapDrawable extends SafeBitmapDrawable{
 
         private WeakReference<SimpleBitmapLoaderTask> loaderTask;//加载任务
-        private Logger logger;//日志打印器
-        private boolean drawEnable = true;//允许绘制
 
-        public SafeBitmapDrawable(Resources res) {
-            super(res);
-        }
-
-        public SafeBitmapDrawable(Bitmap bitmap) {
-            super(bitmap);
-        }
-
-        public SafeBitmapDrawable(Resources res, Bitmap bitmap) {
+        public ReloadableSafeBitmapDrawable(Resources res, Bitmap bitmap) {
             super(res, bitmap);
         }
 
-        public SafeBitmapDrawable(String filepath) {
-            super(filepath);
-        }
-
-        public SafeBitmapDrawable(Resources res, String filepath) {
-            super(res, filepath);
-        }
-
-        public SafeBitmapDrawable(InputStream is) {
-            super(is);
-        }
-
-        public SafeBitmapDrawable(Resources res, InputStream is) {
-            super(res, is);
-        }
-
         @Override
-        public void draw(Canvas canvas) {
-            if (drawEnable) {
-                try {
-                    super.draw(canvas);
-                    /*
-                        解决小米等手机, 绘制recycled的Bitmap时不会抛出异常的问题
-                     */
-                    if (getBitmap() != null && getBitmap().isRecycled()){
-                        throw new Exception("[SafeBitmapDrawable]draw: bitmap is recycled");
-                    }
-                } catch (Exception e) {
-                    //禁止绘制
-                    drawEnable = false;
-                    if (getLogger() != null) {
-                        getLogger().e("[SafeBitmapDrawable]draw: error, catch exception: " + e.getMessage());
-                    }
-                    //重新加载图片
-                    if (getLoaderTask() != null){
-                        if (getLogger() != null) {
-                            getLogger().e("[SafeBitmapDrawable]draw: reload url<" + getLoaderTask().getUrl() + ">");
-                        }
-                        getLoaderTask().resetToDefault();//设置为加载图
-                        getLoaderTask().load();//重加载(不限制次数)
-                    }
-                }
-            }else{
+        protected void onDrawError(Canvas canvas, Exception e){
+            //重新加载图片
+            if (getLoaderTask() != null){
                 if (getLogger() != null) {
-                    getLogger().d("[SafeBitmapDrawable]draw: skip, because of exception");
+                    getLogger().e("[ReloadableSafeBitmapDrawable]draw: reload url<" + getLoaderTask().getUrl() + ">");
                 }
+                getLoaderTask().resetToDefault();//设置为加载图
+                getLoaderTask().load();//重加载(不限制次数)
             }
         }
 
@@ -575,21 +535,12 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
             return this;
         }
 
-        public SafeBitmapDrawable setLogger(Logger logger){
-            this.logger = logger;
-            return this;
-        }
-
-        private Logger getLogger(){
-            return logger;
-        }
-
         private SimpleBitmapLoaderTask getLoaderTask(){
             if (loaderTask != null)
                 return loaderTask.get();
             return null;
         }
-    }
 
+    }
 
 }

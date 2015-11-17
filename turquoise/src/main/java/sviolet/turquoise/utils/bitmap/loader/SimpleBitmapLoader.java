@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import android.view.View;
 
 import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.bitmap.loader.drawable.AbsLoadingDrawableFactory;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.handler.DiskCacheExceptionHandler;
@@ -36,7 +37,7 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  * 便捷图片双缓存网络异步加载器<br/>
  * <br/>
  * 代理强化BitmapLoader, 传入url和View, 自动完成异步加载显示, 错误重新加载, 默认图显示, 淡入效果等.<br/>
- * {@link sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoaderTask.SafeBitmapDrawable}拥有防崩溃, 重新加载功能.<br/>
+ * {@link sviolet.turquoise.utils.bitmap.loader.drawable.SafeBitmapDrawable}拥有防崩溃, 重新加载功能.<br/>
  * <br/>
  * ****************************************************************<br/>
  * * * * * SimpleBitmapLoader使用说明:<br/>
@@ -444,8 +445,10 @@ public class SimpleBitmapLoader {
      */
     static class Settings extends BitmapLoader.Settings{
 
-        Bitmap loadingBitmap;//加载状态的图片(二选一)
-        int loadingColor = 0x00000000;//加载状态的颜色(二选一)
+        Bitmap loadingBitmap;//加载状态的图片(三选一)
+        int loadingColor = 0x00000000;//加载状态的颜色(三选一)
+        AbsLoadingDrawableFactory loadingDrawableFactory;//加载动态图工厂(三选一)
+
         int animationDuration = 500;//AsyncBitmapDrawable图片由浅及深显示的动画持续时间
         int reloadTimesMax = 2;//图片加载失败重新加载次数限制
 
@@ -465,6 +468,7 @@ public class SimpleBitmapLoader {
             super(context, diskCacheName, new Settings());
             getSettings().loadingBitmap = loadingBitmap;
         }
+
         /**
          * @param context 上下文
          * @param diskCacheName 磁盘缓存目录
@@ -473,6 +477,16 @@ public class SimpleBitmapLoader {
         public Builder(Context context, String diskCacheName, int loadingColor) {
             super(context, diskCacheName, new Settings());
             getSettings().loadingColor = loadingColor;
+        }
+
+        /**
+         * @param context 上下文
+         * @param diskCacheName 磁盘缓存目录
+         * @param loadingDrawableFactory 加载动态图工厂
+         */
+        public Builder(Context context, String diskCacheName, AbsLoadingDrawableFactory loadingDrawableFactory) {
+            super(context, diskCacheName, new Settings());
+            getSettings().loadingDrawableFactory = loadingDrawableFactory;
         }
 
         /**
@@ -589,6 +603,10 @@ public class SimpleBitmapLoader {
 
     protected int getLoadingColor(){
         return getSettings().loadingColor;
+    }
+
+    protected AbsLoadingDrawableFactory getLoadingDrawableFactory(){
+        return getSettings().loadingDrawableFactory;
     }
 
     public int getReloadTimesMax() {
