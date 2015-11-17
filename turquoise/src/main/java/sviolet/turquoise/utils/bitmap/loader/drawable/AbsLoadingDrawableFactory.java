@@ -19,17 +19,31 @@
 
 package sviolet.turquoise.utils.bitmap.loader.drawable;
 
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+
 /**
  * [抽象]动态加载图工厂<p/>
  *
- * 实现newLoadingDrawable()方法, 创建动态图实例.<p/>
+ * 1.实现newLoadingDrawable()方法, 创建动态图实例. 用于加载时的动态图显示.<br/>
+ * 2.实现destroy(), 用于销毁资源, 特别是Bitmap.<br/>
+ * 3.实现getBackgroundDrawable(), 返回动态加载图的背景图, 用于目的图显示时的淡入效果背景,
+ * 注意尺寸需为match_parent, 保证加载成功的图片, 尺寸等于目的图.<p/>
  *
- * 实现参考{@link DefaultLoadingDrawableFactory}
+ * 注意: Bitmap需由工厂持有, 便于getBackgroundDrawable()返回给加载任务, 便于destroy()销毁Bitmap.<p/>
+ *
+ * 实现参考{@link DefaultLoadingDrawableFactory}<p/>
  *
  * Created by S.Violet on 2015/11/17.
  */
 public abstract class AbsLoadingDrawableFactory {
 
     public abstract AbsLoadingDrawable newLoadingDrawable();
+
+    public abstract void destroy();
+
+    public Drawable getBackgroundDrawable(){
+        return new ColorDrawable(0x00000000);
+    }
 
 }

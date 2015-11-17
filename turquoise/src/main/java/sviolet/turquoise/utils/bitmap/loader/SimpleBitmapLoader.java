@@ -405,6 +405,11 @@ public class SimpleBitmapLoader {
     public void destroy(){
         bitmapLoader.destroy();
 
+        //销毁加载动画工厂
+        if (getSettings().loadingDrawableFactory != null){
+            getSettings().loadingDrawableFactory.destroy();
+        }
+
         //回收加载图
         if (getSettings().loadingBitmap != null && !getSettings().loadingBitmap.isRecycled()){
             getSettings().loadingBitmap.recycle();

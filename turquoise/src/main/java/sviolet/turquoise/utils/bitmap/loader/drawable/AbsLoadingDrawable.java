@@ -32,7 +32,7 @@ import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoaderTask;
  *
  * 实现onDraw()方法, 绘制动态图. 父类已实现根据加载任务状态, 确定是否需要刷新显示.<p/>
  *
- * 实现参考{@link DefaultLoadingDrawableFactory.DefaultLoadingDrawable}
+ * 实现参考{@link DefaultLoadingDrawableFactory.DefaultLoadingDrawable}<p/>
  *
  * Created by S.Violet on 2015/11/17.
  */
@@ -53,9 +53,9 @@ public abstract class AbsLoadingDrawable extends Drawable {
 
     @Override
     public final void draw(Canvas canvas) {
-        onDraw(canvas);
         //任务加载中刷新显示
         if (isLoading()){
+            onDraw(canvas);
             invalidateSelf();
         }
     }

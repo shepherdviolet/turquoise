@@ -322,8 +322,8 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         if (getLoader() != null){
             if (getLoader().getLoadingDrawableFactory() != null){//动态加载图
                 if (forTransitionBackground) {
-                    //作为目的图背景时, 返回透明图
-                    return new ColorDrawable(0x00000000);
+                    //作为目的图背景时, 返回工厂的背景图
+                    return getLoader().getLoadingDrawableFactory().getBackgroundDrawable();
                 } else {
                     //作为加载图时, 返回动态加载图
                     return getLoader().getLoadingDrawableFactory().newLoadingDrawable().setLoaderTask(this);
@@ -331,13 +331,12 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
             } else if (getLoader().getLoadingBitmap() != null && !getLoader().getLoadingBitmap().isRecycled()){//加载图
                 if (forTransitionBackground){
                     //作为目的图背景时, 返回尺寸为match_parent的SafeBitmapDrawable
-                    return new NoDimensionSafeBitmapDrawable(getResources(), getLoader().getLoadingBitmap())
-                            .setLoaderTask(this)
+                    return new SafeBitmapDrawable(getResources(), getLoader().getLoadingBitmap())
+                            .setMatchParent(true)
                             .setLogger(getLogger());
                 } else {
                     //作为加载图时, 返回普通SafeBitmapDrawable
-                    return new ReloadableSafeBitmapDrawable(getResources(), getLoader().getLoadingBitmap())
-                            .setLoaderTask(this)
+                    return new SafeBitmapDrawable(getResources(), getLoader().getLoadingBitmap())
                             .setLogger(getLogger());
                 }
             }else{//加载颜色
@@ -479,31 +478,6 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
     /*****************************************************
      * 内部类
      */
-
-    /**
-     * 无尺寸(自适应尺寸)的SafeBitmapDrawable<p/>
-     *
-     * 通过复写getIntrinsicWidth/getIntrinsicHeight两个方法,返回-1,
-     * 使得该Drawable在计算尺寸时,作为match_parent处理.<p/>
-     *
-     * 用于TransitionDrawable,使得加载图尺寸等于目标图尺寸<p/>
-     */
-    private static class NoDimensionSafeBitmapDrawable extends ReloadableSafeBitmapDrawable{
-
-        public NoDimensionSafeBitmapDrawable(Resources res, Bitmap bitmap) {
-            super(res, bitmap);
-        }
-
-        @Override
-        public int getIntrinsicWidth() {
-            return -1;
-        }
-
-        @Override
-        public int getIntrinsicHeight() {
-            return -1;
-        }
-    }
 
     /**
      * 可重加载的SafeBitmapDrawable<p/>

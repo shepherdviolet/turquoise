@@ -40,6 +40,7 @@ public class SafeBitmapDrawable extends BitmapDrawable {
 
     private Logger logger;//日志打印器
     private boolean drawEnable = true;//允许绘制
+    private boolean matchParent = false;//尺寸填充父控件(match_parent)
 
     public SafeBitmapDrawable(Resources res) {
         super(res);
@@ -100,6 +101,28 @@ public class SafeBitmapDrawable extends BitmapDrawable {
      */
     protected void onDrawError(Canvas canvas, Exception e){
 
+    }
+
+    @Override
+    public int getIntrinsicWidth() {
+        if (matchParent)
+            return -1;
+        return super.getIntrinsicWidth();
+    }
+
+    @Override
+    public int getIntrinsicHeight() {
+        if (matchParent)
+            return -1;
+        return super.getIntrinsicHeight();
+    }
+
+    /**
+     * 设置尺寸是否填充父控件(match_parent), 默认false
+     */
+    public SafeBitmapDrawable setMatchParent(boolean matchParent){
+        this.matchParent = matchParent;
+        return this;
     }
 
     public SafeBitmapDrawable setLogger(Logger logger){
