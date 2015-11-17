@@ -323,7 +323,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
             if (getLoader().getLoadingDrawableFactory() != null){//动态加载图
                 if (forTransitionBackground) {
                     //作为目的图背景时, 返回工厂的背景图
-                    return getLoader().getLoadingDrawableFactory().getBackgroundDrawable();
+                    return getLoader().getLoadingDrawableFactory().newBackgroundDrawable();
                 } else {
                     //作为加载图时, 返回动态加载图
                     return getLoader().getLoadingDrawableFactory().newLoadingDrawable().setLoaderTask(this);

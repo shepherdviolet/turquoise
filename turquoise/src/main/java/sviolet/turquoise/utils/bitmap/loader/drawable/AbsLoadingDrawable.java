@@ -30,7 +30,9 @@ import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoaderTask;
 /**
  * [抽象]动态加载图<p/>
  *
- * 实现onDraw()方法, 绘制动态图. 父类已实现根据加载任务状态, 确定是否需要刷新显示.<p/>
+ * 实现onDrawBackground(), 绘制背景图.<Br/>
+ * 实现onDrawAnimation(), 绘制加载动画. 父类已实现根据加载任务状态, 决定是否需要绘制和刷新.<br/>
+ * 实现onDrawFailedBitmap(), 绘制加载失败图.<p/>
  *
  * 实现参考{@link DefaultLoadingDrawableFactory.DefaultLoadingDrawable}<p/>
  *
@@ -46,21 +48,31 @@ public abstract class AbsLoadingDrawable extends Drawable {
         return this;
     }
 
-    public boolean isLoading() {
+    private boolean isLoading() {
         return loaderTask != null && loaderTask.get() != null
                 && loaderTask.get().getState() <= SimpleBitmapLoaderTask.STATE_LOADING;
     }
 
     @Override
     public final void draw(Canvas canvas) {
-        //任务加载中刷新显示
+        //绘制背景/加载错误图
+        onDrawBackground(canvas);
+
         if (isLoading()){
-            onDraw(canvas);
+            //加载时绘制加载动画
+            onDrawAnimation(canvas);
             invalidateSelf();
+        }else{
+            //绘制加载失败图
+            onDrawFailedBitmap(canvas);
         }
     }
 
-    public abstract void onDraw(Canvas canvas);
+    public abstract void onDrawBackground(Canvas canvas);
+
+    public abstract void onDrawAnimation(Canvas canvas);
+
+    public abstract void onDrawFailedBitmap(Canvas canvas);
 
     @Override
     public void setAlpha(int alpha) {
