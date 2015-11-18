@@ -54,7 +54,7 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
      */
     @Override
     public Drawable newBackgroundDrawable() {
-        return settings.newBackgroundDrawable();
+        return settings.newBackgroundDrawable(true);//用于目的图淡入动画背景, 尺寸为match_parent
     }
 
     /**
@@ -93,11 +93,14 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         Bitmap backgroundBitmap;//加载背景图
         int backgroundColor;//加载背景颜色
 
-        Drawable newBackgroundDrawable() {
+        /**
+         * @param matchParent 尺寸是否填充父控件(match_parent)
+         */
+        Drawable newBackgroundDrawable(boolean matchParent) {
             //背景图模式
             if (backgroundBitmap != null && !backgroundBitmap.isRecycled())
                 return new SafeBitmapDrawable(backgroundBitmap)
-                        .setMatchParent(true);//用于目的图淡入动画背景, 因此尺寸为match_parent
+                        .setMatchParent(matchParent);
             //背景颜色模式
             return new ColorDrawable(backgroundColor);
         }
@@ -219,7 +222,7 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         public void onDrawBackground(Canvas canvas) {
             //绘制背景
             if (background == null) {
-                background = settings.newBackgroundDrawable();
+                background = settings.newBackgroundDrawable(false);//作为加载图背景, 保持原有尺寸
                 //设置Bounds
                 Rect rect = new Rect();
                 canvas.getClipBounds(rect);
