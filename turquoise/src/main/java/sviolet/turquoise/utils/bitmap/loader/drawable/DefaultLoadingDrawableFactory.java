@@ -220,14 +220,14 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
 
         @Override
         public void onDrawBackground(Canvas canvas) {
-            //绘制背景
             if (background == null) {
                 background = settings.newBackgroundDrawable(false);//作为加载图背景, 保持原有尺寸
-                //设置Bounds
-                Rect rect = new Rect();
-                canvas.getClipBounds(rect);
-                background.setBounds(rect);
             }
+            //设置Bounds
+            Rect rect = new Rect();
+            canvas.getClipBounds(rect);
+            background.setBounds(rect);
+            //绘制背景
             background.draw(canvas);
         }
 
@@ -244,14 +244,13 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         public void onDrawFailedBitmap(Canvas canvas) {
             if (failed == null){
                 failed = settings.newFailedDrawable();
-                if (failed != null){
-                    //设置Bounds
-                    Rect rect = new Rect();
-                    canvas.getClipBounds(rect);
-                    failed.setBounds(rect);
-                }
             }
             if (failed != null){
+                //设置Bounds
+                Rect rect = new Rect();
+                canvas.getClipBounds(rect);
+                failed.setBounds(rect);
+                //绘制加载失败图
                 failed.draw(canvas);
             }
         }
@@ -297,6 +296,21 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
             paint.setStyle(Paint.Style.FILL);
         }
 
+        @Override
+        public int getIntrinsicWidth() {
+            if (background == null) {
+                background = settings.newBackgroundDrawable(false);//作为加载图背景, 保持原有尺寸
+            }
+            return background.getIntrinsicWidth();//尺寸以背景图为准
+        }
+
+        @Override
+        public int getIntrinsicHeight() {
+            if (background == null) {
+                background = settings.newBackgroundDrawable(false);//作为加载图背景, 保持原有尺寸
+            }
+            return background.getIntrinsicHeight();//尺寸以背景图为准
+        }
     }
 
 }
