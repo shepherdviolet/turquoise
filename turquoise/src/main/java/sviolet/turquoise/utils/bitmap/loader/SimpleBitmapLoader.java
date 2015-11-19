@@ -542,7 +542,7 @@ public class SimpleBitmapLoader {
     protected void load(SimpleBitmapLoaderTask task){
         if (task == null)
             return;
-        bitmapLoader.load(task.getUrl(), task.getReqWidth(), task.getReqHeight(), null, task);
+        bitmapLoader.load(task.getRequest(), null, task);
     }
 
     protected void unused(String url){
@@ -570,7 +570,7 @@ public class SimpleBitmapLoader {
             SimpleBitmapLoaderTask task = ((SimpleBitmapLoaderTask) tag);
             if (task.getState() != SimpleBitmapLoaderTask.STATE_UNUSED
                     && !task.checkViewModified()
-                    && request.getUrl().equals(task.getUrl())){
+                    && request.getUrl().equals(task.getRequest().getUrl())){
                 if (getLogger() != null)
                     getLogger().i("[SimpleBitmapLoader]load skipped (url:" + request.getUrl() + "), because of the same url");
                 return true;

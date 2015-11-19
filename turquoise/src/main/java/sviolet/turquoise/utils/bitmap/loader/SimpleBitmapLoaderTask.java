@@ -286,7 +286,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
                 throw new RuntimeException("[SimpleBitmapLoaderTask]view's tag key conflict, key<" + TAG_KEY);
             }
             //SimpleBitmapLoaderTask中url
-            String taskUrl = ((SimpleBitmapLoaderTask) getView().getTag(TAG_KEY)).getUrl();
+            String taskUrl = ((SimpleBitmapLoaderTask) getView().getTag(TAG_KEY)).getRequest().getUrl();
             //若加载成功的url和SimpleBitmapLoaderTask中的url不同, 则取消任务不予显示
             if (url != null && !url.equals(taskUrl)) {
                 return true;
@@ -357,16 +357,8 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         return 0;
     }
 
-    protected String getUrl(){
-        return request.getUrl();
-    }
-
-    protected int getReqWidth(){
-        return request.getReqWidth();
-    }
-
-    protected int getReqHeight(){
-        return request.getReqHeight();
+    protected BitmapRequest getRequest(){
+        return request;
     }
 
     /**
@@ -502,7 +494,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
             //重新加载图片
             if (getLoaderTask() != null){
                 if (getLogger() != null) {
-                    getLogger().e("[ReloadableSafeBitmapDrawable]draw: reload url<" + getLoaderTask().getUrl() + ">");
+                    getLogger().e("[ReloadableSafeBitmapDrawable]draw: reload url<" + getLoaderTask().getRequest().getUrl() + ">");
                 }
                 getLoaderTask().resetToDefault();//设置为加载图
                 getLoaderTask().load();//重加载(不限制次数)
