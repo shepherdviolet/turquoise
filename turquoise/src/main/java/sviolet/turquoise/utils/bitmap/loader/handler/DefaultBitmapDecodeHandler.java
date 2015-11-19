@@ -37,7 +37,7 @@ import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
  * 这点与{@link NetLoadHandler}中进行图片特殊处理不同, BitmapDecodeHandler适合保留原始数据,
  * 进行轻量级处理.<p/>
  *
- * @see DefaultBitmapDecodeHandler
+ * @see BitmapDecodeHandler
  *
  * Created by S.Violet on 2015/11/5.
  */
@@ -47,18 +47,18 @@ public class DefaultBitmapDecodeHandler implements BitmapDecodeHandler{
     public Bitmap onDecode(Context context, BitmapLoader loader, BitmapRequest request, byte[] data) {
         //判断需求尺寸是否生效
         if (request.hasReqDimension())
-            return BitmapUtils.decodeFromByteArray(data, request.getReqWidth(), request.getReqHeight());
+            return BitmapUtils.decodeFromByteArray(data, request.getReqWidth(), request.getReqHeight(), request.getBitmapConfig());
         else
-            return BitmapUtils.decodeFromByteArray(data);
+            return BitmapUtils.decodeFromByteArray(data, 0, 0, request.getBitmapConfig());
     }
 
     @Override
     public Bitmap onDecode(Context context, BitmapLoader loader, BitmapRequest request, String filePath) {
         //判断需求尺寸是否生效
         if (request.hasReqDimension())
-            return BitmapUtils.decodeFromFile(filePath, request.getReqWidth(), request.getReqHeight());
+            return BitmapUtils.decodeFromFile(filePath, request.getReqWidth(), request.getReqHeight(), request.getBitmapConfig());
         else
-            return BitmapUtils.decodeFromFile(filePath);
+            return BitmapUtils.decodeFromFile(filePath, 0, 0, request.getBitmapConfig());
     }
 
     @Override

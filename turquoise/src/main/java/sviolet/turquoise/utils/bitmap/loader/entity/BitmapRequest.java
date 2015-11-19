@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.utils.bitmap.loader.entity;
 
-import sviolet.turquoise.utils.bitmap.BitmapUtils;
+import android.graphics.Bitmap;
 
 /**
  * BitmapLoader图片加载请求参数<p/>
@@ -45,7 +45,19 @@ import sviolet.turquoise.utils.bitmap.BitmapUtils;
  * 生效条件:<br/>
  * reqWidth > 0 && reqHeight > 0 <p/>
  *
- * 缩小算法可参考{@link BitmapUtils}<p/>
+ * 实现位置:<br/>
+ * {@link sviolet.turquoise.utils.bitmap.loader.handler.BitmapDecodeHandler}<br/>
+ * {@link sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler}<p/>
+ *
+ * ***********************************************<p/>
+ *
+ * BitmapConfig : Bitmap颜色深度 : 可选<p/>
+ *
+ * 说明:<Br/>
+ * Bitmap的颜色深度, 默认值ARGB_8888, 用于节省内存开销, 设置为RGB_565可减小一半, 但无透明度. <p/>
+ *
+ * 实现位置:<br/>
+ * {@link sviolet.turquoise.utils.bitmap.loader.handler.BitmapDecodeHandler}<p/>
  *
  * ***********************************************<p/>
  *
@@ -120,6 +132,30 @@ public class BitmapRequest {
      */
     public boolean hasReqDimension(){
         return reqWidth > 0 && reqHeight > 0;
+    }
+
+    /******************************************************
+     * Bitmap颜色深度
+     ******************************************************/
+
+    private Bitmap.Config bitmapConfig = Bitmap.Config.ARGB_8888;//颜色深度
+
+    /**
+     * @param bitmapConfig Bitmap颜色深度, 默认ARGB_8888
+     */
+    public BitmapRequest setBitmapConfig(Bitmap.Config bitmapConfig){
+        if (bitmapConfig == null)
+            throw new RuntimeException("[BitmapRequest]bitmapConfig must not be null");
+
+        this.bitmapConfig = bitmapConfig;
+        return this;
+    }
+
+    /**
+     * @return Bitmap颜色深度, 默认ARGB_8888
+     */
+    public Bitmap.Config getBitmapConfig(){
+        return bitmapConfig;
     }
 
     /******************************************************
