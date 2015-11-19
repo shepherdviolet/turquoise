@@ -50,7 +50,7 @@ public interface DiskCacheExceptionHandler {
      * @param bitmapLoader 图片加载器
      * @param throwable 异常
      */
-    void onCacheOpenException(Context context, BitmapLoader bitmapLoader, BitmapRequest request, Throwable throwable);
+    void onCacheOpenException(Context context, BitmapLoader bitmapLoader, Throwable throwable);
 
     /**
      * 实现磁盘缓存写入异常的处理, 通常只需要打印日志或提醒即可

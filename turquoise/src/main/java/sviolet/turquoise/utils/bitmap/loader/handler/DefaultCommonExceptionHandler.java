@@ -22,6 +22,7 @@ package sviolet.turquoise.utils.bitmap.loader.handler;
 import android.content.Context;
 
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 
 /**
  * 普通异常处理器默认实现<p/>
@@ -33,7 +34,7 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 public class DefaultCommonExceptionHandler implements CommonExceptionHandler {
 
     @Override
-    public void onCommonException(Context context, BitmapLoader bitmapLoader, Throwable throwable) {
+    public void onCommonException(Context context, BitmapLoader bitmapLoader, BitmapRequest request, Throwable throwable) {
         //直接输出错误信息
         throwable.printStackTrace();
     }

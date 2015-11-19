@@ -846,11 +846,11 @@ public class BitmapLoader {
         public Object doInBackground(Object params) {
             //异常检查
             if (mDiskLruCache == null) {
-                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mDiskLruCache is null"));
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, request, new RuntimeException("[BitmapLoader]mDiskLruCache is null"));
                 return RESULT_CANCELED;
             }
             if (mBitmapCache == null) {
-                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mBitmapCache is null"));
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, request, new RuntimeException("[BitmapLoader]mBitmapCache is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
@@ -862,7 +862,7 @@ public class BitmapLoader {
                     //若缓存文件存在, 从缓存中加载Bitmap
                     Bitmap bitmap = null;
                     try {
-                        bitmap = getBitmapDecodeHandler().onDecode(request, cacheFile.getAbsolutePath());
+                        bitmap = getBitmapDecodeHandler().onDecode(getContext(), BitmapLoader.this, request, cacheFile.getAbsolutePath());
                     }catch(Exception e){
                         //Bitmap加载失败
                         if (getLogger() != null){
@@ -888,7 +888,7 @@ public class BitmapLoader {
                     return RESULT_CONTINUE;
                 }
             } catch (Exception e) {
-                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, e);
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, request, e);
             }
             return RESULT_FAILED;
         }
@@ -970,11 +970,11 @@ public class BitmapLoader {
         public Object doInBackground(Object params) {
             //检查异常
             if (!diskCacheDisabled && mDiskLruCache == null) {
-                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mDiskLruCache is null"));
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, request, new RuntimeException("[BitmapLoader]mDiskLruCache is null"));
                 return RESULT_CANCELED;
             }
             if (mBitmapCache == null) {
-                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, new RuntimeException("[BitmapLoader]mBitmapCache is null"));
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, request, new RuntimeException("[BitmapLoader]mBitmapCache is null"));
                 return RESULT_CANCELED;
             }
             //计算缓存key
@@ -985,7 +985,7 @@ public class BitmapLoader {
                 //结果容器
                 messenger = new BitmapLoaderMessenger();
                 //从网络加载图片数据
-                getNetLoadHandler().loadFromNet(request, BitmapLoader.this, messenger);
+                getNetLoadHandler().loadFromNet(getContext(), BitmapLoader.this, request, messenger);
                 //阻塞等待并获取结果数据
                 int result = messenger.getResult();
                 if (result == BitmapLoaderMessenger.RESULT_SUCCEED){
@@ -1022,7 +1022,7 @@ public class BitmapLoader {
                                     mDiskLruCache.flush();
                                 } catch (Exception ignored) {
                                 }
-                                getDiskCacheExceptionHandler().onCacheWriteException(getContext(), BitmapLoader.this, e);
+                                getDiskCacheExceptionHandler().onCacheWriteException(getContext(), BitmapLoader.this, request, e);
                             } finally {
                                 try {
                                     if (outputStream != null)
@@ -1038,7 +1038,7 @@ public class BitmapLoader {
                         }
 
                         //解码图片
-                        Bitmap bitmap = getBitmapDecodeHandler().onDecode(request, messenger.getData());
+                        Bitmap bitmap = getBitmapDecodeHandler().onDecode(getContext(), BitmapLoader.this, request, messenger.getData());
 
                         if (bitmap == null || bitmap.isRecycled()){
                             //图片解码失败
@@ -1065,7 +1065,7 @@ public class BitmapLoader {
                     }
                 }
             } catch (Exception e) {
-                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, e);
+                getCommonExceptionHandler().onCommonException(getContext(), BitmapLoader.this, request, e);
             }
             //加载失败
             return RESULT_FAILED;

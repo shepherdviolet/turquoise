@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.utils.bitmap.loader.handler;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
 import java.io.ByteArrayOutputStream;
@@ -132,7 +133,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
      * 实现网络加载过程
      */
     @Override
-    public void loadFromNet(BitmapRequest request, BitmapLoader loader, final BitmapLoaderMessenger messenger) {
+    public void loadFromNet(Context context, BitmapLoader loader, BitmapRequest request, final BitmapLoaderMessenger messenger) {
         InputStream inputStream = null;
         ByteArrayOutputStream outputStream = null;
         HttpURLConnection conn = null;

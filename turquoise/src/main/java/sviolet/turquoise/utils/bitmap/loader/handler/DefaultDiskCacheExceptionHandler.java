@@ -26,6 +26,7 @@ import android.content.DialogInterface;
 import android.widget.Toast;
 
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
@@ -155,7 +156,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
      * 磁盘缓存写入异常, 打印日志
      */
     @Override
-    public void onCacheWriteException(Context context, BitmapLoader bitmapLoader, Throwable throwable) {
+    public void onCacheWriteException(Context context, BitmapLoader bitmapLoader, BitmapRequest request, Throwable throwable) {
         throwable.printStackTrace();
     }
 
