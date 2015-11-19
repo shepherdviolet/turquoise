@@ -78,11 +78,11 @@ public class Async2ImageActivity extends TActivity {
         //初始化图片加载器
         simpleBitmapLoader = new SimpleBitmapLoader.Builder(this, "AsyncImageActivity",
                  new DefaultLoadingDrawableFactory.Builder(0xFFF0F0F0)//背景颜色
-                         .setColor(0xFFC0C0C0)//动画点颜色
-                         .setRadius(MeasureUtils.dp2px(getApplicationContext(), 2))//动画点半径
-                         .setInterval(MeasureUtils.dp2px(getApplicationContext(), 8))//动画点间隔
+                         .setColor(0xFFD0D0D0)//进度条颜色
+                         .setRadius(MeasureUtils.dp2px(getApplicationContext(), 2))//进度条圆点半径
+                         .setInterval(MeasureUtils.dp2px(getApplicationContext(), 8))//进度条圆点间隔
                          .setDuration(1000)//动画时间(一个来回)
-//                         .setOffsetY(0.7f)//动画点在Y轴上的位置
+//                         .setOffsetY(0.7f)//进度条在Y轴上的位置
 //                         .setFailedBitmap(BitmapUtils.decodeFromResource(getResources(), R.mipmap.ic_launcher))//加载失败图
                          .create()
         )
