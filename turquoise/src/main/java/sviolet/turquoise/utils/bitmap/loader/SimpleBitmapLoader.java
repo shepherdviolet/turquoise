@@ -441,6 +441,40 @@ public class SimpleBitmapLoader {
         return bitmapLoader;
     }
 
+    /****************************************************************************
+     * static function
+     */
+
+    /**
+     * [慎用]清除磁盘缓存数据<br/>
+     * 若外部储存存在, 则清除外部储存的缓存, 否则清除内部储存的缓存<Br/>
+     * <br/>
+     * 注意:在该方法调用期间, 若对该磁盘缓存区进行读写操作, 可能会
+     * 抛出异常. 请确保调用期间该磁盘缓存区不被使用.
+     *
+     * @param context context
+     * @param diskCacheName 缓存目录名
+     * @throws Exception
+     */
+    public static void wipeDiskCache(Context context, String diskCacheName) throws Exception {
+        BitmapLoader.wipeDiskCache(context, diskCacheName);
+    }
+
+    /**
+     * [慎用]清除磁盘缓存数据<br/>
+     * 强制清除内部储存的缓存<br/>
+     * <br/>
+     * 注意:在该方法调用期间, 若对该磁盘缓存区进行读写操作, 可能会
+     * 抛出异常. 请确保调用期间该磁盘缓存区不被使用.
+     *
+     * @param context context
+     * @param diskCacheName 缓存目录名
+     * @throws Exception
+     */
+    public static void wipeInnerDiskCache(Context context, String diskCacheName) throws Exception {
+        BitmapLoader.wipeInnerDiskCache(context, diskCacheName);
+    }
+
     /**********************************************************************
      * inner class
      */
