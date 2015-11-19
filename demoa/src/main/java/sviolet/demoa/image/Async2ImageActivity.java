@@ -86,8 +86,8 @@ public class Async2ImageActivity extends TActivity {
 //                         .setFailedBitmap(BitmapUtils.decodeFromResource(getResources(), R.mipmap.ic_launcher))//加载失败图
                          .create()
         )
-                .setNetLoadHandler(new MyNetLoadHandler(this))//自定义网络加载实现
-                .setRamCache(0.15f, 0.15f)//缓存和回收站各占15%内存
+                .setNetLoadHandler(new MyNetLoadHandler())//自定义网络加载实现
+                .setRamCache(0.08f, 0.08f)//缓存和回收站各占8%内存, 由于加载采用RGB_565, 适当调低内存占比
 //                    .setRamCache(0.004f, 0.004f)//测试:即使内存不足,显示的Bitmap被回收, 也不会抛异常
                 .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
                 .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25

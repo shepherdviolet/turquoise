@@ -20,6 +20,7 @@
 package sviolet.demoa.image.utils;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -30,6 +31,7 @@ import java.util.List;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 
 /**
@@ -111,9 +113,17 @@ public class AsyncImageAdapter2 extends BaseAdapter {
             if (i == 0) {
                 //第一张图为160*160dp, 其余80*80dp
                 //加载成功逐渐显示动画效果
-                simpleBitmapLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge, holder.imageView[i]);
+                simpleBitmapLoader.load(
+                        new BitmapRequest(item.getUrl(i))//URL
+                            .setReqDimension(widthHeightLarge, widthHeightLarge)//请求尺寸
+                            .setBitmapConfig(Bitmap.Config.RGB_565), //设置颜色深度为RGB_565可节省内存,但不支持透明
+                        holder.imageView[i]);
             } else {
-                simpleBitmapLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall, holder.imageView[i]);
+                simpleBitmapLoader.load(
+                        new BitmapRequest(item.getUrl(i))//URL
+                                .setReqDimension(widthHeightSmall, widthHeightSmall)//请求尺寸
+                                .setBitmapConfig(Bitmap.Config.RGB_565), //设置颜色深度为RGB_565可节省内存,但不支持透明
+                        holder.imageView[i]);
             }
 
         }

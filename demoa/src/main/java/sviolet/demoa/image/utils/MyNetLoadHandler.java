@@ -40,20 +40,18 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
  */
 public class MyNetLoadHandler implements NetLoadHandler {
 
-    private Context context;
-
     //用于随机生成图片, 供模拟网络加载
     private Random random = new Random(System.currentTimeMillis());
     private int index = 0;
     private int resourceIds[] = {R.mipmap.async_image_1, R.mipmap.async_image_2, R.mipmap.async_image_3, R.mipmap.async_image_4, R.mipmap.async_image_5};
     private ExecutorService pool = Executors.newCachedThreadPool();
 
-    public MyNetLoadHandler(Context context){
-        this.context = context;
+    public MyNetLoadHandler(){
+
     }
 
     @Override
-    public void loadFromNet(final BitmapRequest request, BitmapLoader loader, final BitmapLoaderMessenger messenger) {
+    public void loadFromNet(final Context context, BitmapLoader loader, final BitmapRequest request, final BitmapLoaderMessenger messenger) {
 
         ///////////////////////////////////////////////////
         //同步方式
@@ -141,7 +139,6 @@ public class MyNetLoadHandler implements NetLoadHandler {
 
     @Override
     public void onDestroy() {
-        context = null;
         random = null;
         if (pool != null)
             pool.shutdown();

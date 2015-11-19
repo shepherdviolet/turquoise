@@ -76,7 +76,7 @@ public class AsyncImageActivity extends TActivity {
 
         //初始化图片加载器
         mBitmapLoader = new BitmapLoader.Builder(this, "AsyncImageActivity")
-                .setNetLoadHandler(new MyNetLoadHandler(this))//自定义网络加载实现
+                .setNetLoadHandler(new MyNetLoadHandler())//自定义网络加载实现
                 .setRamCache(0.15f, 0.15f)//缓存和回收站各占10%内存
                 .setDiskCache(50, 5, 25)//磁盘缓存50M, 5线程磁盘加载, 等待队列容量25
                 .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
