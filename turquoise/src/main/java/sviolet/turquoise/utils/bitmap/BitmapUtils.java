@@ -67,7 +67,7 @@ public class BitmapUtils {
      * @param resId 资源文件ID
      */
     public static Bitmap decodeFromResource(Resources res, int resId) {
-        return decodeFromResource(res, resId, 0, 0);
+        return decodeFromResource(res, resId, 0, 0, Config.ARGB_8888);
     }
 
     /**
@@ -82,11 +82,28 @@ public class BitmapUtils {
      * @param reqHeight 需求高度 px
      */
     public static Bitmap decodeFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
+        return decodeFromResource(res, resId, reqWidth, reqHeight, Config.ARGB_8888);
+    }
+
+    /**
+     * 从资源文件中解码图片(节省内存)<br/>
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     *
+     * @param res       getResource()
+     * @param resId     资源文件ID
+     * @param reqWidth  需求宽度 px
+     * @param reqHeight 需求高度 px
+     * @param bitmapConfig 颜色深度
+     */
+    public static Bitmap decodeFromResource(Resources res, int resId, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;//仅计算参数, 不解码
         BitmapFactory.decodeResource(res, resId, options);
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);//缩放因子(整数倍)
         options.inJustDecodeBounds = false;//解码模式
+        options.inPreferredConfig = bitmapConfig;//颜色深度
         return BitmapFactory.decodeResource(res, resId, options);
     }
 
@@ -96,7 +113,7 @@ public class BitmapUtils {
      * @param path 文件路径
      */
     public static Bitmap decodeFromFile(String path) {
-        return decodeFromFile(path, 0, 0);
+        return decodeFromFile(path, 0, 0, Config.ARGB_8888);
     }
 
     /**
@@ -110,11 +127,27 @@ public class BitmapUtils {
      * @param reqHeight 需求高度 px
      */
     public static Bitmap decodeFromFile(String path, int reqWidth, int reqHeight) {
+        return decodeFromFile(path, reqWidth, reqHeight, Config.ARGB_8888);
+    }
+
+    /**
+     * 从文件中解码图片(节省内存)<br/>
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     *
+     * @param path      文件路径
+     * @param reqWidth  需求宽度 px
+     * @param reqHeight 需求高度 px
+     * @param bitmapConfig 颜色深度
+     */
+    public static Bitmap decodeFromFile(String path, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;//仅计算参数, 不解码
         BitmapFactory.decodeFile(path, options);
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);//缩放因子(整数倍)
         options.inJustDecodeBounds = false;//解码模式
+        options.inPreferredConfig = bitmapConfig;//颜色深度
         return BitmapFactory.decodeFile(path, options);
     }
 
@@ -124,7 +157,7 @@ public class BitmapUtils {
      * @param data 二进制数据
      */
     public static Bitmap decodeFromByteArray(byte[] data) {
-        return decodeFromByteArray(data, 0, 0);
+        return decodeFromByteArray(data, 0, 0, Config.ARGB_8888);
     }
 
     /**
@@ -138,11 +171,27 @@ public class BitmapUtils {
      * @param reqHeight 需求高度 px
      */
     public static Bitmap decodeFromByteArray(byte[] data, int reqWidth, int reqHeight) {
+        return decodeFromByteArray(data, reqWidth, reqHeight, Config.ARGB_8888);
+    }
+
+    /**
+     * 将二进制数据解码为图片(节省内存)<br/>
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     *
+     * @param data      二进制数据
+     * @param reqWidth  需求宽度 px
+     * @param reqHeight 需求高度 px
+     * @param bitmapConfig 颜色深度
+     */
+    public static Bitmap decodeFromByteArray(byte[] data, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(data, 0, data.length, options);
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         options.inJustDecodeBounds = false;
+        options.inPreferredConfig = bitmapConfig;//颜色深度
         return BitmapFactory.decodeByteArray(data, 0, data.length, options);
     }
 
@@ -152,7 +201,7 @@ public class BitmapUtils {
      * @param base64 Base64数据
      */
     public static Bitmap decodeFromBase64(byte[] base64) {
-        return decodeFromBase64(base64, 0, 0);
+        return decodeFromBase64(base64, 0, 0, Config.ARGB_8888);
     }
 
     /**
@@ -166,7 +215,22 @@ public class BitmapUtils {
      * @param reqHeight 需求高度 px
      */
     public static Bitmap decodeFromBase64(byte[] base64, int reqWidth, int reqHeight) {
-        return decodeFromByteArray(Base64.decode(base64, Base64.DEFAULT), reqWidth, reqHeight);
+        return decodeFromBase64(base64, reqWidth, reqHeight, Config.ARGB_8888);
+    }
+
+    /**
+     * 将Base64数据解码为图片(节省内存)<br/>
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     *
+     * @param base64    Base64数据
+     * @param reqWidth  需求宽度 px
+     * @param reqHeight 需求高度 px
+     * @param bitmapConfig 颜色深度
+     */
+    public static Bitmap decodeFromBase64(byte[] base64, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig) {
+        return decodeFromByteArray(Base64.decode(base64, Base64.DEFAULT), reqWidth, reqHeight, bitmapConfig);
     }
 
     /**
@@ -175,7 +239,7 @@ public class BitmapUtils {
      * @param base64 Base64数据
      */
     public static Bitmap decodeFromBase64(String base64) {
-        return decodeFromBase64(base64, 0, 0);
+        return decodeFromBase64(base64, 0, 0, Config.ARGB_8888);
     }
 
     /**
@@ -189,7 +253,22 @@ public class BitmapUtils {
      * @param reqHeight 需求高度 px
      */
     public static Bitmap decodeFromBase64(String base64, int reqWidth, int reqHeight) {
-        return decodeFromByteArray(Base64.decode(base64, Base64.DEFAULT), reqWidth, reqHeight);
+        return decodeFromBase64(base64, reqWidth, reqHeight, Config.ARGB_8888);
+    }
+
+    /**
+     * 将Base64数据解码为图片(节省内存)<br/>
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     *
+     * @param base64    Base64数据
+     * @param reqWidth  需求宽度 px
+     * @param reqHeight 需求高度 px
+     * @param bitmapConfig 颜色深度
+     */
+    public static Bitmap decodeFromBase64(String base64, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig) {
+        return decodeFromByteArray(Base64.decode(base64, Base64.DEFAULT), reqWidth, reqHeight, bitmapConfig);
     }
 
     /**
@@ -198,7 +277,7 @@ public class BitmapUtils {
      * @param inputStream 输入流
      */
     public static Bitmap decodeFromStream(InputStream inputStream) {
-        return decodeFromStream(inputStream, 1);
+        return decodeFromStream(inputStream, 1, Config.ARGB_8888);
     }
 
     /**
@@ -214,9 +293,27 @@ public class BitmapUtils {
      * @param inSampleSize 缩放因子 (1:原大小 2:缩小一倍 ...)
      */
     public static Bitmap decodeFromStream(InputStream inputStream, int inSampleSize) {
+        return decodeFromStream(inputStream, inSampleSize, Config.ARGB_8888);
+    }
+
+    /**
+     * 从输入流中解码图片(节省内存)<br/>
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     * <br/>
+     * InputStream只能使用一次, 因此不能通过第一次解码获得图片长宽,
+     * 计算缩放因子, 再解码获得图片这种方式<br/>
+     *
+     * @param inputStream 输入流
+     * @param inSampleSize 缩放因子 (1:原大小 2:缩小一倍 ...)
+     * @param bitmapConfig 颜色深度
+     */
+    public static Bitmap decodeFromStream(InputStream inputStream, int inSampleSize, Bitmap.Config bitmapConfig) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inSampleSize = inSampleSize;//缩放因子(整数倍)
         options.inJustDecodeBounds = false;//解码模式
+        options.inPreferredConfig = bitmapConfig;//颜色深度
         return BitmapFactory.decodeStream(inputStream, null, options);
     }
 
