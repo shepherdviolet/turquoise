@@ -19,8 +19,10 @@
 
 package sviolet.turquoise.utils.bitmap.loader.handler;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
+import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 
 /**
@@ -46,7 +48,7 @@ public interface BitmapDecodeHandler {
      *
      * @param data byteArray数据(不为空)
      */
-    public Bitmap onDecode(BitmapRequest request, byte[] data) throws Exception;
+    Bitmap onDecode(Context context, BitmapLoader loader, BitmapRequest request, byte[] data) throws Exception;
 
     /**
      * [磁盘缓存加载时调用]<Br/>
@@ -54,12 +56,12 @@ public interface BitmapDecodeHandler {
      *
      * @param filePath 文件路径
      */
-    public Bitmap onDecode(BitmapRequest request, String filePath) throws Exception;
+    Bitmap onDecode(Context context, BitmapLoader loader, BitmapRequest request, String filePath) throws Exception;
 
     /**
      * 当BitmapLoader销毁时,会回调该方法,用于销毁处理器成员<br/>
      * 可不实现<Br/>
      */
-    public void onDestroy();
+    void onDestroy();
 
 }

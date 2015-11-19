@@ -22,6 +22,7 @@ package sviolet.turquoise.utils.bitmap.loader.handler;
 import android.content.Context;
 
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 
 /**
  * 普通异常处理器<Br/>
@@ -41,12 +42,12 @@ public interface CommonExceptionHandler {
      * @param bitmapLoader 图片加载器
      * @param throwable 异常
      */
-    public void onCommonException(Context context, BitmapLoader bitmapLoader, Throwable throwable);
+    void onCommonException(Context context, BitmapLoader bitmapLoader, BitmapRequest request, Throwable throwable);
 
     /**
      * 当BitmapLoader销毁时,会回调该方法,用于销毁处理器成员<br/>
      * 可不实现<Br/>
      */
-    public void onDestroy();
+    void onDestroy();
 
 }

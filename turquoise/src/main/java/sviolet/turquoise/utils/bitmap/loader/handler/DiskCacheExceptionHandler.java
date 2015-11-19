@@ -22,6 +22,7 @@ package sviolet.turquoise.utils.bitmap.loader.handler;
 import android.content.Context;
 
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
+import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 
 /**
  * 磁盘缓存异常处理器<p/>
@@ -49,7 +50,7 @@ public interface DiskCacheExceptionHandler {
      * @param bitmapLoader 图片加载器
      * @param throwable 异常
      */
-    public void onCacheOpenException(Context context, BitmapLoader bitmapLoader, Throwable throwable);
+    void onCacheOpenException(Context context, BitmapLoader bitmapLoader, BitmapRequest request, Throwable throwable);
 
     /**
      * 实现磁盘缓存写入异常的处理, 通常只需要打印日志或提醒即可
@@ -58,12 +59,12 @@ public interface DiskCacheExceptionHandler {
      * @param bitmapLoader 图片加载器
      * @param throwable 异常
      */
-    public void onCacheWriteException(Context context, BitmapLoader bitmapLoader, Throwable throwable);
+    void onCacheWriteException(Context context, BitmapLoader bitmapLoader, BitmapRequest request, Throwable throwable);
 
     /**
      * 当BitmapLoader销毁时,会回调该方法,用于销毁处理器成员<br/>
      * 可不实现<Br/>
      */
-    public void onDestroy();
+    void onDestroy();
 
 }
