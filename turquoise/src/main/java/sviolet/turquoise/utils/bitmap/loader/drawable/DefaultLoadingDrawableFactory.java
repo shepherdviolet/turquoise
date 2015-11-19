@@ -81,13 +81,15 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         static final int RADIUS_DEF = 10;
         static final int INTERVAL_DEF = 40;
         static final int DURATION = 1000;
+        static final float OFFSET_X_DEF = 0.5f;
         static final float OFFSET_Y_DEF = 0.5f;
 
-        int color = COLOR_DEF;//圆点颜色
-        int radius = RADIUS_DEF;//圆点半径
-        int interval = INTERVAL_DEF;//点间隔
-        long duration = DURATION;//动画时间
-        float offsetY = OFFSET_Y_DEF;//圆点Y轴方向位置
+        int color = COLOR_DEF;//进度条颜色
+        int radius = RADIUS_DEF;//进度条圆点半径
+        int interval = INTERVAL_DEF;//进度条点间隔
+        long duration = DURATION;//进度条动画时间
+        float offsetX = OFFSET_X_DEF;//进度条X轴方向位置
+        float offsetY = OFFSET_Y_DEF;//进度条Y轴方向位置
 
         Bitmap failedBitmap;//失败时显示的图
         Bitmap backgroundBitmap;//加载背景图
@@ -134,7 +136,7 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         }
 
         /**
-         * @param color 加载动画点颜色
+         * @param color 进度条圆点颜色
          */
         public Builder setColor(int color){
             settings.color = color;
@@ -142,7 +144,7 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         }
 
         /**
-         * @param radius 加载动画点半径 px
+         * @param radius 进度条圆点半径 px
          */
         public Builder setRadius(int radius){
             settings.radius = radius;
@@ -150,7 +152,7 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         }
 
         /**
-         * @param interval 加载动画点间隔 px
+         * @param interval 进度条圆点间隔 px
          */
         public Builder setInterval(int interval){
             settings.interval = interval;
@@ -158,7 +160,7 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         }
 
         /**
-         * @param duration 加载动画时间 ms
+         * @param duration 进度条动画时间 ms
          */
         public Builder setDuration(long duration){
             settings.duration = duration;
@@ -166,7 +168,15 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
         }
 
         /**
-         * @param offsetY 加载动画点的Y轴方向位置 [0, 1], 默认值0.5f
+         * @param offsetX 进度条在X轴方向相对位置 [0, 1], 默认值0.5f
+         */
+        public Builder setOffsetX(float offsetX){
+            settings.offsetX = offsetX;
+            return this;
+        }
+
+        /**
+         * @param offsetY 进度条在Y轴方向相对位置 [0, 1], 默认值0.5f
          */
         public Builder setOffsetY(float offsetY){
             settings.offsetY = offsetY;
@@ -291,7 +301,7 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
             final int height = clipBounds.height();
             final int length = (int) ((QUANTITY - 1) * settings.interval * scale);
 
-            int x = width / 2 - length / 2;
+            int x = (int) (width * settings.offsetX - length / 2);
             int y = (int) (height * settings.offsetY);
 
             for(int i = 0 ; i < QUANTITY ; i++){
