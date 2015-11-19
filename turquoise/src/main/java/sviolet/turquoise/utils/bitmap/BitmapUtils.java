@@ -326,9 +326,19 @@ public class BitmapUtils {
      *
      * @param bitmap
      */
+    @Deprecated
     @SuppressWarnings("deprecation")
     public static BitmapDrawable bitmapToDrawable(Bitmap bitmap) {
         return new BitmapDrawable(bitmap);
+    }
+
+    /**
+     * bitmap转成drawable
+     *
+     * @param bitmap
+     */
+    public static BitmapDrawable bitmapToDrawable(Resources resources, Bitmap bitmap) {
+        return new BitmapDrawable(resources, bitmap);
     }
 
     /**
