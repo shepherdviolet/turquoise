@@ -273,16 +273,30 @@ public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
          * 绘制圆点
          */
         private void drawCircle(Canvas canvas, int currentPosition) {
-            final int width = canvas.getWidth();
-            final int height = canvas.getHeight();
-            final int length = (QUANTITY - 1) * settings.interval;
+            /*
+             * 背景图如果是Bitmap, 绘制后canvas的选区可能会被裁剪(小于画布), 因此绘制动画时,
+             * 为保证定位准确, 大小保持原比例, 使用选区(clipBounds)尺寸, 且点半径和点间距根据
+             * 选区与画布尺寸的比例缩小, 保证显示的大小保持一致.
+             */
+            Rect clipBounds = new Rect();
+            canvas.getClipBounds(clipBounds);
+
+            //画布或选区长宽为0不绘制
+            if (canvas.getWidth() <= 0 || canvas.getHeight() <= 0 || clipBounds.width() <=0 || clipBounds.height() <= 0)
+                return;
+
+            final float scale = (float)clipBounds.width() / (float)canvas.getWidth();//用于点半径和点间距的比例缩放
+
+            final int width = clipBounds.width();
+            final int height = clipBounds.height();
+            final int length = (int) ((QUANTITY - 1) * settings.interval * scale);
 
             int x = width / 2 - length / 2;
             int y = (int) (height * settings.offsetY);
 
             for(int i = 0 ; i < QUANTITY ; i++){
-                canvas.drawCircle(x, y, i == currentPosition ? (float) (settings.radius * 1.5) : settings.radius, paint);
-                x += settings.interval;
+                canvas.drawCircle(x, y, i == currentPosition ? (float) (settings.radius * 1.5 * scale) : settings.radius * scale, paint);
+                x += settings.interval * scale;
             }
         }
 
