@@ -480,7 +480,10 @@ public class BitmapUtils {
         if (bitmap == null || bitmap.isRecycled()){
             throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
         }
-        Bitmap result = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
+        Config config = Config.ARGB_8888;
+        if (bitmap.getConfig() != null)
+            config = bitmap.getConfig();
+        Bitmap result = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), config);
         Canvas canvas = new Canvas(result);
         final int color = 0xff424242;
         final Paint paint = new Paint();
@@ -544,7 +547,10 @@ public class BitmapUtils {
             throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
         }
         //copy, 防止出现immutable bitmap异常
-        Bitmap result = bitmap.copy(Config.ARGB_8888, true);
+        Config config = Config.ARGB_8888;
+        if (bitmap.getConfig() != null)
+            config = bitmap.getConfig();
+        Bitmap result = bitmap.copy(config, true);
         if (bitmap != result && recycle)
             bitmap.recycle();
 
@@ -717,12 +723,13 @@ public class BitmapUtils {
     /**
      * 获取View的Bitmap缓存图
      * @param view view
+     * @param bitmapConfig 颜色深度
      */
-    public static Bitmap getViewCache(View view){
+    public static Bitmap getViewCache(View view, Bitmap.Config bitmapConfig){
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
         Bitmap bitmap = view.getDrawingCache();
-        Bitmap result = bitmap.copy(Config.ARGB_8888, true);
+        Bitmap result = bitmap.copy(bitmapConfig, true);
         view.destroyDrawingCache();
         view.setDrawingCacheEnabled(false);
         return result;
