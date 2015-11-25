@@ -20,6 +20,8 @@
 package sviolet.turquoise.utils.lifecycle.listener;
 
 /**
+ * 可销毁对象, 销毁监听器
+ *
  * Created by S.Violet on 2015/11/24.
  */
 public interface Destroyable {
