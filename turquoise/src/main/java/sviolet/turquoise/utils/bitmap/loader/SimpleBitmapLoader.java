@@ -679,7 +679,7 @@ public class SimpleBitmapLoader implements LifeCycle {
 
     @Override
     public void onStop() {
-        reduceMemoryCache();
+        cleanMemoryCache();
     }
 
     @Override

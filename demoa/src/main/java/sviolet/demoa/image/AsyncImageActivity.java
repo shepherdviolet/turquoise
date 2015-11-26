@@ -36,6 +36,7 @@ import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
 import sviolet.turquoise.enhanced.TActivity;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
+import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
 
 @DemoDescription(
         title = "AsyncImageList",
@@ -96,6 +97,8 @@ public class AsyncImageActivity extends TActivity {
                                 })
                 )//设置磁盘缓存打开失败处理方式为:提示并由用户选择是否关闭磁盘缓存继续加载, 并设置UI刷新监听
                 .create();
+        //图片加载器绑定Activity生命周期, 自动压缩内存和销毁
+        LifeCycleUtils.attach(this, mBitmapLoader);
 
         //设置适配器, 传入图片加载器, 图片解码工具
         adapter = new AsyncImageAdapter(this, makeItemList(), mBitmapLoader, getCachedBitmapUtils());
@@ -105,8 +108,11 @@ public class AsyncImageActivity extends TActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        /**
+         * 图片加载器绑定Activity生命周期, 自动压缩内存和销毁, 无需手动调用
+         */
         //Activity不再显示时, 压缩图片缓存占用空间, 非必须, 在内存紧张场合适用
-        mBitmapLoader.reduceMemoryCache();
+//        mBitmapLoader.reduceMemoryCache();
         //Activity不再显示时, 取消所有加载任务
 //        simpleBitmapLoader.cancelAllTasks();
     }
@@ -114,8 +120,11 @@ public class AsyncImageActivity extends TActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        /**
+         * 图片加载器绑定Activity生命周期, 自动压缩内存和销毁, 无需手动调用
+         */
         //销毁图片加载器(回收位图占用内存)
-        mBitmapLoader.destroy();
+//        mBitmapLoader.destroy();
     }
 
     /****************************************************

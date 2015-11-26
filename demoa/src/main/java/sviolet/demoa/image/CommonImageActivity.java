@@ -39,6 +39,7 @@ import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
+import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.utils.sys.NetStateUtils;
 
@@ -90,12 +91,14 @@ public class CommonImageActivity extends TActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        /**
+         * 图片加载器绑定Activity生命周期, 自动压缩内存和销毁, 无需手动调用
+         */
 //        cachedBitmapUtils.destroy();//销毁示例
-
-        if (bitmapLoader != null)
-            bitmapLoader.destroy();
-        if (simpleBitmapLoader != null)
-            simpleBitmapLoader.destroy();
+//        if (bitmapLoader != null)
+//            bitmapLoader.destroy();
+//        if (simpleBitmapLoader != null)
+//            simpleBitmapLoader.destroy();
     }
 
     private final Handler handler = new Handler();
@@ -266,6 +269,9 @@ public class CommonImageActivity extends TActivity {
                 .setLogger(getLogger())//打印日志
                 .create();
 
+        //图片加载器绑定Activity生命周期, 自动压缩内存和销毁
+        LifeCycleUtils.attach(this, bitmapLoader);
+
         /**
          * BitmapLoader普通方式加载图片
          */
@@ -315,6 +321,9 @@ public class CommonImageActivity extends TActivity {
                 .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
                 .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
                 .create();
+
+        //图片加载器绑定Activity生命周期, 自动压缩内存和销毁
+        LifeCycleUtils.attach(this, simpleBitmapLoader);
 
         /**
          * SimpleBitmapLoader加载图片
