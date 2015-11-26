@@ -112,7 +112,7 @@ public class GlobalVars {
             HostHolder hostHolder = hosts.get(hostKey);
             //宿主存在则获取变量
             if (hostHolder != null){
-                hostHolder.get(key);
+                return hostHolder.get(key);
             }
         }finally {
             lock.unlock();
