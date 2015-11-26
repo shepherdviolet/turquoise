@@ -26,6 +26,7 @@ import android.graphics.Bitmap;
 import java.io.InputStream;
 
 import sviolet.turquoise.utils.cache.BitmapCache;
+import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
 
 /**
  * 
@@ -84,7 +85,7 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  *
  * Created by S.Violet on 2015/7/1.
  */
-public class CachedBitmapUtils {
+public class CachedBitmapUtils implements LifeCycle {
 
     private static final String DEFAULT_KEY_PREFIX = "DEFAULT_KEY_PREFIX";//默认标签前缀
 
@@ -550,4 +551,37 @@ public class CachedBitmapUtils {
         return result;
     }
 
+    /***************************************************************
+     * LifeCycle
+     */
+
+    @Override
+    public void onCreate() {
+
+    }
+
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onResume() {
+
+    }
+
+    @Override
+    public void onPause() {
+
+    }
+
+    @Override
+    public void onStop() {
+        reduce();
+    }
+
+    @Override
+    public void onDestroy() {
+        recycleAll();
+    }
 }

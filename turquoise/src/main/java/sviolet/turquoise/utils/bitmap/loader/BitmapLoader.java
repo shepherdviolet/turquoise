@@ -44,6 +44,7 @@ import sviolet.turquoise.utils.cache.BitmapCache;
 import sviolet.turquoise.utils.cache.DiskLruCache;
 import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
+import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 import sviolet.turquoise.utils.sys.DirectoryUtils;
 
@@ -169,7 +170,7 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *
  * Created by S.Violet on 2015/7/3.
  */
-public class BitmapLoader {
+public class BitmapLoader implements LifeCycle {
 
     private BitmapCache mBitmapCache;//Bitmap内存缓存器
     private DiskLruCache mDiskLruCache;//磁盘缓存器
@@ -1250,6 +1251,40 @@ public class BitmapLoader {
      */
     public BitmapCache getBitmapCache(){
         return mBitmapCache;
+    }
+
+    /**********************************************************************
+     * LifeCycle
+     */
+
+    @Override
+    public void onCreate() {
+
+    }
+
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onResume() {
+
+    }
+
+    @Override
+    public void onPause() {
+
+    }
+
+    @Override
+    public void onStop() {
+        reduceMemoryCache();
+    }
+
+    @Override
+    public void onDestroy() {
+        destroy();
     }
 
 }

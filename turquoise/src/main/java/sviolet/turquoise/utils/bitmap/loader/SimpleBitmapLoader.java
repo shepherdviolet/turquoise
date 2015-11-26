@@ -30,6 +30,7 @@ import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHa
 import sviolet.turquoise.utils.bitmap.loader.handler.DiskCacheExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.task.SimpleBitmapLoaderTaskFactory;
 import sviolet.turquoise.utils.cache.BitmapCache;
+import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
 
 /**
  * 
@@ -154,7 +155,7 @@ import sviolet.turquoise.utils.cache.BitmapCache;
  *
  * Created by S.Violet on 2015/10/19.
  */
-public class SimpleBitmapLoader {
+public class SimpleBitmapLoader implements LifeCycle {
 
     /**
      * 内部bitmapLoader<Br/>
@@ -650,6 +651,40 @@ public class SimpleBitmapLoader {
 
     public int getReloadTimesMax() {
         return getSettings().reloadTimesMax;
+    }
+
+    /**********************************************************************
+     * LifeCycle
+     */
+
+    @Override
+    public void onCreate() {
+
+    }
+
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onResume() {
+
+    }
+
+    @Override
+    public void onPause() {
+
+    }
+
+    @Override
+    public void onStop() {
+        reduceMemoryCache();
+    }
+
+    @Override
+    public void onDestroy() {
+        destroy();
     }
 
 }
