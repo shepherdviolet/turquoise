@@ -66,8 +66,10 @@ public class GlobalVars {
      */
     public static void set(Object host, String key, Object param){
 
-        if (host == null || key == null || param == null)
-            throw new NullPointerException("[GlobalVars] host == null || key == null || param == null");
+        if (host == null || param == null)
+            return;
+        if (key == null)
+            throw new NullPointerException("[GlobalVars] key == null");
 
         init();//初始化
 
@@ -99,8 +101,10 @@ public class GlobalVars {
      */
     public static Object get(Object host, String key){
 
-        if (host == null || key == null)
-            throw new NullPointerException("[GlobalVars] host == null || key == null");
+        if (host == null)
+            return null;
+        if (key == null)
+            throw new NullPointerException("[GlobalVars] key == null");
 
         init();//初始化
 
@@ -130,8 +134,10 @@ public class GlobalVars {
      */
     public static void remove(Object host, String key){
 
-        if (host == null || key == null)
-            throw new NullPointerException("[GlobalVars] host == null || key == null");
+        if (host == null)
+            return;
+        if (key == null)
+            throw new NullPointerException("[GlobalVars] key == null");
 
         init();//初始化
 
@@ -160,7 +166,7 @@ public class GlobalVars {
     public static void removeAll(Object host){
 
         if (host == null)
-            throw new NullPointerException("[GlobalVars] host == null");
+            return;
 
         init();//初始化
 
@@ -196,11 +202,12 @@ public class GlobalVars {
             lock.unlock();
         }
 
-        for (Map.Entry<String, HostHolder> entry : gcHosts.entrySet()){
-            entry.getValue().removeAll();
+        if (gcHosts != null) {
+            for (Map.Entry<String, HostHolder> entry : gcHosts.entrySet()) {
+                entry.getValue().removeAll();
+            }
+            gcHosts.clear();
         }
-
-        gcHosts.clear();
 
     }
 
