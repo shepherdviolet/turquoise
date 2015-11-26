@@ -4,20 +4,20 @@
 ## Description
 > Android Library <br/>
 > <br/>
-> Utils |　sviolet.turquoise.utils <br/>
-> ---1.BitmapLoader/SimpleBitmapLoader | 双缓存图片异步加载器 | sviolet.turquoise.utils.bitmap.loader <br/>
-> ---2.LifeCycleUtils | Activity生命周期监听工具 | sviolet.turquoise.utils.lifecycle <br/>
+> Utils ■ sviolet.turquoise.utils <br/>
+> ---1.BitmapLoader/SimpleBitmapLoader ■ 双缓存图片异步加载器 ■ sviolet.turquoise.utils.bitmap.loader <br/>
+> ---2.LifeCycleUtils ■ Activity生命周期监听工具 ■ sviolet.turquoise.utils.lifecycle <br/>
 > <br/>
-> Views | sviolet.turquoise.view <br/>
-> ---1.SlideEngine | 滑动引擎 | sviolet.turquoise.view.slide <br/>
+> Views ■ sviolet.turquoise.view <br/>
+> ---1.SlideEngine ■ 滑动引擎 ■ sviolet.turquoise.view.slide <br/>
 > <br/>
-> enhanced Component | sviolet.turquoise.enhanced <br/>
-> ---1.InjectUtils | 注释型控件注入工具 | sviolet.turquoise.enhanced.utils <br/>
-> ---2.TApplication/TActivity | 可配置组件 | sviolet.turquoise.enhanced <br/>
+> enhanced Component ■ sviolet.turquoise.enhanced <br/>
+> ---1.InjectUtils ■ 注释型控件注入工具 ■ sviolet.turquoise.enhanced.utils <br/>
+> ---2.TApplication/TActivity ■ 可配置组件 ■ sviolet.turquoise.enhanced <br/>
 
 ## Modules
-> turquoise : the "Turquoise" library module  |  库本体 <br/>
-> demoa : demos of "Turquoise" library  |  示例程序 <br/>
+> turquoise : the "Turquoise" library module  ■  库本体 <br/>
+> demoa : demos of "Turquoise" library  ■  示例程序 <br/>
 
 ## Package Releases (aar/source/javadoc)
 > https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
