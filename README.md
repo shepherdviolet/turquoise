@@ -14,6 +14,7 @@
 > enhanced Component ┃ sviolet.turquoise.enhanced <br/>
 > ┈┈ 1.InjectUtils ┃ 注释型控件注入工具 ┃ sviolet.turquoise.enhanced.utils <br/>
 > ┈┈ 2.TApplication/TActivity ┃ 可配置组件 ┃ sviolet.turquoise.enhanced <br/>
+> ┈┈ 3.TActivity.executePermissionTask ┃ 回调方式请求权限 ┃ sviolet.turquoise.enhanced <br/>
 
 ## Modules
 > 1.turquoise ┃ the "Turquoise" library module ┃ 库本体 <br/>
