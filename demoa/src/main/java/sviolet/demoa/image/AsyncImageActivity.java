@@ -34,6 +34,7 @@ import sviolet.demoa.image.utils.MyNetLoadHandler;
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
 import sviolet.turquoise.enhanced.TActivity;
+import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
 import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
@@ -100,8 +101,12 @@ public class AsyncImageActivity extends TActivity {
         //图片加载器绑定Activity生命周期, 自动压缩内存和销毁
         LifeCycleUtils.attach(this, mBitmapLoader);
 
+        CachedBitmapUtils cachedBitmapUtils = new CachedBitmapUtils(this, 0.05f, 0.05f);
+        //绑定Activity生命周期, 自动压缩内存和销毁
+        LifeCycleUtils.attach(this, cachedBitmapUtils);
+
         //设置适配器, 传入图片加载器, 图片解码工具
-        adapter = new AsyncImageAdapter(this, makeItemList(), mBitmapLoader, getCachedBitmapUtils());
+        adapter = new AsyncImageAdapter(this, makeItemList(), mBitmapLoader, cachedBitmapUtils);
         listView.setAdapter(adapter);
     }
 

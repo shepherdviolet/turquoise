@@ -35,6 +35,7 @@ import sviolet.turquoise.enhanced.TActivity;
 import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
+import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
@@ -61,11 +62,14 @@ import sviolet.turquoise.utils.sys.NetStateUtils;
 )
 public class CommonImageActivity extends TActivity {
 
+    private CachedBitmapUtils cachedBitmapUtils;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getCachedBitmapUtils(0.1f, 0.1f);//初始化Activity自带的CachedBitmapUtils, 设置内存占用比
+        cachedBitmapUtils = new CachedBitmapUtils(this, 0.1f, 0.1f);
+        LifeCycleUtils.attach(this, cachedBitmapUtils);//绑定Activity生命周期, 自动压缩内存和销毁
 
         initLine1();
         initLine2();
@@ -121,7 +125,7 @@ public class CommonImageActivity extends TActivity {
          */
 
         imageView11.setImageBitmap(
-                getCachedBitmapUtils().decodeFromResource(
+                cachedBitmapUtils.decodeFromResource(
                         null,//此处送空, CachedBitmapUtils会自动分配一个不重复的key
                         getResources(),
                         R.mipmap.async_image_1,//资源ID
@@ -130,7 +134,7 @@ public class CommonImageActivity extends TActivity {
                 )
         );
         imageView12.setImageBitmap(
-                getCachedBitmapUtils().decodeFromResource(
+                cachedBitmapUtils.decodeFromResource(
                         "imageView12",//指定缓存中的key, 后续可以单独对指定图片操作, unused(key)/get(key)等
                         getResources(),
                         R.mipmap.async_image_2,//资源ID
@@ -176,7 +180,7 @@ public class CommonImageActivity extends TActivity {
         );
         //在图片上绘制文字
         //CachedBitmapUtils.drawText会将原Bitmap回收
-        bitmap21 = getCachedBitmapUtils().drawText(
+        bitmap21 = cachedBitmapUtils.drawText(
                 null,
                 bitmap21, //原图
                 "文字", //文字
@@ -200,7 +204,7 @@ public class CommonImageActivity extends TActivity {
         );
         //下边两个角做圆角处理
         //CachedBitmapUtils.drawText会将原Bitmap回收
-        bitmap22 = getCachedBitmapUtils().toRoundedCorner(null, bitmap22, 50f, BitmapUtils.RoundedCornerType.TopLeft_And_BottomLeft);
+        bitmap22 = cachedBitmapUtils.toRoundedCorner(null, bitmap22, 50f, BitmapUtils.RoundedCornerType.TopLeft_And_BottomLeft);
         imageView22.setImageBitmap(bitmap22);
 
         /**
@@ -216,7 +220,7 @@ public class CommonImageActivity extends TActivity {
         );
         //缩小Bitmap
         //CachedBitmapUtils.zoom会将原Bitmap回收
-        bitmap23 = getCachedBitmapUtils().scale(null, bitmap23, 0.4f);
+        bitmap23 = cachedBitmapUtils.scale(null, bitmap23, 0.4f);
         imageView23.setImageBitmap(bitmap23);
 
         /**

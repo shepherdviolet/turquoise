@@ -29,12 +29,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.util.SparseArray;
 import android.widget.Toast;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 import sviolet.turquoise.enhanced.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhanced.annotation.setting.DebugSettings;
@@ -55,34 +57,34 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
 
     private static TApplication mApplication;//实例
 
-    private SparseArray<Activity> mSubActivityList = new SparseArray<Activity>();
-    private int subActivityIntex = 0;
+    private final Set<Activity> mActivities = Collections.newSetFromMap(new WeakHashMap<Activity, Boolean>());
 
     private boolean crashHandleToken = true;//崩溃处理令牌
     private boolean crashHandleTokenInner = false;//崩溃处理令牌(内部)
 
     private Logger logger;//日志打印器
 
-    protected int addActivity(Activity activity) {
-        //编号递增
-        subActivityIntex++;
+    protected void addActivity(Activity activity) {
         //存入Activity
-        mSubActivityList.put(subActivityIntex, activity);
+        synchronized (this) {
+            mActivities.add(activity);
+        }
 
         //第一个Activity提示当前Debug模式
-        if (mSubActivityList.size() == 1){
+        if (mActivities.size() == 1){
             if (isDebugMode()){
                 getLogger().i("[TApplication]DebugMode");
                 Toast.makeText(getApplicationContext(), "Debug Mode", Toast.LENGTH_SHORT).show();
             }
         }
 
-        //返回编号
-        return subActivityIntex;
     }
 
-    protected void removeActivity(int index){
-        mSubActivityList.remove(index);
+    protected void removeActivity(Activity activity){
+        //移除Activity
+        synchronized (this) {
+            mActivities.remove(activity);
+        }
     }
 
     public void onCreate() {
@@ -324,10 +326,10 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
      */
     public void killApp() {
         try {
-            for (int i = 0 ; i < mSubActivityList.size() ; i ++){
-                mSubActivityList.valueAt(i).finish();
+            for (Activity activity : mActivities){
+                activity.finish();
             }
-            mSubActivityList.clear();
+            mActivities.clear();
         } catch (Exception ignored) {
         } finally {
             android.os.Process.killProcess(android.os.Process.myPid());
