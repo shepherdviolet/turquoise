@@ -27,12 +27,13 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.*;
 import android.os.Process;
+import android.support.annotation.NonNull;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.Logger;
@@ -103,21 +104,22 @@ public abstract class TActivity extends Activity {
      */
 
     //权限请求请求码
-    private volatile int mOnRequestPermissionListenerRequestCode = Integer.MAX_VALUE;
-    //权限请求结果监听器池
-    private Map<Integer, OnRequestPermissionListener> mOnRequestPermissionListenerPool = new HashMap<Integer, OnRequestPermissionListener>();
+    private AtomicInteger mPermissionRequestCode = new AtomicInteger(Integer.MAX_VALUE);
+    //权限请求任务池
+    private SparseArray<PermissionRequestTask> mPermissionRequestTaskPool = new SparseArray<>();
 
     /**
-     * 权限请求结果监听器
+     * 权限请求任务
      */
-    public interface OnRequestPermissionListener{
+    public interface PermissionRequestTask{
         /**
-         * @param requestCode 请求码
+         * 权限请求结果
+         *
          * @param permissions 权限列表 android.Manifest.permission....
          * @param grantResults 结果列表
          * @param allGranted 是否所有请求的权限都被允许
          */
-        public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults, boolean allGranted);
+        public void onResult(String[] permissions, int[] grantResults, boolean allGranted);
     }
 
     /**
@@ -141,10 +143,9 @@ public abstract class TActivity extends Activity {
      * 支持低版本<br/>
      *
      * @param permission android.Manifest.permission....
-     * @return
      */
     @Override
-    public boolean shouldShowRequestPermissionRationale(String permission) {
+    public boolean shouldShowRequestPermissionRationale(@NonNull String permission) {
         return DeviceUtils.getVersionSDK() >= 23 && super.shouldShowRequestPermissionRationale(permission);
     }
 
@@ -157,10 +158,10 @@ public abstract class TActivity extends Activity {
      * SDK版本,且需要复写onRequestPermissionsResult(...)方法处理结果事件<br/>
      *
      * @param permission 权限 android.Manifest.permission....
-     * @param listener 监听器
+     * @param task 需要权限的任务
      */
-    public void requestPermissions(String permission, OnRequestPermissionListener listener) {
-        requestPermissions(new String[]{permission}, listener);
+    public void requestPermissions(String permission, PermissionRequestTask task) {
+        requestPermissions(new String[]{permission}, task);
     }
 
     /**
@@ -172,18 +173,14 @@ public abstract class TActivity extends Activity {
      * SDK版本,且需要复写onRequestPermissionsResult(...)方法处理结果事件<br/>
      *
      * @param permissions 权限列表 android.Manifest.permission....
-     * @param listener 监听器
+     * @param task 任务
      */
     @TargetApi(Build.VERSION_CODES.M)
-    public void requestPermissions(final String[] permissions, OnRequestPermissionListener listener) {
+    public void requestPermissions(final String[] permissions, PermissionRequestTask task) {
 
-        final int requestCode;
-        synchronized (TActivity.class){
-            mOnRequestPermissionListenerRequestCode--;
-            requestCode = mOnRequestPermissionListenerRequestCode;
-        }
+        final int requestCode = mPermissionRequestCode.getAndDecrement();
 
-        mOnRequestPermissionListenerPool.put(requestCode, listener);
+        mPermissionRequestTaskPool.put(requestCode, task);
 
         if(DeviceUtils.getVersionSDK() >= 23) {
             super.requestPermissions(permissions, requestCode);
@@ -225,10 +222,10 @@ public abstract class TActivity extends Activity {
                 break;
             }
         }
-        OnRequestPermissionListener listener = mOnRequestPermissionListenerPool.get(requestCode);
-        if(listener != null) {
-            listener.onRequestPermissionsResult(requestCode, permissions, grantResults, allGranted);
-            mOnRequestPermissionListenerPool.remove(requestCode);
+        PermissionRequestTask task = mPermissionRequestTaskPool.get(requestCode);
+        if(task != null) {
+            task.onResult(permissions, grantResults, allGranted);
+            mPermissionRequestTaskPool.remove(requestCode);
         }else{
             onRequestPermissionsResult(requestCode, permissions, grantResults, allGranted);
         }
@@ -256,10 +253,10 @@ public abstract class TActivity extends Activity {
      * 目的任务在监听器中实现, 需要判断权限是否被授予<br/>
      *
      * @param permission 任务需要的权限
-     * @param listener 在监听器中判断权限是否授予, 并执行目的任务
+     * @param task 在监听器中判断权限是否授予, 并执行目的任务
      */
-    public void executePermissionTask(final String permission, final OnRequestPermissionListener listener){
-        executePermissionTask(permission, null, null, listener);
+    public void executePermissionTask(final String permission, final PermissionRequestTask task){
+        executePermissionTask(permission, null, null, task);
     }
 
     /**
@@ -270,22 +267,22 @@ public abstract class TActivity extends Activity {
      * @param permission 任务需要的权限
      * @param rationaleTitle 权限说明标题(标题和内容都送空, 则不提示)
      * @param rationaleContent 权限说明内容(标题和内容都送空, 则不提示)
-     * @param listener 在监听器中判断权限是否授予, 并执行目的任务
+     * @param task 在监听器中判断权限是否授予, 并执行目的任务
      */
-    public void executePermissionTask(final String permission, String rationaleTitle, String rationaleContent, final OnRequestPermissionListener listener){
+    public void executePermissionTask(final String permission, String rationaleTitle, String rationaleContent, final PermissionRequestTask task){
         if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
             if ((!CheckUtils.isEmpty(rationaleTitle) || !CheckUtils.isEmpty(rationaleContent)) && shouldShowRequestPermissionRationale(permission)) {
                 new PermissionRationaleDialog(this, rationaleTitle, rationaleContent, new DialogInterface.OnCancelListener(){
                     @Override
                     public void onCancel(DialogInterface dialog) {
-                        requestPermissions(permission, listener);
+                        requestPermissions(permission, task);
                     }
                 }).show();
             }else{
-                requestPermissions(permission, listener);
+                requestPermissions(permission, task);
             }
         }else{
-            listener.onRequestPermissionsResult(0, new String[]{permission}, new int[]{PackageManager.PERMISSION_GRANTED}, true);
+            task.onResult(new String[]{permission}, new int[]{PackageManager.PERMISSION_GRANTED}, true);
         }
     }
 
