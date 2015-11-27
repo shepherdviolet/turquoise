@@ -212,7 +212,7 @@ public class TActivityProvider {
      * 检查权限->显示说明->请求权限->回调监听器<br/>
      * 目的任务在监听器中实现, 需要判断权限是否被授予<br/>
      *
-     * @param permissions 任务需要的权限
+     * @param permissions 任务需要的权限 android.Manifest.permission....
      * @param rationaleTitle 权限说明标题(标题和内容都送空, 则不提示)
      * @param rationaleContent 权限说明内容(标题和内容都送空, 则不提示)
      * @param task 在监听器中判断权限是否授予, 并执行目的任务

@@ -108,7 +108,7 @@ public class TActivity extends Activity implements TActivityProvider.RequestPerm
      * 检查权限->显示说明->请求权限->回调{@link TActivityProvider.RequestPermissionTask}<br/>
      * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
      *
-     * @param permissions 所需权限
+     * @param permissions 所需权限 android.Manifest.permission....
      * @param task 需要权限的任务
      */
     public void executePermissionTask(String[] permissions, TActivityProvider.RequestPermissionTask task){
@@ -120,7 +120,7 @@ public class TActivity extends Activity implements TActivityProvider.RequestPerm
      * 检查权限->显示说明->请求权限->回调{@link TActivityProvider.RequestPermissionTask}<br/>
      * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
      *
-     * @param permissions 所需权限
+     * @param permissions 所需权限 android.Manifest.permission....
      * @param rationaleTitle 权限说明标题(标题和内容都送空, 则不提示)
      * @param rationaleContent 权限说明内容(标题和内容都送空, 则不提示)
      * @param task 需要权限的任务
