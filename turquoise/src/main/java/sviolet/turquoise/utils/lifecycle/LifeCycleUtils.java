@@ -34,7 +34,9 @@ import sviolet.turquoise.utils.lifecycle.manager.LifeCycleManagerImpl;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
- * Android生命周期监听工具
+ * Android生命周期监听工具<p/>
+ *
+ * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
  *
  * Created by S.Violet on 2015/11/24.
  */
@@ -42,6 +44,8 @@ public class LifeCycleUtils {
 
     /**
      * 监听Activity的生命周期<p/>
+     *
+     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
      *
      * 注意:<br/>
      * API < 11 时, 不建议使用该方法, 只能利用{@link GlobalVars}捕获onDestroy()事件, 建议改用
@@ -65,7 +69,9 @@ public class LifeCycleUtils {
     }
 
     /**
-     * 监听FragmentActivity的生命周期
+     * 监听FragmentActivity的生命周期<p/>
+     *
+     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
      *
      * @param fragmentActivity 被监听的FragmentActivity
      * @param lifeCycle 监听器
@@ -83,6 +89,8 @@ public class LifeCycleUtils {
      * 监听Fragment的生命周期<p/>
      *
      * 实际上是监听其对应的Activity<p/>
+     *
+     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
      *
      * @param fragment 被监听的Fragment
      * @param lifeCycle 监听器
@@ -103,6 +111,8 @@ public class LifeCycleUtils {
      * 监听Fragment的生命周期<p/>
      *
      * 实际上是监听其对应的Activity<p/>
+     *
+     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
      *
      * @param fragment 被监听的Fragment
      * @param lifeCycle 监听器
