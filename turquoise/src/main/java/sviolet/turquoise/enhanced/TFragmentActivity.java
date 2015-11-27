@@ -46,7 +46,7 @@ import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
 
 public class TFragmentActivity extends FragmentActivity implements TActivityProvider.RequestPermissionsCallback, ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private static final TActivityProvider provider = new TActivityProvider();
+    private final TActivityProvider provider = new TActivityProvider();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
