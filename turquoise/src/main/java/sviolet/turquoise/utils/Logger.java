@@ -19,6 +19,10 @@
 
 package sviolet.turquoise.utils;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+
 /**
  * 日志打印器<br />
  *
@@ -61,5 +65,20 @@ public abstract class Logger {
      * @param t 异常
      */
     public abstract void e(Throwable t);
+
+    /*****************************************************
+     * static
+     */
+
+    /**
+     * 把异常转为String信息
+     */
+    public static String parseThrowableToString(Throwable ex) {
+        Writer writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+        ex.printStackTrace(printWriter);
+        printWriter.close();
+        return writer.toString();
+    }
 
 }

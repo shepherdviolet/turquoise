@@ -336,15 +336,4 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
         }
     }
 
-    /**
-     * 把异常转为String信息
-     */
-    public String parseThrowableToString(Throwable ex) {
-        Writer writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter(writer);
-        ex.printStackTrace(printWriter);
-        printWriter.close();
-        return writer.toString();
-    }
-
 }
