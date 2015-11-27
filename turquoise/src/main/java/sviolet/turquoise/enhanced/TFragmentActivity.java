@@ -20,12 +20,16 @@
 package sviolet.turquoise.enhanced;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhanced.utils.InjectUtils;
 import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
 
 /**
  * [组件扩展]Activity<br>
@@ -39,7 +43,8 @@ import sviolet.turquoise.utils.Logger;
  *
  * @author S.Violet
  */
-public class TFragmentActivity extends FragmentActivity{
+
+public class TFragmentActivity extends FragmentActivity implements TActivityProvider.RequestPermissionsCallback, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final TActivityProvider provider = new TActivityProvider();
 
@@ -79,6 +84,75 @@ public class TFragmentActivity extends FragmentActivity{
      */
     public Logger getLogger(){
         return provider.getLogger(this);
+    }
+
+    /**
+     * 将生命周期监听器绑定在该Activity上<p/>
+     *
+     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
+     *
+     * @param lifeCycle 生命周期监听器
+     */
+    public void attachLifeCycle(LifeCycle lifeCycle){
+        LifeCycleUtils.attach(this, lifeCycle);
+    }
+
+    /**********************************************
+     * Public
+     *
+     * Runtime Permission
+     */
+
+    /**
+     * 执行一个需要权限的任务, 兼容低版本<br/>
+     * 检查权限->显示说明->请求权限->回调{@link TActivityProvider.RequestPermissionTask}<br/>
+     * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
+     *
+     * @param permissions 所需权限
+     * @param task 需要权限的任务
+     */
+    public void executePermissionTask(String[] permissions, TActivityProvider.RequestPermissionTask task){
+        provider.executePermissionTask(this, permissions, null, null, task);
+    }
+
+    /**
+     * 执行一个需要权限的任务, 兼容低版本<br/>
+     * 检查权限->显示说明->请求权限->回调{@link TActivityProvider.RequestPermissionTask}<br/>
+     * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
+     *
+     * @param permissions 所需权限
+     * @param rationaleTitle 权限说明标题(标题和内容都送空, 则不提示)
+     * @param rationaleContent 权限说明内容(标题和内容都送空, 则不提示)
+     * @param task 需要权限的任务
+     */
+    public void executePermissionTask(String[] permissions, String rationaleTitle, String rationaleContent, TActivityProvider.RequestPermissionTask task){
+        provider.executePermissionTask(this, permissions, rationaleTitle, rationaleContent, task);
+    }
+
+    /**
+     * 原生权限请求结果回调方法<p/>
+     *
+     * 已被改造, 若采用原生方法获取权限, 请复写{@link TActivity#onRequestPermissionsResult(int, String[], int[], boolean)}<p/>
+     */
+    @Override
+    public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        provider.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    /**
+     * 权限请求结果回调方法<p/>
+     *
+     * 仅用于原生方法获取权限. 若使用{@link TActivity#executePermissionTask}请求权限,
+     * 无需复写此方法, 程序会回调{@link TActivityProvider.RequestPermissionTask}处理.<br/>
+     *
+     * @param requestCode 请求码
+     * @param permissions 权限列表 android.Manifest.permission....
+     * @param grantResults 结果列表
+     * @param allGranted 是否所有请求的权限都被允许
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults, boolean allGranted) {
+
     }
 
 }

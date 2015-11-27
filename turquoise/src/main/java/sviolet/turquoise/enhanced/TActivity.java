@@ -19,28 +19,17 @@
 
 package sviolet.turquoise.enhanced;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.os.*;
-import android.os.Process;
 import android.support.annotation.NonNull;
-import android.util.SparseArray;
+import android.support.v4.app.ActivityCompat;
 import android.view.Menu;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.utils.Logger;
-import sviolet.turquoise.utils.CheckUtils;
-import sviolet.turquoise.utils.sys.DeviceUtils;
 import sviolet.turquoise.enhanced.utils.InjectUtils;
-import sviolet.turquoise.utils.sys.MeasureUtils;
+import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
 
 /**
  * [组件扩展]Activity<br>
@@ -55,7 +44,7 @@ import sviolet.turquoise.utils.sys.MeasureUtils;
  * @author S.Violet
  */
 
-public abstract class TActivity extends Activity {
+public class TActivity extends Activity implements TActivityProvider.RequestPermissionsCallback, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static final TActivityProvider provider = new TActivityProvider();
 
@@ -97,218 +86,73 @@ public abstract class TActivity extends Activity {
         return provider.getLogger(this);
     }
 
+    /**
+     * 将生命周期监听器绑定在该Activity上<p/>
+     *
+     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
+     *
+     * @param lifeCycle 生命周期监听器
+     */
+    public void attachLifeCycle(LifeCycle lifeCycle){
+        LifeCycleUtils.attach(this, lifeCycle);
+    }
+
     /**********************************************
      * Public
      *
      * Runtime Permission
      */
 
-    //权限请求请求码
-    private AtomicInteger mPermissionRequestCode = new AtomicInteger(Integer.MAX_VALUE);
-    //权限请求任务池
-    private SparseArray<PermissionRequestTask> mPermissionRequestTaskPool = new SparseArray<>();
-
     /**
-     * 权限请求任务
-     */
-    public interface PermissionRequestTask{
-        /**
-         * 权限请求结果
-         *
-         * @param permissions 权限列表 android.Manifest.permission....
-         * @param grantResults 结果列表
-         * @param allGranted 是否所有请求的权限都被允许
-         */
-        public void onResult(String[] permissions, int[] grantResults, boolean allGranted);
-    }
-
-    /**
-     * 检查权限<br/>
-     * 支持低版本<Br/>
+     * 执行一个需要权限的任务, 兼容低版本<br/>
+     * 检查权限->显示说明->请求权限->回调{@link TActivityProvider.RequestPermissionTask}<br/>
+     * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
      *
-     * @param permission 权限名 android.Manifest.permission....
-     * @return PackageManager.PERMISSION_...
-     */
-    @Override
-    public int checkSelfPermission(String permission) {
-        if(permission == null) {
-            throw new IllegalArgumentException("permission is null");
-        } else {
-            return super.checkPermission(permission, android.os.Process.myPid(), Process.myUid());
-        }
-    }
-
-    /**
-     * 是否需要显示权限描述<br/>
-     * 支持低版本<br/>
-     *
-     * @param permission android.Manifest.permission....
-     */
-    @Override
-    public boolean shouldShowRequestPermissionRationale(@NonNull String permission) {
-        return DeviceUtils.getVersionSDK() >= 23 && super.shouldShowRequestPermissionRationale(permission);
-    }
-
-    /**
-     * 请求权限<br/>
-     * 支持低版本<br/>
-     * 监听器方式,无需复写onRequestPermissionsResult(...)处理结果事件<br/>
-     * <br/>
-     * 若使用原有requestPermissions(@NonNull String[] permissions, int requestCode)方法,需要注意检查
-     * SDK版本,且需要复写onRequestPermissionsResult(...)方法处理结果事件<br/>
-     *
-     * @param permission 权限 android.Manifest.permission....
+     * @param permissions 所需权限
      * @param task 需要权限的任务
      */
-    public void requestPermissions(String permission, PermissionRequestTask task) {
-        requestPermissions(new String[]{permission}, task);
+    public void executePermissionTask(String[] permissions, TActivityProvider.RequestPermissionTask task){
+        provider.executePermissionTask(this, permissions, null, null, task);
     }
 
     /**
-     * 请求权限<br/>
-     * 支持低版本<br/>
-     * 监听器方式,无需复写onRequestPermissionsResult(...)处理结果事件<br/>
-     * <br/>
-     * 若使用原有requestPermissions(@NonNull String[] permissions, int requestCode)方法,需要注意检查
-     * SDK版本,且需要复写onRequestPermissionsResult(...)方法处理结果事件<br/>
+     * 执行一个需要权限的任务, 兼容低版本<br/>
+     * 检查权限->显示说明->请求权限->回调{@link TActivityProvider.RequestPermissionTask}<br/>
+     * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
      *
-     * @param permissions 权限列表 android.Manifest.permission....
-     * @param task 任务
+     * @param permissions 所需权限
+     * @param rationaleTitle 权限说明标题(标题和内容都送空, 则不提示)
+     * @param rationaleContent 权限说明内容(标题和内容都送空, 则不提示)
+     * @param task 需要权限的任务
      */
-    @TargetApi(Build.VERSION_CODES.M)
-    public void requestPermissions(final String[] permissions, PermissionRequestTask task) {
-
-        final int requestCode = mPermissionRequestCode.getAndDecrement();
-
-        mPermissionRequestTaskPool.put(requestCode, task);
-
-        if(DeviceUtils.getVersionSDK() >= 23) {
-            super.requestPermissions(permissions, requestCode);
-        } else {
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable() {
-                public void run() {
-                    int[] grantResults = new int[permissions.length];
-                    PackageManager packageManager = getPackageManager();
-                    String packageName = getPackageName();
-                    int permissionCount = permissions.length;
-
-                    for (int i = 0; i < permissionCount; ++i) {
-                        grantResults[i] = packageManager.checkPermission(permissions[i], packageName);
-                    }
-
-                    onRequestPermissionsResult(requestCode, permissions, grantResults);
-                }
-            });
-        }
+    public void executePermissionTask(String[] permissions, String rationaleTitle, String rationaleContent, TActivityProvider.RequestPermissionTask task){
+        provider.executePermissionTask(this, permissions, rationaleTitle, rationaleContent, task);
     }
 
     /**
-     * 权限请求结果回调方法<br/>
+     * 原生权限请求结果回调方法<p/>
      *
-     * @param requestCode 请求码
-     * @param permissions 权限列表 android.Manifest.permission....
-     * @param grantResults 结果列表
+     * 已被改造, 若采用原生方法获取权限, 请复写{@link TActivity#onRequestPermissionsResult(int, String[], int[], boolean)}<p/>
      */
     @Override
-    public final void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        boolean allGranted = true;
-        if(grantResults == null || grantResults.length <= 0){
-            allGranted = false;
-        }
-        for(int result : grantResults){
-            if(result != PackageManager.PERMISSION_GRANTED){
-                allGranted = false;
-                break;
-            }
-        }
-        PermissionRequestTask task = mPermissionRequestTaskPool.get(requestCode);
-        if(task != null) {
-            task.onResult(permissions, grantResults, allGranted);
-            mPermissionRequestTaskPool.remove(requestCode);
-        }else{
-            onRequestPermissionsResult(requestCode, permissions, grantResults, allGranted);
-        }
+    public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        provider.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
     /**
-     * 权限请求结果回调方法<br/>
-     * 采用requestPermissions(final String[] permissions, OnRequestPermissionListener listener)请求权限的情况下,
-     * 无需复写此方法,onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)会回调监听器.<br/>
-     * 采用原生requestPermissions(@NonNull String[] permissions, int requestCode)请求权限的情况下,
-     * 需要复写此方法,处理返回结果.<br/>
+     * 权限请求结果回调方法<p/>
+     *
+     * 仅用于原生方法获取权限. 若使用{@link TActivity#executePermissionTask}请求权限,
+     * 无需复写此方法, 程序会回调{@link TActivityProvider.RequestPermissionTask}处理.<br/>
      *
      * @param requestCode 请求码
      * @param permissions 权限列表 android.Manifest.permission....
      * @param grantResults 结果列表
      * @param allGranted 是否所有请求的权限都被允许
      */
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults, boolean allGranted) {
 
-    }
-
-    /**
-     * 执行一个需要权限的任务<br/>
-     * 检查权限->请求权限->回调监听器<br/>
-     * 目的任务在监听器中实现, 需要判断权限是否被授予<br/>
-     *
-     * @param permission 任务需要的权限
-     * @param task 在监听器中判断权限是否授予, 并执行目的任务
-     */
-    public void executePermissionTask(final String permission, final PermissionRequestTask task){
-        executePermissionTask(permission, null, null, task);
-    }
-
-    /**
-     * 执行一个需要权限的任务<br/>
-     * 检查权限->显示说明->请求权限->回调监听器<br/>
-     * 目的任务在监听器中实现, 需要判断权限是否被授予<br/>
-     *
-     * @param permission 任务需要的权限
-     * @param rationaleTitle 权限说明标题(标题和内容都送空, 则不提示)
-     * @param rationaleContent 权限说明内容(标题和内容都送空, 则不提示)
-     * @param task 在监听器中判断权限是否授予, 并执行目的任务
-     */
-    public void executePermissionTask(final String permission, String rationaleTitle, String rationaleContent, final PermissionRequestTask task){
-        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-            if ((!CheckUtils.isEmpty(rationaleTitle) || !CheckUtils.isEmpty(rationaleContent)) && shouldShowRequestPermissionRationale(permission)) {
-                new PermissionRationaleDialog(this, rationaleTitle, rationaleContent, new DialogInterface.OnCancelListener(){
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        requestPermissions(permission, task);
-                    }
-                }).show();
-            }else{
-                requestPermissions(permission, task);
-            }
-        }else{
-            task.onResult(new String[]{permission}, new int[]{PackageManager.PERMISSION_GRANTED}, true);
-        }
-    }
-
-    /**
-     * 权限说明窗口
-     */
-    private final class PermissionRationaleDialog extends Dialog {
-        public PermissionRationaleDialog(Context context, String rationaleTitle, String rationaleContent, DialogInterface.OnCancelListener listener) {
-            super(context, true, listener);
-
-            if(!CheckUtils.isEmpty(rationaleTitle)) {
-                setTitle(rationaleTitle);
-            }
-
-            TextView textView = new TextView(getContext());
-            if (!CheckUtils.isEmpty(rationaleContent)) {
-                textView.setText(rationaleContent);
-            }
-            textView.setTextColor(0xFF808080);
-            final int dp15 = MeasureUtils.dp2px(getContext(), 15);
-            final int dp10 = MeasureUtils.dp2px(getContext(), 10);
-            textView.setPadding(dp15, dp15, dp10, dp10);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            addContentView(textView, params);
-
-        }
     }
 
 }

@@ -21,17 +21,30 @@ package sviolet.turquoise.enhanced;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhanced.utils.InjectUtils;
+import sviolet.turquoise.utils.CheckUtils;
 import sviolet.turquoise.utils.Logger;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 import sviolet.turquoise.utils.sys.DeviceUtils;
+import sviolet.turquoise.utils.sys.MeasureUtils;
 
 /**
  * [组件扩展]Activity<br>
@@ -160,6 +173,168 @@ public class TActivityProvider {
             }catch (Exception ignored){}
         }
         return Logger.newInstance("", false, false, false);//返回无效的日志打印器
+    }
+
+    /**********************************************
+     * Public
+     *
+     * Runtime Permission
+     */
+
+    //权限请求请求码
+    private AtomicInteger mPermissionRequestCode = new AtomicInteger(Integer.MAX_VALUE);
+    //权限请求任务池
+    private SparseArray<RequestPermissionTask> mPermissionRequestTaskPool = new SparseArray<>();
+
+    /**
+     * 权限请求任务(结果监听器)
+     */
+    public interface RequestPermissionTask {
+        /**
+         * 权限请求结果
+         *
+         * @param permissions 权限列表 android.Manifest.permission....
+         * @param grantResults 结果列表 PackageManager.PERMISSION_....
+         * @param allGranted 是否所有请求的权限都被允许
+         */
+        public void onResult(String[] permissions, int[] grantResults, boolean allGranted);
+    }
+
+    /**
+     * 权限结果回调
+     */
+    interface RequestPermissionsCallback {
+        void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults, boolean allGranted);
+    }
+
+    /**
+     * 执行一个需要权限的任务<br/>
+     * 检查权限->显示说明->请求权限->回调监听器<br/>
+     * 目的任务在监听器中实现, 需要判断权限是否被授予<br/>
+     *
+     * @param permissions 任务需要的权限
+     * @param rationaleTitle 权限说明标题(标题和内容都送空, 则不提示)
+     * @param rationaleContent 权限说明内容(标题和内容都送空, 则不提示)
+     * @param task 在监听器中判断权限是否授予, 并执行目的任务
+     */
+    void executePermissionTask(final Activity activity, final String[] permissions, String rationaleTitle, String rationaleContent, final RequestPermissionTask task){
+        if (permissions == null || permissions.length <= 0){
+            throw new IllegalArgumentException("permissions is null");
+        }
+        //判断权限是否已开启
+        boolean allGranted = true;
+        for (String permission : permissions){
+            if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED){
+                allGranted = false;
+                break;
+            }
+        }
+
+        if (allGranted) {
+            //权限已开启则直接回调任务
+            int[] grantResults = new int[permissions.length];
+            for (int i = 0 ; i < grantResults.length ; i++){
+                grantResults[i] = PackageManager.PERMISSION_GRANTED;
+            }
+            task.onResult(permissions, grantResults, true);
+        }else{
+            //有权限未开启, 则请求权限
+
+            //判断是否需要显示提示
+            boolean shouldShowRationale = false;
+            for (String permission : permissions){
+                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)){
+                    shouldShowRationale = true;
+                    break;
+                }
+            }
+
+            if ((!CheckUtils.isEmpty(rationaleTitle) || !CheckUtils.isEmpty(rationaleContent)) && shouldShowRationale) {
+                //显示权限提示
+                new PermissionRationaleDialog(activity, rationaleTitle, rationaleContent, new DialogInterface.OnCancelListener(){
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        //请求权限
+                        requestPermissions(activity, permissions, task);
+                    }
+                }).show();
+            }else{
+                //请求权限
+                requestPermissions(activity, permissions, task);
+            }
+        }
+    }
+
+    /**
+     * 请求权限<br/>
+     * 支持低版本<br/>
+     *
+     * @param permissions 权限列表 android.Manifest.permission....
+     * @param task 任务
+     */
+    private void requestPermissions(Activity activity, final String[] permissions, RequestPermissionTask task) {
+        //递减的请求号
+        final int requestCode = mPermissionRequestCode.getAndDecrement();
+        //任务加入任务池
+        mPermissionRequestTaskPool.put(requestCode, task);
+        //请求权限
+        ActivityCompat.requestPermissions(activity, permissions, requestCode);
+    }
+
+    /**
+     * 权限请求结果处理
+     */
+    void onRequestPermissionsResult(Activity activity, int requestCode, String[] permissions, int[] grantResults) {
+        //判断权限是否全部允许
+        boolean allGranted = true;
+        if(grantResults == null || grantResults.length <= 0){
+            allGranted = false;
+        }else {
+            for (int result : grantResults) {
+                if (result != PackageManager.PERMISSION_GRANTED) {
+                    allGranted = false;
+                    break;
+                }
+            }
+        }
+        //任务池中取出任务
+        RequestPermissionTask task = mPermissionRequestTaskPool.get(requestCode);
+
+        if(task != null) {
+            //回调任务
+            task.onResult(permissions, grantResults, allGranted);
+            //从任务池中移除
+            mPermissionRequestTaskPool.remove(requestCode);
+        }else if (activity instanceof RequestPermissionsCallback){
+            //任务不存在则调用Activity方法
+            ((RequestPermissionsCallback)activity).onRequestPermissionsResult(requestCode, permissions, grantResults, allGranted);
+        }
+    }
+
+    /**
+     * 权限说明窗口
+     */
+    private static final class PermissionRationaleDialog extends Dialog {
+
+        public PermissionRationaleDialog(Context context, String rationaleTitle, String rationaleContent, DialogInterface.OnCancelListener listener) {
+            super(context, true, listener);
+
+            if(!CheckUtils.isEmpty(rationaleTitle)) {
+                setTitle(rationaleTitle);
+            }
+
+            TextView textView = new TextView(getContext());
+            if (!CheckUtils.isEmpty(rationaleContent)) {
+                textView.setText(rationaleContent);
+            }
+            textView.setTextColor(0xFF808080);
+            final int dp15 = MeasureUtils.dp2px(getContext(), 15);
+            final int dp10 = MeasureUtils.dp2px(getContext(), 10);
+            textView.setPadding(dp15, dp15, dp10, dp10);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            addContentView(textView, params);
+
+        }
     }
 
 }
