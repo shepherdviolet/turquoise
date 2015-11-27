@@ -144,7 +144,9 @@ public class TActivity extends Activity implements TActivityProvider.RequestPerm
     /**
      * 执行一个需要权限的任务, 兼容低版本<br/>
      * 检查权限->显示说明->请求权限->回调{@link TActivityProvider.RequestPermissionTask}<br/>
-     * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
+     * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<p/>
+     *
+     * 注意:会占用requestCode 201-250 , 建议不要与原生方法requestPermission同时使用.<br/>
      *
      * @param permissions 所需权限 android.Manifest.permission....
      * @param rationaleTitle 权限说明标题(标题和内容都送空, 则不提示)

@@ -185,7 +185,7 @@ public class TActivityProvider {
      */
 
     //权限请求请求码
-    private AtomicInteger mPermissionRequestCode = new AtomicInteger(Integer.MAX_VALUE);
+    private AtomicInteger mPermissionRequestCode = new AtomicInteger(0);
     //权限请求任务池
     private SparseArray<RequestPermissionTask> mPermissionRequestTaskPool = new SparseArray<>();
 
@@ -276,8 +276,8 @@ public class TActivityProvider {
      * @param task 任务
      */
     private void requestPermissions(Activity activity, final String[] permissions, RequestPermissionTask task) {
-        //递减的请求号
-        final int requestCode = mPermissionRequestCode.getAndDecrement();
+        //递减的请求号201-250
+        final int requestCode = mPermissionRequestCode.getAndIncrement() % 50 + 201;
         //任务加入任务池
         mPermissionRequestTaskPool.put(requestCode, task);
         //请求权限
