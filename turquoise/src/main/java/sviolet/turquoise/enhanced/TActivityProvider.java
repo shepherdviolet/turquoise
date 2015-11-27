@@ -62,6 +62,10 @@ public class TActivityProvider {
 
     private ActivitySettings settings;
 
+    TActivityProvider(){
+
+    }
+
     /**
      * 获得@ActivitySettings设置标签
      *
