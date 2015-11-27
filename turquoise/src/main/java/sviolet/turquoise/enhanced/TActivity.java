@@ -50,8 +50,8 @@ public class TActivity extends Activity implements TActivityProvider.RequestPerm
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        provider.windowSetting(this);//窗口设置
         super.onCreate(savedInstanceState);
+        provider.windowSetting(this);//窗口设置
         provider.onCreate(this);
     }
 

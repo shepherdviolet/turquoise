@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.enhanced;
 
-import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -83,7 +83,7 @@ public class TActivityProvider {
     /**
      * 根据@ActivitySettings标签进行窗口设置
      */
-    @SuppressLint("NewApi")
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     void windowSetting(Activity activity) {
         if (getActivitySettings(activity) == null)
             return;
@@ -91,7 +91,6 @@ public class TActivityProvider {
         //硬件加速
         if(getActivitySettings(activity).enableHardwareAccelerated()){
             ApplicationUtils.enableHardwareAccelerated(activity.getWindow());
-
         }
 
         //无标题
