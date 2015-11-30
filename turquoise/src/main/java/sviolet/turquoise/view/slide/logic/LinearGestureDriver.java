@@ -22,10 +22,11 @@ package sviolet.turquoise.view.slide.logic;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import sviolet.turquoise.utils.WeakHandler;
 import sviolet.turquoise.view.slide.GestureDriver;
 import sviolet.turquoise.view.slide.SlideEngine;
 import android.content.Context;
-import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
@@ -465,7 +466,7 @@ public class LinearGestureDriver implements GestureDriver {
 		//重置惯性滑动停住(hold)状态
 		holdSliding = false;
 		//[ACTION超时释放]停止检测
-		handler.removeMessages(HANDLER_RELEASE_CHECK);
+		handler.removeMessages(MyHandler.HANDLER_RELEASE_CHECK);
 	}
 	
 	/**
@@ -474,11 +475,11 @@ public class LinearGestureDriver implements GestureDriver {
 	 */
 	private void postReleaseCheck(){
 		//[ACTION超时释放]停止检测
-		handler.removeMessages(HANDLER_RELEASE_CHECK);
+		handler.removeMessages(MyHandler.HANDLER_RELEASE_CHECK);
 		//重置计数
 		releaseCheckCounter = 0;
 		//延时执行检测
-		handler.sendEmptyMessageDelayed(HANDLER_RELEASE_CHECK, RELEASE_CHECK_DELAY);
+		handler.sendEmptyMessageDelayed(MyHandler.HANDLER_RELEASE_CHECK, RELEASE_CHECK_DELAY);
 	}
 	
 	/**
@@ -840,21 +841,26 @@ public class LinearGestureDriver implements GestureDriver {
 	 * handler
 	 */
 	
-	private static final int HANDLER_RELEASE_CHECK = 1;
-	
-	private Handler handler = new Handler(new Handler.Callback(){
-		@Override
-		public boolean handleMessage(Message msg) {
-			switch(msg.what){
-			case HANDLER_RELEASE_CHECK:
-				releaseCheck();
-				break;
-			default:
-				break;
-			}
-			return true;
+    private final MyHandler handler = new MyHandler(Looper.getMainLooper(), this);
+
+	private static class MyHandler extends WeakHandler<LinearGestureDriver>{
+
+		private static final int HANDLER_RELEASE_CHECK = 1;
+
+		public MyHandler(Looper looper, LinearGestureDriver host) {
+			super(looper, host);
 		}
-		
-	});
+
+		@Override
+		protected void handleMessageWithHost(Message msg, LinearGestureDriver host) {
+			switch(msg.what){
+				case HANDLER_RELEASE_CHECK:
+					host.releaseCheck();
+					break;
+				default:
+					break;
+			}
+		}
+	}
 	
 }

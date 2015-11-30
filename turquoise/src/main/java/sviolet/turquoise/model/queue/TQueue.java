@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.model.queue;
 
-import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 import java.util.ArrayList;
@@ -30,6 +30,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.locks.ReentrantLock;
+
+import sviolet.turquoise.utils.WeakHandler;
 
 /**
  * 任务队列 (必须在主线程实例化)<br/>
@@ -641,7 +643,7 @@ public class TQueue {
      */
     protected void ttask_postStart(TTask task){
         Message msg = mHandler.obtainMessage();
-        msg.what = HANDLER_TASK_START;
+        msg.what = MyHandler.HANDLER_TASK_START;
         msg.obj = task;
         msg.sendToTarget();
     }
@@ -654,17 +656,24 @@ public class TQueue {
      */
     protected void ttask_postComplete(TTask task){
         Message msg = mHandler.obtainMessage();
-        msg.what = HANDLER_TASK_COMPLETE;
+        msg.what = MyHandler.HANDLER_TASK_COMPLETE;
         msg.obj = task;
         msg.sendToTarget();
     }
 
-    private static final int HANDLER_TASK_START = 0;//任务启动(主线程执行任务过程)
-    private static final int HANDLER_TASK_COMPLETE = 1;//任务完成(主线程执行onPostExecute)
+    private final MyHandler mHandler = new MyHandler(Looper.getMainLooper(), this);//主线程处理
 
-    private final Handler mHandler = new Handler(new Handler.Callback() {
+    private static class MyHandler extends WeakHandler<TQueue>{
+
+        private static final int HANDLER_TASK_START = 0;//任务启动(主线程执行任务过程)
+        private static final int HANDLER_TASK_COMPLETE = 1;//任务完成(主线程执行onPostExecute)
+
+        public MyHandler(Looper looper, TQueue host) {
+            super(looper, host);
+        }
+
         @Override
-        public boolean handleMessage(Message msg) {
+        protected void handleMessageWithHost(Message msg, TQueue host) {
             switch (msg.what) {
                 case HANDLER_TASK_START:
                     if (msg.obj != null && msg.obj instanceof TTask) {
@@ -679,8 +688,7 @@ public class TQueue {
                 default:
                     break;
             }
-            return true;
         }
-    });
+    }
 
 }

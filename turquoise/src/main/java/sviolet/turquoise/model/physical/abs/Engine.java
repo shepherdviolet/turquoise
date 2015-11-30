@@ -19,11 +19,13 @@
 
 package sviolet.turquoise.model.physical.abs;
 
-import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import sviolet.turquoise.utils.WeakHandler;
 
 /**
  * 
@@ -61,7 +63,7 @@ public abstract class Engine {
 	 */
 	protected void output(){
 		messageCounter++;
-		handler.sendEmptyMessage(WHAT_OUTPUT);
+		handler.sendEmptyMessage(MyHandler.WHAT_OUTPUT);
 	}
 	
 	/**
@@ -171,27 +173,33 @@ public abstract class Engine {
 	}
 	
 	////////////////////////////////////////////////////////
-	
-	private final int WHAT_OUTPUT = 1;
 
-	private final Handler handler = new Handler(new Handler.Callback() {
-		@Override
-		public boolean handleMessage(Message msg) {
-			messageCounter--;
-			if(messageCounter > 0)
-				return true;
+    private final MyHandler handler = new MyHandler(Looper.getMainLooper(), this);
 
-			synchronized (Engine.this) {
+    private static class MyHandler extends WeakHandler<Engine>{
+
+        private static final int WHAT_OUTPUT = 1;
+
+        public MyHandler(Looper looper, Engine host) {
+            super(looper, host);
+        }
+
+        @Override
+        protected void handleMessageWithHost(Message msg, Engine host) {
+            host.messageCounter--;
+			if(host.messageCounter > 0)
+				return;
+
+			synchronized (this) {
 				switch (msg.what) {
 					case WHAT_OUTPUT:
-						onOutput();
+                        host.onOutput();
 						break;
 					default:
 						break;
 				}
 			}
-			return true;
-		}
-	});
+        }
+    }
 
 }

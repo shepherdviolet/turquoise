@@ -24,7 +24,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -35,6 +35,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
 
 import sviolet.turquoise.R;
+import sviolet.turquoise.utils.WeakHandler;
 
 /**
  * 水波纹触摸效果控件(RelativeLayout)
@@ -272,25 +273,31 @@ public class RippleView extends RelativeLayout{
 	 * 										inter
 	 */
 	
-	private static final int HANDLER_REFRESH_VIEW = 0;//刷新动画
-	private static final int HANDLER_ANIMATION_FIHISH = 1;//动画结束回调
+	private final MyHandler handler = new MyHandler(Looper.getMainLooper(), this);
 
-	private final Handler handler = new Handler(new Handler.Callback() {
+	private static class MyHandler extends WeakHandler<RippleView>{
+
+		private static final int HANDLER_REFRESH_VIEW = 0;//刷新动画
+		private static final int HANDLER_ANIMATION_FIHISH = 1;//动画结束回调
+
+		public MyHandler(Looper looper, RippleView host) {
+			super(looper, host);
+		}
+
 		@Override
-		public boolean handleMessage(Message msg) {
+		protected void handleMessageWithHost(Message msg, RippleView host) {
 			switch(msg.what){
 				case HANDLER_REFRESH_VIEW:
-					invalidate();
+                    host.invalidate();
 					break;
 				case HANDLER_ANIMATION_FIHISH:
-					onAnimationFinish();
+                    host.onAnimationFinish();
 					break;
 				default:
 					break;
 			}
-			return true;
 		}
-	});
+	}
 		
     /**
      * 波纹动画结束监听器<p>
@@ -364,7 +371,7 @@ public class RippleView extends RelativeLayout{
 	private void drawCircle(Canvas canvas) {
 		//动画进度超过callbackPercent后, 触发animation_finish事件
 		if(!hasCallback && timer * frameRate >= duration * callbackPercent){
-			handler.sendEmptyMessage(HANDLER_ANIMATION_FIHISH);
+			handler.sendEmptyMessage(MyHandler.HANDLER_ANIMATION_FIHISH);
 			hasCallback = true;
 		}
 		
@@ -373,7 +380,7 @@ public class RippleView extends RelativeLayout{
 			resetCanvas(canvas);
 			return;
 		} else {
-			handler.sendEmptyMessageDelayed(HANDLER_REFRESH_VIEW, frameRate);
+			handler.sendEmptyMessageDelayed(MyHandler.HANDLER_REFRESH_VIEW, frameRate);
 		}
 
 		//画布保存初始状态

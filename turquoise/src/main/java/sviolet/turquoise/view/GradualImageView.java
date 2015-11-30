@@ -23,12 +23,13 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
+import sviolet.turquoise.utils.WeakHandler;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
@@ -63,7 +64,7 @@ public class GradualImageView extends ImageView {
     public void setImageBitmapGradual(Bitmap bitmap) {
         resetToTranslucent();
         super.setImageBitmap(bitmap);
-        mHandler.sendEmptyMessageDelayed(HANDLER_SET_ALPHA, GRADUAL_REFRESH_INTERVAL);//开始刷新
+        mHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_SET_ALPHA, GRADUAL_REFRESH_INTERVAL);//开始刷新
     }
 
     /**
@@ -73,7 +74,7 @@ public class GradualImageView extends ImageView {
     public void setImageResourceGradual(int resId) {
         resetToTranslucent();
         super.setImageResource(resId);
-        mHandler.sendEmptyMessageDelayed(HANDLER_SET_ALPHA, GRADUAL_REFRESH_INTERVAL);
+        mHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_SET_ALPHA, GRADUAL_REFRESH_INTERVAL);
     }
 
     /**
@@ -83,7 +84,7 @@ public class GradualImageView extends ImageView {
     public void setImageDrawableGradual(Drawable drawable) {
         resetToTranslucent();
         super.setImageDrawable(drawable);
-        mHandler.sendEmptyMessageDelayed(HANDLER_SET_ALPHA, GRADUAL_REFRESH_INTERVAL);
+        mHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_SET_ALPHA, GRADUAL_REFRESH_INTERVAL);
     }
 
     /**
@@ -91,7 +92,7 @@ public class GradualImageView extends ImageView {
      * @param drawable
      */
     public void setImageDrawableImmediate(Drawable drawable) {
-        mHandler.removeMessages(HANDLER_SET_ALPHA);
+        mHandler.removeMessages(MyHandler.HANDLER_SET_ALPHA);
         updateTimestamp = SystemClock.uptimeMillis();
         super.setImageDrawable(drawable);
         if (drawable != null)
@@ -103,7 +104,7 @@ public class GradualImageView extends ImageView {
      * @param resId
      */
     public void setImageResourceImmediate(int resId) {
-        mHandler.removeMessages(HANDLER_SET_ALPHA);
+        mHandler.removeMessages(MyHandler.HANDLER_SET_ALPHA);
         updateTimestamp = SystemClock.uptimeMillis();
         super.setImageResource(resId);
         if (resId > 0)
@@ -115,7 +116,7 @@ public class GradualImageView extends ImageView {
      * @param bm
      */
     public void setImageBitmapImmediate(Bitmap bm) {
-        mHandler.removeMessages(HANDLER_SET_ALPHA);
+        mHandler.removeMessages(MyHandler.HANDLER_SET_ALPHA);
         updateTimestamp = SystemClock.uptimeMillis();
         super.setImageBitmap(bm);
         if (bm != null)
@@ -152,25 +153,34 @@ public class GradualImageView extends ImageView {
         super.setImageResource(resId);
     }
 
-    private static final int HANDLER_SET_ALPHA = 1;//设置透明度
+    ///////////////////////////////////////////////////////////////////////
+    // Handler
 
-    private final Handler mHandler = new Handler(new Handler.Callback(){
+    private final MyHandler mHandler = new MyHandler(Looper.getMainLooper(), this);//主线程处理
+
+    private static class MyHandler extends WeakHandler<GradualImageView>{
+
+        private static final int HANDLER_SET_ALPHA = 1;//设置透明度
+
+        public MyHandler(Looper looper, GradualImageView host) {
+            super(looper, host);
+        }
+
         @Override
-        public boolean handleMessage(Message msg) {
+        protected void handleMessageWithHost(Message msg, GradualImageView host) {
             //计算透明度
-            long passTime = SystemClock.uptimeMillis() - updateTimestamp;
+            long passTime = SystemClock.uptimeMillis() - host.updateTimestamp;
             int alpha = (int) (((double)passTime / (double)GRADUAL_DURATION) * 255);
             if (alpha > 255){
                 alpha = 255;
             }else{
                 //继续刷新
-                mHandler.sendEmptyMessageDelayed(HANDLER_SET_ALPHA, GRADUAL_REFRESH_INTERVAL);
+                sendEmptyMessageDelayed(HANDLER_SET_ALPHA, GRADUAL_REFRESH_INTERVAL);
             }
             //设置透明度
-            setAlphaCompat(alpha);
-            return true;
+            host.setAlphaCompat(alpha);
         }
-    });
+    }
 
     /**
      * 设置透明度
@@ -189,7 +199,7 @@ public class GradualImageView extends ImageView {
      * 重置状态并设置为全透明
      */
     private void resetToTranslucent() {
-        mHandler.removeMessages(HANDLER_SET_ALPHA);//移除消息
+        mHandler.removeMessages(MyHandler.HANDLER_SET_ALPHA);//移除消息
         updateTimestamp = SystemClock.uptimeMillis();//记录更新时间
         setAlphaCompat(0);//设为全透明
     }

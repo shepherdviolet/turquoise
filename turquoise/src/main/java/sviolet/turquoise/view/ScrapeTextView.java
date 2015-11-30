@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.view;
 
+import sviolet.turquoise.utils.WeakHandler;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 
 import android.annotation.SuppressLint;
@@ -385,7 +386,7 @@ public class ScrapeTextView extends TextView {
 
 					if(!hasCallback && onPercentListener != null)
 						if(scrapePercent >= callbackPercent)
-							mHandler.sendEmptyMessage(HANDLER_PERCENT_CALLBACK);
+							mHandler.sendEmptyMessage(MyHandler.HANDLER_PERCENT_CALLBACK);
 					return true;
 				}
 			});
@@ -394,23 +395,29 @@ public class ScrapeTextView extends TextView {
 			Looper.loop();
 		}
 	}
-	
-	private static final int HANDLER_PERCENT_CALLBACK = 1;
 
-	private final Handler mHandler = new Handler(new Handler.Callback() {
+	private final MyHandler mHandler = new MyHandler(Looper.getMainLooper(), this);
+
+	private static class MyHandler extends WeakHandler<ScrapeTextView>{
+
+		private static final int HANDLER_PERCENT_CALLBACK = 1;
+
+		public MyHandler(Looper looper, ScrapeTextView host) {
+			super(looper, host);
+		}
+
 		@Override
-		public boolean handleMessage(Message msg) {
+		protected void handleMessageWithHost(Message msg, ScrapeTextView host) {
 			switch (msg.what) {
 				case HANDLER_PERCENT_CALLBACK:
-					if(onPercentListener != null)
-						onPercentListener.run();
+					if(host.onPercentListener != null)
+						host.onPercentListener.run();
 					break;
 				default:
 					break;
 			}
-			return true;
 		}
-	});
+	}
 	
 	/**
 	 * 当刮开指定比例时回调监听器

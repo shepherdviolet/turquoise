@@ -19,15 +19,18 @@
 
 package sviolet.turquoise.view.slide.logic;
 
+import sviolet.turquoise.utils.WeakHandler;
 import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.GestureDriver;
 import sviolet.turquoise.view.slide.SlideEngine;
 import sviolet.turquoise.view.slide.SlideView;
 import android.content.Context;
-import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
+
+import java.lang.ref.WeakReference;
 
 /**
  * 
@@ -75,7 +78,7 @@ public class LinearDragEngine implements SlideEngine {
 	public static final int STATE_HOLDING = 1;//手势持有运动状态
 	public static final int STATE_SLIDING = 2;//惯性滑动状态
 	
-	protected SlideView mSlideView = null;
+	protected WeakReference<SlideView> mSlideView = null;
 	protected GestureDriver mGestureDriver = null;
 	protected Context mContext = null;
 	private SlideEngine parentSlideEngine = null;//外部引擎（嵌套时）
@@ -96,11 +99,11 @@ public class LinearDragEngine implements SlideEngine {
 
 	/**
 	 * @param context ViewGroup上下文
-	 * @param slideView 通知刷新的View
+	 * @param slideView 通知刷新的View(弱引用)
 	 */
 	public LinearDragEngine(Context context, SlideView slideView){
 		this.mContext = context;
-		this.mSlideView = slideView;
+		this.mSlideView = new WeakReference<SlideView>(slideView);
 	}
 
 	/*********************************************************
@@ -415,7 +418,7 @@ public class LinearDragEngine implements SlideEngine {
 		//调用监听器
 		if(mOnGestureHoldListener != null){
 			try{
-				mOnGestureHoldListener.onClick((View) mSlideView);
+				mOnGestureHoldListener.onClick((View)getSlideView());
 			}catch (ClassCastException e){
 				mOnGestureHoldListener.onClick(null);
 			}
@@ -495,11 +498,12 @@ public class LinearDragEngine implements SlideEngine {
 	}
 	
 	/**
-	 * 获得与引擎绑定的SlideView
-	 * @return
+	 * 获得与引擎绑定的SlideView, 弱引用, 可能为空
 	 */
 	public SlideView getSlideView(){
-		return mSlideView;
+        if (mSlideView != null)
+            return mSlideView.get();
+		return null;
 	}
 	
 	/**
@@ -566,7 +570,7 @@ public class LinearDragEngine implements SlideEngine {
 	 * 通知SlideView刷新显示
 	 */
 	protected void notifySlideView(){
-		handler.sendEmptyMessage(HANDLER_NOTIFY_SLIDE);
+		handler.sendEmptyMessage(MyHandler.HANDLER_NOTIFY_SLIDE);
 	}
 	
 	/**
@@ -590,22 +594,28 @@ public class LinearDragEngine implements SlideEngine {
 	 * Handler
 	 */
 	
-	private static final int HANDLER_NOTIFY_SLIDE = 0;//通知SlideView刷新
-	
-	private Handler handler = new Handler(new Handler.Callback() {
-        @Override
-        public boolean handleMessage(Message msg) {
-        	
+	private final MyHandler handler = new MyHandler(Looper.getMainLooper(), this);
+
+	private static class MyHandler extends WeakHandler<LinearDragEngine>{
+
+		private static final int HANDLER_NOTIFY_SLIDE = 0;//通知SlideView刷新
+
+		public MyHandler(Looper looper, LinearDragEngine host) {
+			super(looper, host);
+		}
+
+		@Override
+		protected void handleMessageWithHost(Message msg, LinearDragEngine host) {
 			switch (msg.what) {
 			case HANDLER_NOTIFY_SLIDE://通知SlideView刷新
-				if(mSlideView != null)
-					mSlideView.notifyRefresh();
+                final SlideView slideView = host.getSlideView();
+				if(slideView != null)
+                    slideView.notifyRefresh();
 				break;
 			default:
 				break;
 			}
-			
-			return true;
-        }
-    });
+		}
+	}
+
 }

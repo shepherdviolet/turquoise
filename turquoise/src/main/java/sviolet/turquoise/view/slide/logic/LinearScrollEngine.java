@@ -238,7 +238,7 @@ public class LinearScrollEngine extends LinearDragEngine {
 		//触摸监听
 		if(mOnStaticTouchAreaTouchListener != null)
 			try{
-				mOnStaticTouchAreaTouchListener.onClick((View) mSlideView);
+				mOnStaticTouchAreaTouchListener.onClick((View)getSlideView());
 			}catch (ClassCastException e){
 				mOnStaticTouchAreaTouchListener.onClick(null);
 			}
@@ -260,7 +260,7 @@ public class LinearScrollEngine extends LinearDragEngine {
 	public void onStaticTouchAreaClick() {
 		if(mOnStaticTouchAreaClickListener != null){
 			try{
-				mOnStaticTouchAreaClickListener.onClick((View) mSlideView);
+				mOnStaticTouchAreaClickListener.onClick((View)getSlideView());
 			}catch (ClassCastException e){
 				mOnStaticTouchAreaClickListener.onClick(null);
 			}
@@ -274,7 +274,7 @@ public class LinearScrollEngine extends LinearDragEngine {
 	public void onStaticTouchAreaLongPress() {
 		if(mOnStaticTouchAreaLongPressListener != null){
 			try{
-				mOnStaticTouchAreaLongPressListener.onClick((View) mSlideView);
+				mOnStaticTouchAreaLongPressListener.onClick((View)getSlideView());
 			}catch (ClassCastException e){
 				mOnStaticTouchAreaLongPressListener.onClick(null);
 			}
