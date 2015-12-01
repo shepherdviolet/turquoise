@@ -1,9 +1,8 @@
-# Turquoise 1.4.151130
+# Turquoise 1.4.151201
+> a comprehensive Android Library for private use <br/>
 > https://github.com/shepherdviolet/turquoise <br/>
 
-## Description
-> Android Library <br/>
-> <br/>
+## Overview
 > Utils ┃ sviolet.turquoise.utils <br/>
 > ┈┈ 1.BitmapLoader/SimpleBitmapLoader ┃ 双缓存图片异步加载器 ┃ sviolet.turquoise.utils.bitmap.loader <br/>
 > ┈┈ 2.LifeCycleUtils ┃ Activity生命周期监听工具 ┃ sviolet.turquoise.utils.lifecycle <br/>
