@@ -29,11 +29,12 @@ import android.os.Bundle;
 import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.utils.lifecycle.GlobalVars;
+import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
 
 /**
  * 生命周期监听Fragment<p/>
  *
- * use{@Link LifeCycleUtils}<p/>
+ * use{@link LifeCycleUtils}<p/>
  *
  * Created by S.Violet on 2015/11/24.
  */

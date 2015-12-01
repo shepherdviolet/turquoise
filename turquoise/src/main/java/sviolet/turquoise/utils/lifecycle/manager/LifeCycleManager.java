@@ -19,12 +19,13 @@
 
 package sviolet.turquoise.utils.lifecycle.manager;
 
+import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
 
 /**
  * 生命周期管理器<p/>
  *
- * use{@Link LifeCycleUtils}<p/>
+ * use{@link LifeCycleUtils}<p/>
  *
  * Created by S.Violet on 2015/11/24.
  */

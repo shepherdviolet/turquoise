@@ -49,7 +49,7 @@ public class LifeCycleUtils {
      *
      * 注意:<br/>
      * API < 11 时, 不建议使用该方法, 只能利用{@link GlobalVars}捕获onDestroy()事件, 建议改用
-     * {@link android.support.v4.app.FragmentActivity} 或 {@Link android.support.v4.app.Fragment}<p/>
+     * {@link android.support.v4.app.FragmentActivity} 或 {@link android.support.v4.app.Fragment}<p/>
      *
      * @param activity 被监听的Activity
      * @param lifeCycle 监听器
