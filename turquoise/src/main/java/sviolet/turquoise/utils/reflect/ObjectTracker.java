@@ -125,7 +125,8 @@ public class ObjectTracker {
                 对象为空
              */
             if (current == null) {
-                throw new Exception("[ObjectTracker]can not find target element in map");
+                //元素不存在
+                return null;
             }
             /*
                 对象为Map
@@ -148,7 +149,8 @@ public class ObjectTracker {
                 try {
                     current = ((List) current).get(index);
                 }catch (Exception e){
-                    throw new Exception("[ObjectTracker]illegal key:<" + key + ">, index out of bounds", e);
+                    //out of bounds 视为元素不存在
+                    return null;
                 }
             }
             /*
@@ -166,7 +168,8 @@ public class ObjectTracker {
                 try {
                     current = Array.get(current, index);
                 }catch (Exception e){
-                    throw new Exception("[ObjectTracker]illegal key:<" + key + ">, index out of bounds", e);
+                    //out of bounds 视为元素不存在
+                    return null;
                 }
             }
             /*
@@ -204,10 +207,6 @@ public class ObjectTracker {
                 }catch (Exception e){
                     throw new Exception("[ObjectTracker]can not find target element in map (reflect way), key:<" + key + ">", e);
                 }
-            }
-            //对象不存在
-            if (current == null) {
-                throw new Exception("[ObjectTracker]can not find target element in map, key:<" + key + ">");
             }
         }
 
