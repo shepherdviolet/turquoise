@@ -31,12 +31,12 @@ public class StringUtils {
      * @param positions 变为大写的位置[0, length)
      * @return 变换后的字符串
      */
-    public String toUpperCase(String src, int... positions){
+    public static String toUpperCase(String src, int... positions){
         if (src == null)
             return null;
         char[] chars = src.toCharArray();
         for (int position : positions){
-            if(position < chars.length){
+            if(position < chars.length && position > -1){
                 chars[position] -= (chars[position] > 96 && chars[position] < 123) ? 32 : 0;
             }
         }
@@ -49,12 +49,12 @@ public class StringUtils {
      * @param positions 变为小写的位置[0, length)
      * @return 变换后的字符串
      */
-    public String toLowerCase(String src, int... positions){
+    public static String toLowerCase(String src, int... positions){
         if (src == null)
             return null;
         char[] chars = src.toCharArray();
         for (int position : positions){
-            if(position < chars.length){
+            if(position < chars.length && position > -1){
                 chars[position] += (chars[position] > 64 && chars[position] < 91) ? 32 : 0;
             }
         }
