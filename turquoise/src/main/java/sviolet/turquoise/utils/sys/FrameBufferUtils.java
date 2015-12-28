@@ -29,8 +29,7 @@ public class FrameBufferUtils {
 	 * @throws FileNotFoundException 
 	 */
 	private static InputStream getInputStream() throws FileNotFoundException{
-		FileInputStream inputStream = new FileInputStream(new File("/dev/graphics/fb0"));
-		return inputStream;
+		return new FileInputStream(new File("/dev/graphics/fb0"));
 	}
 	
 	/**
