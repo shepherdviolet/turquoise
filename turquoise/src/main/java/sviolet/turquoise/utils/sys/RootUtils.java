@@ -26,12 +26,12 @@ public class RootUtils {
 		try {
 			for (int i = 0; i < searchPaths.length; i++) {
 				file = new File(searchPaths[i] + "su");
-				if (file != null && file.exists()) {
+				if (file.exists()) {
 					rootState = ROOT_STATE_SUCCESS;
 					return rootState;
 				}
 			}
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		rootState = ROOT_STATE_FAILED;
 		return rootState;
@@ -51,11 +51,7 @@ public class RootUtils {
 			os.writeBytes("exit\n");
 			os.flush();
 			int exitValue = process.waitFor();
-			if (exitValue == 0) {
-				return true;
-			} else {
-				return false;
-			}
+			return exitValue == 0;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -64,7 +60,9 @@ public class RootUtils {
 				if (os != null) {
 					os.close();
 				}
-				process.destroy();
+				if (process != null) {
+					process.destroy();
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -88,11 +86,7 @@ public class RootUtils {
 	        os.writeBytes("exit\n");
 	        os.flush();
 			int exitValue = process.waitFor();
-			if (exitValue == 0) {
-				return true;
-			} else {
-				return false;
-			}
+			return exitValue == 0;
 	    } catch (Exception e) {
 	    	e.printStackTrace();
 	        return false;
@@ -101,7 +95,9 @@ public class RootUtils {
 	            if (os != null) {
 	                os.close();
 	            }
-	            process.destroy();
+				if (process != null) {
+					process.destroy();
+				}
 	        } catch (Exception e) {
 	        	e.printStackTrace();
 	        }
@@ -128,11 +124,7 @@ public class RootUtils {
 	        os.writeBytes("exit\n");
 	        os.flush();
 			int exitValue = process.waitFor();
-			if (exitValue == 0) {
-				return true;
-			} else {
-				return false;
-			}
+			return exitValue == 0;
 	    } catch (Exception e) {
 	    	e.printStackTrace();
 	        return false;
@@ -141,7 +133,9 @@ public class RootUtils {
 	            if (os != null) {
 	                os.close();
 	            }
-	            process.destroy();
+				if (process != null) {
+					process.destroy();
+				}
 	        } catch (Exception e) {
 	        	e.printStackTrace();
 	        }
@@ -167,11 +161,7 @@ public class RootUtils {
             os.writeBytes("exit\n");   
             os.flush(); 
 			int exitValue = process.waitFor();
-			if (exitValue == 0) {
-				return true;
-			} else {
-				return false;
-			}
+			return exitValue == 0;
         } catch (Exception e) {
 	    	e.printStackTrace();
 	        return false;
@@ -180,7 +170,9 @@ public class RootUtils {
 	            if (os != null) {
 	                os.close();
 	            }
-	            process.destroy();
+				if (process != null) {
+					process.destroy();
+				}
 	        } catch (Exception e) {
 	        	e.printStackTrace();
 	        }
