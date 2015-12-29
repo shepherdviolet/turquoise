@@ -2,6 +2,8 @@
 > a comprehensive Android Library for private use <br/>
 > https://github.com/shepherdviolet/turquoise <br/>
 
+![](https://github.com/shepherdviolet/static-resources/blob/master/image/logo/turquoise.jpg)
+
 ## Overview
 > Utils ┃ sviolet.turquoise.utils <br/>
 > ┈┈ 1.BitmapLoader/SimpleBitmapLoader ┃ 双缓存图片异步加载器 ┃ sviolet.turquoise.utils.bitmap.loader <br/>
