@@ -1,5 +1,6 @@
 package sviolet.turquoise.utils.sys;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -91,6 +92,15 @@ public class DeviceUtils {
      */
     public static boolean isLocaleZhCn(Context context){
         return "CN".equals(getCountry(context)) && "zh".equals(getLanguage(context));
+    }
+
+    /**
+     * 获得该设备应用最大可用内存
+     *
+     * @return 最大可用内存 byte
+     */
+    public static int getMemoryClass(Context context){
+        return ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
     }
 
 }

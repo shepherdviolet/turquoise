@@ -605,7 +605,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             cachePercent = 0.5f;
         }
         //应用可用内存级别
-        final int memoryClass = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
+        final int memoryClass = DeviceUtils.getMemoryClass(context);
         //计算缓存大小
         return (int) (1024 * 1024 * memoryClass * cachePercent);
     }
