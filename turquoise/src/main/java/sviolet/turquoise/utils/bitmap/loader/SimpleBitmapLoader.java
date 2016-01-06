@@ -561,6 +561,11 @@ public class SimpleBitmapLoader implements LifeCycle {
             return loader;
         }
 
+        @Override
+        protected Builder cast(BitmapLoader.AbsBuilder builder) {
+            return (Builder) builder;
+        }
+
         /**
          * 获得父类中的settings
          */

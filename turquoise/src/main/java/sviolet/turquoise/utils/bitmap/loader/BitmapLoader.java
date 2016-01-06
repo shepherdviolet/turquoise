@@ -589,6 +589,11 @@ public class BitmapLoader implements LifeCycle {
             settings = null;
             return loader;
         }
+
+        @Override
+        protected Builder cast(AbsBuilder builder) {
+            return (Builder) builder;
+        }
     }
 
     /**
@@ -596,7 +601,7 @@ public class BitmapLoader implements LifeCycle {
      * @param <BuildType> 构建器类型
      * @param <LoaderType> 加载器类型
      */
-    public static abstract class AbsBuilder<BuildType, LoaderType>{
+    public static abstract class AbsBuilder<BuildType extends AbsBuilder, LoaderType>{
 
         protected Settings settings;//配置
 
@@ -635,7 +640,7 @@ public class BitmapLoader implements LifeCycle {
         public BuildType setNetLoad(int netLoadConcurrency, int netLoadVolume){
             settings.netLoadConcurrency = netLoadConcurrency;
             settings.netLoadVolume = netLoadVolume;
-            return (BuildType) this;
+            return cast(this);
         }
 
         /**
@@ -655,7 +660,7 @@ public class BitmapLoader implements LifeCycle {
             settings.diskCacheSize = 1024L * 1024L * diskCacheSizeMib;
             settings.diskLoadConcurrency = diskLoadConcurrency;
             settings.diskLoadVolume = diskLoadVolume;
-            return (BuildType) this;
+            return cast(this);
         }
 
         /**
@@ -682,7 +687,7 @@ public class BitmapLoader implements LifeCycle {
         public BuildType setRamCache(float ramCacheSizePercent, float ramCacheRecyclerSizePercent){
             settings.ramCacheSizePercent = ramCacheSizePercent;
             settings.ramCacheRecyclerSizePercent = ramCacheRecyclerSizePercent;
-            return (BuildType) this;
+            return cast(this);
         }
 
         /**
@@ -696,7 +701,7 @@ public class BitmapLoader implements LifeCycle {
          */
         public BuildType setDiskCacheInner(){
             settings.cacheDir = new File(DirectoryUtils.getInnerCacheDir(settings.context.get()).getAbsolutePath() + File.separator + settings.diskCacheName);
-            return (BuildType) this;
+            return cast(this);
         }
 
         /**
@@ -728,7 +733,7 @@ public class BitmapLoader implements LifeCycle {
             }else{
                 settings.keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;
             }
-            return (BuildType) this;
+            return cast(this);
         }
 
         /**
@@ -742,7 +747,7 @@ public class BitmapLoader implements LifeCycle {
          */
         public BuildType setWipeOnNewVersion(){
             settings.appVersionCode = ApplicationUtils.getAppVersion(settings.context.get());
-            return (BuildType) this;
+            return cast(this);
         }
 
         /**
@@ -756,7 +761,7 @@ public class BitmapLoader implements LifeCycle {
          */
         public BuildType setNetLoadHandler(NetLoadHandler mNetLoadHandler) {
             settings.mNetLoadHandler = mNetLoadHandler;
-            return (BuildType) this;
+            return cast(this);
         }
 
         /**
@@ -771,7 +776,7 @@ public class BitmapLoader implements LifeCycle {
          */
         public BuildType setBitmapDecodeHandler(BitmapDecodeHandler mBitmapDecodeHandler){
             settings.mBitmapDecodeHandler = mBitmapDecodeHandler;
-            return (BuildType) this;
+            return cast(this);
         }
 
         /**
@@ -784,7 +789,7 @@ public class BitmapLoader implements LifeCycle {
          */
         public BuildType setCommonExceptionHandler(CommonExceptionHandler mCommonExceptionHandler) {
             settings.mCommonExceptionHandler = mCommonExceptionHandler;
-            return (BuildType) this;
+            return cast(this);
         }
 
         /**
@@ -798,7 +803,7 @@ public class BitmapLoader implements LifeCycle {
          */
         public BuildType setDiskCacheExceptionHandler(DiskCacheExceptionHandler mDiskCacheExceptionHandler) {
             settings.mDiskCacheExceptionHandler = mDiskCacheExceptionHandler;
-            return (BuildType) this;
+            return cast(this);
         }
 
         /**
@@ -806,13 +811,20 @@ public class BitmapLoader implements LifeCycle {
          */
         public BuildType setLogger(Logger logger) {
             settings.logger = logger;
-            return (BuildType) this;
+            return cast(this);
         }
 
         /**
          * [待实现]创建实例方法
          */
         public abstract LoaderType create();
+
+        /**
+         * 将AbsBuilder转为目标Builder
+         * @param builder absBuilder
+         * @return 目标Builder
+         */
+        protected abstract BuildType cast(AbsBuilder builder);
 
     }
 
