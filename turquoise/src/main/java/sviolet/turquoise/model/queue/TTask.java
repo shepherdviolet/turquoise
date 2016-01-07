@@ -37,7 +37,7 @@ public abstract class TTask {
 
 	//static//////////////////////////////////////////
 
-	public static final int STATE_WAITTING = 0;//等待被启动
+	public static final int STATE_WAITING = 0;//等待被启动
 	public static final int STATE_PRE_EXECUTE = 1;//执行前
 	public static final int STATE_EXECUTING = 2;//正在执行
     public static final int STATE_POST_EXECUTE = 3;//执行后
@@ -59,7 +59,7 @@ public abstract class TTask {
 
 	//var//////////////////////////////////////////
 
-	private int state = STATE_WAITTING;//执行状态
+	private int state = STATE_WAITING;//执行状态
 	private Timer timeOutTimer;//超时计时器
 
 	/*********************************************
@@ -190,7 +190,7 @@ public abstract class TTask {
             if (state >= STATE_CANCELING) {
                 //已取消的任务不再执行, 启动失败
                 return false;
-            } else if (state != STATE_WAITTING) {
+            } else if (state != STATE_WAITING) {
                 //其他非等待状态则抛出异常
                 throw new RuntimeException("[TTask]can not start a TTask which state != STATE_WAITTING");
             }
@@ -223,7 +223,7 @@ public abstract class TTask {
 	 */
 	public void onCancel(){
         synchronized (TTask.this) {
-            if (state == STATE_WAITTING) {
+            if (state == STATE_WAITING) {
                 //取消等待中的任务, 直接置为已取消状态
                 state = STATE_CANCELED;
             } else if (state < STATE_COMPLETE) {
