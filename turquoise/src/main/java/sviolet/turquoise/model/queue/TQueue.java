@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.locks.ReentrantLock;
 
+import sviolet.turquoise.model.thread.LazySingleThreadPool;
 import sviolet.turquoise.utils.WeakHandler;
 
 /**
@@ -83,14 +83,11 @@ public class TQueue {
 	
 	//Variable//////////////////////////////////////////////////////
 
-    ExecutorService dispatchThreadPool;//调度任务线程池
-    ExecutorService taskThreadPool;//任务线程池
+    private LazySingleThreadPool dispatchThreadPool;//调度线程池
+    private ExecutorService taskThreadPool;//任务线程池
 
 	private LinkedHashMap<String, TTask> waittingTasks;//等待队列
     private LinkedHashMap<String, TTask> runningTasks;//执行队列
-	
-	private int dispatchCounter = 0;//防止dispatch重复执行
-    private final ReentrantLock dispatchLock = new ReentrantLock();//调度计数锁
 
     /**
      * reverse : 逆序队列<br/>
@@ -223,17 +220,6 @@ public class TQueue {
 	 * Task会自动触发该方法<br>
 	 */
 	public void notifyDispatchTask(){
-        dispatchLock.lock();
-        try{
-            dispatchCounter++;//调用计数
-            if(dispatchCounter > 2){
-                dispatchCounter--;//消费掉计数
-                return;
-            }
-        }finally{
-            dispatchLock.unlock();
-        }
-
 		//开启线程执行调度任务
 		executeDispatch(new Runnable() {
             @Override
@@ -525,13 +511,6 @@ public class TQueue {
                 concurrencyVolume = getCurrentRunningVolume();
             }
 		}
-
-        dispatchLock.lock();
-        try {
-            dispatchCounter--;//消费掉计数
-        }finally {
-            dispatchLock.unlock();
-        }
     }
 
     /**
@@ -605,7 +584,11 @@ public class TQueue {
      */
     private void executeDispatch(Runnable runnable){
         if (dispatchThreadPool == null){
-            dispatchThreadPool = Executors.newSingleThreadExecutor();
+            synchronized (this) {
+                if (dispatchThreadPool == null) {
+                    dispatchThreadPool = new LazySingleThreadPool();
+                }
+            }
         }
         try {
             dispatchThreadPool.execute(runnable);
@@ -627,7 +610,11 @@ public class TQueue {
      */
     protected void ttask_execute(Runnable runnable){
         if (taskThreadPool == null){
-            taskThreadPool = Executors.newCachedThreadPool();
+            synchronized (this) {
+                if (taskThreadPool == null) {
+                    taskThreadPool = Executors.newCachedThreadPool();
+                }
+            }
         }
         try {
             taskThreadPool.execute(runnable);

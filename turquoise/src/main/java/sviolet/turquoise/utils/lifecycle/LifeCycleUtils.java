@@ -48,7 +48,7 @@ public class LifeCycleUtils {
      * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
      *
      * 注意:<br/>
-     * API < 11 时, 不建议使用该方法, 只能利用{@link GlobalVars}捕获onDestroy()事件, 建议改用
+     * API < 11 时, 不建议使用该方法, 只能利用{@link ParasiticVars}捕获onDestroy()事件, 建议改用
      * {@link android.support.v4.app.FragmentActivity} 或 {@link android.support.v4.app.Fragment}<p/>
      *
      * @param activity 被监听的Activity
@@ -64,7 +64,7 @@ public class LifeCycleUtils {
         if (DeviceUtils.getVersionSDK() >= 11){
             addListener(activity, lifeCycle);
         }else{
-            GlobalVars.set(activity, LifeCycleManager.MANAGER_TAG + "#" + lifeCycle.getClass().getSimpleName() + "#" + lifeCycle.hashCode(), lifeCycle);
+            ParasiticVars.set(activity, LifeCycleManager.MANAGER_TAG + "#" + lifeCycle.getClass().getSimpleName() + "#" + lifeCycle.hashCode(), lifeCycle);
         }
     }
 
@@ -137,8 +137,8 @@ public class LifeCycleUtils {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private static void addListener(Activity activity, LifeCycle lifeCycle) {
 
-        //GlobalVars中获取Activity的生命周期管理器
-        Object manager = GlobalVars.get(activity, LifeCycleManager.MANAGER_TAG);
+        //ParasiticVars中获取Activity的生命周期管理器
+        Object manager = ParasiticVars.get(activity, LifeCycleManager.MANAGER_TAG);
 
         //生命周期管理器不存在则新建
         if (manager == null || !(manager instanceof LifeCycleManager)){
@@ -159,8 +159,8 @@ public class LifeCycleUtils {
 
     private static void addListener(FragmentActivity fragmentActivity, LifeCycle lifeCycle) {
 
-        //GlobalVars中获取FragmentActivity的生命周期管理器
-        Object manager = GlobalVars.get(fragmentActivity, LifeCycleManager.MANAGER_TAG);
+        //ParasiticVars中获取FragmentActivity的生命周期管理器
+        Object manager = ParasiticVars.get(fragmentActivity, LifeCycleManager.MANAGER_TAG);
 
         //生命周期管理器不存在则新建
         if (manager == null || !(manager instanceof LifeCycleManager)){

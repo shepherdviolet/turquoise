@@ -26,7 +26,7 @@ import android.support.v4.app.FragmentActivity;
 
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.utils.lifecycle.GlobalVars;
+import sviolet.turquoise.utils.lifecycle.ParasiticVars;
 import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
 
 /**
@@ -58,8 +58,8 @@ public class LifeCycleFragmentV4 extends Fragment {
         if (activity == null)
             throw new NullPointerException("[LifeCycleFragmentV4]can't create without activity and manager");
 
-        //管理器放入全局变量
-        GlobalVars.set(activity, LifeCycleManager.MANAGER_TAG, manager);
+        //管理器放入寄生变量
+        ParasiticVars.set(activity, LifeCycleManager.MANAGER_TAG, manager);
 
         //弱引用
         this.activity = new WeakReference<FragmentActivity>(activity);
@@ -116,9 +116,9 @@ public class LifeCycleFragmentV4 extends Fragment {
         super.onDestroy();
         if (getWeakLifeCycleManager() != null)
             getWeakLifeCycleManager().onDestroy();
-        //全局变量中移除管理器
+        //寄生变量中移除管理器
         if (getWeakActivity() != null)
-            GlobalVars.remove(getWeakActivity(), LifeCycleManager.MANAGER_TAG);
+            ParasiticVars.remove(getWeakActivity(), LifeCycleManager.MANAGER_TAG);
     }
 
     private FragmentActivity getWeakActivity(){

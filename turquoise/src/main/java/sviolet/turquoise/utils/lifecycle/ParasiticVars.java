@@ -24,12 +24,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
+import sviolet.turquoise.model.thread.LazySingleThreadPool;
 import sviolet.turquoise.utils.lifecycle.listener.Destroyable;
 
 /**
- * 全局变量<p/>
+ * 寄生变量<p/>
  *
- * 用于存放全局变量, 对变量进行生命周期控制.<br/>
+ * 生命周期依附宿主的变量, 不建议存放过大的对象.<br/>
  * 每一个变量需声明其宿主(host)和变量名(key), 同一个宿主名下不可存在同名变量. 变量会被强引用, 直到生命周期结束,
  * 变量的生命周期取决于宿主的生命周期, 即宿主被系统GC时, 其名下所有变量生命周期结束, 也可以主动调用remove()方法移除变量.
  * 变量生命周期结束时, 会解除对其的强引用, 若变量实现了{@link Destroyable}接口, 会被调用{@link Destroyable#onDestroy()}
@@ -49,16 +50,18 @@ import sviolet.turquoise.utils.lifecycle.listener.Destroyable;
  *
  * Created by S.Violet on 2015/11/24.
  */
-public class GlobalVars {
+public class ParasiticVars {
 
     private static WeakReference<GcHandler> gcHandler;//gc事件监听器
 
     private static Map<String, HostHolder> hosts;//变量宿主
 
+    private static LazySingleThreadPool gcTaskPool;//gc任务执行线程池
+
     private final static ReentrantLock lock = new ReentrantLock();
 
     /**
-     * 设置全局变量
+     * 设置寄生变量
      *
      * @param host 宿主 不为空,宿主被系统GC时,其名下所有变量会被GC,实现{@link Destroyable}接口的变量会调用onDestroy()方法销毁
      * @param key 变量名 不为空,相同宿主名下,若变量名重复,原变量实例会被销毁({@link Destroyable#onDestroy()})
@@ -69,7 +72,7 @@ public class GlobalVars {
         if (host == null || param == null)
             return;
         if (key == null)
-            throw new NullPointerException("[GlobalVars] key == null");
+            throw new NullPointerException("[ParasiticVars] key == null");
 
         init();//初始化
 
@@ -93,7 +96,7 @@ public class GlobalVars {
     }
 
     /**
-     * 获取全局变量
+     * 获取寄生变量
      *
      * @param host 宿主 不为空,宿主被系统GC时,其名下所有变量会被GC,实现{@link Destroyable}接口的变量会调用onDestroy()方法销毁
      * @param key 变量名 不为空,相同宿主名下,若变量名重复,原变量实例会被销毁({@link Destroyable#onDestroy()})
@@ -104,7 +107,7 @@ public class GlobalVars {
         if (host == null)
             return null;
         if (key == null)
-            throw new NullPointerException("[GlobalVars] key == null");
+            throw new NullPointerException("[ParasiticVars] key == null");
 
         init();//初始化
 
@@ -127,7 +130,7 @@ public class GlobalVars {
     }
 
     /**
-     * 移除全局变量, 实现{@link Destroyable}接口的变量会调用onDestroy()方法销毁
+     * 移除寄生变量, 实现{@link Destroyable}接口的变量会调用onDestroy()方法销毁
      *
      * @param host 宿主 不为空,宿主被系统GC时,其名下所有变量会被GC,实现{@link Destroyable}接口的变量会调用onDestroy()方法销毁
      * @param key 变量名 不为空
@@ -137,7 +140,7 @@ public class GlobalVars {
         if (host == null)
             return;
         if (key == null)
-            throw new NullPointerException("[GlobalVars] key == null");
+            throw new NullPointerException("[ParasiticVars] key == null");
 
         init();//初始化
 
@@ -159,7 +162,7 @@ public class GlobalVars {
     }
 
     /**
-     * 移除指定宿主名下所有变量, 实现{@link Destroyable}接口的变量会调用onDestroy()方法销毁
+     * 移除指定宿主名下所有寄生变量, 实现{@link Destroyable}接口的变量会调用onDestroy()方法销毁
      *
      * @param host 宿主 不为空,宿主被系统GC时,其名下所有变量会被GC,实现{@link Destroyable}接口的变量会调用onDestroy()方法销毁
      */
@@ -188,7 +191,7 @@ public class GlobalVars {
     }
 
     /**
-     * 移除所有全局变量, 实现{@link Destroyable}接口的变量会调用onDestroy()方法销毁
+     * 移除所有寄生变量, 实现{@link Destroyable}接口的变量会调用onDestroy()方法销毁
      */
     public static void removeAll(){
 
@@ -229,10 +232,31 @@ public class GlobalVars {
         }
     }
 
+    private static LazySingleThreadPool getGcTaskPool(){
+        if (gcTaskPool == null){
+            try{
+                lock.lock();
+                if (gcTaskPool == null){
+                    gcTaskPool = new LazySingleThreadPool();//新建gc任务执行线程池
+                }
+            }finally {
+                lock.unlock();
+            }
+        }
+
+        return gcTaskPool;
+    }
+
     /**
      * 系统gc时, 清理无宿主变量
      */
     private static void gc(){
+
+        //引用当前值
+        final Map<String, HostHolder> hosts = ParasiticVars.hosts;
+        if (hosts == null){
+            return;
+        }
 
         Map<String, HostHolder> gcHosts = new HashMap<>();//被清理的宿主镜像
 
@@ -281,7 +305,12 @@ public class GlobalVars {
          */
         @Override
         protected void finalize() throws Throwable {
-            GlobalVars.gc();
+            getGcTaskPool().execute(new Runnable() {
+                @Override
+                public void run() {
+                    ParasiticVars.gc();
+                }
+            });
             super.finalize();
         }
     }
@@ -305,7 +334,7 @@ public class GlobalVars {
         void set(String key, Object param){
 
             if (key == null || param == null)
-                throw new NullPointerException("[GlobalVars] key == null || param == null");
+                throw new NullPointerException("[ParasiticVars] key == null || param == null");
 
             Object destroyable;
 
@@ -337,7 +366,7 @@ public class GlobalVars {
         Object get(String key){
 
             if (key == null)
-                throw new NullPointerException("[GlobalVars] key == null");
+                throw new NullPointerException("[ParasiticVars] key == null");
 
             try{
                 lock.lock();
@@ -350,7 +379,7 @@ public class GlobalVars {
         void remove(String key){
 
             if (key == null)
-                throw new NullPointerException("[GlobalVars] key == null");
+                throw new NullPointerException("[ParasiticVars] key == null");
 
             Object destroyable;
 

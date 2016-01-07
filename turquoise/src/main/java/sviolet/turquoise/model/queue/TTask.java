@@ -294,16 +294,22 @@ public abstract class TTask {
                         return;
                     state = STATE_EXECUTING;
                 }
-                result = TTask.this.doInBackground(params);
-                cancelTimeOutTimer();
-                synchronized (TTask.this) {
-                    if (checkCancelState())
-                        return;
-                    state = STATE_POST_EXECUTE;
-                }
-                if (getQueue() != null) {
-                    getQueue().ttask_postComplete(TTask.this);
-                }
+				try {
+					result = TTask.this.doInBackground(params);
+				} catch (Exception e){
+                    state = STATE_CANCELED;
+					throw e;
+				} finally {
+					cancelTimeOutTimer();
+					synchronized (TTask.this) {
+						if (checkCancelState())
+							return;
+						state = STATE_POST_EXECUTE;
+					}
+					if (getQueue() != null) {
+						getQueue().ttask_postComplete(TTask.this);
+					}
+				}
             }
         });
 	}
