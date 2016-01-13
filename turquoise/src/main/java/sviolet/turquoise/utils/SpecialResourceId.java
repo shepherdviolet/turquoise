@@ -13,13 +13,13 @@ public class SpecialResourceId {
          * 用于SimpleBitmapLoader<br/>
          * 将SimpleBitmapLoaderTask作为View的Tag绑定在View上<br/>
          */
-        public static final int SimpleBitmapLoaderTask = 0xff77f770;
+        public static final int SimpleBitmapLoaderTask = 0xfff77f00;
 
         /**
          * 用于ViewHolder<br/>
          * 将ViewHolder作为View的Tag绑定在View上<br/>
          */
-        public static final int ViewHolder = 0xff77f771;
+        public static final int ViewHolder = 0xfff77f01;
 
     }
 
