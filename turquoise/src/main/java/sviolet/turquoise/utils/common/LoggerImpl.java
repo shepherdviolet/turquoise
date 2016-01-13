@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utils;
+package sviolet.turquoise.utils.common;
 
 import android.util.Log;
 

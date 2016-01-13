@@ -27,7 +27,7 @@ import android.view.Menu;
 
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhanced.utils.InjectUtils;
-import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
 

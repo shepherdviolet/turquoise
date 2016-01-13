@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhanced.utils.InjectUtils;
 import sviolet.turquoise.utils.CheckUtils;
-import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 import sviolet.turquoise.utils.sys.MeasureUtils;

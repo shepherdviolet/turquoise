@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.model.queue.TQueue;
 import sviolet.turquoise.model.queue.TTask;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;

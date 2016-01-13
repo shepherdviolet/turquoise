@@ -23,7 +23,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 
-import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.utils.bitmap.loader.drawable.AbsLoadingDrawableFactory;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;

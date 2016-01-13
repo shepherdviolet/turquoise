@@ -29,7 +29,7 @@ import android.view.View;
 
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.utils.bitmap.loader.drawable.SafeBitmapDrawable;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;

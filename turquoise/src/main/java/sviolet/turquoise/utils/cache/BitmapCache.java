@@ -20,7 +20,6 @@
 package sviolet.turquoise.utils.cache;
 
 import android.annotation.SuppressLint;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 
@@ -30,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import sviolet.turquoise.compat.CompatLruCache;
-import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**

@@ -31,7 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
 import sviolet.turquoise.model.thread.LazySingleThreadPool;
-import sviolet.turquoise.utils.WeakHandler;
+import sviolet.turquoise.utils.common.WeakHandler;
 
 /**
  * 任务队列 (必须在主线程实例化)<br/>

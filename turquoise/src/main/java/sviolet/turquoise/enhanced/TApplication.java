@@ -31,9 +31,6 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.widget.Toast;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -41,7 +38,7 @@ import java.util.WeakHashMap;
 import sviolet.turquoise.enhanced.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhanced.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhanced.annotation.setting.ReleaseSettings;
-import sviolet.turquoise.utils.Logger;
+import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 
 /**

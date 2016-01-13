@@ -22,7 +22,7 @@ package sviolet.turquoise.view.slide.logic;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import sviolet.turquoise.utils.WeakHandler;
+import sviolet.turquoise.utils.common.WeakHandler;
 import sviolet.turquoise.view.slide.GestureDriver;
 import sviolet.turquoise.view.slide.SlideEngine;
 import android.content.Context;

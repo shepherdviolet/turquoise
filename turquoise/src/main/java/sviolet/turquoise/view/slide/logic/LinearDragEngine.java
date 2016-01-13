@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.view.slide.logic;
 
-import sviolet.turquoise.utils.WeakHandler;
+import sviolet.turquoise.utils.common.WeakHandler;
 import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.GestureDriver;
 import sviolet.turquoise.view.slide.SlideEngine;
