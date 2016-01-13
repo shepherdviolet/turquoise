@@ -83,8 +83,8 @@ public class TQueue {
 	
 	//Variable//////////////////////////////////////////////////////
 
-    private LazySingleThreadPool dispatchThreadPool;//调度线程池
-    private ExecutorService taskThreadPool;//任务线程池
+    private volatile LazySingleThreadPool dispatchThreadPool;//调度线程池
+    private volatile ExecutorService taskThreadPool;//任务线程池
 
 	private LinkedHashMap<String, TTask> waittingTasks;//等待队列
     private LinkedHashMap<String, TTask> runningTasks;//执行队列

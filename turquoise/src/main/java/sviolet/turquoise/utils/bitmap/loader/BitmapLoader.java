@@ -558,10 +558,10 @@ public class BitmapLoader implements LifeCycle {
 
         //处理器////////////////////////////////////////////////////////
 
-        NetLoadHandler mNetLoadHandler;//网络加载处理器
-        BitmapDecodeHandler mBitmapDecodeHandler;//图片解码处理器
-        CommonExceptionHandler mCommonExceptionHandler;//普通异常处理器
-        DiskCacheExceptionHandler mDiskCacheExceptionHandler;//磁盘缓存异常处理器
+        volatile NetLoadHandler mNetLoadHandler;//网络加载处理器
+        volatile BitmapDecodeHandler mBitmapDecodeHandler;//图片解码处理器
+        volatile CommonExceptionHandler mCommonExceptionHandler;//普通异常处理器
+        volatile DiskCacheExceptionHandler mDiskCacheExceptionHandler;//磁盘缓存异常处理器
 
     }
 
