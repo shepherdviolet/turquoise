@@ -40,7 +40,7 @@ import sviolet.turquoise.enhanced.TApplication;
 //调试配置
 @DebugSettings(
         enableStrictMode = true,
-        enableCrashRestart = true,
+        enableCrashRestart = false,
         enableCrashHandle = true,
         logTag = "Demoa",
         enableLogDebug = true,
