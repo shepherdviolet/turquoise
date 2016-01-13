@@ -30,6 +30,7 @@ import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHa
 import sviolet.turquoise.utils.bitmap.loader.handler.DiskCacheExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.task.SimpleBitmapLoaderTaskFactory;
 import sviolet.turquoise.utils.cache.BitmapCache;
+import sviolet.turquoise.utils.SpecialResourceId;
 import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
 
 /**
@@ -352,13 +353,13 @@ public class SimpleBitmapLoader implements LifeCycle {
             return;
         synchronized (view) {
             //取tag
-            Object tag = view.getTag(SimpleBitmapLoaderTask.TAG_KEY);
+            Object tag = view.getTag(SpecialResourceId.ViewTag.SimpleBitmapLoaderTask);
             //若tag为SimpleBitmapLoaderTask
             if (tag instanceof SimpleBitmapLoaderTask) {
                 //弃用任务
                 ((SimpleBitmapLoaderTask) tag).unused();
                 //解除绑定
-                view.setTag(SimpleBitmapLoaderTask.TAG_KEY, null);
+                view.setTag(SpecialResourceId.ViewTag.SimpleBitmapLoaderTask, null);
             }
         }
     }
@@ -604,7 +605,7 @@ public class SimpleBitmapLoader implements LifeCycle {
         if (request == null)
             throw new RuntimeException("[SimpleBitmapLoader]load: request must not be null");
         //取View绑定的加载任务
-        Object tag = view.getTag(SimpleBitmapLoaderTask.TAG_KEY);
+        Object tag = view.getTag(SpecialResourceId.ViewTag.SimpleBitmapLoaderTask);
         if (tag != null && tag instanceof SimpleBitmapLoaderTask){
             //任务未被弃用 且 图片未被篡改 且 URL相同, 跳过加载
             SimpleBitmapLoaderTask task = ((SimpleBitmapLoaderTask) tag);

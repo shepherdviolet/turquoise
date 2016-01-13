@@ -33,6 +33,7 @@ import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.utils.bitmap.loader.drawable.SafeBitmapDrawable;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
+import sviolet.turquoise.utils.SpecialResourceId;
 
 /**
  *
@@ -44,7 +45,7 @@ import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
  * ----已实现------------------------------------<br/>
  * <br/>
  * 1.[重要]提供unused()方法,用于废弃图片,可回收资源/取消加载任务<br/>
- * 2.利用View.setTag({@link SimpleBitmapLoaderTask#TAG_KEY}, ?)在控件中绑定自身<br/>
+ * 2.利用View.setTag({@link SpecialResourceId.ViewTag#SimpleBitmapLoaderTask}, ?)在控件中绑定自身<br/>
  * 3.支持加载图设置<br/>
  * 3.加载成功设置图片,支持淡入效果<br/>
  * 4.加载失败重新加载,含次数限制<br/>
@@ -56,8 +57,8 @@ import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
  * <Br/>
  * ----注意事项-----------------------------------<br/>
  * <br/>
- * 1.该类利用View.setTag({@link SimpleBitmapLoaderTask#TAG_KEY}, ?)在控件中绑定自身,
- * 请勿在View上使用相同的key({@link SimpleBitmapLoaderTask#TAG_KEY})绑定其他Tag<p/>
+ * 1.该类利用View.setTag({@link SpecialResourceId.ViewTag#SimpleBitmapLoaderTask}, ?)在控件中绑定自身,
+ * 请勿在View上使用相同的key({@link SpecialResourceId.ViewTag#SimpleBitmapLoaderTask})绑定其他Tag<p/>
  *
  * 2.若设置了加载图(loadingBitmap), 加载出来的TransitionDrawable尺寸等于目的图<p/>
  *
@@ -66,9 +67,6 @@ import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
  * Created by S.Violet on 2015/10/16.
  */
 public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmapLoadedListener {
-
-    //专用TagKey, 用于将自身作为TAG绑定在View上
-    public static final int TAG_KEY = 0xff77f777;
 
     //图片加载请求参数
     private BitmapRequest request;
@@ -191,7 +189,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
 
         synchronized (view) {
             //原有tag
-            Object tag = view.getTag(TAG_KEY);
+            Object tag = view.getTag(SpecialResourceId.ViewTag.SimpleBitmapLoaderTask);
             //将原有任务取消
             if (tag != null && tag instanceof SimpleBitmapLoaderTask) {
                 ((SimpleBitmapLoaderTask) tag).unused();
@@ -201,10 +199,10 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
                  * 在控件上绑定TAG将会出问题, 若抛出此异常, 请检查代码中是否用到View.setTag(?, ?), 且key是否
                  * 有可能相同, 采用了SimpleBitmapLoader加载的View尽可能使用.setTag(?).
                  */
-                throw new RuntimeException("[SimpleBitmapLoaderTask]view's tag key conflict, key<" + TAG_KEY);
+                throw new RuntimeException("[SimpleBitmapLoaderTask]view's tag key conflict, key<" + SpecialResourceId.ViewTag.SimpleBitmapLoaderTask);
             }
             //绑定本任务
-            view.setTag(TAG_KEY, this);
+            view.setTag(SpecialResourceId.ViewTag.SimpleBitmapLoaderTask, this);
         }
     }
 
@@ -218,10 +216,10 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
 
         synchronized (view) {
             //原有tag
-            Object tag = view.getTag(TAG_KEY);
+            Object tag = view.getTag(SpecialResourceId.ViewTag.SimpleBitmapLoaderTask);
             //若View的标签为本任务, 则设置标签为null
             if (tag == this) {
-                view.setTag(TAG_KEY, null);
+                view.setTag(SpecialResourceId.ViewTag.SimpleBitmapLoaderTask, null);
             }
         }
     }
@@ -272,21 +270,21 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
             return true;
         }
         synchronized (getView()) {
-            if (getView().getTag(TAG_KEY) == null){
+            if (getView().getTag(SpecialResourceId.ViewTag.SimpleBitmapLoaderTask) == null){
                 //tag为空, 视为任务成功
                 return false;
             }
-            if (!(getView().getTag(TAG_KEY) instanceof SimpleBitmapLoaderTask)) {
+            if (!(getView().getTag(SpecialResourceId.ViewTag.SimpleBitmapLoaderTask) instanceof SimpleBitmapLoaderTask)) {
                 //tag不为SimpleBitmapLoaderTask
                 /**
                  * SimpleBitmapLoaderTask利用View.setTag(TAG_KEY, ?)将自身绑定在控件上, 若用相同的TAG_KEY,
                  * 在控件上绑定TAG将会出问题, 若抛出此异常, 请检查代码中是否用到View.setTag(?, ?), 且key是否
                  * 有可能相同, 采用了SimpleBitmapLoader加载的View尽可能使用.setTag(?).
                  */
-                throw new RuntimeException("[SimpleBitmapLoaderTask]view's tag key conflict, key<" + TAG_KEY);
+                throw new RuntimeException("[SimpleBitmapLoaderTask]view's tag key conflict, key<" + SpecialResourceId.ViewTag.SimpleBitmapLoaderTask);
             }
             //SimpleBitmapLoaderTask中url
-            String taskUrl = ((SimpleBitmapLoaderTask) getView().getTag(TAG_KEY)).getRequest().getUrl();
+            String taskUrl = ((SimpleBitmapLoaderTask) getView().getTag(SpecialResourceId.ViewTag.SimpleBitmapLoaderTask)).getRequest().getUrl();
             //若加载成功的url和SimpleBitmapLoaderTask中的url不同, 则取消任务不予显示
             if (url != null && !url.equals(taskUrl)) {
                 return true;
