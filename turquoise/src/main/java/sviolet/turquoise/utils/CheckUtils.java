@@ -40,4 +40,26 @@ public class CheckUtils {
         return false;
     }
 
+    /**
+     * 检查位标记是否符合<p/>
+     *
+     * <pre>
+     * 例如:
+     * input    =   0x00001100;
+     * flag     =   0x00000001;
+     * return   =   false;
+     *
+     * input    =   0x00001100;
+     * flag     =   0x00001000;
+     * return   =   true;
+     * </pre>
+     *
+     * @param input 检查数据
+     * @param flag 检查标记
+     * @return true 符合标记 false 不符合标记
+     */
+    public static boolean isFlagMatch(int input, int flag){
+        return (input & flag) > 0;
+    }
+
 }
