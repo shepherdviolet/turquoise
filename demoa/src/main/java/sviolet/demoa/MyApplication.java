@@ -42,7 +42,7 @@ import sviolet.turquoise.utils.log.TLogger;
         enableCrashRestart = false,
         enableCrashHandle = true,
         logTag = "Demoa",
-        logLevelSwitch = TLogger.ERROR | TLogger.INFO | TLogger.WARNNING | TLogger.DEBUG
+        logLevelSwitch = TLogger.ERROR | TLogger.INFO | TLogger.WARNING | TLogger.DEBUG
 )
 public class MyApplication extends TApplication {
 

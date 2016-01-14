@@ -60,21 +60,21 @@ class TLoggerProxy extends TLogger {
 
     @Override
     public void w(String msg) {
-        if (TLogger.getModule() != null && CheckUtils.isFlagMatch(TLogger.getLevelSwitch(), TLogger.WARNNING)){
+        if (TLogger.getModule() != null && CheckUtils.isFlagMatch(TLogger.getLevelSwitch(), TLogger.WARNING)){
             TLogger.getModule().w(host, TLogger.getTag(), msg);
         }
     }
 
     @Override
     public void w(String msg, Throwable t) {
-        if (TLogger.getModule() != null && CheckUtils.isFlagMatch(TLogger.getLevelSwitch(), TLogger.WARNNING)){
+        if (TLogger.getModule() != null && CheckUtils.isFlagMatch(TLogger.getLevelSwitch(), TLogger.WARNING)){
             TLogger.getModule().w(host, TLogger.getTag(), msg, t);
         }
     }
 
     @Override
     public void w(Throwable t) {
-        if (TLogger.getModule() != null && CheckUtils.isFlagMatch(TLogger.getLevelSwitch(), TLogger.WARNNING)){
+        if (TLogger.getModule() != null && CheckUtils.isFlagMatch(TLogger.getLevelSwitch(), TLogger.WARNING)){
             TLogger.getModule().w(host, TLogger.getTag(), t);
         }
     }

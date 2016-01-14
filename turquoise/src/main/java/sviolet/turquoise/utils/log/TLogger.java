@@ -67,12 +67,12 @@ public abstract class TLogger {
 
     public static final int ALL = 0x11111111;//打印所有日志级别
     public static final int ERROR = 0x00000001;//打印ERROR日志
-    public static final int WARNNING = 0x00000010;//打印WARNNING日志
+    public static final int WARNING = 0x00000010;//打印WARNING日志
     public static final int INFO = 0x00000100;//打印INFO日志
     public static final int DEBUG = 0x00001000;//打印DEBUG日志
 
     private static TLoggerModule module = new SimpleTLoggerModule();
-    private static int levelSwitch = ERROR | WARNNING | INFO | DEBUG;
+    private static int levelSwitch = ERROR | WARNING | INFO | DEBUG;
     private static String tag = DEFAULT_TAG;
 
     /**
