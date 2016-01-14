@@ -23,6 +23,7 @@ import sviolet.turquoise.enhanced.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhanced.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhanced.annotation.setting.ReleaseSettings;
 import sviolet.turquoise.enhanced.TApplication;
+import sviolet.turquoise.utils.log.TLogger;
 
 @ApplicationSettings(
         DEBUG = BuildConfig._DEBUG //Debug模式, 装载DebugSetting配置
@@ -33,9 +34,7 @@ import sviolet.turquoise.enhanced.TApplication;
         enableCrashRestart = true,
         enableCrashHandle = true,
         logTag = "Demoa",
-        enableLogDebug = false,
-        enableLogInfo = false,
-        enableLogError = false
+        logLevelSwitch = TLogger.ERROR | TLogger.INFO
 )
 //调试配置
 @DebugSettings(
@@ -43,9 +42,7 @@ import sviolet.turquoise.enhanced.TApplication;
         enableCrashRestart = false,
         enableCrashHandle = true,
         logTag = "Demoa",
-        enableLogDebug = true,
-        enableLogInfo = true,
-        enableLogError = true
+        logLevelSwitch = TLogger.ERROR | TLogger.INFO | TLogger.WARNNING | TLogger.DEBUG
 )
 public class MyApplication extends TApplication {
 

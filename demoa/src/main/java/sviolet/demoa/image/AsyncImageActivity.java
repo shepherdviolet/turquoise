@@ -84,7 +84,6 @@ public class AsyncImageActivity extends TActivity {
                 .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
 //                    .setDiskCacheInner()//强制使用内部储存
 //                    .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
-                .setLogger(getLogger())//打印日志
                 .setDiskCacheExceptionHandler(new DefaultDiskCacheExceptionHandler(
                                 DefaultDiskCacheExceptionHandler.OpenFailedHandleMode.CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT
                         )

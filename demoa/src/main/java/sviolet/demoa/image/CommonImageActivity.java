@@ -41,6 +41,7 @@ import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
 import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.utils.log.TLogger;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.utils.sys.NetStateUtils;
 
@@ -63,6 +64,7 @@ import sviolet.turquoise.utils.sys.NetStateUtils;
 public class CommonImageActivity extends TActivity {
 
     private CachedBitmapUtils cachedBitmapUtils;
+    private TLogger logger = TLogger.get(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -270,7 +272,6 @@ public class CommonImageActivity extends TActivity {
                 .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
 //                .setDiskCacheInner()//强制使用内部储存
 //                .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
-                .setLogger(getLogger())//打印日志
                 .create();
 
         //图片加载器绑定Activity生命周期, 自动压缩内存和销毁
@@ -321,7 +322,6 @@ public class CommonImageActivity extends TActivity {
                 .setNetLoad(3, 10)//3线程网络加载, 等待队列容量10
 //                    .setDiskCacheInner()//强制使用内部储存
 //                    .setWipeOnNewVersion()//当APP更新时清空磁盘缓存
-                .setLogger(getLogger())//打印日志
                 .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
                 .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
                 .create();
@@ -367,7 +367,7 @@ public class CommonImageActivity extends TActivity {
         @Override
         public void onLoadSucceed(BitmapRequest request, Object params, Bitmap bitmap) {
             //加载成功
-            getLogger().i("[demoa]41 load succeed");
+            logger.i("41 load succeed");
 
             if (bitmap != null && !bitmap.isRecycled()) {
                 //获得传入的控件
@@ -384,7 +384,7 @@ public class CommonImageActivity extends TActivity {
         @Override
         public void onLoadFailed(BitmapRequest request, Object params) {
             //加载失败, 尝试重新加载
-            getLogger().i("[demoa]41 load failed");
+            logger.i("41 load failed");
             //获得传入的控件
             ImageView imageView = (ImageView) params;
             //获得控件tag中的参数
@@ -402,7 +402,7 @@ public class CommonImageActivity extends TActivity {
         @Override
         public void onLoadCanceled(BitmapRequest request, Object params) {
             //取消通常不用处理
-            getLogger().i("[demoa]41 load canceled");
+            logger.i("41 load canceled");
         }
     };
 

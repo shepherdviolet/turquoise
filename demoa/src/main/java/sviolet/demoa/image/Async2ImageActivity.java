@@ -94,7 +94,6 @@ public class Async2ImageActivity extends TActivity {
                 .setNetLoad(3, 25)//3线程网络加载, 等待队列容量25
 //                    .setDiskCacheInner()//强制使用内部储存
 //                    .setWipeOnNewVersion()//设置
-                .setLogger(getLogger())//打印日志
                 .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
                 .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
                 .setDiskCacheExceptionHandler(new DefaultDiskCacheExceptionHandler(
