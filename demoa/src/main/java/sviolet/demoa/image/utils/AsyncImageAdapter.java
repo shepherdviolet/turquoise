@@ -38,6 +38,8 @@ import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
+import sviolet.turquoise.utils.common.ViewHolder;
+import sviolet.turquoise.utils.log.TLogger;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.GradualImageView;
 
@@ -48,6 +50,8 @@ import sviolet.turquoise.view.GradualImageView;
 public class AsyncImageAdapter extends BaseAdapter {
 
     private static final String DEFAULT_BITMAP_KEY = "default_bitmap";
+
+    private TLogger logger = TLogger.get(this);
 
     private Context context;
     private List<AsyncImageItem> itemList;
@@ -93,65 +97,67 @@ public class AsyncImageAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        ViewHolder holder;
-        if (view == null){
-            view = View.inflate(context, R.layout.image_async_item, null);
-            holder = new ViewHolder();
-            holder.imageView[0] = (GradualImageView) view.findViewById(R.id.image_async_item_imageview0);
-            holder.imageView[1] = (GradualImageView) view.findViewById(R.id.image_async_item_imageview1);
-            holder.imageView[2] = (GradualImageView) view.findViewById(R.id.image_async_item_imageview2);
-            holder.imageView[3] = (GradualImageView) view.findViewById(R.id.image_async_item_imageview3);
-            holder.imageView[4] = (GradualImageView) view.findViewById(R.id.image_async_item_imageview4);
-            holder.titleTextView = (TextView) view.findViewById(R.id.image_async_item_title);
-            holder.contentTextView = (TextView) view.findViewById(R.id.image_async_item_content);
-            view.setTag(holder);
-        }else{
-            holder = (ViewHolder) view.getTag();
+
+        ViewHolder holder = ViewHolder.create(context, convertView, parent, R.layout.image_async_item);
+
+        GradualImageView[] images = new GradualImageView[5];
+        images[0] = (GradualImageView) holder.get(R.id.image_async_item_imageview0);
+        images[1] = (GradualImageView) holder.get(R.id.image_async_item_imageview1);
+        images[2] = (GradualImageView) holder.get(R.id.image_async_item_imageview2);
+        images[3] = (GradualImageView) holder.get(R.id.image_async_item_imageview3);
+        images[4] = (GradualImageView) holder.get(R.id.image_async_item_imageview4);
+
+        /*
+            当createTimes() > 1时, imageView已加载过图片, 需要进行清理和unused操作
+         */
+
+        if (holder.createTimes() > 1){
             for (int i = 0 ; i < 5 ; i++){
                 //去除ImageView中原有图片
-                holder.imageView[i].setImageBitmapImmediate(null);
+                images[i].setImageBitmapImmediate(null);
                 //取出之前的TaskInfo
-                TaskInfo taskInfo = (TaskInfo) holder.imageView[i].getTag();
+                TaskInfo taskInfo = (TaskInfo) images[i].getTag();
                 //将之前的位图资源置为unused状态以便回收资源 [重要]
                 bitmapLoader.unused(taskInfo.url);
             }
         }
+
         AsyncImageItem item = itemList.get(position);
-        holder.titleTextView.setText(item.getTitle());
-        holder.contentTextView.setText(item.getContent());
+        ((TextView) holder.get(R.id.image_async_item_title)).setText(item.getTitle());
+        ((TextView) holder.get(R.id.image_async_item_content)).setText(item.getContent());
 
         Bitmap bitmap;//图片
 
         for (int i = 0 ; i < 5 ; i++) {
             //将包含url的TaskInfo存入imageView的TAG中, 来标识当前的图片[重要]
-            holder.imageView[i].setTag(new TaskInfo(item.getUrl(i)));
+            images[i].setTag(new TaskInfo(item.getUrl(i)));
             //从内存缓存中取位图
             bitmap = bitmapLoader.get(item.getUrl(i));
             if (bitmap != null && !bitmap.isRecycled()) {
                 //若内存缓存中存在, 则直接设置图片
-                holder.imageView[i].setImageBitmapImmediate(bitmap);
+                images[i].setImageBitmapImmediate(bitmap);
                 //去除默认背景图(防OverDraw)
-                holder.imageView[i].setBackgroundColor(Color.TRANSPARENT);
+                images[i].setBackgroundColor(Color.TRANSPARENT);
             }else {
                 //若内存缓存中不存在, 交由BitmapLoader.load异步加载
                 //第一张图为160*160dp, 其余80*80dp
                 if (i == 0){
                     //设置默认背景图(大)
-                    holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableLarge);
+                    images[i].setBackgroundDrawable(defaultBitmapDrawableLarge);
                     //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
                     //将ImageView作为参数传入, 便于在回调函数中设置图片
-                    bitmapLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge, holder.imageView[i], mOnBitmapLoadedListener);
+                    bitmapLoader.load(item.getUrl(i), widthHeightLarge, widthHeightLarge, images[i], mOnBitmapLoadedListener);
                 }else{
                     //设置默认背景图(小)
-                    holder.imageView[i].setBackgroundDrawable(defaultBitmapDrawableSmall);
+                    images[i].setBackgroundDrawable(defaultBitmapDrawableSmall);
                     //异步加载, BitmapLoader会根据需求尺寸加载合适大小的位图, 以节省内存
                     //将ImageView作为参数传入, 便于在回调函数中设置图片
-                    bitmapLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall, holder.imageView[i], mOnBitmapLoadedListener);
+                    bitmapLoader.load(item.getUrl(i), widthHeightSmall, widthHeightSmall, images[i], mOnBitmapLoadedListener);
                 }
             }
         }
-        return view;
+
+        return holder.getConvertView();
     }
 
     /**
@@ -170,7 +176,7 @@ public class AsyncImageAdapter extends BaseAdapter {
              * 了, 因此判断url是否相符, 若不相符则直接return
              */
             if (request.getUrl() != null && !request.getUrl().equals(taskInfo.url)){
-                ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载的Bitmap与应该显示的图片不符:" + request.getUrl());
+                logger.e("加载的Bitmap与应该显示的图片不符:" + request.getUrl());
                 return;
             }
 
@@ -184,7 +190,7 @@ public class AsyncImageAdapter extends BaseAdapter {
                 //loader.load(url, widthHeight, widthHeight, params, mOnLoadCompleteListener);
                 //此Demo不做重发
                 if (context instanceof TActivity) {
-                    ((TActivity) context).getLogger().e("[AsyncImageAdapter]加载成功后找不到位图url:" + request.getUrl());
+                    logger.e("加载成功后找不到位图url:" + request.getUrl());
                 }
                 Toast.makeText(context, "[AsyncImageAdapter]加载成功后找不到位图url:" + request.getUrl(), Toast.LENGTH_SHORT).show();
             }
@@ -207,12 +213,6 @@ public class AsyncImageAdapter extends BaseAdapter {
             //加载取消处理, 通常不做处理
         }
     };
-
-    private class ViewHolder{
-        TextView titleTextView;
-        TextView contentTextView;
-        GradualImageView[] imageView = new GradualImageView[5];
-    }
 
     /**
      * 加载任务信息

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sviolet.demoa.R;
+import sviolet.turquoise.utils.common.ViewHolder;
 import sviolet.turquoise.view.slide.view.LinearLayoutDrawer;
 import sviolet.turquoise.view.slide.view.SlideListAdapter;
 
@@ -93,84 +94,77 @@ public class MySlideListAdapter extends BaseAdapter implements SlideListAdapter 
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        final ViewHolder holder;
-        if (convertView == null) {
-            convertView = View.inflate(context, R.layout.slide_list_item, null);
-            holder = new ViewHolder();
-            holder.drawer = (LinearLayoutDrawer) convertView.findViewById(R.id.slide_list_drawer);
-            holder.title = (TextView) convertView.findViewById(R.id.common_list_item_title);
-            holder.type = (TextView) convertView.findViewById(R.id.common_list_item_type);
-            holder.info = (TextView) convertView.findViewById(R.id.common_list_item_info);
-            holder.backgroundButtom = (Button) convertView.findViewById(R.id.slide_list_background_button);
-            convertView.setTag(holder);
+        ViewHolder holder = ViewHolder.create(context, convertView, parent, R.layout.slide_list_item);
+
+        final LinearLayoutDrawer drawerView = (LinearLayoutDrawer) holder.get(R.id.slide_list_drawer);
+        TextView titleView = (TextView) holder.get(R.id.common_list_item_title);
+        TextView typeView = (TextView) holder.get(R.id.common_list_item_type);
+        TextView infoView = (TextView) holder.get(R.id.common_list_item_info);
+        Button backgroundButton = (Button) holder.get(R.id.slide_list_background_button);
+
+        /*
+            初始化, 当createTimes() == 1 时, convertView为新实例, 在此时可以进行控件初始化操作.
+         */
+
+        if (holder.createTimes() == 1){
             //初始化抽屉
-            drawerList.add(holder.drawer);
-            holder.drawer.setSlideScrollDirection(LinearLayoutDrawer.DIRECTION_LEFT)
+            drawerList.add(drawerView);
+            drawerView.setSlideScrollDirection(LinearLayoutDrawer.DIRECTION_LEFT)
                     .setSlideDrawerWidth(200)
                     .setSlideScrollDuration(700)
                     .setSlideInitStage(LinearLayoutDrawer.STAGE_PULL_OUT)
                     .applySlideSetting();
-            holder.title.setOnClickListener(new View.OnClickListener() {
+            //设置监听器
+            titleView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(context, "title click", Toast.LENGTH_SHORT).show();
                 }
             });
-            holder.backgroundButtom.setOnClickListener(new View.OnClickListener() {
+            backgroundButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Toast.makeText(context, "button click", Toast.LENGTH_SHORT).show();
-                    holder.drawer.pullOut();
+                    drawerView.pullOut();
                 }
             });
-        } else {
-            holder = (ViewHolder) convertView.getTag();
+        }else{
             //重置抽屉
-            holder.drawer.pullOutImmidiatly();//拉出抽屉
+            drawerView.pullOutImmediately();//拉出抽屉
         }
 
-        inflateView(position, convertView, holder);
-        return convertView;
+        /*
+         * 填充数据
+         */
+
+        String tail = Integer.toString(position);
+        if (title != null)
+            titleView.setText(title + tail);
+        else
+            titleView.setText("");
+
+        titleView.setTextColor(titleColor);
+
+        if (type != null)
+            typeView.setText(type + tail);
+        else
+            typeView.setText("");
+
+        if (info != null)
+            infoView.setText(info + tail);
+        else
+            infoView.setText("");
+
+        /*
+         * 返回
+         */
+
+        return holder.getConvertView();
     }
 
     /**********************************************
      * private
      */
-
-    /**
-     * 渲染View
-     *
-     * @param position 位置
-     * @param view     view
-     * @param holder   holder
-     */
-    private void inflateView(int position, View view, ViewHolder holder) {
-        String tail = Integer.toString(position);
-        if (title != null)
-            holder.title.setText(title + tail);
-        else
-            holder.title.setText("");
-
-        holder.title.setTextColor(titleColor);
-
-        if (type != null)
-            holder.type.setText(type + tail);
-        else
-            holder.type.setText("");
-
-        if (info != null)
-            holder.info.setText(info + tail);
-        else
-            holder.info.setText("");
-    }
-
-    private class ViewHolder {
-        LinearLayoutDrawer drawer;
-        TextView title;
-        TextView type;
-        TextView info;
-        Button backgroundButtom;
-    }
 
     @Override
     public boolean hasSliddenItem() {

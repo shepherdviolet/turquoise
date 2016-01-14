@@ -27,6 +27,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import sviolet.demoa.R;
+import sviolet.turquoise.utils.common.ViewHolder;
 
 /**
  * Demo列表适配器
@@ -73,19 +74,9 @@ public class DemoListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            convertView = View.inflate(context, resId, null);
-            holder = new ViewHolder();
-            holder.title = (TextView) convertView.findViewById(R.id.guide_main_item_title);
-            holder.type = (TextView) convertView.findViewById(R.id.guide_main_item_type);
-            holder.info = (TextView) convertView.findViewById(R.id.guide_main_item_info);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-        inflateView(position, convertView, holder);
-        return convertView;
+        ViewHolder holder = ViewHolder.create(context, convertView, parent, resId);
+        inflateView(position, holder);
+        return holder.getConvertView();
     }
 
     /****************************************************
@@ -95,10 +86,9 @@ public class DemoListAdapter extends BaseAdapter {
     /**
      * 渲染View
      * @param position 位置
-     * @param view view
      * @param holder holder
      */
-    private void inflateView(int position, View view, ViewHolder holder) {
+    private void inflateView(int position, ViewHolder holder) {
         Class<? extends Activity> activity = (Class) getItem(position);
         if (activity == null)
             return;
@@ -118,18 +108,12 @@ public class DemoListAdapter extends BaseAdapter {
             return;
 
         if (title != null)
-            holder.title.setText(title);
+            ((TextView)holder.get(R.id.guide_main_item_title)).setText(title);
         else
-            holder.title.setText("未设置@DemoDescription");
+            ((TextView)holder.get(R.id.guide_main_item_title)).setText("未设置@DemoDescription");
 
-        holder.type.setText(type);
-        holder.info.setText(info);
-    }
-
-    private class ViewHolder {
-        TextView title;
-        TextView type;
-        TextView info;
+        ((TextView)holder.get(R.id.guide_main_item_type)).setText(type);
+        ((TextView)holder.get(R.id.guide_main_item_info)).setText(info);
     }
 
 }

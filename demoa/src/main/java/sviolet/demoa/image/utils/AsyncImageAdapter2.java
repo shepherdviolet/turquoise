@@ -32,6 +32,7 @@ import java.util.List;
 import sviolet.demoa.R;
 import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
+import sviolet.turquoise.utils.common.ViewHolder;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 
 /**
@@ -77,25 +78,19 @@ public class AsyncImageAdapter2 extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        ViewHolder holder;
-        if (view == null){
-            view = View.inflate(context, R.layout.image_async2_item, null);
-            holder = new ViewHolder();
-            holder.imageView[0] = (ImageView) view.findViewById(R.id.image_async_item_imageview0);
-            holder.imageView[1] = (ImageView) view.findViewById(R.id.image_async_item_imageview1);
-            holder.imageView[2] = (ImageView) view.findViewById(R.id.image_async_item_imageview2);
-            holder.imageView[3] = (ImageView) view.findViewById(R.id.image_async_item_imageview3);
-            holder.imageView[4] = (ImageView) view.findViewById(R.id.image_async_item_imageview4);
-            holder.titleTextView = (TextView) view.findViewById(R.id.image_async_item_title);
-            holder.contentTextView = (TextView) view.findViewById(R.id.image_async_item_content);
-            view.setTag(holder);
-        }else{
-            holder = (ViewHolder) view.getTag();
-        }
+
+        ViewHolder holder = ViewHolder.create(context, convertView, parent, R.layout.image_async2_item);
+
         AsyncImageItem item = itemList.get(position);
-        holder.titleTextView.setText(item.getTitle());
-        holder.contentTextView.setText(item.getContent());
+        ((TextView) holder.get(R.id.image_async_item_title)).setText(item.getTitle());
+        ((TextView) holder.get(R.id.image_async_item_content)).setText(item.getContent());
+
+        ImageView[] images = new ImageView[5];
+        images[0] = (ImageView) holder.get(R.id.image_async_item_imageview0);
+        images[1] = (ImageView) holder.get(R.id.image_async_item_imageview1);
+        images[2] = (ImageView) holder.get(R.id.image_async_item_imageview2);
+        images[3] = (ImageView) holder.get(R.id.image_async_item_imageview3);
+        images[4] = (ImageView) holder.get(R.id.image_async_item_imageview4);
 
         for (int i = 0 ; i < 5 ; i++) {
             /**
@@ -117,23 +112,18 @@ public class AsyncImageAdapter2 extends BaseAdapter {
                         new BitmapRequest(item.getUrl(i))//URL
                             .setReqDimension(widthHeightLarge, widthHeightLarge)//请求尺寸
                             .setBitmapConfig(Bitmap.Config.RGB_565), //设置颜色深度为RGB_565可节省内存,但不支持透明
-                        holder.imageView[i]);
+                        images[i]);
             } else {
                 simpleBitmapLoader.load(
                         new BitmapRequest(item.getUrl(i))//URL
                                 .setReqDimension(widthHeightSmall, widthHeightSmall)//请求尺寸
                                 .setBitmapConfig(Bitmap.Config.RGB_565), //设置颜色深度为RGB_565可节省内存,但不支持透明
-                        holder.imageView[i]);
+                        images[i]);
             }
 
         }
-        return view;
-    }
 
-    private class ViewHolder{
-        TextView titleTextView;
-        TextView contentTextView;
-        ImageView[] imageView = new ImageView[5];
+        return holder.getConvertView();
     }
 
 }

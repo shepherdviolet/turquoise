@@ -26,6 +26,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import sviolet.demoa.R;
+import sviolet.turquoise.utils.common.ViewHolder;
 
 /**
  * 模拟List适配器
@@ -84,19 +85,9 @@ public class EmulateListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
-        if (convertView == null) {
-            convertView = View.inflate(context, R.layout.common_list_item, null);
-            holder = new ViewHolder();
-            holder.title = (TextView) convertView.findViewById(R.id.common_list_item_title);
-            holder.type = (TextView) convertView.findViewById(R.id.common_list_item_type);
-            holder.info = (TextView) convertView.findViewById(R.id.common_list_item_info);
-            convertView.setTag(holder);
-        } else {
-            holder = (ViewHolder) convertView.getTag();
-        }
-        inflateView(position, convertView, holder);
-        return convertView;
+        ViewHolder holder = ViewHolder.create(context, convertView, parent, R.layout.common_list_item);
+        inflateView(position, holder);
+        return holder.getConvertView();
     }
 
     /**********************************************
@@ -107,33 +98,32 @@ public class EmulateListAdapter extends BaseAdapter {
      * 渲染View
      *
      * @param position 位置
-     * @param view     view
      * @param holder   holder
      */
-    private void inflateView(int position, View view, ViewHolder holder) {
+    private void inflateView(int position, ViewHolder holder) {
         String tail = Integer.toString(position);
-        if (title != null)
-            holder.title.setText(title + tail);
-        else
-            holder.title.setText("");
 
-        holder.title.setTextColor(titleColor);
+        TextView titleView = (TextView) holder.get(R.id.common_list_item_title);
+        TextView typeView = (TextView) holder.get(R.id.common_list_item_type);
+        TextView infoView = (TextView) holder.get(R.id.common_list_item_info);
+
+        if (title != null)
+            titleView.setText(title + tail);
+        else
+            titleView.setText("");
+
+        titleView.setTextColor(titleColor);
 
         if (type != null)
-            holder.type.setText(type + tail);
+            typeView.setText(type + tail);
         else
-            holder.type.setText("");
+            typeView.setText("");
 
         if (info != null)
-            holder.info.setText(info + tail);
+            infoView.setText(info + tail);
         else
-            holder.info.setText("");
-    }
+            infoView.setText("");
 
-    private class ViewHolder {
-        TextView title;
-        TextView type;
-        TextView info;
     }
 
 }
