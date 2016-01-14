@@ -19,6 +19,10 @@
 
 package sviolet.turquoise.utils.conversion;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+
 /**
  * 字符串工具
  * Created by S.Violet on 2015/12/22.
@@ -59,6 +63,17 @@ public class StringUtils {
             }
         }
         return String.valueOf(chars);
+    }
+
+    /**
+     * 把异常转为String信息
+     */
+    public static String throwableToString(Throwable throwable) {
+        Writer writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter(writer);
+        throwable.printStackTrace(printWriter);
+        printWriter.close();
+        return writer.toString();
     }
 
 }
