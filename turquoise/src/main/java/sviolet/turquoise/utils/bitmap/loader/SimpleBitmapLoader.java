@@ -60,7 +60,6 @@ import sviolet.turquoise.utils.log.TLogger;
  *          //.setDiskCacheInner()//强制使用内部储存
  *          //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
  *          //.setWipeOnNewVersion()//当APP更新时清空磁盘缓存
- *          //.setLogger(getLogger())//设置日志打印器
  *          .setAnimationDuration(400)//设置图片淡入动画持续时间400ms
  *          .setReloadTimesMax(2)//设置图片加载失败重新加载次数限制
  *          .create();

@@ -74,7 +74,6 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  *          //.setDiskCacheInner()//强制使用内部储存
  *          //.setDuplicateLoadEnable(true)//允许相同图片同时加载(慎用)
  *          //.setWipeOnNewVersion()//当APP更新时清空磁盘缓存
- *          //.setLogger(getLogger())//设置日志打印器
  *          .create();
  * }</pre>
  * <br/>
