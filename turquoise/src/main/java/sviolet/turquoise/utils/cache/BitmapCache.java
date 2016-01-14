@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import sviolet.turquoise.compat.CompatLruCache;
-import sviolet.turquoise.utils.common.Logger;
+import sviolet.turquoise.utils.log.TLogger;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
@@ -89,7 +89,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     private int recyclerSize = 0;
 
     //日志打印器
-    private Logger logger;
+    private TLogger logger = TLogger.get(this);
 
     /**
      * 
@@ -256,8 +256,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             bitmap.recycle();
         }
         //打印内存使用情况
-        if (getLogger() != null)
-            getLogger().i(getMemoryReport());
+        logger.d(getMemoryReport());
     }
 
     /**
@@ -304,8 +303,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         }
         //排除null或被回收的Bitmap
         if (value == null || value.isRecycled()) {
-            if (getLogger() != null)
-                getLogger().e("[BitmapCache]trying to put a null or recycled bitmap, key:" + key);
+            logger.e("BitmapCache trying to put a null or recycled bitmap, key:" + key);
             return null;
         }
         //先强制移除并回收同名Bitmap
@@ -384,10 +382,8 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         }
 
         //打印日志
-        if (getLogger() != null){
-            getLogger().i("[BitmapCache]removeAll recycled:" + counter);
-            getLogger().i(getMemoryReport());
-        }
+        logger.d("BitmapCache removeAll recycled:" + counter);
+        logger.d(getMemoryReport());
     }
 
     /**
@@ -425,10 +421,8 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         unusedBitmaps.clear();
 
         //打印日志
-        if (getLogger() != null){
-            getLogger().i("[BitmapCache]reduce recycled:" + counter);
-            getLogger().i(getMemoryReport());
-        }
+        logger.d("BitmapCache reduce recycled:" + counter);
+        logger.d(getMemoryReport());
     }
 
     /**
@@ -457,7 +451,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      */
     public String getMemoryReport() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("[BitmapCache]MemoryReport: ");
+        stringBuilder.append("MemoryReport: ");
         stringBuilder.append("[Cache]: ");
         stringBuilder.append(size() / 1024);
         stringBuilder.append("K/");
@@ -473,15 +467,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         stringBuilder.append(recyclerQuantity());
         stringBuilder.append("pcs");
         return stringBuilder.toString();
-    }
-
-    /**
-     * 设置日志打印器, 用于调试输出日志<br/>
-     *
-     * @param logger
-     */
-    public void setLogger(Logger logger) {
-        this.logger = logger;
     }
 
     /******************************************************
@@ -562,8 +547,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
             entryRemoved(true, key, value, null);
         }
         //打印内存使用情况
-        if (getLogger() != null)
-            getLogger().i(getMemoryReport());
+        logger.d(getMemoryReport());
     }
 
     @SuppressLint("NewApi")
@@ -582,10 +566,6 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     /********************************************************
      * private / protected
      */
-
-    protected Logger getLogger(){
-        return logger;
-    }
 
     /**
      * 根据缓存占内存的比例, 计算缓存占用大小(byte)<p/>

@@ -23,7 +23,6 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 
-import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.utils.bitmap.loader.drawable.AbsLoadingDrawableFactory;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
@@ -32,6 +31,7 @@ import sviolet.turquoise.utils.bitmap.loader.task.SimpleBitmapLoaderTaskFactory;
 import sviolet.turquoise.utils.cache.BitmapCache;
 import sviolet.turquoise.utils.SpecialResourceId;
 import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
+import sviolet.turquoise.utils.log.TLogger;
 
 /**
  * 
@@ -157,6 +157,8 @@ import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
  * Created by S.Violet on 2015/10/19.
  */
 public class SimpleBitmapLoader implements LifeCycle {
+
+    private TLogger logger = TLogger.get(this);
 
     /**
      * 内部bitmapLoader<Br/>
@@ -612,8 +614,7 @@ public class SimpleBitmapLoader implements LifeCycle {
             if (task.getState() != SimpleBitmapLoaderTask.STATE_UNUSED
                     && !task.checkViewModified()
                     && request.getUrl().equals(task.getRequest().getUrl())){
-                if (getLogger() != null)
-                    getLogger().i("[SimpleBitmapLoader]load skipped (url:" + request.getUrl() + "), because of the same url");
+                logger.d("load skipped (url:" + request.getUrl() + "), because of the same url");
                 return true;
             }
         }
@@ -626,10 +627,6 @@ public class SimpleBitmapLoader implements LifeCycle {
 
     protected Context getContext(){
         return bitmapLoader.getContext();
-    }
-
-    protected Logger getLogger(){
-        return bitmapLoader.getLogger();
     }
 
     protected Settings getSettings(){

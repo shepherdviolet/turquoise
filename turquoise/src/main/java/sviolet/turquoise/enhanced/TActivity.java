@@ -26,7 +26,6 @@ import android.support.v4.app.ActivityCompat;
 import android.view.Menu;
 
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
-import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.enhanced.utils.InjectUtils;
 import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
@@ -72,19 +71,7 @@ public class TActivity extends Activity implements TActivityProvider.RequestPerm
 
     /**********************************************
      * public
-     *
-     * Utils: Logger / BitmapUtils
      */
-
-    /**
-     * 获得日志打印器(需配合TApplication)<br/>
-     * 由TApplication子类标签设置日志打印权限<br/>
-     * 若本应用不采用TApplication, 则返回的日志打印器无用.<br/>
-     *
-     */
-    public Logger getLogger(){
-        return provider.getLogger(this);
-    }
 
     /**
      * 将生命周期监听器绑定在该Activity上<p/>

@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
+import sviolet.turquoise.utils.log.TLogger;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 
 /**
@@ -70,6 +71,8 @@ import sviolet.turquoise.utils.sys.DeviceUtils;
  * Created by S.Violet on 2015/11/4.
  */
 public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandler {
+
+    private TLogger logger = TLogger.get(this);
 
     private OpenFailedHandleMode mode;//磁盘缓存打开失败处理模式
     private Runnable viewRefreshListener;//显示刷新回调(CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT/OPEN_WITHOUT_DISK_CACHE_SILENCE)
@@ -124,11 +127,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
     public void onCacheOpenException(Context context, BitmapLoader bitmapLoader, Throwable throwable) {
 
         //打印日志
-        if (bitmapLoader != null && bitmapLoader.getLogger() != null) {
-            bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]DiskCache open failed, use BitmapLoader.Builder.setDiskCacheExceptionHandler to custom processing", throwable);
-        }else{
-            throwable.printStackTrace();
-        }
+        logger.e("DiskCache open failed, use BitmapLoader.Builder.setDiskCacheExceptionHandler to custom processing", throwable);
 
         //提示或开启磁盘缓存禁用模式
         try {
@@ -177,8 +176,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
 
     private void noticeOnlyByDialog(final Context context, BitmapLoader bitmapLoader){
         if (context == null){
-            if (bitmapLoader != null && bitmapLoader.getLogger() != null)
-                bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]context is null, can't show dialog");
+            logger.e("context is null, can't show dialog");
             return;
         }
 
@@ -217,8 +215,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
 
     private void noticeOnlyByToast(Context context, BitmapLoader bitmapLoader){
         if (context == null){
-            if (bitmapLoader != null && bitmapLoader.getLogger() != null)
-                bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]context is null, can't show toast");
+            logger.e("context is null, can't show toast");
             return;
         }
 
@@ -244,8 +241,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
         if (viewRefreshListener != null)
             viewRefreshListener.run();
 
-        if (bitmapLoader.getLogger() != null)
-            bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]openWithoutDiskCacheSilence");
+        logger.e("openWithoutDiskCacheSilence");
     }
 
     private void choiceToOpenWithoutDiskCacheOrNot(final Context context, final BitmapLoader bitmapLoader) {
@@ -256,8 +252,7 @@ public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandl
         }
 
         if (context == null){
-            if (bitmapLoader.getLogger() != null)
-                bitmapLoader.getLogger().e("[DefaultDiskCacheExceptionHandler]context is null, can't show dialog");
+            logger.e("context is null, can't show dialog");
             return;
         }
 

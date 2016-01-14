@@ -29,11 +29,11 @@ import android.view.View;
 
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.utils.bitmap.loader.drawable.SafeBitmapDrawable;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
 import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.utils.SpecialResourceId;
+import sviolet.turquoise.utils.log.TLogger;
 
 /**
  *
@@ -67,6 +67,8 @@ import sviolet.turquoise.utils.SpecialResourceId;
  * Created by S.Violet on 2015/10/16.
  */
 public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmapLoadedListener {
+
+    private TLogger logger = TLogger.get(this);
 
     //图片加载请求参数
     private BitmapRequest request;
@@ -133,8 +135,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
      */
     private void setBitmap(V view, Resources resources, Bitmap bitmap, int animationDuration){
         if (view == null){
-            if (getLogger() != null)
-                getLogger().e("[SimpleBitmapLoaderTask]setBitmap: view is null");
+            logger.e("setBitmap: view is null");
             return;
         }
         //生成Drawable
@@ -159,8 +160,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         }else{
             //目的图
             Drawable targetDrawable = new ReloadableSafeBitmapDrawable(resources, bitmap)
-                    .setLoaderTask(this)
-                    .setLogger(getLogger());
+                    .setLoaderTask(this);
             //若淡入动画时间为0, 则直接返回
             if (getAnimationDuration() <= 0){
                 return targetDrawable;
@@ -299,13 +299,6 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         return null;
     }
 
-    protected Logger getLogger(){
-        if (getLoader() != null){
-            return getLoader().getLogger();
-        }
-        return null;
-    }
-
     protected Resources getResources(){
         if (getLoader() != null && getLoader().getContext() != null)
             return getLoader().getContext().getResources();
@@ -335,12 +328,10 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
                 if (forTransitionBackground){
                     //作为目的图背景时, 返回尺寸为match_parent的SafeBitmapDrawable
                     return new SafeBitmapDrawable(getResources(), getLoader().getLoadingBitmap())
-                            .setMatchParent(true)
-                            .setLogger(getLogger());
+                            .setMatchParent(true);
                 } else {
                     //作为加载图时, 返回普通SafeBitmapDrawable
-                    return new SafeBitmapDrawable(getResources(), getLoader().getLoadingBitmap())
-                            .setLogger(getLogger());
+                    return new SafeBitmapDrawable(getResources(), getLoader().getLoadingBitmap());
                 }
             }else{//加载颜色
                 return new ColorDrawable(getLoader().getLoadingColor());
@@ -481,6 +472,8 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
      */
     static class ReloadableSafeBitmapDrawable extends SafeBitmapDrawable{
 
+        private TLogger logger = TLogger.get(this);
+
         private WeakReference<SimpleBitmapLoaderTask> loaderTask;//加载任务
 
         public ReloadableSafeBitmapDrawable(Resources res, Bitmap bitmap) {
@@ -491,9 +484,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
         protected void onDrawError(Canvas canvas, Exception e){
             //重新加载图片
             if (getLoaderTask() != null){
-                if (getLogger() != null) {
-                    getLogger().e("[ReloadableSafeBitmapDrawable]draw: reload url<" + getLoaderTask().getRequest().getUrl() + ">");
-                }
+                logger.d("draw: reload url<" + getLoaderTask().getRequest().getUrl() + ">");
                 getLoaderTask().resetToDefault();//设置为加载图
                 getLoaderTask().load();//重加载(不限制次数)
             }

@@ -25,6 +25,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import sviolet.turquoise.utils.log.TLogger;
+import sviolet.turquoise.utils.log.def.SimpleTLoggerModule;
+
 /**
  * [TApplication注释]发布模式参数设置
  *
@@ -57,18 +60,18 @@ public @interface ReleaseSettings {
     String logTag() default "Undefined";
 
     /**
-     * 允许Debug日志打印
+     * 日志级别开关<p/>
+     *
+     * 示例:<br/>
+     * 开启ERROR和INFO日志 : TLogger.ERROR | TLogger.INFO
      */
-    boolean enableLogDebug() default false;
+    int logLevelSwitch() default TLogger.ERROR | TLogger.INFO;
 
     /**
-     * 允许Error日志打印
+     * 日志打印器实现模块<p/>
+     *
+     * 默认采用简易日志打印器模块
      */
-    boolean enableLogError() default false;
-
-    /**
-     * 允许Info日志打印
-     */
-    boolean enableLogInfo() default false;
+    Class logModule() default SimpleTLoggerModule.class;
 
 }

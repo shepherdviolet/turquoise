@@ -41,7 +41,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhanced.utils.InjectUtils;
 import sviolet.turquoise.utils.CheckUtils;
-import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 import sviolet.turquoise.utils.sys.DeviceUtils;
 import sviolet.turquoise.utils.sys.MeasureUtils;
@@ -158,24 +157,6 @@ class TActivityProvider {
                 ((TApplication) activity.getApplication()).removeActivity(activity);
             }catch (Exception ignored){}
         }
-    }
-
-    /*********************************
-     * Utils
-     */
-
-    /**
-     * 获得日志打印器(需配合TApplication)<br/>
-     * 由TApplication子类标签设置日志打印权限<br/>
-     * 若本应用不采用TApplication, 则返回的日志打印器无用.<br/>
-     */
-    Logger getLogger(Activity activity){
-        if (activity.getApplication() instanceof TApplication){
-            try {
-                return ((TApplication) activity.getApplication()).getLogger();
-            }catch (Exception ignored){}
-        }
-        return Logger.newInstance("", false, false, false);//返回无效的日志打印器
     }
 
     /**********************************************

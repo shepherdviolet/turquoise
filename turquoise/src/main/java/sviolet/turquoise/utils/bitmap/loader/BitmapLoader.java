@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.utils.common.Logger;
 import sviolet.turquoise.model.queue.TQueue;
 import sviolet.turquoise.model.queue.TTask;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
@@ -45,6 +44,7 @@ import sviolet.turquoise.utils.cache.DiskLruCache;
 import sviolet.turquoise.utils.conversion.ByteUtils;
 import sviolet.turquoise.utils.crypt.DigestCipher;
 import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
+import sviolet.turquoise.utils.log.TLogger;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 import sviolet.turquoise.utils.sys.DirectoryUtils;
 
@@ -172,6 +172,8 @@ import sviolet.turquoise.utils.sys.DirectoryUtils;
  */
 public class BitmapLoader implements LifeCycle {
 
+    private TLogger logger = TLogger.get(this);
+
     private BitmapCache mBitmapCache;//Bitmap内存缓存器
     private DiskLruCache mDiskLruCache;//磁盘缓存器
 
@@ -214,8 +216,8 @@ public class BitmapLoader implements LifeCycle {
         if (state == STATE_OPEN_FAILED) {
             diskCacheDisabled = true;
             open();
-        }else if(getLogger() != null){
-            getLogger().e("[BitmapLoader]openWithoutDiskCache() can only use when DiskCache open failed");
+        }else{
+            logger.e("openWithoutDiskCache() can only use when DiskCache open failed");
         }
     }
 
@@ -244,9 +246,6 @@ public class BitmapLoader implements LifeCycle {
                 .setVolumeMax(settings.netLoadVolume)
                 .waitCancelingTask(true)
                 .setKeyConflictPolicy(settings.keyConflictPolicy);
-        //设置日志打印器
-        if(getLogger() != null)
-            mBitmapCache.setLogger(getLogger());
         //设置状态为可用
         state = STATE_ACTIVE;
     }
@@ -315,17 +314,13 @@ public class BitmapLoader implements LifeCycle {
             return;
         //计算缓存key
         String cacheKey = getCacheKey(request.getUrl());
-        if (getLogger() != null) {
-            getLogger().d("[BitmapLoader]load:start:  url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
-        }
+        logger.d("load:start:  url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
         //尝试内存缓存中取Bitmap
         Bitmap bitmap = mBitmapCache.get(cacheKey);
         if (bitmap != null && !bitmap.isRecycled()) {
             //缓存中存在直接回调:成功
             mOnBitmapLoadedListener.onLoadSucceed(request, params, bitmap);
-            if (getLogger() != null) {
-                getLogger().d("[BitmapLoader]load:succeed:  from:BitmapCache url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
-            }
+            logger.d("load:succeed:  from:BitmapCache url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
             return;
         }
         //若缓存中不存在, 加入加载队列
@@ -333,7 +328,7 @@ public class BitmapLoader implements LifeCycle {
             //加入磁盘缓存加载队列
             mDiskCacheQueue.put(cacheKey, new DiskCacheTask(request, mOnBitmapLoadedListener).setParams(params));
         }else{
-            getLogger().d("[BitmapLoader]load:diskCacheDisabled:  url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
+            logger.d("load:diskCacheDisabled:  url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
             //磁盘缓存禁用场合, 直接加入网络加载队列
             mNetLoadQueue.put(cacheKey, new NetLoadTask(request, mOnBitmapLoadedListener).setParams(params));
         }
@@ -398,9 +393,7 @@ public class BitmapLoader implements LifeCycle {
         mDiskCacheQueue.cancel(cacheKey);
         //将位图标识为不再使用
         mBitmapCache.unused(cacheKey);
-        if (getLogger() != null) {
-            getLogger().d("[BitmapLoader]unused:  url<" + url + "> cacheKey<" + cacheKey + ">");
-        }
+        logger.d("unused:  url<" + url + "> cacheKey<" + cacheKey + ">");
     }
 
     /**
@@ -432,8 +425,7 @@ public class BitmapLoader implements LifeCycle {
         //磁盘缓存加载队列取消
         mDiskCacheQueue.cancelAll();
 
-        if (getLogger() != null)
-            getLogger().i("[BitmapLoader]cancel all tasks");
+        logger.d("BitmapLoader cancel all tasks");
     }
 
     /**
@@ -484,9 +476,7 @@ public class BitmapLoader implements LifeCycle {
             settings.mDiskCacheExceptionHandler = null;
         }
 
-        if (getLogger() != null) {
-            getLogger().d("[BitmapLoader]destroy");
-        }
+        logger.d("BitmapLoader destroy");
     }
 
     /**
@@ -554,7 +544,6 @@ public class BitmapLoader implements LifeCycle {
         int netLoadVolume = 10;//网络加载等待队列容量
         int keyConflictPolicy = TQueue.KEY_CONFLICT_POLICY_CANCEL;//TQueue同名任务冲突策略
         int appVersionCode = 1;//应用版本versionCode
-        Logger logger;//日志打印器
 
         //处理器////////////////////////////////////////////////////////
 
@@ -807,14 +796,6 @@ public class BitmapLoader implements LifeCycle {
         }
 
         /**
-         * 设置日志打印器, 用于输出调试日志, 不设置则不输出日志
-         */
-        public BuildType setLogger(Logger logger) {
-            settings.logger = logger;
-            return cast(this);
-        }
-
-        /**
          * [待实现]创建实例方法
          */
         public abstract LoaderType create();
@@ -878,15 +859,13 @@ public class BitmapLoader implements LifeCycle {
                         bitmap = getBitmapDecodeHandler().onDecode(getContext(), BitmapLoader.this, request, cacheFile.getAbsolutePath());
                     }catch(Exception e){
                         //Bitmap加载失败
-                        if (getLogger() != null){
-                            getLogger().e("[BitmapLoader]disk load failed, bad file, trying to net load, url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">", e);
-                        }
+                        logger.w("disk load failed, bad file, trying to net load, url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">", e);
                         //尝试从网络重新加载
                         return RESULT_CONTINUE;
                     }
                     //加载出的Bitmap为空
                     if (bitmap == null || bitmap.isRecycled()){
-                        getLogger().e("[BitmapLoader]disk load failed, bitmap decode failed, trying to net load, url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
+                        logger.w("disk load failed, bitmap decode failed, trying to net load, url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
                         //尝试从网络重新加载
                         return RESULT_CONTINUE;
                     }
@@ -915,36 +894,28 @@ public class BitmapLoader implements LifeCycle {
                     mOnBitmapLoadedListener.onLoadCanceled(request, getParams());
                 if (mBitmapCache != null)
                     mBitmapCache.unused(cacheKey);
-                if (getLogger() != null) {
-                    getLogger().d("[BitmapLoader]load:canceled:  from:DiskCache url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
-                }
+                logger.d("load:canceled:  from:DiskCache url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
                 return;
             }
             switch ((int) result) {
                 case RESULT_SUCCEED:
                     if (mOnBitmapLoadedListener != null && mBitmapCache != null)
                         mOnBitmapLoadedListener.onLoadSucceed(request, getParams(), mBitmapCache.get(cacheKey));
-                    if (getLogger() != null) {
-                        getLogger().d("[BitmapLoader]load:succeed:  from:DiskCache url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
-                    }
+                    logger.d("load:succeed:  from:DiskCache url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
                     break;
                 case RESULT_FAILED:
                     if (mOnBitmapLoadedListener != null)
                         mOnBitmapLoadedListener.onLoadFailed(request, getParams());
                     if (mBitmapCache != null)
                         mBitmapCache.unused(cacheKey);
-                    if (getLogger() != null) {
-                        getLogger().d("[BitmapLoader]load:failed:  from:DiskCache url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
-                    }
+                    logger.d("load:failed:  from:DiskCache url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
                     break;
                 case RESULT_CANCELED:
                     if (mOnBitmapLoadedListener != null)
                         mOnBitmapLoadedListener.onLoadCanceled(request, getParams());
                     if (mBitmapCache != null)
                         mBitmapCache.unused(cacheKey);
-                    if (getLogger() != null) {
-                        getLogger().d("[BitmapLoader]load:canceled:  from:DiskCache url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
-                    }
+                    logger.d("load:canceled:  from:DiskCache url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
                     break;
                 case RESULT_CONTINUE:
                     //若缓存文件不存在, 加入网络加载队列
@@ -1055,7 +1026,7 @@ public class BitmapLoader implements LifeCycle {
 
                         if (bitmap == null || bitmap.isRecycled()){
                             //图片解码失败
-                            getLogger().e("[BitmapLoader]net loaded failed, data decoding to Bitmap failed, url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">, dataHex<<" + ByteUtils.byteToHex(messenger.getData()) + ">>");
+                            logger.w("[BitmapLoader]net loaded failed, data decoding to Bitmap failed, url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">, dataHex<<" + ByteUtils.byteToHex(messenger.getData()) + ">>");
                             return RESULT_FAILED;
                         }
 
@@ -1065,9 +1036,7 @@ public class BitmapLoader implements LifeCycle {
                         return RESULT_SUCCEED;
 
                     }else{
-                        if (getLogger() != null){
-                            getLogger().e("[BitmapLoader]net loaded failed, data is null, url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
-                        }
+                        logger.w("net loaded failed, data is null, url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
                     }
                 } else if (result == BitmapLoaderMessenger.RESULT_CANCELED || result == BitmapLoaderMessenger.RESULT_INTERRUPTED) {
                     return RESULT_CANCELED;
@@ -1093,36 +1062,28 @@ public class BitmapLoader implements LifeCycle {
                     mOnBitmapLoadedListener.onLoadCanceled(request, getParams());
                 if (mBitmapCache != null)
                     mBitmapCache.unused(cacheKey);
-                if (getLogger() != null) {
-                    getLogger().d("[BitmapLoader]load:canceled:  from:NetLoad url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
-                }
+                logger.d("load:canceled:  from:NetLoad url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
                 return;
             }
             switch ((int) result) {
                 case RESULT_SUCCEED:
                     if (mOnBitmapLoadedListener != null && mBitmapCache != null)
                         mOnBitmapLoadedListener.onLoadSucceed(request, getParams(), mBitmapCache.get(cacheKey));
-                    if (getLogger() != null) {
-                        getLogger().d("[BitmapLoader]load:succeed:  from:NetLoad url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
-                    }
+                    logger.d("load:succeed:  from:NetLoad url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
                     break;
                 case RESULT_FAILED:
                     if (mOnBitmapLoadedListener != null)
                         mOnBitmapLoadedListener.onLoadFailed(request, getParams());
                     if (mBitmapCache != null)
                         mBitmapCache.unused(cacheKey);
-                    if (getLogger() != null) {
-                        getLogger().d("[BitmapLoader]load:failed:  from:NetLoad url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
-                    }
+                    logger.d("load:failed:  from:NetLoad url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
                     break;
                 case RESULT_CANCELED:
                     if (mOnBitmapLoadedListener != null)
                         mOnBitmapLoadedListener.onLoadCanceled(request, getParams());
                     if (mBitmapCache != null)
                         mBitmapCache.unused(cacheKey);
-                    if (getLogger() != null) {
-                        getLogger().d("[BitmapLoader]load:canceled:  from:NetLoad url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
-                    }
+                    logger.d("load:canceled:  from:NetLoad url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">");
                     break;
                 default:
                     break;
@@ -1179,12 +1140,10 @@ public class BitmapLoader implements LifeCycle {
                 /*
                     出现该情况, 看DefaultDiskCacheExceptionHandler设置方法, 或直接调用openWithoutDiskCache()方法
                 */
-                if (getLogger() != null)
-                    getLogger().e("[BitmapLoader]DiskCache open failed, can't use, see DefaultDiskCacheExceptionHandler or use openWithoutDiskCache()");
+                logger.e("BitmapLoader: DiskCache open failed, can't use, see DefaultDiskCacheExceptionHandler or use openWithoutDiskCache()");
                 return true;
             case STATE_DESTROYED:
-                if (getLogger() != null)
-                    getLogger().e("[BitmapLoader]can't use destroyed BitmapLoader");
+                logger.e("can't use destroyed BitmapLoader");
                 return true;
             default:
                 return false;
@@ -1250,13 +1209,6 @@ public class BitmapLoader implements LifeCycle {
     /*********************************************************************
      * getter
      */
-
-    /**
-     * 获得其中的日志打印器
-     */
-    public Logger getLogger(){
-        return settings.logger;
-    }
 
     /**
      * 获得内存缓存器

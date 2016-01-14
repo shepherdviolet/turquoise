@@ -465,15 +465,15 @@ public class RelativeLayoutDrawer extends RelativeLayout implements SlideView {
 	/**
 	 * 拉出抽屉(立即, 无动画)
 	 */
-	public void pullOutImmidiatly(){
-		mDrawerProvider.pullOutImmidiatly();
+	public void pullOutImmediately(){
+		mDrawerProvider.pullOutImmediately();
 	}
 
 	/**
 	 * 关闭抽屉(立即, 无动画)
 	 */
-	public void pushInImmidiatly(){
-		mDrawerProvider.pushInImmidiatly();
+	public void pushInImmediately(){
+		mDrawerProvider.pushInImmediately();
 	}
 	
 	/***********************************************************

@@ -505,7 +505,7 @@ public class LayoutDrawerProvider {
     /**
      * 打开抽屉(立即, 无动画)
      */
-	protected void pullOutImmidiatly(){
+	protected void pullOutImmediately(){
 		if (mSlideEngine != null)
 			mSlideEngine.scrollToPosition(mSlideEngine.getPositionOfStage(pullOutStage), 0, false);
 	}
@@ -513,7 +513,7 @@ public class LayoutDrawerProvider {
     /**
      * 关闭抽屉(立即, 无动画)
      */
-	protected void pushInImmidiatly(){
+	protected void pushInImmediately(){
 		if (mSlideEngine != null)
 			mSlideEngine.scrollToPosition(mSlideEngine.getPositionOfStage(pushInStage), 0, false);
 	}

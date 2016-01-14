@@ -26,7 +26,7 @@ import android.graphics.drawable.BitmapDrawable;
 
 import java.io.InputStream;
 
-import sviolet.turquoise.utils.common.Logger;
+import sviolet.turquoise.utils.log.TLogger;
 
 /**
  * 安全的BitmapDrawable<br/>
@@ -38,7 +38,7 @@ import sviolet.turquoise.utils.common.Logger;
  */
 public class SafeBitmapDrawable extends BitmapDrawable {
 
-    private Logger logger;//日志打印器
+    private TLogger logger = TLogger.get(this);//日志打印器
     private boolean drawEnable = true;//允许绘制
     private boolean matchParent = false;//尺寸填充父控件(match_parent)
 
@@ -84,15 +84,11 @@ public class SafeBitmapDrawable extends BitmapDrawable {
             } catch (Exception e) {
                 //禁止绘制
                 drawEnable = false;
-                if (getLogger() != null) {
-                    getLogger().e("[SafeBitmapDrawable]draw: error, catch exception: " + e.getMessage());
-                }
+                logger.d("draw: error, catch exception: " + e.getMessage());
                 onDrawError(canvas, e);
             }
         }else{
-            if (getLogger() != null) {
-                getLogger().d("[SafeBitmapDrawable]draw: skip, because of exception");
-            }
+            logger.d("draw: skip, because of exception");
         }
     }
 
@@ -123,15 +119,6 @@ public class SafeBitmapDrawable extends BitmapDrawable {
     public SafeBitmapDrawable setMatchParent(boolean matchParent){
         this.matchParent = matchParent;
         return this;
-    }
-
-    public SafeBitmapDrawable setLogger(Logger logger){
-        this.logger = logger;
-        return this;
-    }
-
-    protected Logger getLogger(){
-        return logger;
     }
 
 }

@@ -38,7 +38,8 @@ import java.util.WeakHashMap;
 import sviolet.turquoise.enhanced.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhanced.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhanced.annotation.setting.ReleaseSettings;
-import sviolet.turquoise.utils.common.Logger;
+import sviolet.turquoise.utils.log.TLogger;
+import sviolet.turquoise.utils.log.TLoggerModule;
 import sviolet.turquoise.utils.sys.ApplicationUtils;
 
 /**
@@ -59,7 +60,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
     private boolean crashHandleToken = true;//崩溃处理令牌
     private boolean crashHandleTokenInner = false;//崩溃处理令牌(内部)
 
-    private Logger logger;//日志打印器
+    private TLogger logger = TLogger.get(this);//日志打印器
 
     protected void addActivity(Activity activity) {
         //存入Activity
@@ -70,7 +71,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
         //第一个Activity提示当前Debug模式
         if (mActivities.size() == 1){
             if (isDebugMode()){
-                getLogger().i("[TApplication]DebugMode");
+                logger.i("DebugMode");
                 Toast.makeText(getApplicationContext(), "Debug Mode", Toast.LENGTH_SHORT).show();
             }
         }
@@ -122,22 +123,35 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
             if (getDebugSettings().enableStrictMode()){
                 ApplicationUtils.enableStrictMode();
             }
-            //日志打印权限
-            logger = Logger.newInstance(getDebugSettings().logTag(),
-                    getDebugSettings().enableLogDebug(),
-                    getDebugSettings().enableLogInfo(),
-                    getDebugSettings().enableLogError());
+            //日志打印器配置
+            installTLogger(getDebugSettings().logModule(), getDebugSettings().logTag(), getDebugSettings().logLevelSwitch());
         }else {
             //策略检测
             if (getReleaseSettings().enableStrictMode()) {
                 ApplicationUtils.enableStrictMode();
             }
-            //日志打印权限
-            logger = Logger.newInstance(getReleaseSettings().logTag(),
-                    getReleaseSettings().enableLogDebug(),
-                    getReleaseSettings().enableLogInfo(),
-                    getReleaseSettings().enableLogError());
+            //日志打印器配置
+            installTLogger(getReleaseSettings().logModule(), getReleaseSettings().logTag(), getReleaseSettings().logLevelSwitch());
         }
+    }
+
+    private void installTLogger(Class<?> moduleClass, String tag, int levelSwitch){
+        if (moduleClass != null){
+            if (TLoggerModule.class.isAssignableFrom(moduleClass)){
+                try {
+                    TLogger.install((TLoggerModule)moduleClass.newInstance());
+                } catch (Exception e) {
+                    throw new RuntimeException("[TApplication]TLogger install error", e);
+                }
+            }else{
+                /**
+                 * ReleaseSettings/DebugSettings中配置的logModule参数, 必须为实现TLoggerModule接口的类
+                 */
+                throw new RuntimeException("[TApplication]\"logModule\" is not assignable from TLoggerModule.class which setting in ReleaseSettings/DebugSettings");
+            }
+        }
+        TLogger.setTag(tag);
+        TLogger.setLevelSwitch(levelSwitch);
     }
 
     /**
@@ -162,7 +176,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
         //打印错误日志
-        getLogger().e(ex);
+        logger.e(ex);
         //是否需要重启
         boolean isCrashRestart = isCrashRestart();
 
@@ -295,17 +309,6 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
      */
     public static TApplication getInstance() {
         return mApplication;
-    }
-
-    /**
-     * 获得日志打印器<br/>
-     * 必须配置ReleaseSettings/DebugSettings, 否则将获得一个无效的打印器
-     */
-    public Logger getLogger(){
-        if (logger == null){
-            logger = Logger.newInstance("", false, false, false);//返回无效的日志打印器
-        }
-        return logger;
     }
 
     /**

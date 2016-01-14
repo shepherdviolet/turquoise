@@ -32,6 +32,7 @@ import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
 import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
 import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
+import sviolet.turquoise.utils.log.TLogger;
 
 /**
  * 网络加载处理器默认实现<p/>
@@ -63,6 +64,8 @@ import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
  * Created by S.Violet on 2015/10/12.
  */
 public class DefaultNetLoadHandler implements NetLoadHandler {
+
+    private TLogger logger = TLogger.get(this);
 
     private int connectTimeout;
     private int readTimeout;
@@ -243,9 +246,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
                 decodeHeight = scaleHeight;
             }
 
-            if (loader.getLogger() != null){
-                loader.getLogger().d("[DefaultNetLoadHandler]scale: start, url<" + request.getUrl() + "> decodeReqWidth:" + decodeWidth + " decodeReqHeight:" + decodeHeight);
-            }
+            logger.d("scale: start, url<" + request.getUrl() + "> decodeReqWidth:" + decodeWidth + " decodeReqHeight:" + decodeHeight);
 
             Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, decodeWidth, decodeHeight);
             if (bitmap == null){
@@ -253,9 +254,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
                 return null;
             }
 
-            if (loader.getLogger() != null){
-                loader.getLogger().d("[DefaultNetLoadHandler]scale: decoded, url<" + request.getUrl() + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
-            }
+            logger.d("scale: decoded, url<" + request.getUrl() + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
 
             if (scaleWidth > 0 || scaleHeight > 0){
                 bitmap = BitmapUtils.scaleTo(bitmap, scaleWidth, scaleHeight, true);
@@ -263,9 +262,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
                     messenger.setResultFailed(new Exception("[DefaultNetLoadHandler]scale: bitmap scale failed"));
                     return null;
                 }
-                if (loader.getLogger() != null){
-                    loader.getLogger().d("[DefaultNetLoadHandler]scale: scaled, url<" + request.getUrl() + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
-                }
+                logger.d("scale: scaled, url<" + request.getUrl() + "> bitmapWidth:" + bitmap.getWidth() + " bitmapHeight:" + bitmap.getHeight());
             }
 
             //图片特殊处理
