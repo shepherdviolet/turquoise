@@ -1,4 +1,4 @@
-package sviolet.turquoise.model.queue;
+package sviolet.turquoise.model.queue.common;
 
 import java.util.ArrayList;
 import java.util.Collection;
