@@ -26,6 +26,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 
+import sviolet.turquoise.util.common.ParasiticVars;
 import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
 import sviolet.turquoise.utilx.lifecycle.manager.LifeCycleFragment;
 import sviolet.turquoise.utilx.lifecycle.manager.LifeCycleFragmentV4;

@@ -28,7 +28,7 @@ import android.os.Bundle;
 
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.utilx.lifecycle.ParasiticVars;
+import sviolet.turquoise.util.common.ParasiticVars;
 import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 
 /**

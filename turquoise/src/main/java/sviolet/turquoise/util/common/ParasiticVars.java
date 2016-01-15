@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utilx.lifecycle;
+package sviolet.turquoise.util.common;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
