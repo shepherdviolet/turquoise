@@ -63,11 +63,19 @@ public class DateTimeUtils {
 	}
 
 	/**
-	 * 获得系统启动至今经过的毫秒数, 深睡眠时不计时
+	 * [Android]获得系统启动至今经过的毫秒数, 深睡眠时不计时
 	 * @return
 	 */
 	public static long getUptimeMillis(){
 		return SystemClock.uptimeMillis();
+	}
+
+	/**
+	 * 获得当前纳秒时间, 该时间仅用于计算程序经过时间, 不保证精确
+	 * @return
+     */
+	public static long getNanoTime(){
+		return System.nanoTime();
 	}
 
     /*************************************************
