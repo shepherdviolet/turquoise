@@ -25,7 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import sviolet.turquoise.utils.SpecialResourceId;
+import sviolet.turquoise.common.statics.SpecialResourceId;
 
 /**
  * ViewHolder工具, 用于Adapter<br/>

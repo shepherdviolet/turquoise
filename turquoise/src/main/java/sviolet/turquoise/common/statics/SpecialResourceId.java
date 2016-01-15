@@ -1,4 +1,4 @@
-package sviolet.turquoise.utils;
+package sviolet.turquoise.common.statics;
 
 /**
  * 特殊资源ID

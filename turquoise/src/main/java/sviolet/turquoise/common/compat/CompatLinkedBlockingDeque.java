@@ -4,7 +4,7 @@
  * http://creativecommons.org/publicdomain/zero/1.0/
  */
 
-package sviolet.turquoise.compat;
+package sviolet.turquoise.common.compat;
 
 import java.util.AbstractQueue;
 import java.util.Collection;

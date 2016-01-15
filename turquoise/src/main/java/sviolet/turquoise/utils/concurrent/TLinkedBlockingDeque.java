@@ -3,12 +3,10 @@ package sviolet.turquoise.utils.concurrent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.compat.CompatLinkedBlockingDeque;
+import sviolet.turquoise.common.compat.CompatLinkedBlockingDeque;
 
 /**
  * 强化版LinkedBlockingDeque<Br/>

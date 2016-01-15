@@ -29,7 +29,7 @@ import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHa
 import sviolet.turquoise.utils.bitmap.loader.handler.DiskCacheExceptionHandler;
 import sviolet.turquoise.utils.bitmap.loader.task.SimpleBitmapLoaderTaskFactory;
 import sviolet.turquoise.utils.cache.BitmapCache;
-import sviolet.turquoise.utils.SpecialResourceId;
+import sviolet.turquoise.common.statics.SpecialResourceId;
 import sviolet.turquoise.utils.lifecycle.listener.LifeCycle;
 import sviolet.turquoise.utils.log.TLogger;
 

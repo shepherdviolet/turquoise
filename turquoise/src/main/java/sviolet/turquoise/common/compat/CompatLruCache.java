@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package sviolet.turquoise.compat;
+package sviolet.turquoise.common.compat;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

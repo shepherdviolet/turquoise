@@ -22,7 +22,7 @@ package sviolet.turquoise.view.slide.logic;
 import android.annotation.SuppressLint;
 import android.content.Context;
 
-import sviolet.turquoise.compat.CompatScroller23;
+import sviolet.turquoise.common.compat.CompatScroller23;
 import sviolet.turquoise.view.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.view.slide.SlideView;
 
