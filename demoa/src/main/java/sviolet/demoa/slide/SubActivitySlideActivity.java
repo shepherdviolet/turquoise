@@ -29,7 +29,7 @@ import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.ui.listener.OnSlideStopListener;
-import sviolet.turquoise.uix.slideengine.logic.LinearGestureDriver;
+import sviolet.turquoise.uix.slideengine.impl.LinearGestureDriver;
 import sviolet.turquoise.uix.slideengine.view.RelativeLayoutDrawer;
 
 /**

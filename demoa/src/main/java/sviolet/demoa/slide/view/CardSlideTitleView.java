@@ -21,7 +21,7 @@ package sviolet.demoa.slide.view;
 
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;
-import sviolet.turquoise.uix.slideengine.logic.LinearFlingEngine;
+import sviolet.turquoise.uix.slideengine.impl.LinearFlingEngine;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;

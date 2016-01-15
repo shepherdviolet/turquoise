@@ -22,8 +22,8 @@ package sviolet.demoa.slide.view;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.ui.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;
-import sviolet.turquoise.uix.slideengine.logic.LinearFlingEngine;
-import sviolet.turquoise.uix.slideengine.logic.LinearGestureDriver;
+import sviolet.turquoise.uix.slideengine.impl.LinearFlingEngine;
+import sviolet.turquoise.uix.slideengine.impl.LinearGestureDriver;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.uix.slideengine.logic;
+package sviolet.turquoise.uix.slideengine.impl;
 
 import android.content.Context;
 

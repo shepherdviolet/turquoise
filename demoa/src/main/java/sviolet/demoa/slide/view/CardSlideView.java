@@ -33,9 +33,9 @@ import sviolet.turquoise.ui.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.uix.slideengine.abs.SlideEngine;
 import sviolet.turquoise.uix.slideengine.abs.SlideEngineGroup;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;
-import sviolet.turquoise.uix.slideengine.logic.LinearFlingEngine;
-import sviolet.turquoise.uix.slideengine.logic.LinearGestureDriver;
-import sviolet.turquoise.uix.slideengine.logic.LinearStageScrollEngine;
+import sviolet.turquoise.uix.slideengine.impl.LinearFlingEngine;
+import sviolet.turquoise.uix.slideengine.impl.LinearGestureDriver;
+import sviolet.turquoise.uix.slideengine.impl.LinearStageScrollEngine;
 import sviolet.turquoise.uix.slideengine.view.AdaptListView;
 
 

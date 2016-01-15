@@ -21,7 +21,7 @@ package sviolet.turquoise.uix.slideengine.view;
 
 import sviolet.turquoise.ui.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;
-import sviolet.turquoise.uix.slideengine.logic.LinearFlingEngine;
+import sviolet.turquoise.uix.slideengine.impl.LinearFlingEngine;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.AttributeSet;
