@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.ui.common.ViewHolder;
+import sviolet.turquoise.ui.util.ViewHolder;
 import sviolet.turquoise.uix.slideengine.view.LinearLayoutDrawer;
 import sviolet.turquoise.uix.slideengine.view.SlideListAdapter;
 

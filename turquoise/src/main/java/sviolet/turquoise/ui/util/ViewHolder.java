@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.ui.common;
+package sviolet.turquoise.ui.util;
 
 import android.content.Context;
 import android.util.SparseArray;

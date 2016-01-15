@@ -32,7 +32,7 @@ import java.util.List;
 import sviolet.demoa.R;
 import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
-import sviolet.turquoise.ui.common.ViewHolder;
+import sviolet.turquoise.ui.util.ViewHolder;
 import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**
