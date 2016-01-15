@@ -9,12 +9,12 @@
 > ┈┈ 1.BitmapLoader/SimpleBitmapLoader ┃ 双缓存图片异步加载器 <br/>
 > ┈┈ 2.LifeCycleUtils ┃ Activity生命周期监听工具 <br/>
 > ┈┈ 3.TLogger ┃ 可扩展日志打印器 <br/>
-> ┈┈ cache/queue/conversion/crypt/sort/android system utils/......
+> ┈┈ cache/queue/conversion/crypt/sort/android system utils/......<br/>
 > <br/>
 > Views ┃ sviolet.turquoise.ui/uix <br/>
 > ┈┈ 1.SlideEngine ┃ 滑动引擎/滑动控件 <br/>
 > ┈┈ 2.ViewHolder ┃ Adapter辅助工具 <br/>
-> ┈┈ shadow/gif/ripple/rotate/scrape/......
+> ┈┈ shadow/gif/ripple/rotate/scrape/......<br/>
 > <br/>
 > enhanced android component ┃ sviolet.turquoise.enhance <br/>
 > ┈┈ 1.InjectUtils ┃ 注释型控件注入工具 <br/>
