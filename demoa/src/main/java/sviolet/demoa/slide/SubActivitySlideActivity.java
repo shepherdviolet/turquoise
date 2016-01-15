@@ -27,7 +27,7 @@ import sviolet.demoa.R;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
-import sviolet.turquoise.utils.sys.MeasureUtils;
+import sviolet.turquoise.util.sys.MeasureUtils;
 import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
 import sviolet.turquoise.view.slide.view.RelativeLayoutDrawer;

@@ -21,7 +21,7 @@ package sviolet.demoa.utils;
 
 import org.json.JSONObject;
 
-import sviolet.turquoise.utils.net.HttpURLConnectionResponse;
+import sviolet.turquoise.util.net.HttpURLConnectionResponse;
 
 /**
  * [DEMO]

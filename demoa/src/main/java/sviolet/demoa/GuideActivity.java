@@ -36,7 +36,7 @@ import sviolet.demoa.slide.SlideActivity;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-import sviolet.turquoise.model.bitmaploader.BitmapLoader;
+import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 
 /**************************************************************
  * Demo配置

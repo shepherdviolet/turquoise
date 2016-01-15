@@ -19,7 +19,7 @@
 
 package sviolet.demoa.slide.view;
 
-import sviolet.turquoise.utils.sys.DeviceUtils;
+import sviolet.turquoise.util.sys.DeviceUtils;
 import sviolet.turquoise.view.slide.view.LayoutDrawerProvider;
 import sviolet.turquoise.view.slide.view.RelativeLayoutDrawer;
 

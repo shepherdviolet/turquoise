@@ -30,10 +30,10 @@ import android.widget.TextView;
 import java.util.List;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.model.bitmaploader.SimpleBitmapLoader;
-import sviolet.turquoise.model.bitmaploader.entity.BitmapRequest;
+import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoader;
+import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
 import sviolet.turquoise.enhance.common.ViewHolder;
-import sviolet.turquoise.utils.sys.MeasureUtils;
+import sviolet.turquoise.util.sys.MeasureUtils;
 
 /**
  * ListView适配器

@@ -33,11 +33,11 @@ import sviolet.demoa.image.utils.MyNetLoadHandler;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-import sviolet.turquoise.model.bitmaploader.SimpleBitmapLoader;
-import sviolet.turquoise.model.bitmaploader.drawable.DefaultLoadingDrawableFactory;
-import sviolet.turquoise.model.bitmaploader.handler.DefaultDiskCacheExceptionHandler;
-import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
-import sviolet.turquoise.utils.sys.MeasureUtils;
+import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoader;
+import sviolet.turquoise.modelx.bitmaploader.drawable.DefaultLoadingDrawableFactory;
+import sviolet.turquoise.modelx.bitmaploader.handler.DefaultDiskCacheExceptionHandler;
+import sviolet.turquoise.util.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.util.sys.MeasureUtils;
 
 @DemoDescription(
         title = "AsyncImageList2",

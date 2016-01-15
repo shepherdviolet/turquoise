@@ -33,7 +33,7 @@ import sviolet.demoa.slide.view.ZoomRelativeLayoutDrawer;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
-import sviolet.turquoise.utils.sys.MeasureUtils;
+import sviolet.turquoise.util.sys.MeasureUtils;
 
 @DemoDescription(
         title = "ZoomDrawer",

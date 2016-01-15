@@ -33,14 +33,14 @@ import java.util.List;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.enhance.app.TActivity;
-import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
-import sviolet.turquoise.model.bitmaploader.BitmapLoader;
-import sviolet.turquoise.model.bitmaploader.entity.BitmapRequest;
-import sviolet.turquoise.model.bitmaploader.listener.OnBitmapLoadedListener;
+import sviolet.turquoise.util.bitmap.BitmapUtils;
+import sviolet.turquoise.util.bitmap.CachedBitmapUtils;
+import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
+import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
+import sviolet.turquoise.modelx.bitmaploader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.enhance.common.ViewHolder;
-import sviolet.turquoise.utils.log.TLogger;
-import sviolet.turquoise.utils.sys.MeasureUtils;
+import sviolet.turquoise.util.log.TLogger;
+import sviolet.turquoise.util.sys.MeasureUtils;
 import sviolet.turquoise.view.GradualImageView;
 
 /**

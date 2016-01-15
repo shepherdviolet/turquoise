@@ -34,16 +34,16 @@ import sviolet.demoa.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
-import sviolet.turquoise.model.bitmaploader.BitmapLoader;
-import sviolet.turquoise.model.bitmaploader.entity.BitmapRequest;
-import sviolet.turquoise.model.bitmaploader.listener.OnBitmapLoadedListener;
-import sviolet.turquoise.model.bitmaploader.SimpleBitmapLoader;
-import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
-import sviolet.turquoise.utils.log.TLogger;
-import sviolet.turquoise.utils.sys.MeasureUtils;
-import sviolet.turquoise.utils.sys.NetStateUtils;
+import sviolet.turquoise.util.bitmap.BitmapUtils;
+import sviolet.turquoise.util.bitmap.CachedBitmapUtils;
+import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
+import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
+import sviolet.turquoise.modelx.bitmaploader.listener.OnBitmapLoadedListener;
+import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoader;
+import sviolet.turquoise.util.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.util.log.TLogger;
+import sviolet.turquoise.util.sys.MeasureUtils;
+import sviolet.turquoise.util.sys.NetStateUtils;
 
 @DemoDescription(
         title = "Common Image Demo",
