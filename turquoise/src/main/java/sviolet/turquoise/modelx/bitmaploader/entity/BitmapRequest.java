@@ -198,4 +198,13 @@ public class BitmapRequest {
 //        return presetWidth > 0 && presetHeight > 0;
 //    }
 
+    /******************************************************
+     * override
+     ******************************************************/
+
+    @Override
+    public String toString() {
+        return "<BitmapRequest<Url:" + url + "><ReqDimen:" + reqWidth + "*" + reqHeight + "><" + bitmapConfig.toString() + ">>";
+    }
 }
+

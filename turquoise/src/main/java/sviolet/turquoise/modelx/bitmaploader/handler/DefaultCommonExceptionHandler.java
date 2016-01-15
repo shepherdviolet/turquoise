@@ -23,6 +23,7 @@ import android.content.Context;
 
 import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * 普通异常处理器默认实现<p/>
@@ -33,10 +34,11 @@ import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
  */
 public class DefaultCommonExceptionHandler implements CommonExceptionHandler {
 
+    TLogger logger = TLogger.get(this);
+
     @Override
     public void onCommonException(Context context, BitmapLoader bitmapLoader, BitmapRequest request, Throwable throwable) {
-        //直接输出错误信息
-        throwable.printStackTrace();
+        logger.e("BitmapLoader:Exception:" + request, throwable);
     }
 
     @Override
