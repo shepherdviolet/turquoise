@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <sviolet.turquoise.view.slide.view.RelativeLayoutDrawer
+    <sviolet.turquoise.ui.slide.view.RelativeLayoutDrawer
         android:id="@+id/slide_activity_sub_drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,7 +18,7 @@
             android:background="#80209090"
             android:clickable="true" />
 
-        <sviolet.turquoise.view.shadow.LinearShadowView
+        <sviolet.turquoise.ui.shadow.LinearShadowView
             android:layout_width="5dp"
             android:layout_height="match_parent"
             android:layout_alignLeft="@id/slide_activity_sub_drawer_view"
@@ -26,6 +26,6 @@
             sviolet:LinearShadowView_direction="left"
             sviolet:colour="#40000000" />
 
-    </sviolet.turquoise.view.slide.view.RelativeLayoutDrawer>
+    </sviolet.turquoise.ui.slide.view.RelativeLayoutDrawer>
 
 </LinearLayout>

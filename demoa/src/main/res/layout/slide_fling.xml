@@ -23,7 +23,7 @@
             android:background="#FFE0E0E0"
             android:clickable="true" />
 
-        <sviolet.turquoise.view.shadow.LinearShadowView
+        <sviolet.turquoise.ui.shadow.LinearShadowView
             android:layout_width="match_parent"
             android:layout_height="5dp"
             sviolet:colour="#50808080"

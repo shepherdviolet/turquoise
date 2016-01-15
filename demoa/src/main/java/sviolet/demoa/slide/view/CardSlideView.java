@@ -29,14 +29,14 @@ import android.widget.LinearLayout;
 import java.util.List;
 
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.view.listener.OnVelocityOverflowListener;
-import sviolet.turquoise.view.slide.SlideEngine;
-import sviolet.turquoise.view.slide.SlideEngineGroup;
-import sviolet.turquoise.view.slide.SlideView;
-import sviolet.turquoise.view.slide.logic.LinearFlingEngine;
-import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
-import sviolet.turquoise.view.slide.logic.LinearStageScrollEngine;
-import sviolet.turquoise.view.slide.view.AdaptListView;
+import sviolet.turquoise.ui.listener.OnVelocityOverflowListener;
+import sviolet.turquoise.ui.slide.SlideEngine;
+import sviolet.turquoise.ui.slide.SlideEngineGroup;
+import sviolet.turquoise.ui.slide.SlideView;
+import sviolet.turquoise.ui.slide.logic.LinearFlingEngine;
+import sviolet.turquoise.ui.slide.logic.LinearGestureDriver;
+import sviolet.turquoise.ui.slide.logic.LinearStageScrollEngine;
+import sviolet.turquoise.ui.slide.view.AdaptListView;
 
 
 /**

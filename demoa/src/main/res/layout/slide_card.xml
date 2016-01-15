@@ -35,7 +35,7 @@
 
         </sviolet.demoa.slide.view.CardSlideTitleView>
 
-        <sviolet.turquoise.view.slide.view.AdaptListView
+        <sviolet.turquoise.ui.slide.view.AdaptListView
             android:id="@+id/slide_card_cardview_listview"
             android:layout_width="match_parent"
             android:layout_height="0dp"

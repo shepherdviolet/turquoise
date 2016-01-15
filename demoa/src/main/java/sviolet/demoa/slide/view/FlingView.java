@@ -20,10 +20,10 @@
 package sviolet.demoa.slide.view;
 
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.view.listener.OnVelocityOverflowListener;
-import sviolet.turquoise.view.slide.SlideView;
-import sviolet.turquoise.view.slide.logic.LinearFlingEngine;
-import sviolet.turquoise.view.slide.logic.LinearGestureDriver;
+import sviolet.turquoise.ui.listener.OnVelocityOverflowListener;
+import sviolet.turquoise.ui.slide.SlideView;
+import sviolet.turquoise.ui.slide.logic.LinearFlingEngine;
+import sviolet.turquoise.ui.slide.logic.LinearGestureDriver;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

@@ -52,7 +52,7 @@
                 android:clickable="true" />
 
             <!-- 线性渐变阴影 -->
-            <sviolet.turquoise.view.shadow.LinearShadowView
+            <sviolet.turquoise.ui.shadow.LinearShadowView
                 android:layout_width="match_parent"
                 android:layout_height="5dp"
                 sviolet:LinearShadowView_direction="bottom"

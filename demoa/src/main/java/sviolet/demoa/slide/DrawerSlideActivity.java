@@ -29,9 +29,9 @@ import sviolet.demoa.common.EmulateListAdapter;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
-import sviolet.turquoise.view.listener.OnSlideStopListener;
-import sviolet.turquoise.view.shadow.LinearShadowView;
-import sviolet.turquoise.view.slide.view.RelativeLayoutDrawer;
+import sviolet.turquoise.ui.listener.OnSlideStopListener;
+import sviolet.turquoise.ui.shadow.LinearShadowView;
+import sviolet.turquoise.ui.slide.view.RelativeLayoutDrawer;
 
 @DemoDescription(
         title = "Drawer",

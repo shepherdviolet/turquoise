@@ -20,8 +20,8 @@
 package sviolet.demoa.slide.view;
 
 import sviolet.turquoise.util.droid.DeviceUtils;
-import sviolet.turquoise.view.slide.view.LayoutDrawerProvider;
-import sviolet.turquoise.view.slide.view.RelativeLayoutDrawer;
+import sviolet.turquoise.ui.slide.view.LayoutDrawerProvider;
+import sviolet.turquoise.ui.slide.view.RelativeLayoutDrawer;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

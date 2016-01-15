@@ -13,14 +13,14 @@ LinearLayoutDrawer必须设置背景颜色
         android:layout_height="100dp"
         android:background="#209090">
 
-        <sviolet.turquoise.view.shadow.LinearShadowView
+        <sviolet.turquoise.ui.shadow.LinearShadowView
             android:layout_width="match_parent"
             android:layout_height="3dp"
             android:layout_alignParentTop="true"
             sviolet:LinearShadowView_direction="bottom"
             sviolet:colour="#40000000" />
 
-        <sviolet.turquoise.view.shadow.LinearShadowView
+        <sviolet.turquoise.ui.shadow.LinearShadowView
             android:layout_width="match_parent"
             android:layout_height="3dp"
             android:layout_alignParentBottom="true"
@@ -39,7 +39,7 @@ LinearLayoutDrawer必须设置背景颜色
 
     </RelativeLayout>
 
-    <sviolet.turquoise.view.slide.view.LinearLayoutDrawer
+    <sviolet.turquoise.ui.slide.view.LinearLayoutDrawer
         android:id="@+id/slide_list_drawer"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -95,12 +95,12 @@ LinearLayoutDrawer必须设置背景颜色
 
         </LinearLayout>
 
-        <sviolet.turquoise.view.shadow.LinearShadowView
+        <sviolet.turquoise.ui.shadow.LinearShadowView
             android:layout_width="3dp"
             android:layout_height="100dp"
             sviolet:LinearShadowView_direction="right"
             sviolet:colour="#40000000" />
 
-    </sviolet.turquoise.view.slide.view.LinearLayoutDrawer>
+    </sviolet.turquoise.ui.slide.view.LinearLayoutDrawer>
 
 </RelativeLayout>

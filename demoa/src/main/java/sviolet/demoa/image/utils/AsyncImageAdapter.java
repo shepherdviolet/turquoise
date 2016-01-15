@@ -41,7 +41,7 @@ import sviolet.turquoise.modelx.bitmaploader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.enhance.common.ViewHolder;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.view.GradualImageView;
+import sviolet.turquoise.ui.GradualImageView;
 
 /**
  * ListView适配器
