@@ -21,9 +21,9 @@ package sviolet.turquoise.uix.slideengine.logic;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.ui.listener.OnSlideStopListener;
-import sviolet.turquoise.uix.slideengine.GestureDriver;
-import sviolet.turquoise.uix.slideengine.SlideEngine;
-import sviolet.turquoise.uix.slideengine.SlideView;
+import sviolet.turquoise.uix.slideengine.abs.GestureDriver;
+import sviolet.turquoise.uix.slideengine.abs.SlideEngine;
+import sviolet.turquoise.uix.slideengine.abs.SlideView;
 import android.content.Context;
 import android.os.Looper;
 import android.os.Message;

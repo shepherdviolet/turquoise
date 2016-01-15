@@ -24,7 +24,7 @@ import android.content.Context;
 
 import sviolet.turquoise.common.compat.CompatScroller23;
 import sviolet.turquoise.ui.listener.OnVelocityOverflowListener;
-import sviolet.turquoise.uix.slideengine.SlideView;
+import sviolet.turquoise.uix.slideengine.abs.SlideView;
 
 /**
  * 

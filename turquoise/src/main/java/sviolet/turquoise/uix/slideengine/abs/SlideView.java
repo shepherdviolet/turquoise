@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.uix.slideengine;
+package sviolet.turquoise.uix.slideengine.abs;
 
 /**
  * 滑动效果控件<p/>

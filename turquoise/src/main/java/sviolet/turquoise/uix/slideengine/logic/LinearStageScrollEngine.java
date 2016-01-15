@@ -22,7 +22,7 @@ package sviolet.turquoise.uix.slideengine.logic;
 import android.content.Context;
 
 import sviolet.turquoise.common.exception.DeprecatedException;
-import sviolet.turquoise.uix.slideengine.SlideView;
+import sviolet.turquoise.uix.slideengine.abs.SlideView;
 
 /**
  * 

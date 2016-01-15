@@ -23,9 +23,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.turquoise.uix.slideengine.GestureDriver;
-import sviolet.turquoise.uix.slideengine.SlideEngine;
-import sviolet.turquoise.uix.slideengine.SlideView;
+import sviolet.turquoise.uix.slideengine.abs.GestureDriver;
+import sviolet.turquoise.uix.slideengine.abs.SlideEngine;
+import sviolet.turquoise.uix.slideengine.abs.SlideView;
 
 import android.content.Context;
 import android.os.Looper;

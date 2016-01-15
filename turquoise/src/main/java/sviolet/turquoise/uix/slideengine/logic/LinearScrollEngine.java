@@ -24,7 +24,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import sviolet.turquoise.common.compat.CompatScroller23;
-import sviolet.turquoise.uix.slideengine.SlideView;
+import sviolet.turquoise.uix.slideengine.abs.SlideView;
 
 /**
  * 

@@ -20,8 +20,8 @@
 package sviolet.demoa.slide.view;
 
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.uix.slideengine.SlideEngine;
-import sviolet.turquoise.uix.slideengine.SlideView;
+import sviolet.turquoise.uix.slideengine.abs.SlideEngine;
+import sviolet.turquoise.uix.slideengine.abs.SlideView;
 import sviolet.turquoise.uix.slideengine.logic.LinearGestureDriver;
 import sviolet.turquoise.uix.slideengine.logic.LinearStageScrollEngine;
 import android.annotation.SuppressLint;

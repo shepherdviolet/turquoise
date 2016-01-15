@@ -20,7 +20,7 @@
 package sviolet.demoa.slide.view;
 
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.uix.slideengine.SlideView;
+import sviolet.turquoise.uix.slideengine.abs.SlideView;
 import sviolet.turquoise.uix.slideengine.logic.LinearFlingEngine;
 import android.content.Context;
 import android.util.AttributeSet;

@@ -27,7 +27,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import sviolet.turquoise.R;
-import sviolet.turquoise.uix.slideengine.SlideIndicator;
+import sviolet.turquoise.uix.slideengine.abs.SlideIndicator;
 
 /**
  * 点状翻页指示器

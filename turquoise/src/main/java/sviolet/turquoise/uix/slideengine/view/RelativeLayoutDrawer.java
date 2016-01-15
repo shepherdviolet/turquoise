@@ -21,7 +21,7 @@ package sviolet.turquoise.uix.slideengine.view;
 
 import sviolet.turquoise.ui.listener.OnInitCompleteListener;
 import sviolet.turquoise.ui.listener.OnSlideStopListener;
-import sviolet.turquoise.uix.slideengine.SlideView;
+import sviolet.turquoise.uix.slideengine.abs.SlideView;
 import sviolet.turquoise.uix.slideengine.logic.LinearGestureDriver;
 import sviolet.turquoise.uix.slideengine.logic.LinearScrollEngine;
 import android.annotation.SuppressLint;
