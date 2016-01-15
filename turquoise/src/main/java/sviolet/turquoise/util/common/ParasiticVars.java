@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.model.thread.LazySingleThreadPool;
+import sviolet.turquoise.model.common.LazySingleThreadPool;
 import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
 
 /**

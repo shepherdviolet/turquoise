@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.model.thread;
+package sviolet.turquoise.model.common;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
