@@ -27,7 +27,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 
-import sviolet.turquoise.model.queue.taskqueue.TQueue;
+import sviolet.turquoise.model.queue.task.TQueue;
 
 /**
  * 简易Http/HttpsURLConnection请求会话实例<br>

@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.model.queue.taskqueue;
+package sviolet.turquoise.model.queue.task;
 
 import android.os.Looper;
 import android.os.Message;
