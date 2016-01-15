@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.view;
 
-import sviolet.turquoise.utils.common.WeakHandler;
+import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 
 import android.annotation.SuppressLint;

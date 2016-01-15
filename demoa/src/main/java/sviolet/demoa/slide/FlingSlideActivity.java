@@ -24,9 +24,9 @@ import android.os.Bundle;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.slide.view.FlingView;
-import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
-import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
-import sviolet.turquoise.enhanced.TActivity;
+import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.app.TActivity;
 
 @DemoDescription(
         title = "Fling",

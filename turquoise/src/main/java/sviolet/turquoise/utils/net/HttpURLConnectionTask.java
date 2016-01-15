@@ -35,7 +35,7 @@ import java.net.UnknownHostException;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 
-import sviolet.turquoise.model.queue.TTask;
+import sviolet.turquoise.model.queue.taskqueue.TTask;
 
 /**
  * 简易Http/HttpsURLConnection请求任务(通常由SimpleHttpURLConnectionClient创建并管理)<br>

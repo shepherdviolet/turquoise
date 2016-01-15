@@ -19,7 +19,6 @@
 
 package sviolet.demoa.image;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.widget.ListView;
 
@@ -31,12 +30,12 @@ import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.image.utils.AsyncImageAdapter;
 import sviolet.demoa.image.utils.AsyncImageItem;
 import sviolet.demoa.image.utils.MyNetLoadHandler;
-import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
-import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
-import sviolet.turquoise.enhanced.TActivity;
+import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
-import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
+import sviolet.turquoise.model.bitmaploader.BitmapLoader;
+import sviolet.turquoise.model.bitmaploader.handler.DefaultDiskCacheExceptionHandler;
 import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
 
 @DemoDescription(

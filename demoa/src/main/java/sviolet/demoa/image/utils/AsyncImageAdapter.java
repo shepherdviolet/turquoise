@@ -32,13 +32,13 @@ import android.widget.Toast;
 import java.util.List;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.enhanced.TActivity;
+import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
 import sviolet.turquoise.utils.bitmap.CachedBitmapUtils;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
-import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
-import sviolet.turquoise.utils.bitmap.loader.listener.OnBitmapLoadedListener;
-import sviolet.turquoise.utils.common.ViewHolder;
+import sviolet.turquoise.model.bitmaploader.BitmapLoader;
+import sviolet.turquoise.model.bitmaploader.entity.BitmapRequest;
+import sviolet.turquoise.model.bitmaploader.listener.OnBitmapLoadedListener;
+import sviolet.turquoise.enhance.common.ViewHolder;
 import sviolet.turquoise.utils.log.TLogger;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 import sviolet.turquoise.view.GradualImageView;

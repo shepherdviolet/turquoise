@@ -30,9 +30,9 @@ import android.widget.TextView;
 import java.util.List;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
-import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
-import sviolet.turquoise.utils.common.ViewHolder;
+import sviolet.turquoise.model.bitmaploader.SimpleBitmapLoader;
+import sviolet.turquoise.model.bitmaploader.entity.BitmapRequest;
+import sviolet.turquoise.enhance.common.ViewHolder;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 
 /**

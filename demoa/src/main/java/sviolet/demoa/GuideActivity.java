@@ -28,17 +28,15 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.IOException;
-
 import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
 import sviolet.demoa.image.ImageActivity;
 import sviolet.demoa.slide.SlideActivity;
-import sviolet.turquoise.enhanced.TActivity;
-import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
-import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
+import sviolet.turquoise.enhance.app.TActivity;
+import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.model.bitmaploader.BitmapLoader;
 
 /**************************************************************
  * Demo配置

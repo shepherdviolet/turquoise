@@ -29,10 +29,10 @@ import java.util.concurrent.Executors;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.utils.bitmap.BitmapUtils;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoader;
-import sviolet.turquoise.utils.bitmap.loader.entity.BitmapRequest;
-import sviolet.turquoise.utils.bitmap.loader.handler.NetLoadHandler;
-import sviolet.turquoise.utils.bitmap.loader.BitmapLoaderMessenger;
+import sviolet.turquoise.model.bitmaploader.BitmapLoader;
+import sviolet.turquoise.model.bitmaploader.entity.BitmapRequest;
+import sviolet.turquoise.model.bitmaploader.handler.NetLoadHandler;
+import sviolet.turquoise.model.bitmaploader.BitmapLoaderMessenger;
 
 /**
  * BitmapLoader网络加载处理器, 自定义实现

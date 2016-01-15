@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.utils.common.ViewHolder;
+import sviolet.turquoise.enhance.common.ViewHolder;
 import sviolet.turquoise.view.slide.view.LinearLayoutDrawer;
 import sviolet.turquoise.view.slide.view.SlideListAdapter;
 

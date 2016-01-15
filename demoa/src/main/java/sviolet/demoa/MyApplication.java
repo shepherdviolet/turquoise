@@ -19,10 +19,10 @@
 
 package sviolet.demoa;
 
-import sviolet.turquoise.enhanced.annotation.setting.ApplicationSettings;
-import sviolet.turquoise.enhanced.annotation.setting.DebugSettings;
-import sviolet.turquoise.enhanced.annotation.setting.ReleaseSettings;
-import sviolet.turquoise.enhanced.TApplication;
+import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
+import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
+import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
+import sviolet.turquoise.enhance.app.TApplication;
 import sviolet.turquoise.utils.log.TLogger;
 
 @ApplicationSettings(

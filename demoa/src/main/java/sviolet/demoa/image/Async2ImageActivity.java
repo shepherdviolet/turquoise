@@ -30,12 +30,12 @@ import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.image.utils.AsyncImageAdapter2;
 import sviolet.demoa.image.utils.AsyncImageItem;
 import sviolet.demoa.image.utils.MyNetLoadHandler;
-import sviolet.turquoise.enhanced.TActivity;
-import sviolet.turquoise.enhanced.annotation.inject.ResourceId;
-import sviolet.turquoise.enhanced.annotation.setting.ActivitySettings;
-import sviolet.turquoise.utils.bitmap.loader.SimpleBitmapLoader;
-import sviolet.turquoise.utils.bitmap.loader.drawable.DefaultLoadingDrawableFactory;
-import sviolet.turquoise.utils.bitmap.loader.handler.DefaultDiskCacheExceptionHandler;
+import sviolet.turquoise.enhance.app.TActivity;
+import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
+import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.model.bitmaploader.SimpleBitmapLoader;
+import sviolet.turquoise.model.bitmaploader.drawable.DefaultLoadingDrawableFactory;
+import sviolet.turquoise.model.bitmaploader.handler.DefaultDiskCacheExceptionHandler;
 import sviolet.turquoise.utils.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utils.sys.MeasureUtils;
 

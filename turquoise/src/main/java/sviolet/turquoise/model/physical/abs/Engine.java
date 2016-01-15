@@ -25,7 +25,7 @@ import android.os.Message;
 import java.util.ArrayList;
 import java.util.List;
 
-import sviolet.turquoise.utils.common.WeakHandler;
+import sviolet.turquoise.enhance.common.WeakHandler;
 
 /**
  * 
