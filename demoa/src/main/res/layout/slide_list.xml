@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <sviolet.turquoise.ui.slide.view.SlideListView
+    <sviolet.turquoise.uix.slideengine.view.SlideListView
         android:id="@+id/slide_list_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

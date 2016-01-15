@@ -19,7 +19,7 @@
     <!-- scrollX/scrollY设置一个很大的值, 让子控件消失, 由engine的初始位置决定控件初始位置 -->
     <!-- [必须]background 设置透明背景, 使得ViewGroup得以绘制, 否则无法滑动 -->
     <!-- [必须]若子控件不处理触摸事件的(例TextView), 则必须设置子控件clickable="true", 否则无法捕获触摸事件, 无法滑动 -->
-    <sviolet.turquoise.ui.slide.view.RelativeLayoutDrawer
+    <sviolet.turquoise.uix.slideengine.view.RelativeLayoutDrawer
         android:id="@+id/slide_drawer_leftdrawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,7 +37,7 @@
         <!-- 关系布局在被占满后, 若使用诸如toRightOf在右侧添加控件, 会导致显示不出来,
 				因此必须使用alignRight与之右对齐, 然后用marginRight将阴影移出去, 才能在
 				超出屏幕范围外的地方放置阴影 -->
-        <sviolet.turquoise.ui.shadow.LinearShadowView
+        <sviolet.turquoise.ui.view.shadow.LinearShadowView
             android:id="@+id/slide_drawer_leftdrawer_rightshadow"
             android:layout_width="5dp"
             android:layout_height="match_parent"
@@ -47,7 +47,7 @@
             sviolet:colour="#50000000" />
 
         <!-- 线性渐变阴影 -->
-        <sviolet.turquoise.ui.shadow.LinearShadowView
+        <sviolet.turquoise.ui.view.shadow.LinearShadowView
             android:layout_width="5dp"
             android:layout_height="match_parent"
             android:layout_alignLeft="@id/slide_drawer_leftdrawer_listview"
@@ -55,6 +55,6 @@
             sviolet:LinearShadowView_direction="left"
             sviolet:colour="#50000000" />
 
-    </sviolet.turquoise.ui.slide.view.RelativeLayoutDrawer>
+    </sviolet.turquoise.uix.slideengine.view.RelativeLayoutDrawer>
 
 </RelativeLayout>

@@ -29,8 +29,8 @@ import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.ui.listener.OnSlideStopListener;
-import sviolet.turquoise.ui.slide.logic.LinearGestureDriver;
-import sviolet.turquoise.ui.slide.view.RelativeLayoutDrawer;
+import sviolet.turquoise.uix.slideengine.logic.LinearGestureDriver;
+import sviolet.turquoise.uix.slideengine.view.RelativeLayoutDrawer;
 
 /**
  * 可侧滑关闭Activity的demo(子Activity)

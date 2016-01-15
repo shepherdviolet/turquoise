@@ -37,7 +37,7 @@
             android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
-            <sviolet.turquoise.ui.GradualImageView
+            <sviolet.turquoise.ui.view.GradualImageView
                 android:id="@+id/image_async_item_imageview0"
                 android:layout_width="162dp"
                 android:layout_height="162dp" />
@@ -48,13 +48,13 @@
                 android:layout_marginLeft="2dp"
                 android:orientation="vertical">
 
-                <sviolet.turquoise.ui.GradualImageView
+                <sviolet.turquoise.ui.view.GradualImageView
                     android:id="@+id/image_async_item_imageview1"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginBottom="2dp" />
 
-                <sviolet.turquoise.ui.GradualImageView
+                <sviolet.turquoise.ui.view.GradualImageView
                     android:id="@+id/image_async_item_imageview2"
                     android:layout_width="80dp"
                     android:layout_height="80dp" />
@@ -67,13 +67,13 @@
                 android:layout_marginLeft="2dp"
                 android:orientation="vertical">
 
-                <sviolet.turquoise.ui.GradualImageView
+                <sviolet.turquoise.ui.view.GradualImageView
                     android:id="@+id/image_async_item_imageview3"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_marginBottom="2dp" />
 
-                <sviolet.turquoise.ui.GradualImageView
+                <sviolet.turquoise.ui.view.GradualImageView
                     android:id="@+id/image_async_item_imageview4"
                     android:layout_width="80dp"
                     android:layout_height="80dp" />
@@ -82,7 +82,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <sviolet.turquoise.ui.shadow.LinearShadowView
+    <sviolet.turquoise.ui.view.shadow.LinearShadowView
         android:layout_width="match_parent"
         android:layout_height="3dp"
         sviolet:LinearShadowView_direction="bottom"

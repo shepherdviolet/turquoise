@@ -82,7 +82,7 @@
         </LinearLayout>
     </LinearLayout>
 
-    <sviolet.turquoise.ui.shadow.LinearShadowView
+    <sviolet.turquoise.ui.view.shadow.LinearShadowView
         android:layout_width="match_parent"
         android:layout_height="3dp"
         sviolet:LinearShadowView_direction="bottom"

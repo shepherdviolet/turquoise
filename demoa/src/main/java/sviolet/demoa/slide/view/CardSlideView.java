@@ -30,13 +30,13 @@ import java.util.List;
 
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.ui.listener.OnVelocityOverflowListener;
-import sviolet.turquoise.ui.slide.SlideEngine;
-import sviolet.turquoise.ui.slide.SlideEngineGroup;
-import sviolet.turquoise.ui.slide.SlideView;
-import sviolet.turquoise.ui.slide.logic.LinearFlingEngine;
-import sviolet.turquoise.ui.slide.logic.LinearGestureDriver;
-import sviolet.turquoise.ui.slide.logic.LinearStageScrollEngine;
-import sviolet.turquoise.ui.slide.view.AdaptListView;
+import sviolet.turquoise.uix.slideengine.SlideEngine;
+import sviolet.turquoise.uix.slideengine.SlideEngineGroup;
+import sviolet.turquoise.uix.slideengine.SlideView;
+import sviolet.turquoise.uix.slideengine.logic.LinearFlingEngine;
+import sviolet.turquoise.uix.slideengine.logic.LinearGestureDriver;
+import sviolet.turquoise.uix.slideengine.logic.LinearStageScrollEngine;
+import sviolet.turquoise.uix.slideengine.view.AdaptListView;
 
 
 /**
