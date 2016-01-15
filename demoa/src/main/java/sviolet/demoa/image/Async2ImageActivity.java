@@ -36,8 +36,8 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.drawable.DefaultLoadingDrawableFactory;
 import sviolet.turquoise.modelx.bitmaploader.handler.DefaultDiskCacheExceptionHandler;
-import sviolet.turquoise.util.lifecycle.LifeCycleUtils;
-import sviolet.turquoise.util.sys.MeasureUtils;
+import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.util.droid.MeasureUtils;
 
 @DemoDescription(
         title = "AsyncImageList2",

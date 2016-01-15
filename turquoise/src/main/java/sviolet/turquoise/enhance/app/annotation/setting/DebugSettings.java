@@ -25,8 +25,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import sviolet.turquoise.util.log.TLogger;
-import sviolet.turquoise.util.log.def.SimpleTLoggerModule;
+import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
 
 /**
  * [TApplication注释]调试模式参数设置

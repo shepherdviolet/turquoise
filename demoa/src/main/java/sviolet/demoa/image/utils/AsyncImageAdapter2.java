@@ -33,7 +33,7 @@ import sviolet.demoa.R;
 import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
 import sviolet.turquoise.enhance.common.ViewHolder;
-import sviolet.turquoise.util.sys.MeasureUtils;
+import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**
  * ListView适配器

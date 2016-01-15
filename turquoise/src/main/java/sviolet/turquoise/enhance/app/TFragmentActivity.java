@@ -27,8 +27,8 @@ import android.view.Menu;
 
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
-import sviolet.turquoise.util.lifecycle.LifeCycleUtils;
-import sviolet.turquoise.util.lifecycle.listener.LifeCycle;
+import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
 
 /**
  * [组件扩展]Activity<br>

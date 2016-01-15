@@ -30,8 +30,8 @@ import sviolet.turquoise.modelx.bitmaploader.handler.DiskCacheExceptionHandler;
 import sviolet.turquoise.modelx.bitmaploader.task.SimpleBitmapLoaderTaskFactory;
 import sviolet.turquoise.model.cache.BitmapCache;
 import sviolet.turquoise.common.statics.SpecialResourceId;
-import sviolet.turquoise.util.lifecycle.listener.LifeCycle;
-import sviolet.turquoise.util.log.TLogger;
+import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * 

@@ -30,7 +30,7 @@ import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.turquoise.util.sys.DeviceUtils;
+import sviolet.turquoise.util.droid.DeviceUtils;
 
 /**
  * 渐渐显示出来的ImageView<br/>

@@ -26,7 +26,7 @@ import android.graphics.drawable.BitmapDrawable;
 
 import java.io.InputStream;
 
-import sviolet.turquoise.util.log.TLogger;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * 安全的BitmapDrawable<br/>

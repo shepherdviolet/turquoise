@@ -26,7 +26,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 
-import sviolet.turquoise.util.sys.DateTimeUtils;
+import sviolet.turquoise.util.common.DateTimeUtils;
 
 /**
  * 默认动态加载图工厂

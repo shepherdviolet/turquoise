@@ -33,10 +33,10 @@ import sviolet.demoa.image.utils.MyNetLoadHandler;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
-import sviolet.turquoise.util.bitmap.CachedBitmapUtils;
+import sviolet.turquoise.util.common.CachedBitmapUtils;
 import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.handler.DefaultDiskCacheExceptionHandler;
-import sviolet.turquoise.util.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 
 @DemoDescription(
         title = "AsyncImageList",

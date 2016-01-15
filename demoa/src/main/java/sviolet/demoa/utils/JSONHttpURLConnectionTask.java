@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import sviolet.turquoise.util.net.HttpURLConnectionClient;
-import sviolet.turquoise.util.net.HttpURLConnectionResponse;
-import sviolet.turquoise.util.net.HttpURLConnectionTask;
+import sviolet.turquoise.model.net.HttpURLConnectionClient;
+import sviolet.turquoise.model.net.HttpURLConnectionResponse;
+import sviolet.turquoise.model.net.HttpURLConnectionTask;
 
 /**
  * [DEMO]

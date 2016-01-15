@@ -28,11 +28,11 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import sviolet.turquoise.util.bitmap.BitmapUtils;
+import sviolet.turquoise.util.common.BitmapUtils;
 import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.BitmapLoaderMessenger;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
-import sviolet.turquoise.util.log.TLogger;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * 网络加载处理器默认实现<p/>

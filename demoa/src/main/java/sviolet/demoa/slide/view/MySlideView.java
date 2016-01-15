@@ -19,7 +19,7 @@
 
 package sviolet.demoa.slide.view;
 
-import sviolet.turquoise.util.sys.MeasureUtils;
+import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.view.slide.SlideEngine;
 import sviolet.turquoise.view.slide.SlideView;
 import sviolet.turquoise.view.slide.logic.LinearGestureDriver;

@@ -23,7 +23,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
 import sviolet.turquoise.enhance.app.TApplication;
-import sviolet.turquoise.util.log.TLogger;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 @ApplicationSettings(
         DEBUG = BuildConfig._DEBUG //Debug模式, 装载DebugSetting配置

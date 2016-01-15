@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.view.slide.view;
 
-import sviolet.turquoise.util.sys.MeasureUtils;
+import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.view.listener.OnInitCompleteListener;
 import sviolet.turquoise.view.listener.OnSlideStopListener;
 import sviolet.turquoise.view.slide.SlideException;

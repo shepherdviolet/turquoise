@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import sviolet.turquoise.common.compat.CompatLruCache;
-import sviolet.turquoise.util.log.TLogger;
-import sviolet.turquoise.util.sys.DeviceUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.util.droid.DeviceUtils;
 
 /**
  * 

@@ -40,10 +40,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
-import sviolet.turquoise.util.CheckUtils;
-import sviolet.turquoise.util.sys.ApplicationUtils;
-import sviolet.turquoise.util.sys.DeviceUtils;
-import sviolet.turquoise.util.sys.MeasureUtils;
+import sviolet.turquoise.util.common.CheckUtils;
+import sviolet.turquoise.util.droid.ApplicationUtils;
+import sviolet.turquoise.util.droid.DeviceUtils;
+import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**
  * [组件扩展]Activity<br>

@@ -22,7 +22,7 @@ package sviolet.turquoise.modelx.bitmaploader.handler;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import sviolet.turquoise.util.bitmap.BitmapUtils;
+import sviolet.turquoise.util.common.BitmapUtils;
 import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
 

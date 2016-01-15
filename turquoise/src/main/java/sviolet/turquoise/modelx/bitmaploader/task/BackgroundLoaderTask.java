@@ -27,7 +27,7 @@ import android.view.View;
 import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoaderTask;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
-import sviolet.turquoise.util.sys.DeviceUtils;
+import sviolet.turquoise.util.droid.DeviceUtils;
 
 /**
  * View背景异步加载任务<br/>

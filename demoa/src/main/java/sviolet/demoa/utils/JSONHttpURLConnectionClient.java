@@ -27,9 +27,9 @@ import java.util.Locale;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import sviolet.turquoise.util.net.HttpURLConnectionClient;
-import sviolet.turquoise.util.net.HttpURLConnectionResponse;
-import sviolet.turquoise.util.net.HttpURLConnectionTask;
+import sviolet.turquoise.model.net.HttpURLConnectionClient;
+import sviolet.turquoise.model.net.HttpURLConnectionResponse;
+import sviolet.turquoise.model.net.HttpURLConnectionTask;
 
 /**
  * [DEMO]

@@ -34,16 +34,16 @@ import sviolet.demoa.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-import sviolet.turquoise.util.bitmap.BitmapUtils;
-import sviolet.turquoise.util.bitmap.CachedBitmapUtils;
+import sviolet.turquoise.util.common.BitmapUtils;
+import sviolet.turquoise.util.common.CachedBitmapUtils;
 import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
 import sviolet.turquoise.modelx.bitmaploader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoader;
-import sviolet.turquoise.util.lifecycle.LifeCycleUtils;
-import sviolet.turquoise.util.log.TLogger;
-import sviolet.turquoise.util.sys.MeasureUtils;
-import sviolet.turquoise.util.sys.NetStateUtils;
+import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.util.droid.MeasureUtils;
+import sviolet.turquoise.util.droid.NetStateUtils;
 
 @DemoDescription(
         title = "Common Image Demo",

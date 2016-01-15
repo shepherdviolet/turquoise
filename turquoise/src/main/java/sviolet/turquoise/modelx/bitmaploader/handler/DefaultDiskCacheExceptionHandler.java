@@ -27,8 +27,8 @@ import android.widget.Toast;
 
 import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
-import sviolet.turquoise.util.log.TLogger;
-import sviolet.turquoise.util.sys.DeviceUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.util.droid.DeviceUtils;
 
 /**
  * 磁盘缓存异常处理器默认实现<p/>

@@ -38,9 +38,9 @@ import java.util.WeakHashMap;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
-import sviolet.turquoise.util.log.TLogger;
-import sviolet.turquoise.util.log.TLoggerModule;
-import sviolet.turquoise.util.sys.ApplicationUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.utilx.tlogger.TLoggerModule;
+import sviolet.turquoise.util.droid.ApplicationUtils;
 
 /**
  * [组件扩展]Application<br>

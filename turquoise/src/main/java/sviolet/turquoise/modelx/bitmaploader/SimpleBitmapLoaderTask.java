@@ -33,7 +33,7 @@ import sviolet.turquoise.modelx.bitmaploader.drawable.SafeBitmapDrawable;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
 import sviolet.turquoise.modelx.bitmaploader.listener.OnBitmapLoadedListener;
 import sviolet.turquoise.common.statics.SpecialResourceId;
-import sviolet.turquoise.util.log.TLogger;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  *
