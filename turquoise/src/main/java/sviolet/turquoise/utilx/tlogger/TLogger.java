@@ -66,6 +66,7 @@ public abstract class TLogger {
     private static final String DEFAULT_TAG = "Turquoise";
 
     public static final int ALL = 0xffffffff;//打印所有日志级别
+    public static final int NULL = 0x00000000;//不打印日志
     public static final int ERROR = 0x00000001;//打印ERROR日志
     public static final int WARNING = 0x00000010;//打印WARNING日志
     public static final int INFO = 0x00000100;//打印INFO日志
