@@ -38,7 +38,7 @@ import sviolet.turquoise.util.common.CachedBitmapUtils;
 import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
 import sviolet.turquoise.modelx.bitmaploader.listener.OnBitmapLoadedListener;
-import sviolet.turquoise.enhance.common.ViewHolder;
+import sviolet.turquoise.ui.common.ViewHolder;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.ui.view.GradualImageView;
