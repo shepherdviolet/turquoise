@@ -34,46 +34,100 @@ public class SimpleTLoggerModule implements TLoggerModule {
 
     }
 
+    /**
+     * {@inheritDoc}
+     * @param host 信息发送者标识(nullable)
+     * @param tag tag
+     * @param msg 错误信息
+     */
     @Override
     public void e(Class host, String tag, String msg) {
         Log.e(tag + getClassSimpleName(host), msg);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param host 信息发送者标识(nullable)
+     * @param tag tag
+     * @param msg 错误信息
+     * @param t 异常
+     */
     @Override
     public void e(Class host, String tag, String msg, Throwable t) {
         Log.e(tag + getClassSimpleName(host), msg, t);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param host 信息发送者标识(nullable)
+     * @param tag tag
+     * @param t 异常
+     */
     @Override
     public void e(Class host, String tag, Throwable t) {
         Log.e(tag + getClassSimpleName(host), "", t);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param host 信息发送者标识(nullable)
+     * @param tag tag
+     * @param msg 错误信息
+     */
     @Override
     public void w(Class host, String tag, String msg) {
         Log.w(tag + getClassSimpleName(host), msg);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param host 信息发送者标识(nullable)
+     * @param tag tag
+     * @param msg 错误信息
+     * @param t 异常
+     */
     @Override
     public void w(Class host, String tag, String msg, Throwable t) {
         Log.w(tag + getClassSimpleName(host), msg, t);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param host 信息发送者标识(nullable)
+     * @param tag tag
+     * @param t 异常
+     */
     @Override
     public void w(Class host, String tag, Throwable t) {
         Log.w(tag + getClassSimpleName(host), "", t);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param host 信息发送者标识(nullable)
+     * @param tag tag
+     * @param msg 信息
+     */
     @Override
     public void i(Class host, String tag, String msg) {
         Log.i(tag + getClassSimpleName(host), msg);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param host 信息发送者标识(nullable)
+     * @param tag tag
+     * @param msg 信息
+     */
     @Override
     public void d(Class host, String tag, String msg) {
         Log.d(tag + getClassSimpleName(host), msg);
     }
 
+    /**
+     * {@inheritDoc}
+     * @param host tag
+     */
     private String getClassSimpleName(Class host){
         if (host != null){
             return ":" + host.getSimpleName();
