@@ -66,6 +66,23 @@ public class StringUtils {
     }
 
     /**
+     * 将字符串中的数字字母标点转为全角
+     * @param src 原字符串
+     * @return 全角字符串
+     */
+    public static String toSBCCase(String src) {
+        char[] charArray = src.toCharArray();
+        for (int i = 0; i< charArray.length; i++) {
+            if (charArray[i] == 12288) {
+                charArray[i] = (char) 32;
+            }else if (charArray[i] > 65280 && charArray[i] < 65375) {
+                charArray[i] = (char) (charArray[i] - 65248);
+            }
+        }
+        return new String(charArray);
+    }
+
+    /**
      * 把异常转为String信息
      */
     public static String throwableToString(Throwable throwable) {
