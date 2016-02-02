@@ -6,6 +6,9 @@
 ====================== -->
 
 <!-- =================================
+
+    用法一:
+
     标签声明::
     xmlns:sviolet="http://schemas.android.com/apk/res/应用包名"
     Android Studio::
@@ -54,6 +57,20 @@
     注意事项:
     declare-styleable name应与控件类名相同, Eclipse插件会自动检索, XML编辑中可ALT+/检索
     attr name不可重复, 特殊的参数名应带上空间名避免重复, 例如:MyView_type
+
+    ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+    用法二:
+
+    直接用AttributeSet方法取值.
+
+    namespace:
+    xmlns:turquoise="https://github.com/shepherdviolet/turquoise"
+
+    <View
+        turquoise:value="value"/>
+
+    value = attrs.getAttributeValue("https://github.com/shepherdviolet/turquoise", "value");
 
  ================================= -->
 
