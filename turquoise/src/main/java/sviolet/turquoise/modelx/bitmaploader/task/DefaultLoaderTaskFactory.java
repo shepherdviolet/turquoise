@@ -35,22 +35,24 @@ import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
  *
  * Created by S.Violet on 2015/11/5.
  */
-public class SimpleBitmapLoaderTaskFactory {
+public class DefaultLoaderTaskFactory implements LoaderTaskFactory {
 
     /**
      * 控件图片加载任务
      */
-    public static SimpleBitmapLoaderTask newLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, View view){
+    @Override
+    public SimpleBitmapLoaderTask newLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, View view){
         if (view instanceof ImageView){
             return new ImageViewLoaderTask(request, loader, (ImageView)view);
         }
-        throw new RuntimeException("[SimpleBitmapLoaderTaskFactory]This view is not supported to load by SimpleBitmapLoader, use BitmapLoader please");
+        throw new RuntimeException("[DefaultLoaderTaskFactory]This view is not supported to load by SimpleBitmapLoader, use BitmapLoader please");
     }
 
     /**
      * 控件背景图片加载任务
      */
-    public static SimpleBitmapLoaderTask newBackgroundLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, View view){
+    @Override
+    public SimpleBitmapLoaderTask newBackgroundLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, View view){
         return new BackgroundLoaderTask(request, loader, view);
     }
 

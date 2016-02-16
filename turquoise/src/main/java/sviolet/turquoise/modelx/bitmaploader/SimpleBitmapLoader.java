@@ -27,7 +27,8 @@ import sviolet.turquoise.modelx.bitmaploader.drawable.AbsLoadingDrawableFactory;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
 import sviolet.turquoise.modelx.bitmaploader.handler.DefaultDiskCacheExceptionHandler;
 import sviolet.turquoise.modelx.bitmaploader.handler.DiskCacheExceptionHandler;
-import sviolet.turquoise.modelx.bitmaploader.task.SimpleBitmapLoaderTaskFactory;
+import sviolet.turquoise.modelx.bitmaploader.task.DefaultLoaderTaskFactory;
+import sviolet.turquoise.modelx.bitmaploader.task.LoaderTaskFactory;
 import sviolet.turquoise.model.cache.BitmapCache;
 import sviolet.turquoise.common.statics.SpecialResourceId;
 import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
@@ -157,6 +158,9 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  */
 public class SimpleBitmapLoader implements LifeCycle {
 
+    //默认的加载任务工厂
+    private static final LoaderTaskFactory privateTaskFactory = new DefaultLoaderTaskFactory();
+
     private TLogger logger = TLogger.get(this);
 
     /**
@@ -195,7 +199,7 @@ public class SimpleBitmapLoader implements LifeCycle {
     /**
      * 异步加载控件图片<p/>
      *
-     * 目前支持控件, 详见{@link SimpleBitmapLoaderTaskFactory}:<br/>
+     * 目前支持控件, 详见{@link DefaultLoaderTaskFactory}:<br/>
      * 1.ImageView<br/>
      *
      * <br/>注意:<Br/>
@@ -218,7 +222,7 @@ public class SimpleBitmapLoader implements LifeCycle {
     /**
      * 异步加载控件图片<p/>
      *
-     * 目前支持控件, 详见{@link SimpleBitmapLoaderTaskFactory}:<br/>
+     * 目前支持控件, 详见{@link DefaultLoaderTaskFactory}:<br/>
      * 1.ImageView<br/>
      *
      * <br/>注意:<Br/>
@@ -243,7 +247,7 @@ public class SimpleBitmapLoader implements LifeCycle {
     /**
      * 异步加载控件图片<p/>
      *
-     * 目前支持控件, 详见{@link SimpleBitmapLoaderTaskFactory}:<br/>
+     * 目前支持控件, 详见{@link DefaultLoaderTaskFactory}:<br/>
      * 1.ImageView<br/>
      *
      * <br/>注意:<Br/>
@@ -266,7 +270,16 @@ public class SimpleBitmapLoader implements LifeCycle {
     }
 
     protected void newLoaderTask(BitmapRequest request, View view){
-        SimpleBitmapLoaderTaskFactory.newLoaderTask(request, this, view);
+        SimpleBitmapLoaderTask task = null;
+        if (getSettings().taskFactory != null){
+            task = getSettings().taskFactory.newLoaderTask(request, this, view);
+        }
+        if (task == null) {
+            task = privateTaskFactory.newLoaderTask(request, this, view);
+        }
+        if (task == null){
+            throw new RuntimeException("[SimpleBitmapLoader]This view is not supported to load by SimpleBitmapLoader, use BitmapLoader please");
+        }
     }
 
     /**
@@ -337,7 +350,16 @@ public class SimpleBitmapLoader implements LifeCycle {
     }
 
     protected void newBackgroundLoaderTask(BitmapRequest request, View view){
-        SimpleBitmapLoaderTaskFactory.newBackgroundLoaderTask(request, this, view);
+        SimpleBitmapLoaderTask task = null;
+        if (getSettings().taskFactory != null){
+            task = getSettings().taskFactory.newBackgroundLoaderTask(request, this, view);
+        }
+        if (task == null) {
+            task = privateTaskFactory.newBackgroundLoaderTask(request, this, view);
+        }
+        if (task == null){
+            throw new RuntimeException("[SimpleBitmapLoader]This view is not supported to load by SimpleBitmapLoader, use BitmapLoader please(2)");
+        }
     }
 
     /**
@@ -491,6 +513,8 @@ public class SimpleBitmapLoader implements LifeCycle {
         int loadingColor = 0x00000000;//加载状态的颜色(三选一)
         AbsLoadingDrawableFactory loadingDrawableFactory;//加载动态图工厂(三选一)
 
+        LoaderTaskFactory taskFactory;//自定义加载任务工厂
+
         int animationDuration = 500;//AsyncBitmapDrawable图片由浅及深显示的动画持续时间
         int reloadTimesMax = 2;//图片加载失败重新加载次数限制
 
@@ -549,6 +573,18 @@ public class SimpleBitmapLoader implements LifeCycle {
          */
         public Builder setReloadTimesMax(int times){
             getSettings().reloadTimesMax = times;
+            return this;
+        }
+
+        /**
+         * 设置自定义加载任务工厂<p/>
+         *
+         * 用于新增图片加载器对控件的支持<br/>
+         *
+         * @param factory 自定义加载任务工厂
+         */
+        public Builder setLoaderTaskFactory(LoaderTaskFactory factory){
+            getSettings().taskFactory = factory;
             return this;
         }
 
