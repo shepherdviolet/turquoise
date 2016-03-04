@@ -28,11 +28,11 @@ import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
  *
  * *************************************************<p/>
  *
- * TLogger使用:<p/>
+ * 使用方法:<p/>
  *
  * <pre>{@code
  *      public class Demo1{
- *          //获得日志打印器实例
+ *          //获得日志打印器实例(默认Tag)
  *          private TLogger logger = TLogger.get(this);
  *          public void method(){
  *              //打印日志
@@ -55,16 +55,30 @@ import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
  *
  * TLogger默认使用{@link SimpleTLoggerModule}模块实现打印逻辑.<br/>
  * TLogger支持自定义日志打印逻辑:<br/>
- * 1.实现{@link TLoggerModule}接口.<br/>
+ * 1.实现{@link TLoggerModule}抽象类.<br/>
  * 2.TLogger.install(TLoggerModule)方法安装(替换)自定义逻辑模块.<br/>
- * 3.所有TLogger实例会替换为自定义打印逻辑, 包括在安装前用TLogger.get(this)方法获取的实例.<br/>
+ * 3.所有TLogger实例会替换为自定义打印逻辑, 包括在安装前用TLogger.get(this)方法获取的实例.<p/>
  *
+ * 基本配置方法:<br/>
  * <pre>{@code
  *      //设置
- *      TLogger.setLevelSwitch(TLogger.ERROR | TLogger.INFO);//允许打印ERROR和INFO日志
- *      TLogger.setTag("demo");//设置日志标签
+ *      TLogger.getGlobalLevel(TLogger.ERROR | TLogger.INFO);//设置日志打印级别(全局),允许打印ERROR和INFO日志
+ *      TLogger.getDefaultTag("Default");//设置默认日志标签
  *      //扩展
- *      TLogger.install(TLoggerModule);//自定义日志打印器模块
+ *      TLogger.install(myTLoggerModule);//自定义日志打印器模块
+ * }</pre>
+ *
+ * SimpleTLoggerModule配置方法:<br/>
+ * <pre>{@code
+ *      //设置日志打印规则
+ *      //tag为demo1时, 打印ERROR和INFO日志, tag为demo2时, 不打印日志
+ *      ((SimpleTLoggerModule)TLogger.getModule())
+ *          .addRule("demo1", new SimpleTLoggerModule.Rule(TLogger.ERROR | TLogger.INFO))
+ *          .addRule("demo2", new SimpleTLoggerModule.Rule(TLogger.NULL));
+ *      //获得tag为demo1的日志打印器, 该日志打印器打印ERROR和INFO日志
+ *      TLogger logger1 = TLogger.get(this, "demo1");
+ *      //获得tag为demo2的日志打印器, 该日志打印器不打印日志
+ *      TLogger logger2 = TLogger.get(this, "demo2");
  * }</pre>
  *
  * Created by S.Violet on 2016/1/13.
