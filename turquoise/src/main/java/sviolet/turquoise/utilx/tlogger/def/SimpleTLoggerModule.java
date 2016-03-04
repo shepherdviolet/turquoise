@@ -21,6 +21,11 @@ package sviolet.turquoise.utilx.tlogger.def;
 
 import android.util.Log;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import sviolet.turquoise.util.common.CheckUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.utilx.tlogger.TLoggerModule;
 
 /**
@@ -28,7 +33,7 @@ import sviolet.turquoise.utilx.tlogger.TLoggerModule;
  *
  * Created by S.Violet on 2016/1/14.
  */
-public class SimpleTLoggerModule implements TLoggerModule {
+public class SimpleTLoggerModule extends TLoggerModule {
 
     public SimpleTLoggerModule(){
 
@@ -41,8 +46,9 @@ public class SimpleTLoggerModule implements TLoggerModule {
      * @param msg 错误信息
      */
     @Override
-    public void e(Class host, String tag, String msg) {
-        Log.e(tag + getClassSimpleName(host), msg);
+    protected void e(Class host, String tag, String msg) {
+        if (checkRule(tag, TLogger.ERROR))
+            Log.e(tag, getClassSimpleName(host) + msg);
     }
 
     /**
@@ -53,8 +59,9 @@ public class SimpleTLoggerModule implements TLoggerModule {
      * @param t 异常
      */
     @Override
-    public void e(Class host, String tag, String msg, Throwable t) {
-        Log.e(tag + getClassSimpleName(host), msg, t);
+    protected void e(Class host, String tag, String msg, Throwable t) {
+        if (checkRule(tag, TLogger.ERROR))
+            Log.e(tag, getClassSimpleName(host) + msg, t);
     }
 
     /**
@@ -64,8 +71,9 @@ public class SimpleTLoggerModule implements TLoggerModule {
      * @param t 异常
      */
     @Override
-    public void e(Class host, String tag, Throwable t) {
-        Log.e(tag + getClassSimpleName(host), "", t);
+    protected void e(Class host, String tag, Throwable t) {
+        if (checkRule(tag, TLogger.ERROR))
+            Log.e(tag, getClassSimpleName(host), t);
     }
 
     /**
@@ -75,8 +83,9 @@ public class SimpleTLoggerModule implements TLoggerModule {
      * @param msg 错误信息
      */
     @Override
-    public void w(Class host, String tag, String msg) {
-        Log.w(tag + getClassSimpleName(host), msg);
+    protected void w(Class host, String tag, String msg) {
+        if (checkRule(tag, TLogger.WARNING))
+            Log.w(tag, getClassSimpleName(host) + msg);
     }
 
     /**
@@ -87,8 +96,9 @@ public class SimpleTLoggerModule implements TLoggerModule {
      * @param t 异常
      */
     @Override
-    public void w(Class host, String tag, String msg, Throwable t) {
-        Log.w(tag + getClassSimpleName(host), msg, t);
+    protected void w(Class host, String tag, String msg, Throwable t) {
+        if (checkRule(tag, TLogger.WARNING))
+            Log.w(tag, getClassSimpleName(host) + msg, t);
     }
 
     /**
@@ -98,8 +108,9 @@ public class SimpleTLoggerModule implements TLoggerModule {
      * @param t 异常
      */
     @Override
-    public void w(Class host, String tag, Throwable t) {
-        Log.w(tag + getClassSimpleName(host), "", t);
+    protected void w(Class host, String tag, Throwable t) {
+        if (checkRule(tag, TLogger.WARNING))
+            Log.w(tag, getClassSimpleName(host), t);
     }
 
     /**
@@ -109,8 +120,9 @@ public class SimpleTLoggerModule implements TLoggerModule {
      * @param msg 信息
      */
     @Override
-    public void i(Class host, String tag, String msg) {
-        Log.i(tag + getClassSimpleName(host), msg);
+    protected void i(Class host, String tag, String msg) {
+        if (checkRule(tag, TLogger.INFO))
+            Log.i(tag, getClassSimpleName(host) + msg);
     }
 
     /**
@@ -120,8 +132,9 @@ public class SimpleTLoggerModule implements TLoggerModule {
      * @param msg 信息
      */
     @Override
-    public void d(Class host, String tag, String msg) {
-        Log.d(tag + getClassSimpleName(host), msg);
+    protected void d(Class host, String tag, String msg) {
+        if (checkRule(tag, TLogger.DEBUG))
+            Log.d(tag, getClassSimpleName(host) + msg);
     }
 
     /**
@@ -130,9 +143,65 @@ public class SimpleTLoggerModule implements TLoggerModule {
      */
     private String getClassSimpleName(Class host){
         if (host != null){
-            return ":" + host.getSimpleName();
+            return "Class<" + host.getSimpleName() + ">: ";
         }
         return "";
+    }
+
+    /**************************************************
+     * RULE
+     */
+
+    //规则
+    private Map<String, Rule> ruleMap = new HashMap<>();
+
+    /**
+     * 添加一个日志规则
+     * @param tag 规则作用的TAG
+     * @param rule 规则
+     * @return SimpleTLoggerModule
+     */
+    public SimpleTLoggerModule addRule(String tag, Rule rule){
+        if (tag == null){
+            throw new RuntimeException("[SimpleTLoggerModule.Rule]tag must not be null");
+        }
+        ruleMap.put(tag, rule);
+        return this;
+    }
+
+    /**
+     * 检查规则
+     * @param tag 日志TAG
+     * @param level 日志打印级别
+     * @return true:打印 false:不打印
+     */
+    private boolean checkRule(String tag, int level){
+        Rule rule = ruleMap.get(tag);
+        if (rule == null){
+            return true;
+        }
+        if (CheckUtils.isFlagMatch(rule.getLevel(), level)){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 日志打印规则
+     */
+    public static class Rule{
+        private int level;
+
+        /**
+         * @param level 例如: TLogger.ERROR | TLogger.INFO
+         */
+        public Rule(int level){
+            this.level = level;
+        }
+
+        public int getLevel(){
+            return level;
+        }
     }
 
 }

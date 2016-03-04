@@ -124,18 +124,18 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
                 ApplicationUtils.enableStrictMode();
             }
             //日志打印器配置
-            installTLogger(getDebugSettings().logModule(), getDebugSettings().logTag(), getDebugSettings().logLevelSwitch());
+            installTLogger(getDebugSettings().logModule(), getDebugSettings().logDefaultTag(), getDebugSettings().logGlobalLevel());
         }else {
             //策略检测
             if (getReleaseSettings().enableStrictMode()) {
                 ApplicationUtils.enableStrictMode();
             }
             //日志打印器配置
-            installTLogger(getReleaseSettings().logModule(), getReleaseSettings().logTag(), getReleaseSettings().logLevelSwitch());
+            installTLogger(getReleaseSettings().logModule(), getReleaseSettings().logDefaultTag(), getReleaseSettings().logGlobalLevel());
         }
     }
 
-    private void installTLogger(Class<?> moduleClass, String tag, int levelSwitch){
+    private void installTLogger(Class<?> moduleClass, String tag, int level){
         if (moduleClass != null){
             if (TLoggerModule.class.isAssignableFrom(moduleClass)){
                 try {
@@ -150,8 +150,8 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
                 throw new RuntimeException("[TApplication]\"logModule\" is not assignable from TLoggerModule.class which setting in ReleaseSettings/DebugSettings");
             }
         }
-        TLogger.setTag(tag);
-        TLogger.setLevelSwitch(levelSwitch);
+        TLogger.setDefaultTag(tag);
+        TLogger.setGlobalLevel(level);
     }
 
     /**

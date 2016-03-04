@@ -57,7 +57,7 @@ public @interface ReleaseSettings {
     /**
      * 日志标签
      */
-    String logTag() default "Undefined";
+    String logDefaultTag() default "Undefined";
 
     /**
      * 日志级别开关<p/>
@@ -65,7 +65,7 @@ public @interface ReleaseSettings {
      * 示例:<br/>
      * 开启ERROR和INFO日志 : TLogger.ERROR | TLogger.INFO
      */
-    int logLevelSwitch() default TLogger.ERROR | TLogger.INFO;
+    int logGlobalLevel() default TLogger.ERROR | TLogger.INFO;
 
     /**
      * 日志打印器实现模块<p/>

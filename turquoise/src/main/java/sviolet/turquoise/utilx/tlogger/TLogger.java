@@ -31,9 +31,17 @@ import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
  * TLogger使用:<p/>
  *
  * <pre>{@code
- *      public class Demo{
+ *      public class Demo1{
  *          //获得日志打印器实例
  *          private TLogger logger = TLogger.get(this);
+ *          public void method(){
+ *              //打印日志
+ *              logger.d("hello world");
+ *          }
+ *      }
+ *      public class Demo2{
+ *          //获得日志打印器实例(带Tag)
+ *          private TLogger logger = TLogger.get(this, "demo2");
  *          public void method(){
  *              //打印日志
  *              logger.d("hello world");
@@ -73,28 +81,48 @@ public abstract class TLogger {
     public static final int DEBUG = 0x00001000;//打印DEBUG日志
 
     private static TLoggerModule module = new SimpleTLoggerModule();
-    private static int levelSwitch = ERROR | WARNING | INFO | DEBUG;
-    private static String tag = DEFAULT_TAG;
+    private static int globalLevel = ERROR | WARNING | INFO | DEBUG;
+    private static String defaultTag = DEFAULT_TAG;
 
     /**
-     * 获得日志打印器实例
+     * 获得日志打印器实例(默认标签)
      * @param host 信息发送者标识, 通常为打印日志的当前类
      * @return 日志打印器(代理)
      */
     public static TLogger get(Object host){
-        Class hostClass = null;
-        if (host != null)
-            hostClass = host.getClass();
-        return new TLoggerProxy(hostClass);
+        return get(host, null);
+    }
+
+    /**
+     * 获得日志打印器实例(默认标签)
+     * @param host 信息发送者标识, 通常为打印日志的当前类
+     * @return 日志打印器(代理)
+     */
+    public static TLogger get(Class host){
+        return get(host, null);
     }
 
     /**
      * 获得日志打印器实例
      * @param host 信息发送者标识, 通常为打印日志的当前类
+     * @param tag 自定义标签
      * @return 日志打印器(代理)
      */
-    public static TLogger get(Class host){
-        return new TLoggerProxy(host);
+    public static TLogger get(Object host, String tag){
+        Class hostClass = null;
+        if (host != null)
+            hostClass = host.getClass();
+        return get(hostClass, tag);
+    }
+
+    /**
+     * 获得日志打印器实例
+     * @param host 信息发送者标识, 通常为打印日志的当前类
+     * @param tag 自定义标签
+     * @return 日志打印器(代理)
+     */
+    public static TLogger get(Class host, String tag){
+        return new TLoggerProxy(host, tag);
     }
 
     /**************************************************
@@ -111,19 +139,19 @@ public abstract class TLogger {
     }
 
     /**
-     * 设置日志打印级别<br/>
-     * @param levelSwitch 例: TLogger.ERROR | TLogger.INFO
+     * 设置全局日志打印级别<br/>
+     * @param globalLevel 例: TLogger.ERROR | TLogger.INFO
      */
-    public static void setLevelSwitch(int levelSwitch){
-        TLogger.levelSwitch = levelSwitch;
+    public static void setGlobalLevel(int globalLevel){
+        TLogger.globalLevel = globalLevel;
     }
 
     /**
-     * 设置日志打印标签(Android的tag)
-     * @param tag 标签
+     * 设置默认日志打印标签(Android的tag)
+     * @param defaultTag 默认标签
      */
-    public static void setTag(String tag){
-        TLogger.tag = tag;
+    public static void setDefaultTag(String defaultTag){
+        TLogger.defaultTag = defaultTag;
     }
 
     /**************************************************
@@ -205,19 +233,28 @@ public abstract class TLogger {
     public abstract void d(String msg);
 
     /**************************************************
-     * package
+     * public
      */
 
-    static TLoggerModule getModule(){
+    /**
+     * @return 获取日志打印器实现类
+     */
+    public static TLoggerModule getModule(){
         return module;
     }
 
-    static int getLevelSwitch(){
-        return levelSwitch;
+    /**
+     * @return 全局日志级别
+     */
+    public static int getGlobalLevel(){
+        return globalLevel;
     }
 
-    static String getTag(){
-        return tag;
+    /**
+     * @return 默认日志TAG
+     */
+    public static String getDefaultTag(){
+        return defaultTag;
     }
 
 }
