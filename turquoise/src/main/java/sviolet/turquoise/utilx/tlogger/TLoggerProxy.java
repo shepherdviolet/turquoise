@@ -28,70 +28,78 @@ import sviolet.turquoise.util.common.CheckUtils;
  */
 class TLoggerProxy extends TLogger {
 
+    static final TLogger DISABLED_LOGGER_PROXY = new TLoggerProxy(null, null, false);
+
     private Class host;
     private String tag;
+    private boolean enabled;
 
     /**
      * @param host 信息发送者标识(nullable)
      * @param tag 自定义标签
      */
     TLoggerProxy(Class host, String tag){
+        this(host, tag, true);
+    }
+
+    private TLoggerProxy(Class host, String tag, boolean enabled){
         this.host = host;
         this.tag = tag;
+        this.enabled = enabled;
     }
 
     @Override
     public void e(String msg) {
-        if (getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), ERROR)){
+        if (enabled && getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), ERROR)){
             getModule().e(host, getTag(), msg);
         }
     }
 
     @Override
     public void e(String msg, Throwable t) {
-        if (getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), ERROR)){
+        if (enabled && getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), ERROR)){
             getModule().e(host, getTag(), msg, t);
         }
     }
 
     @Override
     public void e(Throwable t) {
-        if (getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), ERROR)){
+        if (enabled && getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), ERROR)){
             getModule().e(host, getTag(), t);
         }
     }
 
     @Override
     public void w(String msg) {
-        if (getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), WARNING)){
+        if (enabled && getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), WARNING)){
             getModule().w(host, getTag(), msg);
         }
     }
 
     @Override
     public void w(String msg, Throwable t) {
-        if (getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), WARNING)){
+        if (enabled && getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), WARNING)){
             getModule().w(host, getTag(), msg, t);
         }
     }
 
     @Override
     public void w(Throwable t) {
-        if (getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), WARNING)){
+        if (enabled && getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), WARNING)){
             getModule().w(host, getTag(), t);
         }
     }
 
     @Override
     public void i(String msg) {
-        if (getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), INFO)){
+        if (enabled && getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), INFO)){
             getModule().i(host, getTag(), msg);
         }
     }
 
     @Override
     public void d(String msg) {
-        if (getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), DEBUG)){
+        if (enabled && getModule() != null && CheckUtils.isFlagMatch(getGlobalLevel(), DEBUG)){
             getModule().d(host, getTag(), msg);
         }
     }
