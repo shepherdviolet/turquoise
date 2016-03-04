@@ -34,7 +34,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  */
 public class DefaultCommonExceptionHandler implements CommonExceptionHandler {
 
-    TLogger logger = TLogger.get(this);
+    TLogger logger = TLogger.get(this, BitmapLoader.TAG);
 
     @Override
     public void onCommonException(Context context, BitmapLoader bitmapLoader, BitmapRequest request, Throwable throwable) {

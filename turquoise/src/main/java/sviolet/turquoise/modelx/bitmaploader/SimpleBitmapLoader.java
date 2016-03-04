@@ -161,7 +161,7 @@ public class SimpleBitmapLoader implements LifeCycle {
     //默认的加载任务工厂
     private static final LoaderTaskFactory privateTaskFactory = new DefaultLoaderTaskFactory();
 
-    private TLogger logger = TLogger.get(this);
+    private TLogger logger = TLogger.get(this, BitmapLoader.TAG);
 
     /**
      * 内部bitmapLoader<Br/>

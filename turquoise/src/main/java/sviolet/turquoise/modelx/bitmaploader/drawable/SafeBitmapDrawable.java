@@ -26,6 +26,7 @@ import android.graphics.drawable.BitmapDrawable;
 
 import java.io.InputStream;
 
+import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
@@ -38,7 +39,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  */
 public class SafeBitmapDrawable extends BitmapDrawable {
 
-    private TLogger logger = TLogger.get(this);//日志打印器
+    private TLogger logger = TLogger.get(this, BitmapLoader.TAG);//日志打印器
     private boolean drawEnable = true;//允许绘制
     private boolean matchParent = false;//尺寸填充父控件(match_parent)
 

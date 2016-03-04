@@ -68,7 +68,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  */
 public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmapLoadedListener {
 
-    private TLogger logger = TLogger.get(this);
+    private TLogger logger = TLogger.get(this, BitmapLoader.TAG);
 
     //图片加载请求参数
     private BitmapRequest request;
@@ -472,7 +472,7 @@ public abstract class SimpleBitmapLoaderTask<V extends View> implements OnBitmap
      */
     static class ReloadableSafeBitmapDrawable extends SafeBitmapDrawable{
 
-        private TLogger logger = TLogger.get(this);
+        private TLogger logger = TLogger.get(this, BitmapLoader.TAG);
 
         private WeakReference<SimpleBitmapLoaderTask> loaderTask;//加载任务
 

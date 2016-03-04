@@ -72,7 +72,7 @@ import sviolet.turquoise.util.droid.DeviceUtils;
  */
 public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandler {
 
-    private TLogger logger = TLogger.get(this);
+    private TLogger logger = TLogger.get(this, BitmapLoader.TAG);
 
     private OpenFailedHandleMode mode;//磁盘缓存打开失败处理模式
     private Runnable viewRefreshListener;//显示刷新回调(CHOICE_TO_OPEN_WITHOUT_DISK_CACHE_OR_NOT/OPEN_WITHOUT_DISK_CACHE_SILENCE)

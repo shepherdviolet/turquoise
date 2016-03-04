@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
+import sviolet.turquoise.common.statics.StringConstants;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
@@ -60,7 +61,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
     private boolean crashHandleToken = true;//崩溃处理令牌
     private boolean crashHandleTokenInner = false;//崩溃处理令牌(内部)
 
-    private TLogger logger = TLogger.get(this);//日志打印器
+    private TLogger logger = TLogger.get(this, StringConstants.LIBRARY_TAG);//日志打印器
 
     protected void addActivity(Activity activity) {
         //存入Activity

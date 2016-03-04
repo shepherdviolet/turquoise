@@ -171,7 +171,9 @@ import sviolet.turquoise.util.droid.DirectoryUtils;
  */
 public class BitmapLoader implements LifeCycle {
 
-    private TLogger logger = TLogger.get(this);
+    public static final String TAG = "BitmapLoader";
+
+    private TLogger logger = TLogger.get(this, TAG);
 
     private BitmapCache mBitmapCache;//Bitmap内存缓存器
     private DiskLruCache mDiskLruCache;//磁盘缓存器

@@ -65,7 +65,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  */
 public class DefaultNetLoadHandler implements NetLoadHandler {
 
-    private TLogger logger = TLogger.get(this);
+    private TLogger logger = TLogger.get(this, BitmapLoader.TAG);
 
     private int connectTimeout;
     private int readTimeout;

@@ -30,6 +30,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import sviolet.demoa.R;
+import sviolet.demoa.common.Constants;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
@@ -64,7 +65,7 @@ import sviolet.turquoise.util.droid.NetStateUtils;
 public class CommonImageActivity extends TActivity {
 
     private CachedBitmapUtils cachedBitmapUtils;
-    private TLogger logger = TLogger.get(this);
+    private TLogger logger = TLogger.get(this, Constants.TAG);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

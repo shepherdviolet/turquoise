@@ -32,6 +32,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import sviolet.demoa.R;
+import sviolet.demoa.common.Constants;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.util.common.BitmapUtils;
 import sviolet.turquoise.util.common.CachedBitmapUtils;
@@ -51,7 +52,7 @@ public class AsyncImageAdapter extends BaseAdapter {
 
     private static final String DEFAULT_BITMAP_KEY = "default_bitmap";
 
-    private TLogger logger = TLogger.get(this);
+    private TLogger logger = TLogger.get(this, Constants.TAG);
 
     private Context context;
     private List<AsyncImageItem> itemList;

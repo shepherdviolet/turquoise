@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import sviolet.turquoise.common.compat.CompatLruCache;
+import sviolet.turquoise.common.statics.StringConstants;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.util.droid.DeviceUtils;
 
@@ -89,7 +90,7 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     private int recyclerSize = 0;
 
     //日志打印器
-    private TLogger logger = TLogger.get(this);
+    private TLogger logger = TLogger.get(this, StringConstants.LIBRARY_TAG);
 
     /**
      * 
