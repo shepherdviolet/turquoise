@@ -49,7 +49,8 @@ import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 // Demo列表
 @DemoList({
         SlideActivity.class,
-        ImageActivity.class
+        ImageActivity.class,
+        TempActivity.class
 })
 
 /**************************************************************

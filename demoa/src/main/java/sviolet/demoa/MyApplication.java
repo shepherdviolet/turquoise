@@ -33,16 +33,16 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
         enableStrictMode = false,
         enableCrashRestart = true,
         enableCrashHandle = true,
-        logTag = "Demoa",
-        logLevelSwitch = TLogger.ERROR | TLogger.INFO
+        logDefaultTag = "Demoa",
+        logGlobalLevel = TLogger.ERROR | TLogger.INFO
 )
 //调试配置
 @DebugSettings(
         enableStrictMode = true,
         enableCrashRestart = false,
         enableCrashHandle = true,
-        logTag = "Demoa",
-        logLevelSwitch = TLogger.ERROR | TLogger.INFO | TLogger.WARNING | TLogger.DEBUG
+        logDefaultTag = "Demoa",
+        logGlobalLevel = TLogger.ERROR | TLogger.INFO | TLogger.WARNING | TLogger.DEBUG
 )
 public class MyApplication extends TApplication {
 
