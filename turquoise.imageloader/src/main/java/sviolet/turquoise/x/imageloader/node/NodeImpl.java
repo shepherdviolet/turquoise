@@ -19,8 +19,12 @@
 
 package sviolet.turquoise.x.imageloader.node;
 
+import android.app.Activity;
+import android.content.Context;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
+import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.engine.Engine;
 import sviolet.turquoise.x.imageloader.entity.Params;
@@ -29,18 +33,17 @@ import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.task.Task;
 
 /**
+ *
  * Created by S.Violet on 2016/2/18.
  */
 public class NodeImpl extends Node {
 
-    private String nodeId;
     private ComponentManager manager;
     private NodeController controller;
 
     public NodeImpl(ComponentManager manager, String nodeId){
         this.manager = manager;
-        this.nodeId = nodeId;
-        this.controller = new NodeControllerImpl(manager, this);
+        this.controller = new NodeControllerImpl(manager, this, nodeId);
     }
 
     /********************************************
@@ -51,10 +54,11 @@ public class NodeImpl extends Node {
     public void load(String url, View view) {
         load(url, null, view);
     }
-    
 
     @Override
     public void load(String url, Params params, View view) {
+        manager.waitingForInitialized();
+        controller.waitingForInitialized();
         Task task = manager.getTaskFactory().newLoadTask(url, params, view);
         task.initialize(controller);
     }
@@ -66,68 +70,49 @@ public class NodeImpl extends Node {
 
     @Override
     public void loadBackground(String url, Params params, View view) {
+        manager.waitingForInitialized();
+        controller.waitingForInitialized();
         Task task = manager.getTaskFactory().newLoadBackgroundTask(url, params, view);
         task.initialize(controller);
     }
 
     @Override
     public void extract(String url, Params params, OnLoadedListener listener) {
+        manager.waitingForInitialized();
+        controller.waitingForInitialized();
         Task task = manager.getTaskFactory().newExtractTask(url, params, listener);
         task.initialize(controller);
     }
 
     @Override
-    public void setting(NodeSettings settings) {
-
+    public boolean setting(NodeSettings settings) {
+        return controller.settingNode(settings);
     }
 
     @Override
-    protected String getId() {
-        return this.toString();
+    String getId() {
+        return controller.getNodeId();
     }
 
     @Override
-    protected NodeTask pullNodeTask(Engine.Type type) {
-        return null;
+    NodeTask pullNodeTask(Engine.Type type) {
+        return controller.pullNodeTask(type);
     }
 
     @Override
-    protected void response(NodeTask task) {
+    void response(NodeTask task) {
         controller.response(task);
     }
 
-    /*********************************************
-     * lifecycle
-     */
-
     @Override
-    public void onCreate() {
-
-    }
-
-    @Override
-    public void onStart() {
-
-    }
-
-    @Override
-    public void onResume() {
-
-    }
-
-    @Override
-    public void onPause() {
-
-    }
-
-    @Override
-    public void onStop() {
-
-    }
-
-    @Override
-    public void onDestroy() {
-
+    void attachLifeCycle(Context context) {
+        if (context instanceof FragmentActivity){
+            LifeCycleUtils.attach((FragmentActivity) context, controller);
+        }else if (context instanceof Activity){
+            LifeCycleUtils.attach((Activity) context, controller);
+        }else{
+            throw new RuntimeException("[NodeImpl]can't attach Node on this Context, class=" + context.getClass().getName());
+        }
     }
 
 }

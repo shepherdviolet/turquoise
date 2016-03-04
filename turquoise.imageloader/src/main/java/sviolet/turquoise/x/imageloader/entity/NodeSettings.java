@@ -24,4 +24,47 @@ package sviolet.turquoise.x.imageloader.entity;
  * Created by S.Violet on 2016/2/16.
  */
 public class NodeSettings {
+
+    private static final int DEFAULT_CACHE_QUEUE_SIZE = 10;
+    private static final int DEFAULT_DISK_QUEUE_SIZE = 10;
+    private static final int DEFAULT_NET_QUEUE_SIZE = 10;
+
+    private Values values;
+
+    private NodeSettings(Values values) {
+        this.values = values;
+    }
+
+    public int getCacheQueueSize(){
+        return values.cacheQueueSize;
+    }
+
+    public int getDiskQueueSize(){
+        return values.diskQueueSize;
+    }
+
+    public int getNetQueueSize(){
+        return values.netQueueSize;
+    }
+
+    private static class Values{
+        private int cacheQueueSize = DEFAULT_CACHE_QUEUE_SIZE;
+        private int diskQueueSize = DEFAULT_DISK_QUEUE_SIZE;
+        private int netQueueSize = DEFAULT_NET_QUEUE_SIZE;
+    }
+
+    public static class Builder{
+
+        private Values values;
+
+        public Builder(){
+            values = new Values();
+        }
+
+        public NodeSettings build(){
+            return new NodeSettings(values);
+        }
+
+    }
+
 }

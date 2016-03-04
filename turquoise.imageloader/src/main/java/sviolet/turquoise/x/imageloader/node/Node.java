@@ -19,9 +19,11 @@
 
 package sviolet.turquoise.x.imageloader.node;
 
+import android.content.Context;
 import android.view.View;
 
 import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
+import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.engine.Engine;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.Params;
@@ -35,7 +37,7 @@ import sviolet.turquoise.x.imageloader.task.Task;
  *
  * Created by S.Violet on 2016/2/16.
  */
-public abstract class Node implements LifeCycle{
+public abstract class Node {
 
     /**
      * loading image to view
@@ -77,23 +79,27 @@ public abstract class Node implements LifeCycle{
     public abstract void extract(String url, Params params, OnLoadedListener listener);
 
     /**
-     * Node Setting, first time effective for each Node
+     * Node Setting, you should setting before Node used (load image)<br/>
+     * e.g setting in Activity.onCreate()<br/>
      * @param settings Node Settings
+     * @return true : setting effective. it will be false when setting after Node used, and make no effect.
      */
-    public abstract void setting(NodeSettings settings);
+    public abstract boolean setting(NodeSettings settings);
 
     /**
      * @return get Id of Node
      */
-    protected abstract String getId();
+    abstract String getId();
 
     /**
      * @return pull a NodeTask to executing by Engine
      */
-    protected abstract NodeTask pullNodeTask(Engine.Type type);
+    abstract NodeTask pullNodeTask(Engine.Type type);
 
     /**
      * @param task response when NodeTask executed by Engine
      */
-    protected abstract void response(NodeTask task);
+    abstract void response(NodeTask task);
+
+    abstract void attachLifeCycle(Context context);
 }

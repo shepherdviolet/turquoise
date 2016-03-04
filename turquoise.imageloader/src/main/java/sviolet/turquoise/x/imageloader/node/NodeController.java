@@ -19,6 +19,9 @@
 
 package sviolet.turquoise.x.imageloader.node;
 
+import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
+import sviolet.turquoise.x.imageloader.engine.Engine;
+import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.task.Task;
 
 /**
@@ -29,7 +32,7 @@ import sviolet.turquoise.x.imageloader.task.Task;
  *
  * Created by S.Violet on 2016/2/18.
  */
-public abstract class NodeController {
+public abstract class NodeController implements LifeCycle {
 
     /**
      * execute a Task
@@ -37,16 +40,27 @@ public abstract class NodeController {
      */
     public abstract void executeTask(Task task);
 
+    public abstract String getNodeId();
+
+    abstract boolean settingNode(NodeSettings settings);
+
+    /**
+     * node must be initialized before get NodeSettings
+     * @return get NodeSettings
+     */
+    abstract NodeSettings getNodeSettings();
+
+    abstract void waitingForInitialized();
+
+    abstract NodeTask pullNodeTask(Engine.Type type);
+
     /**
      * @param task response when NodeTask executed by Engine
      */
-    public abstract void response(NodeTask task);
+    abstract void response(NodeTask task);
 
     /**
      * notify the DispatchThread to dispatch tasks
      */
     public abstract void postDispatch();
-
-    public abstract String getNodeId();
-
 }

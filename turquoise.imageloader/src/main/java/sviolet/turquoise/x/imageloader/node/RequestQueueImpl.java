@@ -26,18 +26,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class RequestQueueImpl implements RequestQueue {
 
-    private int DEFAULT_SIZE = 10;
-
-    private int size = DEFAULT_SIZE;
+    private int size;
     private int position = 0;
 
     private NodeTask[] tasks;
 
     private final ReentrantLock lock = new ReentrantLock();
-
-    public RequestQueueImpl(){
-        setSize(DEFAULT_SIZE);
-    }
 
     public RequestQueueImpl(int size){
         setSize(size);

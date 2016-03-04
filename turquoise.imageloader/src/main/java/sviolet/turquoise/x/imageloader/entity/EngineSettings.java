@@ -24,4 +24,33 @@ package sviolet.turquoise.x.imageloader.entity;
  * Created by S.Violet on 2016/2/16.
  */
 public class EngineSettings {
+
+    private Values values;
+
+    private EngineSettings(Values values) {
+        this.values = values;
+    }
+
+    public boolean isLogEnabled(){
+        return values.logEnabled;
+    }
+
+    private static class Values{
+        private boolean logEnabled = true;
+    }
+
+    public static class Builder{
+
+        private Values values;
+
+        public Builder(){
+            values = new Values();
+        }
+
+        public EngineSettings build(){
+            return new EngineSettings(values);
+        }
+
+    }
+
 }

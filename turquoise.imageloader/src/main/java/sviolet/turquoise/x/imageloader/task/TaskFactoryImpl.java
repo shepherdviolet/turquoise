@@ -40,6 +40,11 @@ public class TaskFactoryImpl implements TaskFactory {
     }
 
     @Override
+    public void init() {
+
+    }
+
+    @Override
     public Task newLoadTask(String url, Params params, View view) {
         if (url == null){
             throw new RuntimeException("[TILoader]can't load image without url!");
@@ -129,4 +134,5 @@ public class TaskFactoryImpl implements TaskFactory {
     public void setCustomTaskFactory(TaskFactory factory) {
         this.customTaskFactory = factory;
     }
+
 }

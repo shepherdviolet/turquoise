@@ -19,6 +19,8 @@
 
 package sviolet.turquoise.x.imageloader;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.engine.CacheEngine;
 import sviolet.turquoise.x.imageloader.engine.DiskEngine;
@@ -71,16 +73,14 @@ public class ComponentManager {
     private EngineSettings engineSettings;
 
     /**********************************************************************************************
-     * Defaults
-     **********************************************************************************************/
-
-    private final Params defaultParams = new Params.Builder().build();
-
-    /**********************************************************************************************
      * Extras
      **********************************************************************************************/
 
-    private final TLogger logger = TLogger.get(TILoader.class);
+    private final Params defaultParams = new Params.Builder().build();
+    private final TLogger logger = TLogger.get(TILoader.class, TILoader.TAG);
+
+    private boolean componentsInitialized = false;
+    private final ReentrantLock componentsInitializeLock = new ReentrantLock();
 
     /**********************************************************************************************
      * Components Operations
@@ -119,23 +119,91 @@ public class ComponentManager {
      **********************************************************************************************/
 
     public boolean settingEngine(EngineSettings settings){
-        return true;
+        boolean result = false;
+        if (!componentsInitialized){
+            try{
+                componentsInitializeLock.lock();
+                if (!componentsInitialized){
+                    this.engineSettings = settings;
+                    result = true;
+                }else{
+                    getLogger().e("[TILoader]setting failed, you should invoke TILoader.setting() before TILoader used (load image)");
+                }
+            }finally {
+                componentsInitializeLock.unlock();
+            }
+        }else{
+            getLogger().e("[TILoader]setting failed, you should invoke TILoader.setting() before TILoader used (load image)");
+        }
+        return result;
     }
 
-    /**********************************************************************************************
-     * Defaults
-     **********************************************************************************************/
-
-    public Params getDefaultParams(){
-        return defaultParams;
+    /**
+     * component must be initialized before get EngineSettings
+     * @return get EngineSettings
+     */
+    public EngineSettings getEngineSettings(){
+        return engineSettings;
     }
 
     /**********************************************************************************************
      * public
      **********************************************************************************************/
 
+    public void waitingForInitialized(){
+        if (componentsInitialized){
+            return;
+        }
+        try {
+            componentsInitializeLock.lock();
+            if (!componentsInitialized){
+                onInitialize();
+                componentsInitialized = true;
+            }
+        } finally {
+            componentsInitializeLock.unlock();
+        }
+    }
+
+    private void onInitialize(){
+        if (engineSettings == null) {
+            engineSettings = new EngineSettings.Builder().build();
+        }
+        nodeManager.init();
+        cacheEngine.init();
+        diskEngine.init();
+        netEngine.init();
+        taskFactory.init();
+        nodeFactory.init();
+        nodeTaskFactory.init();
+    }
+
+    public Params getDefaultParams(){
+        return defaultParams;
+    }
+
+    /**
+     * @return get logger
+     */
     public TLogger getLogger(){
-        return logger;
+        if (getEngineSettings().isLogEnabled()) {
+            return logger;
+        }else{
+            return TLogger.getDisabledLogger();
+        }
+    }
+
+    /**********************************************************************************************
+     * inner class
+     **********************************************************************************************/
+
+    public interface Component{
+
+        /**
+         * init component, time consuming operation is prohibited
+         */
+        void init();
+
     }
 
 }

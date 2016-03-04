@@ -35,6 +35,8 @@ import sviolet.turquoise.x.imageloader.node.Node;
  */
 public class TILoader {
 
+    public static final String TAG = "TILoader";
+
     /**
      * @param context context
      * @return get Node of Context, used to loading image
@@ -74,10 +76,10 @@ public class TILoader {
     }
 
     /**
-     * Engine Setting, you should setting before used<br/>
+     * Engine Setting, you should setting before TILoader used (load image)<br/>
      * e.g setting in Application.onCreate()<br/>
      * @param settings Engine Settings
-     * @return true : setting effective. it will be false when setting after used, and make no effect
+     * @return true : setting effective. it will be false when setting after TILoader used, and make no effect.
      */
     public static boolean setting(EngineSettings settings){
         return ComponentManager.getInstance().settingEngine(settings);

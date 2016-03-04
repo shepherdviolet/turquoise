@@ -34,6 +34,11 @@ public class NodeTaskFactoryImpl implements NodeTaskFactory {
     }
 
     @Override
+    public void init() {
+
+    }
+
+    @Override
     public NodeTask newNodeTask(NodeController controller, Task task) {
         return new NodeTask(controller.getNodeId(), task.getType(), task.getKey(), task.getUrl(), task.getParams());
     }

@@ -29,6 +29,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.model.common.LazySingleThreadPool;
 import sviolet.turquoise.x.imageloader.ComponentManager;
+import sviolet.turquoise.x.imageloader.engine.Engine;
+import sviolet.turquoise.x.imageloader.entity.EngineSettings;
+import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.task.Task;
 import sviolet.turquoise.x.imageloader.task.TaskGroup;
 
@@ -38,21 +41,26 @@ import sviolet.turquoise.x.imageloader.task.TaskGroup;
  */
 public class NodeControllerImpl extends NodeController {
 
-    private Node node;
     private ComponentManager manager;
+    private String nodeId;
+    private Node node;
+    private NodeSettings settings;
 
-    private RequestQueue cacheRequestQueue = new RequestQueueImpl();//缓存加载等待队列
+    private RequestQueue cacheRequestQueue;//缓存加载等待队列
     private RequestQueue diskRequestQueue;//磁盘加载等待队列
     private RequestQueue netRequestQueue;//网络加载等待队列
-    private ResponseQueue responseQueue;//响应队列
+    private ResponseQueue responseQueue = new ResponseQueueImpl();//响应队列
 
     private Map<String, TaskGroup> taskPool = new HashMap<>();//等待执行的Task任务池
-
     private final ReentrantLock taskPoolLock = new ReentrantLock();
 
-    NodeControllerImpl(ComponentManager manager, Node node){
+    private boolean nodeInitialized = false;
+    private final ReentrantLock nodeInitializeLock = new ReentrantLock();
+
+    NodeControllerImpl(ComponentManager manager, Node node, String nodeId){
         this.manager = manager;
         this.node = node;
+        this.nodeId = nodeId;
     }
 
     @Override
@@ -82,14 +90,70 @@ public class NodeControllerImpl extends NodeController {
     }
 
     @Override
-    public void response(NodeTask task) {
-        responseQueue.put(task);
-        postDispatch();
+    public String getNodeId() {
+        return nodeId;
     }
 
     @Override
-    public String getNodeId() {
-        return node.getId();
+    boolean settingNode(NodeSettings settings) {
+        boolean result = false;
+        if (!nodeInitialized){
+            try{
+                nodeInitializeLock.lock();
+                if (!nodeInitialized){
+                    this.settings = settings;
+                    result = true;
+                }else{
+                    manager.getLogger().e("[TILoader]setting Node failed, you should invoke TILoader.node(context).setting() before Node used (load image)");
+                }
+            }finally {
+                nodeInitializeLock.unlock();
+            }
+        }else{
+            manager.getLogger().e("[TILoader]setting Node failed, you should invoke TILoader.node(context).setting() before Node used (load image)");
+        }
+        return result;
+    }
+
+    @Override
+    NodeSettings getNodeSettings() {
+        return settings;
+    }
+
+    @Override
+    void waitingForInitialized() {
+        if (nodeInitialized){
+            return;
+        }
+        try {
+            nodeInitializeLock.lock();
+            if (!nodeInitialized){
+                onInitialize();
+                nodeInitialized = true;
+            }
+        } finally {
+            nodeInitializeLock.unlock();
+        }
+    }
+
+    private void onInitialize(){
+        if (settings == null){
+            settings = new NodeSettings.Builder().build();
+        }
+        cacheRequestQueue = new RequestQueueImpl(settings.getCacheQueueSize());
+        diskRequestQueue = new RequestQueueImpl(settings.getDiskQueueSize());
+        netRequestQueue = new RequestQueueImpl(settings.getNetQueueSize());
+    }
+
+    @Override
+    NodeTask pullNodeTask(Engine.Type type) {
+        return null;
+    }
+
+    @Override
+    void response(NodeTask task) {
+        responseQueue.put(task);
+        postDispatch();
     }
 
     private void postObsoleteTask(NodeTask obsoleteNodeTask){
@@ -129,6 +193,40 @@ public class NodeControllerImpl extends NodeController {
 
             }
         });
+    }
+
+    /*********************************************
+     * lifecycle
+     */
+
+    @Override
+    public void onCreate() {
+
+    }
+
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onResume() {
+
+    }
+
+    @Override
+    public void onPause() {
+
+    }
+
+    @Override
+    public void onStop() {
+
+    }
+
+    @Override
+    public void onDestroy() {
+
     }
 
     /******************************************************************

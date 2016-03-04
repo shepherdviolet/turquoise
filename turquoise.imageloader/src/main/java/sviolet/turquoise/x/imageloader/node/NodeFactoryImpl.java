@@ -22,6 +22,7 @@ package sviolet.turquoise.x.imageloader.node;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 
 /**
+ *
  * Created by S.Violet on 2016/2/23.
  */
 public class NodeFactoryImpl implements NodeFactory {
@@ -30,6 +31,11 @@ public class NodeFactoryImpl implements NodeFactory {
 
     public NodeFactoryImpl(ComponentManager manager){
         this.manager = manager;
+    }
+
+    @Override
+    public void init() {
+
     }
 
     @Override

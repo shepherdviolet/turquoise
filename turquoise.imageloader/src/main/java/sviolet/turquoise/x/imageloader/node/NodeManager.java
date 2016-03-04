@@ -19,9 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.node;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.engine.Engine;
 
@@ -37,7 +34,7 @@ import sviolet.turquoise.x.imageloader.engine.Engine;
  *
  * Created by S.Violet on 2016/2/29.
  */
-public class NodeManager {
+public class NodeManager implements ComponentManager.Component {
 
     private ComponentManager manager;
 
@@ -47,6 +44,11 @@ public class NodeManager {
 
     public NodeManager(ComponentManager manager){
         this.manager = manager;
+    }
+
+    @Override
+    public void init() {
+
     }
 
     public Node fetchNode(Context context) {
@@ -61,7 +63,7 @@ public class NodeManager {
             if (node == null){
                 node = manager.getNodeFactory().newNode(nodeId);
                 nodes.put(nodeId, node);
-                attachLifeCycle(context, node);
+                node.attachLifeCycle(context);
             }
         }finally {
             nodesLock.unlock();
@@ -113,16 +115,6 @@ public class NodeManager {
 
     private String parseNodeId(Context context){
         return String.valueOf(context);
-    }
-
-    private void attachLifeCycle(Context context, Node node){
-        if (context instanceof FragmentActivity){
-            LifeCycleUtils.attach((FragmentActivity) context, node);
-        }else if (context instanceof Activity){
-            LifeCycleUtils.attach((Activity) context, node);
-        }else{
-            throw new RuntimeException("[ComponentManager]can't attach Node on this Context, class=" + node.getClass().getName());
-        }
     }
 
 }

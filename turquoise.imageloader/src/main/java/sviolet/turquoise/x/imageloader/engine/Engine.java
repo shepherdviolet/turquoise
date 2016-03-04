@@ -31,7 +31,7 @@ import sviolet.turquoise.x.imageloader.node.NodeTask;
  *
  * Created by S.Violet on 2016/2/19.
  */
-public abstract class Engine {
+public abstract class Engine implements ComponentManager.Component {
 
     private ComponentManager manager;
 
@@ -44,6 +44,11 @@ public abstract class Engine {
 
     public Engine(ComponentManager manager){
         this.manager = manager;
+    }
+
+    @Override
+    public void init() {
+
     }
 
     /**

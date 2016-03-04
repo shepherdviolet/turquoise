@@ -21,6 +21,7 @@ package sviolet.turquoise.x.imageloader.task;
 
 import android.view.View;
 
+import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
@@ -28,7 +29,7 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  *
  * Created by S.Violet on 2016/2/23.
  */
-public interface TaskFactory {
+public interface TaskFactory extends ComponentManager.Component {
 
     Task newLoadTask(String url, Params params, View view);
 
