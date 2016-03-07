@@ -34,11 +34,20 @@ import sviolet.turquoise.x.imageloader.task.Task;
  */
 public abstract class NodeController implements LifeCycle {
 
+    abstract void waitingForInitialized();
+
     /**
      * execute a Task
      * @param task
      */
     public abstract void executeTask(Task task);
+
+    abstract NodeTask pullNodeTask(Engine.Type type);
+
+    /**
+     * @param task response when NodeTask executed by Engine
+     */
+    abstract void response(NodeTask task);
 
     public abstract String getNodeId();
 
@@ -49,15 +58,6 @@ public abstract class NodeController implements LifeCycle {
      * @return get NodeSettings
      */
     abstract NodeSettings getNodeSettings();
-
-    abstract void waitingForInitialized();
-
-    abstract NodeTask pullNodeTask(Engine.Type type);
-
-    /**
-     * @param task response when NodeTask executed by Engine
-     */
-    abstract void response(NodeTask task);
 
     /**
      * notify the DispatchThread to dispatch tasks

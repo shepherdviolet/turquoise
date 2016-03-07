@@ -63,6 +63,39 @@ public class NodeControllerImpl extends NodeController {
         this.nodeId = nodeId;
     }
 
+    /*******************************************************
+     * init
+     */
+
+    @Override
+    void waitingForInitialized() {
+        if (nodeInitialized){
+            return;
+        }
+        try {
+            nodeInitializeLock.lock();
+            if (!nodeInitialized){
+                onInitialize();
+                nodeInitialized = true;
+            }
+        } finally {
+            nodeInitializeLock.unlock();
+        }
+    }
+
+    private void onInitialize(){
+        if (settings == null){
+            settings = new NodeSettings.Builder().build();
+        }
+        cacheRequestQueue = new RequestQueueImpl(settings.getCacheQueueSize());
+        diskRequestQueue = new RequestQueueImpl(settings.getDiskQueueSize());
+        netRequestQueue = new RequestQueueImpl(settings.getNetQueueSize());
+    }
+
+    /****************************************************
+     * I/O
+     */
+
     @Override
     public void executeTask(Task task) {
         String key = task.getKey();
@@ -88,6 +121,48 @@ public class NodeControllerImpl extends NodeController {
             postObsoleteTask(obsoleteNodeTask);
         }
     }
+
+    @Override
+    NodeTask pullNodeTask(Engine.Type type) {
+        return null;
+    }
+
+    @Override
+    void response(NodeTask task) {
+        responseQueue.put(task);
+        postDispatch();
+    }
+
+    /****************************************************
+     * private
+     */
+
+    private void postObsoleteTask(NodeTask obsoleteNodeTask){
+        if (obsoleteNodeTask == null)
+            return;
+
+        TaskGroup obsoleteTaskGroup;
+        try {
+            taskPoolLock.lock();
+            obsoleteTaskGroup = taskPool.remove(obsoleteNodeTask.getKey());
+        } finally {
+            taskPoolLock.unlock();
+        }
+
+        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_OBSOLETE_TASK);
+        msg.obj = obsoleteTaskGroup;
+        msg.sendToTarget();
+    }
+
+    private void obsoleteTask(TaskGroup obsoleteTaskGroup){
+        if (obsoleteTaskGroup != null){
+            obsoleteTaskGroup.onLoadCanceled();
+        }
+    }
+
+    /****************************************************
+     * settings
+     */
 
     @Override
     public String getNodeId() {
@@ -118,65 +193,6 @@ public class NodeControllerImpl extends NodeController {
     @Override
     NodeSettings getNodeSettings() {
         return settings;
-    }
-
-    @Override
-    void waitingForInitialized() {
-        if (nodeInitialized){
-            return;
-        }
-        try {
-            nodeInitializeLock.lock();
-            if (!nodeInitialized){
-                onInitialize();
-                nodeInitialized = true;
-            }
-        } finally {
-            nodeInitializeLock.unlock();
-        }
-    }
-
-    private void onInitialize(){
-        if (settings == null){
-            settings = new NodeSettings.Builder().build();
-        }
-        cacheRequestQueue = new RequestQueueImpl(settings.getCacheQueueSize());
-        diskRequestQueue = new RequestQueueImpl(settings.getDiskQueueSize());
-        netRequestQueue = new RequestQueueImpl(settings.getNetQueueSize());
-    }
-
-    @Override
-    NodeTask pullNodeTask(Engine.Type type) {
-        return null;
-    }
-
-    @Override
-    void response(NodeTask task) {
-        responseQueue.put(task);
-        postDispatch();
-    }
-
-    private void postObsoleteTask(NodeTask obsoleteNodeTask){
-        if (obsoleteNodeTask == null)
-            return;
-
-        TaskGroup obsoleteTaskGroup;
-        try {
-            taskPoolLock.lock();
-            obsoleteTaskGroup = taskPool.remove(obsoleteNodeTask.getKey());
-        } finally {
-            taskPoolLock.unlock();
-        }
-
-        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_OBSOLETE_TASK);
-        msg.obj = obsoleteTaskGroup;
-        msg.sendToTarget();
-    }
-
-    private void obsoleteTask(TaskGroup obsoleteTaskGroup){
-        if (obsoleteTaskGroup != null){
-            obsoleteTaskGroup.onLoadCanceled();
-        }
     }
 
     /******************************************************************
