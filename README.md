@@ -5,6 +5,7 @@
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/logo/turquoise.jpg)
 
 ## Module "turquoise"
+> API level 10 above.<br/>
 > the basic library module, as detailed below:<br/>
 > <br/>
 > Utils/Models ┃ sviolet.turquoise.util/utilx/model/modelx <br/>
@@ -26,7 +27,8 @@
 > <br/>
 
 ## Module "turquoise.imageloader"
-> TurquoiseImageLoader, dependent on module "turquoise" <br/>
+> API level 11 above.<br/>
+> TurquoiseImageLoader, dependent on module "turquoise".<br/>
 > <br/>
 > NOT AVAILABLE!!! still developing...<br/>
 > it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.<br/>
