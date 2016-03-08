@@ -29,7 +29,7 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  *
  * Created by S.Violet on 2016/2/25.
  */
-public class LoadBackgroundTask extends LoadTask {
+class LoadBackgroundTask extends LoadTask {
 
     public LoadBackgroundTask(String url, Params params, View view){
         super(url, params, view);

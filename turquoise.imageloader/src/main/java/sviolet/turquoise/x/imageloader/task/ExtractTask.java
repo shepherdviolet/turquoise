@@ -19,18 +19,14 @@
 
 package sviolet.turquoise.x.imageloader.task;
 
-import android.graphics.Bitmap;
-import android.view.View;
-
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
-import sviolet.turquoise.x.imageloader.node.Node;
 import sviolet.turquoise.x.imageloader.node.NodeController;
 
 /**
  * Created by S.Violet on 2016/2/19.
  */
-public class ExtractTask extends AbsTask {
+class ExtractTask extends AbsTask {
 
     public ExtractTask(String url, Params params, OnLoadedListener listener){
         super(url, params);
