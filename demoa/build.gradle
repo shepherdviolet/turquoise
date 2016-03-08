@@ -8,7 +8,7 @@ android {
         minSdkVersion 10
         targetSdkVersion 23
         versionCode 2
-        versionName "2.0.160114"
+        versionName "2.1.160308"
 
         //true:多dex允许,突破类65535的限制
         multiDexEnabled false

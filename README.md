@@ -1,4 +1,4 @@
-# Turquoise 2.0.160308
+# Turquoise 2.1.160308
 > a comprehensive Android Library for private use <br/>
 > https://github.com/shepherdviolet/turquoise <br/>
 
