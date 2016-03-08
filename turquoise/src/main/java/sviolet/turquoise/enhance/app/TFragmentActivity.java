@@ -48,6 +48,8 @@ public class TFragmentActivity extends FragmentActivity implements TActivityProv
 
     private final TActivityProvider provider = new TActivityProvider();
 
+    private int contentId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         provider.windowSetting(this);//窗口设置
@@ -86,7 +88,10 @@ public class TFragmentActivity extends FragmentActivity implements TActivityProv
     @Deprecated
     public void setContentView(int layoutResID) {
         TLogger.get(this).e("[TFragmentActivity]please use annotation \"@ResourceId()\" instead of setContentView()");
-        super.setContentView(layoutResID);
+        if (contentId != layoutResID) {
+            contentId = layoutResID;
+            super.setContentView(layoutResID);
+        }
     }
 
     /**********************************************

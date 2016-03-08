@@ -48,6 +48,8 @@ public class TActivity extends Activity implements TActivityProvider.RequestPerm
 
     private final TActivityProvider provider = new TActivityProvider();
 
+    private int contentId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +88,10 @@ public class TActivity extends Activity implements TActivityProvider.RequestPerm
     @Deprecated
     public void setContentView(int layoutResID) {
         TLogger.get(this).e("[TActivity]please use annotation \"@ResourceId()\" instead of setContentView()");
-        super.setContentView(layoutResID);
+        if (contentId != layoutResID) {
+            contentId = layoutResID;
+            super.setContentView(layoutResID);
+        }
     }
 
     /**********************************************
