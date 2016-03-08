@@ -29,6 +29,7 @@ import android.widget.ListView;
 import sviolet.demoaimageloader.common.DemoDefault;
 import sviolet.demoaimageloader.common.DemoList;
 import sviolet.demoaimageloader.common.DemoListAdapter;
+import sviolet.demoaimageloader.demos.BasicActivity;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
@@ -38,14 +39,12 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
  */
 //默认Demo
 //@DemoDefault(
-//        TempActivity.class
+//        BasicActivity.class
 //)
 
 // Demo列表
 @DemoList({
-//        SlideActivity.class,
-//        ImageActivity.class,
-//        TempActivity.class
+        BasicActivity.class
 })
 
 /**************************************************************
