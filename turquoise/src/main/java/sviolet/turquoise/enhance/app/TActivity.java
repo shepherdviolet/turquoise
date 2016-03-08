@@ -29,6 +29,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * [组件扩展]Activity<br>
@@ -67,6 +68,25 @@ public class TActivity extends Activity implements TActivityProvider.RequestPerm
     protected void onDestroy() {
         super.onDestroy();
         provider.onDestroy(this);
+    }
+
+    /**
+     * use annotation "@ResourceId()" instead of setContentView()<p/>
+     *
+     * <pre>{@code
+     *      @ResourceId(R.layout.main)
+     *      public class TempActivity extends TActivity {
+     *          ...
+     *      }
+     * }</pre>
+     *
+     * @deprecated use annotation "@ResourceId()" instead of setContentView()
+     */
+    @Override
+    @Deprecated
+    public void setContentView(int layoutResID) {
+        TLogger.get(this).e("[TActivity]please use annotation \"@ResourceId()\" instead of setContentView()");
+        super.setContentView(layoutResID);
     }
 
     /**********************************************
