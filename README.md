@@ -34,10 +34,6 @@
 > it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.<br/>
 > <br/>
 
-## Module "demoa"
-> demos of Turquoise library<br/>
-> <br/>
-
 ## Package Releases (aar/source/javadoc)
 > https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
 

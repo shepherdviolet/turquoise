@@ -1,1 +1,1 @@
-include ':demoa', ':turquoise', ':turquoise.imageloader'
+include ':demoa', ':turquoise', ':turquoise.imageloader', ':demoa.imageloader'

@@ -2,10 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.2'
+    buildToolsVersion "23.0.2"
+
     defaultConfig {
-        applicationId "sviolet.demoa"
-        minSdkVersion 10
+        applicationId "sviolet.demoaimageloader"
+        minSdkVersion 11
         targetSdkVersion 23
         versionCode 2
         versionName "2.1.160308"
@@ -51,6 +52,5 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':turquoise')
-    compile 'com.android.support:design:23.2.0'
+    compile project(':turquoise.imageloader')
 }

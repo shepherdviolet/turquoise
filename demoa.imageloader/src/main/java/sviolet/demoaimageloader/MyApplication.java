@@ -17,13 +17,13 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.demoa;
+package sviolet.demoaimageloader;
 
-import sviolet.demoa.common.Constants;
+import sviolet.demoaimageloader.common.Constants;
+import sviolet.turquoise.enhance.app.TApplication;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
-import sviolet.turquoise.enhance.app.TApplication;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 @ApplicationSettings(
