@@ -27,7 +27,7 @@
 > <br/>
 
 ## Module "turquoise.imageloader"
-> API level 11 above.<br/>
+> API level 15 above.<br/>
 > TurquoiseImageLoader, dependent on module "turquoise".<br/>
 > <br/>
 > NOT AVAILABLE!!! still developing...<br/>
