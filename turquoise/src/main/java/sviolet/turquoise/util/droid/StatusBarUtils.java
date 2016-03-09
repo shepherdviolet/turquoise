@@ -17,15 +17,13 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.ui.util;
+package sviolet.turquoise.util.droid;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.os.Build;
 import android.view.View;
 import android.view.WindowManager;
-
-import sviolet.turquoise.util.droid.DeviceUtils;
 
 /**
  * <p>状态栏工具(顶部状态栏/底部按钮栏)</p>

@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
-import sviolet.turquoise.ui.util.StatusBarUtils;
+import sviolet.turquoise.util.droid.StatusBarUtils;
 import sviolet.turquoise.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.ApplicationUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
