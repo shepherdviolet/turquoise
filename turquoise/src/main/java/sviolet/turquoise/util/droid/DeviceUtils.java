@@ -49,7 +49,8 @@ public class DeviceUtils {
     }
 
     /**
-     * 获取系统SDK版本(例如22)
+     * 获取系统SDK版本(例如22) <br>
+     * Build.VERSION_CODES.XXX <br>
      */
     public static int getVersionSDK() {
         return android.os.Build.VERSION.SDK_INT;
