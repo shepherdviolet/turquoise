@@ -6,25 +6,21 @@
     <string name="guide_menu_wipe">WipeCache</string>
 
     <string name="slide_main_title">Slide Demo</string>
-
     <string name="slide_drawer_title">Drawer</string>
-
     <string name="slide_zoomdrawer_title">ZoomDrawer</string>
-
     <string name="slide_fling_title">Fling</string>
-
     <string name="slide_card_title">Slide Card</string>
-
     <string name="slide_list_title">SlideListView</string>
     <string name="slide_list_background_button">OK</string>
-
     <string name="slide_activity_title">SlideActivity</string>
 
     <string name="image_title">Image Demo</string>
     <string name="image_common_title">Simple Image Demo</string>
     <string name="image_async_title">Async Image List</string>
     <string name="image_async2_title">Async Image List 2</string>
-    <string name="image_shadow_title">Shadow Demo</string>
+
+    <string name="other_title">Other Demo</string>
+    <string name="other_shadow_title">Shadow Demo</string>
 
     <string name="temp_main_title">Temp</string>
 

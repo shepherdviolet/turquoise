@@ -17,30 +17,30 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.demoa.image;
+package sviolet.demoa.other;
 
-import sviolet.demoa.R;
+import sviolet.demoa.GuideActivity;
 import sviolet.demoa.common.DemoDescription;
-import sviolet.turquoise.enhance.app.TActivity;
-import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
-import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.demoa.common.DemoList;
 
-@DemoDescription(
-        title = "Shadow Demo",
-        type = "Image",
-        info = "add shadow to a view"
-)
-
-/**
- * 给控件加上阴影<br/>
- *
- * Created by S.Violet on 2015/7/7.
+/**************************************************************
+ * Demo配置
  */
-@ResourceId(R.layout.image_shadow)
-@ActivitySettings(
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
-)
-public class ShadowImageActivity extends TActivity {
 
+// Demo列表
+@DemoList({
+        ShadowOtherActivity.class
+})
+
+/**************************************************************
+ *  Activity
+ */
+
+//Demo描述
+@DemoDescription(
+        title = "Other Demo",
+        type = "View",
+        info = "Demo of others"
+)
+public class OtherActivity extends GuideActivity {
 }

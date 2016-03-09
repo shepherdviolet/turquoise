@@ -32,6 +32,7 @@ import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
 import sviolet.demoa.image.ImageActivity;
+import sviolet.demoa.other.OtherActivity;
 import sviolet.demoa.slide.SlideActivity;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
@@ -50,6 +51,7 @@ import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 @DemoList({
         SlideActivity.class,
         ImageActivity.class,
+        OtherActivity.class,
         TempActivity.class
 })
 
