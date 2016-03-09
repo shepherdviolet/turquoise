@@ -20,6 +20,7 @@
 package sviolet.turquoise.uix.slideengine.view;
 
 import sviolet.turquoise.ui.listener.OnVelocityOverflowListener;
+import sviolet.turquoise.ui.util.ListViewUtils;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;
 import sviolet.turquoise.uix.slideengine.impl.LinearFlingEngine;
 import android.annotation.SuppressLint;
@@ -133,23 +134,14 @@ public class AdaptListView extends ListView implements SlideView{
 	 * 列表是否拉到顶部
 	 */
 	public boolean reachTop(){
-		//显示的第一个Item为第一个, 且该Item到达顶端的距离为0
-		if(getFirstVisiblePosition() == 0 && getChildAt(0).getTop() == 0){
-			return true;
-		}
-		return false;
+		return ListViewUtils.reachTop(this);
 	}
 
 	/**
 	 * 列表是否拉到底部
 	 */
 	public boolean reachBottom(){
-		//显示的最后一个Item为最后一个, 且该Item到达底部的距离为0
-		if(getLastVisiblePosition() == (getCount() - 1) &&
-				getChildAt(getChildCount() - 1).getBottom() == getHeight()){
-			return true;
-		}
-		return false;
+		return ListViewUtils.reachBottom(this);
 	}
 
 	/**
