@@ -5,6 +5,11 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.view.Window;
 
+import java.lang.reflect.Field;
+
+import sviolet.turquoise.common.statics.StringConstants;
+import sviolet.turquoise.utilx.tlogger.TLogger;
+
 /**
  * 尺寸度量工具<br>
  * <br>
@@ -79,10 +84,26 @@ public class MeasureUtils {
 	
 	/**
 	 * 获取通知栏/状态栏高度(pixel 像素)
-	 * @return
 	 */
 	public static int getStatusBarHeight(Activity activity) {
-		return activity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+		if (activity == null){
+			return 0;
+		}
+		//普通方式获取
+		int height = activity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+		//获取不到采用反射
+		if (height <= 0) {
+			try {
+				Class<?> clazz = Class.forName("com.android.internal.R$dimen");
+				Object obj = clazz.newInstance();
+				Field field = clazz.getField("status_bar_height");
+				int heightResId = Integer.parseInt(String.valueOf(field.get(obj)));
+				height = activity.getResources().getDimensionPixelSize(heightResId);
+			} catch (Exception e) {
+				TLogger.get(MeasureUtils.class, StringConstants.LIBRARY_TAG).e("get status bar height failed by reflect way", e);
+			}
+		}
+		return height;
 	}
 
 	/**
