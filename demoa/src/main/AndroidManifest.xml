@@ -60,6 +60,8 @@
             android:label="@string/other_title"/>
         <activity android:name=".other.ShadowOtherActivity"
             android:label="@string/other_shadow_title"/>
+        <activity android:name=".other.GradualTitleOtherActivity"
+            android:label="@string/other_gradualtitle_title"/>
 
         <activity android:name=".TempActivity"
             android:label="@string/temp_main_title"/>

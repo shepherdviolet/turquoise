@@ -1,4 +1,8 @@
 <resources>
     <dimen name="activity_horizontal_margin">10dp</dimen>
     <dimen name="activity_vertical_margin">10dp</dimen>
+
+    <!-- GradualTitle -->
+    <dimen name="other_gradualtitle_main_titleheight">60dp</dimen>
+
 </resources>
