@@ -87,10 +87,11 @@ public class TFragmentActivity extends FragmentActivity implements TActivityProv
     @Override
     @Deprecated
     public void setContentView(int layoutResID) {
-        TLogger.get(this).e("[TFragmentActivity]please use annotation \"@ResourceId()\" instead of setContentView()");
         if (contentId != layoutResID) {
             contentId = layoutResID;
             super.setContentView(layoutResID);
+        }else{
+            TLogger.get(this).e("[TFragmentActivity]please use annotation \"@ResourceId()\" instead of setContentView()");
         }
     }
 

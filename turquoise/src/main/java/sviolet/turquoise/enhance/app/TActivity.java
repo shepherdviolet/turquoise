@@ -87,10 +87,11 @@ public class TActivity extends Activity implements TActivityProvider.RequestPerm
     @Override
     @Deprecated
     public void setContentView(int layoutResID) {
-        TLogger.get(this).e("[TActivity]please use annotation \"@ResourceId()\" instead of setContentView()");
         if (contentId != layoutResID) {
             contentId = layoutResID;
             super.setContentView(layoutResID);
+        }else{
+            TLogger.get(this).e("[TActivity]please use annotation \"@ResourceId()\" instead of setContentView()");
         }
     }
 
