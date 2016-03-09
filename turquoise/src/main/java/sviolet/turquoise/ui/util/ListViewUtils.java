@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.ui.util;
 
+import android.view.View;
 import android.widget.AbsListView;
 
 /**
@@ -64,13 +65,18 @@ public class ListViewUtils {
     /**
      * 列表从顶部开始向下滚动的进度
      * @param listView 列表控件
-     * @return float 滚动进度(0-MAXVALUE)
+     * @return float 滚动进度(0-MAXVALUE), 并非滚动距离
      */
-//    public static float scrollProgressFromTop(AbsListView listView){
-//        if (listView.getChildCount() <= 0){
-//            return 0f;
-//        }
-//
-//    }
+    public static float scrollProgressFromTop(AbsListView listView){
+        if (listView.getChildCount() <= 0){
+            return 0f;
+        }
+        View child = listView.getChildAt(0);
+        if (child.getHeight() > 0){
+            return listView.getFirstVisiblePosition() + ( - (float)child.getTop() / (float)child.getHeight());
+        }else{
+            return listView.getFirstVisiblePosition();
+        }
+    }
 
 }
