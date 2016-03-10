@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TILoader Demo</string>
+
+    <string name="basic_title">Basic Usage</string>
 </resources>

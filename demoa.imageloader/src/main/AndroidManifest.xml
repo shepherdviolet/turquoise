@@ -19,6 +19,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".demos.BasicActivity"
+            android:label="@string/basic_title"/>
+
     </application>
 
 </manifest>
