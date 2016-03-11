@@ -55,7 +55,7 @@ import sviolet.turquoise.util.droid.MeasureUtils;
  *
  * Created by S.Violet on 2015/11/27.
  */
-class TActivityProvider {
+public class TActivityProvider {
 
     private ActivitySettings settings;
 
