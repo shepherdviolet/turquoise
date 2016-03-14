@@ -59,13 +59,15 @@ public interface Task extends Destroyable {
 
     /**
      * load image
+     * @return return true when load valid
      */
-    void load();
+    boolean load();
 
     /**
      * reload image(has times limit)
+     * @return return true when load valid
      */
-    void reload();
+    boolean reload();
 
     Type getType();
 

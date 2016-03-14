@@ -28,6 +28,7 @@ public class NodeSettings {
     private static final int DEFAULT_CACHE_QUEUE_SIZE = 10;
     private static final int DEFAULT_DISK_QUEUE_SIZE = 10;
     private static final int DEFAULT_NET_QUEUE_SIZE = 10;
+    private static final int DEFAULT_RELOAD_TIMES = 2;
 
     private Values values;
 
@@ -47,10 +48,15 @@ public class NodeSettings {
         return values.netQueueSize;
     }
 
+    public int getReloadTimes(){
+        return values.reloadTimes;
+    }
+
     private static class Values{
         private int cacheQueueSize = DEFAULT_CACHE_QUEUE_SIZE;
         private int diskQueueSize = DEFAULT_DISK_QUEUE_SIZE;
         private int netQueueSize = DEFAULT_NET_QUEUE_SIZE;
+        private int reloadTimes = DEFAULT_RELOAD_TIMES;
     }
 
     public static class Builder{

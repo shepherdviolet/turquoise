@@ -57,7 +57,7 @@ public abstract class NodeController implements LifeCycle {
      * node must be initialized before get NodeSettings
      * @return get NodeSettings
      */
-    abstract NodeSettings getNodeSettings();
+    public abstract NodeSettings getNodeSettings();
 
     /**
      * notify the DispatchThread to dispatch tasks

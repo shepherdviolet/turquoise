@@ -30,6 +30,7 @@ import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
 
 /**
+ *
  * Created by S.Violet on 2016/2/26.
  */
 public abstract class AbsTask implements Task {
@@ -43,7 +44,8 @@ public abstract class AbsTask implements Task {
 
     private WeakReference<NodeController> nodeController;
 
-    private State state = State.BEFORE_INIT;
+    private volatile State state = State.BEFORE_INIT;
+    private int reloadTimes = 0;
 
     private final ReentrantLock stateLock = new ReentrantLock();
 
@@ -55,52 +57,148 @@ public abstract class AbsTask implements Task {
     @Override
     public void initialize(NodeController nodeController) {
         this.nodeController = new WeakReference<>(nodeController);
-    }
-
-    @Override
-    public void load() {
-        final NodeController controller = getNodeController();
-        if (controller == null){
-            onDestroy();
-            return;
-        }
         try {
             stateLock.lock();
-            controller.executeTask(this);
-            state = State.LOADING;
+            if (state == State.BEFORE_INIT) {
+                state = State.INITIALIZED;
+            }
         }finally {
             stateLock.unlock();
         }
-    }
-
-    @Override
-    public void reload() {
 
     }
 
     @Override
-    public void onLoadSucceed(Bitmap bitmap) {
+    public boolean load() {
+        final NodeController controller = getNodeController();
+        if (controller == null){
+            onDestroy();
+            return false;
+        }
+        boolean execute = false;
+        try {
+            stateLock.lock();
+            if (state == State.INITIALIZED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
+                state = State.LOADING;
+                execute = true;
+            }
+        }finally {
+            stateLock.unlock();
+        }
+        if (execute) {
+            controller.executeTask(this);
+        }
+        return execute;
+    }
+
+    @Override
+    public boolean reload() {
+        final NodeController controller = getNodeController();
+        if (controller == null){
+            onDestroy();
+            return false;
+        }
+        boolean reload = false;
+        try {
+            stateLock.lock();
+            if (state == State.INITIALIZED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
+                if (reloadTimes < controller.getNodeSettings().getReloadTimes()){
+                    reloadTimes++;
+                    state = State.LOADING;
+                    reload = true;
+                }
+            }
+        }finally {
+            stateLock.unlock();
+        }
+        if (reload) {
+            controller.executeTask(this);
+        }
+        return reload;
+    }
+
+    @Override
+    public final void onLoadSucceed(Bitmap bitmap) {
+        if (bitmap == null || bitmap.isRecycled()){
+            onLoadCanceled();
+            return;
+        }
+        boolean finish = false;
+        try {
+            stateLock.lock();
+            if (state == State.LOADING) {
+                state = State.LOAD_SUCCEED;
+                finish = true;
+            }
+        }finally {
+            stateLock.unlock();
+        }
+        if (finish) {
+            onLoadSucceedInner(bitmap);
+        }
+    }
+
+    @Override
+    public final void onLoadFailed() {
+        boolean finish = false;
+        try {
+            stateLock.lock();
+            if (state == State.LOADING) {
+                state = State.LOAD_FAILED;
+                finish = true;
+            }
+        }finally {
+            stateLock.unlock();
+        }
+        if (finish) {
+            onLoadFailedInner();
+        }
+    }
+
+    @Override
+    public final void onLoadCanceled() {
 
     }
 
     @Override
-    public void onLoadFailed() {
-
-    }
-
-    @Override
-    public void onLoadCanceled() {
-
-    }
-
-    @Override
-    public void onDestroy() {
-
+    public final void onDestroy() {
+        boolean destroy = false;
+        try {
+            stateLock.lock();
+            if (state != State.DESTROYED) {
+                state = State.DESTROYED;
+                destroy = true;
+            }
+        }finally {
+            stateLock.unlock();
+        }
+        if (destroy){
+            onDestroyInner();
+        }
     }
 
     /***********************************************************
      * protected
      */
+
+    protected void onLoadSucceedInner(Bitmap bitmap){
+
+    }
+
+    protected void onLoadFailedInner(){
+        if (!reload()){
+
+        }
+    }
+
+    /**
+     * called when destroy
+     */
+    protected void onDestroyInner(){
+        if (nodeController != null){
+            nodeController.clear();
+        }
+    }
 
     /***********************************************************
      * Getter

@@ -191,7 +191,7 @@ public class NodeControllerImpl extends NodeController {
     }
 
     @Override
-    NodeSettings getNodeSettings() {
+    public NodeSettings getNodeSettings() {
         return settings;
     }
 

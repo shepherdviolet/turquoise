@@ -52,18 +52,23 @@ public abstract class LoadTask extends AbsTask {
     }
 
     @Override
-    public void load() {
+    public boolean load() {
         final View view = getView();
         if (view == null){
             onDestroy();
-            return;
+            return false;
         }
-        super.load();
+        return super.load();
     }
 
     @Override
-    public void reload() {
-        super.reload();
+    public boolean reload() {
+        final View view = getView();
+        if (view == null){
+            onDestroy();
+            return false;
+        }
+        return super.reload();
     }
 
     /***********************************************************
