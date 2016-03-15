@@ -19,13 +19,13 @@
 
 package sviolet.turquoise.x.imageloader.task;
 
-import android.graphics.Bitmap;
-
 import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.util.conversion.ByteUtils;
 import sviolet.turquoise.util.crypt.DigestCipher;
+import sviolet.turquoise.x.imageloader.TILoaderUtils;
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
 
@@ -118,8 +118,8 @@ public abstract class AbsTask implements Task {
     }
 
     @Override
-    public final void onLoadSucceed(Bitmap bitmap) {
-        if (bitmap == null || bitmap.isRecycled()){
+    public final void onLoadSucceed(ImageResource<?> resource) {
+        if (TILoaderUtils.isImageResourceValid(resource)){
             onLoadCanceled();
             return;
         }
@@ -134,7 +134,7 @@ public abstract class AbsTask implements Task {
             stateLock.unlock();
         }
         if (finish) {
-            onLoadSucceedInner(bitmap);
+            onLoadSucceedInner(resource);
         }
     }
 
@@ -181,7 +181,7 @@ public abstract class AbsTask implements Task {
      * protected
      */
 
-    protected void onLoadSucceedInner(Bitmap bitmap){
+    protected void onLoadSucceedInner(ImageResource<?> resource){
 
     }
 

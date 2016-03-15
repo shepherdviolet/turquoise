@@ -29,9 +29,13 @@ import java.util.concurrent.locks.ReentrantLock;
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.model.common.LazySingleThreadPool;
 import sviolet.turquoise.x.imageloader.ComponentManager;
-import sviolet.turquoise.x.imageloader.engine.Engine;
+import sviolet.turquoise.x.imageloader.TILoader;
+import sviolet.turquoise.x.imageloader.TILoaderUtils;
+import sviolet.turquoise.x.imageloader.server.Engine;
 import sviolet.turquoise.x.imageloader.entity.EngineSettings;
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
+import sviolet.turquoise.x.imageloader.server.Server;
 import sviolet.turquoise.x.imageloader.task.Task;
 import sviolet.turquoise.x.imageloader.task.TaskGroup;
 
@@ -46,7 +50,6 @@ public class NodeControllerImpl extends NodeController {
     private Node node;
     private NodeSettings settings;
 
-    private RequestQueue cacheRequestQueue;//缓存加载等待队列
     private RequestQueue diskRequestQueue;//磁盘加载等待队列
     private RequestQueue netRequestQueue;//网络加载等待队列
     private ResponseQueue responseQueue = new ResponseQueueImpl();//响应队列
@@ -87,7 +90,6 @@ public class NodeControllerImpl extends NodeController {
         if (settings == null){
             settings = new NodeSettings.Builder().build();
         }
-        cacheRequestQueue = new RequestQueueImpl(settings.getCacheQueueSize());
         diskRequestQueue = new RequestQueueImpl(settings.getDiskQueueSize());
         netRequestQueue = new RequestQueueImpl(settings.getNetQueueSize());
     }
@@ -115,15 +117,24 @@ public class NodeControllerImpl extends NodeController {
         taskGroup.add(task);
 
         if (newTaskGroup) {
-            NodeTask nodeTask = manager.getNodeTaskFactory().newNodeTask(this, task);
-            NodeTask obsoleteNodeTask = cacheRequestQueue.put(nodeTask);
-            manager.getCacheEngine().ignite();
-            postObsoleteTask(obsoleteNodeTask);
+            NodeTask nodeTask = manager.getEngineSettings().getNodeTaskFactory().newNodeTask(this, task);
+            nodeTask.setServerType(Server.Type.CACHE);
+            nodeTask.setState(NodeTask.State.STAND_BY);
+            executeNodeTask(nodeTask);
         }
     }
 
     @Override
-    NodeTask pullNodeTask(Engine.Type type) {
+    NodeTask pullNodeTask(Server.Type type) {
+        switch (type){
+            case DISK:
+                return diskRequestQueue.get();
+            case NET:
+                return netRequestQueue.get();
+            default:
+                manager.getLogger().e("NodeControllerImpl:pullNodeTask illegal Server.Type:<" + type.toString() + ">");
+                break;
+        }
         return null;
     }
 
@@ -137,26 +148,122 @@ public class NodeControllerImpl extends NodeController {
      * private
      */
 
-    private void postObsoleteTask(NodeTask obsoleteNodeTask){
-        if (obsoleteNodeTask == null)
-            return;
+    private void executeNodeTask(NodeTask nodeTask){
 
-        TaskGroup obsoleteTaskGroup;
+        if (nodeTask == null){
+            manager.getLogger().e("NodeControllerImpl can't execute null NodeTask");
+            return;
+        }
+
+        if (nodeTask.getState() == NodeTask.State.SUCCEED){
+            callback(nodeTask);
+            return;
+        }else if (nodeTask.getState() == NodeTask.State.CANCELED){
+            callback(nodeTask);
+            return;
+        }
+
+        switch (nodeTask.getServerType()){
+            case CACHE:
+                executeNodeTaskToCache(nodeTask);
+                break;
+            case DISK:
+                executeNodeTaskToDisk(nodeTask);
+                break;
+            case NET:
+                executeNodeTaskToNet(nodeTask);
+                break;
+            default:
+                throw new RuntimeException("[TILoader:NodeControllerImpl] illegal ServerType of NodeTask");
+        }
+    }
+
+    private void executeNodeTaskToCache(NodeTask nodeTask){
+        ImageResource<?> resource = manager.getCacheServer().get(nodeTask.getKey());
+        if (resource != null) {
+            nodeTask.setState(NodeTask.State.SUCCEED);
+            callback(nodeTask);
+        }else{
+            nodeTask.setServerType(Server.Type.DISK);
+            nodeTask.setState(NodeTask.State.STAND_BY);
+            executeNodeTask(nodeTask);
+        }
+    }
+
+    private void executeNodeTaskToDisk(NodeTask nodeTask){
+        if (nodeTask.getState() == NodeTask.State.STAND_BY){
+            NodeTask obsoleteNodeTask = diskRequestQueue.put(nodeTask);
+            manager.getDiskEngine().ignite();
+            callbackToObsolete(obsoleteNodeTask);
+        }else{
+            nodeTask.setServerType(Server.Type.NET);
+            nodeTask.setState(NodeTask.State.STAND_BY);
+            executeNodeTask(nodeTask);
+        }
+    }
+
+    private void executeNodeTaskToNet(NodeTask nodeTask){
+        if (nodeTask.getState() == NodeTask.State.STAND_BY){
+            NodeTask obsoleteNodeTask = netRequestQueue.put(nodeTask);
+            manager.getNetEngine().ignite();
+            callbackToObsolete(obsoleteNodeTask);
+        }else{
+            nodeTask.setState(NodeTask.State.FAILED);
+            callback(nodeTask);
+        }
+    }
+
+    private void callback(NodeTask nodeTask){
+        if (nodeTask == null){
+            return;
+        }
+        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_CALLBACK);
+        msg.obj = nodeTask;
+        msg.sendToTarget();
+    }
+
+    private void callbackToObsolete(NodeTask obsoleteNodeTask){
+        if (obsoleteNodeTask == null) {
+            return;
+        }
+        obsoleteNodeTask.setState(NodeTask.State.CANCELED);
+        callback(obsoleteNodeTask);
+    }
+
+    private void callbackInUiThread(NodeTask nodeTask){
+        if (nodeTask == null){
+            return;
+        }
+
+        TaskGroup taskGroup;
         try {
             taskPoolLock.lock();
-            obsoleteTaskGroup = taskPool.remove(obsoleteNodeTask.getKey());
+            taskGroup = taskPool.remove(nodeTask.getKey());
         } finally {
             taskPoolLock.unlock();
         }
 
-        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_OBSOLETE_TASK);
-        msg.obj = obsoleteTaskGroup;
-        msg.sendToTarget();
-    }
+        if (taskGroup == null){
+            return;
+        }
 
-    private void obsoleteTask(TaskGroup obsoleteTaskGroup){
-        if (obsoleteTaskGroup != null){
-            obsoleteTaskGroup.onLoadCanceled();
+        switch (nodeTask.getState()){
+            case SUCCEED:
+                ImageResource<?> resource = manager.getCacheServer().get(nodeTask.getKey());
+                if (TILoaderUtils.isImageResourceValid(resource)){
+                    taskGroup.onLoadSucceed(resource);
+                }else{
+                    taskGroup.onLoadFailed();
+                }
+                break;
+            case FAILED:
+                taskGroup.onLoadFailed();
+                break;
+            case CANCELED:
+                taskGroup.onLoadCanceled();
+                break;
+            default:
+                throw new RuntimeException("[TILoader:NodeControllerImpl] can't callback(callbackInUiThread) when NodeTask.state = " + nodeTask.getState());
         }
     }
 
@@ -195,6 +302,11 @@ public class NodeControllerImpl extends NodeController {
         return settings;
     }
 
+    @Override
+    public EngineSettings getEngineSettings() {
+        return manager.getEngineSettings();
+    }
+
     /******************************************************************
      * Dispatch Thread
      */
@@ -206,7 +318,10 @@ public class NodeControllerImpl extends NodeController {
         dispatchThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-
+                NodeTask nodeTask;
+                while((nodeTask = responseQueue.get()) != null){
+                    executeNodeTask(nodeTask);
+                }
             }
         });
     }
@@ -253,7 +368,7 @@ public class NodeControllerImpl extends NodeController {
 
     private static class MyHandler extends WeakHandler<NodeControllerImpl>{
 
-        private static final int HANDLER_OBSOLETE_TASK = 1;
+        private static final int HANDLER_CALLBACK = 1;
 
         public MyHandler(Looper looper, NodeControllerImpl host) {
             super(looper, host);
@@ -262,8 +377,8 @@ public class NodeControllerImpl extends NodeController {
         @Override
         protected void handleMessageWithHost(Message msg, NodeControllerImpl host) {
             switch (msg.what){
-                case HANDLER_OBSOLETE_TASK:
-                    host.obsoleteTask((TaskGroup) msg.obj);
+                case HANDLER_CALLBACK:
+                    host.callbackInUiThread((NodeTask) msg.obj);
                     break;
                 default:
                     break;

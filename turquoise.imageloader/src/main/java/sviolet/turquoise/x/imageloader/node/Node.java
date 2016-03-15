@@ -22,13 +22,10 @@ package sviolet.turquoise.x.imageloader.node;
 import android.content.Context;
 import android.view.View;
 
-import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
-import sviolet.turquoise.x.imageloader.ComponentManager;
-import sviolet.turquoise.x.imageloader.engine.Engine;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
-import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
-import sviolet.turquoise.x.imageloader.task.Task;
+import sviolet.turquoise.x.imageloader.entity.Params;
+import sviolet.turquoise.x.imageloader.server.Server;
 
 /**
  * Node<p/>
@@ -70,7 +67,7 @@ public abstract class Node {
     public abstract void loadBackground(String url, Params params, View view);
 
     /**
-     * extract bitmap, without memory cache and disk cache<br/>
+     * extract Image, without memory cache and disk cache<br/>
      * you should recycle Bitmap by yourself<br/>
      * @param url URL
      * @param params loading params
@@ -94,7 +91,7 @@ public abstract class Node {
     /**
      * @return pull a NodeTask to executing by Engine
      */
-    abstract NodeTask pullNodeTask(Engine.Type type);
+    abstract NodeTask pullNodeTask(Server.Type type);
 
     /**
      * @param task response when NodeTask executed by Engine

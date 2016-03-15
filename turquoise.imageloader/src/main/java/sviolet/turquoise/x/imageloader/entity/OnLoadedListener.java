@@ -19,8 +19,6 @@
 
 package sviolet.turquoise.x.imageloader.entity;
 
-import android.graphics.Bitmap;
-
 /**
  *
  * Created by S.Violet on 2016/2/16.
@@ -32,17 +30,9 @@ public interface OnLoadedListener {
      *
      * @param url URL
      * @param params loading params
-     * @param bitmap loaded Bitmap, may be null
+     * @param resource loaded Image, may be null
      */
-    void onLoadSucceed(String url, Params params, Bitmap bitmap);
-
-    /**
-     * callback when loading failed
-     *
-     * @param url URL
-     * @param params loading params
-     */
-    void onLoadFailed(String url, Params params);
+    void onLoadSucceed(String url, Params params, ImageResource<?> resource);
 
     /**
      * callback when loading canceled

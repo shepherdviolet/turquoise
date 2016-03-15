@@ -17,26 +17,20 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.node;
+package sviolet.turquoise.x.imageloader.handler;
 
-import sviolet.turquoise.x.imageloader.ComponentManager;
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 
 /**
- *
- * Created by S.Violet on 2016/2/23.
+ * Created by S.Violet on 2016/3/15.
  */
-public class NodeFactoryImpl implements NodeFactory {
+public interface ImageResourceHandler {
 
-    private ComponentManager manager;
-
-    @Override
-    public void init(ComponentManager manager) {
-        this.manager = manager;
-    }
-
-    @Override
-    public Node newNode(String nodeId) {
-        return new NodeImpl(manager, nodeId);
-    }
+    /**
+     * if the resource is valid (not null or recycled)
+     * @param resource imageResource
+     * @return true:valid
+     */
+    boolean isValid(ImageResource<?> resource);
 
 }

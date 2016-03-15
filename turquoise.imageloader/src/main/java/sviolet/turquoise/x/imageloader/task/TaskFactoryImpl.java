@@ -35,13 +35,12 @@ public class TaskFactoryImpl implements TaskFactory {
     private ComponentManager manager;
     private TaskFactory customTaskFactory;
 
-    public TaskFactoryImpl(ComponentManager manager){
-        this.manager = manager;
-    }
-
     @Override
-    public void init() {
-
+    public void init(ComponentManager manager) {
+        this.manager = manager;
+        if (customTaskFactory != null){
+            customTaskFactory.init(manager);
+        }
     }
 
     @Override
@@ -122,7 +121,7 @@ public class TaskFactoryImpl implements TaskFactory {
             task = newExtractTaskInner(url, params, listener);
         }
         if (task == null){
-            throw new RuntimeException("[TILoader]unsupported listener:<" + listener.getClass().getName() + ">, can't extract bitmap, 0x02");
+            throw new RuntimeException("[TILoader]unsupported listener:<" + listener.getClass().getName() + ">, can't extract image, 0x02");
         }
         return task;
     }

@@ -19,15 +19,13 @@
 
 package sviolet.turquoise.x.imageloader.task;
 
-import android.graphics.Bitmap;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.x.imageloader.entity.Params;
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 
 /**
  *
@@ -68,9 +66,9 @@ public class TaskGroup {
 
     /**
      * callback all task to onLoadSucceed, this method can only invoke once, all tasks will be removed from this Group after callback
-     * @param bitmap loaded Bitmap, may be null
+     * @param resource loaded Image, may be null
      */
-    public void onLoadSucceed(Bitmap bitmap) {
+    public void onLoadSucceed(ImageResource<?> resource) {
         List<Task> tasks = new ArrayList<>();
         while(hasTask()) {
             try {
@@ -83,7 +81,7 @@ public class TaskGroup {
                 setLock.unlock();
             }
             for (Task task : tasks) {
-                task.onLoadSucceed(bitmap);
+                task.onLoadSucceed(resource);
             }
             tasks.clear();
         }

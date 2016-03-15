@@ -17,19 +17,14 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.engine;
+package sviolet.turquoise.x.imageloader.server;
 
-import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.node.NodeTask;
 
 /**
  * Created by S.Violet on 2016/2/19.
  */
 public class DiskEngine extends Engine {
-
-    public DiskEngine(ComponentManager manager){
-        super(manager);
-    }
 
     @Override
     protected void executeNewTask(NodeTask task) {
@@ -42,7 +37,7 @@ public class DiskEngine extends Engine {
     }
 
     @Override
-    protected Type getEngineType() {
+    public Type getServerType() {
         return Type.DISK;
     }
 }

@@ -17,9 +17,8 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.engine;
+package sviolet.turquoise.x.imageloader.server;
 
-import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.node.NodeTask;
 
 /**
@@ -28,10 +27,6 @@ import sviolet.turquoise.x.imageloader.node.NodeTask;
  * Created by S.Violet on 2016/2/19.
  */
 public class NetEngine extends Engine {
-
-    public NetEngine(ComponentManager manager){
-        super(manager);
-    }
 
     @Override
     protected void executeNewTask(NodeTask task) {
@@ -44,8 +39,7 @@ public class NetEngine extends Engine {
     }
 
     @Override
-    protected Type getEngineType() {
+    public Type getServerType() {
         return Type.NET;
     }
-
 }

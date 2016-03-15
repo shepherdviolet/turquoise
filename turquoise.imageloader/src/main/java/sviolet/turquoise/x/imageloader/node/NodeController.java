@@ -20,7 +20,8 @@
 package sviolet.turquoise.x.imageloader.node;
 
 import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
-import sviolet.turquoise.x.imageloader.engine.Engine;
+import sviolet.turquoise.x.imageloader.server.Engine;
+import sviolet.turquoise.x.imageloader.entity.EngineSettings;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.task.Task;
 
@@ -58,6 +59,12 @@ public abstract class NodeController implements LifeCycle {
      * @return get NodeSettings
      */
     public abstract NodeSettings getNodeSettings();
+
+    /**
+     * TLoader must be initialized before get EngineSettings
+     * @return get EngineSettings
+     */
+    public abstract EngineSettings getEngineSettings();
 
     /**
      * notify the DispatchThread to dispatch tasks

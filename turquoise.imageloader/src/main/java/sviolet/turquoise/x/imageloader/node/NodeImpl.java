@@ -26,7 +26,7 @@ import android.view.View;
 
 import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
-import sviolet.turquoise.x.imageloader.engine.Engine;
+import sviolet.turquoise.x.imageloader.server.Engine;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
@@ -59,7 +59,7 @@ public class NodeImpl extends Node {
     public void load(String url, Params params, View view) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Task task = manager.getTaskFactory().newLoadTask(url, params, view);
+        Task task = manager.getEngineSettings().getTaskFactory().newLoadTask(url, params, view);
         task.initialize(controller);
     }
 
@@ -72,7 +72,7 @@ public class NodeImpl extends Node {
     public void loadBackground(String url, Params params, View view) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Task task = manager.getTaskFactory().newLoadBackgroundTask(url, params, view);
+        Task task = manager.getEngineSettings().getTaskFactory().newLoadBackgroundTask(url, params, view);
         task.initialize(controller);
     }
 
@@ -80,7 +80,7 @@ public class NodeImpl extends Node {
     public void extract(String url, Params params, OnLoadedListener listener) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Task task = manager.getTaskFactory().newExtractTask(url, params, listener);
+        Task task = manager.getEngineSettings().getTaskFactory().newExtractTask(url, params, listener);
         task.initialize(controller);
     }
 

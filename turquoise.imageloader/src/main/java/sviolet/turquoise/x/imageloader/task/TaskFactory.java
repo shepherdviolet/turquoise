@@ -37,4 +37,6 @@ public interface TaskFactory extends ComponentManager.Component {
 
     Task newExtractTask(String url, Params params, OnLoadedListener listener);
 
+    void setCustomTaskFactory(TaskFactory factory);
+
 }

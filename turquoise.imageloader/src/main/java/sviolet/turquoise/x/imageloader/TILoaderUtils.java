@@ -17,26 +17,34 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.node;
+package sviolet.turquoise.x.imageloader;
 
-import sviolet.turquoise.x.imageloader.ComponentManager;
+import android.view.View;
+
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 
 /**
  *
- * Created by S.Violet on 2016/2/23.
+ * Created by S.Violet on 2016/3/15.
  */
-public class NodeFactoryImpl implements NodeFactory {
+public class TILoaderUtils {
 
-    private ComponentManager manager;
-
-    @Override
-    public void init(ComponentManager manager) {
-        this.manager = manager;
+    /**
+     * check if ImageResource Valid
+     * @param resource ImageResource
+     * @return true:valid
+     */
+    public static boolean isImageResourceValid(ImageResource resource){
+        return ComponentManager.getInstance().getEngineSettings().getImageResourceHandler().isValid(resource);
     }
 
-    @Override
-    public Node newNode(String nodeId) {
-        return new NodeImpl(manager, nodeId);
+    /**
+     * reload View which has been canceled
+     * @param view view
+     * @return true:this view can be reload
+     */
+    public static boolean reloadView(View view){
+        return false;
     }
 
 }

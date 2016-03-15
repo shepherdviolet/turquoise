@@ -17,10 +17,9 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.engine;
+package sviolet.turquoise.x.imageloader.server;
 
 import java.util.List;
-import java.util.concurrent.RunnableFuture;
 
 import sviolet.turquoise.model.common.LazySingleThreadPool;
 import sviolet.turquoise.x.imageloader.ComponentManager;
@@ -31,7 +30,7 @@ import sviolet.turquoise.x.imageloader.node.NodeTask;
  *
  * Created by S.Violet on 2016/2/19.
  */
-public abstract class Engine implements ComponentManager.Component {
+public abstract class Engine implements ComponentManager.Component, Server {
 
     private ComponentManager manager;
 
@@ -42,13 +41,9 @@ public abstract class Engine implements ComponentManager.Component {
      */
     private List<NodeTask> cache;
 
-    public Engine(ComponentManager manager){
-        this.manager = manager;
-    }
-
     @Override
-    public void init() {
-
+    public void init(ComponentManager manager){
+        this.manager = manager;
     }
 
     /**
@@ -56,7 +51,7 @@ public abstract class Engine implements ComponentManager.Component {
      */
     private NodeTask getNodeTask(){
         if (cache == null || cache.size() <= 0){
-            cache = manager.getNodeManager().pullNodeTasks(getEngineType());
+            cache = manager.getNodeManager().pullNodeTasks(getServerType());
         }
         if (cache != null && cache.size() > 0){
             return cache.remove(0);
@@ -95,19 +90,5 @@ public abstract class Engine implements ComponentManager.Component {
      * @return is Engine ready to execute new task
      */
     protected abstract boolean isReady();
-
-    /**
-     * @return return the Type of Engine
-     */
-    protected abstract Type getEngineType();
-
-    /**
-     * Type of Engine
-     */
-    public enum Type{
-        CACHE,
-        DISK,
-        NET
-    }
 
 }

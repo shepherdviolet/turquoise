@@ -17,33 +17,24 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.engine;
-
-import sviolet.turquoise.x.imageloader.ComponentManager;
-import sviolet.turquoise.x.imageloader.node.NodeTask;
+package sviolet.turquoise.x.imageloader.server;
 
 /**
- * Created by S.Violet on 2016/2/19.
+ * <p>Server</p>
+ *
+ * Created by S.Violet on 2016/3/15.
  */
-public class CacheEngine extends Engine {
+public interface Server {
 
-    public CacheEngine(ComponentManager manager){
-        super(manager);
-    }
+    /**
+     * @return get the type of server
+     */
+    Type getServerType();
 
-    @Override
-    protected void executeNewTask(NodeTask task) {
-
-    }
-
-    @Override
-    protected boolean isReady() {
-        return false;
-    }
-
-    @Override
-    protected Type getEngineType() {
-        return Type.CACHE;
+    enum Type{
+        CACHE,
+        DISK,
+        NET
     }
 
 }

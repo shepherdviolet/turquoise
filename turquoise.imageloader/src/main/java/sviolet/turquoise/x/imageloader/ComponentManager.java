@@ -19,23 +19,22 @@
 
 package sviolet.turquoise.x.imageloader;
 
+import android.content.Context;
+
+import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.utilx.tlogger.TLogger;
-import sviolet.turquoise.x.imageloader.engine.CacheEngine;
-import sviolet.turquoise.x.imageloader.engine.DiskEngine;
-import sviolet.turquoise.x.imageloader.engine.NetEngine;
+import sviolet.turquoise.x.imageloader.server.CacheServer;
+import sviolet.turquoise.x.imageloader.server.DiskEngine;
+import sviolet.turquoise.x.imageloader.server.NetEngine;
 import sviolet.turquoise.x.imageloader.entity.EngineSettings;
 import sviolet.turquoise.x.imageloader.entity.Params;
-import sviolet.turquoise.x.imageloader.node.NodeFactory;
-import sviolet.turquoise.x.imageloader.node.NodeFactoryImpl;
 import sviolet.turquoise.x.imageloader.node.NodeManager;
-import sviolet.turquoise.x.imageloader.node.NodeTaskFactory;
-import sviolet.turquoise.x.imageloader.node.NodeTaskFactoryImpl;
-import sviolet.turquoise.x.imageloader.task.TaskFactory;
-import sviolet.turquoise.x.imageloader.task.TaskFactoryImpl;
 
 /**
+ * <p>manage all component</p>
+ *
  * Created by S.Violet on 2016/2/18.
  */
 public class ComponentManager {
@@ -58,13 +57,10 @@ public class ComponentManager {
      * Components
      **********************************************************************************************/
 
-    private final NodeManager nodeManager = new NodeManager(ComponentManager.getInstance());
-    private final CacheEngine cacheEngine = new CacheEngine(ComponentManager.getInstance());
-    private final DiskEngine diskEngine = new DiskEngine(ComponentManager.getInstance());
-    private final NetEngine netEngine = new NetEngine(ComponentManager.getInstance());
-    private final TaskFactory taskFactory = new TaskFactoryImpl(ComponentManager.getInstance());
-    private final NodeFactory nodeFactory = new NodeFactoryImpl(ComponentManager.getInstance());
-    private final NodeTaskFactory nodeTaskFactory = new NodeTaskFactoryImpl(ComponentManager.getInstance());
+    private final CacheServer cacheServer = new CacheServer();
+    private final NodeManager nodeManager = new NodeManager();
+    private final DiskEngine diskEngine = new DiskEngine();
+    private final NetEngine netEngine = new NetEngine();
 
     /**********************************************************************************************
      * Settings
@@ -78,6 +74,7 @@ public class ComponentManager {
 
     private final Params defaultParams = new Params.Builder().build();
     private final TLogger logger = TLogger.get(TILoader.class, TILoader.TAG);
+    private WeakReference<Context> contextImage;
 
     private boolean componentsInitialized = false;
     private final ReentrantLock componentsInitializeLock = new ReentrantLock();
@@ -86,12 +83,12 @@ public class ComponentManager {
      * Components Operations
      **********************************************************************************************/
 
-    public NodeManager getNodeManager(){
-        return nodeManager;
+    public CacheServer getCacheServer() {
+        return cacheServer;
     }
 
-    public CacheEngine getCacheEngine() {
-        return cacheEngine;
+    public NodeManager getNodeManager(){
+        return nodeManager;
     }
 
     public DiskEngine getDiskEngine() {
@@ -100,18 +97,6 @@ public class ComponentManager {
 
     public NetEngine getNetEngine() {
         return netEngine;
-    }
-
-    public TaskFactory getTaskFactory() {
-        return taskFactory;
-    }
-
-    public NodeFactory getNodeFactory() {
-        return nodeFactory;
-    }
-
-    public NodeTaskFactory getNodeTaskFactory(){
-        return nodeTaskFactory;
     }
 
     /**********************************************************************************************
@@ -169,13 +154,11 @@ public class ComponentManager {
         if (engineSettings == null) {
             engineSettings = new EngineSettings.Builder().build();
         }
-        nodeManager.init();
-        cacheEngine.init();
-        diskEngine.init();
-        netEngine.init();
-        taskFactory.init();
-        nodeFactory.init();
-        nodeTaskFactory.init();
+        engineSettings.init(ComponentManager.getInstance());
+        cacheServer.init(ComponentManager.getInstance());
+        nodeManager.init(ComponentManager.getInstance());
+        diskEngine.init(ComponentManager.getInstance());
+        netEngine.init(ComponentManager.getInstance());
     }
 
     public Params getDefaultParams(){
@@ -193,6 +176,27 @@ public class ComponentManager {
         }
     }
 
+    /**
+     * set a context's image, used to get System Params
+     * @param context context
+     */
+    public void setContextImage(Context context){
+        if (context != null){
+            contextImage = new WeakReference<Context>(context);
+        }
+    }
+
+    /**
+     * context's image, used to get System Params
+     * @return may be null, not reliable
+     */
+    public Context getContextImage(){
+        if (contextImage != null){
+            return contextImage.get();
+        }
+        return null;
+    }
+
     /**********************************************************************************************
      * inner class
      **********************************************************************************************/
@@ -202,7 +206,7 @@ public class ComponentManager {
         /**
          * init component, time consuming operation is prohibited
          */
-        void init();
+        void init(ComponentManager manager);
 
     }
 

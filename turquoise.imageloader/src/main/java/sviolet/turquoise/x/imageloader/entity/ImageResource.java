@@ -17,26 +17,30 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.node;
-
-import sviolet.turquoise.x.imageloader.ComponentManager;
+package sviolet.turquoise.x.imageloader.entity;
 
 /**
- *
- * Created by S.Violet on 2016/2/23.
+ * Created by S.Violet on 2016/3/15.
  */
-public class NodeFactoryImpl implements NodeFactory {
+public class ImageResource <T> {
 
-    private ComponentManager manager;
+    private Type type;
+    private T resource;
 
-    @Override
-    public void init(ComponentManager manager) {
-        this.manager = manager;
+    public ImageResource(Type type, T resource){
+        this.type = type;
+        this.resource = resource;
     }
 
-    @Override
-    public Node newNode(String nodeId) {
-        return new NodeImpl(manager, nodeId);
+    public Type getType() {
+        return type;
     }
 
+    public T getResource() {
+        return resource;
+    }
+
+    public enum Type{
+        BITMAP
+    }
 }

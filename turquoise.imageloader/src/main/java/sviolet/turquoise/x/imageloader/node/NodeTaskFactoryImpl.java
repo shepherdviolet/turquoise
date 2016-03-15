@@ -29,18 +29,14 @@ public class NodeTaskFactoryImpl implements NodeTaskFactory {
 
     private ComponentManager manager;
 
-    public NodeTaskFactoryImpl(ComponentManager manager) {
+    @Override
+    public void init(ComponentManager manager) {
         this.manager = manager;
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     public NodeTask newNodeTask(NodeController controller, Task task) {
-        return new NodeTask(controller.getNodeId(), task.getType(), task.getKey(), task.getUrl(), task.getParams());
+        return new NodeTask(controller.getNodeId(), task.getType(), task.getKey(), task.getDiskKey(), task.getUrl(), task.getParams());
     }
 
 }

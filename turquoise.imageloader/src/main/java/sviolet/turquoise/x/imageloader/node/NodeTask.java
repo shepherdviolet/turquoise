@@ -20,6 +20,7 @@
 package sviolet.turquoise.x.imageloader.node;
 
 import sviolet.turquoise.x.imageloader.entity.Params;
+import sviolet.turquoise.x.imageloader.server.Server;
 import sviolet.turquoise.x.imageloader.task.Task;
 
 /**
@@ -32,13 +33,18 @@ public class NodeTask {
     private Params params;
     private String nodeId;
     private String key;
+    private String diskKey;
 
-    NodeTask(String nodeId, Task.Type type, String key, String url, Params params) {
+    private Server.Type serverType = Server.Type.CACHE;
+    private State state = State.STAND_BY;
+
+    NodeTask(String nodeId, Task.Type type, String key, String diskKey, String url, Params params) {
         this.type = type;
         this.url = url;
         this.params = params;
         this.nodeId = nodeId;
         this.key = key;
+        this.diskKey = diskKey;
     }
 
     public Task.Type getType() {
@@ -59,6 +65,29 @@ public class NodeTask {
 
     public String getKey(){
         return key;
+    }
+
+    public Server.Type getServerType() {
+        return serverType;
+    }
+
+    public void setServerType(Server.Type serverType) {
+        this.serverType = serverType;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public enum State{
+        STAND_BY,
+        SUCCEED,
+        FAILED,
+        CANCELED
     }
 
 }

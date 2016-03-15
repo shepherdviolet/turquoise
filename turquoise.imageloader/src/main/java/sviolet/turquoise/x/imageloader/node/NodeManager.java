@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.x.imageloader.ComponentManager;
-import sviolet.turquoise.x.imageloader.engine.Engine;
+import sviolet.turquoise.x.imageloader.server.Server;
 
 /**
  *
@@ -42,13 +42,9 @@ public class NodeManager implements ComponentManager.Component {
 
     private final ReentrantLock nodesLock = new ReentrantLock();
 
-    public NodeManager(ComponentManager manager){
-        this.manager = manager;
-    }
-
     @Override
-    public void init() {
-
+    public void init(ComponentManager manager){
+        this.manager = manager;
     }
 
     public Node fetchNode(Context context) {
@@ -61,9 +57,10 @@ public class NodeManager implements ComponentManager.Component {
             nodesLock.lock();
             node = nodes.get(nodeId);
             if (node == null){
-                node = manager.getNodeFactory().newNode(nodeId);
+                node = manager.getEngineSettings().getNodeFactory().newNode(nodeId);
                 nodes.put(nodeId, node);
                 node.attachLifeCycle(context);
+                manager.setContextImage(context);
             }
         }finally {
             nodesLock.unlock();
@@ -71,7 +68,7 @@ public class NodeManager implements ComponentManager.Component {
         return node;
     }
 
-    public List<NodeTask> pullNodeTasks(Engine.Type type){
+    public List<NodeTask> pullNodeTasks(Server.Type type){
         List<NodeTask> taskList = new ArrayList<>();
         try{
             nodesLock.lock();

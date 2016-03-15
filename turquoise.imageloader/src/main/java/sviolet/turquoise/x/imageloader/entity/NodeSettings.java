@@ -25,7 +25,6 @@ package sviolet.turquoise.x.imageloader.entity;
  */
 public class NodeSettings {
 
-    private static final int DEFAULT_CACHE_QUEUE_SIZE = 10;
     private static final int DEFAULT_DISK_QUEUE_SIZE = 10;
     private static final int DEFAULT_NET_QUEUE_SIZE = 10;
     private static final int DEFAULT_RELOAD_TIMES = 2;
@@ -34,10 +33,6 @@ public class NodeSettings {
 
     private NodeSettings(Values values) {
         this.values = values;
-    }
-
-    public int getCacheQueueSize(){
-        return values.cacheQueueSize;
     }
 
     public int getDiskQueueSize(){
@@ -53,7 +48,6 @@ public class NodeSettings {
     }
 
     private static class Values{
-        private int cacheQueueSize = DEFAULT_CACHE_QUEUE_SIZE;
         private int diskQueueSize = DEFAULT_DISK_QUEUE_SIZE;
         private int netQueueSize = DEFAULT_NET_QUEUE_SIZE;
         private int reloadTimes = DEFAULT_RELOAD_TIMES;

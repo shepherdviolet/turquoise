@@ -19,10 +19,8 @@
 
 package sviolet.turquoise.x.imageloader.task;
 
-import android.graphics.Bitmap;
-
 import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
-import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
 
@@ -35,9 +33,9 @@ public interface Task extends Destroyable {
     /**
      * callback when loading succeed
      *
-     * @param bitmap loaded Bitmap, may be null
+     * @param resource loaded Image, may be null
      */
-    void onLoadSucceed(Bitmap bitmap);
+    void onLoadSucceed(ImageResource<?> resource);
 
     /**
      * callback when loading failed
