@@ -38,7 +38,7 @@ public class CacheServer implements ComponentManager.Component, Server {
 
     private ComponentManager manager;
 
-    private BitmapCache bitmapCache;
+    private BitmapCacheModule bitmapCacheModule;
 //    private OtherCache otherCache;
 
     @Override
@@ -61,7 +61,7 @@ public class CacheServer implements ComponentManager.Component, Server {
         if (memoryCacheSize < MIN_MEMORY_CACHE_SIZE){
             memoryCacheSize = MIN_MEMORY_CACHE_SIZE;
         }
-        bitmapCache = new BitmapCache(memoryCacheSize, manager.getLogger());
+        bitmapCacheModule = new BitmapCacheModule(memoryCacheSize, manager.getLogger());
     }
 
     public void put(String key, ImageResource<?> resource){
@@ -76,7 +76,7 @@ public class CacheServer implements ComponentManager.Component, Server {
         switch (resource.getType()){
             case BITMAP:
                 if (resource.getResource() instanceof Bitmap) {
-                    bitmapCache.put(key, (Bitmap) resource.getResource());
+                    bitmapCacheModule.put(key, (Bitmap) resource.getResource());
                     //otherCache.remove(key);//remove from other cache
                 }else{
                     throw new RuntimeException("[TILoader:CacheServer]illegal ImageResource, type:<" + resource.getType().toString() + ">, resource:<" + resource.getResource().getClass().getName() + ">");
@@ -84,7 +84,7 @@ public class CacheServer implements ComponentManager.Component, Server {
                 break;
 //            case OTHER:
 //                otherCache.put(key, (Bitmap) resource.getResource());
-//                bitmapCache.remove(key);//remove from other cache
+//                bitmapCacheModule.remove(key);//remove from other cache
 //                break;
             default:
                 manager.getLogger().e("CacheServer can't put this kind of ImageResource, type:<" + resource.getType().toString() + ">");
@@ -98,7 +98,7 @@ public class CacheServer implements ComponentManager.Component, Server {
             return null;
         }
         Object resource = null;
-        resource = bitmapCache.get(key);
+        resource = bitmapCacheModule.get(key);
         if (resource != null){
             return new ImageResource<>(ImageResource.Type.BITMAP, resource);
         }
@@ -114,12 +114,12 @@ public class CacheServer implements ComponentManager.Component, Server {
             manager.getLogger().e("CacheServer can't remove with null key");
             return;
         }
-        bitmapCache.remove(key);
+        bitmapCacheModule.remove(key);
 //        otherCache.remove(key);
     }
 
     public void removeAll(){
-        bitmapCache.removeAll();
+        bitmapCacheModule.removeAll();
 //        otherCache.removeAll();
     }
 
