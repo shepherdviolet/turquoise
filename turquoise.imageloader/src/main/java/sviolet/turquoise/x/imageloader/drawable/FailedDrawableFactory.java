@@ -17,22 +17,22 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.task;
+package sviolet.turquoise.x.imageloader.drawable;
 
-import android.view.View;
-
-import sviolet.turquoise.x.imageloader.entity.Params;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
 /**
- * Load Background Task<br/>
- * loading image to View's background<br/>
- *
- * Created by S.Violet on 2016/2/25.
+ * Created by S.Violet on 2016/3/16.
  */
-class LoadBackgroundTask extends LoadTask {
+public interface FailedDrawableFactory {
 
-    LoadBackgroundTask(String url, Params params, View view){
-        super(url, params, view);
-    }
+    /**
+     * create a drawable for failed state
+     * @param failedBackgroundColor background color when failed
+     * @param failedBitmap bitmap when failed
+     * @return Drawable
+     */
+    Drawable create(int failedBackgroundColor, Bitmap failedBitmap);
 
 }

@@ -29,7 +29,7 @@ import sviolet.turquoise.x.imageloader.node.Node;
  */
 class ImageViewLoadTask extends LoadTask {
 
-    public ImageViewLoadTask(String url, Params params, View view){
+    ImageViewLoadTask(String url, Params params, View view){
         super(url, params, view);
     }
 

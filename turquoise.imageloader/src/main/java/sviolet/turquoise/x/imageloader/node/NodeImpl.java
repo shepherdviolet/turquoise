@@ -59,7 +59,7 @@ public class NodeImpl extends Node {
     public void load(String url, Params params, View view) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Task task = manager.getEngineSettings().getTaskFactory().newLoadTask(url, params, view);
+        Task task = manager.getEngineSettings().getTaskFactory().newLoadTask(url, params, view, manager.getDefaultParams());
         task.initialize(controller);
     }
 
@@ -72,7 +72,7 @@ public class NodeImpl extends Node {
     public void loadBackground(String url, Params params, View view) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Task task = manager.getEngineSettings().getTaskFactory().newLoadBackgroundTask(url, params, view);
+        Task task = manager.getEngineSettings().getTaskFactory().newLoadBackgroundTask(url, params, view, manager.getDefaultParams());
         task.initialize(controller);
     }
 
@@ -80,7 +80,7 @@ public class NodeImpl extends Node {
     public void extract(String url, Params params, OnLoadedListener listener) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Task task = manager.getEngineSettings().getTaskFactory().newExtractTask(url, params, listener);
+        Task task = manager.getEngineSettings().getTaskFactory().newExtractTask(url, params, listener, manager.getDefaultParams());
         task.initialize(controller);
     }
 

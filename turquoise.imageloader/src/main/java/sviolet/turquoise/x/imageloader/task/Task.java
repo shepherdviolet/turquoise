@@ -83,9 +83,25 @@ public interface Task extends Destroyable {
      */
     String getDiskKey();
 
-    public enum Type{
+    State getState();
+
+    enum Type{
         LOAD,
         EXTRACT
+    }
+
+    /***********************************************************
+     * Enum
+     */
+
+    enum State{
+        BEFORE_INIT,
+        INITIALIZED,
+        LOADING,
+        LOAD_SUCCEED,
+        LOAD_FAILED,
+        LOAD_CANCELED,
+        DESTROYED
     }
 
 }

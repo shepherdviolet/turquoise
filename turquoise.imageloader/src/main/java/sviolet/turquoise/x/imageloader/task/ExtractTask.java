@@ -28,7 +28,7 @@ import sviolet.turquoise.x.imageloader.node.NodeController;
  */
 class ExtractTask extends AbsTask {
 
-    public ExtractTask(String url, Params params, OnLoadedListener listener){
+    ExtractTask(String url, Params params, OnLoadedListener listener){
         super(url, params);
     }
 

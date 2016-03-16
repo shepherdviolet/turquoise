@@ -32,19 +32,10 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  */
 public class TaskFactoryImpl implements TaskFactory {
 
-    private ComponentManager manager;
     private TaskFactory customTaskFactory;
 
     @Override
-    public void init(ComponentManager manager) {
-        this.manager = manager;
-        if (customTaskFactory != null){
-            customTaskFactory.init(manager);
-        }
-    }
-
-    @Override
-    public Task newLoadTask(String url, Params params, View view) {
+    public Task newLoadTask(String url, Params params, View view, Params defParams) {
         if (url == null){
             throw new RuntimeException("[TILoader]can't load image without url!");
         }
@@ -52,14 +43,14 @@ public class TaskFactoryImpl implements TaskFactory {
             throw new RuntimeException("[TILoader]can't load image into a null View!");
         }
         if (params == null){
-            params = manager.getDefaultParams();
+            params = defParams;
         }
         Task task = null;
         if (customTaskFactory != null){
-            task = customTaskFactory.newLoadTask(url, params, view);
+            task = customTaskFactory.newLoadTask(url, params, view, defParams);
         }
         if (task == null){
-            task = newLoadTaskInner(url, params, view);
+            task = newLoadTaskInner(url, params, view, defParams);
         }
         if (task == null){
             throw new RuntimeException("[TILoader]unsupported view:<" + view.getClass().getName() + ">, can't load image into it, 0x00");
@@ -67,7 +58,7 @@ public class TaskFactoryImpl implements TaskFactory {
         return task;
     }
 
-    protected Task newLoadTaskInner(String url, Params params, View view){
+    protected Task newLoadTaskInner(String url, Params params, View view, Params defParams){
         if (view instanceof ImageView){
             return new ImageViewLoadTask(url, params, view);
         }
@@ -75,7 +66,7 @@ public class TaskFactoryImpl implements TaskFactory {
     }
 
     @Override
-    public Task newLoadBackgroundTask(String url, Params params, View view) {
+    public Task newLoadBackgroundTask(String url, Params params, View view, Params defParams) {
         if (url == null){
             throw new RuntimeException("[TILoader]can't load image without url!");
         }
@@ -83,14 +74,14 @@ public class TaskFactoryImpl implements TaskFactory {
             throw new RuntimeException("[TILoader]can't load image into a null View!");
         }
         if (params == null){
-            params = manager.getDefaultParams();
+            params = defParams;
         }
         Task task = null;
         if (customTaskFactory != null){
-            task = customTaskFactory.newLoadBackgroundTask(url, params, view);
+            task = customTaskFactory.newLoadBackgroundTask(url, params, view, defParams);
         }
         if (task == null){
-            task = newLoadBackgroundTaskInner(url, params, view);
+            task = newLoadBackgroundTaskInner(url, params, view, defParams);
         }
         if (task == null){
             throw new RuntimeException("[TILoader]unsupported view:<" + view.getClass().getName() + ">, can't load background image into it, 0x01");
@@ -98,12 +89,12 @@ public class TaskFactoryImpl implements TaskFactory {
         return task;
     }
 
-    protected Task newLoadBackgroundTaskInner(String url, Params params, View view){
+    protected Task newLoadBackgroundTaskInner(String url, Params params, View view, Params defParams){
         return new LoadBackgroundTask(url, params, view);
     }
 
     @Override
-    public Task newExtractTask(String url, Params params, OnLoadedListener listener) {
+    public Task newExtractTask(String url, Params params, OnLoadedListener listener, Params defParams) {
         if (url == null){
             throw new RuntimeException("[TILoader]can't load image without url!");
         }
@@ -111,14 +102,14 @@ public class TaskFactoryImpl implements TaskFactory {
             throw new RuntimeException("[TILoader]can't load image into a null View!");
         }
         if (params == null){
-            params = manager.getDefaultParams();
+            params = defParams;
         }
         Task task = null;
         if (customTaskFactory != null){
-            task = customTaskFactory.newExtractTask(url, params, listener);
+            task = customTaskFactory.newExtractTask(url, params, listener, defParams);
         }
         if (task == null){
-            task = newExtractTaskInner(url, params, listener);
+            task = newExtractTaskInner(url, params, listener, defParams);
         }
         if (task == null){
             throw new RuntimeException("[TILoader]unsupported listener:<" + listener.getClass().getName() + ">, can't extract image, 0x02");
@@ -126,7 +117,7 @@ public class TaskFactoryImpl implements TaskFactory {
         return task;
     }
 
-    protected Task newExtractTaskInner(String url, Params params, OnLoadedListener listener){
+    protected Task newExtractTaskInner(String url, Params params, OnLoadedListener listener, Params defParams){
         return new ExtractTask(url, params, listener);
     }
 

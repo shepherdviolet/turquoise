@@ -157,7 +157,19 @@ public abstract class AbsTask implements Task {
 
     @Override
     public final void onLoadCanceled() {
-
+        boolean cancel = false;
+        try {
+            stateLock.lock();
+            if (state == State.LOADING) {
+                state = State.LOAD_CANCELED;
+                cancel = true;
+            }
+        }finally {
+            stateLock.unlock();
+        }
+        if (cancel) {
+            onLoadCanceledInner();
+        }
     }
 
     @Override
@@ -187,8 +199,12 @@ public abstract class AbsTask implements Task {
 
     protected void onLoadFailedInner(){
         if (!reload()){
-
+            onLoadCanceled();
         }
+    }
+
+    protected void onLoadCanceledInner(){
+
     }
 
     /**
@@ -235,25 +251,16 @@ public abstract class AbsTask implements Task {
         return diskKey;
     }
 
+    @Override
+    public State getState() {
+        return state;
+    }
+
     protected NodeController getNodeController(){
         if (this.nodeController!= null){
             return nodeController.get();
         }
         return null;
-    }
-
-    /***********************************************************
-     * Enum
-     */
-
-    private enum State{
-        BEFORE_INIT,
-        INITIALIZED,
-        LOADING,
-        LOAD_SUCCEED,
-        LOAD_FAILED,
-        LOAD_CANCELED,
-        DESTROYED
     }
 
 }

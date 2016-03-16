@@ -88,7 +88,7 @@ public class EngineSettings implements ComponentManager.Component{
 
         //factory////////////////////////////////////////////////////////////////////////////
 
-        private final TaskFactory taskFactory = new TaskFactoryImpl();
+        private final TaskFactoryImpl taskFactory = new TaskFactoryImpl();
         private final NodeFactory nodeFactory = new NodeFactoryImpl();
         private final NodeTaskFactory nodeTaskFactory = new NodeTaskFactoryImpl();
 
@@ -144,7 +144,6 @@ public class EngineSettings implements ComponentManager.Component{
     @Override
     public void init(ComponentManager manager) {
         this.manager = manager;
-        values.taskFactory.init(manager);
         values.nodeFactory.init(manager);
         values.nodeTaskFactory.init(manager);
     }

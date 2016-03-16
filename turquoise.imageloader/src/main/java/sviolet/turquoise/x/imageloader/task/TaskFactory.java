@@ -29,14 +29,36 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  *
  * Created by S.Violet on 2016/2/23.
  */
-public interface TaskFactory extends ComponentManager.Component {
+public interface TaskFactory {
 
-    Task newLoadTask(String url, Params params, View view);
+    /**
+     *
+     * @param url url
+     * @param params params
+     * @param view view
+     * @param defParams use default when params is null
+     * @return Task
+     */
+    Task newLoadTask(String url, Params params, View view, Params defParams);
 
-    Task newLoadBackgroundTask(String url, Params params, View view);
+    /**
+     *
+     * @param url url
+     * @param params params
+     * @param view view
+     * @param defParams use default when params is null
+     * @return Task
+     */
+    Task newLoadBackgroundTask(String url, Params params, View view, Params defParams);
 
-    Task newExtractTask(String url, Params params, OnLoadedListener listener);
-
-    void setCustomTaskFactory(TaskFactory factory);
+    /**
+     *
+     * @param url url
+     * @param params params
+     * @param listener listener
+     * @param defParams use default when params is null
+     * @return Task
+     */
+    Task newExtractTask(String url, Params params, OnLoadedListener listener, Params defParams);
 
 }

@@ -67,4 +67,8 @@ public class NodeSettings {
 
     }
 
+    public void destroy(){
+
+    }
+
 }

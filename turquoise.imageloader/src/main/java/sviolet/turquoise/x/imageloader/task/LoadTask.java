@@ -25,6 +25,7 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.common.statics.SpecialResourceId;
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
 
@@ -93,6 +94,26 @@ public abstract class LoadTask extends AbsTask {
         }finally {
             viewLock.unlock();
         }
+    }
+
+    @Override
+    protected void onLoadSucceedInner(ImageResource<?> resource) {
+        super.onLoadSucceedInner(resource);
+    }
+
+    @Override
+    protected void onLoadFailedInner() {
+        super.onLoadFailedInner();
+    }
+
+    @Override
+    protected void onLoadCanceledInner() {
+        super.onLoadCanceledInner();
+    }
+
+    @Override
+    protected void onDestroyInner() {
+        super.onDestroyInner();
     }
 
     /***********************************************************

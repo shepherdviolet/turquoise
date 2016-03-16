@@ -23,14 +23,20 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 /**
- * Created by S.Violet on 2016/2/19.
+ * <p>create background of Loaded Image</p>
+ *
+ * Created by S.Violet on 2016/3/16.
  */
-public interface LoadingDrawableFactory {
+public interface BackgroundDrawableFactory {
 
     /**
-     * create a drawable for loading state
-     * @param loadingBackgroundColor background color when loading
-     * @param loadingBitmap bitmap when loading
+     * <p>create background of Loaded Image</p>
+     *
+     * <p>it will show after Image loaded, and then gradually disappear. The drawable is used for
+     * TransitionDrawable's layer, and it will continue to use color/bitmap of loading state.</p>
+     *
+     * @param loadingBackgroundColor background color of loading state
+     * @param loadingBitmap bitmap of loading state
      * @return Drawable
      */
     Drawable create(int loadingBackgroundColor, Bitmap loadingBitmap);
