@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+ Animation animation = AnimationUtils.loadAnimation(context, R.anim.xxx);//加载
+ animation.setDuration(200);//设置动画长度
+ //animation.start();//动画置为初始状态(可用于重置)
+ View.setAnimation(animation);//设置(下一个)动画
+ View.startAnimation(animation);//设置并开始这个动画
+ -->
 <translate xmlns:android="http://schemas.android.com/apk/res/android"
     android:duration="300"
     android:fromXDelta="100%p"
