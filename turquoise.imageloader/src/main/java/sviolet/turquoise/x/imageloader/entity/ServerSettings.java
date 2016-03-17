@@ -23,6 +23,12 @@ import android.content.Context;
 
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
+import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.def.DefaultBackgroundDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.def.DefaultFailedDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.def.DefaultLoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
 import sviolet.turquoise.x.imageloader.handler.def.DefaultImageResourceHandler;
 import sviolet.turquoise.x.imageloader.node.NodeFactory;
@@ -36,12 +42,12 @@ import sviolet.turquoise.x.imageloader.task.TaskFactoryImpl;
  *
  * Created by S.Violet on 2016/2/16.
  */
-public class EngineSettings implements ComponentManager.Component{
+public class ServerSettings implements ComponentManager.Component{
 
     private ComponentManager manager;
     private Values values;
 
-    private EngineSettings(Values values) {
+    private ServerSettings(Values values) {
         this.values = values;
     }
 
@@ -61,11 +67,25 @@ public class EngineSettings implements ComponentManager.Component{
         return values.imageResourceHandler;
     }
 
-    //factory////////////////////////////////////////////////////////////////////////////
+    //configurable factory////////////////////////////////////////////////////////////////////////////
 
     public TaskFactory getTaskFactory(){
         return values.taskFactory;
     }
+
+    public LoadingDrawableFactory getLoadingDrawableFactory(){
+        return values.loadingDrawableFactory;
+    }
+
+    public FailedDrawableFactory getFailedDrawableFactory(){
+        return values.failedDrawableFactory;
+    }
+
+    public BackgroundDrawableFactory getBackgroundDrawableFactory(){
+        return values.backgroundDrawableFactory;
+    }
+
+    //static factory////////////////////////////////////////////////////////////////////////////
 
     public NodeFactory getNodeFactory(){
         return values.nodeFactory;
@@ -86,12 +106,17 @@ public class EngineSettings implements ComponentManager.Component{
 
         private ImageResourceHandler imageResourceHandler = new DefaultImageResourceHandler();
 
-        //factory////////////////////////////////////////////////////////////////////////////
+        //configurable factory////////////////////////////////////////////////////////////////////////////
 
         private final TaskFactoryImpl taskFactory = new TaskFactoryImpl();
+        private LoadingDrawableFactory loadingDrawableFactory = new DefaultLoadingDrawableFactory();
+        private FailedDrawableFactory failedDrawableFactory = new DefaultFailedDrawableFactory();
+        private BackgroundDrawableFactory backgroundDrawableFactory = new DefaultBackgroundDrawableFactory();
+
+        //static factory////////////////////////////////////////////////////////////////////////////
+
         private final NodeFactory nodeFactory = new NodeFactoryImpl();
         private final NodeTaskFactory nodeTaskFactory = new NodeTaskFactoryImpl();
-
     }
 
     public static class Builder{
@@ -102,8 +127,8 @@ public class EngineSettings implements ComponentManager.Component{
             values = new Values();
         }
 
-        public EngineSettings build(){
-            return new EngineSettings(values);
+        public ServerSettings build(){
+            return new ServerSettings(values);
         }
 
         //settings////////////////////////////////////////////////////////////////////////////
@@ -115,7 +140,7 @@ public class EngineSettings implements ComponentManager.Component{
          */
         public Builder setMemoryCachePercent(Context context, float percent){
             if (context == null){
-                throw new RuntimeException("[EngineSettings]setMemoryCachePercent:　context is null!");
+                throw new RuntimeException("[ServerSettings]setMemoryCachePercent:　context is null!");
             }
             //控制上下限
             if (percent < 0){
@@ -132,10 +157,31 @@ public class EngineSettings implements ComponentManager.Component{
 
         //handler////////////////////////////////////////////////////////////////////////////
 
-        //factory////////////////////////////////////////////////////////////////////////////
+        //configurable factory////////////////////////////////////////////////////////////////////////////
 
         public Builder setCustomTaskFactory(TaskFactory customTaskFactory){
             values.taskFactory.setCustomTaskFactory(customTaskFactory);
+            return this;
+        }
+
+        public Builder setLoadingDrawableFactory(LoadingDrawableFactory factory){
+            if (factory != null){
+                values.loadingDrawableFactory = factory;
+            }
+            return this;
+        }
+
+        public Builder setFailedDrawableFactory(FailedDrawableFactory factory){
+            if (factory != null){
+                values.failedDrawableFactory = factory;
+            }
+            return this;
+        }
+
+        public Builder setBackgroundDrawableFactory(BackgroundDrawableFactory factory){
+            if (factory != null){
+                values.backgroundDrawableFactory = factory;
+            }
             return this;
         }
 

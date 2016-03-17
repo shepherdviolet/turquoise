@@ -48,7 +48,7 @@ public class CacheServer implements ComponentManager.Component, Server {
     }
 
     private void initBitmapCache() {
-        int memoryCacheSize = manager.getEngineSettings().getMemoryCacheSize();
+        int memoryCacheSize = manager.getServerSettings().getMemoryCacheSize();
         //try to use default value if memoryCacheSize <= 0
         if (memoryCacheSize <= 0){
             final Context contextImage = manager.getContextImage();

@@ -20,8 +20,11 @@
 package sviolet.turquoise.x.imageloader.node;
 
 import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
+import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.server.Engine;
-import sviolet.turquoise.x.imageloader.entity.EngineSettings;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.task.Task;
 
@@ -61,10 +64,25 @@ public abstract class NodeController implements LifeCycle {
     public abstract NodeSettings getNodeSettings();
 
     /**
-     * TLoader must be initialized before get EngineSettings
-     * @return get EngineSettings
+     * TLoader must be initialized before get ServerSettings
+     * @return get ServerSettings
      */
-    public abstract EngineSettings getEngineSettings();
+    public abstract ServerSettings getServerSettings();
+
+    /**
+     * @return get LoadingDrawableFactory from Node, if it's null, get from ServerSettings
+     */
+    public abstract LoadingDrawableFactory getLoadingDrawableFactory();
+
+    /**
+     * @return get FailedDrawableFactory from Node, if it's null, get from ServerSettings
+     */
+    public abstract FailedDrawableFactory getFailedDrawableFactory();
+
+    /**
+     * @return get BackgroundDrawableFactory from Node, if it's null, get from ServerSettings
+     */
+    public abstract BackgroundDrawableFactory BackgroundDrawableFactory();
 
     /**
      * notify the DispatchThread to dispatch tasks

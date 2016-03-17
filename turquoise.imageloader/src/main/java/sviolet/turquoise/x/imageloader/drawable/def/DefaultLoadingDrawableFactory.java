@@ -17,34 +17,19 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader;
+package sviolet.turquoise.x.imageloader.drawable.def;
 
-import android.view.View;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
-import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
 
 /**
- *
- * Created by S.Violet on 2016/3/15.
+ * Created by S.Violet on 2016/3/17.
  */
-public class TILoaderUtils {
-
-    /**
-     * check if ImageResource Valid
-     * @param resource ImageResource
-     * @return true:valid
-     */
-    public static boolean isImageResourceValid(ImageResource resource){
-        return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().isValid(resource);
+public class DefaultLoadingDrawableFactory implements LoadingDrawableFactory {
+    @Override
+    public Drawable create(int loadingBackgroundColor, Bitmap loadingBitmap) {
+        return null;
     }
-
-    /**
-     * reload View which has been canceled
-     * @param view view
-     * @return true:this view can be reload
-     */
-    public static boolean reloadView(View view){
-        return false;
-    }
-
 }

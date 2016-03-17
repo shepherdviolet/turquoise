@@ -29,10 +29,11 @@ import java.util.concurrent.locks.ReentrantLock;
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.model.common.LazySingleThreadPool;
 import sviolet.turquoise.x.imageloader.ComponentManager;
-import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
-import sviolet.turquoise.x.imageloader.server.Engine;
-import sviolet.turquoise.x.imageloader.entity.EngineSettings;
+import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.server.Server;
@@ -117,7 +118,7 @@ public class NodeControllerImpl extends NodeController {
         taskGroup.add(task);
 
         if (newTaskGroup) {
-            NodeTask nodeTask = manager.getEngineSettings().getNodeTaskFactory().newNodeTask(this, task);
+            NodeTask nodeTask = manager.getServerSettings().getNodeTaskFactory().newNodeTask(this, task);
             nodeTask.setServerType(Server.Type.CACHE);
             nodeTask.setState(NodeTask.State.STAND_BY);
             executeNodeTask(nodeTask);
@@ -303,8 +304,35 @@ public class NodeControllerImpl extends NodeController {
     }
 
     @Override
-    public EngineSettings getEngineSettings() {
-        return manager.getEngineSettings();
+    public ServerSettings getServerSettings() {
+        return manager.getServerSettings();
+    }
+
+    @Override
+    public LoadingDrawableFactory getLoadingDrawableFactory() {
+        LoadingDrawableFactory factory = getNodeSettings().getLoadingDrawableFactory();
+        if (factory == null){
+            factory = getServerSettings().getLoadingDrawableFactory();
+        }
+        return factory;
+    }
+
+    @Override
+    public FailedDrawableFactory getFailedDrawableFactory() {
+        FailedDrawableFactory factory = getNodeSettings().getFailedDrawableFactory();
+        if (factory == null){
+            factory = getServerSettings().getFailedDrawableFactory();
+        }
+        return factory;
+    }
+
+    @Override
+    public BackgroundDrawableFactory BackgroundDrawableFactory() {
+        BackgroundDrawableFactory factory = getNodeSettings().getBackgroundDrawableFactory();
+        if (factory == null){
+            factory = getServerSettings().getBackgroundDrawableFactory();
+        }
+        return factory;
     }
 
     /******************************************************************

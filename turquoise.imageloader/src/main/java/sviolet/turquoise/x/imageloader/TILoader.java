@@ -25,7 +25,7 @@ import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
-import sviolet.turquoise.x.imageloader.entity.EngineSettings;
+import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.Node;
 
 /**
@@ -76,13 +76,13 @@ public class TILoader {
     }
 
     /**
-     * Engine Setting, you should setting before TILoader used (load image)<br/>
+     * Server Setting, you should setting before TILoader used (load image)<br/>
      * e.g setting in Application.onCreate()<br/>
-     * @param settings Engine Settings
+     * @param settings Server Settings
      * @return true : setting effective. it will be false when setting after TILoader used, and make no effect.
      */
-    public static boolean setting(EngineSettings settings){
-        return ComponentManager.getInstance().settingEngine(settings);
+    public static boolean setting(ServerSettings settings){
+        return ComponentManager.getInstance().settingServer(settings);
     }
 
     /**

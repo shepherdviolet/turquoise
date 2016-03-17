@@ -25,10 +25,10 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.server.CacheServer;
 import sviolet.turquoise.x.imageloader.server.DiskEngine;
 import sviolet.turquoise.x.imageloader.server.NetEngine;
-import sviolet.turquoise.x.imageloader.entity.EngineSettings;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeManager;
 
@@ -66,7 +66,7 @@ public class ComponentManager {
      * Settings
      **********************************************************************************************/
 
-    private EngineSettings engineSettings;
+    private ServerSettings serverSettings;
 
     /**********************************************************************************************
      * Extras
@@ -103,13 +103,13 @@ public class ComponentManager {
      * Settings Operations
      **********************************************************************************************/
 
-    public boolean settingEngine(EngineSettings settings){
+    public boolean settingServer(ServerSettings settings){
         boolean result = false;
         if (!componentsInitialized){
             try{
                 componentsInitializeLock.lock();
                 if (!componentsInitialized){
-                    this.engineSettings = settings;
+                    this.serverSettings = settings;
                     result = true;
                 }else{
                     getLogger().e("[TILoader]setting failed, you should invoke TILoader.setting() before TILoader used (load image)");
@@ -124,11 +124,11 @@ public class ComponentManager {
     }
 
     /**
-     * component must be initialized before get EngineSettings
-     * @return get EngineSettings
+     * component must be initialized before get ServerSettings
+     * @return get ServerSettings
      */
-    public EngineSettings getEngineSettings(){
-        return engineSettings;
+    public ServerSettings getServerSettings(){
+        return serverSettings;
     }
 
     /**********************************************************************************************
@@ -151,10 +151,10 @@ public class ComponentManager {
     }
 
     private void onInitialize(){
-        if (engineSettings == null) {
-            engineSettings = new EngineSettings.Builder().build();
+        if (serverSettings == null) {
+            serverSettings = new ServerSettings.Builder().build();
         }
-        engineSettings.init(ComponentManager.getInstance());
+        serverSettings.init(ComponentManager.getInstance());
         cacheServer.init(ComponentManager.getInstance());
         nodeManager.init(ComponentManager.getInstance());
         diskEngine.init(ComponentManager.getInstance());
@@ -169,7 +169,7 @@ public class ComponentManager {
      * @return get logger
      */
     public TLogger getLogger(){
-        if (getEngineSettings().isLogEnabled()) {
+        if (getServerSettings().isLogEnabled()) {
             return logger;
         }else{
             return TLogger.getDisabledLogger();

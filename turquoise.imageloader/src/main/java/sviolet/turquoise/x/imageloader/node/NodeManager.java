@@ -57,7 +57,7 @@ public class NodeManager implements ComponentManager.Component {
             nodesLock.lock();
             node = nodes.get(nodeId);
             if (node == null){
-                node = manager.getEngineSettings().getNodeFactory().newNode(nodeId);
+                node = manager.getServerSettings().getNodeFactory().newNode(nodeId);
                 nodes.put(nodeId, node);
                 node.attachLifeCycle(context);
                 manager.setContextImage(context);
