@@ -40,7 +40,7 @@ public abstract class AbsStub implements Stub {
     private String url;
     private Params params;
     private String key;
-    private String diskKey;
+    private String resourceKey;
 
     private WeakReference<NodeController> nodeController;
 
@@ -235,20 +235,20 @@ public abstract class AbsStub implements Stub {
         if (key == null) {
             if (params == null)
                 params = new Params.Builder().build();
-            key = getDiskKey() + "@" + Integer.toString(params.getReqWidth()) + "x" + Integer.toString(params.getReqHeight());
+            key = getResourceKey() + "@" + Integer.toString(params.getReqWidth()) + "x" + Integer.toString(params.getReqHeight());
         }
         return key;
     }
 
     @Override
-    public String getDiskKey() {
-        if (diskKey == null){
+    public String getResourceKey() {
+        if (resourceKey == null){
             String url = getUrl();
             if (url == null)
                 url = NULL;
-            diskKey = ByteUtils.byteToHex(DigestCipher.digest(url, DigestCipher.TYPE_SHA1));
+            resourceKey = ByteUtils.byteToHex(DigestCipher.digest(url, DigestCipher.TYPE_SHA1));
         }
-        return diskKey;
+        return resourceKey;
     }
 
     @Override

@@ -33,18 +33,18 @@ public class NodeTask {
     private Params params;
     private String nodeId;
     private String key;
-    private String diskKey;
+    private String resourceKey;
 
     private Server.Type serverType = Server.Type.CACHE;
     private volatile State state = State.STAND_BY;
 
-    NodeTask(String nodeId, Stub.Type type, String key, String diskKey, String url, Params params) {
+    NodeTask(String nodeId, Stub.Type type, String key, String resourceKey, String url, Params params) {
         this.type = type;
         this.url = url;
         this.params = params;
         this.nodeId = nodeId;
         this.key = key;
-        this.diskKey = diskKey;
+        this.resourceKey = resourceKey;
     }
 
     public Stub.Type getType() {

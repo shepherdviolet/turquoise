@@ -36,7 +36,7 @@ public class NodeTaskFactoryImpl implements NodeTaskFactory {
 
     @Override
     public NodeTask newNodeTask(NodeController controller, Stub stub) {
-        return new NodeTask(controller.getNodeId(), stub.getType(), stub.getKey(), stub.getDiskKey(), stub.getUrl(), stub.getParams());
+        return new NodeTask(controller.getNodeId(), stub.getType(), stub.getKey(), stub.getResourceKey(), stub.getUrl(), stub.getParams());
     }
 
 }

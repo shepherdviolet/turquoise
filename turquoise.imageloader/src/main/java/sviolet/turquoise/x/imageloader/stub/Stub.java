@@ -81,7 +81,7 @@ public interface Stub extends Destroyable {
     /**
      * @return key of target resource (Net/Disk)
      */
-    String getDiskKey();
+    String getResourceKey();
 
     State getState();
 
