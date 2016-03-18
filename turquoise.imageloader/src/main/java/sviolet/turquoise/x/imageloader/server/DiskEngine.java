@@ -32,8 +32,8 @@ public class DiskEngine extends Engine {
     }
 
     @Override
-    protected boolean isReady() {
-        return false;
+    protected int getMaxThread() {
+        return getComponentManager().getServerSettings().getDiskLoadMaxThread();
     }
 
     @Override

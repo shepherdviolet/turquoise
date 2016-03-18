@@ -36,7 +36,7 @@ public class NodeTask {
     private String diskKey;
 
     private Server.Type serverType = Server.Type.CACHE;
-    private State state = State.STAND_BY;
+    private volatile State state = State.STAND_BY;
 
     NodeTask(String nodeId, Task.Type type, String key, String diskKey, String url, Params params) {
         this.type = type;

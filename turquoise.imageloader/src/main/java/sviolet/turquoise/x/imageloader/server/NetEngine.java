@@ -34,8 +34,8 @@ public class NetEngine extends Engine {
     }
 
     @Override
-    protected boolean isReady() {
-        return false;
+    protected int getMaxThread() {
+        return getComponentManager().getServerSettings().getNetLoadMaxThread();
     }
 
     @Override

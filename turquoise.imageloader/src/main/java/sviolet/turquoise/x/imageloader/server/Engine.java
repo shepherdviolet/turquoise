@@ -20,6 +20,9 @@
 package sviolet.turquoise.x.imageloader.server;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.model.common.LazySingleThreadPool;
 import sviolet.turquoise.x.imageloader.ComponentManager;
@@ -35,6 +38,11 @@ public abstract class Engine implements ComponentManager.Component, Server {
     private ComponentManager manager;
 
     private LazySingleThreadPool dispatchThreadPool = new LazySingleThreadPool();
+    private ExecutorService taskThreadPool = Executors.newCachedThreadPool();
+
+    private volatile int taskCount = 0;
+
+    private final ReentrantLock taskCountLock = new ReentrantLock();
 
     /**
      * single Thread to operate the cache!
@@ -66,18 +74,35 @@ public abstract class Engine implements ComponentManager.Component, Server {
         dispatchThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                if (isReady()){
+                while (competeThread()){
                     NodeTask task = getNodeTask();
                     if (task != null){
-                        executeNewTask(task);
+                        executeTask(task);
+                    }else{
+                        break;
                     }
                 }
             }
         });
     }
 
+    private void executeTask(final NodeTask task) {
+        taskThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                executeNewTask(task);
+            }
+        });
+    }
+
     protected void response(NodeTask task){
         manager.getNodeManager().response(task);
+        releaseThread();
+        ignite();
+    }
+
+    protected ComponentManager getComponentManager(){
+        return manager;
     }
 
     /**
@@ -86,9 +111,33 @@ public abstract class Engine implements ComponentManager.Component, Server {
      */
     protected abstract void executeNewTask(NodeTask task);
 
+    protected abstract int getMaxThread();
+
     /**
-     * @return is Engine ready to execute new task
+     * compete thread to execute new task
+     * @return ready to execute new task
      */
-    protected abstract boolean isReady();
+    private boolean competeThread(){
+        final int maxThread = getMaxThread();
+        try{
+            taskCountLock.lock();
+            if (taskCount < maxThread){
+                taskCount++;
+                return true;
+            }
+        }finally {
+            taskCountLock.unlock();
+        }
+        return false;
+    }
+
+    private void releaseThread(){
+        try{
+            taskCountLock.lock();
+            taskCount--;
+        }finally {
+            taskCountLock.unlock();
+        }
+    }
 
 }

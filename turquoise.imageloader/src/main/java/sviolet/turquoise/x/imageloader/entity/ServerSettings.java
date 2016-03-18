@@ -61,6 +61,14 @@ public class ServerSettings implements ComponentManager.Component{
         return values.memoryCacheSize;
     }
 
+    public int getNetLoadMaxThread(){
+        return values.netLoadMaxThread;
+    }
+
+    public int getDiskLoadMaxThread(){
+        return values.diskLoadMaxThread;
+    }
+
     //handler////////////////////////////////////////////////////////////////////////////
 
     public ImageResourceHandler getImageResourceHandler(){
@@ -101,6 +109,8 @@ public class ServerSettings implements ComponentManager.Component{
 
         private boolean logEnabled = true;
         private int memoryCacheSize = 0;
+        private int netLoadMaxThread = 3;
+        private int diskLoadMaxThread = 10;
 
         //handler////////////////////////////////////////////////////////////////////////////
 
