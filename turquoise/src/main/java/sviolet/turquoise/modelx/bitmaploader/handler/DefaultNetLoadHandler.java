@@ -145,6 +145,7 @@ public class DefaultNetLoadHandler implements NetLoadHandler {
             conn = (HttpURLConnection) httpUrl.openConnection();
             conn.setConnectTimeout(connectTimeout);
             conn.setReadTimeout(readTimeout);
+            conn.setUseCaches(false);
             conn.setRequestMethod("GET");
             //连接
             inputStream = conn.getInputStream();
