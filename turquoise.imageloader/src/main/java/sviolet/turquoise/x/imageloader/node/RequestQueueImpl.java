@@ -29,7 +29,7 @@ public class RequestQueueImpl implements RequestQueue {
     private int size;
     private int position = 0;
 
-    private NodeTask[] tasks;
+    private Task[] tasks;
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -38,8 +38,8 @@ public class RequestQueueImpl implements RequestQueue {
     }
 
     @Override
-    public NodeTask put(NodeTask task) {
-        NodeTask oldTask;
+    public Task put(Task task) {
+        Task oldTask;
         try{
             lock.lock();
             oldTask = tasks[position];
@@ -52,8 +52,8 @@ public class RequestQueueImpl implements RequestQueue {
     }
 
     @Override
-    public NodeTask get() {
-        NodeTask task;
+    public Task get() {
+        Task task;
         try{
             lock.lock();
             positionDecrease();
@@ -72,12 +72,12 @@ public class RequestQueueImpl implements RequestQueue {
         if (this.size == size){
             return;
         }
-        NodeTask[] newTasks = new NodeTask[size];
+        Task[] newTasks = new Task[size];
         try{
             lock.lock();
             if(this.tasks != null){
                 for (int i = size - 1 ; i >= 0 ; i--){
-                    NodeTask task = get();
+                    Task task = get();
                     if (task == null){
                         break;
                     }

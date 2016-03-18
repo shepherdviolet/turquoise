@@ -28,12 +28,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class ResponseQueueImpl implements ResponseQueue {
 
-    private List<NodeTask> tasks = new ArrayList<>();
+    private List<Task> tasks = new ArrayList<>();
 
     private final ReentrantLock tasksLock = new ReentrantLock();
 
     @Override
-    public void put(NodeTask task) {
+    public void put(Task task) {
         try{
             tasksLock.lock();
             tasks.add(task);
@@ -43,8 +43,8 @@ public class ResponseQueueImpl implements ResponseQueue {
     }
 
     @Override
-    public NodeTask get() {
-        NodeTask task = null;
+    public Task get() {
+        Task task = null;
         try{
             tasksLock.lock();
             task = tasks.remove(0);

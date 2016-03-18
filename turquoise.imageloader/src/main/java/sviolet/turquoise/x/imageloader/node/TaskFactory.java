@@ -26,8 +26,8 @@ import sviolet.turquoise.x.imageloader.stub.Stub;
  *
  * Created by S.Violet on 2016/3/3.
  */
-public interface NodeTaskFactory extends ComponentManager.Component {
+public interface TaskFactory extends ComponentManager.Component {
 
-    NodeTask newNodeTask(NodeController controller, Stub stub);
+    Task newTask(NodeController controller, Stub stub);
 
 }

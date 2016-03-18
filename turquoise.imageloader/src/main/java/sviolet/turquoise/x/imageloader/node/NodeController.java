@@ -43,12 +43,12 @@ public abstract class NodeController implements LifeCycle {
      */
     public abstract void execute(Stub stub);
 
-    abstract NodeTask pullNodeTask(Engine.Type type);
+    abstract Task pullTask(Engine.Type type);
 
     /**
-     * @param task response when NodeTask executed by Engine
+     * @param task response when Task executed by Engine
      */
-    abstract void response(NodeTask task);
+    abstract void response(Task task);
 
     public abstract String getNodeId();
 

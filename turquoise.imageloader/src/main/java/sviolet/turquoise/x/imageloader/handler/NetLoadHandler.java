@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.handler;
 
-import sviolet.turquoise.x.imageloader.node.NodeTask;
+import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.EngineCallback;
 
 /**
@@ -28,6 +28,6 @@ import sviolet.turquoise.x.imageloader.server.EngineCallback;
  */
 public interface NetLoadHandler {
 
-    void onHandle(NodeTask task, EngineCallback callback);
+    void onHandle(Task task, EngineCallback callback);
 
 }

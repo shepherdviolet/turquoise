@@ -25,16 +25,16 @@ package sviolet.turquoise.x.imageloader.node;
 public interface RequestQueue {
 
     /**
-     * put a NodeTask into the queue
-     * @param task new NodeTask
+     * put a Task into the queue
+     * @param task new Task
      * @return return the obsolete task, you should handle it
      */
-    NodeTask put(NodeTask task);
+    Task put(Task task);
 
     /**
-     * @return get a NodeTask from the queue
+     * @return get a Task from the queue
      */
-    NodeTask get();
+    Task get();
 
     /**
      * @param size set the size of waiting queue (>0)

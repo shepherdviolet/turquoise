@@ -25,15 +25,15 @@ package sviolet.turquoise.x.imageloader.node;
 public interface ResponseQueue {
 
     /**
-     * put a NodeTask into the response queue
+     * put a Task into the response queue
      * @param task the task which executed by engine
      */
-    void put(NodeTask task);
+    void put(Task task);
 
     /**
-     * @return get a NodeTask from response queue
+     * @return get a Task from response queue
      */
-    NodeTask get();
+    Task get();
 
     /**
      * @return size of queue

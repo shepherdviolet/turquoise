@@ -118,29 +118,29 @@ public class NodeControllerImpl extends NodeController {
         stubGroup.add(stub);
 
         if (newStubGroup) {
-            NodeTask nodeTask = manager.getServerSettings().getNodeTaskFactory().newNodeTask(this, stub);
-            nodeTask.setServerType(Server.Type.CACHE);
-            nodeTask.setState(NodeTask.State.STAND_BY);
-            executeNodeTask(nodeTask);
+            Task task = manager.getServerSettings().getTaskFactory().newTask(this, stub);
+            task.setServerType(Server.Type.CACHE);
+            task.setState(Task.State.STAND_BY);
+            executeTask(task);
         }
     }
 
     @Override
-    NodeTask pullNodeTask(Server.Type type) {
+    Task pullTask(Server.Type type) {
         switch (type){
             case DISK:
                 return diskRequestQueue.get();
             case NET:
                 return netRequestQueue.get();
             default:
-                manager.getLogger().e("NodeControllerImpl:pullNodeTask illegal Server.Type:<" + type.toString() + ">");
+                manager.getLogger().e("NodeControllerImpl:pullTask illegal Server.Type:<" + type.toString() + ">");
                 break;
         }
         return null;
     }
 
     @Override
-    void response(NodeTask task) {
+    void response(Task task) {
         responseQueue.put(task);
         postDispatch();
     }
@@ -149,97 +149,97 @@ public class NodeControllerImpl extends NodeController {
      * private
      */
 
-    private void executeNodeTask(NodeTask nodeTask){
+    private void executeTask(Task task){
 
-        if (nodeTask == null){
-            manager.getLogger().e("NodeControllerImpl can't execute null NodeTask");
+        if (task == null){
+            manager.getLogger().e("NodeControllerImpl can't execute null Task");
             return;
         }
 
-        if (nodeTask.getState() == NodeTask.State.SUCCEED){
-            callback(nodeTask);
+        if (task.getState() == Task.State.SUCCEED){
+            callback(task);
             return;
-        }else if (nodeTask.getState() == NodeTask.State.CANCELED){
-            callback(nodeTask);
+        }else if (task.getState() == Task.State.CANCELED){
+            callback(task);
             return;
         }
 
-        switch (nodeTask.getServerType()){
+        switch (task.getServerType()){
             case CACHE:
-                executeNodeTaskToCache(nodeTask);
+                executeTaskToCache(task);
                 break;
             case DISK:
-                executeNodeTaskToDisk(nodeTask);
+                executeTaskToDisk(task);
                 break;
             case NET:
-                executeNodeTaskToNet(nodeTask);
+                executeTaskToNet(task);
                 break;
             default:
-                throw new RuntimeException("[TILoader:NodeControllerImpl] illegal ServerType of NodeTask");
+                throw new RuntimeException("[TILoader:NodeControllerImpl] illegal ServerType of Task");
         }
     }
 
-    private void executeNodeTaskToCache(NodeTask nodeTask){
-        ImageResource<?> resource = manager.getCacheServer().get(nodeTask.getKey());
+    private void executeTaskToCache(Task task){
+        ImageResource<?> resource = manager.getCacheServer().get(task.getKey());
         if (resource != null) {
-            nodeTask.setState(NodeTask.State.SUCCEED);
-            callback(nodeTask);
+            task.setState(Task.State.SUCCEED);
+            callback(task);
         }else{
-            nodeTask.setServerType(Server.Type.DISK);
-            nodeTask.setState(NodeTask.State.STAND_BY);
-            executeNodeTask(nodeTask);
+            task.setServerType(Server.Type.DISK);
+            task.setState(Task.State.STAND_BY);
+            executeTask(task);
         }
     }
 
-    private void executeNodeTaskToDisk(NodeTask nodeTask){
-        if (nodeTask.getState() == NodeTask.State.STAND_BY){
-            NodeTask obsoleteNodeTask = diskRequestQueue.put(nodeTask);
+    private void executeTaskToDisk(Task task){
+        if (task.getState() == Task.State.STAND_BY){
+            Task obsoleteTask = diskRequestQueue.put(task);
             manager.getDiskEngine().ignite();
-            callbackToObsolete(obsoleteNodeTask);
+            callbackToObsolete(obsoleteTask);
         }else{
-            nodeTask.setServerType(Server.Type.NET);
-            nodeTask.setState(NodeTask.State.STAND_BY);
-            executeNodeTask(nodeTask);
+            task.setServerType(Server.Type.NET);
+            task.setState(Task.State.STAND_BY);
+            executeTask(task);
         }
     }
 
-    private void executeNodeTaskToNet(NodeTask nodeTask){
-        if (nodeTask.getState() == NodeTask.State.STAND_BY){
-            NodeTask obsoleteNodeTask = netRequestQueue.put(nodeTask);
+    private void executeTaskToNet(Task task){
+        if (task.getState() == Task.State.STAND_BY){
+            Task obsoleteTask = netRequestQueue.put(task);
             manager.getNetEngine().ignite();
-            callbackToObsolete(obsoleteNodeTask);
+            callbackToObsolete(obsoleteTask);
         }else{
-            nodeTask.setState(NodeTask.State.FAILED);
-            callback(nodeTask);
+            task.setState(Task.State.FAILED);
+            callback(task);
         }
     }
 
-    private void callback(NodeTask nodeTask){
-        if (nodeTask == null){
+    private void callback(Task task){
+        if (task == null){
             return;
         }
         Message msg = myHandler.obtainMessage(MyHandler.HANDLER_CALLBACK);
-        msg.obj = nodeTask;
+        msg.obj = task;
         msg.sendToTarget();
     }
 
-    private void callbackToObsolete(NodeTask obsoleteNodeTask){
-        if (obsoleteNodeTask == null) {
+    private void callbackToObsolete(Task obsoleteTask){
+        if (obsoleteTask == null) {
             return;
         }
-        obsoleteNodeTask.setState(NodeTask.State.CANCELED);
-        callback(obsoleteNodeTask);
+        obsoleteTask.setState(Task.State.CANCELED);
+        callback(obsoleteTask);
     }
 
-    private void callbackInUiThread(NodeTask nodeTask){
-        if (nodeTask == null){
+    private void callbackInUiThread(Task task){
+        if (task == null){
             return;
         }
 
         StubGroup stubGroup;
         try {
             stubPoolLock.lock();
-            stubGroup = stubPool.remove(nodeTask.getKey());
+            stubGroup = stubPool.remove(task.getKey());
         } finally {
             stubPoolLock.unlock();
         }
@@ -248,9 +248,9 @@ public class NodeControllerImpl extends NodeController {
             return;
         }
 
-        switch (nodeTask.getState()){
+        switch (task.getState()){
             case SUCCEED:
-                ImageResource<?> resource = manager.getCacheServer().get(nodeTask.getKey());
+                ImageResource<?> resource = manager.getCacheServer().get(task.getKey());
                 if (TILoaderUtils.isImageResourceValid(resource)){
                     stubGroup.onLoadSucceed(resource);
                 }else{
@@ -264,7 +264,7 @@ public class NodeControllerImpl extends NodeController {
                 stubGroup.onLoadCanceled();
                 break;
             default:
-                throw new RuntimeException("[TILoader:NodeControllerImpl] can't callback(callbackInUiThread) when NodeTask.state = " + nodeTask.getState());
+                throw new RuntimeException("[TILoader:NodeControllerImpl] can't callback(callbackInUiThread) when Task.state = " + task.getState());
         }
     }
 
@@ -346,9 +346,9 @@ public class NodeControllerImpl extends NodeController {
         dispatchThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                NodeTask nodeTask;
-                while((nodeTask = responseQueue.get()) != null){
-                    executeNodeTask(nodeTask);
+                Task task;
+                while((task = responseQueue.get()) != null){
+                    executeTask(task);
                 }
             }
         });
@@ -406,7 +406,7 @@ public class NodeControllerImpl extends NodeController {
         protected void handleMessageWithHost(Message msg, NodeControllerImpl host) {
             switch (msg.what){
                 case HANDLER_CALLBACK:
-                    host.callbackInUiThread((NodeTask) msg.obj);
+                    host.callbackInUiThread((Task) msg.obj);
                     break;
                 default:
                     break;

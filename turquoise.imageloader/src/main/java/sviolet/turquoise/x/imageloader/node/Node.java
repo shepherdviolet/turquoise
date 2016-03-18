@@ -89,14 +89,14 @@ public abstract class Node {
     abstract String getId();
 
     /**
-     * @return pull a NodeTask to executing by Engine
+     * @return pull a Task to executing by Engine
      */
-    abstract NodeTask pullNodeTask(Server.Type type);
+    abstract Task pullTask(Server.Type type);
 
     /**
-     * @param task response when NodeTask executed by Engine
+     * @param task response when Task executed by Engine
      */
-    abstract void response(NodeTask task);
+    abstract void response(Task task);
 
     abstract void attachLifeCycle(Context context);
 }

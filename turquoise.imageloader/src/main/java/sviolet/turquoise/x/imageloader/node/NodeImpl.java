@@ -95,12 +95,12 @@ public class NodeImpl extends Node {
     }
 
     @Override
-    NodeTask pullNodeTask(Engine.Type type) {
-        return controller.pullNodeTask(type);
+    Task pullTask(Engine.Type type) {
+        return controller.pullTask(type);
     }
 
     @Override
-    void response(NodeTask task) {
+    void response(Task task) {
         controller.response(task);
     }
 

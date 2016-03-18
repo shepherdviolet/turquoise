@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.server;
 
-import sviolet.turquoise.x.imageloader.node.NodeTask;
+import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
  * Created by S.Violet on 2016/2/19.
@@ -27,7 +27,7 @@ import sviolet.turquoise.x.imageloader.node.NodeTask;
 public class DiskEngine extends Engine {
 
     @Override
-    protected void executeNewTask(NodeTask task) {
+    protected void executeNewTask(Task task) {
 
     }
 

@@ -26,7 +26,7 @@ import sviolet.turquoise.x.imageloader.stub.Stub;
 /**
  * Created by S.Violet on 2016/2/17.
  */
-public class NodeTask {
+public class Task {
 
     private Stub.Type type;
     private String url;
@@ -38,7 +38,7 @@ public class NodeTask {
     private Server.Type serverType = Server.Type.CACHE;
     private volatile State state = State.STAND_BY;
 
-    NodeTask(String nodeId, Stub.Type type, String key, String resourceKey, String url, Params params) {
+    Task(String nodeId, Stub.Type type, String key, String resourceKey, String url, Params params) {
         this.type = type;
         this.url = url;
         this.params = params;

@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.server;
 
-import sviolet.turquoise.x.imageloader.node.NodeTask;
+import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
  *
@@ -29,7 +29,7 @@ import sviolet.turquoise.x.imageloader.node.NodeTask;
 public class NetEngine extends Engine {
 
     @Override
-    protected void executeNewTask(NodeTask task) {
+    protected void executeNewTask(Task task) {
 
     }
 

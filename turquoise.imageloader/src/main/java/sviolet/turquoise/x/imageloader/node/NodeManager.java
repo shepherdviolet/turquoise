@@ -68,12 +68,12 @@ public class NodeManager implements ComponentManager.Component {
         return node;
     }
 
-    public List<NodeTask> pullNodeTasks(Server.Type type){
-        List<NodeTask> taskList = new ArrayList<>();
+    public List<Task> pullTasks(Server.Type type){
+        List<Task> taskList = new ArrayList<>();
         try{
             nodesLock.lock();
             for (Map.Entry<String, Node> entry : nodes.entrySet()){
-                NodeTask task = entry.getValue().pullNodeTask(type);
+                Task task = entry.getValue().pullTask(type);
                 if (task != null){
                     taskList.add(task);
                 }
@@ -84,7 +84,7 @@ public class NodeManager implements ComponentManager.Component {
         return taskList;
     }
 
-    public void response(NodeTask task){
+    public void response(Task task){
         String nodeId = task.getNodeId();
         Node node;
         try{

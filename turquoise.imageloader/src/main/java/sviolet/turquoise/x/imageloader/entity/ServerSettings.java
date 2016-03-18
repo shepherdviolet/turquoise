@@ -33,8 +33,8 @@ import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
 import sviolet.turquoise.x.imageloader.handler.def.DefaultImageResourceHandler;
 import sviolet.turquoise.x.imageloader.node.NodeFactory;
 import sviolet.turquoise.x.imageloader.node.NodeFactoryImpl;
-import sviolet.turquoise.x.imageloader.node.NodeTaskFactory;
-import sviolet.turquoise.x.imageloader.node.NodeTaskFactoryImpl;
+import sviolet.turquoise.x.imageloader.node.TaskFactory;
+import sviolet.turquoise.x.imageloader.node.TaskFactoryImpl;
 import sviolet.turquoise.x.imageloader.stub.StubFactory;
 import sviolet.turquoise.x.imageloader.stub.StubFactoryImpl;
 
@@ -99,8 +99,8 @@ public class ServerSettings implements ComponentManager.Component{
         return values.nodeFactory;
     }
 
-    public NodeTaskFactory getNodeTaskFactory(){
-        return values.nodeTaskFactory;
+    public TaskFactory getTaskFactory(){
+        return values.taskFactory;
     }
 
     private static class Values{
@@ -126,7 +126,7 @@ public class ServerSettings implements ComponentManager.Component{
         //static factory////////////////////////////////////////////////////////////////////////////
 
         private final NodeFactory nodeFactory = new NodeFactoryImpl();
-        private final NodeTaskFactory nodeTaskFactory = new NodeTaskFactoryImpl();
+        private final TaskFactory taskFactory = new TaskFactoryImpl();
     }
 
     public static class Builder{
@@ -201,7 +201,7 @@ public class ServerSettings implements ComponentManager.Component{
     public void init(ComponentManager manager) {
         this.manager = manager;
         values.nodeFactory.init(manager);
-        values.nodeTaskFactory.init(manager);
+        values.taskFactory.init(manager);
     }
 
 }
