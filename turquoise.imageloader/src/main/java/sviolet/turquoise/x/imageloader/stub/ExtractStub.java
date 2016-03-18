@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.task;
+package sviolet.turquoise.x.imageloader.stub;
 
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
@@ -26,9 +26,9 @@ import sviolet.turquoise.x.imageloader.node.NodeController;
 /**
  * Created by S.Violet on 2016/2/19.
  */
-class ExtractTask extends AbsTask {
+class ExtractStub extends AbsStub {
 
-    ExtractTask(String url, Params params, OnLoadedListener listener){
+    ExtractStub(String url, Params params, OnLoadedListener listener){
         super(url, params);
     }
 

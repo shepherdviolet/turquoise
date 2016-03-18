@@ -26,7 +26,7 @@ import android.graphics.drawable.Drawable;
 
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.x.imageloader.task.Task;
+import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  * this drawable used to launch Task (load image)
@@ -35,18 +35,18 @@ import sviolet.turquoise.x.imageloader.task.Task;
  */
 public class LaunchDrawable extends Drawable {
 
-    private WeakReference<Task> task;
+    private WeakReference<Stub> stub;
 
-    public LaunchDrawable(Task task){
-        this.task = new WeakReference<>(task);
+    public LaunchDrawable(Stub stub){
+        this.stub = new WeakReference<>(stub);
     }
 
     @Override
     public void draw(Canvas canvas) {
-        final Task task = getTask();
-        if (task != null){
-            if (task.getState() == Task.State.INITIALIZED){
-                task.load();
+        final Stub stub = getStub();
+        if (stub != null){
+            if (stub.getState() == Stub.State.INITIALIZED){
+                stub.load();
             }
         }
     }
@@ -76,9 +76,9 @@ public class LaunchDrawable extends Drawable {
         return -1;//match parent
     }
 
-    private Task getTask(){
-        if (task != null){
-            return task.get();
+    private Stub getStub(){
+        if (stub != null){
+            return stub.get();
         }
         return null;
     }

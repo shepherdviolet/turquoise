@@ -17,19 +17,18 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.task;
+package sviolet.turquoise.x.imageloader.stub;
 
 import android.view.View;
 
 import sviolet.turquoise.x.imageloader.entity.Params;
-import sviolet.turquoise.x.imageloader.node.Node;
 
 /**
  * Created by S.Violet on 2016/2/25.
  */
-class ImageViewLoadTask extends LoadTask {
+class ImageViewLoadStub extends LoadStub {
 
-    ImageViewLoadTask(String url, Params params, View view){
+    ImageViewLoadStub(String url, Params params, View view){
         super(url, params, view);
     }
 

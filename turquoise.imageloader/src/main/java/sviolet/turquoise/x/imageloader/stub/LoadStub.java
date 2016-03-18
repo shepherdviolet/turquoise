@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.task;
+package sviolet.turquoise.x.imageloader.stub;
 
 import android.view.View;
 
@@ -30,18 +30,18 @@ import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
 
 /**
- * Load Task<br/>
+ * Load Stub<br/>
  * loading image/background to View<br/>
  *
  * Created by S.Violet on 2016/2/19.
  */
-public abstract class LoadTask extends AbsTask {
+public abstract class LoadStub extends AbsStub {
 
     private WeakReference<View> view;
 
     private final ReentrantLock viewLock = new ReentrantLock();
 
-    public LoadTask(String url, Params params, View view){
+    public LoadStub(String url, Params params, View view){
         super(url, params);
         this.view = new WeakReference<>(view);
     }
@@ -83,14 +83,14 @@ public abstract class LoadTask extends AbsTask {
         }
         try{
             viewLock.lock();
-            //get Task from View Tag
-            Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderTask);
-            //destroy obsolete Task
-            if (tag != null && tag instanceof Task) {
-                ((Task) tag).onDestroy();
+            //get Stub from View Tag
+            Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
+            //destroy obsolete Stub
+            if (tag != null && tag instanceof Stub) {
+                ((Stub) tag).onDestroy();
             }
-            //bind Task on View
-            view.setTag(SpecialResourceId.ViewTag.TILoaderTask, this);
+            //bind Stub on View
+            view.setTag(SpecialResourceId.ViewTag.TILoaderStub, this);
         }finally {
             viewLock.unlock();
         }

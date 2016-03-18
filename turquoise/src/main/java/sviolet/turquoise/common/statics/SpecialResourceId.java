@@ -41,10 +41,10 @@ public class SpecialResourceId {
         public static final int ViewHolder = 0xfff77f01;
 
         /**
-         * for TILoader's Task : sviolet.turquoise.x.imageloader.task.Task <br/>
-         * used to bind Task on View as a Tag<br/>
+         * for TILoader's Stub : sviolet.turquoise.x.imageloader.stub.Stub <br/>
+         * used to bind Stub on View as a Tag<br/>
          */
-        public static final int TILoaderTask = 0xfff77f02;
+        public static final int TILoaderStub = 0xfff77f02;
 
     }
 

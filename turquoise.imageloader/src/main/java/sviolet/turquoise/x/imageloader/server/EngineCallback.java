@@ -68,6 +68,7 @@ public class EngineCallback {
     private boolean isCancelling = false;//is canceling (by cancel())
 
     private Object data;//result data (byte[]/InputStream/Exception/null)
+    private long contentLength;
     private Runnable onCancelListener;
 
     private final ReentrantLock lock = new ReentrantLock();

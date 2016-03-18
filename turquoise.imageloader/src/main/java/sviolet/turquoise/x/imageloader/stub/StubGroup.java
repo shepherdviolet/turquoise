@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.task;
+package sviolet.turquoise.x.imageloader.stub;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,103 +31,103 @@ import sviolet.turquoise.x.imageloader.entity.ImageResource;
  *
  * Created by S.Violet on 2016/3/3.
  */
-public class TaskGroup {
+public class StubGroup {
 
-    private Set<Task> taskSet = new HashSet<>();
+    private Set<Stub> stubSet = new HashSet<>();
 
     private final ReentrantLock setLock = new ReentrantLock();
 
-    public TaskGroup(){
+    public StubGroup(){
 
     }
 
     /**
-     * @param task add the task into group, non-repetitive(Set)
+     * @param stub add the stub into group, non-repetitive(Set)
      */
-    public void add(Task task){
-        if (task == null)
+    public void add(Stub stub){
+        if (stub == null)
             return;
         try{
             setLock.lock();
-            taskSet.add(task);
+            stubSet.add(stub);
         }finally {
             setLock.unlock();
         }
     }
 
-    private boolean hasTask(){
+    private boolean hasStub(){
         try{
             setLock.lock();
-            return taskSet.size() > 0;
+            return stubSet.size() > 0;
         }finally {
             setLock.unlock();
         }
     }
 
     /**
-     * callback all task to onLoadSucceed, this method can only invoke once, all tasks will be removed from this Group after callback
+     * callback all stubs to onLoadSucceed, this method can only invoke once, all stubs will be removed from this Group after callback
      * @param resource loaded Image, may be null
      */
     public void onLoadSucceed(ImageResource<?> resource) {
-        List<Task> tasks = new ArrayList<>();
-        while(hasTask()) {
+        List<Stub> stubs = new ArrayList<>();
+        while(hasStub()) {
             try {
                 setLock.lock();
-                for (Task task : taskSet) {
-                    tasks.add(task);
+                for (Stub stub : stubSet) {
+                    stubs.add(stub);
                 }
-                taskSet.clear();
+                stubSet.clear();
             } finally {
                 setLock.unlock();
             }
-            for (Task task : tasks) {
-                task.onLoadSucceed(resource);
+            for (Stub stub : stubs) {
+                stub.onLoadSucceed(resource);
             }
-            tasks.clear();
+            stubs.clear();
         }
     }
 
     /**
-     * callback all task to onLoadFailed, this method can only invoke once, all tasks will be removed from this Group after callback
+     * callback all stubs to onLoadFailed, this method can only invoke once, all stubs will be removed from this Group after callback
      */
     public void onLoadFailed() {
-        List<Task> tasks = new ArrayList<>();
-        while(hasTask()) {
+        List<Stub> stubs = new ArrayList<>();
+        while(hasStub()) {
             try {
                 setLock.lock();
-                for (Task task : taskSet) {
-                    tasks.add(task);
+                for (Stub stub : stubSet) {
+                    stubs.add(stub);
                 }
-                taskSet.clear();
+                stubSet.clear();
             } finally {
                 setLock.unlock();
             }
-            for (Task task : tasks) {
-                task.onLoadFailed();
+            for (Stub stub : stubs) {
+                stub.onLoadFailed();
             }
-            tasks.clear();
+            stubs.clear();
         }
     }
 
     /**
-     * callback all task to onLoadCanceled, this method can only invoke once, all tasks will be removed from this Group after callback
+     * callback all stubs to onLoadCanceled, this method can only invoke once, all stubs will be removed from this Group after callback
      */
     public void onLoadCanceled() {
-        List<Task> tasks = new ArrayList<>();
-        while(hasTask()) {
+        List<Stub> stubs = new ArrayList<>();
+        while(hasStub()) {
             try {
                 setLock.lock();
-                for (Task task : taskSet) {
-                    tasks.add(task);
+                for (Stub stub : stubSet) {
+                    stubs.add(stub);
                 }
-                taskSet.clear();
+                stubSet.clear();
             } finally {
                 setLock.unlock();
             }
-            for (Task task : tasks) {
-                task.onLoadCanceled();
+            for (Stub stub : stubs) {
+                stub.onLoadCanceled();
             }
-            tasks.clear();
+            stubs.clear();
         }
     }
 }

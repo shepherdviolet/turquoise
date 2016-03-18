@@ -26,13 +26,10 @@ import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.server.Engine;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
-import sviolet.turquoise.x.imageloader.task.Task;
+import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  * Controller of Node<p/>
- *
- * 1.logic of Task execution <br/>
- * 2.Task Queues <br/>
  *
  * Created by S.Violet on 2016/2/18.
  */
@@ -41,10 +38,10 @@ public abstract class NodeController implements LifeCycle {
     abstract void waitingForInitialized();
 
     /**
-     * execute a Task
-     * @param task
+     * execute a Stub
+     * @param stub
      */
-    public abstract void executeTask(Task task);
+    public abstract void execute(Stub stub);
 
     abstract NodeTask pullNodeTask(Engine.Type type);
 

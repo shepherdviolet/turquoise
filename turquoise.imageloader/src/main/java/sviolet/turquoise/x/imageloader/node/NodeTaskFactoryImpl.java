@@ -20,7 +20,7 @@
 package sviolet.turquoise.x.imageloader.node;
 
 import sviolet.turquoise.x.imageloader.ComponentManager;
-import sviolet.turquoise.x.imageloader.task.Task;
+import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  * Created by S.Violet on 2016/3/3.
@@ -35,8 +35,8 @@ public class NodeTaskFactoryImpl implements NodeTaskFactory {
     }
 
     @Override
-    public NodeTask newNodeTask(NodeController controller, Task task) {
-        return new NodeTask(controller.getNodeId(), task.getType(), task.getKey(), task.getDiskKey(), task.getUrl(), task.getParams());
+    public NodeTask newNodeTask(NodeController controller, Stub stub) {
+        return new NodeTask(controller.getNodeId(), stub.getType(), stub.getKey(), stub.getDiskKey(), stub.getUrl(), stub.getParams());
     }
 
 }

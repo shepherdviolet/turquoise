@@ -17,21 +17,21 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.task;
+package sviolet.turquoise.x.imageloader.stub;
 
 import android.view.View;
 
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
- * Load Background Task<br/>
+ * Load Background Stub<br/>
  * loading image to View's background<br/>
  *
  * Created by S.Violet on 2016/2/25.
  */
-class LoadBackgroundTask extends LoadTask {
+class LoadBackgroundStub extends LoadStub {
 
-    LoadBackgroundTask(String url, Params params, View view){
+    LoadBackgroundStub(String url, Params params, View view){
         super(url, params, view);
     }
 

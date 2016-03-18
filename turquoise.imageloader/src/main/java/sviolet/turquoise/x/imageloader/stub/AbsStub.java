@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.task;
+package sviolet.turquoise.x.imageloader.stub;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
@@ -33,7 +33,7 @@ import sviolet.turquoise.x.imageloader.node.NodeController;
  *
  * Created by S.Violet on 2016/2/26.
  */
-public abstract class AbsTask implements Task {
+public abstract class AbsStub implements Stub {
 
     private static final String NULL = "null";
 
@@ -49,7 +49,7 @@ public abstract class AbsTask implements Task {
 
     private final ReentrantLock stateLock = new ReentrantLock();
 
-    public AbsTask(String url, Params params){
+    public AbsStub(String url, Params params){
         this.url = url;
         this.params = params;
     }
@@ -86,7 +86,7 @@ public abstract class AbsTask implements Task {
             stateLock.unlock();
         }
         if (execute) {
-            controller.executeTask(this);
+            controller.execute(this);
         }
         return execute;
     }
@@ -112,7 +112,7 @@ public abstract class AbsTask implements Task {
             stateLock.unlock();
         }
         if (reload) {
-            controller.executeTask(this);
+            controller.execute(this);
         }
         return reload;
     }

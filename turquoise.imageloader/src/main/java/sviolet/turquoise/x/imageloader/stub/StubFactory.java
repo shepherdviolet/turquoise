@@ -17,11 +17,10 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.task;
+package sviolet.turquoise.x.imageloader.stub;
 
 import android.view.View;
 
-import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
@@ -29,7 +28,7 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  *
  * Created by S.Violet on 2016/2/23.
  */
-public interface TaskFactory {
+public interface StubFactory {
 
     /**
      *
@@ -37,9 +36,9 @@ public interface TaskFactory {
      * @param params params
      * @param view view
      * @param defParams use default when params is null
-     * @return Task
+     * @return Stub
      */
-    Task newLoadTask(String url, Params params, View view, Params defParams);
+    Stub newLoadStub(String url, Params params, View view, Params defParams);
 
     /**
      *
@@ -47,9 +46,9 @@ public interface TaskFactory {
      * @param params params
      * @param view view
      * @param defParams use default when params is null
-     * @return Task
+     * @return Stub
      */
-    Task newLoadBackgroundTask(String url, Params params, View view, Params defParams);
+    Stub newLoadBackgroundStub(String url, Params params, View view, Params defParams);
 
     /**
      *
@@ -57,8 +56,8 @@ public interface TaskFactory {
      * @param params params
      * @param listener listener
      * @param defParams use default when params is null
-     * @return Task
+     * @return Stub
      */
-    Task newExtractTask(String url, Params params, OnLoadedListener listener, Params defParams);
+    Stub newExtractStub(String url, Params params, OnLoadedListener listener, Params defParams);
 
 }

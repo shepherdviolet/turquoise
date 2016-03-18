@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.task;
+package sviolet.turquoise.x.imageloader.stub;
 
 import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
@@ -28,7 +28,7 @@ import sviolet.turquoise.x.imageloader.node.NodeController;
  *
  * Created by S.Violet on 2016/2/19.
  */
-public interface Task extends Destroyable {
+public interface Stub extends Destroyable {
 
     /**
      * callback when loading succeed
@@ -74,12 +74,12 @@ public interface Task extends Destroyable {
     Params getParams();
 
     /**
-     * @return identity of Task, or key of MemoryCache
+     * @return key of loading task (Cache)
      */
     String getKey();
 
     /**
-     * @return key of DiskCache
+     * @return key of target resource (Net/Disk)
      */
     String getDiskKey();
 

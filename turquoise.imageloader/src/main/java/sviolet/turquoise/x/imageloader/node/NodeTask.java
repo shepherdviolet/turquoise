@@ -21,14 +21,14 @@ package sviolet.turquoise.x.imageloader.node;
 
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.server.Server;
-import sviolet.turquoise.x.imageloader.task.Task;
+import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  * Created by S.Violet on 2016/2/17.
  */
 public class NodeTask {
 
-    private Task.Type type;
+    private Stub.Type type;
     private String url;
     private Params params;
     private String nodeId;
@@ -38,7 +38,7 @@ public class NodeTask {
     private Server.Type serverType = Server.Type.CACHE;
     private volatile State state = State.STAND_BY;
 
-    NodeTask(String nodeId, Task.Type type, String key, String diskKey, String url, Params params) {
+    NodeTask(String nodeId, Stub.Type type, String key, String diskKey, String url, Params params) {
         this.type = type;
         this.url = url;
         this.params = params;
@@ -47,7 +47,7 @@ public class NodeTask {
         this.diskKey = diskKey;
     }
 
-    public Task.Type getType() {
+    public Stub.Type getType() {
         return type;
     }
 

@@ -35,8 +35,8 @@ import sviolet.turquoise.x.imageloader.node.NodeFactory;
 import sviolet.turquoise.x.imageloader.node.NodeFactoryImpl;
 import sviolet.turquoise.x.imageloader.node.NodeTaskFactory;
 import sviolet.turquoise.x.imageloader.node.NodeTaskFactoryImpl;
-import sviolet.turquoise.x.imageloader.task.TaskFactory;
-import sviolet.turquoise.x.imageloader.task.TaskFactoryImpl;
+import sviolet.turquoise.x.imageloader.stub.StubFactory;
+import sviolet.turquoise.x.imageloader.stub.StubFactoryImpl;
 
 /**
  *
@@ -77,8 +77,8 @@ public class ServerSettings implements ComponentManager.Component{
 
     //configurable factory////////////////////////////////////////////////////////////////////////////
 
-    public TaskFactory getTaskFactory(){
-        return values.taskFactory;
+    public StubFactory getStubFactory(){
+        return values.stubFactory;
     }
 
     public LoadingDrawableFactory getLoadingDrawableFactory(){
@@ -118,7 +118,7 @@ public class ServerSettings implements ComponentManager.Component{
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
-        private final TaskFactoryImpl taskFactory = new TaskFactoryImpl();
+        private final StubFactoryImpl stubFactory = new StubFactoryImpl();
         private LoadingDrawableFactory loadingDrawableFactory = new DefaultLoadingDrawableFactory();
         private FailedDrawableFactory failedDrawableFactory = new DefaultFailedDrawableFactory();
         private BackgroundDrawableFactory backgroundDrawableFactory = new DefaultBackgroundDrawableFactory();
@@ -169,8 +169,8 @@ public class ServerSettings implements ComponentManager.Component{
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
-        public Builder setCustomTaskFactory(TaskFactory customTaskFactory){
-            values.taskFactory.setCustomTaskFactory(customTaskFactory);
+        public Builder setCustomStubFactory(StubFactory customStubFactory){
+            values.stubFactory.setCustomStubFactory(customStubFactory);
             return this;
         }
 

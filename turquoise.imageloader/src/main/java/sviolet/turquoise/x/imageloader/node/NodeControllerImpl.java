@@ -37,8 +37,8 @@ import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.server.Server;
-import sviolet.turquoise.x.imageloader.task.Task;
-import sviolet.turquoise.x.imageloader.task.TaskGroup;
+import sviolet.turquoise.x.imageloader.stub.Stub;
+import sviolet.turquoise.x.imageloader.stub.StubGroup;
 
 /**
  *
@@ -55,8 +55,8 @@ public class NodeControllerImpl extends NodeController {
     private RequestQueue netRequestQueue;//网络加载等待队列
     private ResponseQueue responseQueue = new ResponseQueueImpl();//响应队列
 
-    private Map<String, TaskGroup> taskPool = new HashMap<>();//等待执行的Task任务池
-    private final ReentrantLock taskPoolLock = new ReentrantLock();
+    private Map<String, StubGroup> stubPool = new HashMap<>();//等待执行的Stub池
+    private final ReentrantLock stubPoolLock = new ReentrantLock();
 
     private boolean nodeInitialized = false;
     private final ReentrantLock nodeInitializeLock = new ReentrantLock();
@@ -100,25 +100,25 @@ public class NodeControllerImpl extends NodeController {
      */
 
     @Override
-    public void executeTask(Task task) {
-        String key = task.getKey();
-        TaskGroup taskGroup;
-        boolean newTaskGroup = false;
+    public void execute(Stub stub) {
+        String key = stub.getKey();
+        StubGroup stubGroup;
+        boolean newStubGroup = false;
         try{
-            taskPoolLock.lock();
-            taskGroup = taskPool.get(key);
-            if (taskGroup == null){
-                taskGroup = new TaskGroup();
-                taskPool.put(key, taskGroup);
-                newTaskGroup = true;
+            stubPoolLock.lock();
+            stubGroup = stubPool.get(key);
+            if (stubGroup == null){
+                stubGroup = new StubGroup();
+                stubPool.put(key, stubGroup);
+                newStubGroup = true;
             }
         }finally {
-            taskPoolLock.unlock();
+            stubPoolLock.unlock();
         }
-        taskGroup.add(task);
+        stubGroup.add(stub);
 
-        if (newTaskGroup) {
-            NodeTask nodeTask = manager.getServerSettings().getNodeTaskFactory().newNodeTask(this, task);
+        if (newStubGroup) {
+            NodeTask nodeTask = manager.getServerSettings().getNodeTaskFactory().newNodeTask(this, stub);
             nodeTask.setServerType(Server.Type.CACHE);
             nodeTask.setState(NodeTask.State.STAND_BY);
             executeNodeTask(nodeTask);
@@ -236,15 +236,15 @@ public class NodeControllerImpl extends NodeController {
             return;
         }
 
-        TaskGroup taskGroup;
+        StubGroup stubGroup;
         try {
-            taskPoolLock.lock();
-            taskGroup = taskPool.remove(nodeTask.getKey());
+            stubPoolLock.lock();
+            stubGroup = stubPool.remove(nodeTask.getKey());
         } finally {
-            taskPoolLock.unlock();
+            stubPoolLock.unlock();
         }
 
-        if (taskGroup == null){
+        if (stubGroup == null){
             return;
         }
 
@@ -252,16 +252,16 @@ public class NodeControllerImpl extends NodeController {
             case SUCCEED:
                 ImageResource<?> resource = manager.getCacheServer().get(nodeTask.getKey());
                 if (TILoaderUtils.isImageResourceValid(resource)){
-                    taskGroup.onLoadSucceed(resource);
+                    stubGroup.onLoadSucceed(resource);
                 }else{
-                    taskGroup.onLoadFailed();
+                    stubGroup.onLoadFailed();
                 }
                 break;
             case FAILED:
-                taskGroup.onLoadFailed();
+                stubGroup.onLoadFailed();
                 break;
             case CANCELED:
-                taskGroup.onLoadCanceled();
+                stubGroup.onLoadCanceled();
                 break;
             default:
                 throw new RuntimeException("[TILoader:NodeControllerImpl] can't callback(callbackInUiThread) when NodeTask.state = " + nodeTask.getState());

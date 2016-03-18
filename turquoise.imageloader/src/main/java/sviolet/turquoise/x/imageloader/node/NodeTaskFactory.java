@@ -20,13 +20,14 @@
 package sviolet.turquoise.x.imageloader.node;
 
 import sviolet.turquoise.x.imageloader.ComponentManager;
-import sviolet.turquoise.x.imageloader.task.Task;
+import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
+ *
  * Created by S.Violet on 2016/3/3.
  */
 public interface NodeTaskFactory extends ComponentManager.Component {
 
-    NodeTask newNodeTask(NodeController controller, Task task);
+    NodeTask newNodeTask(NodeController controller, Stub stub);
 
 }

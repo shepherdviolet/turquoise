@@ -27,7 +27,7 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.modelx.bitmaploader.drawable.SafeBitmapDrawable;
-import sviolet.turquoise.x.imageloader.task.Task;
+import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  *
@@ -35,7 +35,7 @@ import sviolet.turquoise.x.imageloader.task.Task;
  */
 public class ReloadableBitmapDrawable extends SafeBitmapDrawable {
 
-    private WeakReference<Task> task;
+    private WeakReference<Stub> stub;
 
     public ReloadableBitmapDrawable(Resources res) {
         super(res);
@@ -67,21 +67,21 @@ public class ReloadableBitmapDrawable extends SafeBitmapDrawable {
 
     @Override
     protected void onDrawError(Canvas canvas, Exception e) {
-        final Task task = getTask();
-        if (task != null){
-            task.reload();
+        final Stub stub = getStub();
+        if (stub != null){
+            stub.reload();
         }
     }
 
-    private Task getTask(){
-        if (task != null){
-            return task.get();
+    private Stub getStub(){
+        if (stub != null){
+            return stub.get();
         }
         return null;
     }
 
-    public ReloadableBitmapDrawable bindTask(Task task){
-        this.task = new WeakReference<>(task);
+    public ReloadableBitmapDrawable bindStub(Stub stub){
+        this.stub = new WeakReference<>(stub);
         return this;
     }
 

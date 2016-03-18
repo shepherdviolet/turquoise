@@ -30,7 +30,7 @@ import sviolet.turquoise.x.imageloader.server.Engine;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
-import sviolet.turquoise.x.imageloader.task.Task;
+import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  *
@@ -59,8 +59,8 @@ public class NodeImpl extends Node {
     public void load(String url, Params params, View view) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Task task = manager.getServerSettings().getTaskFactory().newLoadTask(url, params, view, manager.getDefaultParams());
-        task.initialize(controller);
+        Stub stub = manager.getServerSettings().getStubFactory().newLoadStub(url, params, view, manager.getDefaultParams());
+        stub.initialize(controller);
     }
 
     @Override
@@ -72,16 +72,16 @@ public class NodeImpl extends Node {
     public void loadBackground(String url, Params params, View view) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Task task = manager.getServerSettings().getTaskFactory().newLoadBackgroundTask(url, params, view, manager.getDefaultParams());
-        task.initialize(controller);
+        Stub stub = manager.getServerSettings().getStubFactory().newLoadBackgroundStub(url, params, view, manager.getDefaultParams());
+        stub.initialize(controller);
     }
 
     @Override
     public void extract(String url, Params params, OnLoadedListener listener) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Task task = manager.getServerSettings().getTaskFactory().newExtractTask(url, params, listener, manager.getDefaultParams());
-        task.initialize(controller);
+        Stub stub = manager.getServerSettings().getStubFactory().newExtractStub(url, params, listener, manager.getDefaultParams());
+        stub.initialize(controller);
     }
 
     @Override
