@@ -57,10 +57,11 @@ public class NodeManager implements ComponentManager.Component {
             nodesLock.lock();
             node = nodes.get(nodeId);
             if (node == null){
+                manager.setContextImage(context);
+                manager.setApplicationContextImage(context.getApplicationContext());
                 node = manager.getServerSettings().getNodeFactory().newNode(nodeId);
                 nodes.put(nodeId, node);
                 node.attachLifeCycle(context);
-                manager.setContextImage(context);
             }
         }finally {
             nodesLock.unlock();

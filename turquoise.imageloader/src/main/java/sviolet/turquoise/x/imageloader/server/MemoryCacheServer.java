@@ -25,20 +25,21 @@ import android.graphics.Bitmap;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.server.module.BitmapMemoryCacheModule;
 
 /**
  * <p>manage all memory caches</p>
  *
  * Created by S.Violet on 2016/3/15.
  */
-public class CacheServer implements ComponentManager.Component, Server {
+public class MemoryCacheServer implements ComponentManager.Component, Server {
 
     private static final int MIN_MEMORY_CACHE_SIZE = 1024 * 1024 * 5;//minimum of memory Cache Size
     private static final float DEFAULT_MEMORY_CACHE_PERCENT = 0.25f;//default percent
 
     private ComponentManager manager;
 
-    private BitmapCacheModule bitmapCacheModule;
+    private BitmapMemoryCacheModule bitmapMemoryCacheModule;
 //    private OtherCache otherCache;
 
     @Override
@@ -51,7 +52,7 @@ public class CacheServer implements ComponentManager.Component, Server {
         int memoryCacheSize = manager.getServerSettings().getMemoryCacheSize();
         //try to use default value if memoryCacheSize <= 0
         if (memoryCacheSize <= 0){
-            final Context contextImage = manager.getContextImage();
+            final Context contextImage = manager.getApplicationContextImage();
             if (contextImage != null){
                 final int memoryClass = DeviceUtils.getMemoryClass(contextImage);
                 memoryCacheSize = (int) (1024 * 1024 * memoryClass * DEFAULT_MEMORY_CACHE_PERCENT);
@@ -61,44 +62,44 @@ public class CacheServer implements ComponentManager.Component, Server {
         if (memoryCacheSize < MIN_MEMORY_CACHE_SIZE){
             memoryCacheSize = MIN_MEMORY_CACHE_SIZE;
         }
-        bitmapCacheModule = new BitmapCacheModule(memoryCacheSize, manager.getLogger());
+        bitmapMemoryCacheModule = new BitmapMemoryCacheModule(memoryCacheSize, manager.getLogger());
     }
 
     public void put(String key, ImageResource<?> resource){
         if (key == null){
-            manager.getLogger().e("CacheServer can't put with null key");
+            manager.getLogger().e("MemoryCacheServer can't put with null key");
             return;
         }
         if (resource == null || resource.getType() == null || resource.getResource() == null){
-            manager.getLogger().e("CacheServer can't put with null or illegal resource");
+            manager.getLogger().e("MemoryCacheServer can't put with null or illegal resource");
             return;
         }
         switch (resource.getType()){
             case BITMAP:
                 if (resource.getResource() instanceof Bitmap) {
-                    bitmapCacheModule.put(key, (Bitmap) resource.getResource());
+                    bitmapMemoryCacheModule.put(key, (Bitmap) resource.getResource());
                     //otherCache.remove(key);//remove from other cache
                 }else{
-                    throw new RuntimeException("[TILoader:CacheServer]illegal ImageResource, type:<" + resource.getType().toString() + ">, resource:<" + resource.getResource().getClass().getName() + ">");
+                    throw new RuntimeException("[TILoader:MemoryCacheServer]illegal ImageResource, type:<" + resource.getType().toString() + ">, resource:<" + resource.getResource().getClass().getName() + ">");
                 }
                 break;
 //            case OTHER:
 //                otherCache.put(key, (Bitmap) resource.getResource());
-//                bitmapCacheModule.remove(key);//remove from other cache
+//                bitmapMemoryCacheModule.remove(key);//remove from other cache
 //                break;
             default:
-                manager.getLogger().e("CacheServer can't put this kind of ImageResource, type:<" + resource.getType().toString() + ">");
+                manager.getLogger().e("MemoryCacheServer can't put this kind of ImageResource, type:<" + resource.getType().toString() + ">");
                 break;
         }
     }
 
     public ImageResource<?> get(String key){
         if (key == null){
-            manager.getLogger().e("CacheServer can't get with null key");
+            manager.getLogger().e("MemoryCacheServer can't get with null key");
             return null;
         }
         Object resource = null;
-        resource = bitmapCacheModule.get(key);
+        resource = bitmapMemoryCacheModule.get(key);
         if (resource != null){
             return new ImageResource<>(ImageResource.Type.BITMAP, resource);
         }
@@ -111,20 +112,20 @@ public class CacheServer implements ComponentManager.Component, Server {
 
     public void remove(String key){
         if (key == null){
-            manager.getLogger().e("CacheServer can't remove with null key");
+            manager.getLogger().e("MemoryCacheServer can't remove with null key");
             return;
         }
-        bitmapCacheModule.remove(key);
+        bitmapMemoryCacheModule.remove(key);
 //        otherCache.remove(key);
     }
 
     public void removeAll(){
-        bitmapCacheModule.removeAll();
+        bitmapMemoryCacheModule.removeAll();
 //        otherCache.removeAll();
     }
 
     @Override
     public Type getServerType() {
-        return Type.CACHE;
+        return Type.MEMORY_CACHE;
     }
 }

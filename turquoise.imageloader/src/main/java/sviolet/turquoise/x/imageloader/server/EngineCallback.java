@@ -23,39 +23,13 @@ import java.io.InputStream;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
-import sviolet.turquoise.modelx.bitmaploader.handler.NetLoadHandler;
-
 /**
- * 
- * BitmapLoader异步结果通知器<p/>
- *
- * 用于{@link BitmapLoader}网络加载处理器{@link NetLoadHandler}中任务线程与网络请求线程间的结果通知<br/>
- * <br/>
- * 用途:<Br/>
- * 1.返回处理结果:setResultSucceed/setResultFailed/setResultCanceled<br/>
- *      无论同步处理,还是异步处理,均通过这些方法返回结果,BitmapLoader加载任务会阻塞,
- *      直到setResultSucceed/setResultFailed/setResultCanceled方法被调用.结果仅允许设置一次.<br/>
- *      1)setResultSucceed(byte[]),加载成功,返回图片数据<br/>
- *      2)setResultFailed(Exception),加载失败,返回异常,触发重新加载<br/>
- *      3)setResultCanceled(),加载取消,不触发重新加载<br/>
- *      若加载任务已被取消(isCancelling() = true),但仍使用setResultSucceed返回结果,则数据会被存入
- *      磁盘缓存,但BitmapLoader返回任务取消.<p/>
- *
- * 2.判断任务是否取消中:isCancelling<br/>
- *      加载任务是否被取消.通常用于同步加载场合,从InputStream循环读取数据时,判断isCancelling(),若为
- *      true,则终止读取,并setResultCanceled()返回结果.<p/>
- *
- * 3.设置任务取消监听器:setOnCancelListener<br/>
- *      加载任务被取消时,会回调该监听器.通常用于异步加载场合,例如使用异步网络框架,在该监听器回调方法中
- *      调用框架方法,终止网络请求.<br/>
- * <Br/>
- * 
+ * <p>is used to callback Engine by asynchronous way, return result</p>
  *
  * @author S.Violet
  *
  */
-public class EngineCallback {
+public class EngineCallback <ResultDataType> {
 
     public static final int RESULT_NULL = 0;//no result
     public static final int RESULT_SUCCEED = 1;//load succeed
@@ -67,8 +41,8 @@ public class EngineCallback {
 
     private boolean isCancelling = false;//is canceling (by cancel())
 
-    private Object data;//result data (byte[]/InputStream/Exception/null)
-    private long contentLength;
+    private ResultDataType data;//result data
+    private Exception exception;//result exception
     private Runnable onCancelListener;
 
     private final ReentrantLock lock = new ReentrantLock();
@@ -80,21 +54,9 @@ public class EngineCallback {
 
     /**
      * set result when load succeed, can only be called once
-     * @param data byte[]
+     * @param data data
      */
-    public void setResultSucceed(byte[] data){
-        setResultSucceed(data);
-    }
-
-    /**
-     * set result when load succeed, can only be called once
-     * @param data InputStream
-     */
-    public void setResultSucceed(InputStream data){
-        setResultSucceed(data);
-    }
-
-    private void setResultSucceed(Object data){
+    public void setResultSucceed(ResultDataType data){
         lock.lock();
         try{
             //can only be called once
@@ -120,7 +82,7 @@ public class EngineCallback {
             if (result != RESULT_NULL) {
                 return;
             }
-            this.data = e;
+            this.exception = e;
             this.result = RESULT_FAILED;
             condition.signalAll();
         }finally {
@@ -189,12 +151,24 @@ public class EngineCallback {
     }
 
     /**
-     * @return get loading result (byte[]/InputStream/Exception/null)
+     * @return get loading result
      */
-    Object getData(){
+    ResultDataType getData(){
         lock.lock();
         try{
             return data;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * @return get loading exception
+     */
+    Exception getException(){
+        lock.lock();
+        try{
+            return exception;
         } finally {
             lock.unlock();
         }

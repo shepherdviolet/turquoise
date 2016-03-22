@@ -119,7 +119,7 @@ public class NodeControllerImpl extends NodeController {
 
         if (newStubGroup) {
             Task task = manager.getServerSettings().getTaskFactory().newTask(this, stub);
-            task.setServerType(Server.Type.CACHE);
+            task.setServerType(Server.Type.MEMORY_CACHE);
             task.setState(Task.State.STAND_BY);
             executeTask(task);
         }
@@ -128,9 +128,9 @@ public class NodeControllerImpl extends NodeController {
     @Override
     Task pullTask(Server.Type type) {
         switch (type){
-            case DISK:
+            case DISK_ENGINE:
                 return diskRequestQueue.get();
-            case NET:
+            case NETWORK_ENGINE:
                 return netRequestQueue.get();
             default:
                 manager.getLogger().e("NodeControllerImpl:pullTask illegal Server.Type:<" + type.toString() + ">");
@@ -165,13 +165,13 @@ public class NodeControllerImpl extends NodeController {
         }
 
         switch (task.getServerType()){
-            case CACHE:
-                executeTaskToCache(task);
+            case MEMORY_CACHE:
+                executeTaskToMemoryCache(task);
                 break;
-            case DISK:
+            case DISK_ENGINE:
                 executeTaskToDisk(task);
                 break;
-            case NET:
+            case NETWORK_ENGINE:
                 executeTaskToNet(task);
                 break;
             default:
@@ -179,13 +179,13 @@ public class NodeControllerImpl extends NodeController {
         }
     }
 
-    private void executeTaskToCache(Task task){
-        ImageResource<?> resource = manager.getCacheServer().get(task.getKey());
+    private void executeTaskToMemoryCache(Task task){
+        ImageResource<?> resource = manager.getMemoryCacheServer().get(task.getKey());
         if (resource != null) {
             task.setState(Task.State.SUCCEED);
             callback(task);
         }else{
-            task.setServerType(Server.Type.DISK);
+            task.setServerType(Server.Type.DISK_ENGINE);
             task.setState(Task.State.STAND_BY);
             executeTask(task);
         }
@@ -197,7 +197,7 @@ public class NodeControllerImpl extends NodeController {
             manager.getDiskEngine().ignite();
             callbackToObsolete(obsoleteTask);
         }else{
-            task.setServerType(Server.Type.NET);
+            task.setServerType(Server.Type.NETWORK_ENGINE);
             task.setState(Task.State.STAND_BY);
             executeTask(task);
         }
@@ -250,7 +250,7 @@ public class NodeControllerImpl extends NodeController {
 
         switch (task.getState()){
             case SUCCEED:
-                ImageResource<?> resource = manager.getCacheServer().get(task.getKey());
+                ImageResource<?> resource = manager.getMemoryCacheServer().get(task.getKey());
                 if (TILoaderUtils.isImageResourceValid(resource)){
                     stubGroup.onLoadSucceed(resource);
                 }else{

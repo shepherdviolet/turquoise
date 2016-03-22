@@ -19,6 +19,9 @@
 
 package sviolet.turquoise.x.imageloader.server;
 
+import java.io.InputStream;
+
+import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
@@ -30,16 +33,71 @@ public class NetEngine extends Engine {
 
     @Override
     protected void executeNewTask(Task task) {
-
+        EngineCallback<NetworkLoadHandler.Result> callback = new EngineCallback<>();
+        try {
+            getComponentManager().getServerSettings().getNetworkLoadHandler().onHandle(task, callback);
+        }catch(Exception e){
+            responseFailed(task, e);
+            return;
+        }
+        int result = callback.getResult();
+        switch(result){
+            case EngineCallback.RESULT_SUCCEED:
+                NetworkLoadHandler.Result data = callback.getData();
+                if (data.getType() == NetworkLoadHandler.ResultType.NULL){
+                    responseFailed(task, new NullPointerException("[TILoader:NetworkLoadHandler]callback return null result!"));
+                }else if (data.getType() == NetworkLoadHandler.ResultType.BYTES){
+                    handleBytesResult(task, data.getBytes(), data.getLength());
+                }else if (data.getType() == NetworkLoadHandler.ResultType.INPUTSTREAM){
+                    handleInputStreamResult(task, data.getInputStream(), data.getLength());
+                }
+                return;
+            case EngineCallback.RESULT_FAILED:
+                responseFailed(task, callback.getException());
+                return;
+            default:
+                break;
+        }
+        responseCanceled(task);
     }
 
     @Override
     protected int getMaxThread() {
-        return getComponentManager().getServerSettings().getNetLoadMaxThread();
+        return getComponentManager().getServerSettings().getNetworkLoadMaxThread();
     }
 
     @Override
     public Type getServerType() {
-        return Type.NET;
+        return Type.NETWORK_ENGINE;
     }
+
+    private void handleBytesResult(Task task, byte[] bytes, int length){
+        if (length == NetworkLoadHandler.Result.UNKNOW_LENGTH){
+            length = bytes.length;
+        }
+
+    }
+
+    private void handleInputStreamResult(Task task, InputStream inputStream, int length){
+
+    }
+
+    private void responseSucceed(Task task){
+        task.setState(Task.State.SUCCEED);
+        response(task);
+    }
+
+    private void responseFailed(Task task, Exception exception){
+        if (exception != null){
+            getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getContextImage(), task, exception);
+        }
+        task.setState(Task.State.FAILED);
+        response(task);
+    }
+
+    private void responseCanceled(Task task){
+        task.setState(Task.State.CANCELED);
+        response(task);
+    }
+
 }

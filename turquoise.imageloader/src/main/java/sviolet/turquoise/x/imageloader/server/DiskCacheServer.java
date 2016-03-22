@@ -19,23 +19,28 @@
 
 package sviolet.turquoise.x.imageloader.server;
 
+import sviolet.turquoise.model.cache.DiskLruCache;
+import sviolet.turquoise.x.imageloader.ComponentManager;
+
 /**
- * <p>Server</p>
- *
- * Created by S.Violet on 2016/3/15.
+ * Created by S.Violet on 2016/3/22.
  */
-public interface Server {
+public class DiskCacheServer implements ComponentManager.Component, Server {
 
-    /**
-     * @return get the type of server
-     */
-    Type getServerType();
+    private ComponentManager manager;
 
-    enum Type{
-        MEMORY_CACHE,
-        DISK_CACHE,
-        DISK_ENGINE,
-        NETWORK_ENGINE
+    private DiskLruCache diskLruCache;
+
+    @Override
+    public void init(ComponentManager manager) {
+        this.manager = manager;
+
+//        diskLruCache = DiskLruCache.open()
+    }
+
+    @Override
+    public Type getServerType() {
+        return Type.DISK_CACHE;
     }
 
 }

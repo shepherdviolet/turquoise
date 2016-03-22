@@ -17,25 +17,21 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.server;
+package sviolet.turquoise.x.imageloader.handler.def;
+
+import android.content.Context;
+
+import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
+import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
- * <p>Server</p>
- *
- * Created by S.Violet on 2016/3/15.
+ * Created by S.Violet on 2016/3/22.
  */
-public interface Server {
+public class DefaultExceptionHandler implements ExceptionHandler {
 
-    /**
-     * @return get the type of server
-     */
-    Type getServerType();
+    @Override
+    public void onNetworkLoadException(Context context, Task task, Throwable throwable) {
 
-    enum Type{
-        MEMORY_CACHE,
-        DISK_CACHE,
-        DISK_ENGINE,
-        NETWORK_ENGINE
     }
 
 }

@@ -19,8 +19,21 @@
 
 package sviolet.turquoise.x.imageloader.handler;
 
+import android.content.Context;
+
+import sviolet.turquoise.x.imageloader.node.Task;
+
 /**
  * Created by S.Violet on 2016/2/19.
  */
-public class ExceptionHandler {
+public interface ExceptionHandler {
+
+    /**
+     * exception while network loading
+     * @param context context, maybe null
+     * @param task task
+     * @param throwable throwable
+     */
+    void onNetworkLoadException(Context context, Task task, Throwable throwable);
+
 }

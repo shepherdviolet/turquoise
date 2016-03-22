@@ -38,6 +38,6 @@ public class DiskEngine extends Engine {
 
     @Override
     public Type getServerType() {
-        return Type.DISK;
+        return Type.DISK_ENGINE;
     }
 }

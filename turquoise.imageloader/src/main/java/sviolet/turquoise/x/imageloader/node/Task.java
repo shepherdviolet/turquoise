@@ -35,7 +35,7 @@ public class Task {
     private String key;
     private String resourceKey;
 
-    private Server.Type serverType = Server.Type.CACHE;
+    private Server.Type serverType = Server.Type.MEMORY_CACHE;
     private volatile State state = State.STAND_BY;
 
     Task(String nodeId, Stub.Type type, String key, String resourceKey, String url, Params params) {

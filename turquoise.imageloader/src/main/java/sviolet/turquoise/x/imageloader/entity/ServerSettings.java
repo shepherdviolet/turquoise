@@ -21,7 +21,11 @@ package sviolet.turquoise.x.imageloader.entity;
 
 import android.content.Context;
 
+import java.io.File;
+
+import sviolet.turquoise.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
+import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
@@ -29,8 +33,12 @@ import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.def.DefaultBackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.def.DefaultFailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.def.DefaultLoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
+import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
+import sviolet.turquoise.x.imageloader.handler.def.DefaultExceptionHandler;
 import sviolet.turquoise.x.imageloader.handler.def.DefaultImageResourceHandler;
+import sviolet.turquoise.x.imageloader.handler.def.DefaultNetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.NodeFactory;
 import sviolet.turquoise.x.imageloader.node.NodeFactoryImpl;
 import sviolet.turquoise.x.imageloader.node.TaskFactory;
@@ -43,6 +51,14 @@ import sviolet.turquoise.x.imageloader.stub.StubFactoryImpl;
  * Created by S.Violet on 2016/2/16.
  */
 public class ServerSettings implements ComponentManager.Component{
+
+    //DEFAULT/////////////////////////////////////////////////////////////////////////////
+
+    private static final boolean DEFAULT_LOG_ENABLED = true;
+    private static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
+    private static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
+
+    //Var/////////////////////////////////////////////////////////////////////////////////
 
     private ComponentManager manager;
     private Values values;
@@ -57,22 +73,45 @@ public class ServerSettings implements ComponentManager.Component{
         return values.logEnabled;
     }
 
+    public boolean isWipeDiskCacheWhenUpdate(){
+        return values.wipeDiskCacheWhenUpdate;
+    }
+
     public int getMemoryCacheSize(){
         return values.memoryCacheSize;
     }
 
-    public int getNetLoadMaxThread(){
-        return values.netLoadMaxThread;
+    public int getDiskCacheSize(){
+        return values.diskCacheSize;
+    }
+
+    public int getNetworkLoadMaxThread(){
+        return values.networkLoadMaxThread;
     }
 
     public int getDiskLoadMaxThread(){
         return values.diskLoadMaxThread;
     }
 
+    public File getDiskCachePath(){
+        if (values.diskCachePath == null){
+            values.diskCachePath = fetchDiskCachePath(manager.getApplicationContextImage(), DEFAULT_DISK_CACHE_PATH, null);
+        }
+        return values.diskCachePath;
+    }
+
     //handler////////////////////////////////////////////////////////////////////////////
 
     public ImageResourceHandler getImageResourceHandler(){
         return values.imageResourceHandler;
+    }
+
+    public NetworkLoadHandler getNetworkLoadHandler(){
+        return values.networkLoadHandler;
+    }
+
+    public ExceptionHandler getExceptionHandler(){
+        return values.exceptionHandler;
     }
 
     //configurable factory////////////////////////////////////////////////////////////////////////////
@@ -107,14 +146,19 @@ public class ServerSettings implements ComponentManager.Component{
 
         //settings////////////////////////////////////////////////////////////////////////////
 
-        private boolean logEnabled = true;
+        private boolean logEnabled = DEFAULT_LOG_ENABLED;
+        private boolean wipeDiskCacheWhenUpdate = false;
         private int memoryCacheSize = 0;
-        private int netLoadMaxThread = 3;
+        private int diskCacheSize = 0;
+        private int networkLoadMaxThread = 3;
         private int diskLoadMaxThread = 10;
+        private File diskCachePath = null;
 
         //handler////////////////////////////////////////////////////////////////////////////
 
         private ImageResourceHandler imageResourceHandler = new DefaultImageResourceHandler();
+        private NetworkLoadHandler networkLoadHandler = new DefaultNetworkLoadHandler();
+        private ExceptionHandler exceptionHandler = new DefaultExceptionHandler();
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
@@ -165,6 +209,27 @@ public class ServerSettings implements ComponentManager.Component{
             return this;
         }
 
+        /**
+         * set the disk cache size
+         * @param sizeMb mb, > 0
+         */
+        public Builder setDiskCacheSize(float sizeMb){
+            //控制上下限
+            if (sizeMb <= 0){
+                throw new RuntimeException("[ServerSettings]setDiskCacheSize: size must be >0");
+            }
+            values.diskCacheSize = (int) (sizeMb * 1024 * 1024);
+            return this;
+        }
+
+        public Builder setDiskCachePath(Context context, DiskCachePath diskCachePath, String subPath){
+            if (context == null){
+                throw new RuntimeException("[ServerSettings]setDiskCachePath:　context is null!");
+            }
+            values.diskCachePath = fetchDiskCachePath(context, diskCachePath, subPath);
+            return this;
+        }
+
         //handler////////////////////////////////////////////////////////////////////////////
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
@@ -202,6 +267,32 @@ public class ServerSettings implements ComponentManager.Component{
         this.manager = manager;
         values.nodeFactory.init(manager);
         values.taskFactory.init(manager);
+    }
+
+    /*************************************************************
+     * enum
+     */
+
+    public enum DiskCachePath{
+        INNER_STORAGE,
+        EXTERNAL_STORAGE
+    }
+
+    /**************************************************************
+     * private
+     */
+
+    private static File fetchDiskCachePath(Context context, DiskCachePath diskCachePath, String subPath){
+        if (CheckUtils.isEmpty(subPath)){
+            subPath = DEFAULT_DISK_CACHE_SUB_PATH;
+        }
+        switch (diskCachePath){
+            case EXTERNAL_STORAGE:
+                return DirectoryUtils.getCacheDir(context, subPath);
+            case INNER_STORAGE:
+            default:
+                return new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + subPath);
+        }
     }
 
 }

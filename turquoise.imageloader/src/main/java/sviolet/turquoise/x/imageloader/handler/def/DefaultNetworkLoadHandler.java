@@ -17,17 +17,18 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.handler;
+package sviolet.turquoise.x.imageloader.handler.def;
 
+import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.EngineCallback;
 
 /**
- *
- * Created by S.Violet on 2016/2/19.
+ * Created by S.Violet on 2016/3/22.
  */
-public interface NetLoadHandler {
-
-    void onHandle(Task task, EngineCallback callback);
-
+public class DefaultNetworkLoadHandler implements NetworkLoadHandler {
+    @Override
+    public void onHandle(Task task, EngineCallback<Result> callback) {
+//        callback.setResultSucceed();
+    }
 }

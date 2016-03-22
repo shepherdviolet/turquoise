@@ -26,7 +26,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
-import sviolet.turquoise.x.imageloader.server.CacheServer;
+import sviolet.turquoise.x.imageloader.server.DiskCacheServer;
+import sviolet.turquoise.x.imageloader.server.MemoryCacheServer;
 import sviolet.turquoise.x.imageloader.server.DiskEngine;
 import sviolet.turquoise.x.imageloader.server.NetEngine;
 import sviolet.turquoise.x.imageloader.entity.Params;
@@ -57,7 +58,8 @@ public class ComponentManager {
      * Components
      **********************************************************************************************/
 
-    private final CacheServer cacheServer = new CacheServer();
+    private final MemoryCacheServer memoryCacheServer = new MemoryCacheServer();
+    private final DiskCacheServer diskCacheServer = new DiskCacheServer();
     private final NodeManager nodeManager = new NodeManager();
     private final DiskEngine diskEngine = new DiskEngine();
     private final NetEngine netEngine = new NetEngine();
@@ -75,6 +77,7 @@ public class ComponentManager {
     private final Params defaultParams = new Params.Builder().build();
     private final TLogger logger = TLogger.get(TILoader.class, TILoader.TAG);
     private WeakReference<Context> contextImage;
+    private WeakReference<Context> applicationContextImage;
 
     private boolean componentsInitialized = false;
     private final ReentrantLock componentsInitializeLock = new ReentrantLock();
@@ -83,8 +86,8 @@ public class ComponentManager {
      * Components Operations
      **********************************************************************************************/
 
-    public CacheServer getCacheServer() {
-        return cacheServer;
+    public MemoryCacheServer getMemoryCacheServer() {
+        return memoryCacheServer;
     }
 
     public NodeManager getNodeManager(){
@@ -155,7 +158,8 @@ public class ComponentManager {
             serverSettings = new ServerSettings.Builder().build();
         }
         serverSettings.init(ComponentManager.getInstance());
-        cacheServer.init(ComponentManager.getInstance());
+        memoryCacheServer.init(ComponentManager.getInstance());
+        diskCacheServer.init(ComponentManager.getInstance());
         nodeManager.init(ComponentManager.getInstance());
         diskEngine.init(ComponentManager.getInstance());
         netEngine.init(ComponentManager.getInstance());
@@ -193,6 +197,26 @@ public class ComponentManager {
     public Context getContextImage(){
         if (contextImage != null){
             return contextImage.get();
+        }
+        return null;
+    }
+
+    /**
+     * set a application context's image, used to get System Params
+     * @param context context
+     */
+    public void setApplicationContextImage(Context context){
+        if (context != null){
+            applicationContextImage = new WeakReference<Context>(context);
+        }
+    }
+
+    /**
+     * application context's image, used to get System Params
+     */
+    public Context getApplicationContextImage(){
+        if (applicationContextImage != null){
+            return applicationContextImage.get();
         }
         return null;
     }

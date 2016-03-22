@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.server;
+package sviolet.turquoise.x.imageloader.server.module;
 
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
@@ -33,7 +33,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  *
  * Created by S.Violet on 2016/3/15.
  */
-class BitmapCacheModule extends CompatLruCache<String, Bitmap> {
+public class BitmapMemoryCacheModule extends CompatLruCache<String, Bitmap> {
 
     private TLogger logger;
 
@@ -41,7 +41,7 @@ class BitmapCacheModule extends CompatLruCache<String, Bitmap> {
      * @param cacheSize cache size
      * @param logger logger
      */
-    BitmapCacheModule(int cacheSize, TLogger logger) {
+    public BitmapMemoryCacheModule(int cacheSize, TLogger logger) {
         super(cacheSize);
     }
 
@@ -52,7 +52,7 @@ class BitmapCacheModule extends CompatLruCache<String, Bitmap> {
     @Override
     public Bitmap get(String key) {
         if (key == null){
-            throw new NullPointerException("[TILoader:BitmapCacheModule]key must not be null");
+            throw new NullPointerException("[TILoader:BitmapMemoryCacheModule]key must not be null");
         }
         //return bitmap
         Bitmap bitmap = super.get(key);
@@ -67,11 +67,11 @@ class BitmapCacheModule extends CompatLruCache<String, Bitmap> {
     @Override
     public Bitmap put(String key, Bitmap value) {
         if (key == null){
-            throw new NullPointerException("[TILoader:BitmapCacheModule]key must not be null");
+            throw new NullPointerException("[TILoader:BitmapMemoryCacheModule]key must not be null");
         }
         //exclude null or recycled bitmap
         if (value == null || value.isRecycled()) {
-            logger.e("BitmapCacheModule trying to put a null or recycled bitmap, key:" + key);
+            logger.e("BitmapMemoryCacheModule trying to put a null or recycled bitmap, key:" + key);
             return null;
         }
         //remove previous bitmap with same key
@@ -82,7 +82,7 @@ class BitmapCacheModule extends CompatLruCache<String, Bitmap> {
     @Override
     public Bitmap remove(String key) {
         if (key == null){
-            throw new NullPointerException("[TILoader:BitmapCacheModule]key must not be null");
+            throw new NullPointerException("[TILoader:BitmapMemoryCacheModule]key must not be null");
         }
         Bitmap bitmap = super.remove(key);
         //recycle
@@ -110,7 +110,7 @@ class BitmapCacheModule extends CompatLruCache<String, Bitmap> {
         setSize(0);
 
         //打印日志
-        logger.d("BitmapCacheModule removeAll recycled:" + counter);
+        logger.d("BitmapMemoryCacheModule removeAll recycled:" + counter);
         logger.d(getMemoryReport());
     }
 
@@ -139,7 +139,7 @@ class BitmapCacheModule extends CompatLruCache<String, Bitmap> {
 
             synchronized (this) {
                 if (size() < 0 || (getMap().isEmpty() && size() != 0)) {
-                    throw new IllegalStateException("[TILoader:BitmapCacheModule]sizeOf: is reporting inconsistent results!");
+                    throw new IllegalStateException("[TILoader:BitmapMemoryCacheModule]sizeOf: is reporting inconsistent results!");
                 }
 
                 if (size() <= maxSize) {
