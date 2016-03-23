@@ -29,6 +29,27 @@ import sviolet.turquoise.x.imageloader.node.Task;
 public interface ExceptionHandler {
 
     /**
+     * exception while disk cache open
+     * @param context context, maybe null
+     * @param throwable throwable
+     */
+    void onDiskCacheOpenException(Context context, Throwable throwable);
+
+    /**
+     * exception while disk cache loading
+     * @param context context, maybe null
+     * @param throwable throwable
+     */
+    void onDiskCacheLoadException(Context context, Throwable throwable);
+
+    /**
+     * exception while disk cache close/flush..., for unimportance exception
+     * @param context context, maybe null
+     * @param throwable throwable
+     */
+    void onDiskCacheCommonException(Context context, Throwable throwable);
+
+    /**
      * exception while network loading
      * @param context context, maybe null
      * @param task task

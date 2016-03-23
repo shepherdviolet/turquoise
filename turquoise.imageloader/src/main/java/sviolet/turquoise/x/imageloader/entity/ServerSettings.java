@@ -54,7 +54,13 @@ public class ServerSettings implements ComponentManager.Component{
 
     //DEFAULT/////////////////////////////////////////////////////////////////////////////
 
-    private static final boolean DEFAULT_LOG_ENABLED = true;
+    public static final boolean DEFAULT_LOG_ENABLED = true;
+    public static final boolean DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE = false;
+    public static final int DEFAULT_MEMORY_CACHE_SIZE = 0;
+    public static final int DEFAULT_DISK_CACHE_SIZE = 10 * 1024 * 1024;
+    public static final int DEFAULT_NETWORK_LOAD_MAX_THREAD = 3;
+    public static final int DEFAULT_DISK_LOAD_MAX_THREAD = 10;
+
     private static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
     private static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
 
@@ -147,11 +153,11 @@ public class ServerSettings implements ComponentManager.Component{
         //settings////////////////////////////////////////////////////////////////////////////
 
         private boolean logEnabled = DEFAULT_LOG_ENABLED;
-        private boolean wipeDiskCacheWhenUpdate = false;
-        private int memoryCacheSize = 0;
-        private int diskCacheSize = 0;
-        private int networkLoadMaxThread = 3;
-        private int diskLoadMaxThread = 10;
+        private boolean wipeDiskCacheWhenUpdate = DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE;
+        private int memoryCacheSize = DEFAULT_MEMORY_CACHE_SIZE;
+        private int diskCacheSize = DEFAULT_DISK_CACHE_SIZE;
+        private int networkLoadMaxThread = DEFAULT_NETWORK_LOAD_MAX_THREAD;
+        private int diskLoadMaxThread = DEFAULT_DISK_LOAD_MAX_THREAD;
         private File diskCachePath = null;
 
         //handler////////////////////////////////////////////////////////////////////////////
