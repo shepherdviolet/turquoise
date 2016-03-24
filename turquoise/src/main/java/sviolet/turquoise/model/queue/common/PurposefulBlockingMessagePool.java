@@ -26,11 +26,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * <p>目的性阻塞队列</p>
+ * <p>目的性阻塞消息池</p>
  *
- * <p>使用{@link PurposefulBlockingQueue#register(Object)}方法注册指定ID, 开始异步操作, 使用
- * {@link PurposefulBlockingQueue#wait(Object, long)} 方法等待目标对象返回, 此时线程阻塞. 当
- * 异步操作中, 通过{@link PurposefulBlockingQueue#restock(Object, Object)} 方法塞入目标对象后,
+ * <p>使用{@link PurposefulBlockingMessagePool#register(Object)}方法注册指定ID, 开始异步操作, 使用
+ * {@link PurposefulBlockingMessagePool#wait(Object, long)} 方法等待目标对象返回, 此时线程阻塞. 当
+ * 异步操作中, 通过{@link PurposefulBlockingMessagePool#restock(Object, Object)} 方法塞入目标对象后,
  * 原线程继续执行, 返回目标对象.</p>
  *
  * <p><pre>{@code
@@ -55,14 +55,14 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * <p>Created by S.Violet on 2016/3/23.</p>
  */
-public class PurposefulBlockingQueue <T> {
+public class PurposefulBlockingMessagePool <T> {
 
     private final ReentrantLock lock = new ReentrantLock();//锁
     private final Map<Object, Condition> conditionPool = new HashMap<>();//信号池
     private final Map<Object, T> itemPool = new HashMap<>();//对象池
 
     /**
-     * 队列注册指定ID, 表明需要目标对象, 注册后该队列接受该ID目标对象的塞入(restock)
+     * 注册指定ID, 表明需要目标对象, 注册后该消息池接受该ID目标对象的塞入(restock)
      * @param id 指定的ID
      */
     public void register(Object id){
@@ -76,7 +76,7 @@ public class PurposefulBlockingQueue <T> {
     }
 
     /**
-     * 阻塞等待并返回指定ID的目标对象, 必须先调用{@link PurposefulBlockingQueue#register(Object)}注册等待的ID.
+     * 阻塞等待并返回指定ID的目标对象, 必须先调用{@link PurposefulBlockingMessagePool#register(Object)}注册等待的ID.
      * @param id 指定的ID
      * @param timeout 超时时间
      * @return 指定ID的目标对象(可能为空)
@@ -87,7 +87,7 @@ public class PurposefulBlockingQueue <T> {
             lock.lock();
             final Condition condition = conditionPool.get(id);
             if (condition == null){
-                throw new RuntimeException("[PurposefulBlockingQueue]can't wait() before register()");
+                throw new RuntimeException("[PurposefulBlockingMessagePool]can't wait() before register()");
             }
             T item;
             while ((item = itemPool.remove(id)) == null) {
@@ -112,7 +112,7 @@ public class PurposefulBlockingQueue <T> {
     }
 
     /**
-     * 向队列塞入指定ID的目标对象, 若该ID未注册({@link PurposefulBlockingQueue#register(Object)}), 或等待已超时, 则塞入无效,
+     * 向消息池塞入指定ID的目标对象, 若该ID未注册({@link PurposefulBlockingMessagePool#register(Object)}), 或等待已超时, 则塞入无效,
      * 并返回false.
      * @param id 指定ID
      * @param item 目标对象
