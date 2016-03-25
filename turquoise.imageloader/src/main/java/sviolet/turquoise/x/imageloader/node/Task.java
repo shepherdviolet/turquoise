@@ -67,6 +67,10 @@ public class Task {
         return key;
     }
 
+    public String getResourceKey(){
+        return resourceKey;
+    }
+
     public Server.Type getServerType() {
         return serverType;
     }

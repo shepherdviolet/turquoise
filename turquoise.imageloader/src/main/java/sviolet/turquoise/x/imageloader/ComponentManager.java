@@ -90,6 +90,10 @@ public class ComponentManager {
         return memoryCacheServer;
     }
 
+    public DiskCacheServer getDiskCacheServer() {
+        return diskCacheServer;
+    }
+
     public NodeManager getNodeManager(){
         return nodeManager;
     }

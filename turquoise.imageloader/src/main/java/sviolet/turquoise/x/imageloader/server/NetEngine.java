@@ -19,8 +19,12 @@
 
 package sviolet.turquoise.x.imageloader.server;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
+import sviolet.turquoise.model.cache.DiskLruCache;
+import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
@@ -47,9 +51,9 @@ public class NetEngine extends Engine {
                 if (data.getType() == NetworkLoadHandler.ResultType.NULL){
                     responseFailed(task, new NullPointerException("[TILoader:NetworkLoadHandler]callback return null result!"));
                 }else if (data.getType() == NetworkLoadHandler.ResultType.BYTES){
-                    handleBytesResult(task, data.getBytes(), data.getLength());
+                    handleBytesResult(task, data.getBytes());
                 }else if (data.getType() == NetworkLoadHandler.ResultType.INPUTSTREAM){
-                    handleInputStreamResult(task, data.getInputStream(), data.getLength());
+                    handleInputStreamResult(task, data.getInputStream());
                 }
                 return;
             case EngineCallback.RESULT_FAILED:
@@ -71,15 +75,24 @@ public class NetEngine extends Engine {
         return Type.NETWORK_ENGINE;
     }
 
-    private void handleBytesResult(Task task, byte[] bytes, int length){
-        if (length == NetworkLoadHandler.Result.UNKNOW_LENGTH){
-            length = bytes.length;
-        }
-
+    private void handleBytesResult(Task task, byte[] bytes){
+        getComponentManager().getDiskCacheServer().write(task, bytes);
     }
 
-    private void handleInputStreamResult(Task task, InputStream inputStream, int length){
+    private void handleInputStreamResult(Task task, InputStream inputStream){
+        DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream);
+        switch (result.getType()){
+            case SUCCEED:
 
+                break;
+            case RETURN_MEMORY_BUFFER:
+
+                break;
+            case FAILED:
+            default:
+
+                break;
+        }
     }
 
     private void responseSucceed(Task task){

@@ -50,6 +50,9 @@ public abstract class AbsStub implements Stub {
     private final ReentrantLock stateLock = new ReentrantLock();
 
     public AbsStub(String url, Params params){
+        if (url == null){
+            throw new RuntimeException("[TILoader:AbsStub]url must not be null");
+        }
         this.url = url;
         this.params = params;
     }

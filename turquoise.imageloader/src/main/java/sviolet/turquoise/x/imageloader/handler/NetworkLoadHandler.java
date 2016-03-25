@@ -55,17 +55,12 @@ public interface NetworkLoadHandler {
         }
 
         Result(InputStream inputStream){
-            this(inputStream, UNKNOW_LENGTH);
-        }
-
-        Result(InputStream inputStream, int length){
             if (inputStream == null){
                 this.type = ResultType.NULL;
                 return;
             }
             this.type = ResultType.INPUTSTREAM;
             this.inputStream = inputStream;
-            this.length = length;
         }
 
         public ResultType getType() {
@@ -82,6 +77,10 @@ public interface NetworkLoadHandler {
 
         public int getLength() {
             return length;
+        }
+
+        public void setLength(int length) {
+            this.length = length;
         }
     }
 
