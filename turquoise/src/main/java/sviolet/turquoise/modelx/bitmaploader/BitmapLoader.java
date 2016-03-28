@@ -1027,7 +1027,7 @@ public class BitmapLoader implements LifeCycle {
 
                         if (bitmap == null || bitmap.isRecycled()){
                             //图片解码失败
-                            logger.w("[BitmapLoader]net loaded failed, data decoding to Bitmap failed, url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">, dataHex<<" + ByteUtils.byteToHex(messenger.getData()) + ">>");
+                            logger.w("[BitmapLoader]net loaded failed, data decoding to Bitmap failed, url<" + request.getUrl() + "> cacheKey<" + cacheKey + ">, dataHex<<" + ByteUtils.bytesToHex(messenger.getData()) + ">>");
                             return RESULT_FAILED;
                         }
 
@@ -1127,7 +1127,7 @@ public class BitmapLoader implements LifeCycle {
      */
     private String getCacheKey(String url) {
         //url->SHA1->hex->key
-        return ByteUtils.byteToHex(DigestCipher.digest(url, DigestCipher.TYPE_SHA1));
+        return ByteUtils.bytesToHex(DigestCipher.digest(url, DigestCipher.TYPE_SHA1));
     }
 
     /**

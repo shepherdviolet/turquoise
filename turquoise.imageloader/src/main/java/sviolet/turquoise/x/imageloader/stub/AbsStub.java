@@ -249,7 +249,7 @@ public abstract class AbsStub implements Stub {
             String url = getUrl();
             if (url == null)
                 url = NULL;
-            resourceKey = ByteUtils.byteToHex(DigestCipher.digest(url, DigestCipher.TYPE_SHA1));
+            resourceKey = ByteUtils.bytesToHex(DigestCipher.digest(url, DigestCipher.TYPE_SHA1));
         }
         return resourceKey;
     }

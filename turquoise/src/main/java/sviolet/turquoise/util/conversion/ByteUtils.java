@@ -33,6 +33,8 @@ import java.io.ObjectOutputStream;
 
 public class ByteUtils {
 
+	private static final String HEX_STRING_MAPPING = "0123456789ABCDEF";
+
 	/**
 	 * 把两个byte[]前后拼接成一个byte[]
 	 * 
@@ -48,15 +50,15 @@ public class ByteUtils {
 	}
 
 	/**
-	 * byte转为hex
-	 * @param src bytes
+	 * bytes转为hexString
+	 * @param bytes bytes
 	 * @return hex string
 	 */
-	public static String byteToHex(byte[] src){
-		if (src == null || src.length <= 0)
+	public static String bytesToHex(byte[] bytes){
+		if (bytes == null || bytes.length <= 0)
 			return "";
 		StringBuilder stringBuilder = new StringBuilder("");
-        for (byte unit : src) {
+        for (byte unit : bytes) {
             int unitInt = unit & 0xFF;
             String unitHex = Integer.toHexString(unitInt);
             if (unitHex.length() < 2) {
@@ -65,6 +67,30 @@ public class ByteUtils {
             stringBuilder.append(unitHex);
         }
 		return stringBuilder.toString();
+	}
+
+	/**
+	 * hexString转为bytes
+	 * @param hexString hexString
+	 * @return bytes
+	 */
+	public static byte[] hexToBytes(String hexString) {
+		if (hexString == null || hexString.length() <= 0) {
+			return null;
+		}
+		hexString = hexString.toUpperCase();
+		int length = hexString.length() / 2;
+		char[] hexChars = hexString.toCharArray();
+		byte[] result = new byte[length];
+		for (int i = 0; i < length; i++) {
+			int step = i * 2;
+			result[i] = (byte) (charToByte(hexChars[step]) << 4 | charToByte(hexChars[step + 1]));
+		}
+		return result;
+	}
+
+	private static byte charToByte(char c) {
+		return (byte) HEX_STRING_MAPPING.indexOf(c);
 	}
 
 	/**
