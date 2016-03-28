@@ -49,21 +49,21 @@ public class ByteUtils {
 
 	/**
 	 * byte转为hex
-	 * @param src
-	 * @return
+	 * @param src bytes
+	 * @return hex string
 	 */
 	public static String byteToHex(byte[] src){
-		StringBuilder stringBuilder = new StringBuilder("");
 		if (src == null || src.length <= 0)
 			return "";
-		for (int i = 0; i < src.length; i++) {
-			int v = src[i] & 0xFF;
-			String hv = Integer.toHexString(v);
-			if (hv.length() < 2) {
-				stringBuilder.append(0);
-			}
-			stringBuilder.append(hv);
-		}
+		StringBuilder stringBuilder = new StringBuilder("");
+        for (byte unit : src) {
+            int unitInt = unit & 0xFF;
+            String unitHex = Integer.toHexString(unitInt);
+            if (unitHex.length() < 2) {
+                stringBuilder.append(0);
+            }
+            stringBuilder.append(unitHex);
+        }
 		return stringBuilder.toString();
 	}
 
