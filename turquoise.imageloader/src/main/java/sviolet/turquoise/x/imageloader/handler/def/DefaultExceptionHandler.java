@@ -30,6 +30,26 @@ import sviolet.turquoise.x.imageloader.node.Task;
 public class DefaultExceptionHandler implements ExceptionHandler {
 
     @Override
+    public void onDiskCacheOpenException(Context context, Throwable throwable) {
+
+    }
+
+    @Override
+    public void onDiskCacheReadException(Context context, Task task, Throwable throwable) {
+
+    }
+
+    @Override
+    public void onDiskCacheWriteException(Context context, Task task, Throwable throwable) {
+
+    }
+
+    @Override
+    public void onDiskCacheCommonException(Context context, Throwable throwable) {
+
+    }
+
+    @Override
     public void onNetworkLoadException(Context context, Task task, Throwable throwable) {
 
     }

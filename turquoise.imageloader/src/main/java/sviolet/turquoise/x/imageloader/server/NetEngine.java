@@ -19,12 +19,8 @@
 
 package sviolet.turquoise.x.imageloader.server;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
-import sviolet.turquoise.model.cache.DiskLruCache;
-import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
@@ -59,10 +55,12 @@ public class NetEngine extends Engine {
             case EngineCallback.RESULT_FAILED:
                 responseFailed(task, callback.getException());
                 return;
+            case EngineCallback.RESULT_CANCELED:
             default:
+                responseCanceled(task);
                 break;
         }
-        responseCanceled(task);
+
     }
 
     @Override
