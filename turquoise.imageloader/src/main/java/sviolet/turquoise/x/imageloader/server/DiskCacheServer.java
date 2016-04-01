@@ -19,18 +19,17 @@
 
 package sviolet.turquoise.x.imageloader.server;
 
-import android.accounts.NetworkErrorException;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.model.cache.DiskLruCache;
+import sviolet.turquoise.model.common.LazySingleThreadPool;
 import sviolet.turquoise.util.droid.ApplicationUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.node.Task;
@@ -44,6 +43,7 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
     public static final int BUFFER_SIZE = 1024;
 
     private static final int DEFAULT_APP_VERSION = 1;
+    private static final long PAUSE_DELAY_NANOS = 60 * 1000000000L;//60s to pause diskcache
 
     private ComponentManager manager;
 
@@ -54,11 +54,13 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
     private AtomicBoolean isHealthy = new AtomicBoolean(true);
     private int holdCounter = 0;
 
+    private LazySingleThreadPool dispatchThreadPool;
     private ReentrantLock statusLock = new ReentrantLock();
 
     @Override
     public void init(ComponentManager manager) {
         this.manager = manager;
+        this.dispatchThreadPool = new LazySingleThreadPool();
         if (manager.getServerSettings().isWipeDiskCacheWhenUpdate() && manager.getApplicationContextImage() != null){
             this.appVersion = ApplicationUtils.getAppVersion(manager.getApplicationContextImage());
         }
@@ -185,7 +187,6 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
      * @return true: write succeed
      */
     public boolean write(Task task, byte[] bytes){
-        Result result = new Result();
         DiskLruCache.Editor editor = null;
         OutputStream outputStream = null;
         try {
@@ -349,6 +350,14 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
         }finally {
             statusLock.unlock();
         }
+        //try to pause cache
+        dispatchThreadPool.execute(new Runnable() {
+            @Override
+            public void run() {
+                LockSupport.parkNanos(PAUSE_DELAY_NANOS);
+                closeCache();
+            }
+        });
     }
 
     private void closeStream(InputStream stream){
