@@ -108,7 +108,7 @@ public abstract class WeakHandler<T> extends Handler {
      * 判断宿主对象是否存在, 分发到不同的方法处理消息<br/>
      */
     @Override
-    public void handleMessage(Message msg) {
+    public final void handleMessage(Message msg) {
         final T host = getHost();
         if (host != null){
             handleMessageWithHost(msg, host);
