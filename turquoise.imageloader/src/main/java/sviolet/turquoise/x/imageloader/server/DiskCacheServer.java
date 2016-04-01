@@ -88,8 +88,8 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
         try {
             editor = edit(task);
             if (editor == null) {
-                manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getContextImage(), task,
-                        new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, multiple edit one file, write disk cache failed"));
+                manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getApplicationContextImage(), manager.getContextImage(), task,
+                        new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, multiple edit one file, write disk cache failed"), manager.getLogger());
                 writeToMemoryCache(task, inputStream, result, null);
                 return result;
             }
@@ -114,7 +114,7 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
                         setHealthy(false);
                         if (!hasWrite){
                             abortEditor(editor);
-                            manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getContextImage(), task, e);
+                            manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getApplicationContextImage(), manager.getContextImage(), task, e, manager.getLogger());
                             writeToMemoryCache(task, inputStream, result, buffer);
                             return result;
                         }
@@ -140,20 +140,20 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
                     }catch(Exception e){
                         setHealthy(false);
                         editor.abort();
-                        manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getContextImage(), task, e);
+                        manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getApplicationContextImage(), manager.getContextImage(), task, e, manager.getLogger());
                     }
                 }else{
-                    manager.getServerSettings().getExceptionHandler().onNetworkLoadException(manager.getContextImage(), task,
-                            new Exception("[TILoader]network load failed, null content received (3)"));
+                    manager.getServerSettings().getExceptionHandler().onNetworkLoadException(manager.getApplicationContextImage(), manager.getContextImage(), task,
+                            new Exception("[TILoader]network load failed, null content received (3)"), manager.getLogger());
                     editor.abort();
                 }
             }
         }catch(NetworkException e){
             abortEditor(editor);
-            manager.getServerSettings().getExceptionHandler().onNetworkLoadException(manager.getContextImage(), task, e.getCause());
+            manager.getServerSettings().getExceptionHandler().onNetworkLoadException(manager.getApplicationContextImage(), manager.getContextImage(), task, e.getCause(), manager.getLogger());
         }catch(Exception e){
             abortEditor(editor);
-            manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getContextImage(), task, e);
+            manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getApplicationContextImage(), manager.getContextImage(), task, e, manager.getLogger());
         }finally {
             closeStream(inputStream);
             closeStream(outputStream);
@@ -165,8 +165,8 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
             if (targetFile == null || !targetFile.exists()){
                 setHealthy(false);
                 result.setType(ResultType.FAILED);
-                manager.getServerSettings().getExceptionHandler().onDiskCacheReadException(manager.getContextImage(), task,
-                    new Exception("[TILoader]resources have been written to disk cache, but we can't find target File!!!"));
+                manager.getServerSettings().getExceptionHandler().onDiskCacheReadException(manager.getApplicationContextImage(), manager.getContextImage(), task,
+                    new Exception("[TILoader]resources have been written to disk cache, but we can't find target File!!!"), manager.getLogger());
             }else{
                 result.setTargetFile(targetFile);
             }
@@ -192,8 +192,8 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
         try {
             editor = edit(task);
             if (editor == null) {
-                manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getContextImage(), task,
-                        new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, multiple edit one file, write disk cache failed (2)"));
+                manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getApplicationContextImage(), manager.getContextImage(), task,
+                        new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, multiple edit one file, write disk cache failed (2)"), manager.getLogger());
                 return false;
             }
             //trying to write to disk cache
@@ -207,16 +207,16 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
                 } catch (Exception e) {
                     setHealthy(false);
                     editor.abort();
-                    manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getContextImage(), task, e);
+                    manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getApplicationContextImage(), manager.getContextImage(), task, e, manager.getLogger());
                 }
             } else {
-                manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getContextImage(), task,
-                        new Exception("[TILoader]disk cache write failed, bytes is null"));
+                manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getApplicationContextImage(), manager.getContextImage(), task,
+                        new Exception("[TILoader]disk cache write failed, bytes is null"), manager.getLogger());
                 editor.abort();
             }
         }catch(Exception e){
             abortEditor(editor);
-            manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getContextImage(), task, e);
+            manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getApplicationContextImage(), manager.getContextImage(), task, e, manager.getLogger());
         }finally {
             closeStream(outputStream);
             release();
@@ -282,10 +282,10 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
             statusLock.unlock();
         }
         if (openException != null){
-            manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getContextImage(), openException);
+            manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getApplicationContextImage(), manager.getContextImage(), openException, manager.getLogger());
         }
         if (commonException != null){
-            manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getContextImage(), commonException);
+            manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getApplicationContextImage(), manager.getContextImage(), commonException, manager.getLogger());
         }
         return false;
     }
@@ -307,7 +307,7 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
             try {
                 diskLruCacheToClose.close();
             } catch (IOException e) {
-                manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getContextImage(), e);
+                manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getApplicationContextImage(), manager.getContextImage(), e, manager.getLogger());
             }
         }
     }
@@ -317,7 +317,7 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
             try{
                 return diskLruCache.getFile(task.getResourceKey(), 0);
             } catch (IOException e) {
-                manager.getServerSettings().getExceptionHandler().onDiskCacheReadException(manager.getContextImage(), task, e);
+                manager.getServerSettings().getExceptionHandler().onDiskCacheReadException(manager.getApplicationContextImage(), manager.getContextImage(), task, e, manager.getLogger());
             }
         }
         return null;
@@ -328,7 +328,7 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
             try{
                 return diskLruCache.edit(task.getResourceKey());
             } catch (IOException e) {
-                manager.getServerSettings().getExceptionHandler().onDiskCacheReadException(manager.getContextImage(), task, e);
+                manager.getServerSettings().getExceptionHandler().onDiskCacheReadException(manager.getApplicationContextImage(), manager.getContextImage(), task, e, manager.getLogger());
             }
         }
         return null;
@@ -340,7 +340,7 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
             if (diskLruCacheToFlush != null)
                 diskLruCacheToFlush.flush();
         } catch (IOException e) {
-            manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getContextImage(), e);
+            manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getApplicationContextImage(), manager.getContextImage(), e, manager.getLogger());
         }
         try{
             statusLock.lock();

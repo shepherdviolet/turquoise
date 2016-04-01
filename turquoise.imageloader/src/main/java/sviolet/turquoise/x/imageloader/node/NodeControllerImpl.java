@@ -119,6 +119,7 @@ public class NodeControllerImpl extends NodeController {
 
         if (newStubGroup) {
             Task task = manager.getServerSettings().getTaskFactory().newTask(this, stub);
+            task.setNodeSettings(settings);
             task.setServerType(Server.Type.MEMORY_CACHE);
             task.setState(Task.State.STAND_BY);
             executeTask(task);

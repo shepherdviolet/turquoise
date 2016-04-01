@@ -19,8 +19,11 @@
 
 package sviolet.turquoise.x.imageloader.handler;
 
+import android.content.Context;
+
 import java.io.InputStream;
 
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.EngineCallback;
 
@@ -30,19 +33,27 @@ import sviolet.turquoise.x.imageloader.server.EngineCallback;
  */
 public interface NetworkLoadHandler {
 
-    void onHandle(Task task, EngineCallback<Result> callback);
+    /**
+     * load from net
+     * @param applicationContext application context
+     * @param context activity context, maybe null
+     * @param task task
+     * @param callback callback
+     * @param logger logger
+     */
+    void onHandle(Context applicationContext, Context context, Task task, EngineCallback<Result> callback, TLogger logger);
 
     /**
      * network loading result (on succeed)
      */
     class Result{
 
-        public static final int UNKNOW_LENGTH = -1;
+        public static final int UNKNOWN_LENGTH = -1;
 
         private ResultType type = ResultType.NULL;
         private byte[] bytes;
         private InputStream inputStream;
-        private int length = UNKNOW_LENGTH;
+        private int length = UNKNOWN_LENGTH;
 
         Result(byte[] bytes){
             if (bytes == null){

@@ -33,9 +33,11 @@ import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.def.DefaultBackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.def.DefaultFailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.def.DefaultLoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
+import sviolet.turquoise.x.imageloader.handler.def.DefaultDecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.def.DefaultExceptionHandler;
 import sviolet.turquoise.x.imageloader.handler.def.DefaultImageResourceHandler;
 import sviolet.turquoise.x.imageloader.handler.def.DefaultNetworkLoadHandler;
@@ -116,6 +118,10 @@ public class ServerSettings implements ComponentManager.Component{
         return values.networkLoadHandler;
     }
 
+    public DecodeHandler getDecodeHandler(){
+        return values.decodeHandler;
+    }
+
     public ExceptionHandler getExceptionHandler(){
         return values.exceptionHandler;
     }
@@ -164,6 +170,7 @@ public class ServerSettings implements ComponentManager.Component{
 
         private ImageResourceHandler imageResourceHandler = new DefaultImageResourceHandler();
         private NetworkLoadHandler networkLoadHandler = new DefaultNetworkLoadHandler();
+        private DecodeHandler decodeHandler = new DefaultDecodeHandler();
         private ExceptionHandler exceptionHandler = new DefaultExceptionHandler();
 
         //configurable factory////////////////////////////////////////////////////////////////////////////

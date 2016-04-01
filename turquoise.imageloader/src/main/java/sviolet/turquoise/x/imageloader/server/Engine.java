@@ -26,6 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.model.common.LazySingleThreadPool;
 import sviolet.turquoise.x.imageloader.ComponentManager;
+import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
@@ -41,30 +42,34 @@ public abstract class Engine implements ComponentManager.Component, Server {
     private ExecutorService taskThreadPool = Executors.newCachedThreadPool();
 
     private volatile int taskCount = 0;
-
     private final ReentrantLock taskCountLock = new ReentrantLock();
+    private List<Task> cache;//single Thread to operate the cache!
+
+    /***************************************************************************
+     * abstract
+     */
 
     /**
-     * single Thread to operate the cache!
+     * the method invoked on single Thread, which "dispatch thread"
+     * @param task the task to execute
      */
-    private List<Task> cache;
+    protected abstract void executeNewTask(Task task);
+
+    protected abstract int getMaxThread();
+
+    /***************************************************************************
+     * public
+     */
 
     @Override
     public void init(ComponentManager manager){
         this.manager = manager;
     }
 
-    /**
-     * single Thread to operate the method!
-     */
-    private Task getTask(){
-        if (cache == null || cache.size() <= 0){
-            cache = manager.getNodeManager().pullTasks(getServerType());
-        }
-        if (cache != null && cache.size() > 0){
-            return cache.remove(0);
-        }
-        return null;
+    protected void response(Task task){
+        manager.getNodeManager().response(task);
+        releaseThread();
+        ignite();
     }
 
     /**
@@ -86,6 +91,19 @@ public abstract class Engine implements ComponentManager.Component, Server {
         });
     }
 
+    /**
+     * single Thread to operate the method!
+     */
+    private Task getTask(){
+        if (cache == null || cache.size() <= 0){
+            cache = manager.getNodeManager().pullTasks(getServerType());
+        }
+        if (cache != null && cache.size() > 0){
+            return cache.remove(0);
+        }
+        return null;
+    }
+
     private void executeTask(final Task task) {
         taskThreadPool.execute(new Runnable() {
             @Override
@@ -95,23 +113,26 @@ public abstract class Engine implements ComponentManager.Component, Server {
         });
     }
 
-    protected void response(Task task){
-        manager.getNodeManager().response(task);
-        releaseThread();
-        ignite();
-    }
+    /***************************************************************************
+     * getter setter
+     */
 
     protected ComponentManager getComponentManager(){
         return manager;
     }
 
-    /**
-     * the method invoked on single Thread, which "dispatch thread"
-     * @param task the task to execute
-     */
-    protected abstract void executeNewTask(Task task);
+    protected DecodeHandler getDecodeHandler(Task task){
+        if (task.getNodeSettings() != null){
+            if (task.getNodeSettings().getDecodeHandler() != null){
+                return task.getNodeSettings().getDecodeHandler();
+            }
+        }
+        return getComponentManager().getServerSettings().getDecodeHandler();
+    }
 
-    protected abstract int getMaxThread();
+    /***************************************************************************
+     * thread control
+     */
 
     /**
      * compete thread to execute new task

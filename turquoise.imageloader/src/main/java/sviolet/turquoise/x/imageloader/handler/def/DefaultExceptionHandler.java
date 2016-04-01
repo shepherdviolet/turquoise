@@ -20,38 +20,151 @@
 package sviolet.turquoise.x.imageloader.handler.def;
 
 import android.content.Context;
+import android.os.Looper;
+import android.os.Message;
+import android.widget.Toast;
 
+import java.lang.ref.WeakReference;
+import java.util.concurrent.atomic.AtomicLong;
+
+import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.util.common.DateTimeUtils;
+import sviolet.turquoise.util.droid.DeviceUtils;
+import sviolet.turquoise.util.droid.SystemAppUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
+ *
  * Created by S.Violet on 2016/3/22.
  */
 public class DefaultExceptionHandler implements ExceptionHandler {
 
-    @Override
-    public void onDiskCacheOpenException(Context context, Throwable throwable) {
+    private static final String DISK_CACHE_EXCEPTION_TOAST_CN = "图片磁盘缓存访问失败,请检查您的手机内存是否已满";
+    private static final String DISK_CACHE_EXCEPTION_TOAST_EN = "Image disk cache access fails, check your phone memory is full";
+    private static final long DISK_CACHE_EXCEPTION_NOTICE_INTERVAL = 5 * 60 * 1000L;//5min
 
+    private AtomicLong diskCacheExceptionNoticeTime = new AtomicLong(0);
+
+    @Override
+    public void onDiskCacheOpenException(Context applicationContext, Context context, Throwable throwable, TLogger logger) {
+        long time = DateTimeUtils.getUptimeMillis();
+        long previousTime = diskCacheExceptionNoticeTime.getAndSet(time);
+        if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
+            Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
+            msg.obj = new Info(applicationContext, throwable);
+            msg.sendToTarget();
+        }
+        logger.e("DiskCacheOpenException", throwable);
     }
 
     @Override
-    public void onDiskCacheReadException(Context context, Task task, Throwable throwable) {
-
+    public void onDiskCacheReadException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger) {
+        long time = DateTimeUtils.getUptimeMillis();
+        long previousTime = diskCacheExceptionNoticeTime.getAndSet(time);
+        if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
+            Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
+            msg.obj = new Info(applicationContext, throwable);
+            msg.sendToTarget();
+        }
+        logger.e("DiskCacheReadException:" + task, throwable);
     }
 
     @Override
-    public void onDiskCacheWriteException(Context context, Task task, Throwable throwable) {
-
+    public void onDiskCacheWriteException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger) {
+        long time = DateTimeUtils.getUptimeMillis();
+        long previousTime = diskCacheExceptionNoticeTime.getAndSet(time);
+        if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
+            Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
+            msg.obj = new Info(applicationContext, throwable);
+            msg.sendToTarget();
+        }
+        logger.e("DiskCacheWriteException:" + task, throwable);
     }
 
     @Override
-    public void onDiskCacheCommonException(Context context, Throwable throwable) {
-
+    public void onDiskCacheCommonException(Context applicationContext, Context context, Throwable throwable, TLogger logger) {
+        logger.w("DiskCacheCommonException", throwable);
     }
 
     @Override
-    public void onNetworkLoadException(Context context, Task task, Throwable throwable) {
+    public void onNetworkLoadException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger) {
+        logger.e("NetworkLoadException:" + task, throwable);
+    }
 
+    /*******************************************************************************
+     * protected
+     */
+
+    protected void onDiskCacheOpenExceptionInner(final Context context, Throwable throwable) {
+        if (context != null){
+            if (DeviceUtils.isLocaleZhCn(context)){
+                Toast.makeText(context, DISK_CACHE_EXCEPTION_TOAST_CN, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(context, DISK_CACHE_EXCEPTION_TOAST_EN, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    /*******************************************************************************
+     * handler
+     */
+
+    private final MyHandler myHandler = new MyHandler(Looper.getMainLooper(), this);
+
+    private static class MyHandler extends WeakHandler<DefaultExceptionHandler>{
+
+        private static final int HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION = 1;
+
+        public MyHandler(Looper looper, DefaultExceptionHandler host) {
+            super(looper, host);
+        }
+
+        @Override
+        protected void handleMessageWithHost(Message msg, DefaultExceptionHandler host) {
+            switch (msg.what){
+                case HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION:
+                    if (msg.obj instanceof Info) {
+                        host.onDiskCacheOpenExceptionInner(((Info) msg.obj).getApplicationContext(), ((Info) msg.obj).getThrowable());
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    }
+
+    private static class Info{
+        private WeakReference<Context> applicationContext;
+        private Throwable throwable;
+
+        private Info(Context context, Throwable throwable){
+            setApplicationContext(context);
+            setThrowable(throwable);
+        }
+
+        public Context getApplicationContext() {
+            if (applicationContext != null){
+                return applicationContext.get();
+            }
+            return null;
+        }
+
+        public void setApplicationContext(final Context context) {
+            if (context != null){
+                applicationContext = new WeakReference<>(context.getApplicationContext());
+            }
+        }
+
+        public Throwable getThrowable() {
+            return throwable;
+        }
+
+        public void setThrowable(Throwable throwable) {
+            this.throwable = throwable;
+        }
     }
 
 }

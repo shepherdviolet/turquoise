@@ -19,6 +19,8 @@
 
 package sviolet.turquoise.x.imageloader.server;
 
+import android.graphics.Bitmap;
+
 import java.io.InputStream;
 
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
@@ -35,7 +37,7 @@ public class NetEngine extends Engine {
     protected void executeNewTask(Task task) {
         EngineCallback<NetworkLoadHandler.Result> callback = new EngineCallback<>();
         try {
-            getComponentManager().getServerSettings().getNetworkLoadHandler().onHandle(task, callback);
+            getComponentManager().getServerSettings().getNetworkLoadHandler().onHandle(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task, callback, getComponentManager().getLogger());
         }catch(Exception e){
             responseFailed(task, e);
             return;
@@ -75,6 +77,8 @@ public class NetEngine extends Engine {
 
     private void handleBytesResult(Task task, byte[] bytes){
         getComponentManager().getDiskCacheServer().write(task, bytes);
+        Bitmap bitmap = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                task, bytes, getComponentManager().getLogger());
     }
 
     private void handleInputStreamResult(Task task, InputStream inputStream){
@@ -100,7 +104,7 @@ public class NetEngine extends Engine {
 
     private void responseFailed(Task task, Exception exception){
         if (exception != null){
-            getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getContextImage(), task, exception);
+            getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task, exception, getComponentManager().getLogger());
         }
         task.setState(Task.State.FAILED);
         response(task);

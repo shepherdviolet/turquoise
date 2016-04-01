@@ -22,6 +22,8 @@ package sviolet.turquoise.x.imageloader.entity;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
+import sviolet.turquoise.x.imageloader.handler.def.DefaultDecodeHandler;
 
 /**
  *
@@ -55,6 +57,10 @@ public class NodeSettings {
 
     //handler////////////////////////////////////////////////////////////////////////////
 
+    public DecodeHandler getDecodeHandler(){
+        return values.decodeHandler;
+    }
+
     //configurable factory////////////////////////////////////////////////////////////////////////////
 
     public LoadingDrawableFactory getLoadingDrawableFactory(){
@@ -78,6 +84,8 @@ public class NodeSettings {
         private int reloadTimes = DEFAULT_RELOAD_TIMES;
 
         //handler////////////////////////////////////////////////////////////////////////////
+
+        private DecodeHandler decodeHandler;
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
 

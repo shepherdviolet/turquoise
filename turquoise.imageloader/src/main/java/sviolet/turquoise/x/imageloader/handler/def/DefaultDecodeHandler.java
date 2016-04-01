@@ -20,19 +20,26 @@
 package sviolet.turquoise.x.imageloader.handler.def;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+
+import java.io.File;
 
 import sviolet.turquoise.utilx.tlogger.TLogger;
-import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
+import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.EngineCallback;
 
 /**
  *
- * Created by S.Violet on 2016/3/22.
+ * Created by S.Violet on 2016/4/1.
  */
-public class DefaultNetworkLoadHandler implements NetworkLoadHandler {
+public class DefaultDecodeHandler implements DecodeHandler {
     @Override
-    public void onHandle(Context applicationContext, Context context, Task task, EngineCallback<Result> callback, TLogger logger) {
-//        callback.setResultSucceed();
+    public Bitmap decode(Context applicationContext, Context context, Task task, byte[] data, TLogger logger) {
+        return null;
+    }
+
+    @Override
+    public Bitmap decode(Context applicationContext, Context context, Task task, File file, TLogger logger) {
+        return null;
     }
 }

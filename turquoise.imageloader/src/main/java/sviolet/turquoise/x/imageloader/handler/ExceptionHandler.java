@@ -21,6 +21,7 @@ package sviolet.turquoise.x.imageloader.handler;
 
 import android.content.Context;
 
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
@@ -30,40 +31,45 @@ public interface ExceptionHandler {
 
     /**
      * exception while disk cache open
-     * @param context context, maybe null
+     * @param applicationContext application context
+     * @param context activity context, maybe null
      * @param throwable throwable
      */
-    void onDiskCacheOpenException(Context context, Throwable throwable);
+    void onDiskCacheOpenException(Context applicationContext, Context context, Throwable throwable, TLogger logger);
 
     /**
      * exception while disk cache reading
-     * @param context context, maybe null
+     * @param applicationContext application context
+     * @param context activity context, maybe null
      * @param task task
      * @param throwable throwable
      */
-    void onDiskCacheReadException(Context context, Task task, Throwable throwable);
+    void onDiskCacheReadException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger);
 
     /**
      * exception while disk cache writing
-     * @param context context, maybe null
+     * @param applicationContext application context
+     * @param context activity context, maybe null
      * @param task task
      * @param throwable throwable
      */
-    void onDiskCacheWriteException(Context context, Task task, Throwable throwable);
+    void onDiskCacheWriteException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger);
 
     /**
      * exception while disk cache close/flush..., for unimportance exception
-     * @param context context, maybe null
+     * @param applicationContext application context
+     * @param context activity context, maybe null
      * @param throwable throwable
      */
-    void onDiskCacheCommonException(Context context, Throwable throwable);
+    void onDiskCacheCommonException(Context applicationContext, Context context, Throwable throwable, TLogger logger);
 
     /**
      * exception while network loading
-     * @param context context, maybe null
+     * @param applicationContext application context
+     * @param context activity context, maybe null
      * @param task task
      * @param throwable throwable
      */
-    void onNetworkLoadException(Context context, Task task, Throwable throwable);
+    void onNetworkLoadException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger);
 
 }

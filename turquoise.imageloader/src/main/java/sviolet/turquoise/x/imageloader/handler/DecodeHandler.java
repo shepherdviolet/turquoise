@@ -19,8 +19,22 @@
 
 package sviolet.turquoise.x.imageloader.handler;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+
+import java.io.File;
+
+import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.imageloader.node.Task;
+
 /**
+ *
  * Created by S.Violet on 2016/2/19.
  */
-public class DecodeHandler {
+public interface DecodeHandler {
+
+    Bitmap decode(Context applicationContext, Context context, Task task, byte[] data, TLogger logger);
+
+    Bitmap decode(Context applicationContext, Context context, Task task, File file, TLogger logger);
+
 }

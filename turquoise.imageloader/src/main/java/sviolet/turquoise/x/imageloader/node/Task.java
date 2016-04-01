@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.node;
 
+import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.server.Server;
 import sviolet.turquoise.x.imageloader.stub.Stub;
@@ -28,15 +29,19 @@ import sviolet.turquoise.x.imageloader.stub.Stub;
  */
 public class Task {
 
+    private static final String SEPARATOR = "-";
+
     private Stub.Type type;
-    private String url;
-    private Params params;
+    private Server.Type serverType = Server.Type.MEMORY_CACHE;
+    private volatile State state = State.STAND_BY;
+
     private String nodeId;
     private String key;
     private String resourceKey;
+    private NodeSettings nodeSettings;
 
-    private Server.Type serverType = Server.Type.MEMORY_CACHE;
-    private volatile State state = State.STAND_BY;
+    private String url;
+    private Params params;
 
     Task(String nodeId, Stub.Type type, String key, String resourceKey, String url, Params params) {
         this.type = type;
@@ -45,6 +50,22 @@ public class Task {
         this.nodeId = nodeId;
         this.key = key;
         this.resourceKey = resourceKey;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("[Task]<");
+        builder.append(type);
+        builder.append(SEPARATOR);
+        builder.append(serverType);
+        builder.append(SEPARATOR);
+        builder.append(state);
+        builder.append(SEPARATOR);
+        builder.append(nodeId);
+        builder.append("><");
+        builder.append(key);
+        builder.append(">");
+        return builder.toString();
     }
 
     public Stub.Type getType() {
@@ -85,6 +106,14 @@ public class Task {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public NodeSettings getNodeSettings() {
+        return nodeSettings;
+    }
+
+    public void setNodeSettings(NodeSettings nodeSettings) {
+        this.nodeSettings = nodeSettings;
     }
 
     public enum State{
