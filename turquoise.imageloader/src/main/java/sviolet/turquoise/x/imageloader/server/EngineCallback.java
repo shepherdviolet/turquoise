@@ -19,7 +19,6 @@
 
 package sviolet.turquoise.x.imageloader.server;
 
-import java.io.InputStream;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 

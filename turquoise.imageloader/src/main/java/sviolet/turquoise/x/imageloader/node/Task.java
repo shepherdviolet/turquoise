@@ -25,95 +25,72 @@ import sviolet.turquoise.x.imageloader.server.Server;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
+ *
  * Created by S.Violet on 2016/2/17.
  */
 public class Task {
 
-    private static final String SEPARATOR = "-";
+    private Info values;
 
-    private Stub.Type type;
-    private Server.Type serverType = Server.Type.MEMORY_CACHE;
-    private volatile State state = State.STAND_BY;
-
-    private String nodeId;
-    private String key;
-    private String resourceKey;
-    private NodeSettings nodeSettings;
-
-    private String url;
-    private Params params;
-
-    Task(String nodeId, Stub.Type type, String key, String resourceKey, String url, Params params) {
-        this.type = type;
-        this.url = url;
-        this.params = params;
-        this.nodeId = nodeId;
-        this.key = key;
-        this.resourceKey = resourceKey;
+    Task(String nodeId, Stub.Type type, String url, Params params, String key, String resourceKey) {
+        this.values = new Info(nodeId, type, url, params, key, resourceKey);
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("[Task]<");
-        builder.append(type);
-        builder.append(SEPARATOR);
-        builder.append(serverType);
-        builder.append(SEPARATOR);
-        builder.append(state);
-        builder.append(SEPARATOR);
-        builder.append(nodeId);
-        builder.append("><");
-        builder.append(key);
-        builder.append(">");
-        return builder.toString();
+        return values.toString();
     }
 
     public Stub.Type getType() {
-        return type;
+        return values.type;
     }
 
     public String getUrl() {
-        return url;
+        return values.url;
     }
 
     public Params getParams() {
-        return params;
+        return values.params;
     }
 
     public String getNodeId(){
-        return nodeId;
+        return values.nodeId;
     }
 
     public String getKey(){
-        return key;
+        return values.key;
     }
 
     public String getResourceKey(){
-        return resourceKey;
+        return values.resourceKey;
     }
 
     public Server.Type getServerType() {
-        return serverType;
+        return values.serverType;
     }
 
     public void setServerType(Server.Type serverType) {
-        this.serverType = serverType;
+        values.serverType = serverType;
     }
 
     public State getState() {
-        return state;
+        return values.state;
     }
 
     public void setState(State state) {
-        this.state = state;
+        values.state = state;
     }
 
     public NodeSettings getNodeSettings() {
-        return nodeSettings;
+        return values.nodeSettings;
     }
 
     public void setNodeSettings(NodeSettings nodeSettings) {
-        this.nodeSettings = nodeSettings;
+        values.nodeSettings = nodeSettings;
+    }
+
+    public Info getTaskInfo(){
+        return values;
     }
 
     public enum State{
@@ -121,6 +98,87 @@ public class Task {
         SUCCEED,
         FAILED,
         CANCELED
+    }
+
+    public static class Info{
+
+        private static final String SEPARATOR = "-";
+
+        //status//////////////////////////
+        private Stub.Type type;
+        private Server.Type serverType = Server.Type.MEMORY_CACHE;
+        private volatile State state = State.STAND_BY;
+
+        //node//////////////////////////
+        private String nodeId;
+        private NodeSettings nodeSettings;
+
+        //params//////////////////////////
+        private String url;
+        private Params params;
+        private String key;
+        private String resourceKey;
+
+        Info(String nodeId, Stub.Type type, String url, Params params, String key, String resourceKey) {
+            this.nodeId = nodeId;
+            this.type = type;
+            this.url = url;
+            this.params = params;
+            this.key = key;
+            this.resourceKey = resourceKey;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder builder = new StringBuilder("[Task]<");
+            builder.append(type);
+            builder.append(SEPARATOR);
+            builder.append(serverType);
+            builder.append(SEPARATOR);
+            builder.append(state);
+            builder.append(SEPARATOR);
+            builder.append(nodeId);
+            builder.append("><");
+            builder.append(key);
+            builder.append(">");
+            return builder.toString();
+        }
+
+        public Stub.Type getType() {
+            return type;
+        }
+
+        public Server.Type getServerType() {
+            return serverType;
+        }
+
+        public State getState() {
+            return state;
+        }
+
+        public String getNodeId() {
+            return nodeId;
+        }
+
+        public NodeSettings getNodeSettings() {
+            return nodeSettings;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public Params getParams() {
+            return params;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public String getResourceKey() {
+            return resourceKey;
+        }
     }
 
 }

@@ -37,11 +37,11 @@ public interface NetworkLoadHandler {
      * load from net
      * @param applicationContext application context
      * @param context activity context, maybe null
-     * @param task task
+     * @param taskInfo taskInfo
      * @param callback callback
      * @param logger logger
      */
-    void onHandle(Context applicationContext, Context context, Task task, EngineCallback<Result> callback, TLogger logger);
+    void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, TLogger logger);
 
     /**
      * network loading result (on succeed)

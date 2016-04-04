@@ -23,6 +23,7 @@ import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
+ *
  * Created by S.Violet on 2016/3/3.
  */
 public class TaskFactoryImpl implements TaskFactory {
@@ -36,7 +37,7 @@ public class TaskFactoryImpl implements TaskFactory {
 
     @Override
     public Task newTask(NodeController controller, Stub stub) {
-        return new Task(controller.getNodeId(), stub.getType(), stub.getKey(), stub.getResourceKey(), stub.getUrl(), stub.getParams());
+        return new Task(controller.getNodeId(), stub.getType(), stub.getUrl(), stub.getParams(), stub.getKey(), stub.getResourceKey());
     }
 
 }

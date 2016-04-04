@@ -60,7 +60,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     }
 
     @Override
-    public void onDiskCacheReadException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger) {
+    public void onDiskCacheReadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
         long time = DateTimeUtils.getUptimeMillis();
         long previousTime = diskCacheExceptionNoticeTime.getAndSet(time);
         if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
@@ -68,11 +68,11 @@ public class DefaultExceptionHandler implements ExceptionHandler {
             msg.obj = new Info(applicationContext, throwable);
             msg.sendToTarget();
         }
-        logger.e("DiskCacheReadException:" + task, throwable);
+        logger.e("DiskCacheReadException:" + taskInfo, throwable);
     }
 
     @Override
-    public void onDiskCacheWriteException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger) {
+    public void onDiskCacheWriteException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
         long time = DateTimeUtils.getUptimeMillis();
         long previousTime = diskCacheExceptionNoticeTime.getAndSet(time);
         if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
@@ -80,7 +80,7 @@ public class DefaultExceptionHandler implements ExceptionHandler {
             msg.obj = new Info(applicationContext, throwable);
             msg.sendToTarget();
         }
-        logger.e("DiskCacheWriteException:" + task, throwable);
+        logger.e("DiskCacheWriteException:" + taskInfo, throwable);
     }
 
     @Override
@@ -89,8 +89,13 @@ public class DefaultExceptionHandler implements ExceptionHandler {
     }
 
     @Override
-    public void onNetworkLoadException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger) {
-        logger.e("NetworkLoadException:" + task, throwable);
+    public void onNetworkLoadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        logger.e("NetworkLoadException:" + taskInfo, throwable);
+    }
+
+    @Override
+    public void onDecodeException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        logger.e("DecodeException:" + taskInfo, throwable);
     }
 
     /*******************************************************************************

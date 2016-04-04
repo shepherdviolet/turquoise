@@ -29,11 +29,16 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public interface ExceptionHandler {
 
+    /*************************************************************
+     * disk
+     */
+
     /**
      * exception while disk cache open
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param throwable throwable
+     * @param logger logger
      */
     void onDiskCacheOpenException(Context applicationContext, Context context, Throwable throwable, TLogger logger);
 
@@ -41,35 +46,57 @@ public interface ExceptionHandler {
      * exception while disk cache reading
      * @param applicationContext application context
      * @param context activity context, maybe null
-     * @param task task
+     * @param taskInfo taskInfo
      * @param throwable throwable
+     * @param logger logger
      */
-    void onDiskCacheReadException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger);
+    void onDiskCacheReadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
 
     /**
      * exception while disk cache writing
      * @param applicationContext application context
      * @param context activity context, maybe null
-     * @param task task
+     * @param taskInfo taskInfo
      * @param throwable throwable
+     * @param logger logger
      */
-    void onDiskCacheWriteException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger);
+    void onDiskCacheWriteException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
 
     /**
      * exception while disk cache close/flush..., for unimportance exception
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param throwable throwable
+     * @param logger logger
      */
     void onDiskCacheCommonException(Context applicationContext, Context context, Throwable throwable, TLogger logger);
+
+    /*************************************************************
+     * net
+     */
 
     /**
      * exception while network loading
      * @param applicationContext application context
      * @param context activity context, maybe null
-     * @param task task
+     * @param taskInfo taskInfo
      * @param throwable throwable
+     * @param logger logger
      */
-    void onNetworkLoadException(Context applicationContext, Context context, Task task, Throwable throwable, TLogger logger);
+    void onNetworkLoadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
+
+    /*************************************************************
+     * decode
+     */
+
+    /**
+     * exception while image decoding
+     * @param applicationContext application context
+     * @param context activity context, maybe null
+     * @param taskInfo taskInfo
+     * @param throwable throwable
+     * @param logger logger
+     */
+    void onDecodeException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
 
 }

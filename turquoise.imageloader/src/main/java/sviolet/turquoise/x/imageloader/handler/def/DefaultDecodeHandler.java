@@ -34,12 +34,12 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public class DefaultDecodeHandler implements DecodeHandler {
     @Override
-    public Bitmap decode(Context applicationContext, Context context, Task task, byte[] data, TLogger logger) {
+    public Bitmap decode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
         return null;
     }
 
     @Override
-    public Bitmap decode(Context applicationContext, Context context, Task task, File file, TLogger logger) {
+    public Bitmap decode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
         return null;
     }
 }

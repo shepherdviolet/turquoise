@@ -17,22 +17,10 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.handler.def;
-
-import android.content.Context;
-
-import sviolet.turquoise.utilx.tlogger.TLogger;
-import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
-import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.EngineCallback;
+package sviolet.turquoise.x.imageloader.node;
 
 /**
- *
- * Created by S.Violet on 2016/3/22.
+ * Created by S.Violet on 2016/4/4.
  */
-public class DefaultNetworkLoadHandler implements NetworkLoadHandler {
-    @Override
-    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, TLogger logger) {
-//        callback.setResultSucceed();
-    }
+public class TaskInfo {
 }

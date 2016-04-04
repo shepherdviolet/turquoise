@@ -67,6 +67,10 @@ public interface Stub extends Destroyable {
      */
     boolean reload();
 
+    /***********************************************************
+     * params
+     */
+
     Type getType();
 
     String getUrl();

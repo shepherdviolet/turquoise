@@ -33,8 +33,8 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public interface DecodeHandler {
 
-    Bitmap decode(Context applicationContext, Context context, Task task, byte[] data, TLogger logger);
+    Bitmap decode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger);
 
-    Bitmap decode(Context applicationContext, Context context, Task task, File file, TLogger logger);
+    Bitmap decode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger);
 
 }

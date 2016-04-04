@@ -37,9 +37,11 @@ public class NetEngine extends Engine {
     protected void executeNewTask(Task task) {
         EngineCallback<NetworkLoadHandler.Result> callback = new EngineCallback<>();
         try {
-            getComponentManager().getServerSettings().getNetworkLoadHandler().onHandle(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task, callback, getComponentManager().getLogger());
+            getComponentManager().getServerSettings().getNetworkLoadHandler().
+                    onHandle(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), callback, getComponentManager().getLogger());
         }catch(Exception e){
-            responseFailed(task, e);
+            getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
+            responseFailed(task);
             return;
         }
         int result = callback.getResult();
@@ -47,7 +49,9 @@ public class NetEngine extends Engine {
             case EngineCallback.RESULT_SUCCEED:
                 NetworkLoadHandler.Result data = callback.getData();
                 if (data.getType() == NetworkLoadHandler.ResultType.NULL){
-                    responseFailed(task, new NullPointerException("[TILoader:NetworkLoadHandler]callback return null result!"));
+                    getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                            new Exception("[TILoader:NetworkLoadHandler]callback return null result!"), getComponentManager().getLogger());
+                    responseFailed(task);
                 }else if (data.getType() == NetworkLoadHandler.ResultType.BYTES){
                     handleBytesResult(task, data.getBytes());
                 }else if (data.getType() == NetworkLoadHandler.ResultType.INPUTSTREAM){
@@ -55,7 +59,11 @@ public class NetEngine extends Engine {
                 }
                 return;
             case EngineCallback.RESULT_FAILED:
-                responseFailed(task, callback.getException());
+                Exception exception = callback.getException();
+                if (exception != null){
+                    getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), exception, getComponentManager().getLogger());
+                }
+                responseFailed(task);
                 return;
             case EngineCallback.RESULT_CANCELED:
             default:
@@ -77,8 +85,21 @@ public class NetEngine extends Engine {
 
     private void handleBytesResult(Task task, byte[] bytes){
         getComponentManager().getDiskCacheServer().write(task, bytes);
-        Bitmap bitmap = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                task, bytes, getComponentManager().getLogger());
+        Bitmap bitmap = null;
+        try {
+            bitmap = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                    task.getTaskInfo(), bytes, getComponentManager().getLogger());
+        }catch(Exception e){
+            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
+            responseFailed(task);
+            return;
+        }
+        if (bitmap == null){
+            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                    new Exception("[TILoader:DecodeHandler]decoding failed, return null Bitmap"), getComponentManager().getLogger());
+            responseFailed(task);
+        }
+
     }
 
     private void handleInputStreamResult(Task task, InputStream inputStream){
@@ -102,10 +123,7 @@ public class NetEngine extends Engine {
         response(task);
     }
 
-    private void responseFailed(Task task, Exception exception){
-        if (exception != null){
-            getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task, exception, getComponentManager().getLogger());
-        }
+    private void responseFailed(Task task){
         task.setState(Task.State.FAILED);
         response(task);
     }
