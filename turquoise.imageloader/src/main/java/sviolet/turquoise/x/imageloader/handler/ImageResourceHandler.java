@@ -33,4 +33,19 @@ public interface ImageResourceHandler {
      */
     boolean isValid(ImageResource<?> resource);
 
+    /**
+     * judge whether the two resource are equal.
+     * @param src resource
+     * @param dst resource
+     * @return true:equal
+     */
+    boolean isEqual(ImageResource<?> src, ImageResource<?> dst);
+
+    /**
+     * recycle imageResource
+     * @param resource imageResource which will be recycled
+     * @return true:recycled
+     */
+    boolean recycle(ImageResource<?> resource);
+
 }

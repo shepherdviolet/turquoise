@@ -39,6 +39,25 @@ public class TILoaderUtils {
     }
 
     /**
+     * judge whether the two resource are equal.
+     * @param src resource
+     * @param dst resource
+     * @return true:equal
+     */
+    public static boolean isImageResourceEqual(ImageResource<?> src, ImageResource<?> dst){
+        return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().isEqual(src, dst);
+    }
+
+    /**
+     * recycle imageResource
+     * @param resource imageResource which will be recycled
+     * @return true:recycled
+     */
+    public static boolean recycleImageResource(ImageResource<?> resource){
+        return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().recycle(resource);
+    }
+
+    /**
      * reload View which has been canceled
      * @param view view
      * @return true:this view can be reload

@@ -25,6 +25,7 @@ import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
 
 /**
+ *
  * Created by S.Violet on 2016/3/15.
  */
 public class DefaultImageResourceHandler implements ImageResourceHandler {
@@ -44,7 +45,41 @@ public class DefaultImageResourceHandler implements ImageResourceHandler {
             default:
                 break;
         }
-        return true;
+        return false;
+    }
+
+    @Override
+    public boolean isEqual(ImageResource<?> src, ImageResource<?> dst) {
+        if (src == null && dst == null){
+            return true;
+        }else if (src == null || dst == null){
+            return false;
+        }
+        Object srcRes = src.getResource();
+        Object dstRes = dst.getResource();
+        if (srcRes == null && dstRes == null){
+            return true;
+        }
+        return srcRes != null && srcRes.equals(dstRes);
+    }
+
+    @Override
+    public boolean recycle(ImageResource<?> resource) {
+        if (resource == null || resource.getResource() == null){
+            return false;
+        }
+        switch (resource.getType()){
+            case BITMAP:
+                if ((resource.getResource() instanceof Bitmap) && (!((Bitmap) resource.getResource()).isRecycled())){
+                    ((Bitmap) resource.getResource()).recycle();
+                    return true;
+                }else{
+                    return false;
+                }
+            default:
+                break;
+        }
+        return false;
     }
 
 }

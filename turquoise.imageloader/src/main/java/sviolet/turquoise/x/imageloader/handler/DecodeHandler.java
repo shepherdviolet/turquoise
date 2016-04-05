@@ -20,11 +20,11 @@
 package sviolet.turquoise.x.imageloader.handler;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import java.io.File;
 
 import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.node.Task;
 
@@ -32,10 +32,41 @@ import sviolet.turquoise.x.imageloader.node.Task;
  *
  * Created by S.Violet on 2016/2/19.
  */
-public interface DecodeHandler {
+public abstract class DecodeHandler {
 
-    ImageResource decode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger);
+    public abstract ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger);
 
-    ImageResource decode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger);
+    public abstract ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger);
+
+    public final ImageResource<?> decode(Context applicationContext, Context context, Task task, byte[] data, TLogger logger){
+        ImageResource<?> imageResource = onDecode(applicationContext, context, task.getTaskInfo(), data, logger);
+        imageResource = intercept(applicationContext, context, task, logger, imageResource);
+        return imageResource;
+    }
+
+    public final ImageResource<?> decode(Context applicationContext, Context context, Task task, File file, TLogger logger){
+        ImageResource<?> imageResource = onDecode(applicationContext, context, task.getTaskInfo(), file, logger);
+        imageResource = intercept(applicationContext, context, task, logger, imageResource);
+        return imageResource;
+    }
+
+    private ImageResource<?> intercept(Context applicationContext, Context context, Task task, TLogger logger, ImageResource<?> imageResource) {
+        //interceptor
+        if (imageResource != null && task.getParams().getDecodeInterceptor() != null){
+            ImageResource<?> imageResource2 = task.getParams().getDecodeInterceptor().intercept(applicationContext, context, task.getTaskInfo(), imageResource, logger);
+            //recycle previous ImageResource
+            if (!TILoaderUtils.isImageResourceEqual(imageResource, imageResource2)){
+                TILoaderUtils.recycleImageResource(imageResource);
+            }
+            imageResource = imageResource2;
+        }
+        return imageResource;
+    }
+
+    public static interface Interceptor{
+
+        ImageResource<?> intercept(Context applicationContext, Context context, Task.Info taskInfo, ImageResource<?> imageResource, TLogger logger);
+
+    }
 
 }

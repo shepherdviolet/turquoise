@@ -19,6 +19,8 @@
 
 package sviolet.turquoise.x.imageloader.entity;
 
+import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
+
 /**
  *
  * Created by S.Violet on 2016/2/16.
@@ -41,9 +43,14 @@ public class Params {
         return values.reqHeight;
     }
 
+    public DecodeHandler.Interceptor getDecodeInterceptor(){
+        return values.decodeInterceptor;
+    }
+
     private static class Values{
         private int reqWidth = MATCH_PARENT;
         private int reqHeight = MATCH_PARENT;
+        private DecodeHandler.Interceptor decodeInterceptor;
     }
 
     public static class Builder{
@@ -61,6 +68,11 @@ public class Params {
 
         public Builder setReqHeight(int reqHeight){
             values.reqHeight = reqHeight;
+            return this;
+        }
+
+        public Builder setDecodeInterceptor(DecodeHandler.Interceptor interceptor){
+            values.decodeInterceptor = interceptor;
             return this;
         }
 
