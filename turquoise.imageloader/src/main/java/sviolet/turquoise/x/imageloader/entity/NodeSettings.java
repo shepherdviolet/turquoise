@@ -23,7 +23,9 @@ import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
+import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.handler.def.DefaultDecodeHandler;
+import sviolet.turquoise.x.imageloader.handler.def.DefaultNetworkLoadHandler;
 
 /**
  *
@@ -57,6 +59,10 @@ public class NodeSettings {
 
     //handler////////////////////////////////////////////////////////////////////////////
 
+    public NetworkLoadHandler getNetworkLoadHandler(){
+        return values.networkLoadHandler;
+    }
+
     public DecodeHandler getDecodeHandler(){
         return values.decodeHandler;
     }
@@ -85,6 +91,7 @@ public class NodeSettings {
 
         //handler////////////////////////////////////////////////////////////////////////////
 
+        private NetworkLoadHandler networkLoadHandler;
         private DecodeHandler decodeHandler;
 
         //configurable factory////////////////////////////////////////////////////////////////////////////

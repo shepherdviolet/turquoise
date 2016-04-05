@@ -67,6 +67,10 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
         status = Status.PAUSE;
     }
 
+    public void read(){
+
+    }
+
     /**
      * ResultType.SUCCEED :<br/>
      * use {@link Result#getTargetFile()} to get File of resource, and than decode from this file<br/>
@@ -82,18 +86,21 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
      * @return Result
      */
     public Result write(Task task, InputStream inputStream) {
-        Result result = new Result();
+        Result result = new Result();//result of write task
         DiskLruCache.Editor editor = null;
         OutputStream outputStream = null;
         try {
+            //edit cache file
             editor = edit(task);
             if (editor == null) {
                 manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getApplicationContextImage(), manager.getContextImage(), task.getTaskInfo(),
                         new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, multiple edit one file, write disk cache failed"), manager.getLogger());
-                writeToMemoryCache(task, inputStream, result, null);
+                writeToMemoryBuffer(task, inputStream, result, null);
                 return result;
             }
+            //check disk cache healthy stat
             if (isHealthy()) {
+                //read and write by fix buffer
                 outputStream = editor.newOutputStream(0);
                 byte[] buffer = new byte[DiskCacheServer.BUFFER_SIZE];
                 boolean hasWrite = false;
@@ -112,10 +119,11 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
                         outputStream.flush();
                     }catch (Exception e){
                         setHealthy(false);
+                        //if error while writing first buffer data, try to use memory buffer
                         if (!hasWrite){
                             abortEditor(editor);
                             manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getApplicationContextImage(), manager.getContextImage(), task.getTaskInfo(), e, manager.getLogger());
-                            writeToMemoryCache(task, inputStream, result, buffer);
+                            writeToMemoryBuffer(task, inputStream, result, buffer);
                             return result;
                         }
                         throw e;
@@ -125,11 +133,13 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
                 if (!hasWrite){
                     throw new Exception("[TILoader]network load failed, null content received (1)");
                 }
+                //succeed
                 editor.commit();
                 result.setType(ResultType.SUCCEED);
                 setHealthy(true);
             }else{
-                writeToMemoryCache(task, inputStream, result, null);
+                //read and write by full size memory buffer
+                writeToMemoryBuffer(task, inputStream, result, null);
                 //trying to write to disk cache
                 if (result.getType() == ResultType.RETURN_MEMORY_BUFFER && result.getMemoryBuffer().length > 0) {
                     try {
@@ -190,6 +200,7 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
         DiskLruCache.Editor editor = null;
         OutputStream outputStream = null;
         try {
+            //edit cache file
             editor = edit(task);
             if (editor == null) {
                 manager.getServerSettings().getExceptionHandler().onDiskCacheWriteException(manager.getApplicationContextImage(), manager.getContextImage(), task.getTaskInfo(),
@@ -224,10 +235,24 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
         return false;
     }
 
-    private Result writeToMemoryCache(Task task, InputStream inputStream, Result result, byte[] buffer) throws NetworkException, IOException  {
+    /**
+     * data load from network write to full size memory buffer
+     * @param task task
+     * @param inputStream inputStream
+     * @param result result of write task
+     * @param buffer fix buffer, might have data
+     * @return result of write task
+     * @throws NetworkException exception of network
+     * @throws IOException exception of io
+     */
+    private Result writeToMemoryBuffer(Task task, InputStream inputStream, Result result, byte[] buffer) throws NetworkException, IOException  {
+        //full size buffer
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        //fix buffer
         if (buffer != null) {
             outputStream.write(buffer);
+        }else{
+            buffer = new byte[DiskCacheServer.BUFFER_SIZE];
         }
         int readLength;
         while (true) {
@@ -245,11 +270,16 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
         if (outputStream.size() <= 0){
             throw new NetworkException(new Exception("[TILoader]network load failed, null content received (2)"));
         }
+        //return memory buffer
         result.setType(ResultType.RETURN_MEMORY_BUFFER);
         result.setMemoryBuffer(outputStream.toByteArray());
         return result;
     }
 
+    /**
+     * try to open disk cache if is closed
+     * @return true: disk cache ok
+     */
     private boolean openCache(){
         Exception commonException = null;
         Exception openException = null;
@@ -290,6 +320,9 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
         return false;
     }
 
+    /**
+     * try to close disk cache, release resource
+     */
     private void closeCache(){
         DiskLruCache diskLruCacheToClose = null;
         try{
@@ -312,6 +345,10 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
         }
     }
 
+    /**
+     * @param task task
+     * @return file of image disk cache
+     */
     protected File get(Task task){
         if (openCache()){
             try{
@@ -334,6 +371,9 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
         return null;
     }
 
+    /**
+     * release holding of disk cache, might have close disk cache
+     */
     protected void release(){
         try {
             DiskLruCache diskLruCacheToFlush = this.diskLruCache;
@@ -448,7 +488,7 @@ public class DiskCacheServer implements ComponentManager.Component, Server {
         }
     }
 
-    public static class NetworkException extends Exception{
+    private static class NetworkException extends Exception{
 
         public NetworkException(Throwable throwable) {
             super(throwable);

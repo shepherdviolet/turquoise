@@ -70,7 +70,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
             manager.getLogger().e("MemoryCacheServer can't put with null key");
             return;
         }
-        if (resource == null || resource.getType() == null || resource.getResource() == null){
+        if (!manager.getServerSettings().getImageResourceHandler().isValid(resource)){
             manager.getLogger().e("MemoryCacheServer can't put with null or illegal resource");
             return;
         }

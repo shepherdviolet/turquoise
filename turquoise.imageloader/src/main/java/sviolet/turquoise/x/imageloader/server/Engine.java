@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import sviolet.turquoise.model.common.LazySingleThreadPool;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
+import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
@@ -119,6 +120,15 @@ public abstract class Engine implements ComponentManager.Component, Server {
 
     protected ComponentManager getComponentManager(){
         return manager;
+    }
+
+    protected NetworkLoadHandler getNetworkLoadHandler(Task task){
+        if (task.getNodeSettings() != null){
+            if (task.getNodeSettings().getNetworkLoadHandler() != null){
+                return task.getNodeSettings().getNetworkLoadHandler();
+            }
+        }
+        return getComponentManager().getServerSettings().getNetworkLoadHandler();
     }
 
     protected DecodeHandler getDecodeHandler(Task task){

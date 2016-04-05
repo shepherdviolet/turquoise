@@ -22,13 +22,14 @@ package sviolet.turquoise.x.imageloader.server;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
+ *
  * Created by S.Violet on 2016/2/19.
  */
 public class DiskEngine extends Engine {
 
     @Override
     protected void executeNewTask(Task task) {
-
+//        getComponentManager().getDiskCacheServer().get()
     }
 
     @Override

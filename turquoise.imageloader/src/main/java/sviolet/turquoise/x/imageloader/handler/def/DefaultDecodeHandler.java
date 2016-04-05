@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import java.io.File;
 
 import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
@@ -34,12 +35,12 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public class DefaultDecodeHandler implements DecodeHandler {
     @Override
-    public Bitmap decode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
+    public ImageResource decode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
         return null;
     }
 
     @Override
-    public Bitmap decode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
+    public ImageResource decode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
         return null;
     }
 }
