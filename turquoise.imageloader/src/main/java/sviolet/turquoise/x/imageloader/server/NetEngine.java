@@ -142,10 +142,10 @@ public class NetEngine extends Engine {
             //dispatch type
             if (bytes != null) {
                 imageResource = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                        task.getTaskInfo(), bytes, getComponentManager().getLogger());
+                        task, bytes, getComponentManager().getLogger());
             }else if(file != null){
                 imageResource = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                        task.getTaskInfo(), file, getComponentManager().getLogger());
+                        task, file, getComponentManager().getLogger());
             }else{
                 throw new Exception("[TILoader:NetEngine]can't decode neither byte[] nor file");
             }
