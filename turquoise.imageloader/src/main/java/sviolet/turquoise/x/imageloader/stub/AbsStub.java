@@ -53,6 +53,9 @@ public abstract class AbsStub implements Stub {
         if (url == null){
             throw new RuntimeException("[TILoader:AbsStub]url must not be null");
         }
+        if (params == null){
+            params = new Params.Builder().build();
+        }
         this.url = url;
         this.params = params;
     }
@@ -236,9 +239,7 @@ public abstract class AbsStub implements Stub {
     @Override
     public String getKey(){
         if (key == null) {
-            if (params == null)
-                params = new Params.Builder().build();
-            key = getResourceKey() + "@" + Integer.toString(params.getReqWidth()) + "x" + Integer.toString(params.getReqHeight());
+            key = getResourceKey() + params.getKeySuffix();
         }
         return key;
     }

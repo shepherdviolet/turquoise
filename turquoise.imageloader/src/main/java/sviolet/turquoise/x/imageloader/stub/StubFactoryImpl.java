@@ -41,6 +41,7 @@ public class StubFactoryImpl implements StubFactory {
         if (view == null){
             throw new RuntimeException("[TILoader]can't load image into a null View!");
         }
+        //default params
         if (params == null){
             params = defParams;
         }
@@ -49,7 +50,7 @@ public class StubFactoryImpl implements StubFactory {
             stub = customStubFactory.newLoadStub(url, params, view, defParams);
         }
         if (stub == null){
-            stub = newLoadStubInner(url, params, view, defParams);
+            stub = newLoadStubInner(url, params, view);
         }
         if (stub == null){
             throw new RuntimeException("[TILoader]unsupported view:<" + view.getClass().getName() + ">, can't load image into it, 0x00");
@@ -57,7 +58,7 @@ public class StubFactoryImpl implements StubFactory {
         return stub;
     }
 
-    protected Stub newLoadStubInner(String url, Params params, View view, Params defParams){
+    protected Stub newLoadStubInner(String url, Params params, View view){
         if (view instanceof ImageView){
             return new ImageViewLoadStub(url, params, view);
         }
@@ -72,6 +73,7 @@ public class StubFactoryImpl implements StubFactory {
         if (view == null){
             throw new RuntimeException("[TILoader]can't load image into a null View!");
         }
+        //default params
         if (params == null){
             params = defParams;
         }
@@ -80,7 +82,7 @@ public class StubFactoryImpl implements StubFactory {
             stub = customStubFactory.newLoadBackgroundStub(url, params, view, defParams);
         }
         if (stub == null){
-            stub = newLoadBackgroundStubInner(url, params, view, defParams);
+            stub = newLoadBackgroundStubInner(url, params, view);
         }
         if (stub == null){
             throw new RuntimeException("[TILoader]unsupported view:<" + view.getClass().getName() + ">, can't load background image into it, 0x01");
@@ -88,7 +90,7 @@ public class StubFactoryImpl implements StubFactory {
         return stub;
     }
 
-    protected Stub newLoadBackgroundStubInner(String url, Params params, View view, Params defParams){
+    protected Stub newLoadBackgroundStubInner(String url, Params params, View view){
         return new LoadBackgroundStub(url, params, view);
     }
 
@@ -100,6 +102,7 @@ public class StubFactoryImpl implements StubFactory {
         if (listener == null){
             throw new RuntimeException("[TILoader]can't load image into a null View!");
         }
+        //default params
         if (params == null){
             params = defParams;
         }
@@ -108,7 +111,7 @@ public class StubFactoryImpl implements StubFactory {
             stub = customStubFactory.newExtractStub(url, params, listener, defParams);
         }
         if (stub == null){
-            stub = newExtractStubInner(url, params, listener, defParams);
+            stub = newExtractStubInner(url, params, listener);
         }
         if (stub == null){
             throw new RuntimeException("[TILoader]unsupported listener:<" + listener.getClass().getName() + ">, can't extract image, 0x02");
@@ -116,7 +119,7 @@ public class StubFactoryImpl implements StubFactory {
         return stub;
     }
 
-    protected Stub newExtractStubInner(String url, Params params, OnLoadedListener listener, Params defParams){
+    protected Stub newExtractStubInner(String url, Params params, OnLoadedListener listener){
         return new ExtractStub(url, params, listener);
     }
 

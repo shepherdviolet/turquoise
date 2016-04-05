@@ -43,6 +43,7 @@ public class BitmapMemoryCacheModule extends CompatLruCache<String, Bitmap> {
      */
     public BitmapMemoryCacheModule(int cacheSize, TLogger logger) {
         super(cacheSize);
+        this.logger = logger;
     }
 
     /*****************************************************************************

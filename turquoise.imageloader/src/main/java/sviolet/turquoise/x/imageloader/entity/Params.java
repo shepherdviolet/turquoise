@@ -43,6 +43,18 @@ public class Params {
         return values.reqHeight;
     }
 
+    public String getKeySuffix(){
+        StringBuilder builder = new StringBuilder("@");
+        builder.append(getReqWidth());
+        builder.append("x");
+        builder.append(getReqHeight());
+        if (values.decodeInterceptor != null) {
+            builder.append("@");
+            builder.append(values.decodeInterceptor.getClass().hashCode());
+        }
+        return builder.toString();
+    }
+
     public DecodeHandler.Interceptor getDecodeInterceptor(){
         return values.decodeInterceptor;
     }

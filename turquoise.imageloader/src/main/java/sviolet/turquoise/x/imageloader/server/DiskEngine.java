@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.server;
 
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
@@ -29,7 +30,15 @@ public class DiskEngine extends Engine {
 
     @Override
     protected void executeNewTask(Task task) {
-//        getComponentManager().getDiskCacheServer().get()
+        ImageResource<?> imageResource = getComponentManager().getDiskCacheServer().read(task, getDecodeHandler(task));
+        if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
+            task.setState(Task.State.FAILED);
+            response(task);
+            return;
+        }
+        getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
+        task.setState(Task.State.SUCCEED);
+        response(task);
     }
 
     @Override

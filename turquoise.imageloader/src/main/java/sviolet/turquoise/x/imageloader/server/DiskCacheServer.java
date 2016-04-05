@@ -36,9 +36,25 @@ import sviolet.turquoise.x.imageloader.server.module.DiskCacheModule;
  */
 public class DiskCacheServer extends DiskCacheModule {
 
-//    public ImageResource<?> read(Task task, DecodeHandler decodeHandler){
-//        File targetFile = get(task);
-//    }
+    /**
+     * read Image from disk cache
+     * @param task task
+     * @param decodeHandler used to decode file
+     * @return ImageResource, might be null
+     */
+    public ImageResource<?> read(Task task, DecodeHandler decodeHandler){
+        //fetch cache file
+        File targetFile = get(task);
+        if (targetFile == null || !targetFile.exists()){
+            return null;
+        }
+        //decode
+        ImageResource<?> imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                task, targetFile, getComponentManager().getLogger());
+        //release
+        release();
+        return imageResource;
+    }
 
     /**
      * ResultType.SUCCEED :<br/>
