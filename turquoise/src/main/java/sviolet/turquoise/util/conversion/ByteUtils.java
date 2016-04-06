@@ -49,6 +49,15 @@ public class ByteUtils {
 		return result;
 	}
 
+    /**
+     * bytes转为hexString
+     * @param bytes bytes
+     * @return lower case hex string
+     */
+    public static String bytesToHex(byte[] bytes){
+        return bytesToHex(bytes, false);
+    }
+
 	/**
 	 * bytes转为hexString
 	 * @param bytes bytes
