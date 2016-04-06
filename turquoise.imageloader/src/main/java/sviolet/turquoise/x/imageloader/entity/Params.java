@@ -19,6 +19,9 @@
 
 package sviolet.turquoise.x.imageloader.entity;
 
+import android.graphics.Bitmap;
+import android.view.View;
+
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 
 /**
@@ -27,7 +30,8 @@ import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
  */
 public class Params {
 
-    public static final int MATCH_PARENT = -1;
+    public static final int SIZE_MATCH_RESOURCE = 0;//size match resource (origin size)
+    public static final Bitmap.Config DEFAULT_BITMAP_CONFIG = Bitmap.Config.RGB_565;
 
     private Values values;
 
@@ -43,6 +47,28 @@ public class Params {
         return values.reqHeight;
     }
 
+    public boolean isSizeMatchView(){
+        return values.sizeMatchView;
+    }
+
+    public Bitmap.Config getBitmapConfig(){
+        return values.bitmapConfig;
+    }
+
+    public DecodeHandler.Interceptor getDecodeInterceptor(){
+        return values.decodeInterceptor;
+    }
+
+    public void adjustByView(View view){
+        if (view == null){
+            return;
+        }
+        if (isSizeMatchView()){
+            values.reqWidth = view.getWidth();
+            values.reqHeight = view.getHeight();
+        }
+    }
+
     public String getKeySuffix(){
         StringBuilder builder = new StringBuilder("@");
         builder.append(getReqWidth());
@@ -55,13 +81,11 @@ public class Params {
         return builder.toString();
     }
 
-    public DecodeHandler.Interceptor getDecodeInterceptor(){
-        return values.decodeInterceptor;
-    }
-
     private static class Values{
-        private int reqWidth = MATCH_PARENT;
-        private int reqHeight = MATCH_PARENT;
+        private int reqWidth = SIZE_MATCH_RESOURCE;
+        private int reqHeight = SIZE_MATCH_RESOURCE;
+        private boolean sizeMatchView = true;
+        private Bitmap.Config bitmapConfig = DEFAULT_BITMAP_CONFIG;
         private DecodeHandler.Interceptor decodeInterceptor;
     }
 
@@ -73,16 +97,39 @@ public class Params {
             values = new Values();
         }
 
-        public Builder setReqWidth(int reqWidth){
+        /**
+         * if you set reqSize manually by this method, it will set sizeMatchView flag to false
+         * @param reqWidth request width, image width will close to this value
+         * @param reqHeight request height, image height will close to this value
+         */
+        public Builder setReqSize(int reqWidth, int reqHeight){
             values.reqWidth = reqWidth;
-            return this;
-        }
-
-        public Builder setReqHeight(int reqHeight){
             values.reqHeight = reqHeight;
+            setSizeMatchView(false);
             return this;
         }
 
+        /**
+         * if you set sizeMatchView true, the reqSize will follow view's size, true by default
+         * @param matchView true:image size match view
+         */
+        public Builder setSizeMatchView(boolean matchView){
+            values.sizeMatchView = matchView;
+            return this;
+        }
+
+        public Builder setBitmapConfig(Bitmap.Config bitmapConfig){
+            if (bitmapConfig == null){
+                throw new RuntimeException("[TILoader:Params]setBitmapConfig: bitmapConfig is null");
+            }
+            values.bitmapConfig = bitmapConfig;
+            return this;
+        }
+
+        /**
+         * this interceptor will invoke after DecodeHandler.onDecode(...)
+         * @param interceptor interceptor
+         */
         public Builder setDecodeInterceptor(DecodeHandler.Interceptor interceptor){
             values.decodeInterceptor = interceptor;
             return this;

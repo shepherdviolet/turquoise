@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 
 import java.io.File;
 
+import sviolet.turquoise.util.common.BitmapUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
@@ -33,14 +34,21 @@ import sviolet.turquoise.x.imageloader.node.Task;
  *
  * Created by S.Violet on 2016/4/1.
  */
-public class DefaultDecodeHandler implements DecodeHandler {
+public class DefaultDecodeHandler extends DecodeHandler {
+
     @Override
-    public ImageResource decode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
-        return null;
+    public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
+        Bitmap bitmap = BitmapUtils.decodeFromByteArray(data,taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getBitmapConfig());
+        if (bitmap == null)
+            return null;
+        return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
 
     @Override
-    public ImageResource decode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
-        return null;
+    public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
+        Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getBitmapConfig());
+        if (bitmap == null)
+            return null;
+        return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
 }
