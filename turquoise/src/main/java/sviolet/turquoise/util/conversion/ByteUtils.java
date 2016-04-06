@@ -38,9 +38,9 @@ public class ByteUtils {
 	/**
 	 * 把两个byte[]前后拼接成一个byte[]
 	 * 
-	 * @param left
-	 * @param right
-	 * @return
+	 * @param left left bytes
+	 * @param right right bytes
+	 * @return jointed bytes
 	 */
 	public static byte[] joint(byte[] left, byte[] right){
 		byte[] result = new byte[left.length + right.length];
@@ -52,9 +52,10 @@ public class ByteUtils {
 	/**
 	 * bytes转为hexString
 	 * @param bytes bytes
+     * @param upperCase true:upper case
 	 * @return hex string
 	 */
-	public static String bytesToHex(byte[] bytes){
+	public static String bytesToHex(byte[] bytes, boolean upperCase){
 		if (bytes == null || bytes.length <= 0)
 			return "";
 		StringBuilder stringBuilder = new StringBuilder("");
@@ -66,7 +67,10 @@ public class ByteUtils {
             }
             stringBuilder.append(unitHex);
         }
-		return stringBuilder.toString();
+		if (upperCase)
+			return stringBuilder.toString().toUpperCase();
+		else
+			return stringBuilder.toString();
 	}
 
 	/**
@@ -95,44 +99,34 @@ public class ByteUtils {
 
 	/**
 	 * 对象转数组
-	 * @param obj
-	 * @return
+	 * @param obj object
+	 * @return bytes
 	 */
-	public static byte[] objectToByte (Object obj) {
+	public static byte[] objectToByte (Object obj) throws IOException {
 		byte[] bytes = null;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		try {
-			ObjectOutputStream oos = new ObjectOutputStream(bos);
-			oos.writeObject(obj);
-			oos.flush();
-			bytes = bos.toByteArray ();
-			oos.close();
-			bos.close();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-		return bytes;
+        ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(obj);
+        oos.flush();
+        bytes = bos.toByteArray();
+        oos.close();
+        bos.close();
+        return bytes;
 	}
 
 	/**
 	 * 数组转对象
-	 * @param bytes
-	 * @return
+	 * @param bytes bytes
+	 * @return object
 	 */
-	public static Object byteToObject (byte[] bytes) {
+	public static Object byteToObject (byte[] bytes) throws IOException, ClassNotFoundException {
 		Object obj = null;
-		try {
-			ByteArrayInputStream bis = new ByteArrayInputStream (bytes);
-			ObjectInputStream ois = new ObjectInputStream (bis);
-			obj = ois.readObject();
-			ois.close();
-			bis.close();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		}
-		return obj;
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        ObjectInputStream ois = new ObjectInputStream(bis);
+        obj = ois.readObject();
+        ois.close();
+        bis.close();
+        return obj;
 	}
 
 }
