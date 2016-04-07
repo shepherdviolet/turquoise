@@ -40,7 +40,7 @@ public class ConcurrentUtils {
      * @return 快照
      */
     public static <T> List<T> getSnapShot(Collection<T> source) {
-        List<T> snap = new ArrayList<T>(source.size());
+        List<T> snap = new ArrayList<>(source.size());
         for (T item : source) {
             snap.add(item);
         }
@@ -56,7 +56,7 @@ public class ConcurrentUtils {
      * @return 快照
      */
     public static <K, V> Map<K, V> getSnapShot(Map<K, V> source){
-        Map<K, V> snap = new HashMap<K, V>(source.size());
+        Map<K, V> snap = new HashMap<>(source.size());
         for (Map.Entry<K, V> entry : source.entrySet()){
             snap.put(entry.getKey(), entry.getValue());
         }
