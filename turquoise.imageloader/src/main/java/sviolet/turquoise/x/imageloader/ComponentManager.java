@@ -26,6 +26,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
+import sviolet.turquoise.x.imageloader.node.NodeFactory;
+import sviolet.turquoise.x.imageloader.node.NodeFactoryImpl;
 import sviolet.turquoise.x.imageloader.server.DiskCacheServer;
 import sviolet.turquoise.x.imageloader.server.MemoryCacheServer;
 import sviolet.turquoise.x.imageloader.server.DiskEngine;
@@ -55,18 +57,28 @@ public class ComponentManager {
     }
 
     /**********************************************************************************************
+     * Nodes
+     **********************************************************************************************/
+
+    private final NodeManager nodeManager = new NodeManager(this);
+    private final NodeFactory nodeFactory = new NodeFactoryImpl(this);
+
+    public NodeManager getNodeManager(){
+        return nodeManager;
+    }
+
+    public NodeFactory getNodeFactory(){
+        return nodeFactory;
+    }
+
+    /**********************************************************************************************
      * Components
      **********************************************************************************************/
 
     private final MemoryCacheServer memoryCacheServer = new MemoryCacheServer();
     private final DiskCacheServer diskCacheServer = new DiskCacheServer();
-    private final NodeManager nodeManager = new NodeManager();
     private final DiskEngine diskEngine = new DiskEngine();
     private final NetEngine netEngine = new NetEngine();
-
-    /**********************************************************************************************
-     * Settings
-     **********************************************************************************************/
 
     private ServerSettings serverSettings;
 
@@ -94,16 +106,20 @@ public class ComponentManager {
         return diskCacheServer;
     }
 
-    public NodeManager getNodeManager(){
-        return nodeManager;
-    }
-
     public DiskEngine getDiskEngine() {
         return diskEngine;
     }
 
     public NetEngine getNetEngine() {
         return netEngine;
+    }
+
+    /**
+     * component must be initialized before get ServerSettings
+     * @return get ServerSettings
+     */
+    public ServerSettings getServerSettings(){
+        return serverSettings;
     }
 
     /**********************************************************************************************
@@ -128,14 +144,6 @@ public class ComponentManager {
             getLogger().e("[TILoader]setting failed, you should invoke TILoader.setting() before TILoader used (load image)");
         }
         return result;
-    }
-
-    /**
-     * component must be initialized before get ServerSettings
-     * @return get ServerSettings
-     */
-    public ServerSettings getServerSettings(){
-        return serverSettings;
     }
 
     /**********************************************************************************************
@@ -164,7 +172,6 @@ public class ComponentManager {
         serverSettings.init(ComponentManager.getInstance());
         memoryCacheServer.init(ComponentManager.getInstance());
         diskCacheServer.init(ComponentManager.getInstance());
-        nodeManager.init(ComponentManager.getInstance());
         diskEngine.init(ComponentManager.getInstance());
         netEngine.init(ComponentManager.getInstance());
     }

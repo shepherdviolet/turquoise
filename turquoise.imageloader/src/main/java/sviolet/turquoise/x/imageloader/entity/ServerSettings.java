@@ -146,10 +146,6 @@ public class ServerSettings implements ComponentManager.Component{
 
     //static factory////////////////////////////////////////////////////////////////////////////
 
-    public NodeFactory getNodeFactory(){
-        return values.nodeFactory;
-    }
-
     public TaskFactory getTaskFactory(){
         return values.taskFactory;
     }
@@ -182,7 +178,6 @@ public class ServerSettings implements ComponentManager.Component{
 
         //static factory////////////////////////////////////////////////////////////////////////////
 
-        private final NodeFactory nodeFactory = new NodeFactoryImpl();
         private final TaskFactory taskFactory = new TaskFactoryImpl();
     }
 
@@ -278,7 +273,6 @@ public class ServerSettings implements ComponentManager.Component{
     @Override
     public void init(ComponentManager manager) {
         this.manager = manager;
-        values.nodeFactory.init(manager);
         values.taskFactory.init(manager);
     }
 

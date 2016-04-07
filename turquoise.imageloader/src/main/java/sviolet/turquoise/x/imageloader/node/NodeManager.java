@@ -34,7 +34,7 @@ import sviolet.turquoise.x.imageloader.server.Server;
  *
  * Created by S.Violet on 2016/2/29.
  */
-public class NodeManager implements ComponentManager.Component {
+public class NodeManager {
 
     private ComponentManager manager;
 
@@ -42,8 +42,7 @@ public class NodeManager implements ComponentManager.Component {
 
     private final ReentrantLock nodesLock = new ReentrantLock();
 
-    @Override
-    public void init(ComponentManager manager){
+    public NodeManager(ComponentManager manager){
         this.manager = manager;
     }
 
@@ -59,7 +58,7 @@ public class NodeManager implements ComponentManager.Component {
             if (node == null){
                 manager.setContextImage(context);
                 manager.setApplicationContextImage(context.getApplicationContext());
-                node = manager.getServerSettings().getNodeFactory().newNode(nodeId);
+                node = manager.getNodeFactory().newNode(nodeId);
                 nodes.put(nodeId, node);
                 node.attachLifeCycle(context);
             }

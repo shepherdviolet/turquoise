@@ -19,12 +19,10 @@
 
 package sviolet.turquoise.x.imageloader.node;
 
-import sviolet.turquoise.x.imageloader.ComponentManager;
-
 /**
  * Created by S.Violet on 2016/2/23.
  */
-public interface NodeFactory extends ComponentManager.Component {
+public interface NodeFactory {
 
     Node newNode(String nodeId);
 

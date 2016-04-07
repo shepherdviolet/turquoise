@@ -29,8 +29,7 @@ public class NodeFactoryImpl implements NodeFactory {
 
     private ComponentManager manager;
 
-    @Override
-    public void init(ComponentManager manager) {
+    public NodeFactoryImpl(ComponentManager manager) {
         this.manager = manager;
     }
 
