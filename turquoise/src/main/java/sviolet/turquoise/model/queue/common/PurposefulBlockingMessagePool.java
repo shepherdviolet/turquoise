@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.model.common.LazySingleThreadPool;
@@ -138,6 +139,7 @@ import sviolet.turquoise.model.common.LazySingleThreadPool;
 public class PurposefulBlockingMessagePool <K, I> {
 
     private static final int DEFAULT_LIMIT = 1000;//默认限制
+    private static final long UNEXPECTED_ITEM_FLUSH_DELAY = 10 * 1000000L;//意外消息池清理任务时延
 
     private final ReentrantLock lock = new ReentrantLock();//锁
     private final Map<K, Condition> conditionPool = new HashMap<>();//信号池
@@ -403,6 +405,8 @@ public class PurposefulBlockingMessagePool <K, I> {
     private class UnexpectedItemFlushTask implements Runnable{
         @Override
         public void run() {
+            //使清理任务间歇进行, 防止过多的占用锁
+            LockSupport.parkNanos(UNEXPECTED_ITEM_FLUSH_DELAY);
             List<I> overdueItems = null;
             if (messageDropListener != null) {
                 overdueItems = new ArrayList<>();
