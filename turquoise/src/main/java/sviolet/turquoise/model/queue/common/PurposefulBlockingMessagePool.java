@@ -34,53 +34,110 @@ import sviolet.turquoise.model.common.LazySingleThreadPool;
  *
  * <p>*******************************************************************************************</p>
  *
+ * <p>意外消息:若一个消息在塞入(restock)时, ID未在消息池注册, 则该消息被视为意外消息</p>
+ *
+ * <p>*******************************************************************************************</p>
+ *
+ * <p>模式1:意外消息直接抛弃模式</p>
+ *
+ * <p>用于提前知道ID的情况, 先注册ID, 然后阻塞等待异步操作塞入的消息.</p>
+ *
  * <p>使用{@link PurposefulBlockingMessagePool#register(Object)}方法注册指定ID, 开始异步操作, 使用
  * {@link PurposefulBlockingMessagePool#wait(Object, long)} 方法等待目标对象返回, 此时线程阻塞. 当
  * 异步操作中, 通过{@link PurposefulBlockingMessagePool#restock(Object, Object)} 方法塞入目标对象后,
  * 原线程继续执行, 返回目标对象.</p>
  *
  * <p><pre>{@code
- *      //注册
- *      queue.register(id);
- *      //异步操作
- *      threadPool.execute(new Runnable(){
- *          public void run(){
- *              //......
- *              queue.restock(id, item);//返回对象
+ *
+ *  PurposefulBlockingMessagePool<String, String> pool = new PurposefulBlockingMessagePool<>();//意外消息直接抛弃模式
+ *
+ *  //注册需要的消息ID
+ *  try {
+ *      pool.register(id);
+ *  } catch (PurposefulBlockingMessagePool.OutOfLimitException e) {
+ *      //注册等待的消息超过限制
+ *      //TODO异常处理,终止流程或抛出异常
+ *      return;
+ *  }
+ *  //异步操作
+ *  threadPool.execute(new Runnable(){
+ *      public void run(){
+ *          //TODO异步处理
+ *          //将消息塞入消息池
+ *          try {
+ *              pool.restock(id, item);
+ *          } catch (PurposefulBlockingMessagePool.MessageDropException e) {
+ *              //因ID未注册或意外消息池满而抛出该异常
+ *              //TODO处理被丢弃的消息
  *          }
- *      });
- *      //阻塞线程, 等待对象返回
- *      Item item = queue.wait(id, 60000);
- *      //对象处理
- *      if(item != null){
- *          //返回结果处理
- *      }else{
- *          //超时
  *      }
+ *  });
+ *  //阻塞线程, 等待消息返回
+ *  String message = null;
+ *  try {
+ *      message = pool.wait(id, 5000);
+ *  } catch (PurposefulBlockingMessagePool.TimeoutException e) {
+ *      //等待超时抛出该异常
+ *      //TODO超时处理,终止流程或抛出异常
+ *      return;
+ *  }
+ *  if (message == null){
+ *      //TODO返回消息为空,终止流程或抛出异常
+ *      return;
+ *  }
+ *
  * }</pre></p>
  *
  * <p>*******************************************************************************************</p>
  *
- * <p>意外消息:若一个消息在塞入(restock)时, ID未在消息池注册, 则该消息被视为意外消息</p>
- *
- * <p>模式1:意外消息抛弃模式</p>
- *
- * <br>PurposefulBlockingMessagePool pool = PurposefulBlockingMessagePool();</br>
- * <p>用于提前知道ID的情况, 先注册ID, 然后阻塞等待异步操作塞入消息. 该模式下, 意外消息被消息池直接抛弃,
- * wait方法返回false.</p>
- *
  * <p>模式2:意外消息池模式</p>
  *
- * <br>PurposefulBlockingMessagePool pool = PurposefulBlockingMessagePool(long unexpectedItemValidityPeriod, MessageDropListener<I> messageDropListener);</br>
  * <p>用于无法提前知道ID的情况, 设置一个意外消息有效期, 接收到的意外消息将存入意外消息池, 有效期内可以
- * 从意外消息池获取该消息, 失效的消息将被清理任务清理(自动). 手动调用{@link PurposefulBlockingMessagePool#flush()}
+ * 从意外消息池获取该消息, 过期的消息将被清理任务清理(自动). 手动调用{@link PurposefulBlockingMessagePool#flush()}
  * 可立即启动清理任务.</p>
+ *
+ * <pre>{@code
+ *
+ * PurposefulBlockingMessagePool<String, String> pool = new PurposefulBlockingMessagePool<>(10000);//意外消息池模式, 设定意外消息有效期
+ *
+ * //异步操作,可能会先于pool.register()执行
+ * threadPool.execute(new Runnable(){
+ *      public void run(){
+ *          //TODO 异步处理
+ *          //将消息塞入消息池
+ *          try {
+ *              pool.restock(id, item);
+ *          } catch (PurposefulBlockingMessagePool.MessageDropException e) {
+ *              //因意外消息池满而抛出该异常
+ *              //TODO 处理被丢弃的消息
+ *          }
+ *      }
+ * });
+ * //注册并阻塞线程, 等待消息返回
+ * String message = null;
+ * try {
+ *      message = pool.registerAndWait(id, 5000);
+ * } catch (PurposefulBlockingMessagePool.OutOfLimitException e) {
+ *      //注册等待的消息超过限制
+ *      //TODO 异常处理,终止流程或抛出异常
+ *      return;
+ * } catch (PurposefulBlockingMessagePool.TimeoutException e) {
+ *      //等待超时抛出该异常
+ *      //TODO 超时处理,终止流程或抛出异常
+ *      return;
+ * }
+ * if (message == null){
+ *      //TODO 返回消息为空,终止流程或抛出异常
+ *      return;
+ * }
+ *
+ * }</pre>
  *
  * <p>Created by S.Violet on 2016/3/23.</p>
  */
 public class PurposefulBlockingMessagePool <K, I> {
 
-    private static final int DEFAULT_LIMIT = 1000;
+    private static final int DEFAULT_LIMIT = 1000;//默认限制
 
     private final ReentrantLock lock = new ReentrantLock();//锁
     private final Map<K, Condition> conditionPool = new HashMap<>();//信号池
@@ -137,24 +194,26 @@ public class PurposefulBlockingMessagePool <K, I> {
     }
 
     /**
-     * @param registerLimit 设置注册等待数上限, 注册等待的消息ID超过限制将会抛出异常
+     * @param registerLimit 设置注册等待数上限, 注册等待的消息ID超过限制将会抛出异常, 默认1000
      */
     public void setRegisterLimit(int registerLimit){
         this.registerLimit = registerLimit;
     }
 
     /**
-     * @param messageLimit 意外消息数上限(不包括普通消息池), 超过上限将会抛弃塞入的新消息
+     * @param messageLimit 意外消息数上限(不包括普通消息池), 超过上限将会抛弃塞入的新消息, 默认1000
      */
     public void setMessageLimit(int messageLimit){
         this.messageLimit = messageLimit;
     }
 
     /**
-     * 注册并阻塞等待消息
+     * 注册并阻塞等待消息, {@link PurposefulBlockingMessagePool#register(Object)}&{@link PurposefulBlockingMessagePool#wait(Object, long)}
      * @param id 指定的ID
      * @param timeout 超时时间
      * @return 指定ID的目标对象(可能为空)
+     * @exception OutOfLimitException 注册等待的消息数超过限制时抛出该异常, 注册被拒绝
+     * @exception TimeoutException 阻塞等待超时时抛出该异常
      */
     public I registerAndWait(K id, long timeout) throws OutOfLimitException, TimeoutException{
         register(id);
@@ -164,6 +223,7 @@ public class PurposefulBlockingMessagePool <K, I> {
     /**
      * 注册指定ID, 表明需要目标对象, 注册后该消息池接受该ID目标对象的塞入(restock)
      * @param id 指定的ID
+     * @exception OutOfLimitException 注册等待的消息数超过限制时抛出该异常, 注册被拒绝
      */
     public void register(K id) throws OutOfLimitException{
         Condition condition = lock.newCondition();
@@ -184,6 +244,7 @@ public class PurposefulBlockingMessagePool <K, I> {
      * @param id 指定的ID
      * @param timeout 超时时间
      * @return 指定ID的目标对象(可能为空)
+     * @exception TimeoutException 阻塞等待超时时抛出该异常
      */
     public I wait(K id, long timeout) throws TimeoutException{
         final long startMillis = System.currentTimeMillis();
@@ -220,20 +281,26 @@ public class PurposefulBlockingMessagePool <K, I> {
     }
 
     /**
-     * 向消息池塞入指定ID的目标对象, 若该ID未注册({@link PurposefulBlockingMessagePool#register(Object)}), 或等待已超时, 则塞入无效,
-     * 并返回false.
+     * <p>向消息池塞入指定ID的目标对象</p>
+     *
+     * <p>意外消息直接抛弃模式下, 若该ID未注册, 或等待已超时, 则塞入无效, 抛出异常</p>
+     *
+     * <p>意外消息池模式下, 若意外消息池消息数量超过限制, 则塞入无效, 抛出异常</p>
+     *
      * @param id 指定ID
      * @param item 目标对象
-     * @return true:塞入成功(包括塞入意外消息池) false:塞入失败(消息丢弃)
+     * @exception MessageDropException 消息塞入失败, 被丢弃时抛出该异常. 意外消息直接丢弃模式下, 消息
+     * 塞入消息池时, 因ID未注册而丢弃消息. 意外消息池模式下, 因意外消息池超过数量限制而丢弃消息. 意外消息
+     * 池模式下, 因意外消息过期而丢弃消息的, 请使用messageDropListener监听事件.
      */
-    public boolean restock(K id, I item) throws OutOfLimitException{
+    public void restock(K id, I item) throws MessageDropException {
         try{
             lock.lock();
             Condition condition = conditionPool.get(id);
             if (condition != null){
                 itemPool.put(id, item);
                 condition.signalAll();
-                return true;
+                return;
             }
         }finally {
             lock.unlock();
@@ -244,16 +311,16 @@ public class PurposefulBlockingMessagePool <K, I> {
             try{
                 unexpectedItemLock.lock();
                 if (getUnexpectedItemCount() > messageLimit){
-                    throw new OutOfLimitException("[PurposefulBlockingMessagePool]unexpected message out of limit, drop this message : " + messageLimit);
+                    throw new MessageDropException("[PurposefulBlockingMessagePool]unexpected message out of limit, drop this message, id:" + String.valueOf(id) + " limit:" + messageLimit);
                 }
                 //放入意外消息池
                 unexpectedItemPool.put(id, new UnexpectedItem<>(item));
-                return true;
+                return;
             } finally {
                 unexpectedItemLock.unlock();
             }
         }
-        return false;
+        throw new MessageDropException("[PurposefulBlockingMessagePool]id not registered, drop this message, id:" + String.valueOf(id));
     }
 
     /**
@@ -330,6 +397,9 @@ public class PurposefulBlockingMessagePool <K, I> {
         return null;
     }
 
+    /**
+     * 意外消息池清理任务
+     */
     private class UnexpectedItemFlushTask implements Runnable{
         @Override
         public void run() {
@@ -363,6 +433,10 @@ public class PurposefulBlockingMessagePool <K, I> {
         }
     }
 
+    /**
+     * 意外消息
+     * @param <I> 消息
+     */
     private static class UnexpectedItem<I>{
 
         private I item;
@@ -388,12 +462,29 @@ public class PurposefulBlockingMessagePool <K, I> {
 
     }
 
+    /**
+     * 消息从意外消息池被抛弃时回调该监听器
+     * @param <I>
+     */
     public interface MessageDropListener<I>{
         void onDrop(I item);
     }
 
     /**
-     * 注册等待消息数超出限制, 或消息池内消息超过限制(包括意外消息池)
+     * <p>意外消息直接抛弃模式下, 若该ID未注册, 或等待已超时, 则塞入无效, 抛出异常</p>
+     *
+     * <p>意外消息池模式下, 若意外消息池消息数量超过限制, 则塞入无效, 抛出异常</p>
+     */
+    public static class MessageDropException extends Exception{
+
+        public MessageDropException(String detailMessage) {
+            super(detailMessage);
+        }
+
+    }
+
+    /**
+     * 注册等待消息数超出限制抛出异常
      */
     public static class OutOfLimitException extends Exception{
 
