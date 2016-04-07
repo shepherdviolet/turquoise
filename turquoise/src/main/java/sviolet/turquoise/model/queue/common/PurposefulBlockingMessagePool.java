@@ -103,13 +103,13 @@ import sviolet.turquoise.model.common.LazySingleThreadPool;
  * //异步操作,可能会先于pool.register()执行
  * threadPool.execute(new Runnable(){
  *      public void run(){
- *          //TODO 异步处理
+ *          //TODO异步处理
  *          //将消息塞入消息池
  *          try {
  *              pool.restock(id, item);
  *          } catch (PurposefulBlockingMessagePool.MessageDropException e) {
  *              //因意外消息池满而抛出该异常
- *              //TODO 处理被丢弃的消息
+ *              //TODO处理被丢弃的消息
  *          }
  *      }
  * });
@@ -119,15 +119,15 @@ import sviolet.turquoise.model.common.LazySingleThreadPool;
  *      message = pool.registerAndWait(id, 5000);
  * } catch (PurposefulBlockingMessagePool.OutOfLimitException e) {
  *      //注册等待的消息超过限制
- *      //TODO 异常处理,终止流程或抛出异常
+ *      //TODO异常处理,终止流程或抛出异常
  *      return;
  * } catch (PurposefulBlockingMessagePool.TimeoutException e) {
  *      //等待超时抛出该异常
- *      //TODO 超时处理,终止流程或抛出异常
+ *      //TODO超时处理,终止流程或抛出异常
  *      return;
  * }
  * if (message == null){
- *      //TODO 返回消息为空,终止流程或抛出异常
+ *      //TODO返回消息为空,终止流程或抛出异常
  *      return;
  * }
  *
