@@ -1127,7 +1127,7 @@ public class BitmapLoader implements LifeCycle {
      */
     private String getCacheKey(String url) {
         //url->SHA1->hex->key
-        return ByteUtils.bytesToHex(DigestCipher.digest(url, DigestCipher.TYPE_SHA1));
+        return ByteUtils.bytesToHex(DigestCipher.digestStr(url, DigestCipher.TYPE_SHA1));
     }
 
     /**

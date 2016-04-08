@@ -48,7 +48,7 @@ public class AESHelper extends AESCipher {
 	 * @return
 	 */
 	public static byte[] makeShaKey(String input){
-		byte[] sha = DigestCipher.digest(input, DigestCipher.TYPE_SHA1);
+		byte[] sha = DigestCipher.digestStr(input, DigestCipher.TYPE_SHA1);
 		byte[] password = new byte[16];
 		int offset = 0;
 		for(int i = 0 ; i < sha.length ; i++){

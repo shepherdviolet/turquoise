@@ -65,8 +65,12 @@ public class ByteUtils {
 	 * @return hex string
 	 */
 	public static String bytesToHex(byte[] bytes, boolean upperCase){
-		if (bytes == null || bytes.length <= 0)
-			return "";
+		if (bytes == null) {
+			return null;
+		}
+        if (bytes.length <= 0){
+            return "";
+        }
 		StringBuilder stringBuilder = new StringBuilder("");
         for (byte unit : bytes) {
             int unitInt = unit & 0xFF;
@@ -88,9 +92,12 @@ public class ByteUtils {
 	 * @return bytes
 	 */
 	public static byte[] hexToBytes(String hexString) {
-		if (hexString == null || hexString.length() <= 0) {
+		if (hexString == null) {
 			return null;
 		}
+        if (hexString.length() <= 0){
+            return new byte[0];
+        }
 		hexString = hexString.toUpperCase();
 		int length = hexString.length() / 2;
 		char[] hexChars = hexString.toCharArray();

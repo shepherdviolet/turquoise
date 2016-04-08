@@ -21,91 +21,163 @@ package sviolet.turquoise.util.crypt;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import sviolet.turquoise.util.conversion.ByteUtils;
+import sviolet.turquoise.util.droid.DeviceUtils;
+
+/**
+ * [国际算法]摘要工具
+ */
 public class DigestCipher {
 	
 	public static final String TYPE_MD5 = "MD5";
 	public static final String TYPE_SHA1 = "SHA1";
 	
-	private static final String ENCODE = "utf-8";
+	private static final String DEFAULT_ENCODING = "utf-8";
 	
 	/**
-	 * 摘要byte[]
+	 * 摘要byte[], 注意抛出异常
 	 * 
-	 * @param input
-	 * @return
-	 * @throws NoSuchAlgorithmException 
+	 * @param bytes bytes
+	 * @param type 摘要算法
+	 * @return 摘要bytes
 	 */
-	public static byte[] digest(byte[] input,String type){
-		MessageDigest cipher;
-		try {
-			cipher = MessageDigest.getInstance(type);
-			return cipher.digest(input);
-		} catch (NoSuchAlgorithmException e1) {
-			e1.printStackTrace();
+	public static byte[] digest(byte[] bytes,String type) {
+		if (bytes == null){
+			throw new NullPointerException("[DigestCipher]digest: bytes is null");
 		}
-		return null;
-	}
-	
-	/**
-	 * 摘要字符串
-	 * 
-	 * @param input
-	 * @return
-	 * @throws UnsupportedEncodingException 
-	 * @throws NoSuchAlgorithmException 
-	 */
-	public static byte[] digest(String input,String type){
-		MessageDigest cipher;
 		try {
-			cipher = MessageDigest.getInstance(type);
-			return cipher.digest(input.getBytes(ENCODE));
-		} catch (NoSuchAlgorithmException e1) {
-			e1.printStackTrace();
+			MessageDigest cipher = MessageDigest.getInstance(type);
+			return cipher.digest(bytes);
+		} catch (NoSuchAlgorithmException e) {
+			throw new RuntimeException("[DigestCipher]No Such Algorithm:" + type, e);
+		}
+	}
+
+	/**
+	 * 摘要字符串(.getBytes("UTF-8")), 注意抛出异常
+	 *
+	 * @param str 字符串
+	 * @param type 摘要算法
+	 * @return 摘要bytes
+     */
+	public static byte[] digestStr(String str, String type){
+		return digestStr(str, type, DEFAULT_ENCODING);
+	}
+
+	/**
+	 * 摘要字符串(.getBytes(encoding)), 注意抛出异常
+	 * 
+	 * @param str bytes
+	 * @param type 摘要算法
+	 * @param encoding 编码方式
+	 * @return 摘要bytes
+	 */
+	public static byte[] digestStr(String str, String type, String encoding){
+		if (str == null){
+			throw new NullPointerException("[DigestCipher]digestStr: str is null");
+		}
+		try {
+			return digest(str.getBytes(encoding), type);
 		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
+			throw new RuntimeException("[DigestCipher]Unsupported Encoding:" + encoding, e);
 		}
-		return null;
 	}
-	
-	/**
-	 * 摘要文件
-	 * 
-	 * @return
-	 * @throws UnsupportedEncodingException 
-	 * @throws NoSuchAlgorithmException 
-	 */
-	public static byte[] digest(File file,String type){
-		FileInputStream fis = null;
-		MessageDigest cipher;
-		try {
-			cipher = MessageDigest.getInstance(type);
-			fis = new FileInputStream(file);
-			byte[] buffer = new byte[2048];
-			int length = -1;
-			while((length = fis.read(buffer)) != -1)
-				cipher.update(buffer, 0, length);
-			return cipher.digest();
-		} catch (NoSuchAlgorithmException e1) {
-			e1.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}finally{
-			try {
-				fis.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+
+    /**
+     * 摘要十六进制字符串(ByteUtils.hexToBytes(hexStr)), 注意抛出异常
+     *
+     * @param hexStr 十六进制字符串
+     * @param type 摘要算法
+     * @return 摘要bytes
+     */
+	public static byte[] digestHexStr(String hexStr, String type){
+		if (hexStr == null){
+			throw new NullPointerException("[DigestCipher]digestHexStr: hexStr is null");
 		}
-		return null;
+        return digest(ByteUtils.hexToBytes(hexStr), type);
 	}
+
+    /**
+     * 摘要文件(根据安卓API版本选择NIO或IO方式)
+     *
+     * @param file 文件
+     * @param type 摘要算法
+     * @return 摘要bytes
+     */
+    public static byte[] digestFile(File file, String type) throws IOException {
+        if(DeviceUtils.getVersionSDK() < 11)
+            return digestFileIo(file, type);//API10使用普通IO(NIO很慢)
+        else
+            return digestFileNio(file, type);//API11以上使用NIO,效率高
+    }
+
+    /**
+     * 摘要文件(NIO方式, 较快, 安卓API11以上使用, API10以下会很慢)
+     *
+     * @param file 文件
+     * @param type 摘要算法
+     * @return 摘要bytes
+     */
+    private static byte[] digestFileNio(File file, String type) throws IOException {
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+            FileChannel channel = inputStream.getChannel();
+            MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+            MessageDigest cipher = MessageDigest.getInstance(type);
+            cipher.update(byteBuffer);
+            return cipher.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("[DigestCipher]No Such Algorithm:" + type, e);
+        } catch (IOException e) {
+            throw e;
+        }finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
+
+    /**
+     * 摘要文件(普通方式, 阻塞较慢, 安卓API10以下用这个方法)
+     *
+     * @param file 文件
+     * @param type 摘要算法
+     * @return 摘要bytes
+     */
+    private static byte[] digestFileIo(File file, String type) throws IOException {
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+            MessageDigest cipher = MessageDigest.getInstance(type);
+            byte[] buff = new byte[1024];
+            int size = -1;
+            while((size = inputStream.read(buff)) != -1){
+                cipher.update(buff, 0, size);
+            }
+            return cipher.digest();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("[DigestCipher]No Such Algorithm:" + type, e);
+        } catch (IOException e) {
+            throw e;
+        }finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
+
 }
