@@ -142,8 +142,8 @@ public abstract class TLogger {
     /**
      * @return 获得一个不打印任何内容的日志打印器
      */
-    public static TLogger getDisabledLogger(){
-        return TLoggerProxy.DISABLED_LOGGER_PROXY;
+    public static TLogger getNullLogger(){
+        return TLoggerProxy.LOGGER_NULL;
     }
 
     /**************************************************

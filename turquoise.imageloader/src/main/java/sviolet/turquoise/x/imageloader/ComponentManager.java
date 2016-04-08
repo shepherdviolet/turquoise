@@ -187,7 +187,7 @@ public class ComponentManager {
         if (getServerSettings().isLogEnabled()) {
             return logger;
         }else{
-            return TLogger.getDisabledLogger();
+            return TLogger.getNullLogger();
         }
     }
 

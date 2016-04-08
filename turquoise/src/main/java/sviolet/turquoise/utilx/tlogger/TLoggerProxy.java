@@ -28,7 +28,7 @@ import sviolet.turquoise.util.common.CheckUtils;
  */
 class TLoggerProxy extends TLogger {
 
-    static final TLogger DISABLED_LOGGER_PROXY = new TLoggerProxy(null, null, false);
+    static final TLogger LOGGER_NULL = new TLoggerNull();
 
     private Class host;
     private String tag;
