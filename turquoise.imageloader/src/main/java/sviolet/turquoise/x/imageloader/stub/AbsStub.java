@@ -156,10 +156,17 @@ public abstract class AbsStub implements Stub {
      * callbacks
      */
 
+    /**
+     * 1.check resource valid<br/>
+     * 2.update state<br/>
+     * 3.invoke inner method<br/>
+     *
+     * @param resource loaded Image, may be null
+     */
     @Override
     public final void onLoadSucceed(ImageResource<?> resource) {
         if (TILoaderUtils.isImageResourceValid(resource)){
-            onLoadCanceled();
+            onLoadFailed();
             return;
         }
         boolean finish = false;
@@ -177,6 +184,10 @@ public abstract class AbsStub implements Stub {
         }
     }
 
+    /**
+     * 1.update state<br/>
+     * 2.invoke inner method<br/>
+     */
     @Override
     public final void onLoadFailed() {
         boolean finish = false;
@@ -194,6 +205,10 @@ public abstract class AbsStub implements Stub {
         }
     }
 
+    /**
+     * 1.update state<br/>
+     * 2.invoke inner method<br/>
+     */
     @Override
     public final void onLoadCanceled() {
         boolean cancel = false;
@@ -211,6 +226,10 @@ public abstract class AbsStub implements Stub {
         }
     }
 
+    /**
+     * 1.update state<br/>
+     * 2.invoke inner method<br/>
+     */
     @Override
     public final void onDestroy() {
         boolean destroy = false;
