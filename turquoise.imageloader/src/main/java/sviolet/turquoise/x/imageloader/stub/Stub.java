@@ -31,6 +31,18 @@ import sviolet.turquoise.x.imageloader.node.NodeController;
 public interface Stub extends Destroyable {
 
     /**
+     * initialize process<br/>
+     * 1.bind View or Callback<br/>
+     * 2.start loading if needed<br/>
+     * @param controller use WeakReference to hold the NodeController
+     */
+    void initialize(NodeController controller);
+
+    /******************************************************************
+     * callbacks
+     */
+
+    /**
      * callback when loading succeed
      *
      * @param resource loaded Image, may be null
@@ -47,13 +59,9 @@ public interface Stub extends Destroyable {
      */
     void onLoadCanceled();
 
-    /**
-     * initialize process<br/>
-     * 1.bind View or Callback<br/>
-     * 2.start loading if needed<br/>
-     * @param controller use WeakReference to hold the NodeController
+    /******************************************************************
+     * control
      */
-    void initialize(NodeController controller);
 
     /**
      * load image
@@ -89,14 +97,14 @@ public interface Stub extends Destroyable {
 
     State getState();
 
+    /***********************************************************
+     * Enum
+     */
+
     enum Type{
         LOAD,
         EXTRACT
     }
-
-    /***********************************************************
-     * Enum
-     */
 
     enum State{
         BEFORE_INIT,

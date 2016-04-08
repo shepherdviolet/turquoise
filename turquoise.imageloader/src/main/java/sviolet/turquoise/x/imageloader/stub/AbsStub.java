@@ -37,16 +37,19 @@ public abstract class AbsStub implements Stub {
 
     private static final String NULL = "null";
 
-    private String url;
-    private Params params;
-    private String key;
-    private String resourceKey;
+    //params///////////////////////////////
 
-    private WeakReference<NodeController> nodeController;
+    private String url;//loading url
+    private Params params;//loading params
+    private String key;//key (include params)
+    private String resourceKey;//resource key
+
+    //stat///////////////////////////////
 
     private volatile State state = State.BEFORE_INIT;
     private int reloadTimes = 0;
 
+    private WeakReference<NodeController> nodeController;
     private final ReentrantLock stateLock = new ReentrantLock();
 
     public AbsStub(String url, Params params){
@@ -60,6 +63,12 @@ public abstract class AbsStub implements Stub {
         this.params = params;
     }
 
+    /**
+     * 1.bind nodeController<br/>
+     * 2.set state to INITIALIZED<br/>
+     *
+     * @param nodeController nodeController
+     */
     @Override
     public void initialize(NodeController nodeController) {
         this.nodeController = new WeakReference<>(nodeController);
@@ -71,9 +80,20 @@ public abstract class AbsStub implements Stub {
         }finally {
             stateLock.unlock();
         }
-
     }
 
+    /******************************************************************
+     * control
+     */
+
+    /**
+     * <p>basic load</p>
+     *
+     * 1.check state<br/>
+     * 2.execute by nodeController<br/>
+     *
+     * @return true if stub executed by nodeController
+     */
     @Override
     public boolean load() {
         final NodeController controller = getNodeController();
@@ -97,6 +117,15 @@ public abstract class AbsStub implements Stub {
         return execute;
     }
 
+    /**
+     * <p>basic reload</p>
+     *
+     * 1.check state<br/>
+     * 2.check reload times<br/>
+     * 3.execute by nodeController<br/>
+     *
+     * @return true if stub executed by nodeController
+     */
     @Override
     public boolean reload() {
         final NodeController controller = getNodeController();
@@ -122,6 +151,10 @@ public abstract class AbsStub implements Stub {
         }
         return reload;
     }
+
+    /******************************************************************
+     * callbacks
+     */
 
     @Override
     public final void onLoadSucceed(ImageResource<?> resource) {
@@ -223,7 +256,7 @@ public abstract class AbsStub implements Stub {
     }
 
     /***********************************************************
-     * Getter
+     * params & getter
      */
 
     @Override
