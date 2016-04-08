@@ -29,9 +29,9 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  *
  * Created by S.Violet on 2016/2/25.
  */
-class LoadBackgroundStub extends LoadStub {
+class BackgroundLoadStub extends LoadStub {
 
-    LoadBackgroundStub(String url, Params params, View view){
+    BackgroundLoadStub(String url, Params params, View view){
         super(url, params, view);
     }
 

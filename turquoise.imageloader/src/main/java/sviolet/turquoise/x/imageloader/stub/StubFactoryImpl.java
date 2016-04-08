@@ -91,7 +91,7 @@ public class StubFactoryImpl implements StubFactory {
     }
 
     protected Stub newLoadBackgroundStubInner(String url, Params params, View view){
-        return new LoadBackgroundStub(url, params, view);
+        return new BackgroundLoadStub(url, params, view);
     }
 
     @Override
