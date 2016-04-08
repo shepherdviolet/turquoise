@@ -125,7 +125,7 @@ public class DigestCipher {
      * @param type 摘要算法
      * @return 摘要bytes
      */
-    private static byte[] digestFileNio(File file, String type) throws IOException {
+    public static byte[] digestFileNio(File file, String type) throws IOException {
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
@@ -155,7 +155,7 @@ public class DigestCipher {
      * @param type 摘要算法
      * @return 摘要bytes
      */
-    private static byte[] digestFileIo(File file, String type) throws IOException {
+    public static byte[] digestFileIo(File file, String type) throws IOException {
         FileInputStream inputStream = null;
         try {
             inputStream = new FileInputStream(file);
