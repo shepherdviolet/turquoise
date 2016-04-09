@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.stub;
 
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import java.lang.ref.WeakReference;
@@ -35,13 +36,13 @@ import sviolet.turquoise.x.imageloader.node.NodeController;
  *
  * Created by S.Violet on 2016/2/19.
  */
-public abstract class LoadStub extends AbsStub {
+public abstract class LoadStub<V extends View> extends AbsStub {
 
-    private WeakReference<View> view;
+    private WeakReference<V> view;
 
     private final ReentrantLock viewLock = new ReentrantLock();
 
-    public LoadStub(String url, Params params, View view){
+    public LoadStub(String url, Params params, V view){
         super(url, params);
         this.view = new WeakReference<>(view);
     }
@@ -54,7 +55,7 @@ public abstract class LoadStub extends AbsStub {
 
     @Override
     public boolean load() {
-        final View view = getView();
+        final V view = getView();
         if (view == null){
             onDestroy();
             return false;
@@ -64,7 +65,7 @@ public abstract class LoadStub extends AbsStub {
 
     @Override
     public boolean reload() {
-        final View view = getView();
+        final V view = getView();
         if (view == null){
             onDestroy();
             return false;
@@ -72,11 +73,17 @@ public abstract class LoadStub extends AbsStub {
         return super.reload();
     }
 
+    /**
+     * @param drawable set drawable to view
+     * @param view target view
+     */
+    protected abstract void setDrawableToView(Drawable drawable, V view);
+
     /***********************************************************
      * protected
      */
 
-    protected void bindView(final View view){
+    protected void bindView(final V view){
         if (view == null){
             onDestroy();
             return;
@@ -120,7 +127,7 @@ public abstract class LoadStub extends AbsStub {
      * Getter
      */
 
-    protected View getView(){
+    protected V getView(){
         if (view != null){
             return view.get();
         }

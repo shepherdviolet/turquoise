@@ -19,8 +19,12 @@
 
 package sviolet.turquoise.x.imageloader.stub;
 
+import android.annotation.TargetApi;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.View;
 
+import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
@@ -29,10 +33,20 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  *
  * Created by S.Violet on 2016/2/25.
  */
-class BackgroundLoadStub extends LoadStub {
+class BackgroundLoadStub extends LoadStub<View> {
 
     BackgroundLoadStub(String url, Params params, View view){
         super(url, params, view);
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    @Override
+    protected void setDrawableToView(Drawable drawable, View view) {
+        if (DeviceUtils.getVersionSDK() >= 16) {
+            view.setBackground(drawable);
+        }else{
+            view.setBackgroundDrawable(drawable);
+        }
     }
 
 }

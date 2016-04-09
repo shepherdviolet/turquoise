@@ -60,7 +60,7 @@ public class StubFactoryImpl implements StubFactory {
 
     protected Stub newLoadStubInner(String url, Params params, View view){
         if (view instanceof ImageView){
-            return new ImageViewLoadStub(url, params, view);
+            return new ImageViewLoadStub(url, params, (ImageView) view);
         }
         return null;
     }

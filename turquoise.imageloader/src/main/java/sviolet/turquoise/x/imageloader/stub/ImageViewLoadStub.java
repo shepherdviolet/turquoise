@@ -19,17 +19,23 @@
 
 package sviolet.turquoise.x.imageloader.stub;
 
-import android.view.View;
+import android.graphics.drawable.Drawable;
+import android.widget.ImageView;
 
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
  * Created by S.Violet on 2016/2/25.
  */
-class ImageViewLoadStub extends LoadStub {
+class ImageViewLoadStub extends LoadStub<ImageView> {
 
-    ImageViewLoadStub(String url, Params params, View view){
+    ImageViewLoadStub(String url, Params params, ImageView view){
         super(url, params, view);
+    }
+
+    @Override
+    protected void setDrawableToView(Drawable drawable, ImageView view) {
+        view.setImageDrawable(drawable);
     }
 
 }
