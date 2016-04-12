@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.turquoise.model.common.LazySingleThreadPool;
+import sviolet.turquoise.model.thread.LazySingleThreadPool;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;

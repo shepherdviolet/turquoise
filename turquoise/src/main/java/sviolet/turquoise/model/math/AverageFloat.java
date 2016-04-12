@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.model.common;
+package sviolet.turquoise.model.math;
 
 /**
  * Float平均值<p>

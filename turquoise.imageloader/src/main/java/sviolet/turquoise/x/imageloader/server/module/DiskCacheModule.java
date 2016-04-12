@@ -26,7 +26,7 @@ import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.model.cache.DiskLruCache;
-import sviolet.turquoise.model.common.LazySingleThreadPool;
+import sviolet.turquoise.model.thread.LazySingleThreadPool;
 import sviolet.turquoise.util.droid.ApplicationUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.node.Task;

@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.model.queue.common;
+package sviolet.turquoise.model.queue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.model.common.LazySingleThreadPool;
+import sviolet.turquoise.model.thread.LazySingleThreadPool;
 
 /**
  * <p>目的性阻塞消息池</p>

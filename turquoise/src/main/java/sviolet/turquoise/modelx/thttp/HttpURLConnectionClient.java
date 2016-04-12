@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 S.Violet
+ * Copyright (C) 2015-2016 S.Violet
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.model.net;
+package sviolet.turquoise.modelx.thttp;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -27,7 +27,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
 
-import sviolet.turquoise.model.queue.task.TQueue;
+import sviolet.turquoise.modelx.taskqueue.TQueue;
 
 /**
  * 简易Http/HttpsURLConnection请求会话实例<br>
