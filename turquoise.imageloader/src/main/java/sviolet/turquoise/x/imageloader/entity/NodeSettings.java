@@ -19,19 +19,19 @@
 
 package sviolet.turquoise.x.imageloader.entity;
 
+import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.def.DefaultBackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
-import sviolet.turquoise.x.imageloader.handler.def.DefaultDecodeHandler;
-import sviolet.turquoise.x.imageloader.handler.def.DefaultNetworkLoadHandler;
 
 /**
  *
  * Created by S.Violet on 2016/2/16.
  */
-public class NodeSettings {
+public class NodeSettings implements Destroyable {
 
     private static final int DEFAULT_DISK_QUEUE_SIZE = 10;
     private static final int DEFAULT_NET_QUEUE_SIZE = 10;
@@ -119,10 +119,49 @@ public class NodeSettings {
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
+        public Builder setLoadingDrawableFactory(LoadingDrawableFactory factory){
+            if (factory != null){
+                values.loadingDrawableFactory = factory;
+            }
+            return this;
+        }
+
+        public Builder setFailedDrawableFactory(FailedDrawableFactory factory){
+            if (factory != null){
+                values.failedDrawableFactory = factory;
+            }
+            return this;
+        }
+
+        public Builder setBackgroundImageResId(int backgroundImageResId){
+            if (values.backgroundDrawableFactory == null){
+                values.backgroundDrawableFactory = new DefaultBackgroundDrawableFactory();
+            }
+            values.backgroundDrawableFactory.setBackgroundImageResId(backgroundImageResId);
+            return this;
+        }
+
+        public Builder setBackgroundColor(int backgroundColor){
+            if (values.backgroundDrawableFactory == null){
+                values.backgroundDrawableFactory = new DefaultBackgroundDrawableFactory();
+            }
+            values.backgroundDrawableFactory.setBackgroundColor(backgroundColor);
+            return this;
+        }
+
     }
 
-    public void destroy(){
-
+    @Override
+    public void onDestroy() {
+        if (values.loadingDrawableFactory != null){
+            values.loadingDrawableFactory.onDestroy();
+        }
+        if (values.failedDrawableFactory != null){
+            values.failedDrawableFactory.onDestroy();
+        }
+        if (values.backgroundDrawableFactory != null){
+            values.backgroundDrawableFactory.onDestroy();
+        }
     }
 
 }

@@ -22,12 +22,14 @@ package sviolet.turquoise.x.imageloader.drawable;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
+import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+
 /**
  * <p>create background of Loaded Image</p>
  *
  * Created by S.Violet on 2016/3/16.
  */
-public interface BackgroundDrawableFactory {
+public interface BackgroundDrawableFactory extends Destroyable {
 
     /**
      * <p>create background of Loaded Image</p>
@@ -40,5 +42,9 @@ public interface BackgroundDrawableFactory {
      * @return Drawable
      */
     Drawable create(int loadingBackgroundColor, Bitmap loadingBitmap);
+
+    void setBackgroundImageResId(int backgroundImageResId);
+
+    void setBackgroundColor(int backgroundColor);
 
 }

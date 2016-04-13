@@ -32,4 +32,9 @@ public class DefaultFailedDrawableFactory implements FailedDrawableFactory {
     public Drawable create(int failedBackgroundColor, Bitmap failedBitmap) {
         return null;
     }
+
+    @Override
+    public void onDestroy() {
+
+    }
 }

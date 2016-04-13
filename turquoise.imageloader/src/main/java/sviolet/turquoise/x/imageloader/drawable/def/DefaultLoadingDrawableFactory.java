@@ -32,4 +32,9 @@ public class DefaultLoadingDrawableFactory implements LoadingDrawableFactory {
     public Drawable create(int loadingBackgroundColor, Bitmap loadingBitmap) {
         return null;
     }
+
+    @Override
+    public void onDestroy() {
+
+    }
 }

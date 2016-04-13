@@ -386,7 +386,9 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     public void onDestroy() {
-
+        if (settings != null){
+            settings.onDestroy();
+        }
     }
 
     /******************************************************************

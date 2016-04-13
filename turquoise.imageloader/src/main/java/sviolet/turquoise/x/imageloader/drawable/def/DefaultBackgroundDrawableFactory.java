@@ -28,8 +28,27 @@ import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
  * Created by S.Violet on 2016/3/17.
  */
 public class DefaultBackgroundDrawableFactory implements BackgroundDrawableFactory {
+
+    public static final int DEFAULT_BACKGROUND_COLOR = 0x00000000;
+
+    private int backgroundImageResId = -1;
+    private int backgroundColor = DEFAULT_BACKGROUND_COLOR;
+
     @Override
     public Drawable create(int loadingBackgroundColor, Bitmap loadingBitmap) {
         return null;
+    }
+
+    @Override
+    public void onDestroy() {
+
+    }
+
+    public void setBackgroundImageResId(int backgroundImageResId) {
+        this.backgroundImageResId = backgroundImageResId;
+    }
+
+    public void setBackgroundColor(int backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 }

@@ -41,8 +41,6 @@ import sviolet.turquoise.x.imageloader.handler.def.DefaultDecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.def.DefaultExceptionHandler;
 import sviolet.turquoise.x.imageloader.handler.def.DefaultImageResourceHandler;
 import sviolet.turquoise.x.imageloader.handler.def.DefaultNetworkLoadHandler;
-import sviolet.turquoise.x.imageloader.node.NodeFactory;
-import sviolet.turquoise.x.imageloader.node.NodeFactoryImpl;
 import sviolet.turquoise.x.imageloader.node.TaskFactory;
 import sviolet.turquoise.x.imageloader.node.TaskFactoryImpl;
 import sviolet.turquoise.x.imageloader.stub.StubFactory;
@@ -172,8 +170,8 @@ public class ServerSettings implements ComponentManager.Component{
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
         private final StubFactoryImpl stubFactory = new StubFactoryImpl();
-        private LoadingDrawableFactory loadingDrawableFactory = new DefaultLoadingDrawableFactory();
-        private FailedDrawableFactory failedDrawableFactory = new DefaultFailedDrawableFactory();
+        private LoadingDrawableFactory loadingDrawableFactory;
+        private FailedDrawableFactory failedDrawableFactory;
         private BackgroundDrawableFactory backgroundDrawableFactory = new DefaultBackgroundDrawableFactory();
 
         //static factory////////////////////////////////////////////////////////////////////////////
@@ -261,10 +259,13 @@ public class ServerSettings implements ComponentManager.Component{
             return this;
         }
 
-        public Builder setBackgroundDrawableFactory(BackgroundDrawableFactory factory){
-            if (factory != null){
-                values.backgroundDrawableFactory = factory;
-            }
+        public Builder setBackgroundImageResId(int backgroundImageResId){
+            values.backgroundDrawableFactory.setBackgroundImageResId(backgroundImageResId);
+            return this;
+        }
+
+        public Builder setBackgroundColor(int backgroundColor){
+            values.backgroundDrawableFactory.setBackgroundColor(backgroundColor);
             return this;
         }
 
@@ -274,6 +275,12 @@ public class ServerSettings implements ComponentManager.Component{
     public void init(ComponentManager manager) {
         this.manager = manager;
         values.taskFactory.init(manager);
+        if (values.loadingDrawableFactory == null) {
+            values.loadingDrawableFactory = new DefaultLoadingDrawableFactory();
+        }
+        if(values.failedDrawableFactory == null) {
+            values.failedDrawableFactory = new DefaultFailedDrawableFactory();
+        }
     }
 
     /*************************************************************

@@ -22,10 +22,13 @@ package sviolet.turquoise.x.imageloader.drawable;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
+import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+
 /**
+ *
  * Created by S.Violet on 2016/3/16.
  */
-public interface FailedDrawableFactory {
+public interface FailedDrawableFactory extends Destroyable {
 
     /**
      * create a drawable for failed state
