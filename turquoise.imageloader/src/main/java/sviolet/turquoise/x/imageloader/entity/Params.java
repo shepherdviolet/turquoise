@@ -30,57 +30,6 @@ import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
  */
 public class Params {
 
-    public static final int SIZE_MATCH_RESOURCE = 0;//size match resource (origin size)
-    public static final Bitmap.Config DEFAULT_BITMAP_CONFIG = Bitmap.Config.RGB_565;
-
-    private Values values;
-
-    private Params(Values values){
-        this.values = values;
-    }
-
-    public int getReqWidth() {
-        return values.reqWidth;
-    }
-
-    public int getReqHeight() {
-        return values.reqHeight;
-    }
-
-    public boolean isSizeMatchView(){
-        return values.sizeMatchView;
-    }
-
-    public Bitmap.Config getBitmapConfig(){
-        return values.bitmapConfig;
-    }
-
-    public DecodeHandler.Interceptor getDecodeInterceptor(){
-        return values.decodeInterceptor;
-    }
-
-    public void adjustByView(View view){
-        if (view == null){
-            return;
-        }
-        if (isSizeMatchView()){
-            values.reqWidth = view.getWidth();
-            values.reqHeight = view.getHeight();
-        }
-    }
-
-    public String getKeySuffix(){
-        StringBuilder builder = new StringBuilder("@");
-        builder.append(getReqWidth());
-        builder.append("x");
-        builder.append(getReqHeight());
-        if (values.decodeInterceptor != null) {
-            builder.append("@");
-            builder.append(values.decodeInterceptor.getClass().hashCode());
-        }
-        return builder.toString();
-    }
-
     private static class Values{
         private int reqWidth = SIZE_MATCH_RESOURCE;
         private int reqHeight = SIZE_MATCH_RESOURCE;
@@ -139,6 +88,65 @@ public class Params {
             return new Params(values);
         }
 
+    }
+
+    //DEFAULT////////////////////////////////////////////////////////////
+
+    public static final int SIZE_MATCH_RESOURCE = 0;//size match resource (origin size)
+    public static final Bitmap.Config DEFAULT_BITMAP_CONFIG = Bitmap.Config.RGB_565;
+
+    //constructor////////////////////////////////////////////////////////////
+
+    private Values values;
+
+    private Params(Values values){
+        this.values = values;
+    }
+
+    //getter/////////////////////////////////////////////////////////////////
+
+    public int getReqWidth() {
+        return values.reqWidth;
+    }
+
+    public int getReqHeight() {
+        return values.reqHeight;
+    }
+
+    public boolean isSizeMatchView(){
+        return values.sizeMatchView;
+    }
+
+    public Bitmap.Config getBitmapConfig(){
+        return values.bitmapConfig;
+    }
+
+    public DecodeHandler.Interceptor getDecodeInterceptor(){
+        return values.decodeInterceptor;
+    }
+
+    //function////////////////////////////////////////////////////////////
+
+    public void adjustByView(View view){
+        if (view == null){
+            return;
+        }
+        if (isSizeMatchView()){
+            values.reqWidth = view.getWidth();
+            values.reqHeight = view.getHeight();
+        }
+    }
+
+    public String getKeySuffix(){
+        StringBuilder builder = new StringBuilder("@");
+        builder.append(getReqWidth());
+        builder.append("x");
+        builder.append(getReqHeight());
+        if (values.decodeInterceptor != null) {
+            builder.append("@");
+            builder.append(values.decodeInterceptor.getClass().hashCode());
+        }
+        return builder.toString();
     }
 
 }
