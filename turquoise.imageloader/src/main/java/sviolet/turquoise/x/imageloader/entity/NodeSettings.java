@@ -33,53 +33,6 @@ import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
  */
 public class NodeSettings implements Destroyable {
 
-    private static final int DEFAULT_DISK_QUEUE_SIZE = 10;
-    private static final int DEFAULT_NET_QUEUE_SIZE = 10;
-    private static final int DEFAULT_RELOAD_TIMES = 2;
-
-    private Values values;
-
-    private NodeSettings(Values values) {
-        this.values = values;
-    }
-
-    //settings////////////////////////////////////////////////////////////////////////////
-
-    public int getDiskQueueSize(){
-        return values.diskQueueSize;
-    }
-
-    public int getNetQueueSize(){
-        return values.netQueueSize;
-    }
-
-    public int getReloadTimes(){
-        return values.reloadTimes;
-    }
-
-    //handler////////////////////////////////////////////////////////////////////////////
-
-    public NetworkLoadHandler getNetworkLoadHandler(){
-        return values.networkLoadHandler;
-    }
-
-    public DecodeHandler getDecodeHandler(){
-        return values.decodeHandler;
-    }
-
-    //configurable factory////////////////////////////////////////////////////////////////////////////
-
-    public LoadingDrawableFactory getLoadingDrawableFactory(){
-        return values.loadingDrawableFactory;
-    }
-
-    public FailedDrawableFactory getFailedDrawableFactory(){
-        return values.failedDrawableFactory;
-    }
-
-    public BackgroundDrawableFactory getBackgroundDrawableFactory(){
-        return values.backgroundDrawableFactory;
-    }
 
     private static class Values{
 
@@ -151,6 +104,18 @@ public class NodeSettings implements Destroyable {
 
     }
 
+    //DEFAULT/////////////////////////////////////////////////////////////////////////////
+
+    private static final int DEFAULT_DISK_QUEUE_SIZE = 10;
+    private static final int DEFAULT_NET_QUEUE_SIZE = 10;
+    private static final int DEFAULT_RELOAD_TIMES = 2;
+
+    private Values values;
+
+    private NodeSettings(Values values) {
+        this.values = values;
+    }
+
     @Override
     public void onDestroy() {
         if (values.loadingDrawableFactory != null){
@@ -162,6 +127,44 @@ public class NodeSettings implements Destroyable {
         if (values.backgroundDrawableFactory != null){
             values.backgroundDrawableFactory.onDestroy();
         }
+    }
+
+    //settings////////////////////////////////////////////////////////////////////////////
+
+    public int getDiskQueueSize(){
+        return values.diskQueueSize;
+    }
+
+    public int getNetQueueSize(){
+        return values.netQueueSize;
+    }
+
+    public int getReloadTimes(){
+        return values.reloadTimes;
+    }
+
+    //handler////////////////////////////////////////////////////////////////////////////
+
+    public NetworkLoadHandler getNetworkLoadHandler(){
+        return values.networkLoadHandler;
+    }
+
+    public DecodeHandler getDecodeHandler(){
+        return values.decodeHandler;
+    }
+
+    //configurable factory////////////////////////////////////////////////////////////////////////////
+
+    public LoadingDrawableFactory getLoadingDrawableFactory(){
+        return values.loadingDrawableFactory;
+    }
+
+    public FailedDrawableFactory getFailedDrawableFactory(){
+        return values.failedDrawableFactory;
+    }
+
+    public BackgroundDrawableFactory getBackgroundDrawableFactory(){
+        return values.backgroundDrawableFactory;
     }
 
 }

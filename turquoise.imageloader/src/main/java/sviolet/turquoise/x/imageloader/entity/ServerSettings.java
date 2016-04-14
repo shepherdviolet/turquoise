@@ -52,102 +52,6 @@ import sviolet.turquoise.x.imageloader.stub.StubFactoryImpl;
  */
 public class ServerSettings implements ComponentManager.Component{
 
-    //DEFAULT/////////////////////////////////////////////////////////////////////////////
-
-    public static final boolean DEFAULT_LOG_ENABLED = true;
-    public static final boolean DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE = false;
-    public static final int DEFAULT_MEMORY_CACHE_SIZE = 0;
-    public static final int DEFAULT_DISK_CACHE_SIZE = 10 * 1024 * 1024;
-    public static final int DEFAULT_NETWORK_LOAD_MAX_THREAD = 3;
-    public static final int DEFAULT_DISK_LOAD_MAX_THREAD = 10;
-
-    private static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
-    private static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
-
-    //Var/////////////////////////////////////////////////////////////////////////////////
-
-    private ComponentManager manager;
-    private Values values;
-
-    private ServerSettings(Values values) {
-        this.values = values;
-    }
-
-    //settings////////////////////////////////////////////////////////////////////////////
-
-    public boolean isLogEnabled(){
-        return values.logEnabled;
-    }
-
-    public boolean isWipeDiskCacheWhenUpdate(){
-        return values.wipeDiskCacheWhenUpdate;
-    }
-
-    public int getMemoryCacheSize(){
-        return values.memoryCacheSize;
-    }
-
-    public int getDiskCacheSize(){
-        return values.diskCacheSize;
-    }
-
-    public int getNetworkLoadMaxThread(){
-        return values.networkLoadMaxThread;
-    }
-
-    public int getDiskLoadMaxThread(){
-        return values.diskLoadMaxThread;
-    }
-
-    public File getDiskCachePath(){
-        if (values.diskCachePath == null){
-            values.diskCachePath = fetchDiskCachePath(manager.getApplicationContextImage(), DEFAULT_DISK_CACHE_PATH, null);
-        }
-        return values.diskCachePath;
-    }
-
-    //handler////////////////////////////////////////////////////////////////////////////
-
-    public ImageResourceHandler getImageResourceHandler(){
-        return values.imageResourceHandler;
-    }
-
-    public NetworkLoadHandler getNetworkLoadHandler(){
-        return values.networkLoadHandler;
-    }
-
-    public DecodeHandler getDecodeHandler(){
-        return values.decodeHandler;
-    }
-
-    public ExceptionHandler getExceptionHandler(){
-        return values.exceptionHandler;
-    }
-
-    //configurable factory////////////////////////////////////////////////////////////////////////////
-
-    public StubFactory getStubFactory(){
-        return values.stubFactory;
-    }
-
-    public LoadingDrawableFactory getLoadingDrawableFactory(){
-        return values.loadingDrawableFactory;
-    }
-
-    public FailedDrawableFactory getFailedDrawableFactory(){
-        return values.failedDrawableFactory;
-    }
-
-    public BackgroundDrawableFactory getBackgroundDrawableFactory(){
-        return values.backgroundDrawableFactory;
-    }
-
-    //static factory////////////////////////////////////////////////////////////////////////////
-
-    public TaskFactory getTaskFactory(){
-        return values.taskFactory;
-    }
-
     private static class Values{
 
         //settings////////////////////////////////////////////////////////////////////////////
@@ -271,6 +175,27 @@ public class ServerSettings implements ComponentManager.Component{
 
     }
 
+    //DEFAULT/////////////////////////////////////////////////////////////////////////////
+
+    public static final boolean DEFAULT_LOG_ENABLED = true;
+    public static final boolean DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE = false;
+    public static final int DEFAULT_MEMORY_CACHE_SIZE = 0;
+    public static final int DEFAULT_DISK_CACHE_SIZE = 10 * 1024 * 1024;
+    public static final int DEFAULT_NETWORK_LOAD_MAX_THREAD = 3;
+    public static final int DEFAULT_DISK_LOAD_MAX_THREAD = 10;
+
+    private static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
+    private static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
+
+    //Var/////////////////////////////////////////////////////////////////////////////////
+
+    private ComponentManager manager;
+    private Values values;
+
+    private ServerSettings(Values values) {
+        this.values = values;
+    }
+
     @Override
     public void init(ComponentManager manager) {
         this.manager = manager;
@@ -281,6 +206,81 @@ public class ServerSettings implements ComponentManager.Component{
         if(values.failedDrawableFactory == null) {
             values.failedDrawableFactory = new DefaultFailedDrawableFactory();
         }
+    }
+
+    //settings////////////////////////////////////////////////////////////////////////////
+
+    public boolean isLogEnabled(){
+        return values.logEnabled;
+    }
+
+    public boolean isWipeDiskCacheWhenUpdate(){
+        return values.wipeDiskCacheWhenUpdate;
+    }
+
+    public int getMemoryCacheSize(){
+        return values.memoryCacheSize;
+    }
+
+    public int getDiskCacheSize(){
+        return values.diskCacheSize;
+    }
+
+    public int getNetworkLoadMaxThread(){
+        return values.networkLoadMaxThread;
+    }
+
+    public int getDiskLoadMaxThread(){
+        return values.diskLoadMaxThread;
+    }
+
+    public File getDiskCachePath(){
+        if (values.diskCachePath == null){
+            values.diskCachePath = fetchDiskCachePath(manager.getApplicationContextImage(), DEFAULT_DISK_CACHE_PATH, null);
+        }
+        return values.diskCachePath;
+    }
+
+    //handler////////////////////////////////////////////////////////////////////////////
+
+    public ImageResourceHandler getImageResourceHandler(){
+        return values.imageResourceHandler;
+    }
+
+    public NetworkLoadHandler getNetworkLoadHandler(){
+        return values.networkLoadHandler;
+    }
+
+    public DecodeHandler getDecodeHandler(){
+        return values.decodeHandler;
+    }
+
+    public ExceptionHandler getExceptionHandler(){
+        return values.exceptionHandler;
+    }
+
+    //configurable factory////////////////////////////////////////////////////////////////////////////
+
+    public StubFactory getStubFactory(){
+        return values.stubFactory;
+    }
+
+    public LoadingDrawableFactory getLoadingDrawableFactory(){
+        return values.loadingDrawableFactory;
+    }
+
+    public FailedDrawableFactory getFailedDrawableFactory(){
+        return values.failedDrawableFactory;
+    }
+
+    public BackgroundDrawableFactory getBackgroundDrawableFactory(){
+        return values.backgroundDrawableFactory;
+    }
+
+    //static factory////////////////////////////////////////////////////////////////////////////
+
+    public TaskFactory getTaskFactory(){
+        return values.taskFactory;
     }
 
     /*************************************************************
