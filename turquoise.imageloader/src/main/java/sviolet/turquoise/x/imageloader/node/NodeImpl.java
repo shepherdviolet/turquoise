@@ -59,7 +59,7 @@ public class NodeImpl extends Node {
     public void load(String url, Params params, View view) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Stub stub = manager.getServerSettings().getStubFactory().newLoadStub(url, params, view, manager.getDefaultParams());
+        Stub stub = manager.getServerSettings().getStubFactory().newLoadStub(url, params, view);
         stub.initialize(controller);
     }
 
@@ -72,7 +72,7 @@ public class NodeImpl extends Node {
     public void loadBackground(String url, Params params, View view) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Stub stub = manager.getServerSettings().getStubFactory().newLoadBackgroundStub(url, params, view, manager.getDefaultParams());
+        Stub stub = manager.getServerSettings().getStubFactory().newLoadBackgroundStub(url, params, view);
         stub.initialize(controller);
     }
 
@@ -80,14 +80,22 @@ public class NodeImpl extends Node {
     public void extract(String url, Params params, OnLoadedListener listener) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Stub stub = manager.getServerSettings().getStubFactory().newExtractStub(url, params, listener, manager.getDefaultParams());
+        Stub stub = manager.getServerSettings().getStubFactory().newExtractStub(url, params, listener);
         stub.initialize(controller);
     }
+
+    /********************************************
+     * public
+     */
 
     @Override
     public boolean setting(NodeSettings settings) {
         return controller.settingNode(settings);
     }
+
+    /********************************************
+     * private
+     */
 
     @Override
     String getId() {

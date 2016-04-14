@@ -35,29 +35,26 @@ public interface StubFactory {
      * @param url url
      * @param params params
      * @param view view
-     * @param defParams use default when params is null
      * @return Stub
      */
-    Stub newLoadStub(String url, Params params, View view, Params defParams);
+    Stub newLoadStub(String url, Params params, View view);
 
     /**
      *
      * @param url url
      * @param params params
      * @param view view
-     * @param defParams use default when params is null
      * @return Stub
      */
-    Stub newLoadBackgroundStub(String url, Params params, View view, Params defParams);
+    Stub newLoadBackgroundStub(String url, Params params, View view);
 
     /**
      *
      * @param url url
      * @param params params
      * @param listener listener
-     * @param defParams use default when params is null
      * @return Stub
      */
-    Stub newExtractStub(String url, Params params, OnLoadedListener listener, Params defParams);
+    Stub newExtractStub(String url, Params params, OnLoadedListener listener);
 
 }

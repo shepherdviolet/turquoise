@@ -31,11 +31,26 @@ import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 public class Params {
 
     private static class Values{
+
         private int reqWidth = SIZE_MATCH_RESOURCE;
         private int reqHeight = SIZE_MATCH_RESOURCE;
         private boolean sizeMatchView = true;
         private Bitmap.Config bitmapConfig = DEFAULT_BITMAP_CONFIG;
         private DecodeHandler.Interceptor decodeInterceptor;
+
+        /**
+         * you must implement cloning method, including all values.
+         * TILoader will get copy by this method before loading.
+         */
+        public Values copy() {
+            Values newValues = new Values();
+            newValues.reqWidth = reqWidth;
+            newValues.reqHeight = reqHeight;
+            newValues.sizeMatchView = sizeMatchView;
+            newValues.bitmapConfig = bitmapConfig;
+            newValues.decodeInterceptor = decodeInterceptor;
+            return newValues;
+        }
     }
 
     public static class Builder{
@@ -149,4 +164,7 @@ public class Params {
         return builder.toString();
     }
 
+    public Params copy() {
+        return new Params((Values) values.copy());
+    }
 }

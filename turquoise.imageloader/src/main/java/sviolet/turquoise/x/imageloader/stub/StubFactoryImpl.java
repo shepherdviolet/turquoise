@@ -34,20 +34,24 @@ public class StubFactoryImpl implements StubFactory {
     private StubFactory customStubFactory;
 
     @Override
-    public Stub newLoadStub(String url, Params params, View view, Params defParams) {
+    public Stub newLoadStub(String url, Params params, View view) {
+        //check input
         if (url == null){
             throw new RuntimeException("[TILoader]can't load image without url!");
         }
         if (view == null){
             throw new RuntimeException("[TILoader]can't load image into a null View!");
         }
-        //default params
+        //copy params
         if (params == null){
-            params = defParams;
+            params = new Params.Builder().build();
+        }else{
+            params = params.copy();
         }
+        //invoke custom factory
         Stub stub = null;
         if (customStubFactory != null){
-            stub = customStubFactory.newLoadStub(url, params, view, defParams);
+            stub = customStubFactory.newLoadStub(url, params, view);
         }
         if (stub == null){
             stub = newLoadStubInner(url, params, view);
@@ -66,20 +70,24 @@ public class StubFactoryImpl implements StubFactory {
     }
 
     @Override
-    public Stub newLoadBackgroundStub(String url, Params params, View view, Params defParams) {
+    public Stub newLoadBackgroundStub(String url, Params params, View view) {
+        //check input
         if (url == null){
             throw new RuntimeException("[TILoader]can't load image without url!");
         }
         if (view == null){
             throw new RuntimeException("[TILoader]can't load image into a null View!");
         }
-        //default params
+        //copy params
         if (params == null){
-            params = defParams;
+            params = new Params.Builder().build();
+        }else{
+            params = params.copy();
         }
+        //invoke custom factory
         Stub stub = null;
         if (customStubFactory != null){
-            stub = customStubFactory.newLoadBackgroundStub(url, params, view, defParams);
+            stub = customStubFactory.newLoadBackgroundStub(url, params, view);
         }
         if (stub == null){
             stub = newLoadBackgroundStubInner(url, params, view);
@@ -95,20 +103,24 @@ public class StubFactoryImpl implements StubFactory {
     }
 
     @Override
-    public Stub newExtractStub(String url, Params params, OnLoadedListener listener, Params defParams) {
+    public Stub newExtractStub(String url, Params params, OnLoadedListener listener) {
+        //check input
         if (url == null){
             throw new RuntimeException("[TILoader]can't load image without url!");
         }
         if (listener == null){
-            throw new RuntimeException("[TILoader]can't load image into a null View!");
+            throw new RuntimeException("[TILoader]can't extract image without listener!");
         }
-        //default params
+        //copy params
         if (params == null){
-            params = defParams;
+            params = new Params.Builder().build();
+        }else{
+            params = params.copy();
         }
+        //invoke custom factory
         Stub stub = null;
         if (customStubFactory != null){
-            stub = customStubFactory.newExtractStub(url, params, listener, defParams);
+            stub = customStubFactory.newExtractStub(url, params, listener);
         }
         if (stub == null){
             stub = newExtractStubInner(url, params, listener);

@@ -86,7 +86,6 @@ public class ComponentManager {
      * Extras
      **********************************************************************************************/
 
-    private final Params defaultParams = new Params.Builder().build();
     private final TLogger logger = TLogger.get(TILoader.class, TILoader.TAG);
     private WeakReference<Context> contextImage;
     private WeakReference<Context> applicationContextImage;
@@ -174,10 +173,6 @@ public class ComponentManager {
         diskCacheServer.init(ComponentManager.getInstance());
         diskEngine.init(ComponentManager.getInstance());
         netEngine.init(ComponentManager.getInstance());
-    }
-
-    public Params getDefaultParams(){
-        return defaultParams;
     }
 
     /**
