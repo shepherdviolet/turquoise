@@ -26,6 +26,7 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.common.statics.SpecialResourceId;
+import sviolet.turquoise.x.imageloader.drawable.ContainerDrawable;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
@@ -51,10 +52,26 @@ public abstract class LoadStub<V extends View> extends AbsStub {
     public void initialize(NodeController controller) {
         super.initialize(controller);
         bindView(getView());
+        showLoading();
+    }
+
+    /*******************************************************8
+     * control inner
+     */
+
+    @Override
+    protected void onLaunch() {
+        super.onLaunch();
     }
 
     @Override
-    public boolean load() {
+    protected void onRelaunch() {
+        showLoading();
+    }
+
+    @Override
+    protected boolean load() {
+        //get & check view
         final V view = getView();
         if (view == null){
             onDestroy();
@@ -64,7 +81,8 @@ public abstract class LoadStub<V extends View> extends AbsStub {
     }
 
     @Override
-    public boolean reload() {
+    protected boolean reload() {
+        //get & check view
         final V view = getView();
         if (view == null){
             onDestroy();
@@ -73,11 +91,104 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         return super.reload();
     }
 
+    protected void showLoading(){
+        //get & check view
+        final V view = getView();
+        if (view == null){
+            onDestroy();
+            return;
+        }
+        //get & check controller
+        final NodeController controller = getNodeController();
+        if (controller == null){
+            onDestroy();
+            return;
+        }
+        //create and set drawable
+        Drawable drawable = controller.getLoadingDrawableFactory().create(getParams());
+        if (drawable == null){
+            throw new RuntimeException("[LoadStub]LoadingDrawableFactory create a null drawable");
+        }
+        setDrawableToView(new ContainerDrawable(drawable).launchEnable(), view);
+    }
+
+    protected void showImage(ImageResource<?> resource){
+        //get & check view
+        final V view = getView();
+        if (view == null){
+            onDestroy();
+            return;
+        }
+        //get & check controller
+        final NodeController controller = getNodeController();
+        if (controller == null){
+            onDestroy();
+            return;
+        }
+        //create and set drawable
+        Drawable drawable = controller.getBackgroundDrawableFactory().create(getParams());
+        if (drawable == null){
+            throw new RuntimeException("[LoadStub]BackgroundDrawableFactory create a null drawable");
+        }
+        Drawable imageDrawable = controller.getServerSettings().getImageResourceHandler().toDrawable(resource);
+        if (imageDrawable == null){
+            shiftSucceedToFailed();
+            return;
+        }
+        setDrawableToView(new ContainerDrawable(drawable, imageDrawable).relaunchEnable(), view);
+    }
+
+    protected void showFailed(){
+        //get & check view
+        final V view = getView();
+        if (view == null){
+            onDestroy();
+            return;
+        }
+        //get & check controller
+        final NodeController controller = getNodeController();
+        if (controller == null){
+            onDestroy();
+            return;
+        }
+        //create and set drawable
+        Drawable drawable = controller.getFailedDrawableFactory().create(getParams());
+        if (drawable == null){
+            throw new RuntimeException("[LoadStub]FailedDrawableFactory create a null drawable");
+        }
+        setDrawableToView(new ContainerDrawable(drawable), view);
+    }
+
     /**
      * @param drawable set drawable to view
      * @param view target view
      */
     protected abstract void setDrawableToView(Drawable drawable, V view);
+
+    /*******************************************************8
+     * callbacks inner
+     */
+
+    @Override
+    protected void onLoadSucceedInner(ImageResource<?> resource) {
+        super.onLoadSucceedInner(resource);
+        showImage(resource);
+    }
+
+    @Override
+    protected void onLoadFailedInner() {
+        super.onLoadFailedInner();
+    }
+
+    @Override
+    protected void onLoadCanceledInner() {
+        showFailed();
+    }
+
+    @Override
+    protected void onDestroyInner() {
+        super.onDestroyInner();
+    }
 
     /***********************************************************
      * protected
@@ -101,26 +212,6 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         }finally {
             viewLock.unlock();
         }
-    }
-
-    @Override
-    protected void onLoadSucceedInner(ImageResource<?> resource) {
-        super.onLoadSucceedInner(resource);
-    }
-
-    @Override
-    protected void onLoadFailedInner() {
-        super.onLoadFailedInner();
-    }
-
-    @Override
-    protected void onLoadCanceledInner() {
-        super.onLoadCanceledInner();
-    }
-
-    @Override
-    protected void onDestroyInner() {
-        super.onDestroyInner();
     }
 
     /***********************************************************

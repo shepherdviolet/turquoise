@@ -227,6 +227,18 @@ public class ComponentManager {
         return null;
     }
 
+    /**
+     * @return true if TILoader initialized
+     */
+    public boolean isInitialized(){
+        try{
+            componentsInitializeLock.lock();
+            return componentsInitialized;
+        }finally {
+            componentsInitializeLock.unlock();
+        }
+    }
+
     /**********************************************************************************************
      * inner class
      **********************************************************************************************/

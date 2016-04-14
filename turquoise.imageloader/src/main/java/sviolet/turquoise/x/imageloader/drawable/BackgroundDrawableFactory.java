@@ -19,10 +19,10 @@
 
 package sviolet.turquoise.x.imageloader.drawable;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
  * <p>create background of Loaded Image</p>
@@ -34,14 +34,12 @@ public interface BackgroundDrawableFactory extends Destroyable {
     /**
      * <p>create background of Loaded Image</p>
      *
-     * <p>it will show after Image loaded, and then gradually disappear. The drawable is used for
-     * TransitionDrawable's layer, and it will continue to use color/bitmap of loading state.</p>
+     * <p>it will show after Image loaded, and then gradually disappear.</p>
      *
-     * @param loadingBackgroundColor background color of loading state
-     * @param loadingBitmap bitmap of loading state
+     * @param params params of stub
      * @return Drawable
      */
-    Drawable create(int loadingBackgroundColor, Bitmap loadingBitmap);
+    Drawable create(Params params);
 
     void setBackgroundImageResId(int backgroundImageResId);
 

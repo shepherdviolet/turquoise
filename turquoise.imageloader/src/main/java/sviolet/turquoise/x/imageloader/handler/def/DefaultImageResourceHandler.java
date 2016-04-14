@@ -20,7 +20,9 @@
 package sviolet.turquoise.x.imageloader.handler.def;
 
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 
+import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
 
@@ -82,4 +84,21 @@ public class DefaultImageResourceHandler implements ImageResourceHandler {
         return false;
     }
 
+    @Override
+    public Drawable toDrawable(ImageResource<?> resource) {
+        if (resource == null || resource.getResource() == null){
+            return null;
+        }
+        switch (resource.getType()){
+            case BITMAP:
+                if ((resource.getResource() instanceof Bitmap) && (!((Bitmap) resource.getResource()).isRecycled())){
+                    return new TIBitmapDrawable((Bitmap) resource.getResource());
+                }else{
+                    return null;
+                }
+            default:
+                break;
+        }
+        return null;
+    }
 }

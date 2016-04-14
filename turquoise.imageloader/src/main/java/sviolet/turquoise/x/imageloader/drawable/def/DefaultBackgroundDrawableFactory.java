@@ -23,6 +23,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
+import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
  * Created by S.Violet on 2016/3/17.
@@ -35,7 +36,7 @@ public class DefaultBackgroundDrawableFactory implements BackgroundDrawableFacto
     private int backgroundColor = DEFAULT_BACKGROUND_COLOR;
 
     @Override
-    public Drawable create(int loadingBackgroundColor, Bitmap loadingBitmap) {
+    public Drawable create(Params params) {
         return null;
     }
 

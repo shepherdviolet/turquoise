@@ -24,6 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.util.conversion.ByteUtils;
 import sviolet.turquoise.util.crypt.DigestCipher;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.Params;
@@ -46,7 +47,7 @@ public abstract class AbsStub implements Stub {
 
     //stat///////////////////////////////
 
-    private volatile State state = State.BEFORE_INIT;
+    private volatile State state = State.INITIAL;
     private int reloadTimes = 0;
 
     private WeakReference<NodeController> nodeController;
@@ -72,19 +73,87 @@ public abstract class AbsStub implements Stub {
     @Override
     public void initialize(NodeController nodeController) {
         this.nodeController = new WeakReference<>(nodeController);
-        try {
-            stateLock.lock();
-            if (state == State.BEFORE_INIT) {
-                state = State.INITIALIZED;
-            }
-        }finally {
-            stateLock.unlock();
-        }
     }
 
     /******************************************************************
      * control
      */
+
+    /**
+     * 1.check state
+     * 2.set state to LAUNCHING
+     */
+    @Override
+    public final boolean launch() {
+        //get & check controller
+        final NodeController controller = getNodeController();
+        if (controller == null){
+            onDestroy();
+            return false;
+        }
+        boolean execute = false;
+        try {
+            stateLock.lock();
+            if (state == State.INITIAL) {
+                state = State.LAUNCHING;
+                execute = true;
+            }
+        }finally {
+            stateLock.unlock();
+        }
+        if (execute){
+            onLaunch();
+        }
+        return execute;
+    }
+
+    /**
+     * 1.check state
+     * 2.set state to INITIAL
+     */
+    @Override
+    public final boolean relaunch() {
+        //get & check controller
+        final NodeController controller = getNodeController();
+        if (controller == null){
+            onDestroy();
+            return false;
+        }
+        boolean execute = false;
+        try {
+            stateLock.lock();
+            if (state == State.LOAD_SUCCEED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
+                state = State.INITIAL;
+                execute = true;
+            }
+        }finally {
+            stateLock.unlock();
+        }
+        if (execute){
+            onRelaunch();
+        }
+        return execute;
+    }
+
+    /******************************************************************
+     * control inner
+     */
+
+    /**
+     * launch process
+     */
+    protected void onLaunch(){
+        //load image
+        load();
+    }
+
+    /**
+     * relaunch process
+     */
+    protected void onRelaunch(){
+        //launch
+        launch();
+    }
 
     /**
      * <p>basic load</p>
@@ -94,8 +163,8 @@ public abstract class AbsStub implements Stub {
      *
      * @return true if stub executed by nodeController
      */
-    @Override
-    public boolean load() {
+    protected boolean load() {
+        //get & check controller
         final NodeController controller = getNodeController();
         if (controller == null){
             onDestroy();
@@ -104,8 +173,9 @@ public abstract class AbsStub implements Stub {
         boolean execute = false;
         try {
             stateLock.lock();
-            if (state == State.INITIALIZED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
+            if (state == State.LAUNCHING || state == State.LOAD_SUCCEED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
                 state = State.LOADING;
+                reloadTimes = 0;
                 execute = true;
             }
         }finally {
@@ -126,8 +196,8 @@ public abstract class AbsStub implements Stub {
      *
      * @return true if stub executed by nodeController
      */
-    @Override
-    public boolean reload() {
+    protected boolean reload() {
+        //get & check controller
         final NodeController controller = getNodeController();
         if (controller == null){
             onDestroy();
@@ -136,7 +206,7 @@ public abstract class AbsStub implements Stub {
         boolean reload = false;
         try {
             stateLock.lock();
-            if (state == State.INITIALIZED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
+            if (state == State.LAUNCHING || state == State.LOAD_SUCCEED  || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
                 if (reloadTimes < controller.getNodeSettings().getReloadTimes()){
                     reloadTimes++;
                     state = State.LOADING;
@@ -152,6 +222,48 @@ public abstract class AbsStub implements Stub {
         return reload;
     }
 
+    /**
+     * shift LOAD_SUCCEED state to LOAD_FAILED, and than invoke onLoadFailedInner();
+     * @return true:shift succeed
+     */
+    protected boolean shiftSucceedToFailed(){
+        boolean finish = false;
+        try {
+            stateLock.lock();
+            if (state == State.LOAD_SUCCEED) {
+                state = State.LOAD_FAILED;
+                finish = true;
+            }
+        }finally {
+            stateLock.unlock();
+        }
+        if (finish) {
+            onLoadFailedInner();
+        }
+        return finish;
+    }
+
+    /**
+     * shift LOAD_FAILED state to LOAD_CANCELED, and than invoke onLoadFailedInner();
+     * @return true:shift succeed
+     */
+    protected boolean shiftFailedToCanceled(){
+        boolean finish = false;
+        try {
+            stateLock.lock();
+            if (state == State.LOAD_FAILED) {
+                state = State.LOAD_CANCELED;
+                finish = true;
+            }
+        }finally {
+            stateLock.unlock();
+        }
+        if (finish) {
+            onLoadCanceled();
+        }
+        return finish;
+    }
+
     /******************************************************************
      * callbacks
      */
@@ -165,6 +277,7 @@ public abstract class AbsStub implements Stub {
      */
     @Override
     public final void onLoadSucceed(ImageResource<?> resource) {
+        //check resource
         if (TILoaderUtils.isImageResourceValid(resource)){
             onLoadFailed();
             return;
@@ -248,7 +361,7 @@ public abstract class AbsStub implements Stub {
     }
 
     /***********************************************************
-     * protected
+     * callbacks inner
      */
 
     protected void onLoadSucceedInner(ImageResource<?> resource){
@@ -257,7 +370,7 @@ public abstract class AbsStub implements Stub {
 
     protected void onLoadFailedInner(){
         if (!reload()){
-            onLoadCanceled();
+            shiftFailedToCanceled();
         }
     }
 
@@ -310,6 +423,15 @@ public abstract class AbsStub implements Stub {
     @Override
     public State getState() {
         return state;
+    }
+
+    @Override
+    public TLogger getLogger() {
+        final NodeController controller = getNodeController();
+        if (controller != null){
+            return controller.getLogger();
+        }
+        return TLogger.getNullLogger();
     }
 
     protected NodeController getNodeController(){

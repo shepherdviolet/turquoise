@@ -20,6 +20,7 @@
 package sviolet.turquoise.x.imageloader.stub;
 
 import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
@@ -64,16 +65,16 @@ public interface Stub extends Destroyable {
      */
 
     /**
-     * load image
-     * @return return true when load valid
+     * launch loading process, first time effective
+     * @return return true when launch valid
      */
-    boolean load();
+    boolean launch();
 
     /**
-     * reload image(has times limit)
-     * @return return true when load valid
+     * relaunch loading process, effective when launch succeed/failed/canceled
+     * @return return true when launch valid
      */
-    boolean reload();
+    boolean relaunch();
 
     /***********************************************************
      * params
@@ -98,6 +99,12 @@ public interface Stub extends Destroyable {
     State getState();
 
     /***********************************************************
+     * getter
+     */
+
+    TLogger getLogger();
+
+    /***********************************************************
      * Enum
      */
 
@@ -107,8 +114,8 @@ public interface Stub extends Destroyable {
     }
 
     enum State{
-        BEFORE_INIT,
-        INITIALIZED,
+        INITIAL,
+        LAUNCHING,
         LOADING,
         LOAD_SUCCEED,
         LOAD_FAILED,

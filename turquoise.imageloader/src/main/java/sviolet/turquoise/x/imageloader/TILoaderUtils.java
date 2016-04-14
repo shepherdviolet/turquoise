@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.x.imageloader;
 
+import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
@@ -35,6 +36,9 @@ public class TILoaderUtils {
      * @return true:valid
      */
     public static boolean isImageResourceValid(ImageResource resource){
+        if (!ComponentManager.getInstance().isInitialized()){
+            throw new RuntimeException("[TILoaderUtils]can't use before TILoader initialized (TILoader.node(context).load(...) to initialize TILoader)");
+        }
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().isValid(resource);
     }
 
@@ -45,6 +49,9 @@ public class TILoaderUtils {
      * @return true:equal
      */
     public static boolean isImageResourceEqual(ImageResource<?> src, ImageResource<?> dst){
+        if (!ComponentManager.getInstance().isInitialized()){
+            throw new RuntimeException("[TILoaderUtils]can't use before TILoader initialized (TILoader.node(context).load(...) to initialize TILoader)");
+        }
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().isEqual(src, dst);
     }
 
@@ -54,7 +61,22 @@ public class TILoaderUtils {
      * @return true:recycled
      */
     public static boolean recycleImageResource(ImageResource<?> resource){
+        if (!ComponentManager.getInstance().isInitialized()){
+            throw new RuntimeException("[TILoaderUtils]can't use before TILoader initialized (TILoader.node(context).load(...) to initialize TILoader)");
+        }
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().recycle(resource);
+    }
+
+    /**
+     * convert ImageResource to drawable
+     * @param resource ImageResource
+     * @return drawable
+     */
+    public static Drawable imageResourceToDrawable(ImageResource<?> resource){
+        if (!ComponentManager.getInstance().isInitialized()){
+            throw new RuntimeException("[TILoaderUtils]can't use before TILoader initialized (TILoader.node(context).load(...) to initialize TILoader)");
+        }
+        return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().toDrawable(resource);
     }
 
     /**
@@ -63,6 +85,9 @@ public class TILoaderUtils {
      * @return true:this view can be reload
      */
     public static boolean reloadView(View view){
+        if (!ComponentManager.getInstance().isInitialized()){
+            throw new RuntimeException("[TILoaderUtils]can't use before TILoader initialized (TILoader.node(context).load(...) to initialize TILoader)");
+        }
         return false;
     }
 

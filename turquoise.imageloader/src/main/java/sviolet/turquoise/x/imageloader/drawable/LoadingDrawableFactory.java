@@ -23,6 +23,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
  *
@@ -32,10 +33,9 @@ public interface LoadingDrawableFactory extends Destroyable {
 
     /**
      * create a drawable for loading state
-     * @param loadingBackgroundColor background color when loading
-     * @param loadingBitmap bitmap when loading
+     * @param params params of stub
      * @return Drawable
      */
-    Drawable create(int loadingBackgroundColor, Bitmap loadingBitmap);
+    Drawable create(Params params);
 
 }

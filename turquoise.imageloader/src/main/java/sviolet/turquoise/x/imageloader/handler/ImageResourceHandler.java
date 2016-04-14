@@ -19,6 +19,8 @@
 
 package sviolet.turquoise.x.imageloader.handler;
 
+import android.graphics.drawable.Drawable;
+
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 
 /**
@@ -47,5 +49,12 @@ public interface ImageResourceHandler {
      * @return true:recycled
      */
     boolean recycle(ImageResource<?> resource);
+
+    /**
+     * convert ImageResource to Drawable
+     * @param resource ImageResource
+     * @return drawable
+     */
+    Drawable toDrawable(ImageResource<?> resource);
 
 }

@@ -23,13 +23,14 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
+import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
  * Created by S.Violet on 2016/3/17.
  */
 public class DefaultFailedDrawableFactory implements FailedDrawableFactory {
     @Override
-    public Drawable create(int failedBackgroundColor, Bitmap failedBitmap) {
+    public Drawable create(Params params) {
         return null;
     }
 

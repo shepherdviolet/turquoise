@@ -19,17 +19,17 @@
 
 package sviolet.turquoise.x.imageloader.drawable.def;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
  * Created by S.Violet on 2016/3/17.
  */
 public class DefaultLoadingDrawableFactory implements LoadingDrawableFactory {
     @Override
-    public Drawable create(int loadingBackgroundColor, Bitmap loadingBitmap) {
+    public Drawable create(Params params) {
         return null;
     }
 

@@ -19,10 +19,10 @@
 
 package sviolet.turquoise.x.imageloader.drawable;
 
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
  *
@@ -32,10 +32,9 @@ public interface FailedDrawableFactory extends Destroyable {
 
     /**
      * create a drawable for failed state
-     * @param failedBackgroundColor background color when failed
-     * @param failedBitmap bitmap when failed
+     * @param params params of stub
      * @return Drawable
      */
-    Drawable create(int failedBackgroundColor, Bitmap failedBitmap);
+    Drawable create(Params params);
 
 }
