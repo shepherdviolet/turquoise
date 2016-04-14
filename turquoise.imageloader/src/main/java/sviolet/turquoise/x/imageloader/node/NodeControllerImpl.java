@@ -28,14 +28,15 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.model.thread.LazySingleThreadPool;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
-import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
+import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.server.Server;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 import sviolet.turquoise.x.imageloader.stub.StubGroup;
@@ -328,12 +329,17 @@ public class NodeControllerImpl extends NodeController {
     }
 
     @Override
-    public BackgroundDrawableFactory BackgroundDrawableFactory() {
+    public BackgroundDrawableFactory getBackgroundDrawableFactory() {
         BackgroundDrawableFactory factory = getNodeSettings().getBackgroundDrawableFactory();
         if (factory == null){
             factory = getServerSettings().getBackgroundDrawableFactory();
         }
         return factory;
+    }
+
+    @Override
+    public TLogger getLogger() {
+        return manager.getLogger();
     }
 
     /******************************************************************

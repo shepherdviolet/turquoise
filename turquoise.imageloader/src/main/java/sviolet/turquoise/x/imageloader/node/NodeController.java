@@ -20,12 +20,13 @@
 package sviolet.turquoise.x.imageloader.node;
 
 import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.server.Engine;
-import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
@@ -37,11 +38,19 @@ public abstract class NodeController implements LifeCycle {
 
     abstract void waitingForInitialized();
 
+    /***********************************************************
+     * load
+     */
+
     /**
      * execute a Stub
      * @param stub
      */
     public abstract void execute(Stub stub);
+
+    /***********************************************************
+     * control
+     */
 
     abstract Task pullTask(Engine.Type type);
 
@@ -50,9 +59,18 @@ public abstract class NodeController implements LifeCycle {
      */
     abstract void response(Task task);
 
-    public abstract String getNodeId();
-
     abstract boolean settingNode(NodeSettings settings);
+
+    /**
+     * notify the DispatchThread to dispatch tasks
+     */
+    public abstract void postDispatch();
+
+    /***********************************************************
+     * getter
+     */
+
+    public abstract String getNodeId();
 
     /**
      * node must be initialized before get NodeSettings
@@ -79,10 +97,8 @@ public abstract class NodeController implements LifeCycle {
     /**
      * @return get BackgroundDrawableFactory from Node, if it's null, get from ServerSettings
      */
-    public abstract BackgroundDrawableFactory BackgroundDrawableFactory();
+    public abstract BackgroundDrawableFactory getBackgroundDrawableFactory();
 
-    /**
-     * notify the DispatchThread to dispatch tasks
-     */
-    public abstract void postDispatch();
+    public abstract TLogger getLogger();
+
 }
