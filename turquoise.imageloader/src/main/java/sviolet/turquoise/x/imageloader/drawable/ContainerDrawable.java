@@ -25,6 +25,7 @@ import android.graphics.drawable.TransitionDrawable;
 
 import java.lang.ref.WeakReference;
 
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
@@ -35,7 +36,7 @@ public class ContainerDrawable extends TransitionDrawable {
 
     private boolean transitionMode = false;
     private boolean launchEnable = false;
-    private boolean reloadEnable = false;
+    private boolean relaunchEnable = false;
 
     private WeakReference<Stub> stub;
 
@@ -57,7 +58,7 @@ public class ContainerDrawable extends TransitionDrawable {
         try {
             super.draw(canvas);
         } catch (Exception e){
-
+            relaunch();
         }
     }
 
@@ -92,8 +93,8 @@ public class ContainerDrawable extends TransitionDrawable {
         return this;
     }
 
-    public ContainerDrawable reloadEnable(){
-        reloadEnable = true;
+    public ContainerDrawable relaunchEnable(){
+        relaunchEnable = true;
         return this;
     }
 
@@ -101,7 +102,36 @@ public class ContainerDrawable extends TransitionDrawable {
         if (!launchEnable){
             return;
         }
+        final Stub stub = getStub();
+        if (stub != null){
+            if (stub.launch()){
+                getLogger().d("[ContainerDrawable]launch: key:" + stub.getKey());
+            }else{
+                getLogger().d("[ContainerDrawable]launch failed: key:" + stub.getKey());
+            }
+        }
+    }
 
+    private void relaunch(){
+        if (!relaunchEnable){
+            return;
+        }
+        final Stub stub = getStub();
+        if (stub != null) {
+            if (stub.relaunch()) {
+                getLogger().d("[ContainerDrawable]relaunch: key:" + stub.getKey());
+                return;
+            }
+        }
+        getLogger().d("[ContainerDrawable]error when drawing, relaunch failed");
+    }
+
+    private TLogger getLogger(){
+        final Stub stub = getStub();
+        if (stub != null){
+            return stub.getLogger();
+        }
+        return TLogger.getNullLogger();
     }
 
     private Stub getStub(){
