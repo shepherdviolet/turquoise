@@ -41,4 +41,6 @@ public interface RequestQueue {
      */
     void setSize(int size);
 
+    void clear();
+
 }

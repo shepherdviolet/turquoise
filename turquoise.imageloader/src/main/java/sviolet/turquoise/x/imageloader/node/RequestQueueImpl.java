@@ -65,6 +65,18 @@ public class RequestQueueImpl implements RequestQueue {
         return task;
     }
 
+    public void clear(){
+        try{
+            lock.lock();
+            for (int i = 0 ; i < tasks.length ; i++){
+                tasks[i] = null;
+            }
+            position = 0;
+        }finally {
+            lock.unlock();
+        }
+    }
+
     public void setSize(int size){
         if (size < 1){
             throw new RuntimeException("[RequestQueueImpl]queue size must >= 1");

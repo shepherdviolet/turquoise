@@ -40,4 +40,6 @@ public interface ResponseQueue {
      */
     int size();
 
+    void clear();
+
 }

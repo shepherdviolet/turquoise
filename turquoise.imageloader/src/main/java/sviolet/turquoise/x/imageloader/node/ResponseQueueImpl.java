@@ -63,4 +63,14 @@ public class ResponseQueueImpl implements ResponseQueue {
             tasksLock.unlock();
         }
     }
+
+    @Override
+    public void clear() {
+        try{
+            tasksLock.lock();
+            tasks.clear();
+        }finally {
+            tasksLock.unlock();
+        }
+    }
 }
