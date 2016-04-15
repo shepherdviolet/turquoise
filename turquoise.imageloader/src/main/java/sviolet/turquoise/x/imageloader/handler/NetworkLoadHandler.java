@@ -55,7 +55,7 @@ public interface NetworkLoadHandler {
         private InputStream inputStream;
         private int length = UNKNOWN_LENGTH;
 
-        Result(byte[] bytes){
+        public Result(byte[] bytes){
             if (bytes == null){
                 this.type = ResultType.NULL;
                 return;
@@ -65,7 +65,7 @@ public interface NetworkLoadHandler {
             this.length = bytes.length;
         }
 
-        Result(InputStream inputStream){
+        public Result(InputStream inputStream){
             if (inputStream == null){
                 this.type = ResultType.NULL;
                 return;
