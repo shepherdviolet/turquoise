@@ -19,6 +19,8 @@
 
 package sviolet.turquoise.x.imageloader.stub;
 
+import sviolet.turquoise.x.imageloader.TILoaderUtils;
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
@@ -28,18 +30,73 @@ import sviolet.turquoise.x.imageloader.node.NodeController;
  */
 class ExtractStub extends AbsStub {
 
+    private OnLoadedListener listener;
+
     ExtractStub(String url, Params params, OnLoadedListener listener){
         super(url, params);
+        this.listener = listener;
     }
 
     @Override
     public void initialize(NodeController controller) {
-
+        super.initialize(controller);
+        launch();
     }
+
+    /*******************************************************8
+     * control inner
+     */
+
+    @Override
+    protected void onLaunch() {
+        super.onLaunch();
+    }
+
+    @Override
+    protected void onRelaunch() {
+        super.onRelaunch();
+    }
+
+    /*******************************************************8
+     * callbacks inner
+     */
+
+    @Override
+    protected void onLoadSucceedInner(ImageResource<?> resource) {
+        super.onLoadSucceedInner(resource);
+        if (!TILoaderUtils.isImageResourceValid(resource)){
+            shiftSucceedToFailed();
+            return;
+        }
+        if (listener != null){
+            listener.onLoadSucceed(getUrl(), getParams(), resource);
+        }
+    }
+
+    @Override
+    protected void onLoadFailedInner() {
+        super.onLoadFailedInner();
+    }
+
+    @Override
+    protected void onLoadCanceledInner() {
+        super.onLoadCanceledInner();
+        if (listener != null){
+            listener.onLoadCanceled(getUrl(), getParams());
+        }
+    }
+
+    @Override
+    protected void onDestroyInner() {
+        super.onDestroyInner();
+    }
+
+    /***********************************************************
+     * Getter
+     */
 
     @Override
     public Type getType() {
         return Type.EXTRACT;
     }
-
 }
