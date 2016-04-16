@@ -108,6 +108,11 @@ public class DefaultLoadingDrawableFactory implements LoadingDrawableFactory {
         return this;
     }
 
+    public DefaultLoadingDrawableFactory setAnimationEnabled(boolean enabled){
+        settings.animationEnabled = enabled;
+        return this;
+    }
+
     protected static class Settings{
         static final int COLOR_DEF = 0xFFC0C0C0;
         static final int RADIUS_DEF = 10;
@@ -122,6 +127,7 @@ public class DefaultLoadingDrawableFactory implements LoadingDrawableFactory {
         long animationDuration = DURATION;
         float pointOffsetX = OFFSET_X_DEF;
         float pointOffsetY = OFFSET_Y_DEF;
+        boolean animationEnabled = true;
     }
 
     private static class LoadingDrawable extends Drawable {
@@ -145,8 +151,10 @@ public class DefaultLoadingDrawableFactory implements LoadingDrawableFactory {
         @Override
         public void draw(Canvas canvas) {
             onDrawBackground(canvas);
-            onDrawAnimation(canvas);
-            invalidateSelf();
+            if (settings.animationEnabled) {
+                onDrawAnimation(canvas);
+                invalidateSelf();
+            }
         }
 
         public void onDrawBackground(Canvas canvas) {
