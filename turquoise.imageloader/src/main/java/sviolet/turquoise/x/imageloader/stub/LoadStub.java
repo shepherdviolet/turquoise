@@ -41,8 +41,6 @@ public abstract class LoadStub<V extends View> extends AbsStub {
 
     private WeakReference<V> view;
 
-    private final ReentrantLock viewLock = new ReentrantLock();
-
     public LoadStub(String url, Params params, V view){
         super(url, params);
         this.view = new WeakReference<>(view);
@@ -109,6 +107,9 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         if (drawable == null){
             throw new RuntimeException("[LoadStub]LoadingDrawableFactory create a null drawable");
         }
+        if (getState() == State.DESTROYED){
+            return;
+        }
         setDrawableToView(new ContainerDrawable(drawable).launchEnable(), view);
     }
 
@@ -135,6 +136,9 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             shiftSucceedToFailed();
             return;
         }
+        if (getState() == State.DESTROYED){
+            return;
+        }
         setDrawableToView(new ContainerDrawable(drawable, imageDrawable).relaunchEnable(), view);
     }
 
@@ -155,6 +159,9 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         Drawable drawable = controller.getFailedDrawableFactory().create(getParams());
         if (drawable == null){
             throw new RuntimeException("[LoadStub]FailedDrawableFactory create a null drawable");
+        }
+        if (getState() == State.DESTROYED){
+            return;
         }
         setDrawableToView(new ContainerDrawable(drawable), view);
     }
@@ -188,19 +195,21 @@ public abstract class LoadStub<V extends View> extends AbsStub {
     @Override
     protected void onDestroyInner() {
         super.onDestroyInner();
+        if (view != null){
+            view.clear();
+        }
     }
 
     /***********************************************************
      * protected
      */
 
-    protected void bindView(final V view){
+    protected void bindView(V view){
         if (view == null){
             onDestroy();
             return;
         }
-        try{
-            viewLock.lock();
+        synchronized (view) {
             //get Stub from View Tag
             Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
             //destroy obsolete Stub
@@ -209,8 +218,6 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             }
             //bind Stub on View
             view.setTag(SpecialResourceId.ViewTag.TILoaderStub, this);
-        }finally {
-            viewLock.unlock();
         }
     }
 

@@ -422,7 +422,12 @@ public abstract class AbsStub implements Stub {
 
     @Override
     public State getState() {
-        return state;
+        try{
+            stateLock.lock();
+            return state;
+        }finally {
+            stateLock.unlock();
+        }
     }
 
     @Override
