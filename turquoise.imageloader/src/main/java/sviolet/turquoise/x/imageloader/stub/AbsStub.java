@@ -87,7 +87,7 @@ public abstract class AbsStub implements Stub {
     public final boolean launch() {
         //get & check controller
         final NodeController controller = getNodeController();
-        if (controller == null){
+        if (controller == null || controller.isDestroyed()){
             onDestroy();
             return false;
         }
@@ -115,7 +115,7 @@ public abstract class AbsStub implements Stub {
     public final boolean relaunch() {
         //get & check controller
         final NodeController controller = getNodeController();
-        if (controller == null){
+        if (controller == null || controller.isDestroyed()){
             onDestroy();
             return false;
         }
@@ -166,7 +166,7 @@ public abstract class AbsStub implements Stub {
     protected boolean load() {
         //get & check controller
         final NodeController controller = getNodeController();
-        if (controller == null){
+        if (controller == null || controller.isDestroyed()){
             onDestroy();
             return false;
         }
@@ -199,7 +199,7 @@ public abstract class AbsStub implements Stub {
     protected boolean reload() {
         //get & check controller
         final NodeController controller = getNodeController();
-        if (controller == null){
+        if (controller == null || controller.isDestroyed()){
             onDestroy();
             return false;
         }
