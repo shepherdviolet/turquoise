@@ -50,7 +50,7 @@ public class DefaultFailedDrawableFactory implements FailedDrawableFactory {
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
         Bitmap bitmap = this.bitmap.getBitmap(applicationContext.getResources(), logger);
-        if (bitmap != null){
+        if (bitmap != null && !bitmap.isRecycled()){
             //use TIBitmapDrawable instead of BitmapDrawable
             return new TIBitmapDrawable(bitmap);
         }

@@ -50,9 +50,9 @@ public class DefaultBackgroundDrawableFactory implements BackgroundDrawableFacto
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
         Bitmap bitmap = backgroundBitmap.getBitmap(applicationContext.getResources(), logger);
-        if (bitmap != null){
+        if (bitmap != null && !bitmap.isRecycled()){
             //use TIBitmapDrawable instead of BitmapDrawable
-            return new TIBitmapDrawable(bitmap);
+            return new TIBitmapDrawable(bitmap).setMatchParent(true);
         }
         return new ColorDrawable(backgroundColor);
     }

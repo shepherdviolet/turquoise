@@ -94,12 +94,17 @@ public class ResourceBitmapWrapper {
      * destroy bitmap
      */
     public void destroy(){
+        Bitmap bitmap = null;
         try {
             lock.lock();
             resId = DESTROYED;
-            bitmap = null;
+            bitmap = this.bitmap;
+            this.bitmap = null;
         } finally {
             lock.unlock();
+        }
+        if (bitmap != null && !bitmap.isRecycled()){
+            bitmap.recycle();
         }
     }
 
