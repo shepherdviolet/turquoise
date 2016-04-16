@@ -23,7 +23,6 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 
 import java.lang.ref.WeakReference;
-import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.common.statics.SpecialResourceId;
 import sviolet.turquoise.x.imageloader.drawable.ContainerDrawable;
@@ -103,7 +102,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             return;
         }
         //create and set drawable
-        Drawable drawable = controller.getLoadingDrawableFactory().create(getParams());
+        Drawable drawable = controller.getLoadingDrawableFactory().create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLogger());
         if (drawable == null){
             throw new RuntimeException("[LoadStub]LoadingDrawableFactory create a null drawable");
         }
@@ -127,7 +126,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             return;
         }
         //create and set drawable
-        Drawable drawable = controller.getBackgroundDrawableFactory().create(getParams());
+        Drawable drawable = controller.getBackgroundDrawableFactory().create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLogger());
         if (drawable == null){
             throw new RuntimeException("[LoadStub]BackgroundDrawableFactory create a null drawable");
         }
@@ -156,7 +155,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             return;
         }
         //create and set drawable
-        Drawable drawable = controller.getFailedDrawableFactory().create(getParams());
+        Drawable drawable = controller.getFailedDrawableFactory().create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLogger());
         if (drawable == null){
             throw new RuntimeException("[LoadStub]FailedDrawableFactory create a null drawable");
         }

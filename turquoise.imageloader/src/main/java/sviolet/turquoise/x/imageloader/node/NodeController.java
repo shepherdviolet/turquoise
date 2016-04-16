@@ -19,6 +19,8 @@
 
 package sviolet.turquoise.x.imageloader.node;
 
+import android.content.Context;
+
 import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
@@ -83,6 +85,10 @@ public abstract class NodeController implements LifeCycle {
      * @return get ServerSettings
      */
     public abstract ServerSettings getServerSettings();
+
+    public abstract Context getApplicationContextImage();
+
+    public abstract Context getContextImage();
 
     /**
      * @return get LoadingDrawableFactory from Node, if it's null, get from ServerSettings

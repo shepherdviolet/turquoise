@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.node;
 
+import android.content.Context;
 import android.os.Looper;
 import android.os.Message;
 
@@ -337,6 +338,16 @@ public class NodeControllerImpl extends NodeController {
     @Override
     public ServerSettings getServerSettings() {
         return manager.getServerSettings();
+    }
+
+    @Override
+    public Context getApplicationContextImage() {
+        return manager.getApplicationContextImage();
+    }
+
+    @Override
+    public Context getContextImage() {
+        return manager.getContextImage();
     }
 
     @Override
