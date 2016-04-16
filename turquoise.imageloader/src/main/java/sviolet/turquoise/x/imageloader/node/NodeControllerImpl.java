@@ -367,6 +367,16 @@ public class NodeControllerImpl extends NodeController {
     }
 
     @Override
+    public boolean isDestroyed() {
+        try {
+            lock.lock();
+            return nodeDestroyed;
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
     public TLogger getLogger() {
         return manager.getLogger();
     }
