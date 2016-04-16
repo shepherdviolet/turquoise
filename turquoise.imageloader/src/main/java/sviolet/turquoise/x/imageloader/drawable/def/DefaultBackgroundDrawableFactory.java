@@ -62,10 +62,12 @@ public class DefaultBackgroundDrawableFactory implements BackgroundDrawableFacto
         backgroundBitmap.destroy();
     }
 
+    @Override
     public void setBackgroundImageResId(int backgroundImageResId) {
         this.backgroundBitmap.setResId(backgroundImageResId);
     }
 
+    @Override
     public void setBackgroundColor(int backgroundColor) {
         this.backgroundColor = backgroundColor;
     }

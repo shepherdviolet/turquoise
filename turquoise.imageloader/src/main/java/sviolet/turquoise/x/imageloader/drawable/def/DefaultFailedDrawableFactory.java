@@ -20,13 +20,16 @@
 package sviolet.turquoise.x.imageloader.drawable.def;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.ResourceBitmapWrapper;
 import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
@@ -38,13 +41,33 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  * Created by S.Violet on 2016/3/17.
  */
 public class DefaultFailedDrawableFactory implements FailedDrawableFactory {
+
+    public static final int DEFAULT_COLOR = 0x20000000;
+
+    private ResourceBitmapWrapper bitmap = new ResourceBitmapWrapper();
+    private int color = DEFAULT_COLOR;
+
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
-        return null;
+        Bitmap bitmap = this.bitmap.getBitmap(applicationContext.getResources(), logger);
+        if (bitmap != null){
+            //use TIBitmapDrawable instead of BitmapDrawable
+            return new TIBitmapDrawable(bitmap);
+        }
+        return new ColorDrawable(color);
     }
 
     @Override
     public void onDestroy() {
-
+        bitmap.destroy();
     }
+
+    public void setImageResId(int resId) {
+        this.bitmap.setResId(resId);
+    }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
+
 }
