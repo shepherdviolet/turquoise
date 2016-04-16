@@ -47,7 +47,9 @@ public class ResponseQueueImpl implements ResponseQueue {
         Task task = null;
         try{
             tasksLock.lock();
-            task = tasks.remove(0);
+            if (size() > 0) {
+                task = tasks.remove(0);
+            }
         }finally {
             tasksLock.unlock();
         }
