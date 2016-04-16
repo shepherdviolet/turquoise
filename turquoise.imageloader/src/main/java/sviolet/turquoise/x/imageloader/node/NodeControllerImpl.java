@@ -503,6 +503,7 @@ public class NodeControllerImpl extends NodeController {
             if (settings != null) {
                 settings.onDestroy();
             }
+            manager.getNodeManager().scrapNode(node);
         }
     }
 
