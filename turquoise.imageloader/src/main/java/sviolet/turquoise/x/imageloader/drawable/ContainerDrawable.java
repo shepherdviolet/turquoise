@@ -84,7 +84,7 @@ public class ContainerDrawable extends TransitionDrawable {
     }
 
     public ContainerDrawable bindStub(Stub stub){
-
+        this.stub = new WeakReference<>(stub);
         return this;
     }
 

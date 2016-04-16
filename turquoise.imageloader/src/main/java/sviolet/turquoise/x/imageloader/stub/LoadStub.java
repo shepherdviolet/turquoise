@@ -109,7 +109,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         if (getState() == State.DESTROYED){
             return;
         }
-        setDrawableToView(new ContainerDrawable(drawable).launchEnable(), view);
+        setDrawableToView(new ContainerDrawable(drawable).launchEnable().bindStub(this), view);
     }
 
     protected void showImage(ImageResource<?> resource){
@@ -138,7 +138,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         if (getState() == State.DESTROYED){
             return;
         }
-        setDrawableToView(new ContainerDrawable(drawable, imageDrawable).relaunchEnable(), view);
+        setDrawableToView(new ContainerDrawable(drawable, imageDrawable).relaunchEnable().bindStub(this), view);
     }
 
     protected void showFailed(){
@@ -162,7 +162,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         if (getState() == State.DESTROYED){
             return;
         }
-        setDrawableToView(new ContainerDrawable(drawable), view);
+        setDrawableToView(new ContainerDrawable(drawable).bindStub(this), view);
     }
 
     /**
