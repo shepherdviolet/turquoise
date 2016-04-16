@@ -19,34 +19,51 @@
 
 package sviolet.turquoise.x.imageloader.drawable.def;
 
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.ResourceBitmapWrapper;
+import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
+ *
+ * <p>you must use this {@link TIBitmapDrawable} instead of {@link BitmapDrawable}
+ * to implements {@link LoadingDrawableFactory}/{@link BackgroundDrawableFactory}/{@link FailedDrawableFactory}</p>
+ *
  * Created by S.Violet on 2016/3/17.
  */
 public class DefaultBackgroundDrawableFactory implements BackgroundDrawableFactory {
 
     public static final int DEFAULT_BACKGROUND_COLOR = 0x00000000;
 
-    private int backgroundImageResId = -1;
+    private ResourceBitmapWrapper backgroundBitmap = new ResourceBitmapWrapper();
     private int backgroundColor = DEFAULT_BACKGROUND_COLOR;
 
     @Override
-    public Drawable create(Params params) {
-        return null;
+    public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
+        Bitmap bitmap = backgroundBitmap.getBitmap(applicationContext.getResources(), logger);
+        if (bitmap != null){
+            //use TIBitmapDrawable instead of BitmapDrawable
+            return new TIBitmapDrawable(bitmap);
+        }
+        return new ColorDrawable(backgroundColor);
     }
 
     @Override
     public void onDestroy() {
-
+        backgroundBitmap.destroy();
     }
 
     public void setBackgroundImageResId(int backgroundImageResId) {
-        this.backgroundImageResId = backgroundImageResId;
+        this.backgroundBitmap.setResId(backgroundImageResId);
     }
 
     public void setBackgroundColor(int backgroundColor) {

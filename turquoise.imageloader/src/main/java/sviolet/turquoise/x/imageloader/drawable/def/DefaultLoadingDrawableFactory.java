@@ -19,17 +19,27 @@
 
 package sviolet.turquoise.x.imageloader.drawable.def;
 
+import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
+import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
+ *
+ * <p>you must use this {@link TIBitmapDrawable} instead of {@link BitmapDrawable}
+ * to implements {@link LoadingDrawableFactory}/{@link BackgroundDrawableFactory}/{@link FailedDrawableFactory}</p>
+ *
  * Created by S.Violet on 2016/3/17.
  */
 public class DefaultLoadingDrawableFactory implements LoadingDrawableFactory {
     @Override
-    public Drawable create(Params params) {
+    public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
         return null;
     }
 

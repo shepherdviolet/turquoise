@@ -19,13 +19,19 @@
 
 package sviolet.turquoise.x.imageloader.drawable;
 
+import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
  * <p>create background of Loaded Image</p>
+ *
+ * <p>you must use this {@link TIBitmapDrawable} instead of {@link BitmapDrawable}
+ * to implements {@link LoadingDrawableFactory}/{@link BackgroundDrawableFactory}/{@link FailedDrawableFactory}</p>
  *
  * Created by S.Violet on 2016/3/16.
  */
@@ -36,10 +42,13 @@ public interface BackgroundDrawableFactory extends Destroyable {
      *
      * <p>it will show after Image loaded, and then gradually disappear.</p>
      *
+     * @param applicationContext applicationContext
+     * @param context context of activity, might be null
      * @param params params of stub
+     * @param logger logger
      * @return Drawable
      */
-    Drawable create(Params params);
+    Drawable create(Context applicationContext, Context context, Params params, TLogger logger);
 
     void setBackgroundImageResId(int backgroundImageResId);
 
