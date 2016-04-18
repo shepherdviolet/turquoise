@@ -306,7 +306,7 @@ public abstract class AbsStub implements Stub {
     @Override
     public final void onLoadSucceed(ImageResource<?> resource) {
         //check resource
-        if (TILoaderUtils.isImageResourceValid(resource)){
+        if (!TILoaderUtils.isImageResourceValid(resource)){
             onLoadFailed();
             return;
         }
