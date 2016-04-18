@@ -77,6 +77,7 @@ public abstract class Engine implements ComponentManager.Component, Server {
      * notify engine to work
      */
     public void ignite(){
+        manager.getLogger().d("[Engine:" + getServerType() + "]ignite");
         dispatchThreadPool.execute(new Runnable() {
             @Override
             public void run() {
@@ -98,10 +99,13 @@ public abstract class Engine implements ComponentManager.Component, Server {
     private Task getTask(){
         if (cache == null || cache.size() <= 0){
             cache = manager.getNodeManager().pullTasks(getServerType());
+            manager.getLogger().d("[Engine:" + getServerType() + "]get task from nodeManager");
         }
         if (cache != null && cache.size() > 0){
+            manager.getLogger().d("[Engine:" + getServerType() + "]get task from cache");
             return cache.remove(0);
         }
+        manager.getLogger().d("[Engine:" + getServerType() + "]get task failed, nothing");
         return null;
     }
 
