@@ -21,6 +21,8 @@ package sviolet.turquoise.x.imageloader.node;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import sviolet.turquoise.utilx.tlogger.TLogger;
+
 /**
  * Created by S.Violet on 2016/2/17.
  */
@@ -32,13 +34,16 @@ public class RequestQueueImpl implements RequestQueue {
     private Task[] tasks;
 
     private final ReentrantLock lock = new ReentrantLock();
+    private TLogger logger;
 
-    public RequestQueueImpl(int size){
+    public RequestQueueImpl(int size, TLogger logger){
         setSize(size);
+        this.logger = logger;
     }
 
     @Override
     public Task put(Task task) {
+        logger.d("[RequestQueueImpl]put: put task, task:" + task.getTaskInfo());
         Task oldTask;
         try{
             lock.lock();
@@ -47,6 +52,9 @@ public class RequestQueueImpl implements RequestQueue {
             positionIncrease();
         }finally {
             lock.unlock();
+        }
+        if (oldTask != null){
+            logger.d("[RequestQueueImpl]put: drop task, task:" + task.getTaskInfo());
         }
         return oldTask;
     }
@@ -61,6 +69,11 @@ public class RequestQueueImpl implements RequestQueue {
             tasks[position] = null;
         }finally {
             lock.unlock();
+        }
+        if (task != null) {
+            logger.d("[RequestQueueImpl]get: get task, task:" + task.getTaskInfo());
+        }else{
+            logger.d("[RequestQueueImpl]get: no task");
         }
         return task;
     }

@@ -95,8 +95,8 @@ public class NodeControllerImpl extends NodeController {
         if (settings == null){
             settings = new NodeSettings.Builder().build();
         }
-        diskRequestQueue = new RequestQueueImpl(settings.getDiskQueueSize());
-        netRequestQueue = new RequestQueueImpl(settings.getNetQueueSize());
+        diskRequestQueue = new RequestQueueImpl(settings.getDiskQueueSize(), manager.getLogger());
+        netRequestQueue = new RequestQueueImpl(settings.getNetQueueSize(), manager.getLogger());
     }
 
     /****************************************************
