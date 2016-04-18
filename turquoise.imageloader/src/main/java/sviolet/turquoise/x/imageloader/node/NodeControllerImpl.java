@@ -403,6 +403,7 @@ public class NodeControllerImpl extends NodeController {
         dispatchThreadPool.execute(new Runnable() {
             @Override
             public void run() {
+                //check state
                 try {
                     lock.lock();
                     if (nodeDestroyed || nodeFrozen){
@@ -414,7 +415,9 @@ public class NodeControllerImpl extends NodeController {
                 }
                 Task task;
                 while((task = responseQueue.get()) != null){
+                    //execute
                     executeTask(task);
+                    //check state
                     try {
                         lock.lock();
                         if (nodeDestroyed || nodeFrozen){
