@@ -82,6 +82,7 @@ public abstract class AbsStub implements Stub {
     /**
      * 1.check state
      * 2.set state to LAUNCHING
+     * @return true if launch valid
      */
     @Override
     public final boolean launch() {
@@ -102,14 +103,15 @@ public abstract class AbsStub implements Stub {
             stateLock.unlock();
         }
         if (execute){
-            onLaunch();
+            return onLaunch();
         }
-        return execute;
+        return false;
     }
 
     /**
      * 1.check state
      * 2.set state to INITIAL
+     * @return true if relaunch valid
      */
     @Override
     public final boolean relaunch() {
@@ -130,9 +132,9 @@ public abstract class AbsStub implements Stub {
             stateLock.unlock();
         }
         if (execute){
-            onRelaunch();
+            return onRelaunch();
         }
-        return execute;
+        return false;
     }
 
     /******************************************************************
@@ -141,18 +143,20 @@ public abstract class AbsStub implements Stub {
 
     /**
      * launch process
+     * @return true if launch valid
      */
-    protected void onLaunch(){
+    protected boolean onLaunch(){
         //load image
-        load();
+        return load();
     }
 
     /**
      * relaunch process
+     * @return true if relaunch valid
      */
-    protected void onRelaunch(){
+    protected boolean onRelaunch(){
         //launch
-        launch();
+        return launch();
     }
 
     /**

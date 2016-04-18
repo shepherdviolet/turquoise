@@ -22,7 +22,9 @@ package sviolet.turquoise.x.imageloader;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import sviolet.turquoise.common.statics.SpecialResourceId;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  *
@@ -87,6 +89,14 @@ public class TILoaderUtils {
     public static boolean reloadView(View view){
         if (!ComponentManager.getInstance().isInitialized()){
             throw new RuntimeException("[TILoaderUtils]can't use before TILoader initialized (TILoader.node(context).load(...) to initialize TILoader)");
+        }
+        synchronized (view) {
+            //get Stub from View Tag
+            Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
+            //destroy obsolete Stub
+            if (tag != null && tag instanceof Stub) {
+                return ((Stub) tag).relaunch();
+            }
         }
         return false;
     }

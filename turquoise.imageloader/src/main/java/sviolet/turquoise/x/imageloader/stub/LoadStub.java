@@ -57,13 +57,13 @@ public abstract class LoadStub<V extends View> extends AbsStub {
      */
 
     @Override
-    protected void onLaunch() {
-        super.onLaunch();
+    protected boolean onLaunch() {
+        return super.onLaunch();
     }
 
     @Override
-    protected void onRelaunch() {
-        showLoading();
+    protected boolean onRelaunch() {
+        return showLoading();
     }
 
     @Override
@@ -88,18 +88,18 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         return super.reload();
     }
 
-    protected void showLoading(){
+    protected boolean showLoading(){
         //get & check view
         final V view = getView();
         if (view == null){
             onDestroy();
-            return;
+            return false;
         }
         //get & check controller
         final NodeController controller = getNodeController();
         if (controller == null){
             onDestroy();
-            return;
+            return false;
         }
         //create and set drawable
         Drawable drawable = controller.getLoadingDrawableFactory().create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLogger());
@@ -107,23 +107,24 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             throw new RuntimeException("[LoadStub]LoadingDrawableFactory create a null drawable");
         }
         if (getState() == State.DESTROYED){
-            return;
+            return false;
         }
         setDrawableToView(new ContainerDrawable(drawable).launchEnable().bindStub(this), view);
+        return true;
     }
 
-    protected void showImage(ImageResource<?> resource){
+    protected boolean showImage(ImageResource<?> resource){
         //get & check view
         final V view = getView();
         if (view == null){
             onDestroy();
-            return;
+            return false;
         }
         //get & check controller
         final NodeController controller = getNodeController();
         if (controller == null){
             onDestroy();
-            return;
+            return false;
         }
         //create and set drawable
         Drawable drawable = controller.getBackgroundDrawableFactory().create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLogger());
@@ -133,26 +134,27 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         Drawable imageDrawable = controller.getServerSettings().getImageResourceHandler().toDrawable(resource);
         if (imageDrawable == null){
             shiftSucceedToFailed();
-            return;
+            return false;
         }
         if (getState() == State.DESTROYED){
-            return;
+            return false;
         }
         setDrawableToView(new ContainerDrawable(drawable, imageDrawable).relaunchEnable().bindStub(this), view);
+        return true;
     }
 
-    protected void showFailed(){
+    protected boolean showFailed(){
         //get & check view
         final V view = getView();
         if (view == null){
             onDestroy();
-            return;
+            return false;
         }
         //get & check controller
         final NodeController controller = getNodeController();
         if (controller == null){
             onDestroy();
-            return;
+            return false;
         }
         //create and set drawable
         Drawable drawable = controller.getFailedDrawableFactory().create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLogger());
@@ -160,9 +162,10 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             throw new RuntimeException("[LoadStub]FailedDrawableFactory create a null drawable");
         }
         if (getState() == State.DESTROYED){
-            return;
+            return false;
         }
         setDrawableToView(new ContainerDrawable(drawable).bindStub(this), view);
+        return true;
     }
 
     /**
