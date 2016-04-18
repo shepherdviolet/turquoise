@@ -72,9 +72,10 @@ public class RequestQueueImpl implements RequestQueue {
         }
         if (task != null) {
             logger.d("[RequestQueueImpl]get: get task, task:" + task.getTaskInfo());
-        }else{
-            logger.d("[RequestQueueImpl]get: no task");
         }
+//        else{
+//            logger.d("[RequestQueueImpl]get: no task");
+//        }
         return task;
     }
 
