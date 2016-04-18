@@ -22,7 +22,7 @@ package sviolet.turquoise.x.imageloader.server;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.model.thread.LazySingleThreadPool;
 import sviolet.turquoise.x.imageloader.ComponentManager;
@@ -42,8 +42,7 @@ public abstract class Engine implements ComponentManager.Component, Server {
     private LazySingleThreadPool dispatchThreadPool = new LazySingleThreadPool();
     private ExecutorService taskThreadPool = Executors.newCachedThreadPool();
 
-    private volatile int taskCount = 0;
-    private final ReentrantLock taskCountLock = new ReentrantLock();
+    private AtomicInteger taskCount = new AtomicInteger(0);
     private List<Task> cache;//single Thread to operate the cache!
 
     /***************************************************************************
@@ -69,19 +68,16 @@ public abstract class Engine implements ComponentManager.Component, Server {
 
     protected void response(Task task){
         manager.getNodeManager().response(task);
-        releaseThread();
-        ignite();
     }
 
     /**
      * notify engine to work
      */
     public void ignite(){
-        manager.getLogger().d("[Engine:" + getServerType() + "]ignite");
         dispatchThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                while (competeThread()){
+                while (taskCount.get() < getMaxThread()){
                     Task task = getTask();
                     if (task != null){
                         executeTask(task);
@@ -110,10 +106,16 @@ public abstract class Engine implements ComponentManager.Component, Server {
     }
 
     private void executeTask(final Task task) {
+        taskCount.incrementAndGet();
         taskThreadPool.execute(new Runnable() {
             @Override
             public void run() {
-                executeNewTask(task);
+                try {
+                    executeNewTask(task);
+                } finally {
+                    taskCount.decrementAndGet();
+                    ignite();
+                }
             }
         });
     }
@@ -142,37 +144,6 @@ public abstract class Engine implements ComponentManager.Component, Server {
             }
         }
         return getComponentManager().getServerSettings().getDecodeHandler();
-    }
-
-    /***************************************************************************
-     * thread control
-     */
-
-    /**
-     * compete thread to execute new task
-     * @return ready to execute new task
-     */
-    private boolean competeThread(){
-        final int maxThread = getMaxThread();
-        try{
-            taskCountLock.lock();
-            if (taskCount < maxThread){
-                taskCount++;
-                return true;
-            }
-        }finally {
-            taskCountLock.unlock();
-        }
-        return false;
-    }
-
-    private void releaseThread(){
-        try{
-            taskCountLock.lock();
-            taskCount--;
-        }finally {
-            taskCountLock.unlock();
-        }
     }
 
 }
