@@ -102,6 +102,7 @@ public class ContainerDrawable extends TransitionDrawable {
         if (!launchEnable){
             return;
         }
+        launchEnable = false;
         final Stub stub = getStub();
         if (stub != null){
             if (stub.launch()){
@@ -116,6 +117,7 @@ public class ContainerDrawable extends TransitionDrawable {
         if (!relaunchEnable){
             return;
         }
+        relaunchEnable = false;
         final Stub stub = getStub();
         if (stub != null) {
             if (stub.relaunch()) {
