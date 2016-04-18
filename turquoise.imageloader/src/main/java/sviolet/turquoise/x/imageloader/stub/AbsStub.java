@@ -263,7 +263,7 @@ public abstract class AbsStub implements Stub {
             stateLock.unlock();
         }
         if (finish) {
-            onLoadCanceled();
+            onLoadCanceledInner();
         }
         return finish;
     }
