@@ -211,7 +211,7 @@ public abstract class AbsStub implements Stub {
         try {
             stateLock.lock();
             if (state == State.LAUNCHING || state == State.LOAD_SUCCEED  || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
-                if (reloadTimes < controller.getNodeSettings().getReloadTimes()){
+                if (canReload(controller)){
                     reloadTimes++;
                     state = State.LOADING;
                     reload = true;
@@ -266,6 +266,30 @@ public abstract class AbsStub implements Stub {
             onLoadCanceledInner();
         }
         return finish;
+    }
+
+    /**
+     * if reloadTimes < limit
+     * @param controller controller, might be null
+     * @return true reloadTimes < limit
+     */
+    private boolean canReload(NodeController controller){
+        //get & check controller
+        if (controller == null){
+            controller = getNodeController();
+        }
+        if (controller == null || controller.isDestroyed()) {
+            return false;
+        }
+        try {
+            stateLock.lock();
+            if (reloadTimes < controller.getNodeSettings().getReloadTimes()){
+                return true;
+            }
+        }finally {
+            stateLock.unlock();
+        }
+        return false;
     }
 
     /******************************************************************
@@ -373,9 +397,11 @@ public abstract class AbsStub implements Stub {
     }
 
     protected void onLoadFailedInner(){
-        if (!reload()){
+        if (!canReload(null)){
             shiftFailedToCanceled();
+            return;
         }
+        reload();
     }
 
     protected void onLoadCanceledInner(){
