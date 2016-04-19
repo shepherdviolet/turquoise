@@ -60,6 +60,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
         }
         //limit
         if (memoryCacheSize < MIN_MEMORY_CACHE_SIZE){
+            manager.getLogger().w("[MemoryCacheServer]initial, setting memoryCacheSize:" + (memoryCacheSize / 1024) + "K < minimumSize, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
             memoryCacheSize = MIN_MEMORY_CACHE_SIZE;
         }
         manager.getLogger().i("[MemoryCacheServer]initial, memoryCacheSize:" + (memoryCacheSize / 1024) + "K");
