@@ -102,14 +102,26 @@ public class ContainerDrawable extends TransitionDrawable {
         if (!launchEnable){
             return;
         }
-        launchEnable = false;
         final Stub stub = getStub();
         if (stub != null){
-            if (stub.launch()){
-                getLogger().d("[ContainerDrawable]launch: key:" + stub.getKey());
-            }else{
-                getLogger().d("[ContainerDrawable]launch failed: key:" + stub.getKey());
+            Stub.LaunchResult result = stub.launch();
+            switch(result){
+                case SUCCEED:
+                    getLogger().d("[ContainerDrawable]launch: key:" + stub.getKey());
+                    launchEnable = false;
+                    break;
+                case RETRY:
+                    getLogger().d("[ContainerDrawable]launch retry: key:" + stub.getKey());
+                    break;
+                case FAILED:
+                default:
+                    getLogger().d("[ContainerDrawable]launch failed: key:" + stub.getKey());
+                    launchEnable = false;
+                    break;
             }
+        }else{
+            getLogger().d("[ContainerDrawable]launch failed, stub missing");
+            launchEnable = false;
         }
     }
 
@@ -117,15 +129,27 @@ public class ContainerDrawable extends TransitionDrawable {
         if (!relaunchEnable){
             return;
         }
-        relaunchEnable = false;
         final Stub stub = getStub();
         if (stub != null) {
-            if (stub.relaunch()) {
-                getLogger().d("[ContainerDrawable]relaunch: key:" + stub.getKey());
-                return;
+            Stub.LaunchResult result = stub.relaunch();
+            switch(result){
+                case SUCCEED:
+                    getLogger().d("[ContainerDrawable]relaunch: key:" + stub.getKey());
+                    relaunchEnable = false;
+                    break;
+                case RETRY:
+                    getLogger().d("[ContainerDrawable]relaunch retry: key:" + stub.getKey());
+                    break;
+                case FAILED:
+                default:
+                    getLogger().d("[ContainerDrawable]relaunch failed: key:" + stub.getKey());
+                    relaunchEnable = false;
+                    break;
             }
+        }else{
+            getLogger().d("[ContainerDrawable]error when drawing, relaunch failed");
+            relaunchEnable = false;
         }
-        getLogger().d("[ContainerDrawable]error when drawing, relaunch failed");
     }
 
     private TLogger getLogger(){

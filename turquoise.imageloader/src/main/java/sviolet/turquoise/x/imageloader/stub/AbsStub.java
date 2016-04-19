@@ -85,13 +85,20 @@ public abstract class AbsStub implements Stub {
      * @return true if launch valid
      */
     @Override
-    public final boolean launch() {
+    public final LaunchResult launch() {
         //get & check controller
         final NodeController controller = getNodeController();
         if (controller == null || controller.isDestroyed()){
             onDestroy();
-            return false;
+            return LaunchResult.FAILED;
         }
+        //check if ready
+        LaunchResult check;
+        if ((check = readyForLaunch()) != LaunchResult.SUCCEED){
+            //try again
+            return check;
+        }
+        //check state
         boolean execute = false;
         try {
             stateLock.lock();
@@ -105,7 +112,7 @@ public abstract class AbsStub implements Stub {
         if (execute){
             return onLaunch();
         }
-        return false;
+        return LaunchResult.FAILED;
     }
 
     /**
@@ -114,12 +121,12 @@ public abstract class AbsStub implements Stub {
      * @return true if relaunch valid
      */
     @Override
-    public final boolean relaunch() {
+    public final LaunchResult relaunch() {
         //get & check controller
         final NodeController controller = getNodeController();
         if (controller == null || controller.isDestroyed()){
             onDestroy();
-            return false;
+            return LaunchResult.FAILED;
         }
         boolean execute = false;
         try {
@@ -134,7 +141,7 @@ public abstract class AbsStub implements Stub {
         if (execute){
             return onRelaunch();
         }
-        return false;
+        return LaunchResult.FAILED;
     }
 
     /******************************************************************
@@ -142,19 +149,27 @@ public abstract class AbsStub implements Stub {
      */
 
     /**
+     * override this method to judge if it's time to launch
+     * @return SUCCEED:ready to launch  RETRY:try launch again  FAILED:can't launch any more
+     */
+    protected LaunchResult readyForLaunch(){
+        return LaunchResult.SUCCEED;
+    }
+
+    /**
      * launch process
      * @return true if launch valid
      */
-    protected boolean onLaunch(){
+    protected LaunchResult onLaunch(){
         //load image
-        return load();
+        return load() ? LaunchResult.SUCCEED : LaunchResult.FAILED;
     }
 
     /**
      * relaunch process
      * @return true if relaunch valid
      */
-    protected boolean onRelaunch(){
+    protected LaunchResult onRelaunch(){
         //launch
         return launch();
     }

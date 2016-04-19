@@ -142,14 +142,24 @@ public class Params {
 
     //function////////////////////////////////////////////////////////////
 
-    public void adjustByView(View view){
+    /**
+     * @param view view
+     * @return true if adjust succeed by view
+     */
+    public boolean adjustByView(View view){
         if (view == null){
-            return;
+            return false;
         }
         if (isSizeMatchView()){
-            values.reqWidth = view.getWidth();
-            values.reqHeight = view.getHeight();
+            int width = view.getWidth();
+            int height = view.getHeight();
+            if (width > 0 && height > 0){
+                values.reqWidth = width;
+                values.reqHeight = height;
+                return true;
+            }
         }
+        return false;
     }
 
     public String getKeySuffix(){

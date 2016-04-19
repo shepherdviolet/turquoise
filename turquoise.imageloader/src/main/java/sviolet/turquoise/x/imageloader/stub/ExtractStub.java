@@ -48,12 +48,12 @@ class ExtractStub extends AbsStub {
      */
 
     @Override
-    protected boolean onLaunch() {
+    protected LaunchResult onLaunch() {
         return super.onLaunch();
     }
 
     @Override
-    protected boolean onRelaunch() {
+    protected LaunchResult onRelaunch() {
         return super.onRelaunch();
     }
 

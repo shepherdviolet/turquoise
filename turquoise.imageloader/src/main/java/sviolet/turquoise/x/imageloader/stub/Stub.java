@@ -66,15 +66,15 @@ public interface Stub extends Destroyable {
 
     /**
      * launch loading process, first time effective
-     * @return return true when launch valid
+     * @return LaunchResult
      */
-    boolean launch();
+    LaunchResult launch();
 
     /**
      * relaunch loading process, effective when launch succeed/failed/canceled
-     * @return return true when launch valid
+     * @return LaunchResult
      */
-    boolean relaunch();
+    LaunchResult relaunch();
 
     /***********************************************************
      * params
@@ -121,6 +121,15 @@ public interface Stub extends Destroyable {
         LOAD_FAILED,
         LOAD_CANCELED,
         DESTROYED
+    }
+
+    enum LaunchResult{
+        //launch succeed, don't launch again
+        SUCCEED,
+        //try launch again
+        RETRY,
+        //can't launch any more
+        FAILED
     }
 
 }

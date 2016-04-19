@@ -56,14 +56,46 @@ public abstract class LoadStub<V extends View> extends AbsStub {
      * control inner
      */
 
+    /**
+     * override this method to judge if it's time to launch
+     * @return SUCCEED:ready to launch  RETRY:try launch again  FAILED:can't launch any more
+     */
     @Override
-    protected boolean onLaunch() {
+    protected LaunchResult readyForLaunch() {
+        //check view
+        final V view = getView();
+        if (view == null){
+            return LaunchResult.FAILED;
+        }
+        //check if size match view
+        if (getParams().isSizeMatchView()){
+            //size match view
+            if (getParams().adjustByView(view)){
+                //adjust succeed
+                return LaunchResult.SUCCEED;
+            }else{
+                //adjust failed
+                /*
+                 * if Params->sizeMatchView is true, make sure View's size is not 0, TILoader will
+                 * waiting for it until view's size > 0. wrap_content is not allowed in this mode.
+                 */
+                getLogger().w("[LoadStub]can't load image if view's size is 0 in \'Params->sizeMatchView\' mode, wrap_content is not allowed in this mode");
+                return LaunchResult.RETRY;
+            }
+        }else{
+            //size not match view
+            return LaunchResult.SUCCEED;
+        }
+    }
+
+    @Override
+    protected LaunchResult onLaunch() {
         return super.onLaunch();
     }
 
     @Override
-    protected boolean onRelaunch() {
-        return showLoading();
+    protected LaunchResult onRelaunch() {
+        return showLoading() ? LaunchResult.SUCCEED : LaunchResult.FAILED;
     }
 
     @Override
