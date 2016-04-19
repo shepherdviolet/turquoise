@@ -104,10 +104,11 @@ public class ContainerDrawable extends TransitionDrawable {
         }
         final Stub stub = getStub();
         if (stub != null){
+            getLogger().d("[ContainerDrawable]launch: key:" + stub.getKey());
             Stub.LaunchResult result = stub.launch();
             switch(result){
                 case SUCCEED:
-                    getLogger().d("[ContainerDrawable]launch: key:" + stub.getKey());
+                    getLogger().d("[ContainerDrawable]launch succeed: key:" + stub.getKey());
                     launchEnable = false;
                     break;
                 case RETRY:
@@ -131,10 +132,11 @@ public class ContainerDrawable extends TransitionDrawable {
         }
         final Stub stub = getStub();
         if (stub != null) {
+            getLogger().d("[ContainerDrawable]relaunch: key:" + stub.getKey());
             Stub.LaunchResult result = stub.relaunch();
             switch(result){
                 case SUCCEED:
-                    getLogger().d("[ContainerDrawable]relaunch: key:" + stub.getKey());
+                    getLogger().d("[ContainerDrawable]relaunch succeed: key:" + stub.getKey());
                     relaunchEnable = false;
                     break;
                 case RETRY:
