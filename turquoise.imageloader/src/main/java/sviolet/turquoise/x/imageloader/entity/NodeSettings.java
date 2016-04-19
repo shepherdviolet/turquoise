@@ -41,6 +41,7 @@ public class NodeSettings implements Destroyable {
         private int diskQueueSize = DEFAULT_DISK_QUEUE_SIZE;
         private int netQueueSize = DEFAULT_NET_QUEUE_SIZE;
         private int reloadTimes = DEFAULT_RELOAD_TIMES;
+        private int imageAppearDuration = DEFAULT_IMAGE_APPEAR_DURATION;
 
         //handler////////////////////////////////////////////////////////////////////////////
 
@@ -109,6 +110,7 @@ public class NodeSettings implements Destroyable {
     private static final int DEFAULT_DISK_QUEUE_SIZE = 10;
     private static final int DEFAULT_NET_QUEUE_SIZE = 10;
     private static final int DEFAULT_RELOAD_TIMES = 2;
+    private static final int DEFAULT_IMAGE_APPEAR_DURATION = 400;
 
     private Values values;
 
@@ -141,6 +143,10 @@ public class NodeSettings implements Destroyable {
 
     public int getReloadTimes(){
         return values.reloadTimes;
+    }
+
+    public int getImageAppearDuration() {
+        return values.imageAppearDuration;
     }
 
     //handler////////////////////////////////////////////////////////////////////////////

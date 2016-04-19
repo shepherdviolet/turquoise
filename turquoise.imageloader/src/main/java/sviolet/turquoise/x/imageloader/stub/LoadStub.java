@@ -139,7 +139,10 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         if (getState() == State.DESTROYED){
             return false;
         }
-        setDrawableToView(new ContainerDrawable(drawable, imageDrawable).relaunchEnable().bindStub(this), view);
+        ContainerDrawable containerDrawable = new ContainerDrawable(drawable, imageDrawable).relaunchEnable().bindStub(this);
+        setDrawableToView(containerDrawable, view);
+        //start animation
+        containerDrawable.startTransition(controller.getNodeSettings().getImageAppearDuration());
         return true;
     }
 
