@@ -189,6 +189,10 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
         });
     }
 
+    public void wipe(File path) throws IOException {
+        DiskLruCache.deleteContents(path);
+    }
+
     public boolean isHealthy(){
         return isHealthy.get();
     }

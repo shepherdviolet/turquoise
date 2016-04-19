@@ -19,11 +19,18 @@
 
 package sviolet.turquoise.x.imageloader;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import java.io.File;
+import java.io.IOException;
+
 import sviolet.turquoise.common.statics.SpecialResourceId;
+import sviolet.turquoise.util.common.CheckUtils;
+import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
@@ -99,6 +106,37 @@ public class TILoaderUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * wipe disk cache data. if you try to wipe when TILoader is loading image, it may cause some problems,
+     * make sure TILoader is not loading image.
+     * @param context context
+     * @param subPath default "TILoader" if null
+     */
+    public static void wipeDiskCache(Context context, String subPath) throws IOException {
+
+        //check subPath
+        if (CheckUtils.isEmpty(subPath)){
+            subPath = ServerSettings.DEFAULT_DISK_CACHE_SUB_PATH;
+        }
+        //external dir
+        File file = DirectoryUtils.getExternalCacheDir(context);
+        if (file != null){
+            file = new File(file.getAbsoluteFile() + File.separator + subPath);
+        }
+        if (file != null && file.exists()){
+            ComponentManager.getInstance().getDiskCacheServer().wipe(file);
+            ComponentManager.getInstance().getLogger().i("[TILoaderUtils]external disk cache wiped");
+        }
+        //inner dir
+        file = new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + subPath);
+        if (file.exists()){
+            ComponentManager.getInstance().getDiskCacheServer().wipe(file);
+            ComponentManager.getInstance().getLogger().i("[TILoaderUtils]inner disk cache wiped");
+        }
+
+        ComponentManager.getInstance().getLogger().i("[TILoaderUtils]disk cache wiped");
     }
 
 }
