@@ -86,7 +86,7 @@ public abstract class Node {
     public abstract void extract(String url, Params params, OnLoadedListener listener);
 
     /**
-     * Node Setting, you should setting before Node initialized (invoke Node.load() will initialize Node)<br/>
+     * Node Setting, you should setting before Node initialized (invoke TILoader.node().load() will initialize Node)<br/>
      * e.g setting in Activity.onCreate()<br/>
      * @param settings Node Settings
      * @return true : setting effective. it will be false when setting after Node initialized, and make no effect.

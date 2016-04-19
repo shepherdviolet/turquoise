@@ -139,13 +139,13 @@ public class ComponentManager {
                     this.serverSettings = settings;
                     result = true;
                 }else{
-                    getLogger().e("[TILoader]setting failed, you should invoke TILoader.setting() before TILoader used (load image)");
+                    getLogger().e("[TILoader]setting failed, you should invoke TILoader.setting() before TILoader initialized (invoke TILoader.setting() or TILoader.node().load() will initialize TILoader)");
                 }
             }finally {
                 componentsInitializeLock.unlock();
             }
         }else{
-            getLogger().e("[TILoader]setting failed, you should invoke TILoader.setting() before TILoader used (load image)");
+            getLogger().e("[TILoader]setting failed, you should invoke TILoader.setting() before TILoader initialized (invoke TILoader.setting() or TILoader.node().load() will initialize TILoader)");
         }
         //initialize
         if (result){

@@ -320,13 +320,13 @@ public class NodeControllerImpl extends NodeController {
                     this.settings = settings;
                     result = true;
                 }else{
-                    manager.getLogger().e("[TILoader]setting Node failed, you should invoke TILoader.node(context).setting() before Node used (load image)");
+                    manager.getLogger().e("[TILoader]setting Node failed, you should invoke TILoader.node(context).setting() before Node initialized (invoke TILoader.node().load() will initialize Node)");
                 }
             }finally {
                 lock.unlock();
             }
         }else{
-            manager.getLogger().e("[TILoader]setting Node failed, you should invoke TILoader.node(context).setting() before Node used (load image)");
+            manager.getLogger().e("[TILoader]setting Node failed, you should invoke TILoader.node(context).setting() before Node initialized (invoke TILoader.node().load() will initialize Node)");
         }
         return result;
     }
