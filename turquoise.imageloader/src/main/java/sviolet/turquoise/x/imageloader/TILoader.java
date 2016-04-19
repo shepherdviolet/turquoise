@@ -76,10 +76,11 @@ public class TILoader {
     }
 
     /**
-     * Server Setting, you should setting before TILoader used (load image)<br/>
+     * [Initialize TILoader]this method will initialize TILoader<br/>
+     * Server Setting, you should setting before TILoader initialized (invoke TILoader.setting() or TILoader.node().load() will initialize TILoader)<br/>
      * e.g setting in Application.onCreate()<br/>
      * @param settings Server Settings
-     * @return true : setting effective. it will be false when setting after TILoader used, and make no effect.
+     * @return true : setting effective. it will be false when setting after TILoader initialized, and make no effect.
      */
     public static boolean setting(ServerSettings settings){
         return ComponentManager.getInstance().settingServer(settings);

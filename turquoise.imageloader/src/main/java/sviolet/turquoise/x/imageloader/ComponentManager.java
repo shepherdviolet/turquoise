@@ -125,6 +125,11 @@ public class ComponentManager {
      * Settings Operations
      **********************************************************************************************/
 
+    /**
+     * [Initialize TILoader]this method will initialize TILoader
+     * @param settings ServerSettings
+     * @return true if setting invalid
+     */
     public boolean settingServer(ServerSettings settings){
         boolean result = false;
         if (!componentsInitialized){
@@ -141,6 +146,10 @@ public class ComponentManager {
             }
         }else{
             getLogger().e("[TILoader]setting failed, you should invoke TILoader.setting() before TILoader used (load image)");
+        }
+        //initialize
+        if (result){
+            waitingForInitialized();
         }
         return result;
     }

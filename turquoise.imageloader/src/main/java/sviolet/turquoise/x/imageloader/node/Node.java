@@ -37,6 +37,8 @@ import sviolet.turquoise.x.imageloader.server.Server;
 public abstract class Node {
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
+     * [Initialize Node]this method will initialize Node<br/>
      * loading image to view
      * @param url URL
      * @param view target View
@@ -44,6 +46,8 @@ public abstract class Node {
     public abstract void load(String url, View view);
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
+     * [Initialize Node]this method will initialize Node<br/>
      * loading image to view
      * @param url URL
      * @param params loading params
@@ -52,6 +56,8 @@ public abstract class Node {
     public abstract void load(String url, Params params, View view);
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
+     * [Initialize Node]this method will initialize Node<br/>
      * loading image to background of view
      * @param url URL
      * @param view View
@@ -59,6 +65,8 @@ public abstract class Node {
     public abstract void loadBackground(String url, View view);
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
+     * [Initialize Node]this method will initialize Node<br/>
      * loading image to background of view
      * @param url URL
      * @param params loading params
@@ -67,6 +75,8 @@ public abstract class Node {
     public abstract void loadBackground(String url, Params params, View view);
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
+     * [Initialize Node]this method will initialize Node<br/>
      * extract Image, without memory cache and disk cache<br/>
      * you should recycle Bitmap by yourself<br/>
      * @param url URL
@@ -76,10 +86,10 @@ public abstract class Node {
     public abstract void extract(String url, Params params, OnLoadedListener listener);
 
     /**
-     * Node Setting, you should setting before Node used (load image)<br/>
+     * Node Setting, you should setting before Node initialized (invoke Node.load() will initialize Node)<br/>
      * e.g setting in Activity.onCreate()<br/>
      * @param settings Node Settings
-     * @return true : setting effective. it will be false when setting after Node used, and make no effect.
+     * @return true : setting effective. it will be false when setting after Node initialized, and make no effect.
      */
     public abstract boolean setting(NodeSettings settings);
 
