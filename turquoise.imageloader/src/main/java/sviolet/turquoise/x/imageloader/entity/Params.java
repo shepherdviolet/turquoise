@@ -175,6 +175,6 @@ public class Params {
     }
 
     public Params copy() {
-        return new Params((Values) values.copy());
+        return new Params(values.copy());
     }
 }
