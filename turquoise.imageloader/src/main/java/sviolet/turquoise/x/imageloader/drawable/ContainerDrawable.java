@@ -104,7 +104,6 @@ public class ContainerDrawable extends TransitionDrawable {
         }
         final Stub stub = getStub();
         if (stub != null){
-            getLogger().d("[ContainerDrawable]launch: key:" + stub.getKey());
             Stub.LaunchResult result = stub.launch();
             switch(result){
                 case SUCCEED:
@@ -132,7 +131,6 @@ public class ContainerDrawable extends TransitionDrawable {
         }
         final Stub stub = getStub();
         if (stub != null) {
-            getLogger().d("[ContainerDrawable]relaunch: key:" + stub.getKey());
             Stub.LaunchResult result = stub.relaunch();
             switch(result){
                 case SUCCEED:
