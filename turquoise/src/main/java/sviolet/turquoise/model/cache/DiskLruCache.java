@@ -252,14 +252,14 @@ public final class DiskLruCache implements Closeable {
     public static void deleteContents(File dir) throws IOException {
         File[] files = dir.listFiles();
         if (files == null) {
-            throw new IllegalArgumentException("not a directory: " + dir);
+            throw new IllegalArgumentException("[DiskLruCache]deleteContents: not a directory: " + dir);
         }
         for (File file : files) {
             if (file.isDirectory()) {
                 deleteContents(file);
             }
             if (!file.delete()) {
-                throw new IOException("failed to delete file: " + file);
+                throw new IOException("[DiskLruCache]deleteContents: failed to delete file: " + file);
             }
         }
     }
