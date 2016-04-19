@@ -40,63 +40,58 @@ import sviolet.turquoise.x.imageloader.stub.Stub;
 public class TILoaderUtils {
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
      * check if ImageResource Valid
      * @param resource ImageResource
      * @return true:valid
      */
     public static boolean isImageResourceValid(ImageResource resource){
-        if (!ComponentManager.getInstance().isInitialized()){
-            throw new RuntimeException("[TILoaderUtils]can't use before TILoader initialized (TILoader.node(context).load(...) to initialize TILoader)");
-        }
+        ComponentManager.getInstance().waitingForInitialized();
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().isValid(resource);
     }
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
      * judge whether the two resource are equal.
      * @param src resource
      * @param dst resource
      * @return true:equal
      */
     public static boolean isImageResourceEqual(ImageResource<?> src, ImageResource<?> dst){
-        if (!ComponentManager.getInstance().isInitialized()){
-            throw new RuntimeException("[TILoaderUtils]can't use before TILoader initialized (TILoader.node(context).load(...) to initialize TILoader)");
-        }
+        ComponentManager.getInstance().waitingForInitialized();
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().isEqual(src, dst);
     }
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
      * recycle imageResource
      * @param resource imageResource which will be recycled
      * @return true:recycled
      */
     public static boolean recycleImageResource(ImageResource<?> resource){
-        if (!ComponentManager.getInstance().isInitialized()){
-            throw new RuntimeException("[TILoaderUtils]can't use before TILoader initialized (TILoader.node(context).load(...) to initialize TILoader)");
-        }
+        ComponentManager.getInstance().waitingForInitialized();
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().recycle(resource);
     }
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
      * convert ImageResource to drawable
      * @param resource ImageResource
      * @return drawable
      */
     public static Drawable imageResourceToDrawable(ImageResource<?> resource){
-        if (!ComponentManager.getInstance().isInitialized()){
-            throw new RuntimeException("[TILoaderUtils]can't use before TILoader initialized (TILoader.node(context).load(...) to initialize TILoader)");
-        }
+        ComponentManager.getInstance().waitingForInitialized();
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().toDrawable(resource);
     }
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
      * reload View which has been canceled
      * @param view view
      * @return true:this view can be reload
      */
     public static boolean reloadView(View view){
-        if (!ComponentManager.getInstance().isInitialized()){
-            throw new RuntimeException("[TILoaderUtils]can't use before TILoader initialized (TILoader.node(context).load(...) to initialize TILoader)");
-        }
+        ComponentManager.getInstance().waitingForInitialized();
         synchronized (view) {
             //get Stub from View Tag
             Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
@@ -109,13 +104,14 @@ public class TILoaderUtils {
     }
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
      * wipe disk cache data. if you try to wipe when TILoader is loading image, it may cause some problems,
      * make sure TILoader is not loading image.
      * @param context context
      * @param subPath default "TILoader" if null
      */
     public static void wipeDiskCache(Context context, String subPath) throws IOException {
-
+        ComponentManager.getInstance().waitingForInitialized();
         //check subPath
         if (CheckUtils.isEmpty(subPath)){
             subPath = ServerSettings.DEFAULT_DISK_CACHE_SUB_PATH;
