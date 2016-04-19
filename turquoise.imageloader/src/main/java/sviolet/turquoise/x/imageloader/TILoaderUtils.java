@@ -97,7 +97,7 @@ public class TILoaderUtils {
             Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
             //destroy obsolete Stub
             if (tag != null && tag instanceof Stub) {
-                return ((Stub) tag).relaunch();
+                return ((Stub) tag).relaunch() == Stub.LaunchResult.SUCCEED;
             }
         }
         return false;
