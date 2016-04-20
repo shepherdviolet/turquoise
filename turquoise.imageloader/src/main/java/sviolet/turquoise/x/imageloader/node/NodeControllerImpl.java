@@ -459,6 +459,7 @@ public class NodeControllerImpl extends NodeController {
             postDispatch();
             manager.getNetEngine().ignite();
             manager.getDiskEngine().ignite();
+            manager.getLogger().d("[NodeControllerImpl]unfreeze nodeId:" + nodeId);
         }
     }
 
@@ -480,6 +481,7 @@ public class NodeControllerImpl extends NodeController {
         }finally {
             lock.unlock();
         }
+        manager.getLogger().d("[NodeControllerImpl]freeze nodeId:" + nodeId);
     }
 
     @Override
@@ -508,6 +510,7 @@ public class NodeControllerImpl extends NodeController {
                 settings.onDestroy();
             }
             manager.getNodeManager().scrapNode(node);
+            manager.getLogger().d("[NodeControllerImpl]destroyed nodeId:" + nodeId);
         }
     }
 
