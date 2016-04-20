@@ -30,6 +30,7 @@ import sviolet.demoaimageloader.common.DemoDefault;
 import sviolet.demoaimageloader.common.DemoList;
 import sviolet.demoaimageloader.common.DemoListAdapter;
 import sviolet.demoaimageloader.demos.BasicActivity;
+import sviolet.demoaimageloader.demos.ListViewActivity;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
@@ -44,7 +45,8 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 
 // Demo列表
 @DemoList({
-        BasicActivity.class
+        BasicActivity.class,
+        ListViewActivity.class
 })
 
 /**************************************************************

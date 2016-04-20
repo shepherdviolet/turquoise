@@ -1,6 +1,7 @@
 package sviolet.demoaimageloader.demos;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 
 import java.io.IOException;
@@ -10,8 +11,10 @@ import sviolet.demoaimageloader.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
+import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 
 /**
@@ -33,8 +36,12 @@ import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 )
 public class BasicActivity extends TActivity {
 
-    @ResourceId(R.id.basic_main_imageview)
-    private ImageView imageView;
+    @ResourceId(R.id.basic_main_imageview1)
+    private ImageView imageView1;
+    @ResourceId(R.id.basic_main_imageview2)
+    private ImageView imageView2;
+    @ResourceId(R.id.basic_main_imageview3)
+    private ImageView imageView3;
 
 //    private Params params = new Params.Builder()
 //            .setBitmapConfig(Bitmap.Config.ARGB_8888)
@@ -44,7 +51,7 @@ public class BasicActivity extends TActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TILoader.setting(new ServerSettings.Builder().setMemoryCachePercent(this, 0.001f).build());
+
 
         try {
             TILoaderUtils.wipeDiskCache(this, null);
@@ -52,7 +59,21 @@ public class BasicActivity extends TActivity {
             e.printStackTrace();
         }
 
-        TILoader.node(this).load("https://avatars0.githubusercontent.com/u/12589661?v=3&s=460", imageView);
+//        TILoader.node(this).setting(new NodeSettings.Builder().build());
+
+        TILoader.node(this).load("https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/slate.jpg", imageView1);
+        TILoader.node(this).load("https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/turquoise.jpg", imageView2);
+        TILoader.node(this).load("https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/violet.jpg", imageView3);
+
+        imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TILoaderUtils.wipeMemoryCache();
+                imageView1.invalidate();
+                imageView2.invalidate();
+                imageView3.invalidate();
+            }
+        });
 
     }
 }

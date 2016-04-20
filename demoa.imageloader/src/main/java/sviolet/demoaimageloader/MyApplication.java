@@ -20,11 +20,14 @@
 package sviolet.demoaimageloader;
 
 import sviolet.demoaimageloader.common.Constants;
+import sviolet.demoaimageloader.demos.extra.MyNetworkLoadHandler;
 import sviolet.turquoise.enhance.app.TApplication;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
 import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.imageloader.TILoader;
+import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 
 @ApplicationSettings(
         DEBUG = BuildConfig._DEBUG //Debug模式, 装载DebugSetting配置
@@ -46,6 +49,18 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
         logGlobalLevel = TLogger.ERROR | TLogger.INFO | TLogger.WARNING | TLogger.DEBUG
 )
 public class MyApplication extends TApplication {
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        TILoader.setting(new ServerSettings.Builder()
+                .setMemoryCachePercent(getApplicationContext(), 0.1f)
+                .setDiskCacheSize(10)
+//                .setNetworkLoadHandler(new MyNetworkLoadHandler())
+                .setLogEnabled(false)
+                .build());
+    }
 
     @Override
     public void onUncaughtException(Throwable ex, boolean isCrashRestart) {

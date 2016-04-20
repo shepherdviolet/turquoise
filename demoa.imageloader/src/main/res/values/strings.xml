@@ -2,4 +2,5 @@
     <string name="app_name">TILoader Demo</string>
 
     <string name="basic_title">Basic Usage</string>
+    <string name="list_view_title">ListView Usage</string>
 </resources>

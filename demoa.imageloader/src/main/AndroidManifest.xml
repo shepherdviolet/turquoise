@@ -25,6 +25,8 @@
 
         <activity android:name=".demos.BasicActivity"
             android:label="@string/basic_title"/>
+        <activity android:name=".demos.ListViewActivity"
+            android:label="@string/list_view_title"/>
 
     </application>
 
