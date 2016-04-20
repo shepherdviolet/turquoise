@@ -85,6 +85,7 @@ public class NodeControllerImpl extends NodeController {
             if (!nodeInitialized){
                 onInitialize();
                 nodeInitialized = true;
+                manager.getLogger().i("[NodeControllerImpl]initialized nodeId:" + nodeId);
             }
         } finally {
             lock.unlock();
@@ -459,7 +460,7 @@ public class NodeControllerImpl extends NodeController {
             postDispatch();
             manager.getNetEngine().ignite();
             manager.getDiskEngine().ignite();
-            manager.getLogger().d("[NodeControllerImpl]unfreeze nodeId:" + nodeId);
+            manager.getLogger().i("[NodeControllerImpl]unfreeze nodeId:" + nodeId);
         }
     }
 
@@ -481,7 +482,7 @@ public class NodeControllerImpl extends NodeController {
         }finally {
             lock.unlock();
         }
-        manager.getLogger().d("[NodeControllerImpl]freeze nodeId:" + nodeId);
+        manager.getLogger().i("[NodeControllerImpl]freeze nodeId:" + nodeId);
     }
 
     @Override
@@ -510,7 +511,7 @@ public class NodeControllerImpl extends NodeController {
                 settings.onDestroy();
             }
             manager.getNodeManager().scrapNode(node);
-            manager.getLogger().d("[NodeControllerImpl]destroyed nodeId:" + nodeId);
+            manager.getLogger().i("[NodeControllerImpl]destroyed nodeId:" + nodeId);
         }
     }
 
