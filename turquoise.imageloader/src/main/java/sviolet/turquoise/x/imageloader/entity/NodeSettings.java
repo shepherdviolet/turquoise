@@ -87,6 +87,13 @@ public class NodeSettings implements Destroyable {
 
         //handler////////////////////////////////////////////////////////////////////////////
 
+        public Builder setNetworkLoadHandler(NetworkLoadHandler networkLoadHandler){
+            if (networkLoadHandler != null){
+                values.networkLoadHandler = networkLoadHandler;
+            }
+            return this;
+        }
+
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
         public Builder setLoadingDrawableFactory(LoadingDrawableFactory factory){
