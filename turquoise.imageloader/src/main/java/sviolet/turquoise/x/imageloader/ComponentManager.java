@@ -182,7 +182,7 @@ public class ComponentManager {
         diskCacheServer.init(ComponentManager.getInstance());
         diskEngine.init(ComponentManager.getInstance());
         netEngine.init(ComponentManager.getInstance());
-        getLogger().i("TILoader initialized");
+        getLogger().i("[ComponentManager]TILoader initialized");
     }
 
     /**
