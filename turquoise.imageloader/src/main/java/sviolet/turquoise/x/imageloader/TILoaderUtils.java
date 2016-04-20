@@ -135,4 +135,13 @@ public class TILoaderUtils {
         ComponentManager.getInstance().getLogger().i("[TILoaderUtils]disk cache wiped");
     }
 
+    /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
+     * wipe TILoader's memory cache, all images will be recycled
+     */
+    public static void wipeMemoryCache(){
+        ComponentManager.getInstance().waitingForInitialized();
+        ComponentManager.getInstance().getMemoryCacheServer().removeAll();
+    }
+
 }
