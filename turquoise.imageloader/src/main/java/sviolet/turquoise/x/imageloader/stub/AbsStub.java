@@ -400,6 +400,7 @@ public abstract class AbsStub implements Stub {
         }
         if (destroy){
             onDestroyInner();
+            getLogger().d("[AbsStub]destroyed: key:" + getKey());
         }
     }
 
@@ -427,10 +428,7 @@ public abstract class AbsStub implements Stub {
      * called when destroy
      */
     protected void onDestroyInner(){
-        if (nodeController != null){
-            nodeController.clear();
-        }
-        getLogger().d("[AbsStub]destroyed: key:" + getKey());
+
     }
 
     /***********************************************************
