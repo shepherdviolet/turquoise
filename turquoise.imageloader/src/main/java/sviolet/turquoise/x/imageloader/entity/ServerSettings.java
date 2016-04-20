@@ -97,6 +97,11 @@ public class ServerSettings implements ComponentManager.Component{
 
         //settings////////////////////////////////////////////////////////////////////////////
 
+        public Builder setLogEnabled(boolean enabled){
+            values.logEnabled = enabled;
+            return this;
+        }
+
         /**
          * set the max thread of network loading
          * @param maxThread max thread num, >=1
