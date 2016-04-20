@@ -65,7 +65,7 @@ public class ListViewActivity extends TActivity {
 
         TILoader.node(this).setting(new NodeSettings.Builder()
                 .setNetworkLoadHandler(new MyNetworkLoadHandler())
-                .setLoadingDrawableFactory(new DefaultLoadingDrawableFactory().setAnimationEnabled(false).setBackgroundColor(0xFFF0F0F0))
+                .setLoadingDrawableFactory(new DefaultLoadingDrawableFactory().setBackgroundColor(0xFFF0F0F0))
                 .setBackgroundColor(0xFFF0F0F0)
                 .setDiskQueueSize(25)
                 .setNetQueueSize(25)
