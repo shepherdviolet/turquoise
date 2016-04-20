@@ -166,6 +166,13 @@ public class ServerSettings implements ComponentManager.Component{
 
         //handler////////////////////////////////////////////////////////////////////////////
 
+        public Builder setNetworkLoadHandler(NetworkLoadHandler networkLoadHandler){
+            if (networkLoadHandler != null){
+                values.networkLoadHandler = networkLoadHandler;
+            }
+            return this;
+        }
+
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
         public Builder setCustomStubFactory(StubFactory customStubFactory){
