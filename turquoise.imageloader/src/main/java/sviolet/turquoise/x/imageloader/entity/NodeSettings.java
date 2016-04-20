@@ -69,6 +69,22 @@ public class NodeSettings implements Destroyable {
 
         //settings////////////////////////////////////////////////////////////////////////////
 
+        public Builder setDiskQueueSize(int diskQueueSize){
+            if (diskQueueSize < 1){
+                throw new RuntimeException("[NodeSettings]diskQueueSize must >= 1");
+            }
+            values.diskQueueSize = diskQueueSize;
+            return this;
+        }
+
+        public Builder setNetQueueSize(int netQueueSize){
+            if (netQueueSize < 1){
+                throw new RuntimeException("[NodeSettings]netQueueSize must >= 1");
+            }
+            values.netQueueSize = netQueueSize;
+            return this;
+        }
+
         //handler////////////////////////////////////////////////////////////////////////////
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
