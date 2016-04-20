@@ -430,6 +430,7 @@ public abstract class AbsStub implements Stub {
         if (nodeController != null){
             nodeController.clear();
         }
+        getLogger().d("[AbsStub]destroyed: key:" + getKey());
     }
 
     /***********************************************************
