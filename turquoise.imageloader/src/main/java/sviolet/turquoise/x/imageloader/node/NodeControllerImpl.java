@@ -107,8 +107,8 @@ public class NodeControllerImpl extends NodeController {
     public void execute(Stub stub) {
         try {
             lock.lock();
-            if (nodeDestroyed){
-                getLogger().d("[NodeControllerImpl]node destroyed, skip execute");
+            if (nodeDestroyed || !nodeInitialized){
+                getLogger().d("[NodeControllerImpl]node destroyed or not initialized, skip execute");
                 return;
             }
         } finally {
@@ -143,8 +143,8 @@ public class NodeControllerImpl extends NodeController {
     Task pullTask(Server.Type type) {
         try {
             lock.lock();
-            if (nodeDestroyed || nodeFrozen){
-                getLogger().d("[NodeControllerImpl]node destroyed/frozen, skip pullTask");
+            if (nodeDestroyed || nodeFrozen || !nodeInitialized){
+                getLogger().d("[NodeControllerImpl]node destroyed/frozen or not initialized, skip pullTask");
                 return null;
             }
         } finally {
@@ -166,8 +166,8 @@ public class NodeControllerImpl extends NodeController {
     void response(Task task) {
         try {
             lock.lock();
-            if (nodeDestroyed){
-                getLogger().d("[NodeControllerImpl]node destroyed, skip response");
+            if (nodeDestroyed || !nodeInitialized){
+                getLogger().d("[NodeControllerImpl]node destroyed or not initialized, skip response");
                 return;
             }
         } finally {
