@@ -98,6 +98,30 @@ public class ServerSettings implements ComponentManager.Component{
         //settings////////////////////////////////////////////////////////////////////////////
 
         /**
+         * set the max thread of network loading
+         * @param maxThread max thread num, >=1
+         */
+        public Builder setNetworkLoadMaxThread(int maxThread){
+            if (maxThread < 1){
+                throw new RuntimeException("[ServerSettings]networkLoadMaxThread must >= 1");
+            }
+            values.networkLoadMaxThread = maxThread;
+            return this;
+        }
+
+        /**
+         * set the max thread of disk loading
+         * @param maxThread max thread num, >=1
+         */
+        public Builder setDiskLoadMaxThread(int maxThread){
+            if (maxThread < 1){
+                throw new RuntimeException("[ServerSettings]diskLoadMaxThread must >= 1");
+            }
+            values.diskLoadMaxThread = maxThread;
+            return this;
+        }
+
+        /**
          * set the memory cache size by percent of app's MemoryClass
          * @param context context
          * @param percent percent of app's MemoryClass (0f-0.5f)
