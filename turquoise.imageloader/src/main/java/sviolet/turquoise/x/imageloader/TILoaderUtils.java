@@ -142,6 +142,7 @@ public class TILoaderUtils {
     public static void wipeMemoryCache(){
         ComponentManager.getInstance().waitingForInitialized();
         ComponentManager.getInstance().getMemoryCacheServer().removeAll();
+        ComponentManager.getInstance().getLogger().i("[TILoaderUtils]memory cache wiped");
     }
 
 }
