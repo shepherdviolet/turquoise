@@ -42,7 +42,6 @@ public abstract class AbsStub implements Stub {
 
     private String url;//loading url
     private Params params;//loading params
-    private String key;//key (include params)
     private String resourceKey;//resource key
 
     //stat///////////////////////////////
@@ -51,7 +50,7 @@ public abstract class AbsStub implements Stub {
     private int reloadTimes = 0;
 
     private WeakReference<NodeController> nodeController;
-    private final ReentrantLock stateLock = new ReentrantLock();
+//    private final ReentrantLock stateLock = new ReentrantLock();
 
     public AbsStub(String url, Params params){
         if (url == null){
@@ -99,17 +98,8 @@ public abstract class AbsStub implements Stub {
             return check;
         }
         //check state
-        boolean execute = false;
-        try {
-            stateLock.lock();
-            if (state == State.INITIAL) {
-                state = State.LAUNCHING;
-                execute = true;
-            }
-        }finally {
-            stateLock.unlock();
-        }
-        if (execute){
+        if (state == State.INITIAL) {
+            state = State.LAUNCHING;
             return onLaunch();
         }
         return LaunchResult.FAILED;
@@ -128,19 +118,13 @@ public abstract class AbsStub implements Stub {
             onDestroy();
             return LaunchResult.FAILED;
         }
-        boolean execute = false;
-        try {
-            stateLock.lock();
-            if (state == State.LOAD_SUCCEED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
-                state = State.INITIAL;
-                execute = true;
-            }
-        }finally {
-            stateLock.unlock();
-        }
-        if (execute){
+
+        //check state
+        if (state == State.LOAD_SUCCEED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
+            state = State.INITIAL;
             return onRelaunch();
         }
+
         return LaunchResult.FAILED;
     }
 
@@ -189,21 +173,14 @@ public abstract class AbsStub implements Stub {
             onDestroy();
             return false;
         }
-        boolean execute = false;
-        try {
-            stateLock.lock();
-            if (state == State.LAUNCHING || state == State.LOAD_SUCCEED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
-                state = State.LOADING;
-                reloadTimes = 0;
-                execute = true;
-            }
-        }finally {
-            stateLock.unlock();
-        }
-        if (execute) {
+
+        if (state == State.LAUNCHING || state == State.LOAD_SUCCEED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
+            state = State.LOADING;
+            reloadTimes = 0;
             controller.execute(this);
+            return true;
         }
-        return execute;
+        return false;
     }
 
     /**
@@ -222,23 +199,17 @@ public abstract class AbsStub implements Stub {
             onDestroy();
             return false;
         }
-        boolean reload = false;
-        try {
-            stateLock.lock();
-            if (state == State.LAUNCHING || state == State.LOAD_SUCCEED  || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
-                if (canReload(controller)){
-                    reloadTimes++;
-                    state = State.LOADING;
-                    reload = true;
-                }
+
+        if (state == State.LAUNCHING || state == State.LOAD_SUCCEED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
+            if (canReload(controller)) {
+                reloadTimes++;
+                state = State.LOADING;
+                controller.execute(this);
+                return true;
             }
-        }finally {
-            stateLock.unlock();
         }
-        if (reload) {
-            controller.execute(this);
-        }
-        return reload;
+
+        return false;
     }
 
     /**
@@ -246,20 +217,14 @@ public abstract class AbsStub implements Stub {
      * @return true:shift succeed
      */
     protected boolean shiftSucceedToFailed(){
-        boolean finish = false;
-        try {
-            stateLock.lock();
-            if (state == State.LOAD_SUCCEED) {
-                state = State.LOAD_FAILED;
-                finish = true;
-            }
-        }finally {
-            stateLock.unlock();
-        }
-        if (finish) {
+
+        if (state == State.LOAD_SUCCEED) {
+            state = State.LOAD_FAILED;
             onLoadFailedInner();
+            return true;
         }
-        return finish;
+
+        return false;
     }
 
     /**
@@ -267,20 +232,14 @@ public abstract class AbsStub implements Stub {
      * @return true:shift succeed
      */
     protected boolean shiftFailedToCanceled(){
-        boolean finish = false;
-        try {
-            stateLock.lock();
-            if (state == State.LOAD_FAILED) {
-                state = State.LOAD_CANCELED;
-                finish = true;
-            }
-        }finally {
-            stateLock.unlock();
-        }
-        if (finish) {
+
+        if (state == State.LOAD_FAILED) {
+            state = State.LOAD_CANCELED;
             onLoadCanceledInner();
+            return true;
         }
-        return finish;
+
+        return false;
     }
 
     /**
@@ -296,15 +255,9 @@ public abstract class AbsStub implements Stub {
         if (controller == null || controller.isDestroyed()) {
             return false;
         }
-        try {
-            stateLock.lock();
-            if (reloadTimes < controller.getNodeSettings().getReloadTimes()){
-                return true;
-            }
-        }finally {
-            stateLock.unlock();
-        }
-        return false;
+
+        return reloadTimes < controller.getNodeSettings().getReloadTimes();
+
     }
 
     /******************************************************************
@@ -325,19 +278,12 @@ public abstract class AbsStub implements Stub {
             onLoadFailed();
             return;
         }
-        boolean finish = false;
-        try {
-            stateLock.lock();
-            if (state == State.LOADING) {
-                state = State.LOAD_SUCCEED;
-                finish = true;
-            }
-        }finally {
-            stateLock.unlock();
-        }
-        if (finish) {
+
+        if (state == State.LOADING) {
+            state = State.LOAD_SUCCEED;
             onLoadSucceedInner(resource);
         }
+
     }
 
     /**
@@ -346,19 +292,12 @@ public abstract class AbsStub implements Stub {
      */
     @Override
     public final void onLoadFailed() {
-        boolean finish = false;
-        try {
-            stateLock.lock();
-            if (state == State.LOADING) {
-                state = State.LOAD_FAILED;
-                finish = true;
-            }
-        }finally {
-            stateLock.unlock();
-        }
-        if (finish) {
+
+        if (state == State.LOADING) {
+            state = State.LOAD_FAILED;
             onLoadFailedInner();
         }
+
     }
 
     /**
@@ -367,19 +306,12 @@ public abstract class AbsStub implements Stub {
      */
     @Override
     public final void onLoadCanceled() {
-        boolean cancel = false;
-        try {
-            stateLock.lock();
-            if (state == State.LOADING) {
-                state = State.LOAD_CANCELED;
-                cancel = true;
-            }
-        }finally {
-            stateLock.unlock();
-        }
-        if (cancel) {
+
+        if (state == State.LOADING) {
+            state = State.LOAD_CANCELED;
             onLoadCanceledInner();
         }
+
     }
 
     /**
@@ -388,20 +320,13 @@ public abstract class AbsStub implements Stub {
      */
     @Override
     public final void onDestroy() {
-        boolean destroy = false;
-        try {
-            stateLock.lock();
-            if (state != State.DESTROYED) {
-                state = State.DESTROYED;
-                destroy = true;
-            }
-        }finally {
-            stateLock.unlock();
-        }
-        if (destroy){
+
+        if (state != State.DESTROYED) {
+            state = State.DESTROYED;
             onDestroyInner();
             getLogger().d("[AbsStub]destroyed: key:" + getKey());
         }
+
     }
 
     /***********************************************************
@@ -463,12 +388,7 @@ public abstract class AbsStub implements Stub {
 
     @Override
     public State getState() {
-        try{
-            stateLock.lock();
-            return state;
-        }finally {
-            stateLock.unlock();
-        }
+        return state;
     }
 
     @Override
