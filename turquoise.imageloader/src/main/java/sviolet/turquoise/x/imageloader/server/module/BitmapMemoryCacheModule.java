@@ -111,13 +111,13 @@ public class BitmapMemoryCacheModule extends CompatLruCache<String, Bitmap> {
         setSize(0);
 
         //打印日志
-        logger.d("BitmapMemoryCacheModule removeAll recycled:" + counter);
+        logger.d("[BitmapMemoryCacheModule]removeAll recycled:" + counter);
         logger.d(getMemoryReport());
     }
 
     public String getMemoryReport() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("MemoryReport: ");
+        stringBuilder.append("[BitmapMemoryCacheModule]MemoryReport: ");
         stringBuilder.append("[Cache]: ");
         stringBuilder.append(size() / 1024);
         stringBuilder.append("K/");
