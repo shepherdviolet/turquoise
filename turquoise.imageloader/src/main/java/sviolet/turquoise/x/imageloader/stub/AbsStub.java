@@ -20,7 +20,6 @@
 package sviolet.turquoise.x.imageloader.stub;
 
 import java.lang.ref.WeakReference;
-import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.util.conversion.ByteUtils;
 import sviolet.turquoise.util.crypt.DigestCipher;
@@ -50,7 +49,6 @@ public abstract class AbsStub implements Stub {
     private int reloadTimes = 0;
 
     private WeakReference<NodeController> nodeController;
-//    private final ReentrantLock stateLock = new ReentrantLock();
 
     public AbsStub(String url, Params params){
         if (url == null){
