@@ -218,7 +218,7 @@ public class ServerSettings implements ComponentManager.Component{
     public static final int DEFAULT_MEMORY_CACHE_SIZE = 0;
     public static final int DEFAULT_DISK_CACHE_SIZE = 10 * 1024 * 1024;
     public static final int DEFAULT_NETWORK_LOAD_MAX_THREAD = 3;
-    public static final int DEFAULT_DISK_LOAD_MAX_THREAD = 10;
+    public static final int DEFAULT_DISK_LOAD_MAX_THREAD = 3;
 
     public static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
     public static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
