@@ -65,15 +65,17 @@ public class ListViewActivity extends TActivity {
 
         TILoader.node(this).setting(new NodeSettings.Builder()
                 .setNetworkLoadHandler(new MyNetworkLoadHandler())
-                .setLoadingDrawableFactory(new DefaultLoadingDrawableFactory().setBackgroundColor(0xFFF0F0F0))
+                .setLoadingDrawableFactory(new DefaultLoadingDrawableFactory().setAnimationEnabled(true).setBackgroundColor(0xFFF0F0F0))
                 .setBackgroundColor(0xFFF0F0F0)
-                .setDiskQueueSize(25)
+                .setMemoryQueueSize(15)
+                .setDiskQueueSize(20)
                 .setNetQueueSize(25)
                 .build());
 
         //设置适配器, 传入图片加载器, 图片解码工具
         adapter = new ListViewAdapter(this, makeItemList());
         listView.setAdapter(adapter);
+        listView.setOnScrollListener(TILoader.node(this).newPauseOnListScrollListener());
     }
 
     @Override

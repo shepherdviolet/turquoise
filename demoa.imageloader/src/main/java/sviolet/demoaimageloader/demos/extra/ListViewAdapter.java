@@ -31,6 +31,7 @@ import java.util.List;
 import sviolet.demoaimageloader.R;
 import sviolet.turquoise.ui.util.ViewHolder;
 import sviolet.turquoise.x.imageloader.TILoader;
+import sviolet.turquoise.x.imageloader.TILoaderUtils;
 
 /**
  * ListView适配器
@@ -81,10 +82,20 @@ public class ListViewAdapter extends BaseAdapter {
         images[3] = (ImageView) holder.get(R.id.list_view_main_item_imageview3);
         images[4] = (ImageView) holder.get(R.id.list_view_main_item_imageview4);
 
+        if (holder.createTimes() == 1){
+            for (int i = 0 ; i < 5 ; i++) {
+                final ImageView imageView = images[i];
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        TILoaderUtils.reloadView(imageView);
+                    }
+                });
+            }
+        }
+
         for (int i = 0 ; i < 5 ; i++) {
-
             TILoader.node(context).load(item.getUrl(i), images[i]);
-
         }
 
         return holder.getConvertView();
