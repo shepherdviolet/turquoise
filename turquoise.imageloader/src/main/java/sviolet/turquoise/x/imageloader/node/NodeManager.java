@@ -22,9 +22,9 @@ package sviolet.turquoise.x.imageloader.node;
 import android.content.Context;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.x.imageloader.ComponentManager;
@@ -38,7 +38,7 @@ public class NodeManager {
 
     private ComponentManager manager;
 
-    private final HashMap<String, Node> nodes = new HashMap<>();
+    private final Map<String, Node> nodes = new ConcurrentHashMap<>();
 
     private final ReentrantLock nodesLock = new ReentrantLock();
 
@@ -51,48 +51,43 @@ public class NodeManager {
             throw new RuntimeException("[NodeManager]can not fetch Node with out Context");
         }
         final String nodeId = parseNodeId(context);
-        Node node = null;
-        try{
-            nodesLock.lock();
-            node = nodes.get(nodeId);
-            if (node == null){
-                manager.setContextImage(context);
-                manager.setApplicationContextImage(context.getApplicationContext());
-                node = manager.getNodeFactory().newNode(nodeId);
-                nodes.put(nodeId, node);
-                node.attachLifeCycle(context);
+        Node node = nodes.get(nodeId);
+        //double check
+        if (node == null) {
+            try {
+                nodesLock.lock();
+                node = nodes.get(nodeId);
+                if (node == null) {
+                    manager.setContextImage(context);
+                    manager.setApplicationContextImage(context.getApplicationContext());
+                    node = manager.getNodeFactory().newNode(nodeId);
+                    nodes.put(nodeId, node);
+                    node.attachLifeCycle(context);
+                }
+            } finally {
+                nodesLock.unlock();
             }
-        }finally {
-            nodesLock.unlock();
         }
         return node;
     }
 
     public List<Task> pullTasks(Server.Type type){
         List<Task> taskList = new ArrayList<>();
-        try{
-            nodesLock.lock();
-            for (Map.Entry<String, Node> entry : nodes.entrySet()){
-                Task task = entry.getValue().pullTask(type);
-                if (task != null){
-                    taskList.add(task);
-                }
+
+        for (Map.Entry<String, Node> entry : nodes.entrySet()) {
+            Task task = entry.getValue().pullTask(type);
+            if (task != null) {
+                taskList.add(task);
             }
-        }finally {
-            nodesLock.unlock();
         }
+
         return taskList;
     }
 
     public void response(Task task){
         String nodeId = task.getNodeId();
-        Node node;
-        try{
-            nodesLock.lock();
-            node = nodes.get(nodeId);
-        }finally {
-            nodesLock.unlock();
-        }
+        Node node = nodes.get(nodeId);
+
         if (node != null){
             node.response(task);
         }
@@ -102,12 +97,7 @@ public class NodeManager {
         if (node == null){
             return;
         }
-        try{
-            nodesLock.lock();
-            nodes.remove(node.getId());
-        }finally {
-            nodesLock.unlock();
-        }
+        nodes.remove(node.getId());
     }
 
     private String parseNodeId(Context context){
