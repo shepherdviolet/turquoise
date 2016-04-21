@@ -386,6 +386,11 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     public void postDispatch() {
+        //check state
+        if (nodeDestroyed.get() || nodeFrozen.get() || !nodeInitialized.get()){
+            getLogger().d("[NodeControllerImpl]node destroyed/frozen or not initialized, skip dispatch");
+            return;
+        }
         dispatchThreadPool.execute(new Runnable() {
             @Override
             public void run() {
@@ -460,6 +465,7 @@ public class NodeControllerImpl extends NodeController {
                 if (settings != null) {
                     settings.onDestroy();
                 }
+                dispatchThreadPool.shutdown();
                 manager.getLogger().i("[NodeControllerImpl]destroyed nodeId:" + nodeId);
             }
         }
