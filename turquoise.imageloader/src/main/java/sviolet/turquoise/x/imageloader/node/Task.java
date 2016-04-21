@@ -106,7 +106,7 @@ public class Task {
 
         //status//////////////////////////
         private Stub.Type type;
-        private Server.Type serverType = Server.Type.MEMORY_CACHE;
+        private Server.Type serverType = Server.Type.MEMORY_ENGINE;
         private volatile State state = State.STAND_BY;
 
         //node//////////////////////////
@@ -140,6 +140,8 @@ public class Task {
             builder.append(nodeId);
             builder.append("><");
             builder.append(key);
+            builder.append("><");
+            builder.append(url);
             builder.append(">");
             return builder.toString();
         }

@@ -34,6 +34,7 @@ public interface Server {
     enum Type{
         MEMORY_CACHE,
         DISK_CACHE,
+        MEMORY_ENGINE,
         DISK_ENGINE,
         NETWORK_ENGINE
     }

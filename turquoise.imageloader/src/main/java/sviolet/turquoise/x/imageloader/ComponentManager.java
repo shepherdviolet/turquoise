@@ -31,6 +31,7 @@ import sviolet.turquoise.x.imageloader.node.NodeFactoryImpl;
 import sviolet.turquoise.x.imageloader.server.DiskCacheServer;
 import sviolet.turquoise.x.imageloader.server.MemoryCacheServer;
 import sviolet.turquoise.x.imageloader.server.DiskEngine;
+import sviolet.turquoise.x.imageloader.server.MemoryEngine;
 import sviolet.turquoise.x.imageloader.server.NetEngine;
 import sviolet.turquoise.x.imageloader.node.NodeManager;
 
@@ -76,6 +77,7 @@ public class ComponentManager {
 
     private final MemoryCacheServer memoryCacheServer = new MemoryCacheServer();
     private final DiskCacheServer diskCacheServer = new DiskCacheServer();
+    private final MemoryEngine memoryEngine = new MemoryEngine();
     private final DiskEngine diskEngine = new DiskEngine();
     private final NetEngine netEngine = new NetEngine();
 
@@ -102,6 +104,10 @@ public class ComponentManager {
 
     public DiskCacheServer getDiskCacheServer() {
         return diskCacheServer;
+    }
+
+    public MemoryEngine getMemoryEngine(){
+        return memoryEngine;
     }
 
     public DiskEngine getDiskEngine() {
@@ -179,6 +185,7 @@ public class ComponentManager {
         serverSettings.init(ComponentManager.getInstance());
         memoryCacheServer.init(ComponentManager.getInstance());
         diskCacheServer.init(ComponentManager.getInstance());
+        memoryEngine.init(ComponentManager.getInstance());
         diskEngine.init(ComponentManager.getInstance());
         netEngine.init(ComponentManager.getInstance());
         getLogger().i("[ComponentManager]TILoader initialized");

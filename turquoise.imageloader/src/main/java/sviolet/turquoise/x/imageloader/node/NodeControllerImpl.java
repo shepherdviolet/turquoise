@@ -54,6 +54,7 @@ public class NodeControllerImpl extends NodeController {
     private Node node;
     private NodeSettings settings;
 
+    private RequestQueue memoryRequestQueue;
     private RequestQueue diskRequestQueue;
     private RequestQueue netRequestQueue;
     private ResponseQueue responseQueue = new ResponseQueueImpl();
@@ -97,6 +98,7 @@ public class NodeControllerImpl extends NodeController {
         if (settings == null){
             settings = new NodeSettings.Builder().build();
         }
+        memoryRequestQueue = new RequestQueueImpl(settings.getMemoryQueueSize(), manager.getLogger());
         diskRequestQueue = new RequestQueueImpl(settings.getDiskQueueSize(), manager.getLogger());
         netRequestQueue = new RequestQueueImpl(settings.getNetQueueSize(), manager.getLogger());
     }
@@ -135,8 +137,6 @@ public class NodeControllerImpl extends NodeController {
         if (newStubGroup) {
             Task task = manager.getServerSettings().getTaskFactory().newTask(this, stub);
             task.setNodeSettings(settings);
-            task.setServerType(Server.Type.MEMORY_CACHE);
-            task.setState(Task.State.STAND_BY);
             executeTask(task);
         }
     }
@@ -150,6 +150,8 @@ public class NodeControllerImpl extends NodeController {
         }
 
         switch (type){
+            case MEMORY_ENGINE:
+                return memoryRequestQueue.get();
             case DISK_ENGINE:
                 return diskRequestQueue.get();
             case NETWORK_ENGINE:
@@ -193,8 +195,8 @@ public class NodeControllerImpl extends NodeController {
         }
 
         switch (task.getServerType()){
-            case MEMORY_CACHE:
-                executeTaskToMemoryCache(task);
+            case MEMORY_ENGINE:
+                executeTaskToMemory(task);
                 break;
             case DISK_ENGINE:
                 executeTaskToDisk(task);
@@ -207,11 +209,11 @@ public class NodeControllerImpl extends NodeController {
         }
     }
 
-    private void executeTaskToMemoryCache(Task task){
-        ImageResource<?> resource = manager.getMemoryCacheServer().get(task.getKey());
-        if (resource != null) {
-            task.setState(Task.State.SUCCEED);
-            callback(task);
+    private void executeTaskToMemory(Task task){
+        if (task.getState() == Task.State.STAND_BY) {
+            Task obsoleteTask = memoryRequestQueue.put(task);
+            manager.getMemoryEngine().ignite();
+            callbackToObsolete(obsoleteTask);
         }else{
             task.setServerType(Server.Type.DISK_ENGINE);
             task.setState(Task.State.STAND_BY);
@@ -458,8 +460,9 @@ public class NodeControllerImpl extends NodeController {
             if (nodeDestroyed.compareAndSet(false, true)){
                 //destroy process
                 manager.getNodeManager().scrapNode(node);
-                diskRequestQueue.clear();
                 netRequestQueue.clear();
+                diskRequestQueue.clear();
+                memoryRequestQueue.clear();
                 responseQueue.clear();
                 stubPool.clear();
                 if (settings != null) {

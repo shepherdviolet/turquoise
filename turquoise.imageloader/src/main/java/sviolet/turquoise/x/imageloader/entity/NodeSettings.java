@@ -38,6 +38,7 @@ public class NodeSettings implements Destroyable {
 
         //settings////////////////////////////////////////////////////////////////////////////
 
+        private int memoryQueueSize = DEFAULT_MEMORY_QUEUE_SIZE;
         private int diskQueueSize = DEFAULT_DISK_QUEUE_SIZE;
         private int netQueueSize = DEFAULT_NET_QUEUE_SIZE;
         private int reloadTimes = DEFAULT_RELOAD_TIMES;
@@ -68,6 +69,14 @@ public class NodeSettings implements Destroyable {
         }
 
         //settings////////////////////////////////////////////////////////////////////////////
+
+        public Builder setMemoryQueueSize(int memoryQueueSize){
+            if (memoryQueueSize < 1){
+                throw new RuntimeException("[NodeSettings]memoryQueueSize must >= 1");
+            }
+            values.memoryQueueSize = memoryQueueSize;
+            return this;
+        }
 
         public Builder setDiskQueueSize(int diskQueueSize){
             if (diskQueueSize < 1){
@@ -130,8 +139,9 @@ public class NodeSettings implements Destroyable {
 
     //DEFAULT/////////////////////////////////////////////////////////////////////////////
 
-    private static final int DEFAULT_DISK_QUEUE_SIZE = 10;
-    private static final int DEFAULT_NET_QUEUE_SIZE = 10;
+    private static final int DEFAULT_MEMORY_QUEUE_SIZE = 10;
+    private static final int DEFAULT_DISK_QUEUE_SIZE = 15;
+    private static final int DEFAULT_NET_QUEUE_SIZE = 20;
     private static final int DEFAULT_RELOAD_TIMES = 2;
     private static final int DEFAULT_IMAGE_APPEAR_DURATION = 400;
 
@@ -155,6 +165,10 @@ public class NodeSettings implements Destroyable {
     }
 
     //settings////////////////////////////////////////////////////////////////////////////
+
+    public int getMemoryQueueSize(){
+        return values.memoryQueueSize;
+    }
 
     public int getDiskQueueSize(){
         return values.diskQueueSize;

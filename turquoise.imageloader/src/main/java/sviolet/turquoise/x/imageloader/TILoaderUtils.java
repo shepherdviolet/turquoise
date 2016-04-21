@@ -92,6 +92,7 @@ public class TILoaderUtils {
      */
     public static boolean reloadView(View view){
         ComponentManager.getInstance().waitingForInitialized();
+        ComponentManager.getInstance().getLogger().i("[TILoaderUtils]reloadView");
         synchronized (view) {
             //get Stub from View Tag
             Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
