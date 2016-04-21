@@ -23,8 +23,8 @@ import android.content.Context;
 import android.os.Looper;
 import android.os.Message;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -58,7 +58,7 @@ public class NodeControllerImpl extends NodeController {
     private RequestQueue netRequestQueue;
     private ResponseQueue responseQueue = new ResponseQueueImpl();
 
-    private Map<String, StubGroup> stubPool = new HashMap<>();
+    private Map<String, StubGroup> stubPool = new ConcurrentHashMap<>();
     private final ReentrantLock stubPoolLock = new ReentrantLock();
 
     private AtomicBoolean nodeInitialized = new AtomicBoolean(false);
@@ -107,28 +107,31 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     public void execute(Stub stub) {
-
         if (nodeDestroyed.get() || !nodeInitialized.get()){
             getLogger().d("[NodeControllerImpl]node destroyed or not initialized, skip execute");
             return;
         }
 
+        //stub key
         String key = stub.getKey();
-        StubGroup stubGroup;
+        //get stubGroup
         boolean newStubGroup = false;
-        try{
+        StubGroup stubGroup = null;
+        try {
             stubPoolLock.lock();
             stubGroup = stubPool.get(key);
-            if (stubGroup == null){
+            if (stubGroup == null) {
                 stubGroup = new StubGroup();
                 stubPool.put(key, stubGroup);
                 newStubGroup = true;
             }
-        }finally {
+        } finally {
             stubPoolLock.unlock();
         }
+        //add into group
         stubGroup.add(stub);
 
+        //execute if new
         if (newStubGroup) {
             Task task = manager.getServerSettings().getTaskFactory().newTask(this, stub);
             task.setNodeSettings(settings);
@@ -262,14 +265,8 @@ public class NodeControllerImpl extends NodeController {
             return;
         }
 
-        StubGroup stubGroup;
-        try {
-            stubPoolLock.lock();
-            stubGroup = stubPool.remove(task.getKey());
-        } finally {
-            stubPoolLock.unlock();
-        }
-
+        //remove stubGroup
+        StubGroup stubGroup = stubPool.remove(task.getKey());
         if (stubGroup == null){
             return;
         }
@@ -459,12 +456,7 @@ public class NodeControllerImpl extends NodeController {
                 diskRequestQueue.clear();
                 netRequestQueue.clear();
                 responseQueue.clear();
-                try {
-                    stubPoolLock.lock();
-                    stubPool.clear();
-                } finally {
-                    stubPoolLock.unlock();
-                }
+                stubPool.clear();
                 if (settings != null) {
                     settings.onDestroy();
                 }
