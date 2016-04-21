@@ -67,6 +67,9 @@ public class ResourceBitmapWrapper {
      * @return bitmap, null if resId is invalid or bitmap is destroyed
      */
     public Bitmap getBitmap(Resources resources, TLogger logger){
+        if (bitmap != null){
+            return bitmap;
+        }
         try {
             lock.lock();
             if (bitmap != null){
