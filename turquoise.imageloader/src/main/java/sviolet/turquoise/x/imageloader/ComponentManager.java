@@ -32,7 +32,6 @@ import sviolet.turquoise.x.imageloader.server.DiskCacheServer;
 import sviolet.turquoise.x.imageloader.server.MemoryCacheServer;
 import sviolet.turquoise.x.imageloader.server.DiskEngine;
 import sviolet.turquoise.x.imageloader.server.NetEngine;
-import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeManager;
 
 /**
