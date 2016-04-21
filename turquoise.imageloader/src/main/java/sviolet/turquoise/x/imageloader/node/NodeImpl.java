@@ -123,4 +123,13 @@ public class NodeImpl extends Node {
         }
     }
 
+    /***************************************************
+     * NodePauseOnListScrollListener
+     */
+
+    @Override
+    public NodePauseOnListScrollListener newPauseOnListScrollListener() {
+        return controller.newPauseOnListScrollListener();
+    }
+
 }

@@ -21,6 +21,8 @@ package sviolet.turquoise.x.imageloader.node;
 
 import android.content.Context;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
@@ -68,6 +70,11 @@ public abstract class NodeController implements LifeCycle {
      */
     public abstract void postDispatch();
 
+    /**
+     * notify Engines to process
+     */
+    abstract void postIgnite();
+
     /***********************************************************
      * getter
      */
@@ -108,5 +115,13 @@ public abstract class NodeController implements LifeCycle {
     public abstract boolean isDestroyed();
 
     public abstract TLogger getLogger();
+
+    /**************************************************************
+     * NodePauseOnListScrollListener
+     */
+
+    abstract AtomicInteger getNodePauseCount();
+
+    abstract NodePauseOnListScrollListener newPauseOnListScrollListener();
 
 }

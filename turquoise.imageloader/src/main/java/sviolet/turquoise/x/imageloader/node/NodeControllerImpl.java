@@ -26,6 +26,7 @@ import android.os.Message;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
@@ -66,6 +67,13 @@ public class NodeControllerImpl extends NodeController {
     private AtomicBoolean nodeFrozen = new AtomicBoolean(false);
     private AtomicBoolean nodeDestroyed = new AtomicBoolean(false);
     private final ReentrantLock initializeLock = new ReentrantLock();
+
+    /**
+     * when all NodePauseOnListScrollListeners is not state of pause,
+     * NodeController can pullTask(). one of those NodePauseOnListScrollListeners
+     * is state of pause, NodeController skip pullTask().
+     */
+    private AtomicInteger nodePauseCount = new AtomicInteger(0);
 
     NodeControllerImpl(ComponentManager manager, Node node, String nodeId){
         this.manager = manager;
@@ -144,8 +152,8 @@ public class NodeControllerImpl extends NodeController {
     @Override
     Task pullTask(Server.Type type) {
 
-        if (nodeDestroyed.get() || nodeFrozen.get() || !nodeInitialized.get()){
-            getLogger().d("[NodeControllerImpl]node destroyed/frozen or not initialized, skip pullTask");
+        if (nodePauseCount.get() > 0 || nodeDestroyed.get() || nodeFrozen.get() || !nodeInitialized.get()){
+            getLogger().d("[NodeControllerImpl]node pause/destroyed/frozen or not initialized, skip pullTask");
             return null;
         }
 
@@ -380,6 +388,20 @@ public class NodeControllerImpl extends NodeController {
         return manager.getLogger();
     }
 
+    /**************************************************************
+     * NodePauseOnListScrollListener
+     */
+
+    @Override
+    AtomicInteger getNodePauseCount() {
+        return nodePauseCount;
+    }
+
+    @Override
+    NodePauseOnListScrollListener newPauseOnListScrollListener() {
+        return new NodePauseOnListScrollListener(this);
+    }
+
     /******************************************************************
      * Dispatch Thread
      */
@@ -415,6 +437,13 @@ public class NodeControllerImpl extends NodeController {
         });
     }
 
+    @Override
+    void postIgnite(){
+        manager.getMemoryEngine().ignite();
+        manager.getNetEngine().ignite();
+        manager.getDiskEngine().ignite();
+    }
+
     /*********************************************
      * lifecycle
      */
@@ -430,8 +459,7 @@ public class NodeControllerImpl extends NodeController {
         //notify if not destroyed
         if (!nodeDestroyed.get()){
             postDispatch();
-            manager.getNetEngine().ignite();
-            manager.getDiskEngine().ignite();
+            postIgnite();
             manager.getLogger().i("[NodeControllerImpl]unfreeze nodeId:" + nodeId);
         }
     }

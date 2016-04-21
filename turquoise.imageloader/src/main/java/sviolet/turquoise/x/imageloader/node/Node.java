@@ -93,6 +93,10 @@ public abstract class Node {
      */
     public abstract boolean setting(NodeSettings settings);
 
+    /***************************************************
+     * protected
+     */
+
     /**
      * @return get Id of Node
      */
@@ -109,4 +113,10 @@ public abstract class Node {
     abstract void response(Task task);
 
     abstract void attachLifeCycle(Context context);
+
+    /***************************************************
+     * NodePauseOnListScrollListener
+     */
+
+    public abstract NodePauseOnListScrollListener newPauseOnListScrollListener();
 }
