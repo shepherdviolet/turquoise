@@ -94,28 +94,43 @@ public class NodeSettings implements Destroyable {
             return this;
         }
 
+        public Builder setReloadTimes(int reloadTimes){
+            if (reloadTimes < 0){
+                throw new RuntimeException("[NodeSettings]reloadTimes must >= 0");
+            }
+            values.reloadTimes = reloadTimes;
+            return this;
+        }
+
+        public Builder setImageAppearDuration(int imageAppearDuration){
+            if (imageAppearDuration < 0){
+                throw new RuntimeException("[NodeSettings]imageAppearDuration must >= 0");
+            }
+            values.imageAppearDuration = imageAppearDuration;
+            return this;
+        }
+
         //handler////////////////////////////////////////////////////////////////////////////
 
         public Builder setNetworkLoadHandler(NetworkLoadHandler networkLoadHandler){
-            if (networkLoadHandler != null){
-                values.networkLoadHandler = networkLoadHandler;
-            }
+            values.networkLoadHandler = networkLoadHandler;
+            return this;
+        }
+
+        public Builder setDecodeHandler(DecodeHandler decodeHandler){
+            values.decodeHandler = decodeHandler;
             return this;
         }
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
         public Builder setLoadingDrawableFactory(LoadingDrawableFactory factory){
-            if (factory != null){
-                values.loadingDrawableFactory = factory;
-            }
+            values.loadingDrawableFactory = factory;
             return this;
         }
 
         public Builder setFailedDrawableFactory(FailedDrawableFactory factory){
-            if (factory != null){
-                values.failedDrawableFactory = factory;
-            }
+            values.failedDrawableFactory = factory;
             return this;
         }
 
