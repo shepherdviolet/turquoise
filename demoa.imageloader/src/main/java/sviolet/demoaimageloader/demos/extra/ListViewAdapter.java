@@ -25,6 +25,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -88,7 +89,11 @@ public class ListViewAdapter extends BaseAdapter {
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        TILoaderUtils.reloadView(imageView);
+                        //reload
+                        if (!TILoaderUtils.reloadView(imageView)){
+                            //loaded succeed or loading
+                            Toast.makeText(context, "click", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }

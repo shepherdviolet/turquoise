@@ -58,7 +58,7 @@ public class MyApplication extends TApplication {
                 .setMemoryCachePercent(getApplicationContext(), 0.1f)
                 .setDiskCacheSize(10)
 //                .setNetworkLoadHandler(new MyNetworkLoadHandler())
-                .setLogEnabled(false)
+                .setLogEnabled(true)
                 .build());
     }
 

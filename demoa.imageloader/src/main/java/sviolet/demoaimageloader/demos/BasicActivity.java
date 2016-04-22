@@ -3,6 +3,7 @@ package sviolet.demoaimageloader.demos;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -11,11 +12,12 @@ import sviolet.demoaimageloader.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
-import sviolet.turquoise.x.imageloader.entity.ServerSettings;
+import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
+import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
  * Basic Usage of TurquoiseImageLoader
@@ -43,6 +45,7 @@ public class BasicActivity extends TActivity {
     @ResourceId(R.id.basic_main_imageview3)
     private ImageView imageView3;
 
+    //loading params
 //    private Params params = new Params.Builder()
 //            .setBitmapConfig(Bitmap.Config.ARGB_8888)
 //            .build();
@@ -51,20 +54,34 @@ public class BasicActivity extends TActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-
+        //wipe disk cache
         try {
             TILoaderUtils.wipeDiskCache(this, null);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-//        TILoader.node(this).setting(new NodeSettings.Builder().build());
+        //node setting, you should setting before load !
+        TILoader.node(this).setting(new NodeSettings.Builder().build());
 
+        //load into imageView
         TILoader.node(this).load("https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/slate.jpg", imageView1);
         TILoader.node(this).load("https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/turquoise.jpg", imageView2);
-        TILoader.node(this).load("https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/violet.jpg", imageView3);
 
+        //extract mode, get a bitmap
+        TILoader.extract(this, "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/violet.jpg", null, new OnLoadedListener() {
+            @Override
+            public void onLoadSucceed(String url, Params params, ImageResource<?> resource) {
+                Toast.makeText(BasicActivity.this, "load succeed", Toast.LENGTH_SHORT).show();
+                imageView3.setImageDrawable(TILoaderUtils.imageResourceToDrawable(resource, true));
+            }
+            @Override
+            public void onLoadCanceled(String url, Params params) {
+                Toast.makeText(BasicActivity.this, "load failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //reload test
         imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
