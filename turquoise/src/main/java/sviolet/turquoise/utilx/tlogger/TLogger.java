@@ -253,6 +253,11 @@ public abstract class TLogger {
      */
     public abstract void d(String msg);
 
+    /**
+     * @return true:空日志打印器
+     */
+    public abstract boolean isNullLogger();
+
     /**************************************************
      * public
      */

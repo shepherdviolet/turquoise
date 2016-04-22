@@ -104,6 +104,11 @@ class TLoggerProxy extends TLogger {
         }
     }
 
+    @Override
+    public boolean isNullLogger() {
+        return false;
+    }
+
     protected String getTag() {
         if (tag != null){
             return tag;

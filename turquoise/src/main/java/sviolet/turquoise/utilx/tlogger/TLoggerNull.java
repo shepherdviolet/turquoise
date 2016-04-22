@@ -66,4 +66,9 @@ class TLoggerNull extends TLogger {
 
     }
 
+    @Override
+    public boolean isNullLogger() {
+        return true;
+    }
+
 }
