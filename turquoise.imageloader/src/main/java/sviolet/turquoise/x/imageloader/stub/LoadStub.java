@@ -76,10 +76,11 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             }else{
                 //adjust failed
                 /*
-                 * if Params->sizeMatchView is true, make sure View's size is not 0, TILoader will
-                 * waiting for it until view's size > 0. wrap_content is not allowed in this mode.
+                 * if Params->sizeMatchView is true, make sure View's size > 1, TILoader will
+                 * waiting until view's size > 1. if ImageView size is wrap_content, you should
+                 * set a LoadingDrawable which size > 1;
                  */
-                getLogger().w("[LoadStub]can't load image if view's size is 0 in \'Params->sizeMatchView\' mode, wrap_content is not allowed in this mode");
+                getLogger().w("[LoadStub]\'Params->sizeMatchView\'mode: view's size <= 1, retry until view's size > 1, key" + getKey());
                 return LaunchResult.RETRY;
             }
         }else{

@@ -153,7 +153,7 @@ public class Params {
         if (isSizeMatchView()){
             int width = view.getWidth();
             int height = view.getHeight();
-            if (width > 0 && height > 0){
+            if (width > 1 && height > 1){
                 values.reqWidth = width;
                 values.reqHeight = height;
                 return true;
