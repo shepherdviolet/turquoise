@@ -44,6 +44,7 @@ import sviolet.turquoise.x.imageloader.TILoader;
 public class TIBitmapDrawable extends BitmapDrawable {
 
     private boolean matchParent = false;//match_parent
+    private boolean skipException = false;
 
     public TIBitmapDrawable() {
     }
@@ -78,10 +79,16 @@ public class TIBitmapDrawable extends BitmapDrawable {
 
     @Override
     public void draw(Canvas canvas) {
-        super.draw(canvas);
-        //throw exception manually when bitmap is recycled
-        if (getBitmap() != null && getBitmap().isRecycled()){
-            throw new RuntimeException("[TIBitmapDrawable]draw: bitmap is recycled");
+        try {
+            super.draw(canvas);
+            //throw exception manually when bitmap is recycled
+            if (getBitmap() != null && getBitmap().isRecycled()) {
+                throw new RuntimeException("[TIBitmapDrawable]draw: bitmap is recycled");
+            }
+        }catch (Exception e){
+            if (!skipException){
+                throw e;
+            }
         }
     }
 
@@ -104,6 +111,15 @@ public class TIBitmapDrawable extends BitmapDrawable {
      */
     public TIBitmapDrawable setMatchParent(boolean matchParent){
         this.matchParent = matchParent;
+        return this;
+    }
+
+    /**
+     * set if skip drawing exception
+     * @param skipException true:skip drawing exception
+     */
+    public TIBitmapDrawable setSkipException(boolean skipException){
+        this.skipException = skipException;
         return this;
     }
 

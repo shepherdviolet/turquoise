@@ -53,8 +53,9 @@ public interface ImageResourceHandler {
     /**
      * convert ImageResource to Drawable
      * @param resource ImageResource
+     * @param skipDrawingException true:skip drawing exception of drawable, if true, it will not throw exceptions even when bitmap has recycled
      * @return drawable
      */
-    Drawable toDrawable(ImageResource<?> resource);
+    Drawable toDrawable(ImageResource<?> resource, boolean skipDrawingException);
 
 }

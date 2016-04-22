@@ -77,11 +77,12 @@ public class TILoaderUtils {
      * [Initialize TILoader]this method will initialize TILoader<br/>
      * convert ImageResource to drawable
      * @param resource ImageResource
+     * @param skipDrawingException true:skip drawing exception of drawable, if true, it will not throw exceptions even when bitmap has recycled
      * @return drawable
      */
-    public static Drawable imageResourceToDrawable(ImageResource<?> resource){
+    public static Drawable imageResourceToDrawable(ImageResource<?> resource, boolean skipDrawingException){
         ComponentManager.getInstance().waitingForInitialized();
-        return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().toDrawable(resource);
+        return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().toDrawable(resource, skipDrawingException);
     }
 
     /**

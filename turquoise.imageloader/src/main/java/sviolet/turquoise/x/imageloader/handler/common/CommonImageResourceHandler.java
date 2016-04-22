@@ -85,14 +85,14 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
     }
 
     @Override
-    public Drawable toDrawable(ImageResource<?> resource) {
+    public Drawable toDrawable(ImageResource<?> resource, boolean skipDrawingException) {
         if (resource == null || resource.getResource() == null){
             return null;
         }
         switch (resource.getType()){
             case BITMAP:
                 if ((resource.getResource() instanceof Bitmap) && (!((Bitmap) resource.getResource()).isRecycled())){
-                    return new TIBitmapDrawable((Bitmap) resource.getResource());
+                    return new TIBitmapDrawable((Bitmap) resource.getResource()).setSkipException(skipDrawingException);
                 }else{
                     return null;
                 }
