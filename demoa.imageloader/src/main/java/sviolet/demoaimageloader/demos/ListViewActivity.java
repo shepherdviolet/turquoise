@@ -34,7 +34,7 @@ import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.x.imageloader.TILoader;
-import sviolet.turquoise.x.imageloader.drawable.def.DefaultLoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.def.CommonLoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 
 @DemoDescription(
@@ -65,7 +65,7 @@ public class ListViewActivity extends TActivity {
 
         TILoader.node(this).setting(new NodeSettings.Builder()
                 .setNetworkLoadHandler(new MyNetworkLoadHandler())
-                .setLoadingDrawableFactory(new DefaultLoadingDrawableFactory().setAnimationEnabled(true).setBackgroundColor(0xFFF0F0F0))
+                .setLoadingDrawableFactory(new CommonLoadingDrawableFactory().setAnimationEnabled(true).setBackgroundColor(0xFFF0F0F0))
                 .setBackgroundColor(0xFFF0F0F0)
                 .setMemoryQueueSize(15)
                 .setDiskQueueSize(20)
