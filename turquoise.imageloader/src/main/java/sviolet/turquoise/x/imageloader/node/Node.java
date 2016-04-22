@@ -39,7 +39,16 @@ public abstract class Node {
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
      * [Initialize Node]this method will initialize Node<br/>
-     * loading image to view
+     *
+     * <p>loading image to view.</p>
+     *
+     * <p>Loaded Image will be cached by MemoryCache/DiskCache, you should not recycle Bitmap manually.
+     * Loading task will be affected by lifecycle of context, it will frozen while Context->OnStop and
+     * destroyed while Context->OnDestroy. Each Node has request queue, when the queue is full earliest
+     * task will be discarded, and callback to cancel. You can use {@link NodeSettings.Builder#setMemoryQueueSize(int)}/
+     * {@link NodeSettings.Builder#setDiskQueueSize(int)}/{@link NodeSettings.Builder#setNetQueueSize(int)}
+     * methods to make screen accommodate more pictures.</p>
+     *
      * @param url URL
      * @param view target View
      */
@@ -48,7 +57,16 @@ public abstract class Node {
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
      * [Initialize Node]this method will initialize Node<br/>
-     * loading image to view
+     *
+     * <p>loading image to view.</p>
+     *
+     * <p>Loaded Image will be cached by MemoryCache/DiskCache, you should not recycle Bitmap manually.
+     * Loading task will be affected by lifecycle of context, it will frozen while Context->OnStop and
+     * destroyed while Context->OnDestroy. Each Node has request queue, when the queue is full earliest
+     * task will be discarded, and callback to cancel. You can use {@link NodeSettings.Builder#setMemoryQueueSize(int)}/
+     * {@link NodeSettings.Builder#setDiskQueueSize(int)}/{@link NodeSettings.Builder#setNetQueueSize(int)}
+     * methods to make screen accommodate more pictures.</p>
+     *
      * @param url URL
      * @param params loading params
      * @param view target View
@@ -58,7 +76,16 @@ public abstract class Node {
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
      * [Initialize Node]this method will initialize Node<br/>
-     * loading image to background of view
+     *
+     * <p>loading image to background.</p>
+     *
+     * <p>Loaded Image will be cached by MemoryCache/DiskCache, you should not recycle Bitmap manually.
+     * Loading task will be affected by lifecycle of context, it will frozen while Context->OnStop and
+     * destroyed while Context->OnDestroy. Each Node has request queue, when the queue is full earliest
+     * task will be discarded, and callback to cancel. You can use {@link NodeSettings.Builder#setMemoryQueueSize(int)}/
+     * {@link NodeSettings.Builder#setDiskQueueSize(int)}/{@link NodeSettings.Builder#setNetQueueSize(int)}
+     * methods to make screen accommodate more pictures.</p>
+     *
      * @param url URL
      * @param view View
      */
@@ -67,7 +94,16 @@ public abstract class Node {
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
      * [Initialize Node]this method will initialize Node<br/>
-     * loading image to background of view
+     *
+     * <p>loading image to background.</p>
+     *
+     * <p>Loaded Image will be cached by MemoryCache/DiskCache, you should not recycle Bitmap manually.
+     * Loading task will be affected by lifecycle of context, it will frozen while Context->OnStop and
+     * destroyed while Context->OnDestroy. Each Node has request queue, when the queue is full earliest
+     * task will be discarded, and callback to cancel. You can use {@link NodeSettings.Builder#setMemoryQueueSize(int)}/
+     * {@link NodeSettings.Builder#setDiskQueueSize(int)}/{@link NodeSettings.Builder#setNetQueueSize(int)}
+     * methods to make screen accommodate more pictures.</p>
+     *
      * @param url URL
      * @param params loading params
      * @param view View
