@@ -27,6 +27,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
+import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 
 @ApplicationSettings(
@@ -60,6 +61,8 @@ public class MyApplication extends TApplication {
 //                .setNetworkLoadHandler(new MyNetworkLoadHandler())
                 .setLogEnabled(true)
                 .build());
+
+        TILoaderUtils.setLoggerLevel(TLogger.ERROR | TLogger.INFO);
     }
 
     @Override

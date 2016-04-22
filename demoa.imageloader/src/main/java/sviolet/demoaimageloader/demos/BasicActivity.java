@@ -12,6 +12,7 @@ import sviolet.demoaimageloader.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
@@ -69,17 +70,22 @@ public class BasicActivity extends TActivity {
         TILoader.node(this).load("https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/turquoise.jpg", imageView2);
 
         //extract mode, get a bitmap
-        TILoader.extract(this, "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/violet.jpg", null, new OnLoadedListener() {
+        TILoader.extract(this, "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/violet.jpg", null, new OnLoadedListener<ImageView>() {
             @Override
             public void onLoadSucceed(String url, Params params, ImageResource<?> resource) {
-                Toast.makeText(BasicActivity.this, "load succeed", Toast.LENGTH_SHORT).show();
-                imageView3.setImageDrawable(TILoaderUtils.imageResourceToDrawable(resource, true));
+                ImageView imageView = getWeakRegister();
+                if (imageView != null) {
+                    Toast.makeText(BasicActivity.this, "load succeed", Toast.LENGTH_SHORT).show();
+                    imageView.setImageDrawable(TILoaderUtils.imageResourceToDrawable(resource, true));
+                }else{
+                    TLogger.get(this).e("imageView is recycled, can't show image");
+                }
             }
             @Override
             public void onLoadCanceled(String url, Params params) {
                 Toast.makeText(BasicActivity.this, "load failed", Toast.LENGTH_SHORT).show();
             }
-        });
+        }.setWeakRegister(imageView3));
 
         //reload test
         imageView1.setOnClickListener(new View.OnClickListener() {
