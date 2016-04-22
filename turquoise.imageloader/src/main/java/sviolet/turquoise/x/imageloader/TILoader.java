@@ -26,6 +26,8 @@ import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
+import java.lang.ref.WeakReference;
+
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
@@ -41,6 +43,7 @@ public class TILoader {
     public static final String TAG = "TILoader";
 
     /**
+     * fetch node to load image
      * @param context context
      * @return get Node of Context, used to loading image
      */
@@ -50,6 +53,7 @@ public class TILoader {
     }
 
     /**
+     * fetch node to load image
      * @param context context
      * @return get Node of Context, used to loading image
      */
@@ -59,6 +63,7 @@ public class TILoader {
     }
 
     /**
+     * fetch node to load image
      * @param context context
      * @return get Node of Context, used to loading image
      */
@@ -68,7 +73,7 @@ public class TILoader {
     }
 
     /**
-     * above API level 11
+     * fetch node to load image
      * @param context context
      * @return get Node of Context, used to loading image
      */
@@ -81,8 +86,31 @@ public class TILoader {
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
      * [Initialize Node]this method will initialize Node<br/>
-     * extract Image, without memory cache and disk cache<br/>
-     * you should recycle Bitmap by yourself<br/>
+     *
+     * <p>Extract Image. Extracted Image will not be cached by MemoryCache, you should recycle Bitmap
+     * by yourself. Extract task will not be affected by lifecycle of context, it will not be discarded
+     * from queue.</p>
+     *
+     * {@link OnLoadedListener}:<br/>
+     * <p>Improper use may cause a memory leak, ExtractNode will hold this listener util extract finished,
+     * avoid being an internal class and holding Context/View object, you can use method
+     * {@link OnLoadedListener#setWeakRegister(Object)} to hold Context/View by {@link WeakReference},
+     * and {@link OnLoadedListener#getWeakRegister()} when callback.</p>
+     *
+     * <pre>{@code
+     *      TILoader.extract(this, url, params, new OnLoadedListener<XXXActivity>() {
+     *         protected void onLoadSucceed(String url, Params params, ImageResource resource) {
+     *              XXXActivity activity = getWeakRegister();
+     *              if (activity != null){
+     *                  //do something
+     *              }
+     *         }
+     *         protected void onLoadCanceled(String url, Params params) {
+     *
+     *         }
+     *      }.setWeakRegister(this));
+     * }</pre>
+     *
      * @param context applicationContext or activity/fragment context
      * @param url URL
      * @param params loading params
@@ -95,7 +123,7 @@ public class TILoader {
 
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
-     * Server Setting, you should setting before TILoader initialized (invoke TILoader.setting() or TILoader.node().load() will initialize TILoader)<br/>
+     * Server Setting, you should setting before TILoader initialized (invoke TILoader.setting() or TILoader.node().load() will initialize TILoader).<br/>
      * e.g setting in Application.onCreate()<br/>
      * @param settings Server Settings
      * @return true : setting effective. it will be false when setting after TILoader initialized, and make no effect.

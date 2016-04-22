@@ -19,11 +19,35 @@
 
 package sviolet.turquoise.x.imageloader.entity;
 
+import java.lang.ref.WeakReference;
+
 /**
+ * <p>callback when image load(extract) succeed or canceled</p>
+ *
+ * <p>Improper use may cause a memory leak, ExtractNode will hold this listener util extract finished,
+ * avoid being an internal class and holding Context/View object, you can use method
+ * {@link OnLoadedListener#setWeakRegister(Object)} to hold Context/View by {@link WeakReference},
+ * and {@link OnLoadedListener#getWeakRegister()} when callback.</p>
+ *
+ * <pre>{@code
+ *      TILoader.extract(this, url, params, new OnLoadedListener<XXXActivity>() {
+ *         protected void onLoadSucceed(String url, Params params, ImageResource resource) {
+ *              XXXActivity activity = getWeakRegister();
+ *              if (activity != null){
+ *                  //do something
+ *              }
+ *         }
+ *         protected void onLoadCanceled(String url, Params params) {
+ *
+ *         }
+ *      }.setWeakRegister(this));
+ * }</pre>
  *
  * Created by S.Violet on 2016/2/16.
  */
-public interface OnLoadedListener {
+public abstract class OnLoadedListener<T> {
+
+    private WeakReference<T> weakRegister;
 
     /**
      * callback when loading succeed
@@ -32,7 +56,7 @@ public interface OnLoadedListener {
      * @param params loading params
      * @param resource loaded Image, may be null
      */
-    void onLoadSucceed(String url, Params params, ImageResource<?> resource);
+    public abstract void onLoadSucceed(String url, Params params, ImageResource<?> resource);
 
     /**
      * callback when loading canceled
@@ -40,6 +64,23 @@ public interface OnLoadedListener {
      * @param url URL
      * @param params loading params
      */
-    void onLoadCanceled(String url, Params params);
+    public abstract void onLoadCanceled(String url, Params params);
 
+    /**
+     * @return get object which hold by WeakReference
+     */
+    public T getWeakRegister() {
+        if (weakRegister != null){
+            return weakRegister.get();
+        }
+        return null;
+    }
+
+    /**
+     * @param weakRegister set object and hold by WeakReference
+     */
+    public OnLoadedListener<T> setWeakRegister(T weakRegister) {
+        this.weakRegister = new WeakReference<>(weakRegister);
+        return this;
+    }
 }
