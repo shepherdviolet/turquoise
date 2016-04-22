@@ -20,6 +20,7 @@
 package sviolet.turquoise.x.imageloader.stub;
 
 import java.lang.ref.WeakReference;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.util.conversion.ByteUtils;
 import sviolet.turquoise.util.crypt.DigestCipher;
@@ -45,7 +46,7 @@ public abstract class AbsStub implements Stub {
 
     //stat///////////////////////////////
 
-    private volatile State state = State.INITIAL;
+    private AtomicInteger state = new AtomicInteger(State.INITIAL);
     private int reloadTimes = 0;
 
     private WeakReference<NodeController> nodeController;
@@ -96,8 +97,7 @@ public abstract class AbsStub implements Stub {
             return check;
         }
         //check state
-        if (state == State.INITIAL) {
-            state = State.LAUNCHING;
+        if (state.compareAndSet(State.INITIAL, State.LAUNCHING)){
             return onLaunch();
         }
         return LaunchResult.FAILED;
@@ -118,8 +118,9 @@ public abstract class AbsStub implements Stub {
         }
 
         //check state
-        if (state == State.LOAD_SUCCEED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
-            state = State.INITIAL;
+        if (state.compareAndSet(State.LOAD_SUCCEED, State.INITIAL) ||
+                state.compareAndSet(State.LOAD_FAILED, State.INITIAL) ||
+                state.compareAndSet(State.LOAD_CANCELED, State.INITIAL)){
             return onRelaunch();
         }
 
@@ -172,12 +173,15 @@ public abstract class AbsStub implements Stub {
             return false;
         }
 
-        if (state == State.LAUNCHING || state == State.LOAD_SUCCEED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
-            state = State.LOADING;
+        if (state.compareAndSet(State.LAUNCHING, State.LOADING) ||
+                state.compareAndSet(State.LOAD_SUCCEED, State.LOADING) ||
+                state.compareAndSet(State.LOAD_FAILED, State.LOADING) ||
+                state.compareAndSet(State.LOAD_CANCELED, State.LOADING)){
             reloadTimes = 0;
             controller.execute(this);
             return true;
         }
+
         return false;
     }
 
@@ -198,10 +202,12 @@ public abstract class AbsStub implements Stub {
             return false;
         }
 
-        if (state == State.LAUNCHING || state == State.LOAD_SUCCEED || state == State.LOAD_FAILED || state == State.LOAD_CANCELED) {
-            if (canReload(controller)) {
+        if (canReload(controller)) {
+            if (state.compareAndSet(State.LAUNCHING, State.LOADING) ||
+                    state.compareAndSet(State.LOAD_SUCCEED, State.LOADING) ||
+                    state.compareAndSet(State.LOAD_FAILED, State.LOADING) ||
+                    state.compareAndSet(State.LOAD_CANCELED, State.LOADING)){
                 reloadTimes++;
-                state = State.LOADING;
                 controller.execute(this);
                 return true;
             }
@@ -216,8 +222,7 @@ public abstract class AbsStub implements Stub {
      */
     protected boolean shiftSucceedToFailed(){
 
-        if (state == State.LOAD_SUCCEED) {
-            state = State.LOAD_FAILED;
+        if (state.compareAndSet(State.LOAD_SUCCEED, State.LOAD_FAILED)){
             onLoadFailedInner();
             return true;
         }
@@ -231,8 +236,7 @@ public abstract class AbsStub implements Stub {
      */
     protected boolean shiftFailedToCanceled(){
 
-        if (state == State.LOAD_FAILED) {
-            state = State.LOAD_CANCELED;
+        if (state.compareAndSet(State.LOAD_FAILED, State.LOAD_CANCELED)){
             onLoadCanceledInner();
             return true;
         }
@@ -277,8 +281,7 @@ public abstract class AbsStub implements Stub {
             return;
         }
 
-        if (state == State.LOADING) {
-            state = State.LOAD_SUCCEED;
+        if (state.compareAndSet(State.LOADING, State.LOAD_SUCCEED)){
             onLoadSucceedInner(resource);
         }
 
@@ -291,8 +294,7 @@ public abstract class AbsStub implements Stub {
     @Override
     public final void onLoadFailed() {
 
-        if (state == State.LOADING) {
-            state = State.LOAD_FAILED;
+        if (state.compareAndSet(State.LOADING, State.LOAD_FAILED)){
             onLoadFailedInner();
         }
 
@@ -305,8 +307,7 @@ public abstract class AbsStub implements Stub {
     @Override
     public final void onLoadCanceled() {
 
-        if (state == State.LOADING) {
-            state = State.LOAD_CANCELED;
+        if (state.compareAndSet(State.LOADING, State.LOAD_CANCELED)){
             onLoadCanceledInner();
         }
 
@@ -319,8 +320,8 @@ public abstract class AbsStub implements Stub {
     @Override
     public final void onDestroy() {
 
-        if (state != State.DESTROYED) {
-            state = State.DESTROYED;
+        if (state.get() != State.DESTROYED) {
+            state.set(State.DESTROYED);
             onDestroyInner();
             getLogger().d("[AbsStub]destroyed: key:" + getKey());
         }
@@ -385,8 +386,8 @@ public abstract class AbsStub implements Stub {
     }
 
     @Override
-    public State getState() {
-        return state;
+    public int getState() {
+        return state.get();
     }
 
     @Override

@@ -96,7 +96,7 @@ public interface Stub extends Destroyable {
      */
     String getResourceKey();
 
-    State getState();
+    int getState();
 
     /***********************************************************
      * getter
@@ -113,16 +113,6 @@ public interface Stub extends Destroyable {
         EXTRACT
     }
 
-    enum State{
-        INITIAL,
-        LAUNCHING,
-        LOADING,
-        LOAD_SUCCEED,
-        LOAD_FAILED,
-        LOAD_CANCELED,
-        DESTROYED
-    }
-
     enum LaunchResult{
         //launch succeed, don't launch again
         SUCCEED,
@@ -130,6 +120,16 @@ public interface Stub extends Destroyable {
         RETRY,
         //can't launch any more
         FAILED
+    }
+
+    class State{
+        static final int INITIAL = 0;
+        static final int LAUNCHING = 1;
+        static final int LOADING = 2;
+        static final int LOAD_SUCCEED = 3;
+        static final int LOAD_FAILED = 4;
+        static final int LOAD_CANCELED = 5;
+        static final int DESTROYED = 6;
     }
 
 }
