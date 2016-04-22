@@ -72,9 +72,10 @@ public interface Stub extends Destroyable {
 
     /**
      * relaunch loading process, effective when launch succeed/failed/canceled
+     * @param force false : relaunch only when loading canceled, true : force relaunch when loading succeed/failed/canceled
      * @return LaunchResult
      */
-    LaunchResult relaunch();
+    LaunchResult relaunch(boolean force);
 
     /***********************************************************
      * params

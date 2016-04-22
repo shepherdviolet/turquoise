@@ -87,9 +87,9 @@ public class TILoaderUtils {
 
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
-     * reload View which has been canceled
+     * reload View which has been canceled, no effect if image is loading or loaded succeed
      * @param view view
-     * @return true:this view can be reload
+     * @return true:this view can be reload (load canceled), false:this view can't be reload (is loading or loaded succeed)
      */
     public static boolean reloadView(View view){
         ComponentManager.getInstance().waitingForInitialized();
@@ -99,7 +99,8 @@ public class TILoaderUtils {
             Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
             //destroy obsolete Stub
             if (tag != null && tag instanceof Stub) {
-                return ((Stub) tag).relaunch() == Stub.LaunchResult.SUCCEED;
+                //relaunch (not force)
+                return ((Stub) tag).relaunch(false) == Stub.LaunchResult.SUCCEED;
             }
         }
         return false;

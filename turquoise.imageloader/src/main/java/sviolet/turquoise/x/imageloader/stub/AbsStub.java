@@ -106,10 +106,11 @@ public abstract class AbsStub implements Stub {
     /**
      * 1.check state
      * 2.set state to INITIAL
+     * @param force false : relaunch only when loading canceled, true : force relaunch when loading succeed/failed/canceled
      * @return true if relaunch valid
      */
     @Override
-    public final LaunchResult relaunch() {
+    public final LaunchResult relaunch(boolean force) {
         //get & check controller
         final NodeController controller = getNodeController();
         if (controller == null || controller.isDestroyed()){
@@ -117,11 +118,18 @@ public abstract class AbsStub implements Stub {
             return LaunchResult.FAILED;
         }
 
-        //check state
-        if (state.compareAndSet(State.LOAD_SUCCEED, State.INITIAL) ||
-                state.compareAndSet(State.LOAD_FAILED, State.INITIAL) ||
-                state.compareAndSet(State.LOAD_CANCELED, State.INITIAL)){
-            return onRelaunch();
+        if (force) {
+            //check state
+            if (state.compareAndSet(State.LOAD_SUCCEED, State.INITIAL) ||
+                    state.compareAndSet(State.LOAD_FAILED, State.INITIAL) ||
+                    state.compareAndSet(State.LOAD_CANCELED, State.INITIAL)) {
+                return onRelaunch();
+            }
+        }else{
+            //check state
+            if (state.compareAndSet(State.LOAD_CANCELED, State.INITIAL)) {
+                return onRelaunch();
+            }
         }
 
         return LaunchResult.FAILED;

@@ -131,7 +131,8 @@ public class ContainerDrawable extends TransitionDrawable {
         }
         final Stub stub = getStub();
         if (stub != null) {
-            Stub.LaunchResult result = stub.relaunch();
+            //force relaunch
+            Stub.LaunchResult result = stub.relaunch(true);
             switch(result){
                 case SUCCEED:
                     getLogger().d("[ContainerDrawable]relaunch succeed: key:" + stub.getKey());
