@@ -40,6 +40,10 @@ import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
+import sviolet.turquoise.x.imageloader.node.queue.InfiniteResponseQueue;
+import sviolet.turquoise.x.imageloader.node.queue.RequestQueue;
+import sviolet.turquoise.x.imageloader.node.queue.RequestQueueImpl;
+import sviolet.turquoise.x.imageloader.node.queue.ResponseQueue;
 import sviolet.turquoise.x.imageloader.server.Server;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 import sviolet.turquoise.x.imageloader.stub.StubGroup;
@@ -58,7 +62,7 @@ public class NodeControllerImpl extends NodeController {
     private RequestQueue memoryRequestQueue;
     private RequestQueue diskRequestQueue;
     private RequestQueue netRequestQueue;
-    private ResponseQueue responseQueue = new ResponseQueueImpl();
+    private ResponseQueue responseQueue = new InfiniteResponseQueue();
 
     private Map<String, StubGroup> stubPool = new ConcurrentHashMap<>();
     private final ReentrantLock stubPoolLock = new ReentrantLock();

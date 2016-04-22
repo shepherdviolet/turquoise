@@ -17,7 +17,9 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.node;
+package sviolet.turquoise.x.imageloader.node.queue;
+
+import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
  * Created by S.Violet on 2016/2/17.

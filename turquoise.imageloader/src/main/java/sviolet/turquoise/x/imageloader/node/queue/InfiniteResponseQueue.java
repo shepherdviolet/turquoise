@@ -17,16 +17,18 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.node;
+package sviolet.turquoise.x.imageloader.node.queue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
+import sviolet.turquoise.x.imageloader.node.Task;
+
 /**
  * Created by S.Violet on 2016/3/3.
  */
-public class ResponseQueueImpl implements ResponseQueue {
+public class InfiniteResponseQueue implements ResponseQueue {
 
     private List<Task> tasks = new ArrayList<>();
 
