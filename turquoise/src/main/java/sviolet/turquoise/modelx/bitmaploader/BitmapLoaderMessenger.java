@@ -51,7 +51,7 @@ import sviolet.turquoise.modelx.bitmaploader.handler.NetLoadHandler;
  * 
  *
  * @author S.Violet
- * @deprecated if you app's api level above 15, use TILoader instead
+ * @deprecated if you app's api level above 11, use TILoader instead
  *
  */
 @Deprecated

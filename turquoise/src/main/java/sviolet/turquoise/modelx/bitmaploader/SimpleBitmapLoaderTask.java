@@ -63,7 +63,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  * 2.若设置了加载图(loadingBitmap), 加载出来的TransitionDrawable尺寸等于目的图<p/>
  *
  * @author S.Violet
- * @deprecated if you app's api level above 15, use TILoader instead
+ * @deprecated if you app's api level above 11, use TILoader instead
  *
  * Created by S.Violet on 2015/10/16.
  */

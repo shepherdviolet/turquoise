@@ -30,7 +30,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  *
  * 实现了基本的错误信息打印, 无日志级别控制<br/>
  *
- * @deprecated if you app's api level above 15, use TILoader instead
+ * @deprecated if you app's api level above 11, use TILoader instead
  *
  * Created by S.Violet on 2015/11/4.
  */

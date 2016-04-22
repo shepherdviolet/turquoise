@@ -38,7 +38,7 @@ import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
  * 进行轻量级处理.<p/>
  *
  * @see BitmapDecodeHandler
- * @deprecated if you app's api level above 15, use TILoader instead
+ * @deprecated if you app's api level above 11, use TILoader instead
  *
  * Created by S.Violet on 2015/11/5.
  */

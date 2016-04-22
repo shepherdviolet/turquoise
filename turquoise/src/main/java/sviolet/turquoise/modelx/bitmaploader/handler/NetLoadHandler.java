@@ -38,7 +38,7 @@ import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
  * @see DefaultNetLoadHandler
  *
  * @author S.Violet
- * @deprecated if you app's api level above 15, use TILoader instead
+ * @deprecated if you app's api level above 11, use TILoader instead
  */
 @Deprecated
 public interface NetLoadHandler {

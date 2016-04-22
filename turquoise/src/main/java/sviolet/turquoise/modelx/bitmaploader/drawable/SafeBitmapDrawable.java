@@ -35,7 +35,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  * 防回收崩溃, 当Bitmap被回收时, 绘制空白, 不会崩溃<Br/>
  * 可复写onDrawError()方法实现重新加载.<br/>
  *
- * @deprecated if you app's api level above 15, use TILoader instead
+ * @deprecated if you app's api level above 11, use TILoader instead
  *
  * Created by S.Violet on 2015/10/21.
  */

@@ -30,7 +30,7 @@ import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
  * 实现磁盘缓存打开失败 和 磁盘缓存写入失败的异常处理, 其中"磁盘缓存打开失败"务必妥善处理.<br/>
  *
  * @see DefaultDiskCacheExceptionHandler
- * @deprecated if you app's api level above 15, use TILoader instead
+ * @deprecated if you app's api level above 11, use TILoader instead
  *
  * Created by S.Violet on 2015/11/4.
  */

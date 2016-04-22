@@ -36,7 +36,7 @@ import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoaderTask;
  *
  * 实现参考{@link DefaultLoadingDrawableFactory.DefaultLoadingDrawable}<p/>
  *
- * @deprecated if you app's api level above 15, use TILoader instead
+ * @deprecated if you app's api level above 11, use TILoader instead
  *
  * Created by S.Violet on 2015/11/17.
  */
