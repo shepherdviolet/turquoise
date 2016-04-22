@@ -11,7 +11,7 @@
 > Utils/Models ┃ sviolet.turquoise.util/utilx/model/modelx <br/>
 > ┈┈ 1.LifeCycleUtils: monitor LifeCycle of Activity/Fragment<br/>
 > ┈┈ 2.TLogger: extensible log utils<br/>
-> ┈┈ ~~3.BitmapLoader/SimpleBitmapLoader: deprecated loader, use TILoader instead (API15 above)~~<br/>
+> ┈┈ ~~3.BitmapLoader/SimpleBitmapLoader: deprecated loader, use TILoader instead (for API11 above)~~<br/>
 > ┈┈ cache/queue/conversion/crypt/sort/android system utils/......<br/>
 > <br/>
 > Views ┃ sviolet.turquoise.ui/uix <br/>
@@ -27,7 +27,7 @@
 > <br/>
 
 ## Module "turquoise.imageloader"
-> API level 15 above.<br/>
+> API level 11 above.<br/>
 > TurquoiseImageLoader, dependent on module "turquoise". it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.<br/>
 > <br/>
 > NOT AVAILABLE!!! still developing...<br/>
