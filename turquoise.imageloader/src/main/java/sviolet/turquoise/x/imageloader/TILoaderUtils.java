@@ -29,6 +29,9 @@ import java.io.IOException;
 import sviolet.turquoise.common.statics.SpecialResourceId;
 import sviolet.turquoise.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.DirectoryUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.utilx.tlogger.TLoggerModule;
+import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.stub.Stub;
@@ -146,6 +149,21 @@ public class TILoaderUtils {
         ComponentManager.getInstance().waitingForInitialized();
         ComponentManager.getInstance().getMemoryCacheServer().removeAll();
         ComponentManager.getInstance().getLogger().i("[TILoaderUtils]memory cache wiped");
+    }
+
+    /**
+     * set TILoader's log level, valid only in SimpleTLoggerModule, it will be invalid if you use custom TLoggerModule
+     * @param level e.g. TLogger.ERROR | TLogger.INFO
+     * @return true:set succeed, module is SimpleTLoggerModule, false:set failed, module is not SimpleTLoggerModule
+     */
+    public static boolean setLoggerLevel(int level){
+        TLoggerModule module = TLogger.getModule();
+        //valid in SimpleTLoggerModule
+        if (module instanceof SimpleTLoggerModule){
+            ((SimpleTLoggerModule) module).addRule(TILoader.TAG, new SimpleTLoggerModule.Rule(level));
+            return true;
+        }
+        return false;
     }
 
 }
