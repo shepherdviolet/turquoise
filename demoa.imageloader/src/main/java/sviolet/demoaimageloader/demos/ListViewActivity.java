@@ -34,7 +34,7 @@ import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.x.imageloader.TILoader;
-import sviolet.turquoise.x.imageloader.drawable.def.CommonLoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.common.CommonLoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 
 @DemoDescription(
