@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.util.common.DateTimeUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
-import sviolet.turquoise.util.droid.SystemAppUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
@@ -39,7 +38,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
  *
  * Created by S.Violet on 2016/3/22.
  */
-public class DefaultExceptionHandler implements ExceptionHandler {
+public class CommonExceptionHandler implements ExceptionHandler {
 
     private static final String DISK_CACHE_EXCEPTION_TOAST_CN = "图片磁盘缓存访问失败,请检查您的手机内存是否已满";
     private static final String DISK_CACHE_EXCEPTION_TOAST_EN = "Image disk cache access fails, check your phone memory is full";
@@ -118,16 +117,16 @@ public class DefaultExceptionHandler implements ExceptionHandler {
 
     private final MyHandler myHandler = new MyHandler(Looper.getMainLooper(), this);
 
-    private static class MyHandler extends WeakHandler<DefaultExceptionHandler>{
+    private static class MyHandler extends WeakHandler<CommonExceptionHandler>{
 
         private static final int HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION = 1;
 
-        public MyHandler(Looper looper, DefaultExceptionHandler host) {
+        public MyHandler(Looper looper, CommonExceptionHandler host) {
             super(looper, host);
         }
 
         @Override
-        protected void handleMessageWithHost(Message msg, DefaultExceptionHandler host) {
+        protected void handleMessageWithHost(Message msg, CommonExceptionHandler host) {
             switch (msg.what){
                 case HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION:
                     if (msg.obj instanceof Info) {

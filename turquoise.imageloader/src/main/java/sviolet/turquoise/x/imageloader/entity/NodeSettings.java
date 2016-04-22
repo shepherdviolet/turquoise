@@ -23,7 +23,7 @@ import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
-import sviolet.turquoise.x.imageloader.drawable.def.DefaultBackgroundDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.def.CommonBackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 
@@ -121,7 +121,7 @@ public class NodeSettings implements Destroyable {
 
         public Builder setBackgroundImageResId(int backgroundImageResId){
             if (values.backgroundDrawableFactory == null){
-                values.backgroundDrawableFactory = new DefaultBackgroundDrawableFactory();
+                values.backgroundDrawableFactory = new CommonBackgroundDrawableFactory();
             }
             values.backgroundDrawableFactory.setBackgroundImageResId(backgroundImageResId);
             return this;
@@ -129,7 +129,7 @@ public class NodeSettings implements Destroyable {
 
         public Builder setBackgroundColor(int backgroundColor){
             if (values.backgroundDrawableFactory == null){
-                values.backgroundDrawableFactory = new DefaultBackgroundDrawableFactory();
+                values.backgroundDrawableFactory = new CommonBackgroundDrawableFactory();
             }
             values.backgroundDrawableFactory.setBackgroundColor(backgroundColor);
             return this;

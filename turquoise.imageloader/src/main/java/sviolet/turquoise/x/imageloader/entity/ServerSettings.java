@@ -30,17 +30,17 @@ import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
-import sviolet.turquoise.x.imageloader.drawable.def.DefaultBackgroundDrawableFactory;
-import sviolet.turquoise.x.imageloader.drawable.def.DefaultFailedDrawableFactory;
-import sviolet.turquoise.x.imageloader.drawable.def.DefaultLoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.def.CommonBackgroundDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.def.CommonFailedDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.def.CommonLoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
-import sviolet.turquoise.x.imageloader.handler.def.DefaultDecodeHandler;
-import sviolet.turquoise.x.imageloader.handler.def.DefaultExceptionHandler;
-import sviolet.turquoise.x.imageloader.handler.def.DefaultImageResourceHandler;
-import sviolet.turquoise.x.imageloader.handler.def.DefaultNetworkLoadHandler;
+import sviolet.turquoise.x.imageloader.handler.def.CommonDecodeHandler;
+import sviolet.turquoise.x.imageloader.handler.def.CommonExceptionHandler;
+import sviolet.turquoise.x.imageloader.handler.def.CommonImageResourceHandler;
+import sviolet.turquoise.x.imageloader.handler.def.CommonNetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.TaskFactory;
 import sviolet.turquoise.x.imageloader.node.TaskFactoryImpl;
 import sviolet.turquoise.x.imageloader.stub.StubFactory;
@@ -67,17 +67,17 @@ public class ServerSettings implements ComponentManager.Component{
 
         //handler////////////////////////////////////////////////////////////////////////////
 
-        private ImageResourceHandler imageResourceHandler = new DefaultImageResourceHandler();
-        private NetworkLoadHandler networkLoadHandler = new DefaultNetworkLoadHandler();
-        private DecodeHandler decodeHandler = new DefaultDecodeHandler();
-        private ExceptionHandler exceptionHandler = new DefaultExceptionHandler();
+        private ImageResourceHandler imageResourceHandler = new CommonImageResourceHandler();
+        private NetworkLoadHandler networkLoadHandler = new CommonNetworkLoadHandler();
+        private DecodeHandler decodeHandler = new CommonDecodeHandler();
+        private ExceptionHandler exceptionHandler = new CommonExceptionHandler();
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
         private final StubFactoryImpl stubFactory = new StubFactoryImpl();
         private LoadingDrawableFactory loadingDrawableFactory;
         private FailedDrawableFactory failedDrawableFactory;
-        private BackgroundDrawableFactory backgroundDrawableFactory = new DefaultBackgroundDrawableFactory();
+        private BackgroundDrawableFactory backgroundDrawableFactory = new CommonBackgroundDrawableFactory();
 
         //static factory////////////////////////////////////////////////////////////////////////////
 
@@ -239,10 +239,10 @@ public class ServerSettings implements ComponentManager.Component{
         this.manager = manager;
         values.taskFactory.init(manager);
         if (values.loadingDrawableFactory == null) {
-            values.loadingDrawableFactory = new DefaultLoadingDrawableFactory();
+            values.loadingDrawableFactory = new CommonLoadingDrawableFactory();
         }
         if(values.failedDrawableFactory == null) {
-            values.failedDrawableFactory = new DefaultFailedDrawableFactory();
+            values.failedDrawableFactory = new CommonFailedDrawableFactory();
         }
     }
 

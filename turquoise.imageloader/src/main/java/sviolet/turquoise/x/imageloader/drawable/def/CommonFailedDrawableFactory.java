@@ -40,35 +40,34 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  *
  * Created by S.Violet on 2016/3/17.
  */
-public class DefaultBackgroundDrawableFactory implements BackgroundDrawableFactory {
+public class CommonFailedDrawableFactory implements FailedDrawableFactory {
 
-    public static final int DEFAULT_BACKGROUND_COLOR = 0x00000000;
+    public static final int DEFAULT_COLOR = 0x20000000;
 
-    private ResourceBitmapWrapper backgroundBitmap = new ResourceBitmapWrapper();
-    private int backgroundColor = DEFAULT_BACKGROUND_COLOR;
+    private ResourceBitmapWrapper bitmap = new ResourceBitmapWrapper();
+    private int color = DEFAULT_COLOR;
 
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
-        Bitmap bitmap = backgroundBitmap.getBitmap(applicationContext.getResources(), logger);
+        Bitmap bitmap = this.bitmap.getBitmap(applicationContext.getResources(), logger);
         if (bitmap != null && !bitmap.isRecycled()){
             //use TIBitmapDrawable instead of BitmapDrawable
-            return new TIBitmapDrawable(bitmap).setMatchParent(true);
+            return new TIBitmapDrawable(bitmap);
         }
-        return new ColorDrawable(backgroundColor);
+        return new ColorDrawable(color);
     }
 
     @Override
     public void onDestroy() {
-        backgroundBitmap.destroy();
+        bitmap.destroy();
     }
 
-    @Override
-    public void setBackgroundImageResId(int backgroundImageResId) {
-        this.backgroundBitmap.setResId(backgroundImageResId);
+    public void setImageResId(int resId) {
+        this.bitmap.setResId(resId);
     }
 
-    @Override
-    public void setBackgroundColor(int backgroundColor) {
-        this.backgroundColor = backgroundColor;
+    public void setColor(int color) {
+        this.color = color;
     }
+
 }

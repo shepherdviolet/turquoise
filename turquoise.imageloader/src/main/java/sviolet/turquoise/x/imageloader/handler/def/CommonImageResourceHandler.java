@@ -30,7 +30,7 @@ import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
  *
  * Created by S.Violet on 2016/3/15.
  */
-public class DefaultImageResourceHandler implements ImageResourceHandler {
+public class CommonImageResourceHandler implements ImageResourceHandler {
 
     @Override
     public boolean isValid(ImageResource<?> resource) {

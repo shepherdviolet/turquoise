@@ -45,7 +45,7 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  *
  * Created by S.Violet on 2016/3/17.
  */
-public class DefaultLoadingDrawableFactory implements LoadingDrawableFactory {
+public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
     private static final int BACKGROUND_COLOR_DEF = 0x00000000;
 
@@ -68,47 +68,47 @@ public class DefaultLoadingDrawableFactory implements LoadingDrawableFactory {
         backgroundBitmap.destroy();
     }
 
-    public DefaultLoadingDrawableFactory setBackgroundResId(int backgroundResId){
+    public CommonLoadingDrawableFactory setBackgroundResId(int backgroundResId){
         backgroundBitmap.setResId(backgroundResId);
         return this;
     }
 
-    public DefaultLoadingDrawableFactory setBackgroundColor(int backgroundColor){
+    public CommonLoadingDrawableFactory setBackgroundColor(int backgroundColor){
         this.backgroundColor = backgroundColor;
         return this;
     }
 
-    public DefaultLoadingDrawableFactory setPointColor(int color){
+    public CommonLoadingDrawableFactory setPointColor(int color){
         settings.pointColor = color;
         return this;
     }
 
-    public DefaultLoadingDrawableFactory setPointRadius(int radius){
+    public CommonLoadingDrawableFactory setPointRadius(int radius){
         settings.pointRadius = radius;
         return this;
     }
 
-    public DefaultLoadingDrawableFactory setPointInterval(int interval){
+    public CommonLoadingDrawableFactory setPointInterval(int interval){
         settings.pointInterval = interval;
         return this;
     }
 
-    public DefaultLoadingDrawableFactory setAnimationDuration(long duration){
+    public CommonLoadingDrawableFactory setAnimationDuration(long duration){
         settings.animationDuration = duration;
         return this;
     }
 
-    public DefaultLoadingDrawableFactory setPointOffsetX(float offsetX){
+    public CommonLoadingDrawableFactory setPointOffsetX(float offsetX){
         settings.pointOffsetX = offsetX;
         return this;
     }
 
-    public DefaultLoadingDrawableFactory setPointOffsetY(float offsetY){
+    public CommonLoadingDrawableFactory setPointOffsetY(float offsetY){
         settings.pointOffsetY = offsetY;
         return this;
     }
 
-    public DefaultLoadingDrawableFactory setAnimationEnabled(boolean enabled){
+    public CommonLoadingDrawableFactory setAnimationEnabled(boolean enabled){
         settings.animationEnabled = enabled;
         return this;
     }

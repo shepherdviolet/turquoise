@@ -34,7 +34,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
  *
  * Created by S.Violet on 2016/4/1.
  */
-public class DefaultDecodeHandler extends DecodeHandler {
+public class CommonDecodeHandler extends DecodeHandler {
 
     @Override
     public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
