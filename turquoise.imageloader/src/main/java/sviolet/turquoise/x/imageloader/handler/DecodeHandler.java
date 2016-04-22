@@ -52,7 +52,7 @@ public abstract class DecodeHandler {
 
     private ImageResource<?> intercept(Context applicationContext, Context context, Task task, TLogger logger, ImageResource<?> imageResource) {
         //interceptor
-        if (imageResource != null && task.getParams().getDecodeInterceptor() != null){
+        if (task.getParams().getDecodeInterceptor() != null && TILoaderUtils.isImageResourceValid(imageResource)){
             ImageResource<?> imageResource2 = task.getParams().getDecodeInterceptor().intercept(applicationContext, context, task.getTaskInfo(), imageResource, logger);
             //recycle previous ImageResource
             if (!TILoaderUtils.isImageResourceEqual(imageResource, imageResource2)){
