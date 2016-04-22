@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.handler.def;
+package sviolet.turquoise.x.imageloader.handler.common;
 
 import android.content.Context;
 

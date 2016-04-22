@@ -23,7 +23,7 @@ import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
-import sviolet.turquoise.x.imageloader.drawable.def.CommonBackgroundDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.common.CommonBackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 
