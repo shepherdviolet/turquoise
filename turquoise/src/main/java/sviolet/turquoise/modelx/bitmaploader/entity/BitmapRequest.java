@@ -78,6 +78,7 @@ import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoaderTask;
  *
  * Created by S.Violet on 2015/11/6.
  */
+@Deprecated
 public class BitmapRequest {
 
     private String url;

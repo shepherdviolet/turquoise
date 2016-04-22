@@ -30,9 +30,11 @@ import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
  * 通常用于实现错误日志的输出过程.<br/>
  *
  * @see DefaultCommonExceptionHandler
+ * @deprecated if you app's api level above 15, use TILoader instead
  *
  * Created by S.Violet on 2015/11/4.
  */
+@Deprecated
 public interface CommonExceptionHandler {
 
     /**

@@ -35,6 +35,7 @@ import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
  *
  * Created by S.Violet on 2015/11/5.
  */
+@Deprecated
 public class DefaultLoaderTaskFactory implements LoaderTaskFactory {
 
     /**

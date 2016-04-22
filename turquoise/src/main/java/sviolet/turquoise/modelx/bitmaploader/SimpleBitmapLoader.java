@@ -153,9 +153,11 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  * 
  *
  * @author S.Violet
+ * @deprecated if you app's api level above 15, use TILoader instead
  *
  * Created by S.Violet on 2015/10/19.
  */
+@Deprecated
 public class SimpleBitmapLoader implements LifeCycle {
 
     //默认的加载任务工厂

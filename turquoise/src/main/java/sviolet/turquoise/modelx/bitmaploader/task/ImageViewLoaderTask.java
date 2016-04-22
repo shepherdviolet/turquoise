@@ -30,6 +30,7 @@ import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
  * ImageView异步加载任务<br/>
  * Created by S.Violet on 2015/10/19.
  */
+@Deprecated
 class ImageViewLoaderTask extends SimpleBitmapLoaderTask<ImageView> {
 
 

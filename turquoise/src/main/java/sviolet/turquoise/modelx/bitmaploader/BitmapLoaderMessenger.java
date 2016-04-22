@@ -51,8 +51,10 @@ import sviolet.turquoise.modelx.bitmaploader.handler.NetLoadHandler;
  * 
  *
  * @author S.Violet
+ * @deprecated if you app's api level above 15, use TILoader instead
  *
  */
+@Deprecated
 public class BitmapLoaderMessenger {
 
     public static final int RESULT_NULL = 0;//无结果

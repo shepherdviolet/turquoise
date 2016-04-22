@@ -31,8 +31,11 @@ import sviolet.turquoise.util.common.DateTimeUtils;
 /**
  * 默认动态加载图工厂
  *
+ * @deprecated if you app's api level above 15, use TILoader instead
+ *
  * Created by S.Violet on 2015/11/17.
  */
+@Deprecated
 public class DefaultLoadingDrawableFactory extends AbsLoadingDrawableFactory {
 
     protected Settings settings;

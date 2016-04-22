@@ -26,6 +26,7 @@ import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
 /**
  * 图片加载结束监听
  */
+@Deprecated
 public interface OnBitmapLoadedListener {
     /**
      * 加载成功

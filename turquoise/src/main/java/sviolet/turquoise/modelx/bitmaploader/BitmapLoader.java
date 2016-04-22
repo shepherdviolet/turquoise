@@ -166,9 +166,11 @@ import sviolet.turquoise.util.droid.DirectoryUtils;
  * 
  *
  * @author S.Violet
+ * @deprecated if you app's api level above 15, use TILoader instead
  *
  * Created by S.Violet on 2015/7/3.
  */
+@Deprecated
 public class BitmapLoader implements LifeCycle {
 
     public static final String TAG = "BitmapLoader";

@@ -11,6 +11,7 @@ import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
  *
  * Created by S.Violet on 2016/2/16.
  */
+@Deprecated
 public interface LoaderTaskFactory {
 
     /**

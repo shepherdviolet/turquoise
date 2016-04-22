@@ -68,8 +68,11 @@ import sviolet.turquoise.util.droid.DeviceUtils;
  * 建议配合setViewRefreshListener()方法使用, 在启用磁盘缓存禁用模式后,
  * 会回调该监听器, 用来刷新显示(重新加载图片).<p/>
  *
+ * @deprecated if you app's api level above 15, use TILoader instead
+ *
  * Created by S.Violet on 2015/11/4.
  */
+@Deprecated
 public class DefaultDiskCacheExceptionHandler implements DiskCacheExceptionHandler {
 
     private TLogger logger = TLogger.get(this, BitmapLoader.TAG);

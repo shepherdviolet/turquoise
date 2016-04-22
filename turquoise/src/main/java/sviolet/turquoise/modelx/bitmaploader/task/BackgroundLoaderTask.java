@@ -33,6 +33,7 @@ import sviolet.turquoise.util.droid.DeviceUtils;
  * View背景异步加载任务<br/>
  * Created by S.Violet on 2015/10/19.
  */
+@Deprecated
 class BackgroundLoaderTask extends SimpleBitmapLoaderTask<View> {
 
     BackgroundLoaderTask(BitmapRequest request, SimpleBitmapLoader loader, View view) {
