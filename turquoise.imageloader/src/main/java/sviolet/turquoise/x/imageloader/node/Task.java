@@ -131,8 +131,6 @@ public class Task {
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder("[Task]<");
-            builder.append(type);
-            builder.append(SEPARATOR);
             builder.append(serverType);
             builder.append(SEPARATOR);
             builder.append(state);

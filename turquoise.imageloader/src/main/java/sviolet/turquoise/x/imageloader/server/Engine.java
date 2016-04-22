@@ -95,13 +95,13 @@ public abstract class Engine implements ComponentManager.Component, Server {
     private Task getTask(){
         if (cache == null || cache.size() <= 0){
             cache = manager.getNodeManager().pullTasks(getServerType());
-            manager.getLogger().d("[Engine:" + getServerType() + "]get task from nodeManager");
+//            manager.getLogger().d("[Engine:" + getServerType() + "]get task from nodeManager");
         }
         if (cache != null && cache.size() > 0){
-            manager.getLogger().d("[Engine:" + getServerType() + "]get task from cache");
+//            manager.getLogger().d("[Engine:" + getServerType() + "]get task from cache");
             return cache.remove(0);
         }
-        manager.getLogger().d("[Engine:" + getServerType() + "]get task failed, nothing");
+//        manager.getLogger().d("[Engine:" + getServerType() + "]get task failed, nothing");
         return null;
     }
 

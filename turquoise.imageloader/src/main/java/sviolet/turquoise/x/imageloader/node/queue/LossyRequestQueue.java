@@ -44,7 +44,9 @@ public class LossyRequestQueue implements RequestQueue {
 
     @Override
     public Task put(Task task) {
-        logger.d("[LossyRequestQueue]put: put task, task:" + task.getTaskInfo());
+        if (!logger.isNullLogger()) {
+            logger.d("[LossyRequestQueue]put: put task, task:" + task.getTaskInfo());
+        }
         Task oldTask;
         try{
             lock.lock();
@@ -71,12 +73,9 @@ public class LossyRequestQueue implements RequestQueue {
         }finally {
             lock.unlock();
         }
-        if (task != null) {
+        if (task != null && !logger.isNullLogger()) {
             logger.d("[LossyRequestQueue]get: get task, task:" + task.getTaskInfo());
         }
-//        else{
-//            logger.d("[LossyRequestQueue]get: no task");
-//        }
         return task;
     }
 

@@ -269,7 +269,9 @@ public class NodeControllerImpl extends NodeController {
         if (task == null){
             return;
         }
-        manager.getLogger().d("[NodeControllerImpl]task finish, callback to stub, task:" + task.getTaskInfo());
+        if (!manager.getLogger().isNullLogger()) {
+            manager.getLogger().d("[NodeControllerImpl]task finish, callback to stub, task:" + task.getTaskInfo());
+        }
         Message msg = myHandler.obtainMessage(MyHandler.HANDLER_CALLBACK);
         msg.obj = task;
         msg.sendToTarget();
