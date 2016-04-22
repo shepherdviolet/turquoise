@@ -189,9 +189,30 @@ public class ServerSettings implements ComponentManager.Component{
 
         //handler////////////////////////////////////////////////////////////////////////////
 
+        public Builder setImageResourceHandler(ImageResourceHandler imageResourceHandler){
+            if (imageResourceHandler != null){
+                values.imageResourceHandler = imageResourceHandler;
+            }
+            return this;
+        }
+
         public Builder setNetworkLoadHandler(NetworkLoadHandler networkLoadHandler){
             if (networkLoadHandler != null){
                 values.networkLoadHandler = networkLoadHandler;
+            }
+            return this;
+        }
+
+        public Builder setDecodeHandler(DecodeHandler decodeHandler){
+            if (decodeHandler != null){
+                values.decodeHandler = decodeHandler;
+            }
+            return this;
+        }
+
+        public Builder setExceptionHandler(ExceptionHandler exceptionHandler){
+            if (exceptionHandler != null){
+                values.exceptionHandler = exceptionHandler;
             }
             return this;
         }
