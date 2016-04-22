@@ -26,4 +26,6 @@ public interface NodeFactory {
 
     Node newNode(String nodeId);
 
+    Node newExtractNode(String nodeId);
+
 }

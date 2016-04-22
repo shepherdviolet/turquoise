@@ -21,10 +21,13 @@ package sviolet.turquoise.x.imageloader;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
+import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
+import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.Node;
 
@@ -73,6 +76,21 @@ public class TILoader {
     public static Node node(android.app.Fragment context){
         checkContext(context);
         return ComponentManager.getInstance().getNodeManager().fetchNode(context.getActivity());
+    }
+
+    /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
+     * [Initialize Node]this method will initialize Node<br/>
+     * extract Image, without memory cache and disk cache<br/>
+     * you should recycle Bitmap by yourself<br/>
+     * @param context applicationContext or activity/fragment context
+     * @param url URL
+     * @param params loading params
+     * @param listener callback when loading succeed / canceled / failed
+     */
+    public static void extract(Context context, String url, Params params, OnLoadedListener listener) {
+        checkContext(context);
+        ComponentManager.getInstance().getNodeManager().fetchExtractNode(context).extract(url, params, listener);
     }
 
     /**

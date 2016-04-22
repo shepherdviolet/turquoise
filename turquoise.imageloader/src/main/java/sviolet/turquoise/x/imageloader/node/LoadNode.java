@@ -29,21 +29,24 @@ import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.server.Engine;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
-import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  *
  * Created by S.Violet on 2016/2/18.
  */
-public class NodeImpl extends Node {
+public class LoadNode extends Node {
 
     private ComponentManager manager;
     private NodeController controller;
 
-    public NodeImpl(ComponentManager manager, String nodeId){
+    LoadNode(ComponentManager manager, String nodeId){
+        this(manager, nodeId, false);
+    }
+
+    LoadNode(ComponentManager manager, String nodeId, boolean infiniteRequestQueue){
         this.manager = manager;
-        this.controller = new NodeControllerImpl(manager, this, nodeId);
+        this.controller = new NodeControllerImpl(manager, this, nodeId, infiniteRequestQueue);
     }
 
     /********************************************
@@ -76,14 +79,6 @@ public class NodeImpl extends Node {
         stub.initialize(controller);
     }
 
-    @Override
-    public void extract(String url, Params params, OnLoadedListener listener) {
-        manager.waitingForInitialized();
-        controller.waitingForInitialized();
-        Stub stub = manager.getServerSettings().getStubFactory().newExtractStub(url, params, listener);
-        stub.initialize(controller);
-    }
-
     /********************************************
      * public
      */
@@ -113,14 +108,22 @@ public class NodeImpl extends Node {
     }
 
     @Override
-    void attachLifeCycle(Context context) {
+    protected void attachLifeCycle(Context context) {
         if (context instanceof FragmentActivity){
             LifeCycleUtils.attach((FragmentActivity) context, controller);
         }else if (context instanceof Activity){
             LifeCycleUtils.attach((Activity) context, controller);
         }else{
-            throw new RuntimeException("[NodeImpl]can't attach Node on this Context, class=" + context.getClass().getName());
+            throw new RuntimeException("[LoadNode]can't attach Node on this Context, class=" + context.getClass().getName());
         }
+    }
+
+    protected ComponentManager getManager() {
+        return manager;
+    }
+
+    protected NodeController getController() {
+        return controller;
     }
 
     /***************************************************

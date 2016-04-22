@@ -75,17 +75,6 @@ public abstract class Node {
     public abstract void loadBackground(String url, Params params, View view);
 
     /**
-     * [Initialize TILoader]this method will initialize TILoader<br/>
-     * [Initialize Node]this method will initialize Node<br/>
-     * extract Image, without memory cache and disk cache<br/>
-     * you should recycle Bitmap by yourself<br/>
-     * @param url URL
-     * @param params loading params
-     * @param listener callback when loading succeed / canceled / failed
-     */
-    public abstract void extract(String url, Params params, OnLoadedListener listener);
-
-    /**
      * Node Setting, you should setting before Node initialized (invoke TILoader.node().load() will initialize Node)<br/>
      * e.g setting in Activity.onCreate()<br/>
      * @param settings Node Settings
@@ -112,7 +101,7 @@ public abstract class Node {
      */
     abstract void response(Task task);
 
-    abstract void attachLifeCycle(Context context);
+    protected abstract void attachLifeCycle(Context context);
 
     /***************************************************
      * NodePauseOnListScrollListener

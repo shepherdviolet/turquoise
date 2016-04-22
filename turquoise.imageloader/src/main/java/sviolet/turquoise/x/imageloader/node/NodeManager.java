@@ -36,10 +36,11 @@ import sviolet.turquoise.x.imageloader.server.Server;
  */
 public class NodeManager {
 
+    private static final String EXTRACT_NODE_ID = "###ExtractNode###";
+
     private ComponentManager manager;
 
     private final Map<String, Node> nodes = new ConcurrentHashMap<>();
-
     private final ReentrantLock nodesLock = new ReentrantLock();
 
     public NodeManager(ComponentManager manager){
@@ -69,6 +70,32 @@ public class NodeManager {
             }
         }
         return node;
+    }
+
+    public ExtractNode fetchExtractNode(Context context) {
+        if (context == null){
+            throw new RuntimeException("[NodeManager]can not fetch extract Node with out Context");
+        }
+        Node node = nodes.get(EXTRACT_NODE_ID);
+        //double check
+        if (node == null) {
+            try {
+                nodesLock.lock();
+                node = nodes.get(EXTRACT_NODE_ID);
+                if (node == null) {
+                    manager.setApplicationContextImage(context.getApplicationContext());
+                    node = manager.getNodeFactory().newExtractNode(EXTRACT_NODE_ID);
+                    nodes.put(EXTRACT_NODE_ID, node);
+                }
+            } finally {
+                nodesLock.unlock();
+            }
+        }
+        if (node instanceof ExtractNode) {
+            return (ExtractNode)node;
+        }else{
+            throw new RuntimeException("[TILoader:NodeManager]fetchExtractNode: can't convert Node to ExtractNode");
+        }
     }
 
     public List<Task> pullTasks(Server.Type type){

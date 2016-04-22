@@ -35,7 +35,11 @@ public class NodeFactoryImpl implements NodeFactory {
 
     @Override
     public Node newNode(String nodeId) {
-        return new NodeImpl(manager, nodeId);
+        return new LoadNode(manager, nodeId);
     }
 
+    @Override
+    public Node newExtractNode(String nodeId) {
+        return new ExtractNode(manager, nodeId);
+    }
 }

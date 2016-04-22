@@ -40,6 +40,7 @@ import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
+import sviolet.turquoise.x.imageloader.node.queue.InfiniteRequestQueue;
 import sviolet.turquoise.x.imageloader.node.queue.InfiniteResponseQueue;
 import sviolet.turquoise.x.imageloader.node.queue.LossyRequestQueue;
 import sviolet.turquoise.x.imageloader.node.queue.RequestQueue;
@@ -58,6 +59,7 @@ public class NodeControllerImpl extends NodeController {
     private String nodeId;
     private Node node;
     private NodeSettings settings;
+    private boolean infiniteRequestQueue = false;
 
     private RequestQueue memoryRequestQueue;
     private RequestQueue diskRequestQueue;
@@ -79,10 +81,11 @@ public class NodeControllerImpl extends NodeController {
      */
     private AtomicInteger nodePauseCount = new AtomicInteger(0);
 
-    NodeControllerImpl(ComponentManager manager, Node node, String nodeId){
+    NodeControllerImpl(ComponentManager manager, Node node, String nodeId, boolean infiniteRequestQueue){
         this.manager = manager;
         this.node = node;
         this.nodeId = nodeId;
+        this.infiniteRequestQueue = infiniteRequestQueue;
     }
 
     /*******************************************************
@@ -110,9 +113,15 @@ public class NodeControllerImpl extends NodeController {
         if (settings == null){
             settings = new NodeSettings.Builder().build();
         }
-        memoryRequestQueue = new LossyRequestQueue(settings.getMemoryQueueSize(), manager.getLogger());
-        diskRequestQueue = new LossyRequestQueue(settings.getDiskQueueSize(), manager.getLogger());
-        netRequestQueue = new LossyRequestQueue(settings.getNetQueueSize(), manager.getLogger());
+        if (infiniteRequestQueue){
+            memoryRequestQueue = new InfiniteRequestQueue();
+            diskRequestQueue = new InfiniteRequestQueue();
+            netRequestQueue = new InfiniteRequestQueue();
+        }else {
+            memoryRequestQueue = new LossyRequestQueue(settings.getMemoryQueueSize(), manager.getLogger());
+            diskRequestQueue = new LossyRequestQueue(settings.getDiskQueueSize(), manager.getLogger());
+            netRequestQueue = new LossyRequestQueue(settings.getNetQueueSize(), manager.getLogger());
+        }
     }
 
     /****************************************************
