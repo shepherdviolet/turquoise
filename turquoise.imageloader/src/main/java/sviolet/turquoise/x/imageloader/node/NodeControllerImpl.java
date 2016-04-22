@@ -41,8 +41,8 @@ import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.queue.InfiniteResponseQueue;
+import sviolet.turquoise.x.imageloader.node.queue.LossyRequestQueue;
 import sviolet.turquoise.x.imageloader.node.queue.RequestQueue;
-import sviolet.turquoise.x.imageloader.node.queue.RequestQueueImpl;
 import sviolet.turquoise.x.imageloader.node.queue.ResponseQueue;
 import sviolet.turquoise.x.imageloader.server.Server;
 import sviolet.turquoise.x.imageloader.stub.Stub;
@@ -110,9 +110,9 @@ public class NodeControllerImpl extends NodeController {
         if (settings == null){
             settings = new NodeSettings.Builder().build();
         }
-        memoryRequestQueue = new RequestQueueImpl(settings.getMemoryQueueSize(), manager.getLogger());
-        diskRequestQueue = new RequestQueueImpl(settings.getDiskQueueSize(), manager.getLogger());
-        netRequestQueue = new RequestQueueImpl(settings.getNetQueueSize(), manager.getLogger());
+        memoryRequestQueue = new LossyRequestQueue(settings.getMemoryQueueSize(), manager.getLogger());
+        diskRequestQueue = new LossyRequestQueue(settings.getDiskQueueSize(), manager.getLogger());
+        netRequestQueue = new LossyRequestQueue(settings.getNetQueueSize(), manager.getLogger());
     }
 
     /****************************************************

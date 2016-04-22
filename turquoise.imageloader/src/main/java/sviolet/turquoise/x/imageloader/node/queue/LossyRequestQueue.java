@@ -27,7 +27,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
 /**
  * Created by S.Violet on 2016/2/17.
  */
-public class RequestQueueImpl implements RequestQueue {
+public class LossyRequestQueue implements RequestQueue {
 
     private int size;
     private int position = 0;
@@ -37,14 +37,14 @@ public class RequestQueueImpl implements RequestQueue {
     private final ReentrantLock lock = new ReentrantLock();
     private TLogger logger;
 
-    public RequestQueueImpl(int size, TLogger logger){
+    public LossyRequestQueue(int size, TLogger logger){
         setSize(size);
         this.logger = logger;
     }
 
     @Override
     public Task put(Task task) {
-        logger.d("[RequestQueueImpl]put: put task, task:" + task.getTaskInfo());
+        logger.d("[LossyRequestQueue]put: put task, task:" + task.getTaskInfo());
         Task oldTask;
         try{
             lock.lock();
@@ -55,7 +55,7 @@ public class RequestQueueImpl implements RequestQueue {
             lock.unlock();
         }
         if (oldTask != null){
-            logger.d("[RequestQueueImpl]put: drop task, task:" + task.getTaskInfo());
+            logger.d("[LossyRequestQueue]put: drop task, task:" + task.getTaskInfo());
         }
         return oldTask;
     }
@@ -72,10 +72,10 @@ public class RequestQueueImpl implements RequestQueue {
             lock.unlock();
         }
         if (task != null) {
-            logger.d("[RequestQueueImpl]get: get task, task:" + task.getTaskInfo());
+            logger.d("[LossyRequestQueue]get: get task, task:" + task.getTaskInfo());
         }
 //        else{
-//            logger.d("[RequestQueueImpl]get: no task");
+//            logger.d("[LossyRequestQueue]get: no task");
 //        }
         return task;
     }
@@ -94,7 +94,7 @@ public class RequestQueueImpl implements RequestQueue {
 
     public void setSize(int size){
         if (size < 1){
-            throw new RuntimeException("[RequestQueueImpl]queue size must >= 1");
+            throw new RuntimeException("[LossyRequestQueue]queue size must >= 1");
         }
         if (this.size == size){
             return;
