@@ -19,7 +19,6 @@
 
 package sviolet.turquoise.x.imageloader.stub;
 
-import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
@@ -64,12 +63,23 @@ class ExtractStub extends AbsStub {
     @Override
     protected void onLoadSucceedInner(ImageResource<?> resource) {
         super.onLoadSucceedInner(resource);
-        if (!TILoaderUtils.isImageResourceValid(resource)){
+        //get & check controller
+        NodeController controller = getNodeController();
+        if (controller == null){
+            onDestroy();
+            return;
+        }
+        //copy image
+        ImageResource<?> newResource = controller.getServerSettings().getImageResourceHandler().copy(resource);
+        //check valid
+        if (!controller.getServerSettings().getImageResourceHandler().isValid(newResource)){
             shiftSucceedToFailed();
             return;
         }
         if (listener != null){
-            listener.onLoadSucceed(getUrl(), getParams(), resource);
+            listener.onLoadSucceed(getUrl(), getParams(), newResource);
+        }else{
+            getLogger().e("[ExtractStub]missing listener, can't callback(succeed), key:" + getKey());
         }
     }
 
@@ -83,6 +93,8 @@ class ExtractStub extends AbsStub {
         super.onLoadCanceledInner();
         if (listener != null){
             listener.onLoadCanceled(getUrl(), getParams());
+        }else{
+            getLogger().e("[ExtractStub]missing listener, can't callback(canceled), key:" + getKey());
         }
     }
 
