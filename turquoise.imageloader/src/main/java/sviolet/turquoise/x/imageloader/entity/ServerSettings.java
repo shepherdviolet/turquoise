@@ -61,8 +61,8 @@ public class ServerSettings implements ComponentManager.Component{
         private int memoryCacheSize = DEFAULT_MEMORY_CACHE_SIZE;
         private int diskCacheSize = DEFAULT_DISK_CACHE_SIZE;
         private int memoryLoadMaxThread = DEFAULT_MEMORY_LOAD_MAX_THREAD;
-        private int networkLoadMaxThread = DEFAULT_NETWORK_LOAD_MAX_THREAD;
         private int diskLoadMaxThread = DEFAULT_DISK_LOAD_MAX_THREAD;
+        private int networkLoadMaxThread = DEFAULT_NETWORK_LOAD_MAX_THREAD;
         private File diskCachePath = null;
 
         //handler////////////////////////////////////////////////////////////////////////////
@@ -103,27 +103,8 @@ public class ServerSettings implements ComponentManager.Component{
             return this;
         }
 
-        /**
-         * set the max thread of network loading
-         * @param maxThread max thread num, >=1
-         */
-        public Builder setNetworkLoadMaxThread(int maxThread){
-            if (maxThread < 1){
-                throw new RuntimeException("[ServerSettings]networkLoadMaxThread must >= 1");
-            }
-            values.networkLoadMaxThread = maxThread;
-            return this;
-        }
-
-        /**
-         * set the max thread of disk loading
-         * @param maxThread max thread num, >=1
-         */
-        public Builder setDiskLoadMaxThread(int maxThread){
-            if (maxThread < 1){
-                throw new RuntimeException("[ServerSettings]diskLoadMaxThread must >= 1");
-            }
-            values.diskLoadMaxThread = maxThread;
+        public Builder setWipeDiskCacheWhenUpdate(boolean wipeDiskCacheWhenUpdate){
+            values.wipeDiskCacheWhenUpdate = wipeDiskCacheWhenUpdate;
             return this;
         }
 
@@ -159,6 +140,42 @@ public class ServerSettings implements ComponentManager.Component{
                 throw new RuntimeException("[ServerSettings]setDiskCacheSize: size must be >0");
             }
             values.diskCacheSize = (int) (sizeMb * 1024 * 1024);
+            return this;
+        }
+
+        /**
+         * set the max thread of memory loading
+         * @param maxThread max thread num, >=1
+         */
+        public Builder setMemoryLoadMaxThread(int maxThread){
+            if (maxThread < 1){
+                throw new RuntimeException("[ServerSettings]setMemoryLoadMaxThread must >= 1");
+            }
+            values.memoryLoadMaxThread = maxThread;
+            return this;
+        }
+
+        /**
+         * set the max thread of disk loading
+         * @param maxThread max thread num, >=1
+         */
+        public Builder setDiskLoadMaxThread(int maxThread){
+            if (maxThread < 1){
+                throw new RuntimeException("[ServerSettings]diskLoadMaxThread must >= 1");
+            }
+            values.diskLoadMaxThread = maxThread;
+            return this;
+        }
+
+        /**
+         * set the max thread of network loading
+         * @param maxThread max thread num, >=1
+         */
+        public Builder setNetworkLoadMaxThread(int maxThread){
+            if (maxThread < 1){
+                throw new RuntimeException("[ServerSettings]networkLoadMaxThread must >= 1");
+            }
+            values.networkLoadMaxThread = maxThread;
             return this;
         }
 
