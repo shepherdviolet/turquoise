@@ -58,4 +58,11 @@ public interface ImageResourceHandler {
      */
     Drawable toDrawable(ImageResource<?> resource, boolean skipDrawingException);
 
+    /**
+     * copy ImageResource
+     * @param resource ImageResource
+     * @return new ImageResource with new resource(new Bitmap/...)
+     */
+    ImageResource<?> copy(ImageResource<?> resource);
+
 }

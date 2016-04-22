@@ -22,6 +22,7 @@ package sviolet.turquoise.x.imageloader.handler.common;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
+import sviolet.turquoise.util.common.BitmapUtils;
 import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
@@ -41,9 +42,8 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
             case BITMAP:
                 if (resource.getResource() instanceof Bitmap){
                     return !((Bitmap) resource.getResource()).isRecycled();
-                }else{
-                    return false;
                 }
+                break;
             default:
                 break;
         }
@@ -75,9 +75,8 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
                 if ((resource.getResource() instanceof Bitmap) && (!((Bitmap) resource.getResource()).isRecycled())){
                     ((Bitmap) resource.getResource()).recycle();
                     return true;
-                }else{
-                    return false;
                 }
+                break;
             default:
                 break;
         }
@@ -93,9 +92,28 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
             case BITMAP:
                 if ((resource.getResource() instanceof Bitmap) && (!((Bitmap) resource.getResource()).isRecycled())){
                     return new TIBitmapDrawable((Bitmap) resource.getResource()).setSkipException(skipDrawingException);
-                }else{
-                    return null;
                 }
+                break;
+            default:
+                break;
+        }
+        return null;
+    }
+
+    @Override
+    public ImageResource<?> copy(ImageResource<?> resource) {
+        if (resource == null || resource.getResource() == null){
+            return null;
+        }
+        switch (resource.getType()){
+            case BITMAP:
+                if ((resource.getResource() instanceof Bitmap) && (!((Bitmap) resource.getResource()).isRecycled())){
+                    Bitmap copy = BitmapUtils.copy((Bitmap)resource.getResource(), false);
+                    if (copy != null) {
+                        return new ImageResource<>(ImageResource.Type.BITMAP, copy);
+                    }
+                }
+                break;
             default:
                 break;
         }
