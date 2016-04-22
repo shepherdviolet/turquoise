@@ -563,6 +563,27 @@ public class BitmapUtils {
     }
 
     /**
+     * 复制Bitmap
+     * @param bitmap 源bitmap
+     * @param recycle 是否回收源Bitmap
+     * @return 新Bitmap
+     */
+    public static Bitmap copy(Bitmap bitmap, boolean recycle){
+        if (bitmap == null || bitmap.isRecycled()){
+            return null;
+        }
+        Config config = Config.ARGB_8888;
+        if (bitmap.getConfig() != null) {
+            config = bitmap.getConfig();
+        }
+        Bitmap result = bitmap.copy(config, true);
+        if (bitmap != result && recycle) {
+            bitmap.recycle();
+        }
+        return result;
+    }
+
+    /**
      * 保存Bitmap到本地(异步)
      *
      * @param bitmap
