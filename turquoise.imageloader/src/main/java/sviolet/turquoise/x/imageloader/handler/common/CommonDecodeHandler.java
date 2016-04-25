@@ -41,12 +41,24 @@ public class CommonDecodeHandler extends DecodeHandler {
         Bitmap bitmap = BitmapUtils.decodeFromByteArray(data,taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getBitmapConfig());
         if (bitmap == null)
             return null;
+        //exact decoding
+        if (taskInfo.getParams().isExactDecoding()){
+            bitmap = BitmapUtils.scaleTo(bitmap, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), true);
+        }
+        if (bitmap == null)
+            return null;
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
 
     @Override
     public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
         Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getBitmapConfig());
+        if (bitmap == null)
+            return null;
+        //exact decoding
+        if (taskInfo.getParams().isExactDecoding()){
+            bitmap = BitmapUtils.scaleTo(bitmap, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), true);
+        }
         if (bitmap == null)
             return null;
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);

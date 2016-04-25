@@ -35,6 +35,7 @@ public class Params {
         private int reqWidth = SIZE_MATCH_RESOURCE;
         private int reqHeight = SIZE_MATCH_RESOURCE;
         private boolean sizeMatchView = true;
+        private boolean exactDecoding = false;
         private Bitmap.Config bitmapConfig = DEFAULT_BITMAP_CONFIG;
         private DecodeHandler.Interceptor decodeInterceptor;
 
@@ -47,6 +48,7 @@ public class Params {
             newValues.reqWidth = reqWidth;
             newValues.reqHeight = reqHeight;
             newValues.sizeMatchView = sizeMatchView;
+            newValues.exactDecoding = exactDecoding;
             newValues.bitmapConfig = bitmapConfig;
             newValues.decodeInterceptor = decodeInterceptor;
             return newValues;
@@ -79,6 +81,15 @@ public class Params {
          */
         public Builder setSizeMatchView(boolean matchView){
             values.sizeMatchView = matchView;
+            return this;
+        }
+
+        /**
+         * if true, Image will decoding according to precise parameters, but it will cost more system resources.
+         * @param exactDecoding false by default
+         */
+        public Builder setExactDecoding(boolean exactDecoding){
+            values.exactDecoding = exactDecoding;
             return this;
         }
 
@@ -130,6 +141,10 @@ public class Params {
 
     public boolean isSizeMatchView(){
         return values.sizeMatchView;
+    }
+
+    public boolean isExactDecoding(){
+        return values.exactDecoding;
     }
 
     public Bitmap.Config getBitmapConfig(){
