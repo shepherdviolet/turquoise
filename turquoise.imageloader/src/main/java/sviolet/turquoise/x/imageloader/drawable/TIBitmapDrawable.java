@@ -43,8 +43,9 @@ import sviolet.turquoise.x.imageloader.TILoader;
  */
 public class TIBitmapDrawable extends BitmapDrawable {
 
-    private boolean matchParent = false;//match_parent
     private boolean skipException = false;
+    private int fixedWidth = Integer.MIN_VALUE;
+    private int fixedHeight = Integer.MIN_VALUE;
 
     public TIBitmapDrawable() {
     }
@@ -94,23 +95,27 @@ public class TIBitmapDrawable extends BitmapDrawable {
 
     @Override
     public int getIntrinsicWidth() {
-        if (matchParent)
-            return -1;
+        if (fixedWidth > Integer.MIN_VALUE)
+            return fixedWidth;
         return super.getIntrinsicWidth();
     }
 
     @Override
     public int getIntrinsicHeight() {
-        if (matchParent)
-            return -1;
+        if (fixedHeight > Integer.MIN_VALUE)
+            return fixedHeight;
         return super.getIntrinsicHeight();
     }
 
     /**
-     * set if match parent, false by default
+     * set if match parent
      */
     public TIBitmapDrawable setMatchParent(boolean matchParent){
-        this.matchParent = matchParent;
+        if (matchParent) {
+            setFixedSize(-1, -1);
+        }else{
+            setFixedSize(Integer.MIN_VALUE, Integer.MIN_VALUE);
+        }
         return this;
     }
 
@@ -120,6 +125,17 @@ public class TIBitmapDrawable extends BitmapDrawable {
      */
     public TIBitmapDrawable setSkipException(boolean skipException){
         this.skipException = skipException;
+        return this;
+    }
+
+    /**
+     * set fixed size
+     * @param width width
+     * @param height height
+     */
+    public TIBitmapDrawable setFixedSize(int width, int height){
+        this.fixedWidth = width;
+        this.fixedHeight = height;
         return this;
     }
 
