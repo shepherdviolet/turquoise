@@ -33,7 +33,7 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  *
  * <p>implement notes::</p>
  *
- * <p>1.if Params->sizeMatchView is true, failedDrawable's size match View (-1) or itself (size of loading image).
+ * <p>1.if Params->sizeMatchView is true, failedDrawable's size match View (-1) or itself (size of failed image).
  * if Params->sizeMatchView is false, failedDrawable's size match Params->reqWidth/reqHeight.</p>
  *
  * Created by S.Violet on 2016/3/16.
