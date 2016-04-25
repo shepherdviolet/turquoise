@@ -51,6 +51,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
     private ResourceBitmapWrapper imageBitmap = new ResourceBitmapWrapper();
     private int backgroundColor = BACKGROUND_COLOR_DEF;
+    private AnimationDrawableFactory animationDrawableFactory = new CommonAnimationDrawableFactory();
 
     private Settings settings = new Settings();
 
@@ -74,8 +75,10 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         if (backgroundColor != 0x00000000){
             backgroundDrawable = new ColorDrawable(backgroundColor);
         }
+        //animation
+        Drawable animationDrawable = animationDrawableFactory.create(applicationContext, context, params, logger);
         //loading drawable
-        return new LoadingDrawable(settings, imageDrawable, backgroundDrawable, drawableWidth, drawableHeight);
+        return new LoadingDrawable(settings, animationDrawable, imageDrawable, backgroundDrawable, drawableWidth, drawableHeight);
     }
 
     @Override
@@ -93,36 +96,6 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         return this;
     }
 
-    public CommonLoadingDrawableFactory setPointColor(int color){
-        settings.pointColor = color;
-        return this;
-    }
-
-    public CommonLoadingDrawableFactory setPointRadius(int radius){
-        settings.pointRadius = radius;
-        return this;
-    }
-
-    public CommonLoadingDrawableFactory setPointInterval(int interval){
-        settings.pointInterval = interval;
-        return this;
-    }
-
-    public CommonLoadingDrawableFactory setAnimationDuration(long duration){
-        settings.animationDuration = duration;
-        return this;
-    }
-
-    public CommonLoadingDrawableFactory setPointOffsetX(float offsetX){
-        settings.pointOffsetX = offsetX;
-        return this;
-    }
-
-    public CommonLoadingDrawableFactory setPointOffsetY(float offsetY){
-        settings.pointOffsetY = offsetY;
-        return this;
-    }
-
     public CommonLoadingDrawableFactory setAnimationEnabled(boolean enabled){
         settings.animationEnabled = enabled;
         return this;
@@ -133,48 +106,36 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         return this;
     }
 
-    protected static class Settings{
-        static final int COLOR_DEF = 0xFFC0C0C0;
-        static final int RADIUS_DEF = 10;
-        static final int INTERVAL_DEF = 40;
-        static final int DURATION = 1000;
-        static final float OFFSET_X_DEF = 0.5f;
-        static final float OFFSET_Y_DEF = 0.5f;
+    public CommonLoadingDrawableFactory setAnimationDrawableFactory(AnimationDrawableFactory factory){
+        if (factory != null) {
+            this.animationDrawableFactory = factory;
+        }
+        return this;
+    }
 
-        int pointColor = COLOR_DEF;
-        int pointRadius = RADIUS_DEF;
-        int pointInterval = INTERVAL_DEF;
-        long animationDuration = DURATION;
-        float pointOffsetX = OFFSET_X_DEF;
-        float pointOffsetY = OFFSET_Y_DEF;
-        boolean animationEnabled = true;
+    protected static class Settings{
 
         ImageScaleType imageScaleType = ImageScaleType.CENTER;
+        boolean animationEnabled = true;
 
     }
 
     private static class LoadingDrawable extends Drawable {
 
         private Settings settings;
+        private Drawable animationDrawable;
         private BitmapDrawable imageDrawable;
         private Drawable backgroundDrawable;
         int drawableWidth = 0;
         int drawableHeight = 0;
 
-        private static final int QUANTITY = 3;
-        private static final int MIN_POSITION = -2;
-        private static final int MAX_POSITION = 4;
-        private long startTime = DateTimeUtils.getUptimeMillis();
-
-        private Paint paint;
-
-        public LoadingDrawable(Settings settings, BitmapDrawable imageDrawable, Drawable backgroundDrawable, int drawableWidth, int drawableHeight){
+        public LoadingDrawable(Settings settings, Drawable animationDrawable, BitmapDrawable imageDrawable, Drawable backgroundDrawable, int drawableWidth, int drawableHeight){
             this.settings = settings;
             this.imageDrawable = imageDrawable;
             this.backgroundDrawable = backgroundDrawable;
             this.drawableWidth = drawableWidth;
             this.drawableHeight = drawableHeight;
-            initPaint();
+            this.animationDrawable = animationDrawable;
         }
 
         @Override
@@ -186,8 +147,8 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
             onDrawStatic(canvas);
 
-            if (settings.animationEnabled) {
-                onDrawAnimation(canvas);
+            if (animationDrawable != null){
+                animationDrawable.draw(canvas);
                 invalidateSelf();
             }
 
@@ -229,6 +190,160 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
                 //draw
                 imageDrawable.draw(canvas);
             }
+        }
+
+
+        @Override
+        public int getIntrinsicWidth() {
+            if (drawableWidth > 0){
+                return drawableWidth;
+            }
+            int maxWidth = -1;
+            if (imageDrawable != null && imageDrawable.getBitmap() != null) {
+                int width = imageDrawable.getBitmap().getWidth();
+                if (width > maxWidth){
+                    maxWidth = width;
+                }
+            }
+            if (animationDrawable != null){
+                int width = animationDrawable.getIntrinsicWidth();
+                if (width > maxWidth){
+                    maxWidth = width;
+                }
+            }
+            return maxWidth > 0 ? maxWidth : -1;
+        }
+
+        @Override
+        public int getIntrinsicHeight() {
+            if (drawableHeight > 0){
+                return drawableHeight;
+            }
+            int maxHeight = -1;
+            if (imageDrawable != null && imageDrawable.getBitmap() != null){
+                int height = imageDrawable.getBitmap().getHeight();
+                if (height > maxHeight){
+                    maxHeight = height;
+                }
+            }
+            if (animationDrawable != null){
+                int height = animationDrawable.getIntrinsicHeight();
+                if (height > maxHeight){
+                    maxHeight = height;
+                }
+            }
+            return maxHeight > 0 ? maxHeight : -1;
+        }
+
+        @Override
+        public void setAlpha(int alpha) {
+            //do nothing
+        }
+
+        @Override
+        public void setColorFilter(ColorFilter colorFilter) {
+            //do nothing
+        }
+
+        @Override
+        public int getOpacity() {
+            return 0;
+        }
+    }
+
+    public enum ImageScaleType{
+        CENTER,
+        STRETCH
+    }
+
+    public interface AnimationDrawableFactory{
+
+        Drawable create(Context applicationContext, Context context, Params params, TLogger logger);
+
+    }
+
+    /**********************************************************************************************
+     * animation
+     */
+
+    protected static class AnimationSettings{
+
+        static final int COLOR_DEF = 0xFFC0C0C0;
+        static final int RADIUS_DEF = 10;
+        static final int INTERVAL_DEF = 40;
+        static final int DURATION = 1000;
+        static final float OFFSET_X_DEF = 0.5f;
+        static final float OFFSET_Y_DEF = 0.5f;
+
+        int pointColor = COLOR_DEF;
+        int pointRadius = RADIUS_DEF;
+        int pointInterval = INTERVAL_DEF;
+        long animationDuration = DURATION;
+        float pointOffsetX = OFFSET_X_DEF;
+        float pointOffsetY = OFFSET_Y_DEF;
+
+    }
+
+    public static class CommonAnimationDrawableFactory implements AnimationDrawableFactory{
+
+        private AnimationSettings settings = new AnimationSettings();
+
+        @Override
+        public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
+            return new CommonAnimationDrawable(settings);
+        }
+
+        public CommonAnimationDrawableFactory setPointColor(int color){
+            settings.pointColor = color;
+            return this;
+        }
+
+        public CommonAnimationDrawableFactory setPointRadius(int radius){
+            settings.pointRadius = radius;
+            return this;
+        }
+
+        public CommonAnimationDrawableFactory setPointInterval(int interval){
+            settings.pointInterval = interval;
+            return this;
+        }
+
+        public CommonAnimationDrawableFactory setAnimationDuration(long duration){
+            settings.animationDuration = duration;
+            return this;
+        }
+
+        public CommonAnimationDrawableFactory setPointOffsetX(float offsetX){
+            settings.pointOffsetX = offsetX;
+            return this;
+        }
+
+        public CommonAnimationDrawableFactory setPointOffsetY(float offsetY){
+            settings.pointOffsetY = offsetY;
+            return this;
+        }
+
+    }
+
+    public static class CommonAnimationDrawable extends Drawable {
+
+        private AnimationSettings settings;
+
+        private static final int QUANTITY = 3;
+        private static final int MIN_POSITION = -2;
+        private static final int MAX_POSITION = 4;
+        private long startTime = DateTimeUtils.getUptimeMillis();
+
+        private Paint paint;
+
+        public CommonAnimationDrawable(AnimationSettings settings) {
+            this.settings = settings;
+            initPaint();
+        }
+
+        @Override
+        public void draw(Canvas canvas) {
+            onDrawAnimation(canvas);
         }
 
         public void onDrawAnimation(Canvas canvas) {
@@ -279,32 +394,6 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         }
 
         @Override
-        public int getIntrinsicWidth() {
-            if (drawableWidth > 0){
-                return drawableWidth;
-            } else if (imageDrawable != null && imageDrawable.getBitmap() != null) {
-                return imageDrawable.getBitmap().getWidth();
-            } else if (backgroundDrawable != null){
-                return backgroundDrawable.getIntrinsicWidth();
-            } else {
-                return -1;
-            }
-        }
-
-        @Override
-        public int getIntrinsicHeight() {
-            if (drawableHeight > 0){
-                return drawableHeight;
-            } else if (imageDrawable != null && imageDrawable.getBitmap() != null){
-                return imageDrawable.getBitmap().getHeight();
-            } else if (backgroundDrawable != null){
-                return backgroundDrawable.getIntrinsicHeight();
-            } else {
-                return -1;
-            }
-        }
-
-        @Override
         public void setAlpha(int alpha) {
             //do nothing
         }
@@ -318,11 +407,6 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         public int getOpacity() {
             return 0;
         }
-    }
-
-    public enum ImageScaleType{
-        CENTER,
-        STRETCH
     }
 
 }
