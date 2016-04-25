@@ -64,7 +64,11 @@ public class Params {
         }
 
         /**
-         * if you set reqSize manually by this method, it will set sizeMatchView flag to false
+         * <p>if you set reqSize manually by this method, it will set sizeMatchView flag to false</p>
+         *
+         * <p>Scene: Know the picture size in advance. In this mode, view and loadingDrawable will match this reqSize.
+         * you can set view wrap_content. Image will match reqSize.</p>
+         *
          * @param reqWidth request width, image width will close to this value
          * @param reqHeight request height, image height will close to this value
          */
@@ -76,7 +80,11 @@ public class Params {
         }
 
         /**
-         * if you set sizeMatchView true, the reqSize will follow view's size, true by default
+         * <p>if you set sizeMatchView true, the reqSize will follow view's size, true by default</p>
+         *
+         * <p>Scene: Fixed size of the View or fixed size of loadingDrawable. In this mode, view will
+         * match it's own size or match loadingDrawable's size, and image will match View's size.</p>
+         *
          * @param matchView true:image size match view
          */
         public Builder setSizeMatchView(boolean matchView){
