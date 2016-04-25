@@ -49,27 +49,42 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
     private static final int BACKGROUND_COLOR_DEF = 0x00000000;
 
-    private ResourceBitmapWrapper backgroundBitmap = new ResourceBitmapWrapper();
+    private ResourceBitmapWrapper imageBitmap = new ResourceBitmapWrapper();
     private int backgroundColor = BACKGROUND_COLOR_DEF;
 
     private Settings settings = new Settings();
 
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
-        Bitmap bitmap = backgroundBitmap.getBitmap(applicationContext.getResources(), logger);
-        if (bitmap != null && !bitmap.isRecycled()){
-            return new LoadingDrawable(settings, new TIBitmapDrawable(bitmap));
+        //size
+        int drawableWidth = 0;
+        int drawableHeight = 0;
+        if (!params.isSizeMatchView()){
+            drawableWidth = params.getReqWidth();
+            drawableHeight = params.getReqHeight();
         }
-        return new LoadingDrawable(settings, new ColorDrawable(backgroundColor));
+        //image
+        BitmapDrawable imageDrawable = null;
+        Bitmap bitmap = imageBitmap.getBitmap(applicationContext.getResources(), logger);
+        if (bitmap != null && !bitmap.isRecycled()){
+            imageDrawable = new TIBitmapDrawable(bitmap);
+        }
+        //background
+        Drawable backgroundDrawable = null;
+        if (backgroundColor != 0x00000000){
+            backgroundDrawable = new ColorDrawable(backgroundColor);
+        }
+        //loading drawable
+        return new LoadingDrawable(settings, imageDrawable, backgroundDrawable, drawableWidth, drawableHeight);
     }
 
     @Override
     public void onDestroy() {
-        backgroundBitmap.destroy();
+        imageBitmap.destroy();
     }
 
-    public CommonLoadingDrawableFactory setBackgroundResId(int backgroundResId){
-        backgroundBitmap.setResId(backgroundResId);
+    public CommonLoadingDrawableFactory setImageResId(int imageResId){
+        imageBitmap.setResId(imageResId);
         return this;
     }
 
@@ -113,6 +128,11 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         return this;
     }
 
+    public CommonLoadingDrawableFactory setImageScaleType(ImageScaleType imageScaleType){
+        settings.imageScaleType = imageScaleType;
+        return this;
+    }
+
     protected static class Settings{
         static final int COLOR_DEF = 0xFFC0C0C0;
         static final int RADIUS_DEF = 10;
@@ -128,12 +148,18 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         float pointOffsetX = OFFSET_X_DEF;
         float pointOffsetY = OFFSET_Y_DEF;
         boolean animationEnabled = true;
+
+        ImageScaleType imageScaleType = ImageScaleType.CENTER;
+
     }
 
     private static class LoadingDrawable extends Drawable {
 
         private Settings settings;
+        private BitmapDrawable imageDrawable;
         private Drawable backgroundDrawable;
+        int drawableWidth = 0;
+        int drawableHeight = 0;
 
         private static final int QUANTITY = 3;
         private static final int MIN_POSITION = -2;
@@ -142,28 +168,67 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
         private Paint paint;
 
-        public LoadingDrawable(Settings settings, Drawable backgroundDrawable){
+        public LoadingDrawable(Settings settings, BitmapDrawable imageDrawable, Drawable backgroundDrawable, int drawableWidth, int drawableHeight){
             this.settings = settings;
+            this.imageDrawable = imageDrawable;
             this.backgroundDrawable = backgroundDrawable;
+            this.drawableWidth = drawableWidth;
+            this.drawableHeight = drawableHeight;
             initPaint();
         }
 
         @Override
         public void draw(Canvas canvas) {
-            onDrawBackground(canvas);
+            //skip drawing
+            if (canvas.getWidth() <=0 || canvas.getHeight() <= 0){
+                return;
+            }
+
+            onDrawStatic(canvas);
+
             if (settings.animationEnabled) {
                 onDrawAnimation(canvas);
                 invalidateSelf();
             }
+
         }
 
-        public void onDrawBackground(Canvas canvas) {
-            //set Bounds
-            Rect rect = new Rect();
-            canvas.getClipBounds(rect);
-            backgroundDrawable.setBounds(rect);
-            //draw
-            backgroundDrawable.draw(canvas);
+        public void onDrawStatic(Canvas canvas) {
+            //canvas rect
+            Rect canvasRect = new Rect();
+            canvas.getClipBounds(canvasRect);
+
+            //draw background
+            if (backgroundDrawable != null){
+                //set Bounds
+                backgroundDrawable.setBounds(canvasRect);
+                //draw
+                backgroundDrawable.draw(canvas);
+            }
+            //draw image
+            if (imageDrawable != null && imageDrawable.getBitmap() != null) {
+                //calculate bounds
+                Rect imageRect = null;
+                if (settings.imageScaleType == ImageScaleType.CENTER){
+                    imageRect = new Rect();
+                    float canvasWidthScale = (float)canvasRect.width() / (float)canvas.getWidth();
+                    float canvasHeightScale = (float)canvasRect.height() / (float)canvas.getHeight();
+                    int bitmapWidth = (int) ((float)imageDrawable.getBitmap().getWidth() * canvasWidthScale);
+                    int bitmapHeight = (int) ((float)imageDrawable.getBitmap().getHeight() * canvasHeightScale);
+                    int horizontalPadding = (canvasRect.width() - bitmapWidth) / 2;
+                    int verticalPadding = (canvasRect.height() - bitmapHeight) / 2;
+                    imageRect.left = canvasRect.left + horizontalPadding;
+                    imageRect.top = canvasRect.top + verticalPadding;
+                    imageRect.right = canvasRect.right - horizontalPadding;
+                    imageRect.bottom = canvasRect.bottom - verticalPadding;
+                } else {
+                    imageRect = canvasRect;
+                }
+                //set Bounds
+                imageDrawable.setBounds(imageRect);
+                //draw
+                imageDrawable.draw(canvas);
+            }
         }
 
         public void onDrawAnimation(Canvas canvas) {
@@ -193,17 +258,12 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
             Rect clipBounds = new Rect();
             canvas.getClipBounds(clipBounds);
 
-            if (canvas.getWidth() <= 0 || canvas.getHeight() <= 0 || clipBounds.width() <=0 || clipBounds.height() <= 0)
-                return;
-
             final float scale = (float)clipBounds.width() / (float)canvas.getWidth();//用于点半径和点间距的比例缩放
 
-            final int width = clipBounds.width();
-            final int height = clipBounds.height();
             final int length = (int) ((QUANTITY - 1) * settings.pointInterval * scale);
 
-            int x = (int) (width * settings.pointOffsetX - length / 2);
-            int y = (int) (height * settings.pointOffsetY);
+            int x = (int) (clipBounds.left + clipBounds.width() * settings.pointOffsetX - length / 2);
+            int y = (int) (clipBounds.top + clipBounds.height() * settings.pointOffsetY);
 
             for(int i = 0 ; i < QUANTITY ; i++){
                 canvas.drawCircle(x, y, i == currentPosition ? (float) (settings.pointRadius * 1.5 * scale) : settings.pointRadius * scale, paint);
@@ -220,28 +280,49 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
         @Override
         public int getIntrinsicWidth() {
-            return backgroundDrawable.getIntrinsicWidth();
+            if (drawableWidth > 0){
+                return drawableWidth;
+            } else if (imageDrawable != null && imageDrawable.getBitmap() != null) {
+                return imageDrawable.getBitmap().getWidth();
+            } else if (backgroundDrawable != null){
+                return backgroundDrawable.getIntrinsicWidth();
+            } else {
+                return -1;
+            }
         }
 
         @Override
         public int getIntrinsicHeight() {
-            return backgroundDrawable.getIntrinsicHeight();
+            if (drawableHeight > 0){
+                return drawableHeight;
+            } else if (imageDrawable != null && imageDrawable.getBitmap() != null){
+                return imageDrawable.getBitmap().getHeight();
+            } else if (backgroundDrawable != null){
+                return backgroundDrawable.getIntrinsicHeight();
+            } else {
+                return -1;
+            }
         }
 
         @Override
         public void setAlpha(int alpha) {
-
+            //do nothing
         }
 
         @Override
         public void setColorFilter(ColorFilter colorFilter) {
-
+            //do nothing
         }
 
         @Override
         public int getOpacity() {
             return 0;
         }
+    }
+
+    public enum ImageScaleType{
+        CENTER,
+        STRETCH
     }
 
 }
