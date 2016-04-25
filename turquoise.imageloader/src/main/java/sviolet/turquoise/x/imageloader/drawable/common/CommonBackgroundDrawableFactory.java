@@ -60,7 +60,7 @@ public class CommonBackgroundDrawableFactory implements BackgroundDrawableFactor
         Bitmap bitmap = backgroundBitmap.getBitmap(applicationContext.getResources(), logger);
         if (bitmap != null && !bitmap.isRecycled()){
             //use TIBitmapDrawable instead of BitmapDrawable
-            return new TIBitmapDrawable(bitmap).setFixedSize(drawableWidth, drawableHeight);
+            return new TIBitmapDrawable(applicationContext.getResources(), bitmap).setFixedSize(drawableWidth, drawableHeight);
         }
         return new TIColorDrawable(backgroundColor).setFixedSize(drawableWidth, drawableHeight);
     }

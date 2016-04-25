@@ -68,7 +68,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         BitmapDrawable imageDrawable = null;
         Bitmap bitmap = imageBitmap.getBitmap(applicationContext.getResources(), logger);
         if (bitmap != null && !bitmap.isRecycled()){
-            imageDrawable = new TIBitmapDrawable(bitmap);
+            imageDrawable = new TIBitmapDrawable(applicationContext.getResources(), bitmap);
         }
         //background
         Drawable backgroundDrawable = null;
@@ -200,7 +200,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
             }
             int maxWidth = -1;
             if (imageDrawable != null && imageDrawable.getBitmap() != null) {
-                int width = imageDrawable.getBitmap().getWidth();
+                int width = imageDrawable.getIntrinsicWidth();
                 if (width > maxWidth){
                     maxWidth = width;
                 }
@@ -221,7 +221,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
             }
             int maxHeight = -1;
             if (imageDrawable != null && imageDrawable.getBitmap() != null){
-                int height = imageDrawable.getBitmap().getHeight();
+                int height = imageDrawable.getIntrinsicHeight();
                 if (height > maxHeight){
                     maxHeight = height;
                 }

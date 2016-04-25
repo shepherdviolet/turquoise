@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.handler;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
@@ -52,11 +53,12 @@ public interface ImageResourceHandler {
 
     /**
      * convert ImageResource to Drawable
+     * @param applicationContext context
      * @param resource ImageResource
      * @param skipDrawingException true:skip drawing exception of drawable, if true, it will not throw exceptions even when bitmap has recycled
      * @return drawable
      */
-    Drawable toDrawable(ImageResource<?> resource, boolean skipDrawingException);
+    Drawable toDrawable(Context applicationContext, ImageResource<?> resource, boolean skipDrawingException);
 
     /**
      * copy ImageResource

@@ -166,7 +166,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         if (drawable == null){
             throw new RuntimeException("[LoadStub]BackgroundDrawableFactory create a null drawable");
         }
-        Drawable imageDrawable = controller.getServerSettings().getImageResourceHandler().toDrawable(resource, false);
+        Drawable imageDrawable = controller.getServerSettings().getImageResourceHandler().toDrawable(controller.getApplicationContextImage(), resource, false);
         if (imageDrawable == null){
             shiftSucceedToFailed();
             return false;

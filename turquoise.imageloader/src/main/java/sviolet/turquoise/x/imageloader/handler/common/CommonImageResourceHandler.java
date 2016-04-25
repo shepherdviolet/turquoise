@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.handler.common;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 
@@ -84,14 +85,14 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
     }
 
     @Override
-    public Drawable toDrawable(ImageResource<?> resource, boolean skipDrawingException) {
+    public Drawable toDrawable(Context applicationContext, ImageResource<?> resource, boolean skipDrawingException) {
         if (resource == null || resource.getResource() == null){
             return null;
         }
         switch (resource.getType()){
             case BITMAP:
                 if ((resource.getResource() instanceof Bitmap) && (!((Bitmap) resource.getResource()).isRecycled())){
-                    return new TIBitmapDrawable((Bitmap) resource.getResource()).setSkipException(skipDrawingException);
+                    return new TIBitmapDrawable(applicationContext.getResources(), (Bitmap) resource.getResource()).setSkipException(skipDrawingException);
                 }
                 break;
             default:
