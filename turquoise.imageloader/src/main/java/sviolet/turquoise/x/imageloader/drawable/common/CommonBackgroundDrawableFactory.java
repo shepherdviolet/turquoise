@@ -22,7 +22,6 @@ package sviolet.turquoise.x.imageloader.drawable.common;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.utilx.tlogger.TLogger;
@@ -31,6 +30,7 @@ import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.ResourceBitmapWrapper;
 import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
+import sviolet.turquoise.x.imageloader.drawable.TIColorDrawable;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
@@ -49,12 +49,20 @@ public class CommonBackgroundDrawableFactory implements BackgroundDrawableFactor
 
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
+        //size
+        int drawableWidth = -1;
+        int drawableHeight = -1;
+        if (!params.isSizeMatchView()){
+            drawableWidth = params.getReqWidth();
+            drawableHeight = params.getReqHeight();
+        }
+
         Bitmap bitmap = backgroundBitmap.getBitmap(applicationContext.getResources(), logger);
         if (bitmap != null && !bitmap.isRecycled()){
             //use TIBitmapDrawable instead of BitmapDrawable
-            return new TIBitmapDrawable(bitmap).setMatchParent(true);
+            return new TIBitmapDrawable(bitmap).setFixedSize(drawableWidth, drawableHeight);
         }
-        return new ColorDrawable(backgroundColor);
+        return new TIColorDrawable(backgroundColor).setFixedSize(drawableWidth, drawableHeight);
     }
 
     @Override
