@@ -51,12 +51,8 @@ public class CommonFailedDrawableFactory implements FailedDrawableFactory {
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
         //size
-        int drawableWidth = Integer.MIN_VALUE;
-        int drawableHeight = Integer.MIN_VALUE;
-        if (!params.isSizeMatchView()){
-            drawableWidth = params.getReqWidth();
-            drawableHeight = params.getReqHeight();
-        }
+        int drawableWidth = params.getReqWidth();
+        int drawableHeight = params.getReqHeight();
 
         Bitmap bitmap = this.bitmap.getBitmap(applicationContext.getResources(), logger);
         if (bitmap != null && !bitmap.isRecycled()){
