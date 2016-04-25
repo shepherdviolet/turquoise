@@ -31,6 +31,7 @@ import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.ResourceBitmapWrapper;
 import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
+import sviolet.turquoise.x.imageloader.drawable.TIColorDrawable;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
@@ -49,12 +50,20 @@ public class CommonFailedDrawableFactory implements FailedDrawableFactory {
 
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
+        //size
+        int drawableWidth = Integer.MIN_VALUE;
+        int drawableHeight = Integer.MIN_VALUE;
+        if (!params.isSizeMatchView()){
+            drawableWidth = params.getReqWidth();
+            drawableHeight = params.getReqHeight();
+        }
+
         Bitmap bitmap = this.bitmap.getBitmap(applicationContext.getResources(), logger);
         if (bitmap != null && !bitmap.isRecycled()){
             //use TIBitmapDrawable instead of BitmapDrawable
-            return new TIBitmapDrawable(bitmap);
+            return new TIBitmapDrawable(bitmap).setFixedSize(drawableWidth, drawableHeight);
         }
-        return new ColorDrawable(color);
+        return new TIColorDrawable(color).setFixedSize(drawableWidth, drawableHeight);
     }
 
     @Override
