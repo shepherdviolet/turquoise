@@ -76,7 +76,7 @@ public class BasicActivity extends TActivity {
                 ImageView imageView = getWeakRegister();
                 if (imageView != null) {
                     Toast.makeText(BasicActivity.this, "load succeed", Toast.LENGTH_SHORT).show();
-                    imageView.setImageDrawable(TILoaderUtils.imageResourceToDrawable(resource, true));
+                    imageView.setImageDrawable(TILoaderUtils.imageResourceToDrawable(BasicActivity.this, resource, true));
                 }else{
                     TLogger.get(this).e("imageView is recycled, can't show image");
                 }
