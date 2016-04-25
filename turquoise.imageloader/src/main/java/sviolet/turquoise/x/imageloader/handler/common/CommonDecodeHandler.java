@@ -44,9 +44,9 @@ public class CommonDecodeHandler extends DecodeHandler {
         //exact decoding
         if (taskInfo.getParams().isExactDecoding()){
             bitmap = BitmapUtils.scaleTo(bitmap, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), true);
+            if (bitmap == null)
+                return null;
         }
-        if (bitmap == null)
-            return null;
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
 
@@ -58,9 +58,9 @@ public class CommonDecodeHandler extends DecodeHandler {
         //exact decoding
         if (taskInfo.getParams().isExactDecoding()){
             bitmap = BitmapUtils.scaleTo(bitmap, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), true);
+            if (bitmap == null)
+                return null;
         }
-        if (bitmap == null)
-            return null;
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
 }
