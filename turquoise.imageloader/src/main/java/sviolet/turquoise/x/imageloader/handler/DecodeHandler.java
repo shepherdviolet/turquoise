@@ -30,6 +30,13 @@ import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
  *
+ * <p>implement notes::</p>
+ *
+ * <p>1.decoding image, format refer to taskInfo->Params->bitmapConfig, size refer to taskInfo->Params->reqWidth/reqHeight,
+ * size does not require very precise.</p>
+ *
+ * <p>2.if taskInfo->Params->exactDecoding is true, scale image to reqSize(reqWidth/reqHeight) exactly</p>
+ *
  * Created by S.Violet on 2016/2/19.
  */
 public abstract class DecodeHandler {

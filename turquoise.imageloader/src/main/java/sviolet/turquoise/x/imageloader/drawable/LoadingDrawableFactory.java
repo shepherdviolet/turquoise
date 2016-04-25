@@ -32,6 +32,11 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  * <p>you must use this {@link TIBitmapDrawable} instead of {@link BitmapDrawable}
  * to implements {@link LoadingDrawableFactory}/{@link BackgroundDrawableFactory}/{@link FailedDrawableFactory}</p>
  *
+ * <p>implement notes::</p>
+ *
+ * <p>1.if Params->sizeMatchView is true, loadingDrawable's size match View (-1) or itself (size of loading image).
+ * if Params->sizeMatchView is false, loadingDrawable's size match Params->reqWidth/reqHeight.</p>
+ *
  * Created by S.Violet on 2016/2/19.
  */
 public interface LoadingDrawableFactory extends Destroyable {
