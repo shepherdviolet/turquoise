@@ -7,6 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/sviolet.turquoise.iml" filepath="$PROJECT_DIR$/sviolet.turquoise.iml" />
       <module fileurl="file://$PROJECT_DIR$/turquoise/turquoise.iml" filepath="$PROJECT_DIR$/turquoise/turquoise.iml" />
       <module fileurl="file://$PROJECT_DIR$/turquoise.imageloader/turquoise.imageloader.iml" filepath="$PROJECT_DIR$/turquoise.imageloader/turquoise.imageloader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/turquoise.v7/turquoise.v7.iml" filepath="$PROJECT_DIR$/turquoise.v7/turquoise.v7.iml" />
     </modules>
   </component>
 </project>
