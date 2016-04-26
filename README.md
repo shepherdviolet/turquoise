@@ -1,12 +1,12 @@
-# Turquoise 3.0.160422
-> a comprehensive Android Library for private use <br/>
+# Turquoise 3.0.160426
+> A comprehensive Android Library for private use <br/>
 > https://github.com/shepherdviolet/turquoise <br/>
 
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/logo/turquoise.jpg)
 
 ## Module "turquoise"
-> API level 10 above.<br/>
-> the basic library module, as detailed below:<br/>
+> API level 10 above. Dependency: support-v4<br/>
+> The basic library module, as detailed below:<br/>
 > <br/>
 > Utils/Models ┃ sviolet.turquoise.util/utilx/model/modelx <br/>
 > ┈┈ 1.LifeCycleUtils: monitor LifeCycle of Activity/Fragment<br/>
@@ -26,9 +26,17 @@
 > ┈┈ 4.WeakHandler: help Handler to avoid Memory Leak(design specifications)<br/>
 > <br/>
 
+## Module "turquoise.v7"
+> API level 10 above. Dependency: turquoise, support-v7<br/>
+> Expansion Module of "turquoise", Add support for "support-v7".<br/>
+> <br/>
+> 1.Add support for AppCompatActivity.<br/>
+> 2.Add support for RecyclerView.<br/>
+> <br/>
+
 ## Module "turquoise.imageloader"
-> API level 11 above.<br/>
-> TurquoiseImageLoader, dependent on module "turquoise". it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.<br/>
+> API level 11 above. Dependency: turquoise<br/>
+> TurquoiseImageLoader. it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.<br/>
 > <br/>
 > NOT AVAILABLE!!! still developing...<br/>
 > TO DO : <br/>
