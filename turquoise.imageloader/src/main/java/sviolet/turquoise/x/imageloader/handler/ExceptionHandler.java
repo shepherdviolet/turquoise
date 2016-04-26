@@ -25,6 +25,8 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
+ * <p>Exception Handling</p>
+ *
  * Created by S.Violet on 2016/2/19.
  */
 public interface ExceptionHandler {

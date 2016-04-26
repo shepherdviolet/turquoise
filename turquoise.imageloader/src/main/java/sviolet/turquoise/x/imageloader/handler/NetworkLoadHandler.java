@@ -28,6 +28,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.EngineCallback;
 
 /**
+ * <p>Achieve network load</p>
  *
  * Created by S.Violet on 2016/2/19.
  */

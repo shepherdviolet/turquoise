@@ -41,7 +41,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
 public class CommonExceptionHandler implements ExceptionHandler {
 
     private static final String DISK_CACHE_EXCEPTION_TOAST_CN = "图片磁盘缓存访问失败,请检查您的手机内存是否已满";
-    private static final String DISK_CACHE_EXCEPTION_TOAST_EN = "Image disk cache access fails, check your phone memory is full";
+    private static final String DISK_CACHE_EXCEPTION_TOAST_EN = "Image disk cache access fails, check your phone memory";
     private static final long DISK_CACHE_EXCEPTION_NOTICE_INTERVAL = 5 * 60 * 1000L;//5min
 
     private AtomicLong diskCacheExceptionNoticeTime = new AtomicLong(0);

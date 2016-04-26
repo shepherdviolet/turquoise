@@ -25,6 +25,8 @@ import android.graphics.drawable.Drawable;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 
 /**
+ * <p>For processing ImageResource</p>
+ *
  * Created by S.Violet on 2016/3/15.
  */
 public interface ImageResourceHandler {
