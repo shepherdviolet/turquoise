@@ -23,6 +23,8 @@ import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
+ * <p>Memory cache Load Engine</p>
+ *
  * Created by S.Violet on 2016/4/21.
  */
 public class MemoryEngine extends Engine {

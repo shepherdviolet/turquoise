@@ -32,6 +32,8 @@ import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.module.DiskCacheModule;
 
 /**
+ * <p>manage disk cache</p>
+ *
  * Created by S.Violet on 2016/4/5.
  */
 public class DiskCacheServer extends DiskCacheModule {

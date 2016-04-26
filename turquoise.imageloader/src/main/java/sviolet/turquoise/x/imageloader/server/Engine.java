@@ -28,10 +28,13 @@ import sviolet.turquoise.model.thread.LazySingleThreadPool;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
+import sviolet.turquoise.x.imageloader.node.Node;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
+ * <p>Asynchronous task processor, with fixed thread pool.</p>
  *
+ * <p>Pull tasks from {@link Node}, execute tasks, and callback to {@link Node}</p>
  *
  * Created by S.Violet on 2016/2/19.
  */

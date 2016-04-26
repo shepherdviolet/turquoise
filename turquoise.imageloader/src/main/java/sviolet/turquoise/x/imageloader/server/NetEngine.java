@@ -27,7 +27,7 @@ import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
- * TODO 若同个resourceKey不同尺寸的图片同时进行网络加载, 可能会出现问题
+ * <p>Net Load Engine</p>
  *
  * Created by S.Violet on 2016/2/19.
  */

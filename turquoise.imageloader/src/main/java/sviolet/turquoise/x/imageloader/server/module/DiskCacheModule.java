@@ -33,6 +33,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.Server;
 
 /**
+ * <p>disk cache</p>
  *
  * Created by S.Violet on 2016/3/22.
  */
