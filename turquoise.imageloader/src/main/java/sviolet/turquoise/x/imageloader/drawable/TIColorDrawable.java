@@ -22,6 +22,8 @@ package sviolet.turquoise.x.imageloader.drawable;
 import android.graphics.drawable.ColorDrawable;
 
 /**
+ * <p>special ColorDrawable for TILoader</p>
+ *
  * Created by S.Violet on 2016/4/25.
  */
 public class TIColorDrawable extends ColorDrawable {

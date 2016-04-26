@@ -29,6 +29,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
+ * <p>ContainerDrawable</p>
  *
  * Created by S.Violet on 2016/4/13.
  */

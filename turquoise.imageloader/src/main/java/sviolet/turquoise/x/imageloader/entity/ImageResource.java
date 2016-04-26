@@ -20,6 +20,8 @@
 package sviolet.turquoise.x.imageloader.entity;
 
 /**
+ * <p>ImageResource</p>
+ *
  * Created by S.Violet on 2016/3/15.
  */
 public class ImageResource <T> {

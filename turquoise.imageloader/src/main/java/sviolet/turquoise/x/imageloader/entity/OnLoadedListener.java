@@ -22,7 +22,7 @@ package sviolet.turquoise.x.imageloader.entity;
 import java.lang.ref.WeakReference;
 
 /**
- * <p>callback when image load(extract) succeed or canceled</p>
+ * <p>callback when image extract succeed or canceled</p>
  *
  * <p>Improper use may cause a memory leak, ExtractNode will hold this listener util extract finished,
  * avoid being an internal class and holding Context/View object, you can use method

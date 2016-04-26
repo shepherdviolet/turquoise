@@ -28,6 +28,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
+ * <p><p>create drawable for loading status</p></p>
  *
  * <p>you must use this {@link TIBitmapDrawable} instead of {@link BitmapDrawable}
  * to implements {@link LoadingDrawableFactory}/{@link BackgroundDrawableFactory}/{@link FailedDrawableFactory}</p>

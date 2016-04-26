@@ -25,6 +25,7 @@ import android.view.View;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 
 /**
+ * <p>parameter of loading</p>
  *
  * Created by S.Violet on 2016/2/16.
  */

@@ -28,6 +28,7 @@ import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 
 /**
+ * <p>NodeSettings</p>
  *
  * Created by S.Violet on 2016/2/16.
  */

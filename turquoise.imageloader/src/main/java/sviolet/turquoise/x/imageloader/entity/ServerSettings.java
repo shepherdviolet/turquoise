@@ -47,6 +47,7 @@ import sviolet.turquoise.x.imageloader.stub.StubFactory;
 import sviolet.turquoise.x.imageloader.stub.StubFactoryImpl;
 
 /**
+ * <p>ServerSettings</p>
  *
  * Created by S.Violet on 2016/2/16.
  */
