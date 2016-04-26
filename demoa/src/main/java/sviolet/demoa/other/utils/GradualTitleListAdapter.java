@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.ui.util.ViewHolder;
+import sviolet.turquoise.ui.util.TViewHolder;
 
 /**
  * Created by S.Violet on 2016/3/9.
@@ -90,15 +90,15 @@ public class GradualTitleListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = null;
+        TViewHolder holder = null;
         int type = getItemViewType(position);
         switch (type){
             case TYPE_TITLE_ITEM:
-                holder = ViewHolder.create(context, convertView, parent, R.layout.other_gradualtitle_main_item_title);
+                holder = TViewHolder.create(context, convertView, parent, R.layout.other_gradualtitle_main_item_title);
                 inflateTitleView(holder);
                 break;
             default:
-                holder = ViewHolder.create(context, convertView, parent, R.layout.common_list_item);
+                holder = TViewHolder.create(context, convertView, parent, R.layout.common_list_item);
                 inflateContentView(position, holder);
                 break;
         }
@@ -109,7 +109,7 @@ public class GradualTitleListAdapter extends BaseAdapter {
      * private
      */
 
-    private void inflateTitleView(ViewHolder holder) {
+    private void inflateTitleView(TViewHolder holder) {
         ImageView imageView = (ImageView) holder.get(R.id.other_gradualtitle_main_item_title_imageview);
         imageView.setAlpha(200);
     }
@@ -120,7 +120,7 @@ public class GradualTitleListAdapter extends BaseAdapter {
      * @param position 位置
      * @param holder   holder
      */
-    private void inflateContentView(int position, ViewHolder holder) {
+    private void inflateContentView(int position, TViewHolder holder) {
         String tail = Integer.toString(position);
 
         TextView titleView = (TextView) holder.get(R.id.common_list_item_title);

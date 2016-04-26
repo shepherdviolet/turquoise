@@ -32,7 +32,7 @@ import java.util.List;
 import sviolet.demoa.R;
 import sviolet.turquoise.modelx.bitmaploader.SimpleBitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
-import sviolet.turquoise.ui.util.ViewHolder;
+import sviolet.turquoise.ui.util.TViewHolder;
 import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**
@@ -79,7 +79,7 @@ public class AsyncImageAdapter2 extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ViewHolder holder = ViewHolder.create(context, convertView, parent, R.layout.image_async2_item);
+        TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.image_async2_item);
 
         AsyncImageItem item = itemList.get(position);
         ((TextView) holder.get(R.id.image_async_item_title)).setText(item.getTitle());

@@ -34,12 +34,12 @@ import java.util.List;
 import sviolet.demoa.R;
 import sviolet.demoa.common.Constants;
 import sviolet.turquoise.enhance.app.TActivity;
+import sviolet.turquoise.ui.util.TViewHolder;
 import sviolet.turquoise.util.common.BitmapUtils;
 import sviolet.turquoise.util.common.CachedBitmapUtils;
 import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 import sviolet.turquoise.modelx.bitmaploader.entity.BitmapRequest;
 import sviolet.turquoise.modelx.bitmaploader.listener.OnBitmapLoadedListener;
-import sviolet.turquoise.ui.util.ViewHolder;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.ui.view.GradualImageView;
@@ -99,7 +99,7 @@ public class AsyncImageAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ViewHolder holder = ViewHolder.create(context, convertView, parent, R.layout.image_async_item);
+        TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.image_async_item);
 
         GradualImageView[] images = new GradualImageView[5];
         images[0] = (GradualImageView) holder.get(R.id.image_async_item_imageview0);

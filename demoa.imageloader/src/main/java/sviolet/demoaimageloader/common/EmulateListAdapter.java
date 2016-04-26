@@ -26,7 +26,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import sviolet.demoaimageloader.R;
-import sviolet.turquoise.ui.util.ViewHolder;
+import sviolet.turquoise.ui.util.TViewHolder;
 
 /**
  * 模拟List适配器
@@ -85,7 +85,7 @@ public class EmulateListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = ViewHolder.create(context, convertView, parent, R.layout.common_list_item);
+        TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.common_list_item);
         inflateView(position, holder);
         return holder.getConvertView();
     }
@@ -100,7 +100,7 @@ public class EmulateListAdapter extends BaseAdapter {
      * @param position 位置
      * @param holder   holder
      */
-    private void inflateView(int position, ViewHolder holder) {
+    private void inflateView(int position, TViewHolder holder) {
         String tail = Integer.toString(position);
 
         TextView titleView = (TextView) holder.get(R.id.common_list_item_title);

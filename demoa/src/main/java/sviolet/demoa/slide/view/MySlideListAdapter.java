@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.ui.util.ViewHolder;
+import sviolet.turquoise.ui.util.TViewHolder;
 import sviolet.turquoise.uix.slideengine.view.LinearLayoutDrawer;
 import sviolet.turquoise.uix.slideengine.view.SlideListAdapter;
 
@@ -94,7 +94,7 @@ public class MySlideListAdapter extends BaseAdapter implements SlideListAdapter 
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = ViewHolder.create(context, convertView, parent, R.layout.slide_list_item);
+        TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.slide_list_item);
 
         final LinearLayoutDrawer drawerView = (LinearLayoutDrawer) holder.get(R.id.slide_list_drawer);
         TextView titleView = (TextView) holder.get(R.id.common_list_item_title);

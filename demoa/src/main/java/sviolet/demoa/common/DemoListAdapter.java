@@ -27,7 +27,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.ui.util.ViewHolder;
+import sviolet.turquoise.ui.util.TViewHolder;
 
 /**
  * Demo列表适配器
@@ -74,7 +74,7 @@ public class DemoListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder = ViewHolder.create(context, convertView, parent, resId);
+        TViewHolder holder = TViewHolder.create(context, convertView, parent, resId);
         inflateView(position, holder);
         return holder.getConvertView();
     }
@@ -88,7 +88,7 @@ public class DemoListAdapter extends BaseAdapter {
      * @param position 位置
      * @param holder holder
      */
-    private void inflateView(int position, ViewHolder holder) {
+    private void inflateView(int position, TViewHolder holder) {
         Class<? extends Activity> activity = (Class) getItem(position);
         if (activity == null)
             return;
@@ -103,7 +103,7 @@ public class DemoListAdapter extends BaseAdapter {
     /**
      * 设置View的显示值
      */
-    private void setViewParams(ViewHolder holder, String title, String type, String info) {
+    private void setViewParams(TViewHolder holder, String title, String type, String info) {
         if (holder == null)
             return;
 

@@ -35,7 +35,7 @@ import sviolet.turquoise.common.statics.SpecialResourceId;
  *          //获得ViewHolder
  *          //第一次create会inflate产生convertView实例, 并产生ViewHolder实例, 用View.setTag绑定在convertView上
  *          //同一个convertView第二次create时, 会用View.getTag直接获取ViewHolder实例
- *          ViewHolder holder = ViewHolder.create(context, convertView, parent, R.layout.xxx);
+ *          TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.xxx);
  *
  *          //获取控件
  *          LinearLayoutDrawer drawer = (LinearLayoutDrawer) holder.get(R.id.drawer);
@@ -66,7 +66,7 @@ import sviolet.turquoise.common.statics.SpecialResourceId;
  *          titleView.setText(item.getTitle());
  *
  *          //必须!!!
- *          //从ViewHolder中获取convertView实例
+ *          //从TViewHolder中获取convertView实例
  *          //切记不能直接返回convertView, 会抛出NullPointException, 必须用holder.getConvertView()从ViewHolder获取
  *          return holder.getConvertView();
  *     }
@@ -77,13 +77,13 @@ import sviolet.turquoise.common.statics.SpecialResourceId;
  *
  * Created by S.Violet on 2016/1/13.
  */
-public class ViewHolder {
+public class TViewHolder {
 
     private View convertView;
     private SparseArray<View> views = new SparseArray<>();
     private long createTimes = 0;
 
-    private ViewHolder(View convertView){
+    private TViewHolder(View convertView){
         this.convertView = convertView;
     }
 
@@ -98,27 +98,27 @@ public class ViewHolder {
      * @param convertView convertView
      * @param parent parent
      * @param layoutResId 资源ID
-     * @return ViewHolder
+     * @return TViewHolder
      */
-    public static ViewHolder create(Context context, View convertView, ViewGroup parent, int layoutResId){
+    public static TViewHolder create(Context context, View convertView, ViewGroup parent, int layoutResId){
         if (convertView == null){
             if (context == null){
-                throw new RuntimeException("[ViewHolder]create: context must not be null");
+                throw new RuntimeException("[TViewHolder]create: context must not be null");
             }
             try {
                 convertView = LayoutInflater.from(context).inflate(layoutResId, parent, false);
             }catch(Exception e){
-                throw new RuntimeException("[ViewHolder]create: error when inflating View", e);
+                throw new RuntimeException("[TViewHolder]create: error when inflating View", e);
             }
         }else{
             Object holder = convertView.getTag(SpecialResourceId.ViewTag.ViewHolder);
-            if (holder instanceof ViewHolder){
-                ViewHolder viewHolder = (ViewHolder) holder;
-                viewHolder.incrementCreateTimes();
-                return viewHolder;
+            if (holder instanceof TViewHolder){
+                TViewHolder TViewHolder = (TViewHolder) holder;
+                TViewHolder.incrementCreateTimes();
+                return TViewHolder;
             }
         }
-        ViewHolder holder = new ViewHolder(convertView);
+        TViewHolder holder = new TViewHolder(convertView);
         convertView.setTag(SpecialResourceId.ViewTag.ViewHolder, holder);
         holder.incrementCreateTimes();
         return holder;
@@ -165,12 +165,12 @@ public class ViewHolder {
 
     private View findView(int resId){
         if (getConvertView() == null){
-            throw new RuntimeException("[ViewHolder]get: convertView is null");
+            throw new RuntimeException("[TViewHolder]get: convertView is null");
         }
         try {
             return getConvertView().findViewById(resId);
         }catch(Exception e){
-            throw new RuntimeException("[ViewHolder]get: error when findViewById", e);
+            throw new RuntimeException("[TViewHolder]get: error when findViewById", e);
         }
     }
 

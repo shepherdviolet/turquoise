@@ -30,7 +30,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import sviolet.demoaimageloader.R;
-import sviolet.turquoise.ui.util.ViewHolder;
+import sviolet.turquoise.ui.util.TViewHolder;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 
@@ -70,7 +70,7 @@ public class ListViewAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        ViewHolder holder = ViewHolder.create(context, convertView, parent, R.layout.list_view_main_item);
+        TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.list_view_main_item);
 
         AsyncImageItem item = itemList.get(position);
         ((TextView) holder.get(R.id.list_view_main_item_title)).setText(item.getTitle());
