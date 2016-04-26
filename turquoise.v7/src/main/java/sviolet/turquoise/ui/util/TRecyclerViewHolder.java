@@ -29,6 +29,8 @@ import android.view.ViewGroup;
 /**
  * <p>[RecyclerView专用] RecyclerView.ViewHolder增强</p>
  *
+ * <p>建议直接使用{@link TRecyclerViewAdapter}.</p>
+ *
  * <pre>{@code
  *  public class XXXAdapter extends RecyclerView.Adapter<TRecyclerViewHolder> {
  *
@@ -54,7 +56,7 @@ import android.view.ViewGroup;
  */
 public class TRecyclerViewHolder extends RecyclerView.ViewHolder {
 
-    private SparseArray<View> views = new SparseArray<>();
+    private SparseArray<View> subViews = new SparseArray<>();
 
     /**
      * <p>[RecyclerView专用] RecyclerView.ViewHolder增强</p>
@@ -64,7 +66,7 @@ public class TRecyclerViewHolder extends RecyclerView.ViewHolder {
      * @param layoutResId item's layout resource id
      */
     public TRecyclerViewHolder(Context context, ViewGroup parent, int layoutResId){
-        super(LayoutInflater.from(context).inflate(layoutResId, parent, false));
+        this(LayoutInflater.from(context).inflate(layoutResId, parent, false));
     }
 
     /**
@@ -75,6 +77,7 @@ public class TRecyclerViewHolder extends RecyclerView.ViewHolder {
     public TRecyclerViewHolder(View itemView) {
         super(itemView);
     }
+
     /**
      * 创建(获取)itemView的子控件
      *
@@ -82,11 +85,11 @@ public class TRecyclerViewHolder extends RecyclerView.ViewHolder {
      * @return 子控件
      */
     public View get(int resId){
-        View view = views.get(resId);
+        View view = subViews.get(resId);
         if (view == null){
             view = findView(resId);
             if (view != null){
-                views.put(resId, view);
+                subViews.put(resId, view);
             }
         }
         return view;
@@ -101,6 +104,48 @@ public class TRecyclerViewHolder extends RecyclerView.ViewHolder {
         }catch(Exception e){
             throw new RuntimeException("[TViewHolder]get: error when findViewById", e);
         }
+    }
+
+    TRecyclerViewHolder bindClickListener(final OnItemClickListener onClickListener){
+        if (onClickListener != null){
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickListener.onClick(v, getLayoutPosition());
+                }
+            });
+        }
+        return this;
+    }
+
+    TRecyclerViewHolder bindLongClickListener(final OnItemLongClickListener onLongClickListener){
+        if (onLongClickListener != null){
+            itemView.setOnLongClickListener(new View.OnLongClickListener(){
+                @Override
+                public boolean onLongClick(View v) {
+                    return onLongClickListener.onLongClick(v, getLayoutPosition());
+                }
+            });
+        }
+        return this;
+    }
+
+    /**
+     * [RecyclerView专用]点击事件监听器
+     */
+    public interface OnItemClickListener{
+
+        void onClick(View v, int position);
+
+    }
+
+    /**
+     * [RecyclerView专用]长按事件监听器
+     */
+    public interface OnItemLongClickListener{
+
+        boolean onLongClick(View v, int position);
+
     }
 
 }
