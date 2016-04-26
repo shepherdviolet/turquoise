@@ -20,11 +20,19 @@
 package sviolet.turquoise.x.imageloader.node;
 
 import android.widget.AbsListView;
+import android.widget.GridView;
+import android.widget.ListView;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * <p>Helps smooth slide, for {@link ListView} and {@link GridView}</p>
+ *
+ * <pre>{@code
+ *  listView.setOnScrollListener(TILoader.node(this).newPauseOnListScrollListener());
+ * }</pre>
+ *
  * Created by S.Violet on 2016/4/21.
  */
 public class NodePauseOnListScrollListener implements AbsListView.OnScrollListener {

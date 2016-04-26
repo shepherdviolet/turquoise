@@ -27,6 +27,8 @@ import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
+ * <p>Node for extract</p>
+ *
  * Created by S.Violet on 2016/4/22.
  */
 public class ExtractNode extends LoadNode {

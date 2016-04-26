@@ -45,11 +45,21 @@ import sviolet.turquoise.x.imageloader.node.queue.InfiniteResponseQueue;
 import sviolet.turquoise.x.imageloader.node.queue.LossyRequestQueue;
 import sviolet.turquoise.x.imageloader.node.queue.RequestQueue;
 import sviolet.turquoise.x.imageloader.node.queue.ResponseQueue;
+import sviolet.turquoise.x.imageloader.server.Engine;
 import sviolet.turquoise.x.imageloader.server.Server;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 import sviolet.turquoise.x.imageloader.stub.StubGroup;
 
 /**
+ * <p>Node Controller</p>
+ *
+ * <p>Manage loading tasks / context lifecycle / settings.
+ * Maintain the relationship between the {@link Stub} and the {@link Server}/{@link Engine}.</p>
+ *
+ * <p>The actual master of the {@link Node}. Maintain task queue, lifecycle, node settings.
+ * {@link Stub} initiated the request to {@link NodeController}, {@link NodeController} construct
+ * a {@link Task}, and the {@link Task} will be executed by {@link Server} or {@link Engine},
+ * when {@link Task} execute finished, {@link NodeController} will callback to {@link Stub}.</p>
  *
  * Created by S.Violet on 2016/2/18.
  */

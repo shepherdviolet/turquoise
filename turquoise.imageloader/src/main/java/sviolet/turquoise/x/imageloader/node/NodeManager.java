@@ -31,6 +31,7 @@ import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.server.Server;
 
 /**
+ * <p>Manage nodes: create, fetch, scrap.</p>
  *
  * Created by S.Violet on 2016/2/29.
  */

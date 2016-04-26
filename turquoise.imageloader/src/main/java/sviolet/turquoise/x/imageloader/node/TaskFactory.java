@@ -24,6 +24,8 @@ import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  *
+ * <p>Task Factory</p>
+ *
  * Created by S.Violet on 2016/3/3.
  */
 public interface TaskFactory extends ComponentManager.Component {

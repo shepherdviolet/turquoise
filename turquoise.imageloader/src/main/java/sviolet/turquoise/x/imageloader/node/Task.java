@@ -26,6 +26,10 @@ import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  *
+ * <p>Loading Task</p>
+ *
+ * <p>Context of a loading task.</p>
+ *
  * Created by S.Violet on 2016/2/17.
  */
 public class Task {

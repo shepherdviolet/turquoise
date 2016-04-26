@@ -22,6 +22,7 @@ package sviolet.turquoise.x.imageloader.node;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 
 /**
+ * <p>Factory of Node</p>
  *
  * Created by S.Violet on 2016/2/23.
  */

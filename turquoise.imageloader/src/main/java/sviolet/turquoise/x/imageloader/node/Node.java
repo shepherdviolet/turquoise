@@ -23,14 +23,18 @@ import android.content.Context;
 import android.view.View;
 
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
-import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.server.Server;
+import sviolet.turquoise.x.imageloader.stub.Stub;
+import sviolet.turquoise.x.imageloader.server.Engine;
 
 /**
- * Node<p/>
+ * <p>Node</p>
  *
- * 
+ * <p>Manage loading tasks / context lifecycle / settings.
+ * Maintain the relationship between the {@link Stub} and the {@link Server}/{@link Engine}.</p>
+ *
+ * <p>User-oriented, management by the {@link NodeController} actually.</p>
  *
  * Created by S.Violet on 2016/2/16.
  */
@@ -143,5 +147,10 @@ public abstract class Node {
      * NodePauseOnListScrollListener
      */
 
+    /**
+     * <pre>{@code
+     *  listView.setOnScrollListener(TILoader.node(this).newPauseOnListScrollListener());
+     * }</pre>
+     */
     public abstract NodePauseOnListScrollListener newPauseOnListScrollListener();
 }

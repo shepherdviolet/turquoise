@@ -32,6 +32,7 @@ import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
+ * <p>Node for loading</p>
  *
  * Created by S.Violet on 2016/2/18.
  */
