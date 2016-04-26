@@ -34,7 +34,6 @@ import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
  */
 public class NodeSettings implements Destroyable {
 
-
     private static class Values{
 
         //settings////////////////////////////////////////////////////////////////////////////
@@ -71,6 +70,10 @@ public class NodeSettings implements Destroyable {
 
         //settings////////////////////////////////////////////////////////////////////////////
 
+        /**
+         * set memory load queue size, increase if you want to make screen accommodate more pictures
+         * @param memoryQueueSize {@value DEFAULT_MEMORY_QUEUE_SIZE} by default
+         */
         public Builder setMemoryQueueSize(int memoryQueueSize){
             if (memoryQueueSize < 1){
                 throw new RuntimeException("[NodeSettings]memoryQueueSize must >= 1");
@@ -79,6 +82,10 @@ public class NodeSettings implements Destroyable {
             return this;
         }
 
+        /**
+         * set disk load queue size, increase if you want to make screen accommodate more pictures
+         * @param diskQueueSize {@value DEFAULT_DISK_QUEUE_SIZE} by default
+         */
         public Builder setDiskQueueSize(int diskQueueSize){
             if (diskQueueSize < 1){
                 throw new RuntimeException("[NodeSettings]diskQueueSize must >= 1");
@@ -87,6 +94,10 @@ public class NodeSettings implements Destroyable {
             return this;
         }
 
+        /**
+         * set network load queue size, increase if you want to make screen accommodate more pictures
+         * @param netQueueSize {@value DEFAULT_NET_QUEUE_SIZE} by default
+         */
         public Builder setNetQueueSize(int netQueueSize){
             if (netQueueSize < 1){
                 throw new RuntimeException("[NodeSettings]netQueueSize must >= 1");
@@ -95,6 +106,9 @@ public class NodeSettings implements Destroyable {
             return this;
         }
 
+        /**
+         * @param reloadTimes reload times (reload when load failed)
+         */
         public Builder setReloadTimes(int reloadTimes){
             if (reloadTimes < 0){
                 throw new RuntimeException("[NodeSettings]reloadTimes must >= 0");
@@ -103,6 +117,9 @@ public class NodeSettings implements Destroyable {
             return this;
         }
 
+        /**
+         * @param imageAppearDuration duration of image appear animation
+         */
         public Builder setImageAppearDuration(int imageAppearDuration){
             if (imageAppearDuration < 0){
                 throw new RuntimeException("[NodeSettings]imageAppearDuration must >= 0");
@@ -113,11 +130,17 @@ public class NodeSettings implements Destroyable {
 
         //handler////////////////////////////////////////////////////////////////////////////
 
+        /**
+         * @param networkLoadHandler custom network load implementation, for node only
+         */
         public Builder setNetworkLoadHandler(NetworkLoadHandler networkLoadHandler){
             values.networkLoadHandler = networkLoadHandler;
             return this;
         }
 
+        /**
+         * @param decodeHandler custom decode implementation, for node only
+         */
         public Builder setDecodeHandler(DecodeHandler decodeHandler){
             values.decodeHandler = decodeHandler;
             return this;
@@ -125,16 +148,28 @@ public class NodeSettings implements Destroyable {
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
+        /**
+         * show when image loading, for node only
+         * @param factory loadingDrawable factory
+         */
         public Builder setLoadingDrawableFactory(LoadingDrawableFactory factory){
             values.loadingDrawableFactory = factory;
             return this;
         }
 
+        /**
+         * show when image load failed, for node only
+         * @param factory failedDrawable factory
+         */
         public Builder setFailedDrawableFactory(FailedDrawableFactory factory){
             values.failedDrawableFactory = factory;
             return this;
         }
 
+        /**
+         * for image's background, for node only
+         * @param backgroundImageResId image resource id
+         */
         public Builder setBackgroundImageResId(int backgroundImageResId){
             if (values.backgroundDrawableFactory == null){
                 values.backgroundDrawableFactory = new CommonBackgroundDrawableFactory();
@@ -143,6 +178,10 @@ public class NodeSettings implements Destroyable {
             return this;
         }
 
+        /**
+         * for image's background, for node only
+         * @param backgroundColor color
+         */
         public Builder setBackgroundColor(int backgroundColor){
             if (values.backgroundDrawableFactory == null){
                 values.backgroundDrawableFactory = new CommonBackgroundDrawableFactory();

@@ -152,8 +152,8 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * set the max thread of memory loading
-         * @param maxThread max thread num, >=1
+         * set the max thread of memory loading engine
+         * @param maxThread max thread num, >=1, {@value DEFAULT_MEMORY_LOAD_MAX_THREAD} by default
          */
         public Builder setMemoryLoadMaxThread(int maxThread){
             if (maxThread < 1){
@@ -164,8 +164,8 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * set the max thread of disk loading
-         * @param maxThread max thread num, >=1
+         * set the max thread of disk loading engine
+         * @param maxThread max thread num, >=1, {@value DEFAULT_DISK_LOAD_MAX_THREAD} by default
          */
         public Builder setDiskLoadMaxThread(int maxThread){
             if (maxThread < 1){
@@ -176,8 +176,8 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * set the max thread of network loading
-         * @param maxThread max thread num, >=1
+         * set the max thread of network loading engine
+         * @param maxThread max thread num, >=1, {@value DEFAULT_NETWORK_LOAD_MAX_THREAD} by default
          */
         public Builder setNetworkLoadMaxThread(int maxThread){
             if (maxThread < 1){
