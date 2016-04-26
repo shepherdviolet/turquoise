@@ -16,7 +16,7 @@
 > <br/>
 > Views ┃ sviolet.turquoise.ui/uix <br/>
 > ┈┈ 1.SlideEngine: help to build sliding view, and provides some ready-made Views<br/>
-> ┈┈ 2.ViewHolder: easy to build Adapter of View<br/>
+> ┈┈ 2.TViewHolder: easy to build Adapter of View<br/>
 > ┈┈ shadow/gif/ripple/rotate/scrape/......<br/>
 > <br/>
 > enhanced android component ┃ sviolet.turquoise.enhance <br/>
