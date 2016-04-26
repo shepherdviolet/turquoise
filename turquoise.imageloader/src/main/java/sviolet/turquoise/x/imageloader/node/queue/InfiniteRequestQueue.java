@@ -26,6 +26,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
+ * <p>Infinite Request Queue</p>
+ *
  * Created by S.Violet on 2016/3/3.
  */
 public class InfiniteRequestQueue implements RequestQueue {

@@ -25,6 +25,10 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
+ * <p>Lossy Request Queue</p>
+ *
+ * <p>A fixed size Queue(Stack?), last in first out, it will drop earliest task if queue is full</p>
+ *
  * Created by S.Violet on 2016/2/17.
  */
 public class LossyRequestQueue implements RequestQueue {

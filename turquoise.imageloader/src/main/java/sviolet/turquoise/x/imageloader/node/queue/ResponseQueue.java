@@ -22,6 +22,8 @@ package sviolet.turquoise.x.imageloader.node.queue;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
+ * <p>ResponseQueue</p>
+ *
  * Created by S.Violet on 2016/2/18.
  */
 public interface ResponseQueue {
