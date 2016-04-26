@@ -37,6 +37,7 @@ import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
+ * <p>Utils for TILoader</p>
  *
  * Created by S.Violet on 2016/3/15.
  */

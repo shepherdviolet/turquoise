@@ -31,6 +31,10 @@ import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
 
 /**
+ * <p>Manage image loading process of view or extract affairs: launch, relaunch, reload, update view or callback to listener.
+ * Maintain the relationship between the view/listener and the load node</p>
+ *
+ * <p>Achieve the basic functions of loading</p>
  *
  * Created by S.Violet on 2016/2/26.
  */

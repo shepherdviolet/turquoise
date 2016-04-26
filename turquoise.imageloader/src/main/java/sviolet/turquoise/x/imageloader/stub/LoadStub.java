@@ -31,8 +31,9 @@ import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
 
 /**
- * Load Stub<br/>
- * loading image/background to View<br/>
+ * <p>Load Stub</p>
+ *
+ * <p>loading image/background to View, Need to achieve method {@link LoadStub#setDrawableToView}</p>
  *
  * Created by S.Violet on 2016/2/19.
  */

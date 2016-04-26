@@ -28,6 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 
 /**
+ * <p>Group of stubs. All tasks for the same purpose will be bundled into a group.</p>
  *
  * Created by S.Violet on 2016/3/3.
  */

@@ -25,6 +25,8 @@ import android.widget.ImageView;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
+ * <p>loading image to ImageView</p>
+ *
  * Created by S.Violet on 2016/2/25.
  */
 class ImageViewLoadStub extends LoadStub<ImageView> {

@@ -25,6 +25,10 @@ import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
 
 /**
+ * <p>Extract Stub</p>
+ *
+ * <p>loading image and callback to listener</p>
+ *
  * Created by S.Violet on 2016/2/19.
  */
 class ExtractStub extends AbsStub {

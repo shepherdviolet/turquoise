@@ -34,7 +34,7 @@ import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.Node;
 
 /**
- * Turquoise Image Loader
+ * <p>Turquoise Image Loader</p>
  *
  * Created by S.Violet on 2016/2/16.
  */

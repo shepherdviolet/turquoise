@@ -25,6 +25,7 @@ import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
+ * <p>Factory of stubs</p>
  *
  * Created by S.Violet on 2016/2/23.
  */

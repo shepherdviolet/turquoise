@@ -28,8 +28,7 @@ import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
- * Load Background Stub<br/>
- * loading image to View's background<br/>
+ * <p>loading image to View's background</p>
  *
  * Created by S.Violet on 2016/2/25.
  */
