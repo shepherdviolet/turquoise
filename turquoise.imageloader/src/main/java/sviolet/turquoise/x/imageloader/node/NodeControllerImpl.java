@@ -56,10 +56,12 @@ import sviolet.turquoise.x.imageloader.stub.StubGroup;
  * <p>Manage loading tasks / context lifecycle / settings.
  * Maintain the relationship between the {@link Stub} and the {@link Server}/{@link Engine}.</p>
  *
- * <p>The actual master of the {@link Node}. Maintain task queue, lifecycle, node settings.
- * {@link Stub} initiated the request to {@link NodeController}, {@link NodeController} construct
- * a {@link Task}, and the {@link Task} will be executed by {@link Server} or {@link Engine},
+ * <p>The actual controller of the {@link Node}. Maintain task queue, attach context lifecycle, holding node settings.
+ * {@link Stub} initiated request to {@link NodeController}, {@link NodeController} construct a {@link Task}, then
+ * push into task queue, {@link Task}s will be executed by {@link Server} or {@link Engine},
  * when {@link Task} execute finished, {@link NodeController} will callback to {@link Stub}.</p>
+ *
+ * <p>When the life cycle of context changes, {@link Node} will change status (freeze / unfreeze / destroy).</p>
  *
  * Created by S.Violet on 2016/2/18.
  */

@@ -34,7 +34,7 @@ import sviolet.turquoise.x.imageloader.server.Engine;
  * <p>Manage loading tasks / context lifecycle / settings.
  * Maintain the relationship between the {@link Stub} and the {@link Server}/{@link Engine}.</p>
  *
- * <p>User-oriented, management by the {@link NodeController} actually.</p>
+ * <p>User-oriented, implement by the {@link NodeController} actually.</p>
  *
  * Created by S.Violet on 2016/2/16.
  */
