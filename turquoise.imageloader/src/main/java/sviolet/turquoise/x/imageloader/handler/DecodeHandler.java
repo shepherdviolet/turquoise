@@ -29,7 +29,7 @@ import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
- * <p>Achieve image decoding</p>
+ * <p>implement image decoding</p>
  *
  * <p>implement notes::</p>
  *

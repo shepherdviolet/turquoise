@@ -102,6 +102,10 @@ public class Params {
             return this;
         }
 
+        /**
+         * set BitmapConfig
+         * @param bitmapConfig bitmapConfig
+         */
         public Builder setBitmapConfig(Bitmap.Config bitmapConfig){
             if (bitmapConfig == null){
                 throw new RuntimeException("[TILoader:Params]setBitmapConfig: bitmapConfig is null");
@@ -119,6 +123,9 @@ public class Params {
             return this;
         }
 
+        /**
+         * @return build Params
+         */
         public Params build(){
             return new Params(values);
         }

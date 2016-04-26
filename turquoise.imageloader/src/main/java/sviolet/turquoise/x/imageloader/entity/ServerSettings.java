@@ -47,7 +47,7 @@ import sviolet.turquoise.x.imageloader.stub.StubFactory;
 import sviolet.turquoise.x.imageloader.stub.StubFactoryImpl;
 
 /**
- * <p>ServerSettings</p>
+ * <p>TILoader global settings</p>
  *
  * Created by S.Violet on 2016/2/16.
  */
@@ -99,11 +99,18 @@ public class ServerSettings implements ComponentManager.Component{
 
         //settings////////////////////////////////////////////////////////////////////////////
 
+        /**
+         * set if TILoader's logger enabled
+         * @param enabled true: enable
+         */
         public Builder setLogEnabled(boolean enabled){
             values.logEnabled = enabled;
             return this;
         }
 
+        /**
+         * @param wipeDiskCacheWhenUpdate if true, disk cache will wipe when App update (versionCode change)
+         */
         public Builder setWipeDiskCacheWhenUpdate(boolean wipeDiskCacheWhenUpdate){
             values.wipeDiskCacheWhenUpdate = wipeDiskCacheWhenUpdate;
             return this;
@@ -180,6 +187,12 @@ public class ServerSettings implements ComponentManager.Component{
             return this;
         }
 
+        /**
+         * set disk cache path
+         * @param context context
+         * @param diskCachePath {@link DiskCachePath#INNER_STORAGE} by default
+         * @param subPath sub path of cache directory
+         */
         public Builder setDiskCachePath(Context context, DiskCachePath diskCachePath, String subPath){
             if (context == null){
                 throw new RuntimeException("[ServerSettings]setDiskCachePath:　context is null!");
@@ -190,6 +203,9 @@ public class ServerSettings implements ComponentManager.Component{
 
         //handler////////////////////////////////////////////////////////////////////////////
 
+        /**
+         * @param imageResourceHandler custom ImageResourceHandler
+         */
         public Builder setImageResourceHandler(ImageResourceHandler imageResourceHandler){
             if (imageResourceHandler != null){
                 values.imageResourceHandler = imageResourceHandler;
@@ -197,6 +213,9 @@ public class ServerSettings implements ComponentManager.Component{
             return this;
         }
 
+        /**
+         * @param networkLoadHandler custom network load implementation
+         */
         public Builder setNetworkLoadHandler(NetworkLoadHandler networkLoadHandler){
             if (networkLoadHandler != null){
                 values.networkLoadHandler = networkLoadHandler;
@@ -204,6 +223,9 @@ public class ServerSettings implements ComponentManager.Component{
             return this;
         }
 
+        /**
+         * @param decodeHandler custom decode implementation
+         */
         public Builder setDecodeHandler(DecodeHandler decodeHandler){
             if (decodeHandler != null){
                 values.decodeHandler = decodeHandler;
@@ -211,6 +233,9 @@ public class ServerSettings implements ComponentManager.Component{
             return this;
         }
 
+        /**
+         * @param exceptionHandler custom exception handling
+         */
         public Builder setExceptionHandler(ExceptionHandler exceptionHandler){
             if (exceptionHandler != null){
                 values.exceptionHandler = exceptionHandler;
@@ -220,11 +245,18 @@ public class ServerSettings implements ComponentManager.Component{
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
+        /**
+         * @param customStubFactory custom stub factory
+         */
         public Builder setCustomStubFactory(StubFactory customStubFactory){
             values.stubFactory.setCustomStubFactory(customStubFactory);
             return this;
         }
 
+        /**
+         * show when image loading
+         * @param factory loadingDrawable factory
+         */
         public Builder setLoadingDrawableFactory(LoadingDrawableFactory factory){
             if (factory != null){
                 values.loadingDrawableFactory = factory;
@@ -232,6 +264,10 @@ public class ServerSettings implements ComponentManager.Component{
             return this;
         }
 
+        /**
+         * show when image load failed
+         * @param factory failedDrawable factory
+         */
         public Builder setFailedDrawableFactory(FailedDrawableFactory factory){
             if (factory != null){
                 values.failedDrawableFactory = factory;
@@ -239,11 +275,19 @@ public class ServerSettings implements ComponentManager.Component{
             return this;
         }
 
+        /**
+         * for image's background
+         * @param backgroundImageResId image resource id
+         */
         public Builder setBackgroundImageResId(int backgroundImageResId){
             values.backgroundDrawableFactory.setBackgroundImageResId(backgroundImageResId);
             return this;
         }
 
+        /**
+         * for image's background
+         * @param backgroundColor color
+         */
         public Builder setBackgroundColor(int backgroundColor){
             values.backgroundDrawableFactory.setBackgroundColor(backgroundColor);
             return this;
