@@ -72,12 +72,14 @@ public class CommonFailedDrawableFactory implements FailedDrawableFactory {
         bitmap.destroy();
     }
 
-    public void setImageResId(int resId) {
+    public CommonFailedDrawableFactory setImageResId(int resId) {
         this.bitmap.setResId(resId);
+        return this;
     }
 
-    public void setColor(int color) {
+    public CommonFailedDrawableFactory setColor(int color) {
         this.color = color;
+        return this;
     }
 
 }
