@@ -272,6 +272,44 @@ public class ServerSettings implements ComponentManager.Component{
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
         /**
+         * <p>Example:</p>
+         *
+         * <p>Basic usage of CustomStubFactory, add support for TextView.
+         * TILoader.node(...).load(...) can load image to TextView's left drawable.</p>
+         *
+         * <pre>{@code
+         *
+         *      //set customStubFactory
+         *      TILoader.setting(new ServerSettings.Builder()
+         *          .setCustomStubFactory(new MyStubFactory())
+         *          .build());
+         *
+         *      //implement SubFactory
+         *      public class MyStubFactory extends StubFactory {
+         *
+         *          public Stub newLoadStub(String url, Params params, View view) {
+         *              //check view
+         *              if (view instanceof TextView){
+         *                  return new TextViewStub(url, params, (TextView) view);
+         *              }
+         *              return null;
+         *          }
+         *
+         *          private static class TextViewStub extends LoadStub<TextView>{
+         *
+         *              public TextViewStub(String url, Params params, TextView view) {
+         *                  super(url, params, view);
+         *              }
+         *
+         *              protected void setDrawableToView(Drawable drawable, TextView view) {
+         *                  //set drawable to view
+         *                  drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+         *                  view.setCompoundDrawables(drawable, null, null, null);
+         *              }
+         *          }
+         *      }
+         * }</pre>
+         *
          * @param customStubFactory custom stub factory
          */
         public Builder setCustomStubFactory(StubFactory customStubFactory){
