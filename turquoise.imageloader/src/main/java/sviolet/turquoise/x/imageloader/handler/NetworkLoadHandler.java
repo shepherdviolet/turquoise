@@ -37,17 +37,26 @@ import sviolet.turquoise.x.imageloader.server.EngineCallback;
 public interface NetworkLoadHandler {
 
     /**
-     * load from net
+     * <p>load from net</p>
+     *
+     * <p>CAUTION:</p>
+     *
+     * <p>You should call "callback.setResultSucceed()"/"callback.setResultFailed()"/"callback.setResultCanceled()"
+     * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block forever.
+     * Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
+     *
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
-     * @param callback callback
+     * @param callback callback, you must return result by it.
      * @param logger logger
      */
     void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, TLogger logger);
 
     /**
-     * network loading result (on succeed)
+     * <p>network loading result (on succeed)</p>
+     *
+     * <p>you can return InputStream or bytes</p>
      */
     class Result{
 

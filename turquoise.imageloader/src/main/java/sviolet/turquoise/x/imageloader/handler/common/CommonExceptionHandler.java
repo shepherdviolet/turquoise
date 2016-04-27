@@ -35,6 +35,7 @@ import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
+ * <p>common implementation of ExceptionHandler</p>
  *
  * Created by S.Violet on 2016/3/22.
  */

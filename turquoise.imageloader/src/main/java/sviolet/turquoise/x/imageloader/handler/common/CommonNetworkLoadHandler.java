@@ -35,6 +35,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.EngineCallback;
 
 /**
+ * <p>common implementation of NetworkLoadHandler</p>
  *
  * Created by S.Violet on 2016/3/22.
  */
@@ -48,15 +49,25 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
     private int connectTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private int readTimeout = DEFAULT_READ_TIMEOUT;
 
+    /**
+     * <p>CAUTION:</p>
+     *
+     * <p>You should call "callback.setResultSucceed()"/"callback.setResultFailed()"/"callback.setResultCanceled()"
+     * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block forever.
+     * Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
+     */
     @Override
     public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, TLogger logger) {
         try{
+            //load
             InputStream inputStream = load(new URL(taskInfo.getUrl()), null, 0, callback);
             if (inputStream == null){
                 throw new Exception("[CommonNetworkLoadHandler]get a null inputStream");
             }
+            //load succeed, callback
             callback.setResultSucceed(new Result(inputStream));
         } catch (Exception e) {
+            //load canceled/failed, callback
             if (callback.isCancelling()){
                 callback.setResultCanceled();
             }else{
@@ -65,7 +76,15 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
         }
     }
 
+    /**
+     * @param url current url
+     * @param prevUrl last url
+     * @param redirectTimes redirect times
+     * @param callback callback
+     * @return InputStream
+     */
     private InputStream load(URL url, URL prevUrl, int redirectTimes, EngineCallback<Result> callback) throws Exception {
+        //skip when redirect too many times
         if (redirectTimes >= MAXIMUM_REDIRECT_TIMES) {
             throw new Exception("[CommonNetworkLoadHandler]redirect times > maximum(" + MAXIMUM_REDIRECT_TIMES + ")");
         } else {
@@ -105,19 +124,23 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
             //check statusCode
             final int statusCode = connection.getResponseCode();
             if (statusCode / 100 == 2) {
+                //succeed
                 return connection.getInputStream();
             } else if (statusCode / 100 == 3) {
+                //redirect
                 String redirectUrl = connection.getHeaderField("Location");
                 if (CheckUtils.isEmpty(redirectUrl)) {
                     throw new Exception("[CommonNetworkLoadHandler]redirect url is null");
                 }
                 return load(new URL(url, redirectUrl), url, redirectTimes + 1, callback);
             } else if (statusCode == -1) {
+                //failed
                 throw new Exception("[CommonNetworkLoadHandler]connect failed, statusCode:" + statusCode);
             } else {
                 throw new Exception("[CommonNetworkLoadHandler]connect failed, statusCode:" + statusCode + " responseMessage" + connection.getResponseMessage());
             }
         }catch (Exception e){
+            //disconnect when exception
             if (connection != null){
                 connection.disconnect();
             }
@@ -125,6 +148,11 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
         }
     }
 
+    /**
+     * add header of http
+     * @param key header key
+     * @param value header value
+     */
     public CommonNetworkLoadHandler addHeader(String key, String value){
         if (headers == null){
             headers = new HashMap<>();

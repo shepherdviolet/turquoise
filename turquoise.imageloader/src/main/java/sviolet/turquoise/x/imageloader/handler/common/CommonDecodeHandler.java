@@ -31,6 +31,7 @@ import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
+ * <p>common implementation of DecodeHandler</p>
  *
  * Created by S.Violet on 2016/4/1.
  */
@@ -38,6 +39,7 @@ public class CommonDecodeHandler extends DecodeHandler {
 
     @Override
     public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
+        //routine decoding
         Bitmap bitmap = BitmapUtils.decodeFromByteArray(data,taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getBitmapConfig());
         if (bitmap == null)
             return null;
@@ -52,6 +54,7 @@ public class CommonDecodeHandler extends DecodeHandler {
 
     @Override
     public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
+        //routine decoding
         Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getBitmapConfig());
         if (bitmap == null)
             return null;
