@@ -20,6 +20,7 @@
 package sviolet.demoaimageloader;
 
 import sviolet.demoaimageloader.common.Constants;
+import sviolet.demoaimageloader.demos.extra.MyStubFactory;
 import sviolet.turquoise.enhance.app.TApplication;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
@@ -60,6 +61,7 @@ public class MyApplication extends TApplication {
         TILoader.setting(new ServerSettings.Builder()
                 .setMemoryCachePercent(getApplicationContext(), 0.1f)//分配10%的APP内存用于图片缓存
                 .setDiskCacheSize(10)//分配10M用于图片磁盘缓存
+                .setCustomStubFactory(new MyStubFactory())//自定义实现Stub工厂(用于增加对新控件的支持)
 //                .setDiskCachePath(getApplicationContext(), ServerSettings.DiskCachePath.EXTERNAL_STORAGE, "TILoaderDemo")//设置优先使用外部存储作为磁盘缓存, 子目录"TILoaderDemo"
 //                .setMemoryLoadMaxThread(1)//设置内存加载线程数(默认1, 通常无需修改)
 //                .setDiskLoadMaxThread(2)//设置磁盘加载线程数(默认2, 通常无需修改)
@@ -69,7 +71,6 @@ public class MyApplication extends TApplication {
 //                .setNetworkLoadHandler(new MyNetworkLoadHandler())//自定义实现网络加载
 //                .setDecodeHandler(new MyDecodeHandler())//自定义实现图片解码
 //                .setExceptionHandler(new MyExceptionHandler())//自定义实现异常处理
-//                .setCustomStubFactory(new MyStubFactory())//自定义实现Stub工厂(用于增加对新控件的支持)
 //                .setLoadingDrawableFactory(new MyLoadingDrawableFactory())//自定义实现加载图
 //                .setFailedDrawableFactory(new MyFailedDrawableFactory())//自定义实现加载失败图
 //                .setBackgroundColor(0xFFF0F0F0)//自定义背景色(作为加载目标图的背景)
