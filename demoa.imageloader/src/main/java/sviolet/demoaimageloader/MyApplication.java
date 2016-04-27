@@ -55,14 +55,33 @@ public class MyApplication extends TApplication {
     public void onCreate() {
         super.onCreate();
 
+        /*
+            TILoader全局配置, 建议在Application.onCreate()方法中执行. 该方法必须在TILoader初始化前执行,
+            使用TILoader加载图片或使用TILoaderUtils均会初始化TILoader.
+         */
         TILoader.setting(new ServerSettings.Builder()
-                .setMemoryCachePercent(getApplicationContext(), 0.1f)
-                .setDiskCacheSize(10)
-//                .setNetworkLoadHandler(new MyNetworkLoadHandler())
-                .setLogEnabled(true)
+                .setMemoryCachePercent(getApplicationContext(), 0.1f)//分配10%的APP内存用于图片缓存
+                .setDiskCacheSize(10)//分配10M用于图片磁盘缓存
+//                .setDiskCachePath(getApplicationContext(), ServerSettings.DiskCachePath.EXTERNAL_STORAGE, "TILoaderDemo")//设置优先使用外部存储作为磁盘缓存, 子目录"TILoaderDemo"
+//                .setMemoryLoadMaxThread(1)//设置内存加载线程数(默认1, 通常无需修改)
+//                .setDiskLoadMaxThread(2)//设置磁盘加载线程数(默认2, 通常无需修改)
+//                .setNetworkLoadMaxThread(3)//设置网络加载线程数(默认3, 通常无需修改)
+//                .setNetworkLoadHandler(new MyNetworkLoadHandler())//自定义实现网络加载
+//                .setDecodeHandler(new MyDecodeHandler())//自定义实现图片解码
+//                .setExceptionHandler(new MyExceptionHandler())//自定义实现异常处理
+//                .setCustomStubFactory(new MyStubFactory())//自定义实现Stub工厂(用于增加对新控件的支持)
+//                .setLoadingDrawableFactory(new MyLoadingDrawableFactory())//自定义实现加载图
+//                .setFailedDrawableFactory(new MyFailedDrawableFactory())//自定义实现加载失败图
+//                .setBackgroundColor(0xFFF0F0F0)//自定义背景色(作为加载目标图的背景)
+//                .setBackgroundImageResId(R.mipmap.async_image_null)//自定义背景图(作为加载目标图的背景, 不常用)
+//                .setWipeDiskCacheWhenUpdate(true)//当APP更新时清空磁盘缓存(versionCode变化)
+                .setLogEnabled(true)//允许日志打印
                 .build());
 
-        TILoaderUtils.setLoggerLevel(TLogger.ERROR | TLogger.INFO);
+        /*
+            设置TILoader日志级别, 对自定义的TLogger模块无效.
+         */
+//        TILoaderUtils.setLoggerLevel(TLogger.ERROR | TLogger.INFO);//仅打印ERROR和INFO日志(不打印DEBUG和WARNING日志)
     }
 
     @Override
