@@ -59,6 +59,7 @@ public class MyApplication extends TApplication {
             使用TILoader加载图片或使用TILoaderUtils均会初始化TILoader.
          */
         TILoader.setting(new ServerSettings.Builder()
+                .setLogEnabled(true)//允许日志打印
                 .setMemoryCachePercent(getApplicationContext(), 0.1f)//分配10%的APP内存用于图片缓存
                 .setDiskCacheSize(10)//分配10M用于图片磁盘缓存
                 .setCustomStubFactory(new MyStubFactory())//自定义实现Stub工厂(用于增加对新控件的支持)
@@ -71,12 +72,27 @@ public class MyApplication extends TApplication {
 //                .setNetworkLoadHandler(new MyNetworkLoadHandler())//自定义实现网络加载
 //                .setDecodeHandler(new MyDecodeHandler())//自定义实现图片解码
 //                .setExceptionHandler(new MyExceptionHandler())//自定义实现异常处理
-//                .setLoadingDrawableFactory(new MyLoadingDrawableFactory())//自定义实现加载图
-//                .setFailedDrawableFactory(new MyFailedDrawableFactory())//自定义实现加载失败图
 //                .setBackgroundColor(0xFFF0F0F0)//自定义背景色(作为加载目标图的背景)
 //                .setBackgroundImageResId(R.mipmap.async_image_null)//自定义背景图(作为加载目标图的背景, 不常用)
 //                .setWipeDiskCacheWhenUpdate(true)//当APP更新时清空磁盘缓存(versionCode变化)
-                .setLogEnabled(true)//允许日志打印
+////                .setLoadingDrawableFactory(new MyLoadingDrawableFactory())//方式1:自定义实现加载图(完全自己实现)
+//                .setLoadingDrawableFactory(new CommonLoadingDrawableFactory()//方式2:配置通用加载图
+//                        .setBackgroundColor(0xFFF0F0F0)//加载图背景颜色
+//                        .setImageResId(R.mipmap.async_image_null)//加载图设置图片
+//                        .setImageScaleType(CommonLoadingDrawableFactory.ImageScaleType.STRETCH)//设置加载图拉伸(默认居中)
+//                        .setAnimationEnabled(true)//允许动画(默认true)
+////                        .setAnimationDrawableFactory(new MyAnimationDrawableFactory())//方式1:自定义实现动画(完全自己实现)
+//                        .setAnimationDrawableFactory(new CommonLoadingDrawableFactory.CommonAnimationDrawableFactory()//方式2:配置通用动画
+//                                .setAnimationDuration(1000)//动画时间
+//                                .setPointColor(0xFFB0A0A0)//动画点颜色
+//                                .setPointInterval(MeasureUtils.dp2px(getApplicationContext(), 9))//动画点间隔
+//                                .setPointRadius(MeasureUtils.dp2px(getApplicationContext(), 3))//动画点半径
+//                                .setPointOffsetX(0.5f)//动画偏移位置
+//                                .setPointOffsetY(0.5f)))//动画偏移位置
+////                .setFailedDrawableFactory(new MyFailedDrawableFactory())//方式1:自定义实现加载失败图
+//                .setFailedDrawableFactory(new CommonFailedDrawableFactory()//方式2:配置通用失败图
+//                        .setColor(0xFFB0B0B0)//失败图背景色
+//                        .setImageResId(R.mipmap.async_image_null))//设置失败图
                 .build());
 
         /*
