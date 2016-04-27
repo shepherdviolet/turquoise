@@ -42,10 +42,14 @@
 > TO DO : <br/>
 > 1.architecture diagram<br/>
 > 2.annotate<br/>
+> 3.demo<br/>
+> 4.user guide<br/>
 > <br/>
 
 ## Package Releases (aar/source/javadoc)
 > https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
+> <br/>
 
 ## How to import Turquoise into your project
-> [https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md](https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md)
+> https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md <br/>
+> <br/>
