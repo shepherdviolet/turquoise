@@ -27,7 +27,6 @@ import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
-import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 
 @ApplicationSettings(
@@ -66,6 +65,8 @@ public class MyApplication extends TApplication {
 //                .setMemoryLoadMaxThread(1)//设置内存加载线程数(默认1, 通常无需修改)
 //                .setDiskLoadMaxThread(2)//设置磁盘加载线程数(默认2, 通常无需修改)
 //                .setNetworkLoadMaxThread(3)//设置网络加载线程数(默认3, 通常无需修改)
+//                .setNetworkConnectTimeout(3000)//设置网络加载连接超时
+//                .setNetworkReadTimeout(3000)//设置网络加载读取超时
 //                .setNetworkLoadHandler(new MyNetworkLoadHandler())//自定义实现网络加载
 //                .setDecodeHandler(new MyDecodeHandler())//自定义实现图片解码
 //                .setExceptionHandler(new MyExceptionHandler())//自定义实现异常处理

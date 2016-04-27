@@ -36,6 +36,8 @@ import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.EngineCallback;
 
 /**
+ * 自定义实现网络加载: 加载本地资源图片模拟网络加载
+ *
  * Created by S.Violet on 2016/4/20.
  */
 public class MyNetworkLoadHandler implements NetworkLoadHandler {
@@ -45,48 +47,53 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
     private int resourceIds[] = {R.mipmap.async_image_1, R.mipmap.async_image_2, R.mipmap.async_image_3, R.mipmap.async_image_4, R.mipmap.async_image_5};
     private ExecutorService pool = Executors.newCachedThreadPool();
 
+    /**
+     * 特别注意:
+     *
+     * 任何处理结果, 都必须通过callback.setResultSucceed()/callback.setResultFailed()/callback.setResultCanceled()返回结果.
+     * 为了支持第三方网络框架的异步加载, 加载线程会挂起, 等待callback返回数据, 当使用callback.setResult...方法返回结果时, 加载
+     * 线程才会继续执行, 因此必须保证每种情况都使用callback返回结果, 包括异常.
+     *
+     * <pre><@code
+     *      public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+     *          try{
+     *              //third party network utils
+     *              XXX.get(url, params, new OnFinishListener(){
+     *                  public void onSucceed(InputStream inputStream){
+     *                      //return result
+     *                      callback.setResultSucceed(new Result(inputStream));
+     *                  }
+     *                  public void onFailed(Exception e){
+     *                      //return result
+     *                      callback.setResultFailed(e);
+     *                  }
+     *              });
+     *          }catch(Exception e){
+     *              //return result
+     *              callback.setResultFailed(e);
+     *          }
+     *      }
+     * </pre>
+     *
+     * 注意根据connectTimeout/readTimeout设置超时.
+     */
     @Override
-    public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final EngineCallback<Result> callback, TLogger logger) {
+    public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
 
+        //模拟异步执行
         pool.execute(new Runnable() {
             @Override
             public void run() {
 
                 //模拟网络耗时////////////////////////////////////////////
 
+                //随机延时
                 long duration = getRandomInt(400) + 100;
-
-                //messenger.canceled()判断方式取消任务
-
-//                for (int i = 0 ; i < duration ; i += 10) {
-//                    try {
-//                        Thread.sleep(10);
-//                    } catch (InterruptedException e) {
-//                    }
-//                    //任务取消处理
-//                    if (messenger.isCancelling()){
-//                        //返回异常
-//                        messenger.setResultCanceled();
-//                        //结束加载
-//                        return;
-//                    }
-//                }
-
-                //messenger.setOnCancelListenner 设置监听器方式取消任务
-
-                final Thread thread = Thread.currentThread();
-                callback.setOnCancelListener(new Runnable() {
-                    @Override
-                    public void run() {
-                        thread.interrupt();
-                    }
-                });
                 try {
                     Thread.sleep(duration);
                 } catch (InterruptedException e) {
-                    //返回异常
+                    //任何异常都需要捕获并返回处理结果,
                     callback.setResultCanceled();
-                    //结束加载
                     return;
                 }
 
@@ -94,8 +101,9 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
                 //模拟网络加载失败的情况
                 if(getRandomInt(100) > 5) {
                     //加载成功
-                    //模拟网络加载, 从资源中获取图片, 注意要根据需求尺寸解析合适大小的Bitmap,以节省内存
+                    //模拟网络加载, 从资源中获取图片
 //                    Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight);
+                    //模拟网络加载, 从资源获取图片, 并绘制url在图上
                     Bitmap bitmap = BitmapUtils.drawTextOnResource(context.getResources(), resourceIds[index], taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getUrl(), 0, 50, 50f, 0xFF000000);
 
                     //转为byteArray
@@ -103,13 +111,14 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
                     try {
                         data = BitmapUtils.bitmapToByteArray(bitmap, Bitmap.CompressFormat.JPEG, 70, true);
                     } catch (IOException e) {
+                        //任何异常都需要捕获并返回处理结果,
                         callback.setResultFailed(e);
                         return;
                     }
 
-                    //bytes
+                    //bytes方式返回
 //                    callback.setResultSucceed(new Result(data));
-                    //inputStream
+                    //inputStream方式返回
                     ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
                     callback.setResultSucceed(new Result(inputStream));
                 }else{
