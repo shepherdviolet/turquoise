@@ -47,6 +47,28 @@ public interface NetworkLoadHandler {
      * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block for a long time,
      * until EngineCallback timeout.Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
      *
+     * <pre><@code
+     *      public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+     *          try{
+     *              //load by third party network utils
+     *              //don't forget set timeout
+     *              XXX.get(url, connectTimeout, readTimeout, new OnFinishListener(){
+     *                  public void onSucceed(InputStream inputStream){
+     *                      //return result
+     *                      callback.setResultSucceed(new Result(inputStream));
+     *                  }
+     *                  public void onFailed(Exception e){
+     *                      //return result
+     *                      callback.setResultFailed(e);
+     *                  }
+     *              });
+     *          }catch(Exception e){
+     *              //return result
+     *              callback.setResultFailed(e);
+     *          }
+     *      }
+     * </pre>
+     *
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
