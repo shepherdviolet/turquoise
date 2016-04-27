@@ -42,6 +42,8 @@ public class NodeSettings implements Destroyable {
         private int diskQueueSize = DEFAULT_DISK_QUEUE_SIZE;
         private int netQueueSize = DEFAULT_NET_QUEUE_SIZE;
         private int reloadTimes = DEFAULT_RELOAD_TIMES;
+        private long networkConnectTimeout = DEFAULT_NETWORK_CONNECT_TIMEOUT;
+        private long networkReadTimeout = DEFAULT_NETWORK_READ_TIMEOUT;
         private int imageAppearDuration = DEFAULT_IMAGE_APPEAR_DURATION;
 
         //handler////////////////////////////////////////////////////////////////////////////
@@ -114,6 +116,30 @@ public class NodeSettings implements Destroyable {
                 throw new RuntimeException("[NodeSettings]reloadTimes must >= 0");
             }
             values.reloadTimes = reloadTimes;
+            return this;
+        }
+
+        /**
+         * set timeout of network connect
+         * @param timeout timeout milli second
+         */
+        public Builder setNetworkConnectTimeout(long timeout){
+            if (timeout <= 0){
+                throw new RuntimeException("[ServerSettings]connect timeout must > 0");
+            }
+            values.networkConnectTimeout = timeout;
+            return this;
+        }
+
+        /**
+         * set timeout of network read
+         * @param timeout timeout milli second
+         */
+        public Builder setNetworkReadTimeout(long timeout){
+            if (timeout <= 0){
+                throw new RuntimeException("[ServerSettings]read timeout must > 0");
+            }
+            values.networkReadTimeout = timeout;
             return this;
         }
 
@@ -199,6 +225,8 @@ public class NodeSettings implements Destroyable {
     private static final int DEFAULT_NET_QUEUE_SIZE = 20;
     private static final int DEFAULT_RELOAD_TIMES = 2;
     private static final int DEFAULT_IMAGE_APPEAR_DURATION = 400;
+    public static final long DEFAULT_NETWORK_CONNECT_TIMEOUT = -1;//ms
+    public static final long DEFAULT_NETWORK_READ_TIMEOUT = -1;//ms
 
     private Values values;
 
@@ -235,6 +263,20 @@ public class NodeSettings implements Destroyable {
 
     public int getReloadTimes(){
         return values.reloadTimes;
+    }
+
+    /**
+     * @return milli second
+     */
+    public long getNetworkConnectTimeout(){
+        return values.networkConnectTimeout;
+    }
+
+    /**
+     * @return milli second
+     */
+    public long getNetworkReadTimeout(){
+        return values.networkReadTimeout;
     }
 
     public int getImageAppearDuration() {

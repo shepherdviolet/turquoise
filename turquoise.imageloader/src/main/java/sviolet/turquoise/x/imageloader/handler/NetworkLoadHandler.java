@@ -21,8 +21,10 @@ package sviolet.turquoise.x.imageloader.handler;
 
 import android.content.Context;
 
+import java.io.IOException;
 import java.io.InputStream;
 
+import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.EngineCallback;
@@ -42,23 +44,25 @@ public interface NetworkLoadHandler {
      * <p>CAUTION:</p>
      *
      * <p>You should call "callback.setResultSucceed()"/"callback.setResultFailed()"/"callback.setResultCanceled()"
-     * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block forever.
-     * Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
+     * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block for a long time,
+     * until EngineCallback timeout.Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
      *
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
      * @param callback callback, you must return result by it.
+     * @param connectTimeout connect timeout of network
+     * @param readTimeout read timeout of network
      * @param logger logger
      */
-    void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, TLogger logger);
+    void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger);
 
     /**
      * <p>network loading result (on succeed)</p>
      *
      * <p>you can return InputStream or bytes</p>
      */
-    class Result{
+    class Result implements Destroyable{
 
         public static final int UNKNOWN_LENGTH = -1;
 
@@ -104,6 +108,20 @@ public interface NetworkLoadHandler {
 
         public void setLength(int length) {
             this.length = length;
+        }
+
+        @Override
+        public void onDestroy() {
+            type = ResultType.NULL;
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+            if (bytes != null){
+                bytes = null;
+            }
         }
     }
 

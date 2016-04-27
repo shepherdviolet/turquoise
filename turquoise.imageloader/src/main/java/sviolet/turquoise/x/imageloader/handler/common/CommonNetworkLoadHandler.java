@@ -41,26 +41,22 @@ import sviolet.turquoise.x.imageloader.server.EngineCallback;
  */
 public class CommonNetworkLoadHandler implements NetworkLoadHandler {
 
-    private static final int DEFAULT_CONNECTION_TIMEOUT = 3000;
-    private static final int DEFAULT_READ_TIMEOUT = 3000;
     private static final int MAXIMUM_REDIRECT_TIMES = 5;
 
     private Map<String, String> headers;
-    private int connectTimeout = DEFAULT_CONNECTION_TIMEOUT;
-    private int readTimeout = DEFAULT_READ_TIMEOUT;
 
     /**
      * <p>CAUTION:</p>
      *
      * <p>You should call "callback.setResultSucceed()"/"callback.setResultFailed()"/"callback.setResultCanceled()"
-     * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block forever.
-     * Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
+     * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block for a long time,
+     * until EngineCallback timeout.Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
      */
     @Override
-    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, TLogger logger) {
+    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
         try{
             //load
-            InputStream inputStream = load(new URL(taskInfo.getUrl()), null, 0, callback);
+            InputStream inputStream = load(new URL(taskInfo.getUrl()), null, 0, callback, connectTimeout, readTimeout);
             if (inputStream == null){
                 throw new Exception("[CommonNetworkLoadHandler]get a null inputStream");
             }
@@ -83,7 +79,7 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
      * @param callback callback
      * @return InputStream
      */
-    private InputStream load(URL url, URL prevUrl, int redirectTimes, EngineCallback<Result> callback) throws Exception {
+    private InputStream load(URL url, URL prevUrl, int redirectTimes, EngineCallback<Result> callback, long connectTimeout, long readTimeout) throws Exception {
         //skip when redirect too many times
         if (redirectTimes >= MAXIMUM_REDIRECT_TIMES) {
             throw new Exception("[CommonNetworkLoadHandler]redirect times > maximum(" + MAXIMUM_REDIRECT_TIMES + ")");
@@ -108,8 +104,8 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
                 }
             }
             //setting
-            connection.setConnectTimeout(connectTimeout);
-            connection.setReadTimeout(readTimeout);
+            connection.setConnectTimeout((int) connectTimeout);
+            connection.setReadTimeout((int) readTimeout);
             connection.setUseCaches(false);
             connection.setRequestMethod("GET");
             connection.setDoInput(true);
@@ -132,7 +128,7 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
                 if (CheckUtils.isEmpty(redirectUrl)) {
                     throw new Exception("[CommonNetworkLoadHandler]redirect url is null");
                 }
-                return load(new URL(url, redirectUrl), url, redirectTimes + 1, callback);
+                return load(new URL(url, redirectUrl), url, redirectTimes + 1, callback, connectTimeout, readTimeout);
             } else if (statusCode == -1) {
                 //failed
                 throw new Exception("[CommonNetworkLoadHandler]connect failed, statusCode:" + statusCode);
@@ -161,13 +157,4 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
         return this;
     }
 
-    public CommonNetworkLoadHandler setConnectTimeout(int connectTimeout) {
-        this.connectTimeout = connectTimeout;
-        return this;
-    }
-
-    public CommonNetworkLoadHandler setReadTimeout(int readTimeout) {
-        this.readTimeout = readTimeout;
-        return this;
-    }
 }

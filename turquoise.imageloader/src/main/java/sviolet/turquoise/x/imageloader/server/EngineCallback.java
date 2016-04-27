@@ -19,8 +19,12 @@
 
 package sviolet.turquoise.x.imageloader.server;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+
+import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * <p>is used to callback Engine by asynchronous way, return result</p>
@@ -38,6 +42,8 @@ public class EngineCallback <ResultDataType> {
 
     private int result = RESULT_NULL;//result state
 
+    private long timeout;
+    private TLogger logger;
     private boolean isCancelling = false;//is canceling (by cancel())
 
     private ResultDataType data;//result data
@@ -47,8 +53,18 @@ public class EngineCallback <ResultDataType> {
     private final ReentrantLock lock = new ReentrantLock();
     private final Condition condition = lock.newCondition();
 
-    EngineCallback(){
-
+    /**
+     * @param timeout timeout of waiting, millis
+     */
+    EngineCallback(long timeout, TLogger logger){
+        if (timeout <= 0){
+            throw new RuntimeException("[EngineCallback]timeout must > 0");
+        }
+        if (logger == null){
+            logger = TLogger.getNullLogger();
+        }
+        this.timeout = timeout;
+        this.logger = logger;
     }
 
     /**
@@ -60,6 +76,10 @@ public class EngineCallback <ResultDataType> {
         try{
             //can only be called once
             if (result != RESULT_NULL) {
+                //destroy data
+                if (data instanceof Destroyable){
+                    ((Destroyable) data).onDestroy();
+                }
                 return;
             }
             this.data = data;
@@ -139,7 +159,18 @@ public class EngineCallback <ResultDataType> {
         lock.lock();
         try{
             if (result == RESULT_NULL)
-                condition.await();
+                if (!condition.await(timeout, TimeUnit.MILLISECONDS)){
+                    /**
+                     * <p>waiting for result timeout! Make sure that NetworkLoadHandler correctly use EngineCallback to return result,
+                     * whether load succeed or failed.</p>
+                     *
+                     * <p>In custom NetworkLoadHandler. You should call "callback.setResultSucceed()"/"callback.setResultFailed()"/"callback.setResultCanceled()"
+                     * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block for a long time, until EngineCallback timeout.
+                     * Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
+                     */
+                    result = RESULT_INTERRUPTED;
+                    logger.e("[EngineCallback]waiting for result timeout! Make sure that NetworkLoadHandler correctly use EngineCallback to return result, whether load succeed or failed");
+                }
             return result;
         } catch (InterruptedException ignored) {
             result = RESULT_INTERRUPTED;//中断状态

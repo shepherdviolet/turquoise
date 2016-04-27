@@ -35,10 +35,12 @@ public class NetEngine extends Engine {
 
     @Override
     protected void executeNewTask(Task task) {
-        //network loading
-        EngineCallback<NetworkLoadHandler.Result> callback = new EngineCallback<>();
+        long connectTimeout = getNetworkConnectTimeout(task);
+        long readTimeout = getNetworkReadTimeout(task);
+        //network loading, callback's timeout is triple of network timeout
+        EngineCallback<NetworkLoadHandler.Result> callback = new EngineCallback<>((connectTimeout + readTimeout) * 3, getComponentManager().getLogger());
         try {
-            getNetworkLoadHandler(task).onHandle(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), callback, getComponentManager().getLogger());
+            getNetworkLoadHandler(task).onHandle(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), callback, connectTimeout, readTimeout, getComponentManager().getLogger());
         }catch(Exception e){
             getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
             responseFailed(task);

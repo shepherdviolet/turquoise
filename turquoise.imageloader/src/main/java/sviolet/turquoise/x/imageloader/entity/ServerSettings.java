@@ -64,6 +64,8 @@ public class ServerSettings implements ComponentManager.Component{
         private int memoryLoadMaxThread = DEFAULT_MEMORY_LOAD_MAX_THREAD;
         private int diskLoadMaxThread = DEFAULT_DISK_LOAD_MAX_THREAD;
         private int networkLoadMaxThread = DEFAULT_NETWORK_LOAD_MAX_THREAD;
+        private long networkConnectTimeout = DEFAULT_NETWORK_CONNECT_TIMEOUT;
+        private long networkReadTimeout = DEFAULT_NETWORK_READ_TIMEOUT;
         private File diskCachePath = null;
 
         //handler////////////////////////////////////////////////////////////////////////////
@@ -188,6 +190,30 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
+         * set timeout of network connect
+         * @param timeout timeout milli second
+         */
+        public Builder setNetworkConnectTimeout(long timeout){
+            if (timeout <= 0){
+                throw new RuntimeException("[ServerSettings]connect timeout must > 0");
+            }
+            values.networkConnectTimeout = timeout;
+            return this;
+        }
+
+        /**
+         * set timeout of network read
+         * @param timeout timeout milli second
+         */
+        public Builder setNetworkReadTimeout(long timeout){
+            if (timeout <= 0){
+                throw new RuntimeException("[ServerSettings]read timeout must > 0");
+            }
+            values.networkReadTimeout = timeout;
+            return this;
+        }
+
+        /**
          * set disk cache path
          * @param context context
          * @param diskCachePath {@link DiskCachePath#INNER_STORAGE} by default
@@ -304,6 +330,8 @@ public class ServerSettings implements ComponentManager.Component{
     public static final int DEFAULT_MEMORY_LOAD_MAX_THREAD = 1;
     public static final int DEFAULT_DISK_LOAD_MAX_THREAD = 2;
     public static final int DEFAULT_NETWORK_LOAD_MAX_THREAD = 3;
+    public static final long DEFAULT_NETWORK_CONNECT_TIMEOUT = 3000;//ms
+    public static final long DEFAULT_NETWORK_READ_TIMEOUT = 3000;//ms
 
     public static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
     public static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
@@ -357,6 +385,20 @@ public class ServerSettings implements ComponentManager.Component{
 
     public int getDiskLoadMaxThread(){
         return values.diskLoadMaxThread;
+    }
+
+    /**
+     * @return milli second
+     */
+    public long getNetworkConnectTimeout(){
+        return values.networkConnectTimeout;
+    }
+
+    /**
+     * @return milli second
+     */
+    public long getNetworkReadTimeout(){
+        return values.networkReadTimeout;
     }
 
     public File getDiskCachePath(){

@@ -149,4 +149,28 @@ public abstract class Engine implements ComponentManager.Component, Server {
         return getComponentManager().getServerSettings().getDecodeHandler();
     }
 
+    /**
+     * @return milli second
+     */
+    protected long getNetworkConnectTimeout(Task task){
+        if (task.getNodeSettings() != null){
+            if (task.getNodeSettings().getNetworkConnectTimeout() > 0){
+                return task.getNodeSettings().getNetworkConnectTimeout();
+            }
+        }
+        return getComponentManager().getServerSettings().getNetworkConnectTimeout();
+    }
+
+    /**
+     * @return milli second
+     */
+    protected long getNetworkReadTimeout(Task task){
+        if (task.getNodeSettings() != null){
+            if (task.getNodeSettings().getNetworkReadTimeout() > 0){
+                return task.getNodeSettings().getNetworkReadTimeout();
+            }
+        }
+        return getComponentManager().getServerSettings().getNetworkReadTimeout();
+    }
+
 }
