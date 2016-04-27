@@ -31,9 +31,6 @@ public class TIColorDrawable extends ColorDrawable {
     private int fixedWidth = Integer.MIN_VALUE;
     private int fixedHeight = Integer.MIN_VALUE;
 
-    public TIColorDrawable() {
-    }
-
     public TIColorDrawable(int color) {
         super(color);
     }

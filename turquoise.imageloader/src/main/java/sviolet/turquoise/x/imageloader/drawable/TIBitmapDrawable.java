@@ -47,32 +47,13 @@ public class TIBitmapDrawable extends BitmapDrawable {
     private int fixedWidth = Integer.MIN_VALUE;
     private int fixedHeight = Integer.MIN_VALUE;
 
-//    public TIBitmapDrawable() {
-//    }
-
-//    public TIBitmapDrawable(Resources res) {
-//        super(res);
-//    }
-
-//    public TIBitmapDrawable(Bitmap bitmap) {
-//        super(bitmap);
-//    }
-
     public TIBitmapDrawable(Resources res, Bitmap bitmap) {
         super(res, bitmap);
     }
 
-//    public TIBitmapDrawable(String filepath) {
-//        super(filepath);
-//    }
-
     public TIBitmapDrawable(Resources res, String filepath) {
         super(res, filepath);
     }
-
-//    public TIBitmapDrawable(InputStream is) {
-//        super(is);
-//    }
 
     public TIBitmapDrawable(Resources res, InputStream is) {
         super(res, is);

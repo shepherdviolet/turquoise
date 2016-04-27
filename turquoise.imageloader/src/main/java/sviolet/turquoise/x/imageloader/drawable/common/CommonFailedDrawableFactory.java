@@ -35,9 +35,14 @@ import sviolet.turquoise.x.imageloader.drawable.TIColorDrawable;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
+ * <p>create drawable for failed status</p>
  *
  * <p>you must use this {@link TIBitmapDrawable} instead of {@link BitmapDrawable}
  * to implements {@link LoadingDrawableFactory}/{@link BackgroundDrawableFactory}/{@link FailedDrawableFactory}</p>
+ *
+ * <p>implement notes::</p>
+ *
+ * <p>1.failedDrawable's size match Params->reqWidth/reqHeight, in any case</p>
  *
  * Created by S.Violet on 2016/3/17.
  */
@@ -50,7 +55,7 @@ public class CommonFailedDrawableFactory implements FailedDrawableFactory {
 
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
-        //size
+        //size, match Params->reqWidth/reqHeight, in any case
         int drawableWidth = params.getReqWidth();
         int drawableHeight = params.getReqHeight();
 

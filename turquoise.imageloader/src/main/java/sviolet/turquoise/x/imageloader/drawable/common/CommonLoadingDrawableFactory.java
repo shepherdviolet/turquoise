@@ -39,9 +39,15 @@ import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
+ * <p><p>create drawable for loading status</p></p>
  *
  * <p>you must use this {@link TIBitmapDrawable} instead of {@link BitmapDrawable}
  * to implements {@link LoadingDrawableFactory}/{@link BackgroundDrawableFactory}/{@link FailedDrawableFactory}</p>
+ *
+ * <p>implement notes::</p>
+ *
+ * <p>1.if Params->sizeMatchView is true, loadingDrawable's size match View (-1) or itself (size of loading image).
+ * if Params->sizeMatchView is false, loadingDrawable's size match Params->reqWidth/reqHeight.</p>
  *
  * Created by S.Violet on 2016/3/17.
  */
@@ -57,7 +63,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
-        //size
+        //size, match reqSize Params->sizeMatchView is false
         int drawableWidth = 0;
         int drawableHeight = 0;
         if (!params.isSizeMatchView()){
@@ -68,6 +74,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         BitmapDrawable imageDrawable = null;
         Bitmap bitmap = imageBitmap.getBitmap(applicationContext.getResources(), logger);
         if (bitmap != null && !bitmap.isRecycled()){
+            //use TIBitmapDrawable instead of BitmapDrawable
             imageDrawable = new TIBitmapDrawable(applicationContext.getResources(), bitmap);
         }
         //background
@@ -86,26 +93,46 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         imageBitmap.destroy();
     }
 
+    /**
+     * set loading image
+     * @param imageResId resource id
+     */
     public CommonLoadingDrawableFactory setImageResId(int imageResId){
         imageBitmap.setResId(imageResId);
         return this;
     }
 
-    public CommonLoadingDrawableFactory setBackgroundColor(int backgroundColor){
-        this.backgroundColor = backgroundColor;
-        return this;
-    }
-
-    public CommonLoadingDrawableFactory setAnimationEnabled(boolean enabled){
-        settings.animationEnabled = enabled;
-        return this;
-    }
-
+    /**
+     * set scale type of loading image
+     * @param imageScaleType ImageScaleType
+     */
     public CommonLoadingDrawableFactory setImageScaleType(ImageScaleType imageScaleType){
         settings.imageScaleType = imageScaleType;
         return this;
     }
 
+    /**
+     * set loading background color
+     * @param backgroundColor color
+     */
+    public CommonLoadingDrawableFactory setBackgroundColor(int backgroundColor){
+        this.backgroundColor = backgroundColor;
+        return this;
+    }
+
+    /**
+     * set if animation enabled
+     * @param enabled true by default
+     */
+    public CommonLoadingDrawableFactory setAnimationEnabled(boolean enabled){
+        settings.animationEnabled = enabled;
+        return this;
+    }
+
+    /**
+     * set custom animation, reference {@link CommonLoadingDrawableFactory.CommonAnimationDrawableFactory} & {@link CommonLoadingDrawableFactory.CommonAnimationDrawable}
+     * @param factory AnimationDrawableFactory
+     */
     public CommonLoadingDrawableFactory setAnimationDrawableFactory(AnimationDrawableFactory factory){
         if (factory != null) {
             this.animationDrawableFactory = factory;
@@ -113,6 +140,9 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         return this;
     }
 
+    /**
+     * settings of LoadingDrawableFactory
+     */
     protected static class Settings{
 
         ImageScaleType imageScaleType = ImageScaleType.CENTER;
@@ -120,9 +150,13 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
     }
 
+    /**
+     * LoadingDrawable, contains background color, loading image, animation drawable
+     */
     private static class LoadingDrawable extends Drawable {
 
         private Settings settings;
+
         private Drawable animationDrawable;
         private BitmapDrawable imageDrawable;
         private Drawable backgroundDrawable;
@@ -145,8 +179,10 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
                 return;
             }
 
+            //draw background and image
             onDrawStatic(canvas);
 
+            //draw animation
             if (animationDrawable != null){
                 animationDrawable.draw(canvas);
                 invalidateSelf();
@@ -166,6 +202,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
                 //draw
                 backgroundDrawable.draw(canvas);
             }
+
             //draw image
             if (imageDrawable != null && imageDrawable.getBitmap() != null) {
                 //calculate bounds
@@ -195,9 +232,11 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
         @Override
         public int getIntrinsicWidth() {
+            //return reqWidth if valid
             if (drawableWidth > 0){
                 return drawableWidth;
             }
+            //calculate width
             int maxWidth = -1;
             if (imageDrawable != null && imageDrawable.getBitmap() != null) {
                 int width = imageDrawable.getIntrinsicWidth();
@@ -216,9 +255,11 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
         @Override
         public int getIntrinsicHeight() {
+            //return reqHeight if valid
             if (drawableHeight > 0){
                 return drawableHeight;
             }
+            //calculate height
             int maxHeight = -1;
             if (imageDrawable != null && imageDrawable.getBitmap() != null){
                 int height = imageDrawable.getIntrinsicHeight();
@@ -251,21 +292,30 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         }
     }
 
+    /**
+     * scale type of loading image
+     */
     public enum ImageScaleType{
         CENTER,
         STRETCH
     }
 
+    /**
+     * AnimationDrawableFactory interface, create AnimationDrawable.
+     */
     public interface AnimationDrawableFactory{
 
         Drawable create(Context applicationContext, Context context, Params params, TLogger logger);
 
     }
 
-    /**********************************************************************************************
-     * animation
-     */
+    /**********************************************************************************************************************
+     * Common Animation
+     **********************************************************************************************************************/
 
+    /**
+     * settings of animation factory
+     */
     protected static class AnimationSettings{
 
         static final int COLOR_DEF = 0xFFC0C0C0;
@@ -284,6 +334,9 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
     }
 
+    /**
+     * common AnimationDrawableFactory
+     */
     public static class CommonAnimationDrawableFactory implements AnimationDrawableFactory{
 
         private AnimationSettings settings = new AnimationSettings();
@@ -325,6 +378,9 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
     }
 
+    /**
+     * Common AnimationDrawable
+     */
     public static class CommonAnimationDrawable extends Drawable {
 
         private AnimationSettings settings;
@@ -343,13 +399,11 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
         @Override
         public void draw(Canvas canvas) {
-            onDrawAnimation(canvas);
-        }
-
-        public void onDrawAnimation(Canvas canvas) {
+            //skip
             if(settings.pointRadius <= 0 || settings.pointInterval < 0 || settings.animationDuration <= 0)
                 return;
 
+            //draw
             drawCircle(canvas, calculateCurrentPosition());
         }
 
@@ -365,11 +419,6 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         }
 
         private void drawCircle(Canvas canvas, int currentPosition) {
-            /*
-             * 背景图如果是Bitmap, 绘制后canvas的选区可能会被裁剪(小于画布), 因此绘制动画时,
-             * 为保证定位准确, 大小保持原比例, 使用选区(clipBounds)尺寸, 且点半径和点间距根据
-             * 选区与画布尺寸的比例缩小, 保证显示的大小保持一致.
-             */
             Rect clipBounds = new Rect();
             canvas.getClipBounds(clipBounds);
 

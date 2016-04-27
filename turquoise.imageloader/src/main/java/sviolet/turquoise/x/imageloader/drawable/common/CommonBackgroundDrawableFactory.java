@@ -34,9 +34,15 @@ import sviolet.turquoise.x.imageloader.drawable.TIColorDrawable;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
+ * <p>create background of Loaded Image</p>
  *
  * <p>you must use this {@link TIBitmapDrawable} instead of {@link BitmapDrawable}
  * to implements {@link LoadingDrawableFactory}/{@link BackgroundDrawableFactory}/{@link FailedDrawableFactory}</p>
+ *
+ * <p>implement notes::</p>
+ *
+ * <p>1.if Params->sizeMatchView is true, backgroundDrawable's size match View (-1) or itself (size of background image).
+ * if Params->sizeMatchView is false, backgroundDrawable's size match Params->reqWidth/reqHeight.</p>
  *
  * Created by S.Violet on 2016/3/17.
  */
@@ -49,7 +55,7 @@ public class CommonBackgroundDrawableFactory implements BackgroundDrawableFactor
 
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
-        //size
+        //size, match reqSize if Params->sizeMatchView is false
         int drawableWidth = -1;
         int drawableHeight = -1;
         if (!params.isSizeMatchView()){
