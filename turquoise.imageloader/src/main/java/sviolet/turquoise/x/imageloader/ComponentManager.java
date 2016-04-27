@@ -163,6 +163,9 @@ public class ComponentManager {
      * public
      **********************************************************************************************/
 
+    /**
+     * check and initialize
+     */
     public void waitingForInitialized(){
         if (componentsInitialized){
             return;
@@ -178,6 +181,9 @@ public class ComponentManager {
         }
     }
 
+    /**
+     * initialize process
+     */
     private void onInitialize(){
         if (serverSettings == null) {
             serverSettings = new ServerSettings.Builder().build();

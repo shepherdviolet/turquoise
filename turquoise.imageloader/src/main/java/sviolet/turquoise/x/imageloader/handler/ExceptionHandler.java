@@ -36,7 +36,7 @@ public interface ExceptionHandler {
      */
 
     /**
-     * exception while disk cache open
+     * exception while disk cache open, notify user generally.
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param throwable throwable
@@ -45,7 +45,7 @@ public interface ExceptionHandler {
     void onDiskCacheOpenException(Context applicationContext, Context context, Throwable throwable, TLogger logger);
 
     /**
-     * exception while disk cache reading
+     * exception while disk cache reading, notify user generally
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
@@ -55,7 +55,7 @@ public interface ExceptionHandler {
     void onDiskCacheReadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
 
     /**
-     * exception while disk cache writing
+     * exception while disk cache writing, notify user generally
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
@@ -65,7 +65,7 @@ public interface ExceptionHandler {
     void onDiskCacheWriteException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
 
     /**
-     * exception while disk cache close/flush..., for unimportance exception
+     * exception while disk cache close/flush..., for unimportance exception, print log generally
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param throwable throwable
@@ -78,7 +78,7 @@ public interface ExceptionHandler {
      */
 
     /**
-     * exception while network loading
+     * exception while network loading, print log generally
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
@@ -92,7 +92,7 @@ public interface ExceptionHandler {
      */
 
     /**
-     * exception while image decoding
+     * exception while image decoding, print log generally
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo

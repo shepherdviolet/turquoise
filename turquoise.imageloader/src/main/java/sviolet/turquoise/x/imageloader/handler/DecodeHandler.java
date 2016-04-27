@@ -42,8 +42,26 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public abstract class DecodeHandler {
 
+    /**
+     * decode image from bytes
+     * @param applicationContext applicationContext
+     * @param context activity context, might be null
+     * @param taskInfo task info
+     * @param data date of image
+     * @param logger logger
+     * @return ImageResource
+     */
     public abstract ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger);
 
+    /**
+     * decode image from file
+     * @param applicationContext applicationContext
+     * @param context activity context, might be null
+     * @param taskInfo task info
+     * @param file file of image
+     * @param logger logger
+     * @return ImageResource
+     */
     public abstract ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger);
 
     public final ImageResource<?> decode(Context applicationContext, Context context, Task task, byte[] data, TLogger logger){
@@ -58,6 +76,9 @@ public abstract class DecodeHandler {
         return imageResource;
     }
 
+    /**
+     * intercept process
+     */
     private ImageResource<?> intercept(Context applicationContext, Context context, Task task, TLogger logger, ImageResource<?> imageResource) {
         //interceptor
         if (task.getParams().getDecodeInterceptor() != null && TILoaderUtils.isImageResourceValid(imageResource)){
@@ -71,7 +92,10 @@ public abstract class DecodeHandler {
         return imageResource;
     }
 
-    public static interface Interceptor{
+    /**
+     * process after DecodeHandler.onDecode()
+     */
+    public interface Interceptor{
 
         ImageResource<?> intercept(Context applicationContext, Context context, Task.Info taskInfo, ImageResource<?> imageResource, TLogger logger);
 

@@ -30,6 +30,8 @@ import sviolet.turquoise.x.imageloader.server.EngineCallback;
 /**
  * <p>implement network load</p>
  *
+ * <p>see:{@link sviolet.turquoise.x.imageloader.handler.common.CommonNetworkLoadHandler}</p>
+ *
  * Created by S.Violet on 2016/2/19.
  */
 public interface NetworkLoadHandler {
