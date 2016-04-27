@@ -30,12 +30,12 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  *
  * Created by S.Violet on 2016/2/23.
  */
-public class StubFactoryImpl implements StubFactory {
+public final class StubFactoryImpl extends StubFactory {
 
     private StubFactory customStubFactory;
 
     @Override
-    public Stub newLoadStub(String url, Params params, View view) {
+    public final Stub newLoadStub(String url, Params params, View view) {
         //check input
         if (url == null){
             throw new RuntimeException("[TILoader]can't load image without url!");
@@ -63,7 +63,7 @@ public class StubFactoryImpl implements StubFactory {
         return stub;
     }
 
-    protected Stub newLoadStubInner(String url, Params params, View view){
+    protected final Stub newLoadStubInner(String url, Params params, View view){
         if (view instanceof ImageView){
             return new ImageViewLoadStub(url, params, (ImageView) view);
         }
@@ -71,7 +71,7 @@ public class StubFactoryImpl implements StubFactory {
     }
 
     @Override
-    public Stub newLoadBackgroundStub(String url, Params params, View view) {
+    public final Stub newLoadBackgroundStub(String url, Params params, View view) {
         //check input
         if (url == null){
             throw new RuntimeException("[TILoader]can't load image without url!");
@@ -99,12 +99,12 @@ public class StubFactoryImpl implements StubFactory {
         return stub;
     }
 
-    protected Stub newLoadBackgroundStubInner(String url, Params params, View view){
+    protected final Stub newLoadBackgroundStubInner(String url, Params params, View view){
         return new BackgroundLoadStub(url, params, view);
     }
 
     @Override
-    public Stub newExtractStub(String url, Params params, OnLoadedListener listener) {
+    public final Stub newExtractStub(String url, Params params, OnLoadedListener listener) {
         //check input
         if (url == null){
             throw new RuntimeException("[TILoader]can't load image without url!");
@@ -132,11 +132,11 @@ public class StubFactoryImpl implements StubFactory {
         return stub;
     }
 
-    protected Stub newExtractStubInner(String url, Params params, OnLoadedListener listener){
+    protected final Stub newExtractStubInner(String url, Params params, OnLoadedListener listener){
         return new ExtractStub(url, params, listener);
     }
 
-    public void setCustomStubFactory(StubFactory factory) {
+    public final void setCustomStubFactory(StubFactory factory) {
         this.customStubFactory = factory;
     }
 

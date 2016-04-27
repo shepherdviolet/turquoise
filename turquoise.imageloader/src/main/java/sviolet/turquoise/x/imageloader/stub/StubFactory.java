@@ -29,33 +29,45 @@ import sviolet.turquoise.x.imageloader.entity.Params;
  *
  * Created by S.Violet on 2016/2/23.
  */
-public interface StubFactory {
+public abstract class StubFactory {
 
     /**
+     * <p>create stub according to the type of View, for TILoader.node(context).load(...).
+     * the stub will load image to view (not background).</p>
      *
      * @param url url
      * @param params params
      * @param view view
      * @return Stub
      */
-    Stub newLoadStub(String url, Params params, View view);
+    public abstract Stub newLoadStub(String url, Params params, View view);
 
     /**
+     * <p>Usually no need to override (just return null).</p>
+     * <p>create stub according to the type of View, for TILoader.node(context).loadBackground(...).
+     * the stub will load image to view's background.</p>
      *
      * @param url url
      * @param params params
      * @param view view
      * @return Stub
      */
-    Stub newLoadBackgroundStub(String url, Params params, View view);
+    public Stub newLoadBackgroundStub(String url, Params params, View view){
+        return null;
+    }
 
     /**
+     * <p>Usually no need to override (just return null).</p>
+     * <p>create stub according to the type of listener, for TILoader.extract(...).
+     * the stub will extract image and callback listener.</p>
      *
      * @param url url
      * @param params params
      * @param listener listener
      * @return Stub
      */
-    Stub newExtractStub(String url, Params params, OnLoadedListener listener);
+    public Stub newExtractStub(String url, Params params, OnLoadedListener listener){
+        return null;
+    }
 
 }
