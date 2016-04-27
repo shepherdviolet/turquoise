@@ -20,7 +20,6 @@
 package sviolet.demoaimageloader;
 
 import sviolet.demoaimageloader.common.Constants;
-import sviolet.demoaimageloader.demos.extra.MyNetworkLoadHandler;
 import sviolet.turquoise.enhance.app.TApplication;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
