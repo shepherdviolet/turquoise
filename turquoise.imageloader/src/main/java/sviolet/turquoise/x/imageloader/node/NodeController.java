@@ -40,12 +40,24 @@ import sviolet.turquoise.x.imageloader.stub.Stub;
  * <p>Manage loading tasks / context lifecycle / settings.
  * Maintain the relationship between the {@link Stub} and the {@link Server}/{@link Engine}.</p>
  *
- * <p>The actual controller of the {@link Node}. Maintain task queue, attach context lifecycle, holding node settings.
+ * <p>The actual core controller of the {@link Node}. Maintain task queue, attach context lifecycle, holding node settings.
  * {@link Stub} initiated request to {@link NodeController}, {@link NodeController} construct a {@link Task}, then
  * push into task queue, {@link Task}s will be executed by {@link Server} or {@link Engine},
  * when {@link Task} execute finished, {@link NodeController} will callback to {@link Stub}.</p>
  *
  * <p>When the life cycle of context changes, {@link Node} will change status (freeze / unfreeze / destroy).</p>
+ *
+ * <p>************************************************************************************</p>
+ *
+ * <p>Status::</p>
+ *
+ * <p>Pause:: Engine will not execute tasks which in paused Node. Node will pause util all NodeRemotes are resumed(not pause).
+ * As long as there is a paused NodeRemoter, Node will keep pause status.</p>
+ *
+ * <p>Frozen:: Engine will not execute tasks of this Node, skip dispatch (skip callback to stub, skip handle response from Engine).
+ * Node will frozen when Context->OnStop(), and unfreeze when Context->OnStart().</p>
+ *
+ * <p>Destroy:: Engine will destroy when Context->OnDestroy(), and skip all process.</p>
  *
  * Created by S.Violet on 2016/2/18.
  */

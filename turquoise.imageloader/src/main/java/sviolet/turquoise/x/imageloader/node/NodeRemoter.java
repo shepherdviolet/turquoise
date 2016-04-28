@@ -101,6 +101,9 @@ public class NodeRemoter {
         this.controller = new WeakReference<>(controller);
     }
 
+    /**
+     * pause Node
+     */
     public void pause(){
         final NodeController controller = this.controller.get();
         if (controller != null) {
@@ -114,6 +117,9 @@ public class NodeRemoter {
         }
     }
 
+    /**
+     * resume Node
+     */
     public void resume(){
         final NodeController controller = this.controller.get();
         if (controller != null) {
@@ -133,10 +139,16 @@ public class NodeRemoter {
         }
     }
 
+    /**
+     * @return get OnScrollListener for ListView / GridView, which can pause Node on fling
+     */
     public PauseOnListViewScrollListener getPauseOnListViewScrollListener(){
         return new PauseOnListViewScrollListener(this);
     }
 
+    /**
+     * Helper for ListView / GridView
+     */
     public static class PauseOnListViewScrollListener implements AbsListView.OnScrollListener {
 
         private NodeRemoter nodeRemoter;
