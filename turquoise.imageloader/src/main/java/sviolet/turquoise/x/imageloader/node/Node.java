@@ -48,9 +48,9 @@ public abstract class Node {
      *
      * <p>Loaded Image will be cached by MemoryCache/DiskCache, you should not recycle Bitmap manually.
      * Loading task will be affected by lifecycle of context, it will frozen while Context->OnStop and
-     * destroyed while Context->OnDestroy. Each Node has request queue, when the queue is full earliest
-     * task will be discarded, and callback to cancel. You can use {@link NodeSettings.Builder#setMemoryQueueSize(int)}/
-     * {@link NodeSettings.Builder#setDiskQueueSize(int)}/{@link NodeSettings.Builder#setNetQueueSize(int)}
+     * destroyed while Context->OnDestroy. Each LoadNode has request queue, when the queue is full earliest
+     * task will be discarded, and callback to cancel. This mechanism is used to filter excessive tasks,
+     * specially in ListView. You can use {@link NodeSettings.Builder#setRequestQueueSize(int)}
      * methods to make screen accommodate more pictures.</p>
      *
      * @param url URL
@@ -66,9 +66,9 @@ public abstract class Node {
      *
      * <p>Loaded Image will be cached by MemoryCache/DiskCache, you should not recycle Bitmap manually.
      * Loading task will be affected by lifecycle of context, it will frozen while Context->OnStop and
-     * destroyed while Context->OnDestroy. Each Node has request queue, when the queue is full earliest
-     * task will be discarded, and callback to cancel. You can use {@link NodeSettings.Builder#setMemoryQueueSize(int)}/
-     * {@link NodeSettings.Builder#setDiskQueueSize(int)}/{@link NodeSettings.Builder#setNetQueueSize(int)}
+     * destroyed while Context->OnDestroy. Each LoadNode has request queue, when the queue is full earliest
+     * task will be discarded, and callback to cancel. This mechanism is used to filter excessive tasks,
+     * specially in ListView. You can use {@link NodeSettings.Builder#setRequestQueueSize(int)}
      * methods to make screen accommodate more pictures.</p>
      *
      * @param url URL
@@ -85,9 +85,9 @@ public abstract class Node {
      *
      * <p>Loaded Image will be cached by MemoryCache/DiskCache, you should not recycle Bitmap manually.
      * Loading task will be affected by lifecycle of context, it will frozen while Context->OnStop and
-     * destroyed while Context->OnDestroy. Each Node has request queue, when the queue is full earliest
-     * task will be discarded, and callback to cancel. You can use {@link NodeSettings.Builder#setMemoryQueueSize(int)}/
-     * {@link NodeSettings.Builder#setDiskQueueSize(int)}/{@link NodeSettings.Builder#setNetQueueSize(int)}
+     * destroyed while Context->OnDestroy. Each LoadNode has request queue, when the queue is full earliest
+     * task will be discarded, and callback to cancel. This mechanism is used to filter excessive tasks,
+     * specially in ListView. You can use {@link NodeSettings.Builder#setRequestQueueSize(int)}
      * methods to make screen accommodate more pictures.</p>
      *
      * @param url URL
@@ -103,9 +103,9 @@ public abstract class Node {
      *
      * <p>Loaded Image will be cached by MemoryCache/DiskCache, you should not recycle Bitmap manually.
      * Loading task will be affected by lifecycle of context, it will frozen while Context->OnStop and
-     * destroyed while Context->OnDestroy. Each Node has request queue, when the queue is full earliest
-     * task will be discarded, and callback to cancel. You can use {@link NodeSettings.Builder#setMemoryQueueSize(int)}/
-     * {@link NodeSettings.Builder#setDiskQueueSize(int)}/{@link NodeSettings.Builder#setNetQueueSize(int)}
+     * destroyed while Context->OnDestroy. Each LoadNode has request queue, when the queue is full earliest
+     * task will be discarded, and callback to cancel. This mechanism is used to filter excessive tasks,
+     * specially in ListView. You can use {@link NodeSettings.Builder#setRequestQueueSize(int)}
      * methods to make screen accommodate more pictures.</p>
      *
      * @param url URL

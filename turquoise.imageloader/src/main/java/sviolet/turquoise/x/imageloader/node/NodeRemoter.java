@@ -27,7 +27,8 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * <p>Remoter of Node, helps smooth slide, for {@link ListView} / {@link GridView} / RecyclerView</p>
+ * <p>Remoter of Node, helps smooth slide, for {@link ListView} / {@link GridView} / RecyclerView,
+ * but not necessary.</p>
  *
  * <p>Engine will not execute tasks which in paused Node. Node will pause util all NodeRemotes are resumed(not pause).
  * As long as there is a paused NodeRemoter, Node will keep pause status.</p>

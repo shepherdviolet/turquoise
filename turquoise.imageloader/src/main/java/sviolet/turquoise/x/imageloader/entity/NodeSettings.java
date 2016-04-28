@@ -88,6 +88,9 @@ public class NodeSettings implements Destroyable {
          *          .build());
          * }</pre>
          *
+         * <p>TIPS:: Each LoadNode has request queue, when the queue is full earliest task will be discarded,
+         * and callback to cancel. This mechanism is used to filter excessive tasks, specially in ListView.</p>
+         *
          * @param requestQueueSize {@value DEFAULT_MEMORY_QUEUE_SIZE} by default
          */
         public Builder setRequestQueueSize(int requestQueueSize){
