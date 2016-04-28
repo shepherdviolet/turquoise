@@ -184,6 +184,8 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
             //draw animation
             if (animationDrawable != null){
+                //set bounds as parent drawable
+                animationDrawable.setBounds(getBounds());
                 animationDrawable.draw(canvas);
                 invalidateSelf();
             }
@@ -424,15 +426,16 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         }
 
         private void drawCircle(Canvas canvas, int currentPosition) {
-            Rect clipBounds = new Rect();
-            canvas.getClipBounds(clipBounds);
+            Rect drawBounds = getBounds();
+            Rect canvasBounds = new Rect();
+            canvas.getClipBounds(canvasBounds);
 
-            final float scale = (float)clipBounds.width() / (float)canvas.getWidth();//用于点半径和点间距的比例缩放
+            final float scale = (float)canvasBounds.width() / (float)canvas.getWidth();//calculate scale of canvas
 
             final int length = (int) ((QUANTITY - 1) * settings.pointInterval * scale);
 
-            int x = (int) (clipBounds.left + clipBounds.width() * settings.pointOffsetX - length / 2);
-            int y = (int) (clipBounds.top + clipBounds.height() * settings.pointOffsetY);
+            int x = (int) (drawBounds.left + drawBounds.width() * settings.pointOffsetX - length / 2);
+            int y = (int) (drawBounds.top + drawBounds.height() * settings.pointOffsetY);
 
             for(int i = 0 ; i < QUANTITY ; i++){
                 canvas.drawCircle(x, y, i == currentPosition ? (float) (settings.pointRadius * 1.5 * scale) : settings.pointRadius * scale, paint);
@@ -449,12 +452,12 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
         @Override
         public void setAlpha(int alpha) {
-            //do nothing
+            paint.setAlpha(alpha);
         }
 
         @Override
         public void setColorFilter(ColorFilter colorFilter) {
-            //do nothing
+            paint.setColorFilter(colorFilter);
         }
 
         @Override
