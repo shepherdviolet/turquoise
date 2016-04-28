@@ -25,6 +25,7 @@ import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
@@ -50,6 +51,11 @@ public class RoundedCornerBitmapDrawable extends Drawable {
         initPaint(bitmap);
     }
 
+    public RoundedCornerBitmapDrawable setRoundRadius(float roundRadius){
+        this.roundRadius = roundRadius;
+        return this;
+    }
+
     private void initPaint(Bitmap bitmap) {
         BitmapShader bitmapShader = new BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP);
         paint = new Paint();
@@ -57,24 +63,39 @@ public class RoundedCornerBitmapDrawable extends Drawable {
         paint.setShader(bitmapShader);
     }
 
-    @Override
-    public void draw(Canvas canvas) {
-        canvas.drawRoundRect(new RectF(getBounds()), roundRadius, roundRadius, paint);
-    }
-
-    public RoundedCornerBitmapDrawable setRoundRadius(float roundRadius){
-        this.roundRadius = roundRadius;
-        return this;
-    }
-
+    /**
+     * 绘制步骤1:外部控件通过该方法获得尺寸, 该尺寸供外部控件参考, 但不一定适用
+     */
     @Override
     public int getIntrinsicWidth() {
         return width;
     }
 
+    /**
+     * 绘制步骤1:外部控件通过该方法获得尺寸, 该尺寸供外部控件参考, 但不一定适用.
+     */
     @Override
     public int getIntrinsicHeight() {
         return height;
+    }
+
+    /**
+     * 绘制步骤2: 外部控件决定该Drawable的绘制范围, 通过该方法设置范围.
+     */
+    @Override
+    public void setBounds(Rect bounds) {
+        super.setBounds(bounds);
+    }
+
+    /**
+     * 绘制步骤3: 绘制图形, 通常根据getBounds()决定绘制范围, drawable.getBounds()获得的范围可能比canvas.getClipBounds()的
+     * 值小, 因为canvas.getClipBounds()是整个画布的绘制范围, 而drawable.getBounds()是Drawable被允许绘制的范围. 另外,
+     * canvas.getWidth()和getHeight()的值为画布的真实尺寸, 通常为绘制范围的数倍(比例缩放), 可以根据canvas.getWidth()/canvasRect.width()
+     * 的比值计算缩放比例.
+     */
+    @Override
+    public void draw(Canvas canvas) {
+        canvas.drawRoundRect(new RectF(getBounds()), roundRadius, roundRadius, paint);
     }
 
     @Override
