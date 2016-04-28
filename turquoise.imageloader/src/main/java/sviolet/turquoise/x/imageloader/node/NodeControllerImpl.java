@@ -93,15 +93,12 @@ public class NodeControllerImpl extends NodeController {
     private Map<String, StubGroup> stubPool = new ConcurrentHashMap<>();
     private final ReentrantLock stubPoolLock = new ReentrantLock();
 
-    private AtomicBoolean nodeInitialized = new AtomicBoolean(false);
-    private AtomicBoolean nodeFrozen = new AtomicBoolean(false);
-    private AtomicBoolean nodeDestroyed = new AtomicBoolean(false);
     private final ReentrantLock initializeLock = new ReentrantLock();
+    private final AtomicInteger status = new AtomicInteger(INITIAL);
 
     /**
-     * when all NodePauseOnListScrollListeners is not state of pause,
-     * NodeController can pullTask(). one of those NodePauseOnListScrollListeners
-     * is state of pause, NodeController skip pullTask().
+     * <p>Pause:: Engine will not execute tasks which in paused Node. Node will pause util all NodeRemotes are resumed(not pause).
+     * As long as there is a paused NodeRemoter, Node will keep pause status.</p>
      */
     private AtomicInteger nodePauseCount = new AtomicInteger(0);
 
@@ -118,14 +115,13 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     void waitingForInitialized() {
-        if (nodeInitialized.get()){
+        if (status.get() != INITIAL){
             return;
         }
         try {
             initializeLock.lock();
-            if (!nodeInitialized.get()){
+            if (status.compareAndSet(INITIAL, NORMAL)){
                 onInitialize();
-                nodeInitialized.set(true);
                 manager.getLogger().i("[NodeControllerImpl]initialized nodeId:" + nodeId);
             }
         } finally {
@@ -154,8 +150,8 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     public void execute(Stub stub) {
-        if (nodeDestroyed.get() || !nodeInitialized.get()){
-            getLogger().d("[NodeControllerImpl]node destroyed or not initialized, skip execute");
+        if (status.get() <= INITIAL){
+            getLogger().d("[NodeControllerImpl]destroyed/initial, skip execute");
             return;
         }
 
@@ -188,9 +184,8 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     Task pullTask(Server.Type type) {
-
-        if (nodePauseCount.get() > 0 || nodeDestroyed.get() || nodeFrozen.get() || !nodeInitialized.get()){
-            getLogger().d("[NodeControllerImpl]node pause/destroyed/frozen or not initialized, skip pullTask");
+        if (nodePauseCount.get() > 0 || status.get() < NORMAL){
+            getLogger().d("[NodeControllerImpl]pause/destroyed/initial/frozen, skip pullTask");
             return null;
         }
 
@@ -210,9 +205,8 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     void response(Task task) {
-
-        if (nodeDestroyed.get() || !nodeInitialized.get()){
-            getLogger().d("[NodeControllerImpl]node destroyed or not initialized, skip response");
+        if (status.get() <= INITIAL){
+            getLogger().d("[NodeControllerImpl]destroyed/initial, skip response");
             return;
         }
 
@@ -351,13 +345,12 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     boolean settingNode(NodeSettings settings) {
-        boolean result = false;
-        if (!nodeInitialized.get()){
+        if (status.get() == INITIAL){
             try{
                 initializeLock.lock();
-                if (!nodeInitialized.get()){
+                if (status.get() == INITIAL){
                     this.settings = settings;
-                    result = true;
+                    return true;
                 }else{
                     manager.getLogger().e("[TILoader]setting Node failed, you should invoke TILoader.node(context).setting() before Node initialized (invoke TILoader.node().load() will initialize Node)");
                 }
@@ -367,7 +360,7 @@ public class NodeControllerImpl extends NodeController {
         }else{
             manager.getLogger().e("[TILoader]setting Node failed, you should invoke TILoader.node(context).setting() before Node initialized (invoke TILoader.node().load() will initialize Node)");
         }
-        return result;
+        return false;
     }
 
     @Override
@@ -419,7 +412,7 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     public boolean isDestroyed() {
-        return nodeDestroyed.get();
+        return status.get() == DESTROYED;
     }
 
     @Override
@@ -453,16 +446,16 @@ public class NodeControllerImpl extends NodeController {
     @Override
     public void postDispatch() {
         //check state
-        if (nodeDestroyed.get() || nodeFrozen.get() || !nodeInitialized.get()){
-            getLogger().d("[NodeControllerImpl]node destroyed/frozen or not initialized, skip dispatch");
+        if (status.get() < NORMAL){
+            getLogger().d("[NodeControllerImpl]destroyed/initial/frozen, skip dispatch");
             return;
         }
         dispatchThreadPool.execute(new Runnable() {
             @Override
             public void run() {
                 //check state
-                if (nodeDestroyed.get() || nodeFrozen.get() || !nodeInitialized.get()){
-                    getLogger().d("[NodeControllerImpl]node destroyed/frozen or not initialized, skip dispatch");
+                if (status.get() < NORMAL){
+                    getLogger().d("[NodeControllerImpl]destroyed/initial/frozen, skip dispatch");
                     return;
                 }
                 Task task;
@@ -470,8 +463,8 @@ public class NodeControllerImpl extends NodeController {
                     //execute
                     executeTask(task);
                     //check state
-                    if (nodeDestroyed.get() || nodeFrozen.get() || !nodeInitialized.get()){
-                        getLogger().d("[NodeControllerImpl]node destroyed/frozen or not initialized, skip dispatch");
+                    if (status.get() < NORMAL){
+                        getLogger().d("[NodeControllerImpl]destroyed/initial/frozen, skip dispatch");
                         return;
                     }
                 }
@@ -481,8 +474,8 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     void postIgnite(){
-        if (nodeDestroyed.get() || !nodeInitialized.get()){
-            getLogger().d("[NodeControllerImpl]node destroyed or not initialized, skip postIgnite");
+        if (status.get() <= INITIAL){
+            getLogger().d("[NodeControllerImpl]destroyed/initial, skip postIgnite");
             return;
         }
         manager.getMemoryEngine().ignite();
@@ -501,9 +494,7 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     public void onStart() {
-        nodeFrozen.set(false);
-        //notify if not destroyed
-        if (!nodeDestroyed.get()){
+        if (status.compareAndSet(FROZEN, NORMAL)){
             postDispatch();
             postIgnite();
             manager.getLogger().i("[NodeControllerImpl]unfreeze nodeId:" + nodeId);
@@ -522,29 +513,28 @@ public class NodeControllerImpl extends NodeController {
 
     @Override
     public void onStop() {
-        nodeFrozen.set(true);
-        manager.getLogger().i("[NodeControllerImpl]freeze nodeId:" + nodeId);
+        if (status.compareAndSet(NORMAL, FROZEN)) {
+            manager.getLogger().i("[NodeControllerImpl]freeze nodeId:" + nodeId);
+        }
     }
 
     @Override
     public void onDestroy() {
         //destroy if not destroyed
-        if (!nodeDestroyed.get()){
-            //try to update state
-            if (nodeDestroyed.compareAndSet(false, true)){
-                //destroy process
-                manager.getNodeManager().scrapNode(node);
-                netRequestQueue.clear();
-                diskRequestQueue.clear();
-                memoryRequestQueue.clear();
-                responseQueue.clear();
-                stubPool.clear();
-                if (settings != null) {
-                    settings.onDestroy();
-                }
-                dispatchThreadPool.shutdown();
-                manager.getLogger().i("[NodeControllerImpl]destroyed nodeId:" + nodeId);
+        if (status.get() != DESTROYED){
+            status.set(DESTROYED);
+            //destroy process
+            manager.getNodeManager().scrapNode(node);
+            netRequestQueue.clear();
+            diskRequestQueue.clear();
+            memoryRequestQueue.clear();
+            responseQueue.clear();
+            stubPool.clear();
+            if (settings != null) {
+                settings.onDestroy();
             }
+            dispatchThreadPool.shutdown();
+            manager.getLogger().i("[NodeControllerImpl]destroyed nodeId:" + nodeId);
         }
     }
 

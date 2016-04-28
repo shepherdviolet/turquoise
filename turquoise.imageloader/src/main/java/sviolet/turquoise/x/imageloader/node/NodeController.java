@@ -63,6 +63,11 @@ import sviolet.turquoise.x.imageloader.stub.Stub;
  */
 public abstract class NodeController implements LifeCycle {
 
+    public static final int DESTROYED = -1;
+    public static final int INITIAL = 0;
+    public static final int FROZEN = 1;
+    public static final int NORMAL = 2;
+
     abstract void waitingForInitialized();
 
     /***********************************************************
