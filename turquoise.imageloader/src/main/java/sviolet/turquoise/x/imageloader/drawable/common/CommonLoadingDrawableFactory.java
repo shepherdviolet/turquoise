@@ -145,7 +145,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
      */
     protected static class Settings{
 
-        ImageScaleType imageScaleType = ImageScaleType.CENTER;
+        ImageScaleType imageScaleType = ImageScaleType.NORMAL;
         boolean animationEnabled = true;
 
     }
@@ -191,14 +191,11 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         }
 
         public void onDrawStatic(Canvas canvas) {
-            //canvas rect
-            Rect canvasRect = new Rect();
-            canvas.getClipBounds(canvasRect);
 
             //draw background
             if (backgroundDrawable != null){
-                //set Bounds
-                backgroundDrawable.setBounds(canvasRect);
+                //set Bounds as parent drawable
+                backgroundDrawable.setBounds(getBounds());
                 //draw
                 backgroundDrawable.draw(canvas);
             }
@@ -207,12 +204,19 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
             if (imageDrawable != null && imageDrawable.getBitmap() != null) {
                 //calculate bounds
                 Rect imageRect = null;
-                if (settings.imageScaleType == ImageScaleType.CENTER){
+                if (settings.imageScaleType == ImageScaleType.FORCE_CENTER){
+                    //new image rect
                     imageRect = new Rect();
+                    //canvas rect
+                    Rect canvasRect = new Rect();
+                    canvas.getClipBounds(canvasRect);
+                    //calculate canvas scale
                     float canvasWidthScale = (float)canvasRect.width() / (float)canvas.getWidth();
                     float canvasHeightScale = (float)canvasRect.height() / (float)canvas.getHeight();
-                    int bitmapWidth = (int) ((float)imageDrawable.getBitmap().getWidth() * canvasWidthScale);
-                    int bitmapHeight = (int) ((float)imageDrawable.getBitmap().getHeight() * canvasHeightScale);
+                    //scale image size
+                    int bitmapWidth = (int) ((float)imageDrawable.getIntrinsicWidth() * canvasWidthScale);
+                    int bitmapHeight = (int) ((float)imageDrawable.getIntrinsicHeight() * canvasHeightScale);
+                    //calculate bounds
                     int horizontalPadding = (canvasRect.width() - bitmapWidth) / 2;
                     int verticalPadding = (canvasRect.height() - bitmapHeight) / 2;
                     imageRect.left = canvasRect.left + horizontalPadding;
@@ -220,7 +224,8 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
                     imageRect.right = canvasRect.right - horizontalPadding;
                     imageRect.bottom = canvasRect.bottom - verticalPadding;
                 } else {
-                    imageRect = canvasRect;
+                    //set Bounds as parent drawable
+                    imageRect = getBounds();
                 }
                 //set Bounds
                 imageDrawable.setBounds(imageRect);
@@ -296,8 +301,8 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
      * scale type of loading image
      */
     public enum ImageScaleType{
-        CENTER,
-        STRETCH
+        NORMAL,
+        FORCE_CENTER
     }
 
     /**
