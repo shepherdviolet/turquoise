@@ -73,12 +73,12 @@ public class MyApplication extends TApplication {
 //                .setDecodeHandler(new MyDecodeHandler())//自定义实现图片解码
 //                .setExceptionHandler(new MyExceptionHandler())//自定义实现异常处理
 //                .setBackgroundColor(0xFFF0F0F0)//自定义背景色(作为加载目标图的背景)
-//                .setBackgroundImageResId(R.mipmap.async_image_null)//自定义背景图(作为加载目标图的背景, 不常用)
+//                .setBackgroundImageResId(R.mipmap.async_image_loading)//自定义背景图(作为加载目标图的背景, 不常用)
 //                .setWipeDiskCacheWhenUpdate(true)//当APP更新时清空磁盘缓存(versionCode变化)
 ////                .setLoadingDrawableFactory(new MyLoadingDrawableFactory())//方式1:自定义实现加载图(完全自己实现)
 //                .setLoadingDrawableFactory(new CommonLoadingDrawableFactory()//方式2:配置通用加载图
 //                        .setBackgroundColor(0xFFF0F0F0)//加载图背景颜色
-//                        .setImageResId(R.mipmap.async_image_null)//加载图设置图片
+//                        .setImageResId(R.mipmap.async_image_loading)//加载图设置图片
 //                        .setImageScaleType(CommonLoadingDrawableFactory.ImageScaleType.STRETCH)//设置加载图拉伸(默认居中)
 //                        .setAnimationEnabled(true)//允许动画(默认true)
 ////                        .setAnimationDrawableFactory(new MyAnimationDrawableFactory())//方式1:自定义实现动画(完全自己实现)
@@ -92,7 +92,7 @@ public class MyApplication extends TApplication {
 ////                .setFailedDrawableFactory(new MyFailedDrawableFactory())//方式1:自定义实现加载失败图
 //                .setFailedDrawableFactory(new CommonFailedDrawableFactory()//方式2:配置通用失败图
 //                        .setColor(0xFFB0B0B0)//失败图背景色
-//                        .setImageResId(R.mipmap.async_image_null))//设置失败图
+//                        .setImageResId(R.mipmap.async_image_loading))//设置失败图
                 .build());
 
         /*
