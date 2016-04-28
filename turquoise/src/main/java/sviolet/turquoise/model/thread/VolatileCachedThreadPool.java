@@ -101,4 +101,11 @@ public class VolatileCachedThreadPool {
         }
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        if (executor != null){
+            executor.shutdown();
+        }
+    }
 }
