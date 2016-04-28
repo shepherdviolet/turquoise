@@ -64,8 +64,8 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
         //size, match reqSize Params->sizeMatchView is false
-        int drawableWidth = 0;
-        int drawableHeight = 0;
+        int drawableWidth = -1;
+        int drawableHeight = -1;
         if (!params.isSizeMatchView()){
             drawableWidth = params.getReqWidth();
             drawableHeight = params.getReqHeight();
