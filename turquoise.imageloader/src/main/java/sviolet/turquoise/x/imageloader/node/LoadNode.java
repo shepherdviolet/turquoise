@@ -128,12 +128,12 @@ public class LoadNode extends Node {
     }
 
     /***************************************************
-     * NodePauseOnListScrollListener
+     * NodeRemoter
      */
 
     @Override
-    public NodePauseOnListScrollListener newPauseOnListScrollListener() {
-        return controller.newPauseOnListScrollListener();
+    public NodeRemoter newNodeRemoter() {
+        return controller.newNodeRemoter();
     }
 
 }

@@ -416,7 +416,7 @@ public class NodeControllerImpl extends NodeController {
     }
 
     /**************************************************************
-     * NodePauseOnListScrollListener
+     * NodeRemoter
      */
 
     @Override
@@ -425,8 +425,8 @@ public class NodeControllerImpl extends NodeController {
     }
 
     @Override
-    NodePauseOnListScrollListener newPauseOnListScrollListener() {
-        return new NodePauseOnListScrollListener(this);
+    NodeRemoter newNodeRemoter() {
+        return new NodeRemoter(this);
     }
 
     /******************************************************************

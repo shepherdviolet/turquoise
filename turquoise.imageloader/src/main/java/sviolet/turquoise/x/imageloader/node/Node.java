@@ -144,13 +144,14 @@ public abstract class Node {
     protected abstract void attachLifeCycle(Context context);
 
     /***************************************************
-     * NodePauseOnListScrollListener
+     * NodeRemoter
      */
 
     /**
+     * <p>For ListView / GridView :</p>
      * <pre>{@code
-     *  listView.setOnScrollListener(TILoader.node(this).newPauseOnListScrollListener());
+     *  listView.setOnScrollListener(TILoader.node(this).newNodeRemoter().getPauseOnListViewScrollListener());
      * }</pre>
      */
-    public abstract NodePauseOnListScrollListener newPauseOnListScrollListener();
+    public abstract NodeRemoter newNodeRemoter();
 }

@@ -128,11 +128,11 @@ public abstract class NodeController implements LifeCycle {
     public abstract TLogger getLogger();
 
     /**************************************************************
-     * NodePauseOnListScrollListener
+     * NodeRemoter
      */
 
     abstract AtomicInteger getNodePauseCount();
 
-    abstract NodePauseOnListScrollListener newPauseOnListScrollListener();
+    abstract NodeRemoter newNodeRemoter();
 
 }
