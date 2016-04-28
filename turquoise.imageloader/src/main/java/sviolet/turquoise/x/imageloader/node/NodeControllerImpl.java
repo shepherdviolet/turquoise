@@ -424,6 +424,9 @@ public class NodeControllerImpl extends NodeController {
         return nodePauseCount;
     }
 
+    /**
+     * @see NodeRemoter
+     */
     @Override
     NodeRemoter newNodeRemoter() {
         return new NodeRemoter(this);

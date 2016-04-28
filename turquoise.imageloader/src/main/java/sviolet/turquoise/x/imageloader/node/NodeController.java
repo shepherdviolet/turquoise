@@ -133,6 +133,9 @@ public abstract class NodeController implements LifeCycle {
 
     abstract AtomicInteger getNodePauseCount();
 
+    /**
+     * @see NodeRemoter
+     */
     abstract NodeRemoter newNodeRemoter();
 
 }

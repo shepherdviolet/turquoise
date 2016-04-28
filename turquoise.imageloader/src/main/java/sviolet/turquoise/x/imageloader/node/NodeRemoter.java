@@ -29,6 +29,64 @@ import java.util.concurrent.atomic.AtomicBoolean;
 /**
  * <p>Remoter of Node, helps smooth slide, for {@link ListView} / {@link GridView} / RecyclerView</p>
  *
+ * <p>Engine will not execute tasks which in paused Node. Node will pause util all NodeRemotes are resumed(not pause).
+ * As long as there is a paused NodeRemoter, Node will keep pause status.</p>
+ *
+ * <p>Example for {@link ListView} / {@link GridView}:</p>
+ *
+ * <pre>{@code
+ *      //Node will pause util all ListViews are not fling.
+ *      //You should new different NodeRemoter for each ListView, Do not re-use.
+ *      listView1.setOnScrollListener(TILoader.node(this).newNodeRemoter().getPauseOnListViewScrollListener());
+ *      listView2.setOnScrollListener(TILoader.node(this).newNodeRemoter().getPauseOnListViewScrollListener().setCustomOnScrollListener(...));
+ * }</pre>
+ *
+ * <p>Example for RecyclerView:</p>
+ *
+ * <pre>{@code
+ *      //Node will pause util all RecyclerViews are not fling.
+ *      //You should new different NodeRemoter for each RecyclerViews, Do not re-use.
+ *      recyclerView1.setOnScrollListener(new PauseOnRecyclerViewScrollListener(TILoader.node(this).newNodeRemoter()));
+ *      recyclerView2.setOnScrollListener(new PauseOnRecyclerViewScrollListener(TILoader.node(this).newNodeRemoter()));
+ *
+ *      //implement RecyclerView.OnScrollListener
+ *      public class PauseOnRecyclerViewScrollListener extends RecyclerView.OnScrollListener{
+ *
+ *          private NodeRemoter nodeRemoter;
+ *          private RecyclerView.OnScrollListener customOnScrollListener;
+ *
+ *          private PauseOnRecyclerViewScrollListener(NodeRemoter nodeRemoter){
+ *              this.nodeRemoter = nodeRemoter;
+ *          }
+ *
+ *          public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+ *              switch (newState){
+ *                  case RecyclerView.SCROLL_STATE_IDLE:
+ *                  case RecyclerView.SCROLL_STATE_DRAGGING:
+ *                      nodeRemoter.resume();
+ *                      break;
+ *                  case RecyclerView.SCROLL_STATE_SETTLING:
+ *                      nodeRemoter.pause();
+ *                      break;
+ *              }
+ *
+ *              if (customOnScrollListener != null) {
+ *                  customOnScrollListener.onScrollStateChanged(recyclerView, newState);
+ *              }
+ *          }
+ *
+ *          public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+ *              if (customOnScrollListener != null) {
+ *                  customOnScrollListener.onScrolled(recyclerView, dx, dy);
+ *              }
+ *          }
+ *
+ *          public void setCustomOnScrollListener(RecyclerView.OnScrollListener customOnScrollListener){
+ *              this.customOnScrollListener = customOnScrollListener;
+ *          }
+ *      }
+ * }</pre>
+ *
  * Created by S.Violet on 2016/4/28.
  */
 public class NodeRemoter {

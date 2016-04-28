@@ -148,10 +148,7 @@ public abstract class Node {
      */
 
     /**
-     * <p>For ListView / GridView :</p>
-     * <pre>{@code
-     *  listView.setOnScrollListener(TILoader.node(this).newNodeRemoter().getPauseOnListViewScrollListener());
-     * }</pre>
+     * @see NodeRemoter
      */
     public abstract NodeRemoter newNodeRemoter();
 }

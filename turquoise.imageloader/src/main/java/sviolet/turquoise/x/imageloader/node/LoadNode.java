@@ -131,6 +131,9 @@ public class LoadNode extends Node {
      * NodeRemoter
      */
 
+    /**
+     * @see NodeRemoter
+     */
     @Override
     public NodeRemoter newNodeRemoter() {
         return controller.newNodeRemoter();
