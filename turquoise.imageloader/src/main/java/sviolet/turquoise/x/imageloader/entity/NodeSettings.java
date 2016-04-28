@@ -73,9 +73,39 @@ public class NodeSettings implements Destroyable {
         //settings////////////////////////////////////////////////////////////////////////////
 
         /**
+         * <p>set request waiting queue size, increase if you want to make screen accommodate more pictures.</p>
+         *
+         * <p>If your window contains a large number of Views which loading by TILoader.node(context).load(...),
+         * but some of them always load failed, you should increase requestQueueSize by this method.</p>
+         *
+         * <p>For example:</p>
+         *
+         * <p>Your window might contains 20pcs images at most. you can set requestQueueSize = 30.</p>
+         *
+         * <pre>{@code
+         *      TILoader.node(this).setting(new NodeSettings.Builder()
+         *          .setRequestQueueSize(30)//1.5x of your window pictures usually
+         *          .build());
+         * }</pre>
+         *
+         * @param requestQueueSize {@value DEFAULT_MEMORY_QUEUE_SIZE} by default
+         */
+        public Builder setRequestQueueSize(int requestQueueSize){
+            if (requestQueueSize < 1){
+                throw new RuntimeException("[NodeSettings]requestQueueSize must >= 1");
+            }
+            setMemoryQueueSize(requestQueueSize);
+            setDiskQueueSize((int)Math.ceil(requestQueueSize * 1.1f));
+            setNetQueueSize((int)Math.ceil(requestQueueSize * 1.2f));
+            return this;
+        }
+
+        /**
          * set memory load queue size, increase if you want to make screen accommodate more pictures
          * @param memoryQueueSize {@value DEFAULT_MEMORY_QUEUE_SIZE} by default
+         * @deprecated Using {@link Builder#setRequestQueueSize(int)} is more simple
          */
+        @Deprecated
         public Builder setMemoryQueueSize(int memoryQueueSize){
             if (memoryQueueSize < 1){
                 throw new RuntimeException("[NodeSettings]memoryQueueSize must >= 1");
@@ -87,7 +117,9 @@ public class NodeSettings implements Destroyable {
         /**
          * set disk load queue size, increase if you want to make screen accommodate more pictures
          * @param diskQueueSize {@value DEFAULT_DISK_QUEUE_SIZE} by default
+         * @deprecated Using {@link Builder#setRequestQueueSize(int)} is more simple
          */
+        @Deprecated
         public Builder setDiskQueueSize(int diskQueueSize){
             if (diskQueueSize < 1){
                 throw new RuntimeException("[NodeSettings]diskQueueSize must >= 1");
@@ -99,7 +131,9 @@ public class NodeSettings implements Destroyable {
         /**
          * set network load queue size, increase if you want to make screen accommodate more pictures
          * @param netQueueSize {@value DEFAULT_NET_QUEUE_SIZE} by default
+         * @deprecated Using {@link Builder#setRequestQueueSize(int)} is more simple
          */
+        @Deprecated
         public Builder setNetQueueSize(int netQueueSize){
             if (netQueueSize < 1){
                 throw new RuntimeException("[NodeSettings]netQueueSize must >= 1");
@@ -221,8 +255,8 @@ public class NodeSettings implements Destroyable {
     //DEFAULT/////////////////////////////////////////////////////////////////////////////
 
     private static final int DEFAULT_MEMORY_QUEUE_SIZE = 10;
-    private static final int DEFAULT_DISK_QUEUE_SIZE = 15;
-    private static final int DEFAULT_NET_QUEUE_SIZE = 20;
+    private static final int DEFAULT_DISK_QUEUE_SIZE = 11;
+    private static final int DEFAULT_NET_QUEUE_SIZE = 12;
     private static final int DEFAULT_RELOAD_TIMES = 2;
     private static final int DEFAULT_IMAGE_APPEAR_DURATION = 400;
     public static final long DEFAULT_NETWORK_CONNECT_TIMEOUT = -1;//ms
