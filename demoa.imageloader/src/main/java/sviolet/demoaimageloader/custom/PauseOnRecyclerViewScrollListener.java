@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.demoaimageloader.demos.extra;
+package sviolet.demoaimageloader.custom;
 
 import android.support.v7.widget.RecyclerView;
 

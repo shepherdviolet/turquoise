@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.demoaimageloader.demos.extra;
+package sviolet.demoaimageloader.custom;
 
 import android.graphics.drawable.Drawable;
 import android.view.View;

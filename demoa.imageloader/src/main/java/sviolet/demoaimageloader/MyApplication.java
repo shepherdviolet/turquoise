@@ -20,7 +20,7 @@
 package sviolet.demoaimageloader;
 
 import sviolet.demoaimageloader.common.Constants;
-import sviolet.demoaimageloader.demos.extra.MyStubFactory;
+import sviolet.demoaimageloader.custom.MyStubFactory;
 import sviolet.turquoise.enhance.app.TApplication;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;

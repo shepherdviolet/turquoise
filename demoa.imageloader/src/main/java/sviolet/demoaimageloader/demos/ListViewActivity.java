@@ -29,7 +29,7 @@ import sviolet.demoaimageloader.R;
 import sviolet.demoaimageloader.common.DemoDescription;
 import sviolet.demoaimageloader.demos.extra.AsyncImageItem;
 import sviolet.demoaimageloader.demos.extra.ListViewAdapter;
-import sviolet.demoaimageloader.demos.extra.MyNetworkLoadHandler;
+import sviolet.demoaimageloader.custom.MyNetworkLoadHandler;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
