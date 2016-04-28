@@ -75,7 +75,7 @@ public class ListViewActivity extends TActivity {
         //设置适配器, 传入图片加载器, 图片解码工具
         adapter = new ListViewAdapter(this, makeItemList());
         listView.setAdapter(adapter);
-        listView.setOnScrollListener(TILoader.node(this).newPauseOnListScrollListener());
+        listView.setOnScrollListener(TILoader.node(this).newNodeRemoter().getPauseOnListViewScrollListener());
     }
 
     @Override
