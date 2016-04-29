@@ -65,9 +65,26 @@ public class Params {
         }
 
         /**
-         * <p>if you set reqSize manually by this method, it will set sizeMatchView flag to false</p>
+         * <p>There are two modes to determine the size of loading image.</p>
          *
-         * <p>Scene: Know the picture size in advance. In this mode, view and loadingDrawable will match this reqSize.
+         * <p>If you call this method, means you choose mode of DimensionSpecified.</p>
+         *
+         * <p>*******************************************************************</p>
+         *
+         * <p>SizeMatchView Mode:: default mode, do not call this method (setReqSize(int, int)).</p>
+         *
+         * <p>Scene: For fixed size View (not wrap_content) or fixed size LoadingDrawable. In this mode, view will
+         * match it's own size or match loadingDrawable's size, and image will match View's size.</p>
+         *
+         * <p>WARNING: In this mode, If your view's size is wrap_content, and LoadingDrawable's size is -1 in the meanwhile,
+         * TILoader will skip loading.</p>
+         *
+         * <p>*******************************************************************</p>
+         *
+         * <p>DimensionSpecified Mode:: set by call this method (setReqSize(int, int)).</p>
+         *
+         * <p>Scene: Know pictures size in advance, or set a size which you want. In this mode,
+         * view / LoadingDrawable / FailedDrawable / loaded image, all of them will match this reqSize.
          * you can set view wrap_content. Image will match reqSize.</p>
          *
          * @param reqWidth request width, image width will close to this value
@@ -83,12 +100,9 @@ public class Params {
         /**
          * <p>if you set sizeMatchView true, the reqSize will follow view's size, true by default</p>
          *
-         * <p>Scene: Fixed size of the View or fixed size of loadingDrawable. In this mode, view will
-         * match it's own size or match loadingDrawable's size, and image will match View's size.</p>
-         *
          * @param matchView true:image size match view
          */
-        public Builder setSizeMatchView(boolean matchView){
+        private Builder setSizeMatchView(boolean matchView){
             values.sizeMatchView = matchView;
             return this;
         }
