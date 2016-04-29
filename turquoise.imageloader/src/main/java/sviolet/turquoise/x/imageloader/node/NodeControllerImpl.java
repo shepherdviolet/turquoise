@@ -497,7 +497,7 @@ public class NodeControllerImpl extends NodeController {
         if (status.compareAndSet(FROZEN, NORMAL)){
             postDispatch();
             postIgnite();
-            manager.getLogger().i("[NodeControllerImpl]unfreeze nodeId:" + nodeId);
+            manager.getLogger().i("[NodeControllerImpl]lifecycle: unfreeze nodeId:" + nodeId);
         }
     }
 
@@ -514,7 +514,7 @@ public class NodeControllerImpl extends NodeController {
     @Override
     public void onStop() {
         if (status.compareAndSet(NORMAL, FROZEN)) {
-            manager.getLogger().i("[NodeControllerImpl]freeze nodeId:" + nodeId);
+            manager.getLogger().i("[NodeControllerImpl]lifecycle: freeze nodeId:" + nodeId);
         }
     }
 
@@ -534,7 +534,7 @@ public class NodeControllerImpl extends NodeController {
                 settings.onDestroy();
             }
             dispatchThreadPool.shutdown();
-            manager.getLogger().i("[NodeControllerImpl]destroyed nodeId:" + nodeId);
+            manager.getLogger().i("[NodeControllerImpl]lifecycle: destroyed nodeId:" + nodeId);
         }
     }
 
