@@ -34,8 +34,8 @@ import sviolet.turquoise.x.imageloader.server.module.BitmapMemoryCacheModule;
  */
 public class MemoryCacheServer implements ComponentManager.Component, Server {
 
-    private static final int MIN_MEMORY_CACHE_SIZE = 1024 * 1024 * 5;//minimum of memory Cache Size
-    private static final float DEFAULT_MEMORY_CACHE_PERCENT = 0.25f;//default percent
+    private static final int MIN_MEMORY_CACHE_SIZE = 1024 * 1024 * 2;//minimum of memory Cache Size
+    private static final float DEFAULT_MEMORY_CACHE_PERCENT = 0.10f;//default percent
 
     private ComponentManager manager;
 
@@ -59,10 +59,14 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
             }
         }
         //limit
-        if (memoryCacheSize < MIN_MEMORY_CACHE_SIZE){
-            manager.getLogger().w("[MemoryCacheServer]initial, setting memoryCacheSize:" + (memoryCacheSize / 1024) + "K < minimumSize, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
+        if (DeviceUtils.getVersionSDK() < 11){
+            manager.getLogger().i("[MemoryCacheServer]initial, API < 11, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
+            memoryCacheSize = MIN_MEMORY_CACHE_SIZE;
+        } else if (memoryCacheSize < MIN_MEMORY_CACHE_SIZE){
+            manager.getLogger().i("[MemoryCacheServer]initial, setting memoryCacheSize:" + (memoryCacheSize / 1024) + "K < minimumSize, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
             memoryCacheSize = MIN_MEMORY_CACHE_SIZE;
         }
+
         manager.getLogger().i("[MemoryCacheServer]initial, memoryCacheSize:" + (memoryCacheSize / 1024) + "K");
         bitmapMemoryCacheModule = new BitmapMemoryCacheModule(memoryCacheSize, manager.getLogger());
     }
