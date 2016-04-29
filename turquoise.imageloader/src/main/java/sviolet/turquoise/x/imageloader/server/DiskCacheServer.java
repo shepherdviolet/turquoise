@@ -82,7 +82,7 @@ public class DiskCacheServer extends DiskCacheModule {
             if (editor == null) {
                 getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                         getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                        new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, multiple edit one file, write disk cache failed"), getComponentManager().getLogger());
+                        new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, write disk cache failed"), getComponentManager().getLogger());
                 writeToMemoryBuffer(task, inputStream, result, null);
                 return result;
             }
@@ -199,7 +199,7 @@ public class DiskCacheServer extends DiskCacheModule {
             if (editor == null) {
                 getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                         getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                        new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, multiple edit one file, write disk cache failed (2)"), getComponentManager().getLogger());
+                        new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, write disk cache failed (2)"), getComponentManager().getLogger());
                 return false;
             }
             //trying to write to disk cache
