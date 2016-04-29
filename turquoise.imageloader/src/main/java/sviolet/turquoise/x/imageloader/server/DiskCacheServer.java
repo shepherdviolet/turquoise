@@ -262,7 +262,7 @@ public class DiskCacheServer extends DiskCacheModule {
             if (readLength < 0) {
                 break;
             }
-            outputStream.write(buffer);
+            outputStream.write(buffer, 0, readLength);
             outputStream.flush();
         }
         if (outputStream.size() <= 0){
