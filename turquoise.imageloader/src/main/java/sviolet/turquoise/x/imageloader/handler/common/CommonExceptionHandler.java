@@ -41,20 +41,22 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public class CommonExceptionHandler implements ExceptionHandler {
 
-    private static final String DISK_CACHE_EXCEPTION_TOAST_CN = "图片磁盘缓存访问失败,请检查您的手机内存是否已满";
-    private static final String DISK_CACHE_EXCEPTION_TOAST_EN = "Image disk cache access fails, check your phone memory";
-    private static final long DISK_CACHE_EXCEPTION_NOTICE_INTERVAL = 5 * 60 * 1000L;//5min
+    private static final String DISK_CACHE_EXCEPTION_TOAST_CN = "图片磁盘缓存访问失败,请检查您的手机内存是否已满,图片将通过网络下载.";
+    private static final String DISK_CACHE_EXCEPTION_TOAST_EN = "Image disk cache access fails, check your phone memory, image will loading from network always.";
+    private static final long DISK_CACHE_EXCEPTION_NOTICE_INTERVAL = 20 * 1000L;//20s
 
     private AtomicLong diskCacheExceptionNoticeTime = new AtomicLong(0);
 
     @Override
     public void onDiskCacheOpenException(Context applicationContext, Context context, Throwable throwable, TLogger logger) {
         long time = DateTimeUtils.getUptimeMillis();
-        long previousTime = diskCacheExceptionNoticeTime.getAndSet(time);
+        long previousTime = diskCacheExceptionNoticeTime.get();
         if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
-            Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
-            msg.obj = new Info(applicationContext, throwable);
-            msg.sendToTarget();
+            if (diskCacheExceptionNoticeTime.compareAndSet(previousTime, time)) {
+                Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
+                msg.obj = new Info(applicationContext, throwable);
+                msg.sendToTarget();
+            }
         }
         logger.e("DiskCacheOpenException", throwable);
     }
@@ -62,11 +64,13 @@ public class CommonExceptionHandler implements ExceptionHandler {
     @Override
     public void onDiskCacheReadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
         long time = DateTimeUtils.getUptimeMillis();
-        long previousTime = diskCacheExceptionNoticeTime.getAndSet(time);
+        long previousTime = diskCacheExceptionNoticeTime.get();
         if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
-            Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
-            msg.obj = new Info(applicationContext, throwable);
-            msg.sendToTarget();
+            if (diskCacheExceptionNoticeTime.compareAndSet(previousTime, time)) {
+                Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
+                msg.obj = new Info(applicationContext, throwable);
+                msg.sendToTarget();
+            }
         }
         logger.e("DiskCacheReadException:" + taskInfo, throwable);
     }
@@ -74,11 +78,13 @@ public class CommonExceptionHandler implements ExceptionHandler {
     @Override
     public void onDiskCacheWriteException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
         long time = DateTimeUtils.getUptimeMillis();
-        long previousTime = diskCacheExceptionNoticeTime.getAndSet(time);
+        long previousTime = diskCacheExceptionNoticeTime.get();
         if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
-            Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
-            msg.obj = new Info(applicationContext, throwable);
-            msg.sendToTarget();
+            if (diskCacheExceptionNoticeTime.compareAndSet(previousTime, time)) {
+                Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
+                msg.obj = new Info(applicationContext, throwable);
+                msg.sendToTarget();
+            }
         }
         logger.e("DiskCacheWriteException:" + taskInfo, throwable);
     }
