@@ -158,7 +158,7 @@ public class NodeSettings implements Destroyable {
 
         /**
          * set timeout of network connect
-         * @param timeout timeout milli second, {@value DEFAULT_NETWORK_CONNECT_TIMEOUT} by default
+         * @param timeout timeout milli second, {@value ServerSettings#DEFAULT_NETWORK_CONNECT_TIMEOUT} by default
          */
         public Builder setNetworkConnectTimeout(long timeout){
             if (timeout <= 0){
@@ -170,7 +170,7 @@ public class NodeSettings implements Destroyable {
 
         /**
          * set timeout of network read
-         * @param timeout timeout milli second, {@value DEFAULT_NETWORK_READ_TIMEOUT} by default
+         * @param timeout timeout milli second, {@value ServerSettings#DEFAULT_NETWORK_READ_TIMEOUT} by default
          */
         public Builder setNetworkReadTimeout(long timeout){
             if (timeout <= 0){
