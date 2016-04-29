@@ -35,6 +35,8 @@ import sviolet.turquoise.x.imageloader.server.Server;
 /**
  * <p>disk cache</p>
  *
+ * <p>disk cache will close if server is idle for a long time</p>
+ *
  * Created by S.Violet on 2016/3/22.
  */
 public class DiskCacheModule implements ComponentManager.Component, Server {
@@ -64,6 +66,8 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
             this.appVersion = ApplicationUtils.getAppVersion(manager.getApplicationContextImage());
         }
         status = Status.PAUSE;
+        manager.getLogger().i("[DiskCacheServer]initial, diskCacheSize:" + manager.getServerSettings().getDiskCacheSize() + "M");
+        manager.getLogger().d("[DiskCacheServer]initial, diskCachePath:" + manager.getServerSettings().getDiskCachePath());
     }
 
     /**
@@ -84,6 +88,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
                     try {
                         diskLruCache = DiskLruCache.open(manager.getServerSettings().getDiskCachePath(), appVersion, 1, manager.getServerSettings().getDiskCacheSize());
                         status = Status.READY;
+                        manager.getLogger().d("[DiskCacheServer]ready");
                         return true;
                     } catch (IOException e) {
                         status = Status.DISABLE;
@@ -129,6 +134,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
         if (diskLruCacheToClose != null) {
             try {
                 diskLruCacheToClose.close();
+                manager.getLogger().d("[DiskCacheServer]pause");
             } catch (IOException e) {
                 manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getApplicationContextImage(), manager.getContextImage(), e, manager.getLogger());
             }
