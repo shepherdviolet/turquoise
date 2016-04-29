@@ -98,15 +98,17 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
                     holdCounter++;
                     return true;
                 case DISABLE:
+                    openException = new RuntimeException("[TILoader:DiskCacheModule]can not use disk cache which has been disabled (open failed)");
+                    break;
                 default:
-                    commonException = new RuntimeException("[TILoader:DiskCacheModule]can not use disk cache which has been disabled");
+                    commonException = new RuntimeException("[TILoader:DiskCacheModule]illegal status");
                     break;
             }
         }finally {
             statusLock.unlock();
         }
         if (openException != null){
-            manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getApplicationContextImage(), manager.getContextImage(), openException, manager.getLogger());
+            manager.getServerSettings().getExceptionHandler().onDiskCacheOpenException(manager.getApplicationContextImage(), manager.getContextImage(), openException, manager.getLogger());
         }
         if (commonException != null){
             manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getApplicationContextImage(), manager.getContextImage(), commonException, manager.getLogger());
