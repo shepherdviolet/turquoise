@@ -80,21 +80,31 @@ public class DiskCacheServer extends DiskCacheModule {
             //edit cache file
             editor = edit(task);
             if (editor == null) {
+                //if cache file fetch failed, write data to memory buffer, skip write to disk
                 getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                         getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
                         new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, write disk cache failed"), getComponentManager().getLogger());
                 writeToMemoryBuffer(task, inputStream, result, null);
                 return result;
             }
-            //check disk cache healthy stat
+            /*
+             * Check disk cache healthy status.
+             * If cache is healthy, data write to disk first, and return File, decoder will decode image from file,
+             * in order to use less memory.
+             * If cache is not healthy, data write to memory buffer, and return bytes, decoder will decode image from bytes,
+             * in order to ensure pictures display normally.
+             */
             if (isHealthy()) {
-                //read and write by fix buffer
+                //write to disk first, and return File
                 outputStream = editor.newOutputStream(0);
+                //buffer, to save memory
                 byte[] buffer = new byte[DiskCacheServer.BUFFER_SIZE];
                 boolean hasWrite = false;
                 int readLength;
+                //read and write
                 while (true) {
                     try {
+                        //read from inputStream
                         readLength = inputStream.read(buffer);
                     } catch (Exception e) {
                         throw new NetworkException(e);
@@ -103,11 +113,13 @@ public class DiskCacheServer extends DiskCacheModule {
                         break;
                     }
                     try {
+                        //try to write disk
                         outputStream.write(buffer, 0, readLength);
                         outputStream.flush();
                     }catch (Exception e){
+                        //not healthy
                         setHealthy(false);
-                        //if error while writing first buffer data, try to use memory buffer
+                        //if error while writing first buffer data, try to write to memory buffer, in order to ensure pictures display normally.
                         if (!hasWrite){
                             abortEditor(editor);
                             getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
@@ -127,7 +139,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 result.setType(ResultType.SUCCEED);
                 setHealthy(true);
             }else{
-                //read and write by full size memory buffer
+                //if disk is not healthy, data write to memory buffer, and return bytes, in order to ensure pictures display normally.
                 writeToMemoryBuffer(task, inputStream, result, null);
                 //trying to write to disk cache
                 if (result.getType() == ResultType.RETURN_MEMORY_BUFFER && result.getMemoryBuffer().length > 0) {
@@ -234,7 +246,7 @@ public class DiskCacheServer extends DiskCacheModule {
     }
 
     /**
-     * data load from network write to full size memory buffer
+     * data load from network write to full size memory buffer, in order to ensure pictures display normally.
      * @param task task
      * @param inputStream inputStream
      * @param result result of write task
