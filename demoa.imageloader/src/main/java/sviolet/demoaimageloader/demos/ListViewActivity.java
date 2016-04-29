@@ -67,9 +67,7 @@ public class ListViewActivity extends TActivity {
                 .setNetworkLoadHandler(new MyNetworkLoadHandler())
                 .setLoadingDrawableFactory(new CommonLoadingDrawableFactory().setAnimationEnabled(true).setBackgroundColor(0xFFF0F0F0))
                 .setBackgroundColor(0xFFF0F0F0)
-                .setMemoryQueueSize(15)
-                .setDiskQueueSize(20)
-                .setNetQueueSize(25)
+                .setRequestQueueSize(20)
                 .build());
 
         //设置适配器, 传入图片加载器, 图片解码工具

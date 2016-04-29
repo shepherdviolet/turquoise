@@ -83,7 +83,7 @@ public class MyApplication extends TApplication {
 //                        .setAnimationEnabled(true)//允许动画(默认true)
 ////                        .setAnimationDrawableFactory(new MyAnimationDrawableFactory())//方式1:自定义实现动画(完全自己实现)
 //                        .setAnimationDrawableFactory(new CommonLoadingDrawableFactory.CommonAnimationDrawableFactory()//方式2:配置通用动画
-//                                .setAnimationDuration(1000)//动画时间
+//                                .setAnimationDuration(500)//动画时间
 //                                .setPointColor(0xFFB0A0A0)//动画点颜色
 //                                .setPointInterval(MeasureUtils.dp2px(getApplicationContext(), 9))//动画点间隔
 //                                .setPointRadius(MeasureUtils.dp2px(getApplicationContext(), 3))//动画点半径
