@@ -146,7 +146,7 @@ public class NodeSettings implements Destroyable {
         }
 
         /**
-         * @param reloadTimes reload times (reload when load failed)
+         * @param reloadTimes reload times (reload when load failed), {@value DEFAULT_RELOAD_TIMES} by default
          */
         public Builder setReloadTimes(int reloadTimes){
             if (reloadTimes < 0){
@@ -158,7 +158,7 @@ public class NodeSettings implements Destroyable {
 
         /**
          * set timeout of network connect
-         * @param timeout timeout milli second
+         * @param timeout timeout milli second, {@value DEFAULT_NETWORK_CONNECT_TIMEOUT} by default
          */
         public Builder setNetworkConnectTimeout(long timeout){
             if (timeout <= 0){
@@ -170,7 +170,7 @@ public class NodeSettings implements Destroyable {
 
         /**
          * set timeout of network read
-         * @param timeout timeout milli second
+         * @param timeout timeout milli second, {@value DEFAULT_NETWORK_READ_TIMEOUT} by default
          */
         public Builder setNetworkReadTimeout(long timeout){
             if (timeout <= 0){
@@ -181,7 +181,7 @@ public class NodeSettings implements Destroyable {
         }
 
         /**
-         * @param imageAppearDuration duration of image appear animation
+         * @param imageAppearDuration duration of image appear animation, {@value DEFAULT_IMAGE_APPEAR_DURATION} by default
          */
         public Builder setImageAppearDuration(int imageAppearDuration){
             if (imageAppearDuration < 0){
