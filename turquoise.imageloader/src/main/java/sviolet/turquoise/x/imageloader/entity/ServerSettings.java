@@ -364,7 +364,7 @@ public class ServerSettings implements ComponentManager.Component{
     public static final boolean DEFAULT_LOG_ENABLED = true;
     public static final boolean DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE = false;
     public static final int DEFAULT_MEMORY_CACHE_SIZE = 0;
-    public static final int DEFAULT_DISK_CACHE_SIZE = 10 * 1024 * 1024;
+    public static final int DEFAULT_DISK_CACHE_SIZE = 30 * 1024 * 1024;
     public static final int DEFAULT_MEMORY_LOAD_MAX_THREAD = 1;
     public static final int DEFAULT_DISK_LOAD_MAX_THREAD = 2;
     public static final int DEFAULT_NETWORK_LOAD_MAX_THREAD = 3;

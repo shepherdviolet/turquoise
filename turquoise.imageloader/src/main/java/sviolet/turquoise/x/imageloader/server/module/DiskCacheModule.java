@@ -44,7 +44,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
     public static final int BUFFER_SIZE = 1024;
 
     private static final int DEFAULT_APP_VERSION = 1;
-    private static final long PAUSE_DELAY_NANOS = 60 * 1000000000L;//60s to pause diskcache
+    private static final long PAUSE_DELAY_NANOS = 20 * 1000000000L;//20s to pause diskCache
 
     private ComponentManager manager;
 
@@ -66,8 +66,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
             this.appVersion = ApplicationUtils.getAppVersion(manager.getApplicationContextImage());
         }
         status = Status.PAUSE;
-        manager.getLogger().i("[DiskCacheServer]initial, diskCacheSize:" + manager.getServerSettings().getDiskCacheSize() + "M");
-        manager.getLogger().d("[DiskCacheServer]initial, diskCachePath:" + manager.getServerSettings().getDiskCachePath());
+        manager.getLogger().i("[DiskCacheServer]initial, diskCacheSize:" + (manager.getServerSettings().getDiskCacheSize() / 1024) + "K");
     }
 
     /**
