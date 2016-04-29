@@ -45,6 +45,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
 
     private static final int DEFAULT_APP_VERSION = 1;
     private static final long PAUSE_DELAY_NANOS = 20 * 1000000000L;//20s to pause diskCache
+    private static final long FAILED_REOPEN_INTERVAL = 10 * 1000L;//10s, reopen if open failed before
 
     private ComponentManager manager;
 
@@ -54,6 +55,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
     private Status status = Status.UNINITIALIZED;
     private AtomicBoolean isHealthy = new AtomicBoolean(true);
     private int holdCounter = 0;
+    private long lastOpenFailedTime = 0;//last open failed time
 
     private LazySingleThreadPool dispatchThreadPool;
     private ReentrantLock statusLock = new ReentrantLock();
@@ -91,6 +93,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
                         return true;
                     } catch (IOException e) {
                         status = Status.DISABLE;
+                        lastOpenFailedTime = System.currentTimeMillis();//record time
                         openException = e;
                     }
                     break;
@@ -98,7 +101,12 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
                     holdCounter++;
                     return true;
                 case DISABLE:
-                    commonException = new RuntimeException("[TILoader:DiskCacheModule]can not use disk cache which has been disabled (open failed)");
+                    if ((System.currentTimeMillis() - lastOpenFailedTime) < FAILED_REOPEN_INTERVAL) {
+                        commonException = new RuntimeException("[TILoader:DiskCacheModule]can not use disk cache which has been disabled (open failed)");
+                    }else{
+                        status = Status.PAUSE;
+                        manager.getLogger().d("[DiskCacheServer]re-open (open is failed before)");
+                    }
                     break;
                 default:
                     commonException = new RuntimeException("[TILoader:DiskCacheModule]illegal status");
