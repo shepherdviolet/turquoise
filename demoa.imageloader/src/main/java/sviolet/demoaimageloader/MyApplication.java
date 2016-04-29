@@ -53,15 +53,19 @@ public class MyApplication extends TApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        initTILoader();
+    }
 
-        /*
-            TILoader全局配置, 建议在Application.onCreate()方法中执行. 该方法必须在TILoader初始化前执行,
-            使用TILoader加载图片或使用TILoaderUtils均会初始化TILoader.
-         */
+    /**
+     * TILoader全局配置, 建议在Application.onCreate()方法中执行. 该方法必须在TILoader初始化前执行,
+     * 使用TILoader加载图片或使用TILoaderUtils均会初始化TILoader.
+     */
+    private void initTILoader() {
+
         TILoader.setting(new ServerSettings.Builder()
                 .setLogEnabled(true)//允许日志打印
                 .setMemoryCachePercent(getApplicationContext(), 0.1f)//分配10%的APP内存用于图片缓存
-                .setDiskCacheSize(10)//分配10M用于图片磁盘缓存
+                .setDiskCacheSize(30)//分配30M用于图片磁盘缓存
                 .setCustomStubFactory(new MyStubFactory())//自定义实现Stub工厂(用于增加对新控件的支持)
 //                .setDiskCachePath(getApplicationContext(), ServerSettings.DiskCachePath.EXTERNAL_STORAGE, "TILoaderDemo")//设置优先使用外部存储作为磁盘缓存, 子目录"TILoaderDemo"
 //                .setMemoryLoadMaxThread(1)//设置内存加载线程数(默认1, 通常无需修改)
@@ -99,6 +103,7 @@ public class MyApplication extends TApplication {
             设置TILoader日志级别, 对自定义的TLogger模块无效.
          */
 //        TILoaderUtils.setLoggerLevel(TLogger.ERROR | TLogger.INFO);//仅打印ERROR和INFO日志(不打印DEBUG和WARNING日志)
+
     }
 
     @Override
