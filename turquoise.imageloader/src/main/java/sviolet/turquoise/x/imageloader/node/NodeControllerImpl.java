@@ -259,7 +259,7 @@ public class NodeControllerImpl extends NodeController {
         }else{
             task.setServerType(Server.Type.DISK_ENGINE);
             task.setState(Task.State.STAND_BY);
-            executeTask(task);
+            executeTaskToDisk(task);
         }
     }
 
@@ -271,7 +271,7 @@ public class NodeControllerImpl extends NodeController {
         }else{
             task.setServerType(Server.Type.NETWORK_ENGINE);
             task.setState(Task.State.STAND_BY);
-            executeTask(task);
+            executeTaskToNet(task);
         }
     }
 
