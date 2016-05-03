@@ -67,13 +67,15 @@ import sviolet.turquoise.x.imageloader.stub.StubGroup;
  *
  * <p>Status::</p>
  *
- * <p>Pause:: Engine will not execute tasks which in paused Node. Node will pause util all NodeRemotes are resumed(not pause).
+ * <p>Pause:: Engine will not execute tasks which in paused Node, and node will skip dispatch (skip callback
+ * to stub, skip handle response from Engine). Node will pause util all NodeRemotes are resumed(not pause).
  * As long as there is a paused NodeRemoter, Node will keep pause status.</p>
  *
- * <p>Frozen:: Engine will not execute tasks of this Node, skip dispatch (skip callback to stub, skip handle response from Engine).
- * Node will frozen when Context->OnStop(), and unfreeze when Context->OnStart().</p>
+ * <p>Frozen:: Engine will not execute tasks of this Node, and node will skip dispatch (skip callback to stub,
+ * skip handle response from Engine). Node will frozen when Context->OnStop(), and unfreeze when
+ * Context->OnStart().</p>
  *
- * <p>Destroy:: Engine will destroy when Context->OnDestroy(), and skip all process.</p>
+ * <p>Destroy:: Node will destroy when Context->OnDestroy(), and skip all process.</p>
  *
  * Created by S.Violet on 2016/2/18.
  */
@@ -97,7 +99,8 @@ public class NodeControllerImpl extends NodeController {
     private final AtomicInteger status = new AtomicInteger(INITIAL);
 
     /**
-     * <p>Pause:: Engine will not execute tasks which in paused Node. Node will pause util all NodeRemotes are resumed(not pause).
+     * <p>Pause:: Engine will not execute tasks which in paused Node, and node will skip dispatch (skip callback
+     * to stub, skip handle response from Engine). Node will pause util all NodeRemotes are resumed(not pause).
      * As long as there is a paused NodeRemoter, Node will keep pause status.</p>
      */
     private AtomicInteger nodePauseCount = new AtomicInteger(0);
@@ -446,16 +449,16 @@ public class NodeControllerImpl extends NodeController {
     @Override
     public void postDispatch() {
         //check state
-        if (status.get() < NORMAL){
-            getLogger().d("[NodeControllerImpl]destroyed/initial/frozen, skip dispatch");
+        if (nodePauseCount.get() > 0 || status.get() < NORMAL){
+            getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
             return;
         }
         dispatchThreadPool.execute(new Runnable() {
             @Override
             public void run() {
                 //check state
-                if (status.get() < NORMAL){
-                    getLogger().d("[NodeControllerImpl]destroyed/initial/frozen, skip dispatch");
+                if (nodePauseCount.get() > 0 || status.get() < NORMAL){
+                    getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
                     return;
                 }
                 Task task;
@@ -463,8 +466,8 @@ public class NodeControllerImpl extends NodeController {
                     //execute
                     executeTask(task);
                     //check state
-                    if (status.get() < NORMAL){
-                        getLogger().d("[NodeControllerImpl]destroyed/initial/frozen, skip dispatch");
+                    if (nodePauseCount.get() > 0 || status.get() < NORMAL){
+                        getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
                         return;
                     }
                 }

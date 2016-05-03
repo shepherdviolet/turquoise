@@ -51,13 +51,15 @@ import sviolet.turquoise.x.imageloader.stub.Stub;
  *
  * <p>Status::</p>
  *
- * <p>Pause:: Engine will not execute tasks which in paused Node. Node will pause util all NodeRemotes are resumed(not pause).
+ * <p>Pause:: Engine will not execute tasks which in paused Node, and node will skip dispatch (skip callback
+ * to stub, skip handle response from Engine). Node will pause util all NodeRemotes are resumed(not pause).
  * As long as there is a paused NodeRemoter, Node will keep pause status.</p>
  *
- * <p>Frozen:: Engine will not execute tasks of this Node, skip dispatch (skip callback to stub, skip handle response from Engine).
- * Node will frozen when Context->OnStop(), and unfreeze when Context->OnStart().</p>
+ * <p>Frozen:: Engine will not execute tasks of this Node, and node will skip dispatch (skip callback to stub,
+ * skip handle response from Engine). Node will frozen when Context->OnStop(), and unfreeze when
+ * Context->OnStart().</p>
  *
- * <p>Destroy:: Engine will destroy when Context->OnDestroy(), and skip all process.</p>
+ * <p>Destroy:: Node will destroy when Context->OnDestroy(), and skip all process.</p>
  *
  * Created by S.Violet on 2016/2/18.
  */
