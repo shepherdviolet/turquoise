@@ -31,6 +31,12 @@
                 android:layout_height="wrap_content"
                 android:scaleType="center"/>
 
+            <ImageView
+                android:id="@+id/basic_main_imageview4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="center"/>
+
         </LinearLayout>
 
     </ScrollView>

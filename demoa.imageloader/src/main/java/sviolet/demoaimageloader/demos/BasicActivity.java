@@ -2,6 +2,7 @@ package sviolet.demoaimageloader.demos;
 
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -11,10 +12,13 @@ import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.util.droid.MeasureUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.drawable.common.CommonLoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
+import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
@@ -42,6 +46,8 @@ public class BasicActivity extends TActivity {
     private ImageView imageView2;
     @ResourceId(R.id.basic_main_imageview3)
     private ImageView imageView3;
+    @ResourceId(R.id.basic_main_imageview4)
+    private ImageView imageView4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,7 @@ public class BasicActivity extends TActivity {
         //必须在加载之前设置节点,否则无效
         initNode();
         loadImage();
+        extractImage();
     }
 
     /**
@@ -99,6 +106,9 @@ public class BasicActivity extends TActivity {
                 .build());
     }
 
+    /**
+     * 加载图片并显示在控件上, TILoader会自动管理图片(加载/重新加载/缓存/回收)
+     */
     private void loadImage() {
 
         /*
@@ -107,10 +117,10 @@ public class BasicActivity extends TActivity {
          * 主要有两种加载模式::
          *
          * 1.尺寸匹配控件模式: 默认模式, 即不设置setReqSize(...)
-         * TODO
+         * 图片会被解码成接近控件尺寸的大小, 图片填充控件, 加载图和失败图也会填充控件.
          *
          * 2.指定尺寸模式: 通过setReqSize(...)设置
-         * TODO
+         * 图片会被解码成接近指定尺寸的大小, 图片显示尺寸等于指定尺寸, 加载图和失败图尺寸等于指定尺寸.
          *
          */
 //        Params paramsDemo = new Params.Builder()
@@ -138,8 +148,10 @@ public class BasicActivity extends TActivity {
          * 图片会被解码成接近指定尺寸的大小, 图片显示尺寸等于指定尺寸, 加载图和失败图尺寸等于指定尺寸.
          */
         String url2 = "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/turquoise.jpg";
+        int image2Width = MeasureUtils.getScreenWidth(this) / 2;//指定图片宽度
+        int image2Height = image2Width * 3 / 4;//指定图片高度
         Params params = new Params.Builder()
-                .setReqSize(MeasureUtils.getScreenWidth(this), MeasureUtils.getScreenWidth(this) * 3 / 4)//指定尺寸
+                .setReqSize(image2Width, image2Height)//指定尺寸
                 .build();
         TILoader.node(this).load(url2, params, imageView2);
 
@@ -150,25 +162,37 @@ public class BasicActivity extends TActivity {
          *
          * 图片会被解码成接近加载图的尺寸, 图片显示尺寸等于自身解码后的尺寸, 加载图和失败图尺寸等于加载图尺寸.
          */
-        String url3="https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/violet.jpg";
+        String url3="https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/crimson.jpg";
         TILoader.node(this).load(url3, imageView3);
 
-//        //extract mode, get a bitmap
-//        TILoader.extract(this, "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/violet.jpg", null, new OnLoadedListener<ImageView>() {
-//            @Override
-//            public void onLoadSucceed(String url, Params params, ImageResource<?> resource) {
-//                ImageView imageView = getWeakRegister();
-//                if (imageView != null) {
-//                    Toast.makeText(BasicActivity.this, "load succeed", Toast.LENGTH_SHORT).show();
-//                    imageView.setImageDrawable(TILoaderUtils.imageResourceToDrawable(BasicActivity.this, resource, true));
-//                }else{
-//                    TLogger.get(this).e("imageView is recycled, can't show image");
-//                }
-//            }
-//            @Override
-//            public void onLoadCanceled(String url, Params params) {
-//                Toast.makeText(BasicActivity.this, "load failed", Toast.LENGTH_SHORT).show();
-//            }
-//        }.setWeakRegister(imageView3));
     }
+
+    /**
+     * 下载图片, 获得的图片将不会由TILoader管理, 请自行处理.
+     */
+    private void extractImage(){
+
+        TILoader.extract(this, "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/cornflower.jpg", null, new OnLoadedListener<ImageView>() {
+            @Override
+            public void onLoadSucceed(String url, Params params, ImageResource<?> resource) {
+                //图片下载成功
+                ImageView imageView = getWeakRegister();//获取弱引用持有的ImageView
+                if (imageView != null) {
+                    Toast.makeText(BasicActivity.this, "load succeed", Toast.LENGTH_SHORT).show();
+                    //用TILoaderUtils的方法, 将ImageResource转为Drawable, 设置跳过绘制错误
+                    imageView.setImageDrawable(TILoaderUtils.imageResourceToDrawable(BasicActivity.this, resource, true));
+                }else{
+                    //ImageView已被GC
+                    TLogger.get(this).e("imageView is recycled, can't show image");
+                }
+            }
+            @Override
+            public void onLoadCanceled(String url, Params params) {
+                //图片下载失败, 可尝试重新下载
+                Toast.makeText(BasicActivity.this, "load failed", Toast.LENGTH_SHORT).show();
+            }
+        }.setWeakRegister(imageView4));//使用弱引用持有ImageView, 防止内存泄漏
+
+    }
+
 }
