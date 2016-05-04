@@ -19,11 +19,14 @@
 
 package sviolet.turquoise.x.imageloader.handler.common;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 
 import sviolet.turquoise.util.common.BitmapUtils;
+import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
@@ -42,13 +45,18 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         }
         switch (resource.getType()){
             case BITMAP:
-                if (resource.getResource() instanceof Bitmap){
-                    return !((Bitmap) resource.getResource()).isRecycled();
+                Object res = resource.getResource();
+                if (res instanceof Bitmap){
+                    return !((Bitmap) res).isRecycled();
                 }
                 break;
             default:
-                break;
+                return isValidExtension(resource);
         }
+        return false;
+    }
+
+    protected boolean isValidExtension(ImageResource<?> resource){
         return false;
     }
 
@@ -74,14 +82,19 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         }
         switch (resource.getType()){
             case BITMAP:
-                if ((resource.getResource() instanceof Bitmap) && (!((Bitmap) resource.getResource()).isRecycled())){
-                    ((Bitmap) resource.getResource()).recycle();
+                Object res = resource.getResource();
+                if ((res instanceof Bitmap) && (!((Bitmap) res).isRecycled())){
+                    ((Bitmap) res).recycle();
                     return true;
                 }
                 break;
             default:
-                break;
+                return recycleExtension(resource);
         }
+        return false;
+    }
+
+    public boolean recycleExtension(ImageResource<?> resource) {
         return false;
     }
 
@@ -92,13 +105,18 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         }
         switch (resource.getType()){
             case BITMAP:
-                if ((resource.getResource() instanceof Bitmap) && (!((Bitmap) resource.getResource()).isRecycled())){
-                    return new TIBitmapDrawable(applicationContext.getResources(), (Bitmap) resource.getResource()).setSkipException(skipDrawingException);
+                Object res = resource.getResource();
+                if ((res instanceof Bitmap) && (!((Bitmap) res).isRecycled())){
+                    return new TIBitmapDrawable(applicationContext.getResources(), (Bitmap) res).setSkipException(skipDrawingException);
                 }
                 break;
             default:
-                break;
+                return toDrawableExtension(applicationContext, resource, skipDrawingException);
         }
+        return null;
+    }
+
+    public Drawable toDrawableExtension(Context applicationContext, ImageResource<?> resource, boolean skipDrawingException){
         return null;
     }
 
@@ -109,16 +127,48 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         }
         switch (resource.getType()){
             case BITMAP:
-                if ((resource.getResource() instanceof Bitmap) && (!((Bitmap) resource.getResource()).isRecycled())){
-                    Bitmap copy = BitmapUtils.copy((Bitmap)resource.getResource(), false);
+                Object res = resource.getResource();
+                if ((res instanceof Bitmap) && (!((Bitmap) res).isRecycled())){
+                    Bitmap copy = BitmapUtils.copy((Bitmap)res, false);
                     if (copy != null) {
                         return new ImageResource<>(ImageResource.Type.BITMAP, copy);
                     }
                 }
                 break;
             default:
-                break;
+                return copyExtension(resource);
         }
         return null;
     }
+
+    public ImageResource<?> copyExtension(ImageResource<?> resource){
+        return null;
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+    public int byteCountOf(ImageResource<?> resource){
+        if (resource == null || resource.getResource() == null){
+            return 0;
+        }
+        switch (resource.getType()){
+            case BITMAP:
+                Object res = resource.getResource();
+                if ((res instanceof Bitmap) && (!((Bitmap) res).isRecycled())){
+                    //calculate
+                    if (DeviceUtils.getVersionSDK() >= 12) {
+                        return ((Bitmap) res).getByteCount();
+                    }
+                    return ((Bitmap) res).getRowBytes() * ((Bitmap) res).getHeight();
+                }
+                break;
+            default:
+                return byteCountOfExtension(resource);
+        }
+        return 0;
+    }
+
+    public int byteCountOfExtension(ImageResource<?> resource){
+        return 0;
+    }
+
 }

@@ -67,7 +67,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
         }
 
         manager.getLogger().i("[MemoryCacheServer]initial, memoryCacheSize:" + (memoryCacheSize / 1024) + "K");
-        imageResourceCacheModule = new ImageResourceCacheModule(memoryCacheSize, manager.getLogger());
+        imageResourceCacheModule = new ImageResourceCacheModule(memoryCacheSize, manager.getServerSettings().getImageResourceHandler(), manager.getLogger());
     }
 
     public void put(String key, ImageResource<?> resource){
@@ -75,27 +75,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
             manager.getLogger().e("MemoryCacheServer can't put with null key");
             return;
         }
-        if (!manager.getServerSettings().getImageResourceHandler().isValid(resource)){
-            manager.getLogger().e("MemoryCacheServer can't put with null or illegal resource");
-            return;
-        }
-        switch (resource.getType()){
-            case BITMAP:
-                if (resource.getResource() instanceof Bitmap) {
-                    imageResourceCacheModule.put(key, (Bitmap) resource.getResource());
-                    //otherCache.remove(key);//remove from other cache
-                }else{
-                    throw new RuntimeException("[TILoader:MemoryCacheServer]illegal ImageResource, type:<" + resource.getType().toString() + ">, resource:<" + resource.getResource().getClass().getName() + ">");
-                }
-                break;
-//            case OTHER:
-//                otherCache.put(key, (Bitmap) resource.getResource());
-//                imageResourceCacheModule.remove(key);//remove from other cache
-//                break;
-            default:
-                manager.getLogger().e("MemoryCacheServer can't put this kind of ImageResource, type:<" + resource.getType().toString() + ">");
-                break;
-        }
+        imageResourceCacheModule.put(key, resource);
     }
 
     public ImageResource<?> get(String key){
@@ -103,16 +83,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
             manager.getLogger().e("MemoryCacheServer can't get with null key");
             return null;
         }
-        Object resource = null;
-        resource = imageResourceCacheModule.get(key);
-        if (resource != null){
-            return new ImageResource<>(ImageResource.Type.BITMAP, resource);
-        }
-//        resource = otherCache.get(key);
-//        if (resource != null){
-//            return new ImageResource<>(ImageResource.Type.OTHER, resource);
-//        }
-        return null;
+        return imageResourceCacheModule.get(key);
     }
 
     public void remove(String key){
@@ -121,12 +92,10 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
             return;
         }
         imageResourceCacheModule.remove(key);
-//        otherCache.remove(key);
     }
 
     public void removeAll(){
         imageResourceCacheModule.removeAll();
-//        otherCache.removeAll();
     }
 
     @Override

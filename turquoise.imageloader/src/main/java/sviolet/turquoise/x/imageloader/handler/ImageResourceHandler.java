@@ -69,4 +69,11 @@ public interface ImageResourceHandler {
      */
     ImageResource<?> copy(ImageResource<?> resource);
 
+    /**
+     * get the byte count of ImageResource (memory)
+     * @param resource ImageResource
+     * @return byte count of ImageResource
+     */
+    int byteCountOf(ImageResource<?> resource);
+
 }

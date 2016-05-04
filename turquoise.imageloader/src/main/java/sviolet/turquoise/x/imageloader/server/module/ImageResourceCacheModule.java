@@ -20,29 +20,31 @@
 package sviolet.turquoise.x.imageloader.server.module;
 
 import android.annotation.SuppressLint;
-import android.graphics.Bitmap;
 
 import java.util.Map;
 
 import sviolet.turquoise.common.compat.CompatLruCache;
-import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
 
 /**
- * <p>bitmap cache for TILoader</p>
+ * <p>ImageResource cache for TILoader</p>
  *
  * Created by S.Violet on 2016/3/15.
  */
-public class ImageResourceCacheModule extends CompatLruCache<String, Bitmap> {
+public class ImageResourceCacheModule extends CompatLruCache<String, ImageResource> {
 
+    private ImageResourceHandler imageResourceHandler;
     private TLogger logger;
 
     /**
      * @param cacheSize cache size
      * @param logger logger
      */
-    public ImageResourceCacheModule(int cacheSize, TLogger logger) {
+    public ImageResourceCacheModule(int cacheSize, ImageResourceHandler imageResourceHandler, TLogger logger) {
         super(cacheSize);
+        this.imageResourceHandler = imageResourceHandler;
         this.logger = logger;
     }
 
@@ -51,45 +53,43 @@ public class ImageResourceCacheModule extends CompatLruCache<String, Bitmap> {
      */
 
     @Override
-    public Bitmap get(String key) {
+    public ImageResource get(String key) {
         if (key == null){
             throw new NullPointerException("[TILoader:ImageResourceCacheModule]key must not be null");
         }
-        //return bitmap
-        Bitmap bitmap = super.get(key);
-        //exclude recycled bitmap
-        if (bitmap != null && bitmap.isRecycled()){
+        //return ImageResource
+        ImageResource imageResource = super.get(key);
+        //exclude invalid ImageResource
+        if (!imageResourceHandler.isValid(imageResource)){
             remove(key);
             return null;
         }
-        return bitmap;
+        return imageResource;
     }
 
     @Override
-    public Bitmap put(String key, Bitmap value) {
+    public ImageResource put(String key, ImageResource value) {
         if (key == null){
             throw new NullPointerException("[TILoader:ImageResourceCacheModule]key must not be null");
         }
-        //exclude null or recycled bitmap
-        if (value == null || value.isRecycled()) {
-            logger.e("ImageResourceCacheModule trying to put a null or recycled bitmap, key:" + key);
+        //exclude invalid ImageResource
+        if (!imageResourceHandler.isValid(value)) {
+            logger.e("ImageResourceCacheModule trying to put an invalid ImageResource, key:" + key);
             return null;
         }
-        //remove previous bitmap with same key
+        //remove previous ImageResource with same key
         remove(key);
         return super.put(key, value);
     }
 
     @Override
-    public Bitmap remove(String key) {
+    public ImageResource remove(String key) {
         if (key == null){
             throw new NullPointerException("[TILoader:ImageResourceCacheModule]key must not be null");
         }
-        Bitmap bitmap = super.remove(key);
+        ImageResource imageResource = super.remove(key);
         //recycle
-        if (bitmap != null && !bitmap.isRecycled()) {
-            bitmap.recycle();
-        }
+        imageResourceHandler.recycle(imageResource);
         //return null
         return null;
     }
@@ -98,10 +98,9 @@ public class ImageResourceCacheModule extends CompatLruCache<String, Bitmap> {
         int counter = 0;
 
         //recycle all
-        for (Map.Entry<String, Bitmap> entry : getMap().entrySet()) {
-            Bitmap bitmap = entry.getValue();
-            if (bitmap != null && !bitmap.isRecycled()) {
-                bitmap.recycle();
+        for (Map.Entry<String, ImageResource> entry : getMap().entrySet()) {
+            ImageResource imageResource = entry.getValue();
+            if (imageResourceHandler.recycle(imageResource)) {
                 counter++;
             }
         }
@@ -136,21 +135,21 @@ public class ImageResourceCacheModule extends CompatLruCache<String, Bitmap> {
     protected void trimToSize(int maxSize) {
         while (true) {
             String key;
-            Bitmap value;
+            ImageResource value;
 
             synchronized (this) {
                 if (size() < 0 || (getMap().isEmpty() && size() != 0)) {
-                    throw new IllegalStateException("[TILoader:ImageResourceCacheModule]sizeOf: is reporting inconsistent results!");
+                    throw new IllegalStateException("[TILoader:ImageResourceCacheModule]byteCountOf: is reporting inconsistent results!");
                 }
 
                 if (size() <= maxSize) {
                     break;
                 }
 
-                Map.Entry<String, Bitmap> toEvict = null;
+                Map.Entry<String, ImageResource> toEvict = null;
 
                 //get earliest item
-                for (Map.Entry<String, Bitmap> entry : getMap().entrySet()) {
+                for (Map.Entry<String, ImageResource> entry : getMap().entrySet()) {
                     toEvict = entry;
                     break;
                 }
@@ -170,9 +169,7 @@ public class ImageResourceCacheModule extends CompatLruCache<String, Bitmap> {
             entryRemoved(true, key, value, null);
 
             //recycle
-            if (value != null && !value.isRecycled()) {
-                value.recycle();
-            }
+            imageResourceHandler.recycle(value);
         }
         //打印内存使用情况
         logger.d(getMemoryReport());
@@ -180,14 +177,8 @@ public class ImageResourceCacheModule extends CompatLruCache<String, Bitmap> {
 
     @SuppressLint("NewApi")
     @Override
-    protected int sizeOf(String key, Bitmap value) {
-        if (value == null || value.isRecycled())
-            return 0;
-        //calculate
-        if (DeviceUtils.getVersionSDK() >= 12) {
-            return value.getByteCount();
-        }
-        return value.getRowBytes() * value.getHeight();
+    protected int sizeOf(String key, ImageResource value) {
+        return imageResourceHandler.byteCountOf(value);
     }
 
 }

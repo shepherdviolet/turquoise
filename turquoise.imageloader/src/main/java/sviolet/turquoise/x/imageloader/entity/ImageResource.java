@@ -43,6 +43,7 @@ public class ImageResource <T> {
     }
 
     public enum Type{
-        BITMAP
+        BITMAP,
+        GIF
     }
 }
