@@ -191,6 +191,9 @@ public abstract class AbsStub implements Stub {
                 state.compareAndSet(State.LOAD_CANCELED, State.LOADING)){
             reloadTimes = 0;
             controller.execute(this);
+            if (!getLogger().isNullLogger()) {
+                getLogger().d("[AbsStub]load: key:" + getKey());
+            }
             return true;
         }
 
@@ -221,6 +224,9 @@ public abstract class AbsStub implements Stub {
                     state.compareAndSet(State.LOAD_CANCELED, State.LOADING)){
                 reloadTimes++;
                 controller.execute(this);
+                if (!getLogger().isNullLogger()) {
+                    getLogger().d("[AbsStub]reload: key:" + getKey());
+                }
                 return true;
             }
         }

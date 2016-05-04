@@ -49,6 +49,9 @@ public class NetEngine extends Engine {
         }
         //waiting for result
         int result = callback.getResult();
+        if (!getComponentManager().getLogger().isNullLogger()) {
+            getComponentManager().getLogger().d("[NetEngine]get result from handler, task:" + task);
+        }
         switch(result){
             //load succeed
             case EngineCallback.RESULT_SUCCEED:
