@@ -74,7 +74,6 @@ public class MyApplication extends TApplication {
 //                .setNetworkConnectTimeout(3000)//设置网络加载连接超时
 //                .setNetworkReadTimeout(3000)//设置网络加载读取超时
 //                .setNetworkLoadHandler(new MyNetworkLoadHandler())//自定义实现网络加载
-//                .setDecodeHandler(new MyDecodeHandler())//自定义实现图片解码
 //                .setExceptionHandler(new MyExceptionHandler())//自定义实现异常处理
 //                .setBackgroundColor(0xFFF0F0F0)//自定义背景色(作为加载目标图的背景)
 //                .setBackgroundImageResId(R.mipmap.async_image_loading)//自定义背景图(作为加载目标图的背景, 不常用)

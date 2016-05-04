@@ -82,7 +82,6 @@ public class BasicActivity extends TActivity {
 //                .setNetworkReadTimeout(3000)//网络读取超时ms
 //                .setImageAppearDuration(400)//加载成功后, 图片渐渐出现动画的时间ms
 //                .setNetworkLoadHandler(new MyNetworkLoadHandler())//自定义实现网络加载
-//                .setDecodeHandler(new MyDecodeHandler())//自定义实现图片解码
 //                .setBackgroundColor(0xFFF0F0F0)//自定义背景色(作为加载目标图的背景)
 //                .setBackgroundImageResId(R.mipmap.async_image_loading)//自定义背景图(作为加载目标图的背景, 不常用)
 ////                .setLoadingDrawableFactory(new MyLoadingDrawableFactory())//方式1:自定义实现加载图(完全自己实现)
