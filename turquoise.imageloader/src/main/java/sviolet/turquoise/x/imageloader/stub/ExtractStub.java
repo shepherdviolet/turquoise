@@ -73,15 +73,13 @@ class ExtractStub extends AbsStub {
             onDestroy();
             return;
         }
-        //copy image
-        ImageResource<?> newResource = controller.getServerSettings().getImageResourceHandler().copy(resource);
         //check valid
-        if (!controller.getServerSettings().getImageResourceHandler().isValid(newResource)){
+        if (!controller.getServerSettings().getImageResourceHandler().isValid(resource)){
             shiftSucceedToFailed();
             return;
         }
         if (listener != null){
-            listener.onLoadSucceed(getUrl(), getParams(), newResource);
+            listener.onLoadSucceed(getUrl(), getParams(), resource);
         }else{
             getLogger().e("[ExtractStub]missing listener, can't callback(succeed), key:" + getKey());
         }

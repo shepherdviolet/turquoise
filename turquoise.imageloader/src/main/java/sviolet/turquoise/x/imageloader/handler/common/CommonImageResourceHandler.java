@@ -120,32 +120,8 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         return null;
     }
 
-    @Override
-    public ImageResource<?> copy(ImageResource<?> resource) {
-        if (resource == null || resource.getResource() == null){
-            return null;
-        }
-        switch (resource.getType()){
-            case BITMAP:
-                Object res = resource.getResource();
-                if ((res instanceof Bitmap) && (!((Bitmap) res).isRecycled())){
-                    Bitmap copy = BitmapUtils.copy((Bitmap)res, false);
-                    if (copy != null) {
-                        return new ImageResource<>(ImageResource.Type.BITMAP, copy);
-                    }
-                }
-                break;
-            default:
-                return copyExtension(resource);
-        }
-        return null;
-    }
-
-    public ImageResource<?> copyExtension(ImageResource<?> resource){
-        return null;
-    }
-
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+    @Override
     public int byteCountOf(ImageResource<?> resource){
         if (resource == null || resource.getResource() == null){
             return 0;

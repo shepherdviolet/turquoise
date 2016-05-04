@@ -21,6 +21,7 @@ package sviolet.turquoise.x.imageloader.server;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.node.Task;
+import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  * <p>Disk Load Engine</p>
@@ -37,7 +38,10 @@ public class DiskEngine extends Engine {
             response(task);
             return;
         }
-        getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
+        //skip memory cache if in extract mode
+        if (task.getType() != Stub.Type.EXTRACT) {
+            getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
+        }
         task.setState(Task.State.SUCCEED);
         response(task);
     }

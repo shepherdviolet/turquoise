@@ -63,13 +63,6 @@ public interface ImageResourceHandler {
     Drawable toDrawable(Context applicationContext, ImageResource<?> resource, boolean skipDrawingException);
 
     /**
-     * copy ImageResource
-     * @param resource ImageResource
-     * @return new ImageResource with new resource(new Bitmap/...)
-     */
-    ImageResource<?> copy(ImageResource<?> resource);
-
-    /**
      * get the byte count of ImageResource (memory)
      * @param resource ImageResource
      * @return byte count of ImageResource

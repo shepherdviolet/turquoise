@@ -181,6 +181,10 @@ public class NodeControllerImpl extends NodeController {
         if (newStubGroup) {
             Task task = manager.getServerSettings().getTaskFactory().newTask(this, stub);
             task.setNodeSettings(settings);
+            //skip load from memory cache if in extract mode
+            if (task.getType() == Stub.Type.EXTRACT){
+                task.setServerType(Server.Type.DISK_ENGINE);
+            }
             executeTask(task);
         }
     }

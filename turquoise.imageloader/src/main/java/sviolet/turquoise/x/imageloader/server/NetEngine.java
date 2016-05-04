@@ -25,6 +25,7 @@ import java.io.InputStream;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
+import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  * <p>Net Load Engine</p>
@@ -103,8 +104,11 @@ public class NetEngine extends Engine {
             responseFailed(task);
             return;
         }
-        //cache by memory
-        getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
+        //skip memory cache if in extract mode
+        if (task.getType() != Stub.Type.EXTRACT) {
+            //cache by memory
+            getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
+        }
         responseSucceed(task);
     }
 
@@ -133,8 +137,11 @@ public class NetEngine extends Engine {
             responseFailed(task);
             return;
         }
-        //cache by memory
-        getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
+        //skip memory cache if in extract mode
+        if (task.getType() != Stub.Type.EXTRACT) {
+            //cache by memory
+            getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
+        }
         responseSucceed(task);
     }
 
