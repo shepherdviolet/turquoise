@@ -129,7 +129,8 @@ public interface NetworkLoadHandler {
         }
 
         public void setLength(int length) {
-            this.length = length;
+            if (this.type != ResultType.NULL)
+                this.length = length;
         }
 
         @Override

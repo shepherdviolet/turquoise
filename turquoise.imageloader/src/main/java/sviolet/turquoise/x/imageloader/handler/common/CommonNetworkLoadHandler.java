@@ -56,12 +56,12 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
     public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
         try{
             //load
-            InputStream inputStream = load(new URL(taskInfo.getUrl()), null, 0, callback, connectTimeout, readTimeout);
-            if (inputStream == null){
+            Result result = load(new URL(taskInfo.getUrl()), null, 0, callback, connectTimeout, readTimeout);
+            if (result == null){
                 throw new Exception("[CommonNetworkLoadHandler]get a null inputStream");
             }
             //load succeed, callback
-            callback.setResultSucceed(new Result(inputStream));
+            callback.setResultSucceed(result);
         } catch (Exception e) {
             //load canceled/failed, callback
             if (callback.isCancelling()){
@@ -77,9 +77,9 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
      * @param prevUrl last url
      * @param redirectTimes redirect times
      * @param callback callback
-     * @return InputStream
+     * @return Result
      */
-    private InputStream load(URL url, URL prevUrl, int redirectTimes, EngineCallback<Result> callback, long connectTimeout, long readTimeout) throws Exception {
+    private Result load(URL url, URL prevUrl, int redirectTimes, EngineCallback<Result> callback, long connectTimeout, long readTimeout) throws Exception {
         //skip when redirect too many times
         if (redirectTimes >= MAXIMUM_REDIRECT_TIMES) {
             throw new Exception("[CommonNetworkLoadHandler]redirect times > maximum(" + MAXIMUM_REDIRECT_TIMES + ")");
@@ -121,7 +121,11 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
             final int statusCode = connection.getResponseCode();
             if (statusCode / 100 == 2) {
                 //succeed
-                return connection.getInputStream();
+                Result result = new Result(connection.getInputStream());
+                if (CheckUtils.isEmpty(connection.getContentEncoding())){
+                    result.setLength(connection.getContentLength());
+                }
+                return result;
             } else if (statusCode / 100 == 3) {
                 //redirect
                 String redirectUrl = connection.getHeaderField("Location");
