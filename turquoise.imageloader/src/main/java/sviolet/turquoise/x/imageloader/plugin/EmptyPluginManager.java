@@ -24,6 +24,8 @@ import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
 import sviolet.turquoise.x.imageloader.server.Engine;
 
 /**
+ * <p>Empty plugin interface</p>
+ *
  * Created by S.Violet on 2016/5/4.
  */
 public class EmptyPluginManager implements PluginInterface {

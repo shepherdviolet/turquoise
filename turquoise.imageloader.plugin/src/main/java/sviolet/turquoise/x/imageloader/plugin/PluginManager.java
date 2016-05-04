@@ -24,20 +24,33 @@ import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
 import sviolet.turquoise.x.imageloader.server.Engine;
 
 /**
- * <p>Plugin interface</p>
- *
- * Created by S.Violet on 2016/5/4.
+ * <p>TILoader will automatic load this PluginManager, if your module dependent on module "turquoise.imageloader.plugin"</p>
  */
-public interface PluginInterface {
+public class PluginManager implements PluginInterface {
 
-    Engine newEnhancedMemoryEngine();
+    @Override
+    public Engine newEnhancedMemoryEngine() {
+        return null;
+    }
 
-    Engine newEnhancedDiskEngine();
+    @Override
+    public Engine newEnhancedDiskEngine() {
+        return null;
+    }
 
-    Engine newEnhancedNetEngine();
+    @Override
+    public Engine newEnhancedNetEngine() {
+        return null;
+    }
 
-    ImageResourceHandler newEnhancedImageResourceHandler();
+    @Override
+    public ImageResourceHandler newEnhancedImageResourceHandler() {
+        return null;
+    }
 
-    DecodeHandler newEnhancedDecodeHandler();
+    @Override
+    public DecodeHandler newEnhancedDecodeHandler() {
+        return null;
+    }
 
 }
