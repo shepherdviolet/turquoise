@@ -31,7 +31,7 @@
 > API level 10 above.<br/>
 > Dependency: turquoise, support-v7;<br/>
 > <br/>
-> Expansion Module of "turquoise", Add support for "support-v7".<br/>
+> Expansion Module of "turquoise", Add support for "support-v7". Optional module.<br/>
 > <br/>
 > 1.Add support for AppCompatActivity.<br/>
 > 2.Add support for RecyclerView.<br/>
@@ -83,6 +83,14 @@
         TILoader.node(this).load(url, params, imageView);
 
 ```
+
+## Module "turquoise.imageloader.plugin"
+> API level 11 above.<br/>
+> Dependency: turquoise, turquoise.imageloader, android-gif-drawable;<br/>
+> <br/>
+> Expansion Module of "turquoise.imageloader", Add support for GIF. Optional module.<br/>
+> <br/>
+> 1.Add support for GIF.<br/>
 
 ## Package Releases (aar/source)
 > https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
