@@ -22,11 +22,9 @@ package sviolet.turquoise.x.imageloader.plugin.handler;
 import android.content.Context;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import pl.droidsonroids.gif.GifDrawable;
 import sviolet.turquoise.util.conversion.ByteUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
