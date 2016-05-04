@@ -21,6 +21,8 @@ package sviolet.turquoise.x.imageloader.plugin;
 
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
+import sviolet.turquoise.x.imageloader.plugin.handler.EnhancedDecodeHandler;
+import sviolet.turquoise.x.imageloader.plugin.handler.EnhancedImageResourceHandler;
 import sviolet.turquoise.x.imageloader.server.Engine;
 
 /**
@@ -45,12 +47,12 @@ public class PluginManager implements PluginInterface {
 
     @Override
     public ImageResourceHandler newEnhancedImageResourceHandler() {
-        return null;
+        return new EnhancedImageResourceHandler();
     }
 
     @Override
     public DecodeHandler newEnhancedDecodeHandler() {
-        return null;
+        return new EnhancedDecodeHandler();
     }
 
 }
