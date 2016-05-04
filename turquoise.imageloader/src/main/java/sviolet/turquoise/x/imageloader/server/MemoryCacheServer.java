@@ -106,6 +106,10 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
         imageResourceCacheModule.removeAll();
     }
 
+    public String getMemoryReport() {
+        return imageResourceCacheModule.getMemoryReport();
+    }
+
     @Override
     public Type getServerType() {
         return Type.MEMORY_CACHE;

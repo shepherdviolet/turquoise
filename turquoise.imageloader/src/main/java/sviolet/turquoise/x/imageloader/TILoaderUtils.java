@@ -154,6 +154,15 @@ public class TILoaderUtils {
     }
 
     /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
+     * get report of memory cache
+     */
+    public static String getMemoryCacheReport(){
+        ComponentManager.getInstance().waitingForInitialized();
+        return ComponentManager.getInstance().getMemoryCacheServer().getMemoryReport();
+    }
+
+    /**
      * set TILoader's log level, valid only in SimpleTLoggerModule, it will be invalid if you use custom TLoggerModule
      * @param level e.g. TLogger.ERROR | TLogger.INFO
      * @return true:set succeed, module is SimpleTLoggerModule, false:set failed, module is not SimpleTLoggerModule
