@@ -236,16 +236,16 @@ public class ComponentManager {
     private void initPlugin(){
         try {
             Class plugin = Class.forName(PLUGIN_CLASS_NAME);
-            if (!plugin.isAssignableFrom(PluginInterface.class)){
-                getLogger().e("[ComponentManager]init plugin, PluginManager is not an instance of PluginInterface.class!!!");
+            if (!PluginInterface.class.isAssignableFrom(plugin)){
+                getLogger().e("[ComponentManager]init plugin: PluginManager is not an instance of PluginInterface.class!!!");
                 return;
             }
             pluginManager = (PluginInterface) plugin.newInstance();
-            getLogger().i("[ComponentManager]init plugin, succeed");
+            getLogger().i("[ComponentManager]init plugin: plugin load succeed");
         } catch (ClassNotFoundException e) {
-            getLogger().i("[ComponentManager]init plugin, plugin not found");
+            getLogger().i("[ComponentManager]init plugin: plugin not found");
         } catch (Exception e) {
-            getLogger().e("[ComponentManager]init plugin, error while instance PluginManager", e);
+            getLogger().e("[ComponentManager]init plugin: error while instance PluginManager", e);
         }
     }
 
