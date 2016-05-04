@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Environment;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 路径工具
@@ -54,6 +56,17 @@ public class DirectoryUtils {
      */
     public static File getNativeLibraryDir(Context context){
         return new File(context.getApplicationInfo().nativeLibraryDir);
+    }
+
+    /**
+     * 打开assets下的文件
+     * @param context context
+     * @param fileName 文件名(路径)
+     * @return InputStream
+     * @throws IOException IO异常
+     */
+    public static InputStream openAssets(Context context, String fileName) throws IOException {
+        return context.getAssets().open(fileName);
     }
 
     /************************
