@@ -28,12 +28,15 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.NodeFactory;
 import sviolet.turquoise.x.imageloader.node.NodeFactoryImpl;
+import sviolet.turquoise.x.imageloader.node.NodeManager;
+import sviolet.turquoise.x.imageloader.plugin.EmptyPluginManager;
+import sviolet.turquoise.x.imageloader.plugin.PluginInterface;
 import sviolet.turquoise.x.imageloader.server.DiskCacheServer;
-import sviolet.turquoise.x.imageloader.server.MemoryCacheServer;
 import sviolet.turquoise.x.imageloader.server.DiskEngine;
+import sviolet.turquoise.x.imageloader.server.Engine;
+import sviolet.turquoise.x.imageloader.server.MemoryCacheServer;
 import sviolet.turquoise.x.imageloader.server.MemoryEngine;
 import sviolet.turquoise.x.imageloader.server.NetEngine;
-import sviolet.turquoise.x.imageloader.node.NodeManager;
 
 /**
  * <p>manage all component</p>
@@ -57,6 +60,18 @@ public class ComponentManager {
     }
 
     /**********************************************************************************************
+     * Plugins
+     **********************************************************************************************/
+
+    private static final String PLUGIN_CLASS_NAME = "sviolet.turquoise.x.imageloader.plugin.PluginManager";
+
+    private PluginInterface pluginManager = new EmptyPluginManager();
+
+    public PluginInterface getPluginManager(){
+        return pluginManager;
+    }
+
+    /**********************************************************************************************
      * Nodes
      **********************************************************************************************/
 
@@ -75,11 +90,11 @@ public class ComponentManager {
      * Components
      **********************************************************************************************/
 
-    private final MemoryCacheServer memoryCacheServer = new MemoryCacheServer();
-    private final DiskCacheServer diskCacheServer = new DiskCacheServer();
-    private final MemoryEngine memoryEngine = new MemoryEngine();
-    private final DiskEngine diskEngine = new DiskEngine();
-    private final NetEngine netEngine = new NetEngine();
+    private MemoryCacheServer memoryCacheServer;
+    private DiskCacheServer diskCacheServer;
+    private Engine memoryEngine;
+    private Engine diskEngine;
+    private Engine netEngine;
 
     private ServerSettings serverSettings;
 
@@ -106,15 +121,15 @@ public class ComponentManager {
         return diskCacheServer;
     }
 
-    public MemoryEngine getMemoryEngine(){
+    public Engine getMemoryEngine(){
         return memoryEngine;
     }
 
-    public DiskEngine getDiskEngine() {
+    public Engine getDiskEngine() {
         return diskEngine;
     }
 
-    public NetEngine getNetEngine() {
+    public Engine getNetEngine() {
         return netEngine;
     }
 
@@ -185,9 +200,30 @@ public class ComponentManager {
      * initialize process
      */
     private void onInitialize(){
+        //default serverSettings
         if (serverSettings == null) {
             serverSettings = new ServerSettings.Builder().build();
         }
+
+        //try to init plugin
+        if (serverSettings.isPluginEnabled()) {
+            initPlugin();
+        }
+
+        //instance components
+        memoryCacheServer = new MemoryCacheServer();
+        diskCacheServer = new DiskCacheServer();
+        memoryEngine = getPluginManager().newEnhancedMemoryEngine();
+        if (memoryEngine == null)
+            memoryEngine = new MemoryEngine();
+        diskEngine = getPluginManager().newEnhancedDiskEngine();
+        if (diskEngine == null)
+            diskEngine = new DiskEngine();
+        netEngine = getPluginManager().newEnhancedNetEngine();
+        if (netEngine == null)
+            netEngine = new NetEngine();
+
+        //init components
         serverSettings.init(ComponentManager.getInstance());
         memoryCacheServer.init(ComponentManager.getInstance());
         diskCacheServer.init(ComponentManager.getInstance());
@@ -195,6 +231,22 @@ public class ComponentManager {
         diskEngine.init(ComponentManager.getInstance());
         netEngine.init(ComponentManager.getInstance());
         getLogger().i("[ComponentManager]TILoader initialized");
+    }
+
+    private void initPlugin(){
+        try {
+            Class plugin = Class.forName(PLUGIN_CLASS_NAME);
+            if (!plugin.isAssignableFrom(PluginInterface.class)){
+                getLogger().e("[ComponentManager]init plugin, PluginManager is not an instance of PluginInterface.class!!!");
+                return;
+            }
+            pluginManager = (PluginInterface) plugin.newInstance();
+            getLogger().i("[ComponentManager]init plugin, succeed");
+        } catch (ClassNotFoundException e) {
+            getLogger().i("[ComponentManager]init plugin, plugin not found");
+        } catch (Exception e) {
+            getLogger().e("[ComponentManager]init plugin, error while instance PluginManager", e);
+        }
     }
 
     /**

@@ -51,8 +51,17 @@ public class DiskCacheServer extends DiskCacheModule {
             return null;
         }
         //decode
-        ImageResource<?> imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                task, targetFile, getComponentManager().getLogger());
+        ImageResource<?> imageResource = null;
+        try {
+            imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                    task, targetFile, getComponentManager().getLogger());
+            if (imageResource == null){
+                getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                        new Exception("[TILoader:DiskEngine]decoding failed, return null ImageResource"), getComponentManager().getLogger());
+            }
+        }catch(Exception e){
+            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
+        }
         //release
         release();
         return imageResource;

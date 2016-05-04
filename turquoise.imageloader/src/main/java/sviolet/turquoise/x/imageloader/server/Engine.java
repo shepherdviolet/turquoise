@@ -141,11 +141,6 @@ public abstract class Engine implements ComponentManager.Component, Server {
     }
 
     protected DecodeHandler getDecodeHandler(Task task){
-        if (task.getNodeSettings() != null){
-            if (task.getNodeSettings().getDecodeHandler() != null){
-                return task.getNodeSettings().getDecodeHandler();
-            }
-        }
         return getComponentManager().getServerSettings().getDecodeHandler();
     }
 

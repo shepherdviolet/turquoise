@@ -158,7 +158,7 @@ public class NetEngine extends Engine {
         //check valid
         if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
             getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[TILoader:NetEngine]decoding failed, return null ImageResource"), getComponentManager().getLogger());
+                    new Exception("[TILoader:NetEngine]decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
             return null;
         }
         return imageResource;

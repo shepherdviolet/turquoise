@@ -42,12 +42,12 @@ public class CommonDecodeHandler extends DecodeHandler {
         //routine decoding
         Bitmap bitmap = BitmapUtils.decodeFromByteArray(data,taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getBitmapConfig());
         if (bitmap == null)
-            return null;
+            throw new RuntimeException("[TILoader:CommonDecodeHandler]decoding failed, illegal image data");
         //exact decoding
         if (taskInfo.getParams().isExactDecoding()){
             bitmap = BitmapUtils.scaleTo(bitmap, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), true);
             if (bitmap == null)
-                return null;
+                throw new RuntimeException("[TILoader:CommonDecodeHandler]exact decoding: scale failed");
         }
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
@@ -57,12 +57,12 @@ public class CommonDecodeHandler extends DecodeHandler {
         //routine decoding
         Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getBitmapConfig());
         if (bitmap == null)
-            return null;
+            throw new RuntimeException("[TILoader:CommonDecodeHandler]decoding failed, illegal image data");
         //exact decoding
         if (taskInfo.getParams().isExactDecoding()){
             bitmap = BitmapUtils.scaleTo(bitmap, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), true);
             if (bitmap == null)
-                return null;
+                throw new RuntimeException("[TILoader:CommonDecodeHandler]exact decoding: scale failed");
         }
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }

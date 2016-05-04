@@ -49,7 +49,6 @@ public class NodeSettings implements Destroyable {
         //handler////////////////////////////////////////////////////////////////////////////
 
         private NetworkLoadHandler networkLoadHandler;
-        private DecodeHandler decodeHandler;
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
@@ -201,14 +200,6 @@ public class NodeSettings implements Destroyable {
             return this;
         }
 
-        /**
-         * @param decodeHandler custom decode implementation, for node only
-         */
-        public Builder setDecodeHandler(DecodeHandler decodeHandler){
-            values.decodeHandler = decodeHandler;
-            return this;
-        }
-
         //configurable factory////////////////////////////////////////////////////////////////////////////
 
         /**
@@ -324,10 +315,6 @@ public class NodeSettings implements Destroyable {
 
     public NetworkLoadHandler getNetworkLoadHandler(){
         return values.networkLoadHandler;
-    }
-
-    public DecodeHandler getDecodeHandler(){
-        return values.decodeHandler;
     }
 
     //configurable factory////////////////////////////////////////////////////////////////////////////

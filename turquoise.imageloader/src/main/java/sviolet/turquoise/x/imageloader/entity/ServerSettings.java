@@ -57,6 +57,7 @@ public class ServerSettings implements ComponentManager.Component{
 
         //settings////////////////////////////////////////////////////////////////////////////
 
+        private boolean pluginEnabled = DEFAULT_PLUGIN_ENABLED;
         private boolean logEnabled = DEFAULT_LOG_ENABLED;
         private boolean wipeDiskCacheWhenUpdate = DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE;
         private int memoryCacheSize = DEFAULT_MEMORY_CACHE_SIZE;
@@ -70,9 +71,12 @@ public class ServerSettings implements ComponentManager.Component{
 
         //handler////////////////////////////////////////////////////////////////////////////
 
-        private ImageResourceHandler imageResourceHandler = new CommonImageResourceHandler();
+        private ImageResourceHandler imageResourceHandler;
+        private DecodeHandler decodeHandler;
+
+        //configurable handler////////////////////////////////////////////////////////////////////////////
+
         private NetworkLoadHandler networkLoadHandler = new CommonNetworkLoadHandler();
-        private DecodeHandler decodeHandler = new CommonDecodeHandler();
         private ExceptionHandler exceptionHandler = new CommonExceptionHandler();
 
         //configurable factory////////////////////////////////////////////////////////////////////////////
@@ -227,17 +231,16 @@ public class ServerSettings implements ComponentManager.Component{
             return this;
         }
 
-        //handler////////////////////////////////////////////////////////////////////////////
-
         /**
-         * @param imageResourceHandler custom ImageResourceHandler
+         * if true, TILoader will load plugin : module "turquoise.imageloader.plugin"
+         * @param enabled true by default
          */
-        public Builder setImageResourceHandler(ImageResourceHandler imageResourceHandler){
-            if (imageResourceHandler != null){
-                values.imageResourceHandler = imageResourceHandler;
-            }
+        public Builder setPluginEnabled(boolean enabled){
+            values.pluginEnabled = enabled;
             return this;
         }
+
+        //configurable handler////////////////////////////////////////////////////////////////////////////
 
         /**
          * @param networkLoadHandler custom network load implementation
@@ -245,16 +248,6 @@ public class ServerSettings implements ComponentManager.Component{
         public Builder setNetworkLoadHandler(NetworkLoadHandler networkLoadHandler){
             if (networkLoadHandler != null){
                 values.networkLoadHandler = networkLoadHandler;
-            }
-            return this;
-        }
-
-        /**
-         * @param decodeHandler custom decode implementation
-         */
-        public Builder setDecodeHandler(DecodeHandler decodeHandler){
-            if (decodeHandler != null){
-                values.decodeHandler = decodeHandler;
             }
             return this;
         }
@@ -361,6 +354,7 @@ public class ServerSettings implements ComponentManager.Component{
 
     //DEFAULT/////////////////////////////////////////////////////////////////////////////
 
+    public static final boolean DEFAULT_PLUGIN_ENABLED = true;
     public static final boolean DEFAULT_LOG_ENABLED = true;
     public static final boolean DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE = false;
     public static final int DEFAULT_MEMORY_CACHE_SIZE = 0;
@@ -385,17 +379,34 @@ public class ServerSettings implements ComponentManager.Component{
 
     @Override
     public void init(ComponentManager manager) {
+        //setting
         this.manager = manager;
-        values.taskFactory.init(manager);
+
+        //instance
+        values.imageResourceHandler = manager.getPluginManager().newEnhancedImageResourceHandler();
+        if (values.imageResourceHandler == null){
+            values.imageResourceHandler = new CommonImageResourceHandler();
+        }
+        values.decodeHandler = manager.getPluginManager().newEnhancedDecodeHandler();
+        if (values.decodeHandler == null){
+            values.decodeHandler = new CommonDecodeHandler();
+        }
         if (values.loadingDrawableFactory == null) {
             values.loadingDrawableFactory = new CommonLoadingDrawableFactory();
         }
         if(values.failedDrawableFactory == null) {
             values.failedDrawableFactory = new CommonFailedDrawableFactory();
         }
+
+        //init
+        values.taskFactory.init(manager);
     }
 
     //settings////////////////////////////////////////////////////////////////////////////
+
+    public boolean isPluginEnabled(){
+        return values.pluginEnabled;
+    }
 
     public boolean isLogEnabled(){
         return values.logEnabled;
@@ -452,12 +463,14 @@ public class ServerSettings implements ComponentManager.Component{
         return values.imageResourceHandler;
     }
 
-    public NetworkLoadHandler getNetworkLoadHandler(){
-        return values.networkLoadHandler;
-    }
-
     public DecodeHandler getDecodeHandler(){
         return values.decodeHandler;
+    }
+
+    //configurable handler////////////////////////////////////////////////////////////////////////////
+
+    public NetworkLoadHandler getNetworkLoadHandler(){
+        return values.networkLoadHandler;
     }
 
     public ExceptionHandler getExceptionHandler(){
