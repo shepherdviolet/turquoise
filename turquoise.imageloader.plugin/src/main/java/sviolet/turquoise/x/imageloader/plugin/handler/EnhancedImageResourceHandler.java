@@ -88,7 +88,7 @@ public class EnhancedImageResourceHandler extends CommonImageResourceHandler {
             case GIF:
                 Object res = resource.getResource();
                 if ((res instanceof EnhancedGifDrawable) && (!((EnhancedGifDrawable) res).isRecycled())){
-                    return (int) (((EnhancedGifDrawable) res).getInputSourceByteCount() + ((EnhancedGifDrawable) res).getAllocationByteCount());
+                    return (int) ((EnhancedGifDrawable) res).getByteCount();
                 }
                 break;
             default:
