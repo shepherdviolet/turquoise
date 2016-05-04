@@ -25,7 +25,7 @@ import android.graphics.Bitmap;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
-import sviolet.turquoise.x.imageloader.server.module.BitmapMemoryCacheModule;
+import sviolet.turquoise.x.imageloader.server.module.ImageResourceCacheModule;
 
 /**
  * <p>manage all memory caches</p>
@@ -39,8 +39,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
 
     private ComponentManager manager;
 
-    private BitmapMemoryCacheModule bitmapMemoryCacheModule;
-//    private OtherCache otherCache;
+    private ImageResourceCacheModule imageResourceCacheModule;
 
     @Override
     public void init(ComponentManager manager) {
@@ -68,7 +67,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
         }
 
         manager.getLogger().i("[MemoryCacheServer]initial, memoryCacheSize:" + (memoryCacheSize / 1024) + "K");
-        bitmapMemoryCacheModule = new BitmapMemoryCacheModule(memoryCacheSize, manager.getLogger());
+        imageResourceCacheModule = new ImageResourceCacheModule(memoryCacheSize, manager.getLogger());
     }
 
     public void put(String key, ImageResource<?> resource){
@@ -83,7 +82,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
         switch (resource.getType()){
             case BITMAP:
                 if (resource.getResource() instanceof Bitmap) {
-                    bitmapMemoryCacheModule.put(key, (Bitmap) resource.getResource());
+                    imageResourceCacheModule.put(key, (Bitmap) resource.getResource());
                     //otherCache.remove(key);//remove from other cache
                 }else{
                     throw new RuntimeException("[TILoader:MemoryCacheServer]illegal ImageResource, type:<" + resource.getType().toString() + ">, resource:<" + resource.getResource().getClass().getName() + ">");
@@ -91,7 +90,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
                 break;
 //            case OTHER:
 //                otherCache.put(key, (Bitmap) resource.getResource());
-//                bitmapMemoryCacheModule.remove(key);//remove from other cache
+//                imageResourceCacheModule.remove(key);//remove from other cache
 //                break;
             default:
                 manager.getLogger().e("MemoryCacheServer can't put this kind of ImageResource, type:<" + resource.getType().toString() + ">");
@@ -105,7 +104,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
             return null;
         }
         Object resource = null;
-        resource = bitmapMemoryCacheModule.get(key);
+        resource = imageResourceCacheModule.get(key);
         if (resource != null){
             return new ImageResource<>(ImageResource.Type.BITMAP, resource);
         }
@@ -121,12 +120,12 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
             manager.getLogger().e("MemoryCacheServer can't remove with null key");
             return;
         }
-        bitmapMemoryCacheModule.remove(key);
+        imageResourceCacheModule.remove(key);
 //        otherCache.remove(key);
     }
 
     public void removeAll(){
-        bitmapMemoryCacheModule.removeAll();
+        imageResourceCacheModule.removeAll();
 //        otherCache.removeAll();
     }
 
