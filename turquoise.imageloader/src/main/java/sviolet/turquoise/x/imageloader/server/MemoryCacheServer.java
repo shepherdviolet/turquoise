@@ -86,6 +86,14 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
         return imageResourceCacheModule.get(key);
     }
 
+    public ImageResource<?> extract(String key){
+        if (key == null){
+            manager.getLogger().e("MemoryCacheServer can't extract with null key");
+            return null;
+        }
+        return imageResourceCacheModule.extract(key);
+    }
+
     public void remove(String key){
         if (key == null){
             manager.getLogger().e("MemoryCacheServer can't remove with null key");

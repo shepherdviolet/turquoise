@@ -38,10 +38,7 @@ public class DiskEngine extends Engine {
             response(task);
             return;
         }
-        //skip memory cache if in extract mode
-        if (task.getType() != Stub.Type.EXTRACT) {
-            getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
-        }
+        getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
         task.setState(Task.State.SUCCEED);
         response(task);
     }

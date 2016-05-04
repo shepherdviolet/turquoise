@@ -181,10 +181,6 @@ public class NodeControllerImpl extends NodeController {
         if (newStubGroup) {
             Task task = manager.getServerSettings().getTaskFactory().newTask(this, stub);
             task.setNodeSettings(settings);
-            //skip load from memory cache if in extract mode
-            if (task.getType() == Stub.Type.EXTRACT){
-                task.setServerType(Server.Type.DISK_ENGINE);
-            }
             executeTask(task);
         }
     }
@@ -323,7 +319,13 @@ public class NodeControllerImpl extends NodeController {
 
         switch (task.getState()){
             case SUCCEED:
-                ImageResource<?> resource = manager.getMemoryCacheServer().get(task.getKey());
+                ImageResource<?> resource;
+                if (task.getType() == Stub.Type.EXTRACT){
+                    //image will remove from memory cache
+                    resource = manager.getMemoryCacheServer().extract(task.getKey());
+                }else{
+                    resource = manager.getMemoryCacheServer().get(task.getKey());
+                }
                 if (TILoaderUtils.isImageResourceValid(resource)){
                     stubGroup.onLoadSucceed(resource);
                 }else{

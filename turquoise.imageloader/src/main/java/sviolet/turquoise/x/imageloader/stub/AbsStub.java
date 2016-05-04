@@ -383,6 +383,9 @@ public abstract class AbsStub implements Stub {
 
     @Override
     public String getKey(){
+        if (getType() == Type.EXTRACT){
+            return "extract:" + getResourceKey() + params.getKeySuffix();
+        }
         return getResourceKey() + params.getKeySuffix();
     }
 

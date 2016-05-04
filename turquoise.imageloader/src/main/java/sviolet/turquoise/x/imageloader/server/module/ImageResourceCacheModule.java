@@ -82,6 +82,13 @@ public class ImageResourceCacheModule extends CompatLruCache<String, ImageResour
         return super.put(key, value);
     }
 
+    public ImageResource extract(String key){
+        if (key == null){
+            throw new NullPointerException("[TILoader:ImageResourceCacheModule]key must not be null");
+        }
+        return super.remove(key);
+    }
+
     @Override
     public ImageResource remove(String key) {
         if (key == null){

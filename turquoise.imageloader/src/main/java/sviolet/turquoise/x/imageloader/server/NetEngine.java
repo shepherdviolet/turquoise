@@ -104,11 +104,8 @@ public class NetEngine extends Engine {
             responseFailed(task);
             return;
         }
-        //skip memory cache if in extract mode
-        if (task.getType() != Stub.Type.EXTRACT) {
-            //cache by memory
-            getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
-        }
+        //cache by memory
+        getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
         responseSucceed(task);
     }
 
@@ -137,11 +134,8 @@ public class NetEngine extends Engine {
             responseFailed(task);
             return;
         }
-        //skip memory cache if in extract mode
-        if (task.getType() != Stub.Type.EXTRACT) {
-            //cache by memory
-            getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
-        }
+        //cache by memory
+        getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
         responseSucceed(task);
     }
 
