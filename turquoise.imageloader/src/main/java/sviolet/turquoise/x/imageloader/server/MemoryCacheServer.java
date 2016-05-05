@@ -34,8 +34,8 @@ import sviolet.turquoise.x.imageloader.server.module.ImageResourceCacheModule;
  */
 public class MemoryCacheServer implements ComponentManager.Component, Server {
 
-    private static final int MIN_MEMORY_CACHE_SIZE = 1024 * 1024 * 2;//minimum of memory Cache Size
-    private static final float DEFAULT_MEMORY_CACHE_PERCENT = 0.10f;//default percent
+    public static final int MIN_MEMORY_CACHE_SIZE = 1024 * 1024 * 2;//minimum of memory Cache Size
+    public static final float DEFAULT_MEMORY_CACHE_PERCENT = 0.10f;//default percent
 
     private ComponentManager manager;
 
