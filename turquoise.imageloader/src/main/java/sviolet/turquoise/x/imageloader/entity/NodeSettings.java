@@ -251,7 +251,7 @@ public class NodeSettings implements Destroyable {
     private static final int DEFAULT_MEMORY_QUEUE_SIZE = 10;
     private static final int DEFAULT_DISK_QUEUE_SIZE = 11;
     private static final int DEFAULT_NET_QUEUE_SIZE = 12;
-    private static final int DEFAULT_RELOAD_TIMES = 2;
+    private static final int DEFAULT_RELOAD_TIMES = -1;
     private static final int DEFAULT_IMAGE_APPEAR_DURATION = 400;
     public static final long DEFAULT_NETWORK_CONNECT_TIMEOUT = -1;//ms
     public static final long DEFAULT_NETWORK_READ_TIMEOUT = -1;//ms

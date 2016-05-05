@@ -142,6 +142,8 @@ public abstract class NodeController implements LifeCycle {
      */
     public abstract BackgroundDrawableFactory getBackgroundDrawableFactory();
 
+    public abstract int getReloadTimes();
+
     public abstract boolean isDestroyed();
 
     public abstract TLogger getLogger();

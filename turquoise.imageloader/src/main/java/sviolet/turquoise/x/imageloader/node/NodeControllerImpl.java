@@ -420,6 +420,14 @@ public class NodeControllerImpl extends NodeController {
     }
 
     @Override
+    public int getReloadTimes() {
+        if (getNodeSettings().getReloadTimes() < 0){
+            return getServerSettings().getReloadTimes();
+        }
+        return getNodeSettings().getReloadTimes();
+    }
+
+    @Override
     public boolean isDestroyed() {
         return status.get() == DESTROYED;
     }

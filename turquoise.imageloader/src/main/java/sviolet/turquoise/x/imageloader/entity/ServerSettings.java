@@ -67,6 +67,7 @@ public class ServerSettings implements ComponentManager.Component{
         private int networkLoadMaxThread = DEFAULT_NETWORK_LOAD_MAX_THREAD;
         private long networkConnectTimeout = DEFAULT_NETWORK_CONNECT_TIMEOUT;
         private long networkReadTimeout = DEFAULT_NETWORK_READ_TIMEOUT;
+        private int reloadTimes = DEFAULT_RELOAD_TIMES;
         private File diskCachePath = null;
 
         //handler////////////////////////////////////////////////////////////////////////////
@@ -232,6 +233,17 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
+         * @param reloadTimes reload times (reload when load failed), {@value DEFAULT_RELOAD_TIMES} by default
+         */
+        public Builder setReloadTimes(int reloadTimes){
+            if (reloadTimes < 0){
+                throw new RuntimeException("[NodeSettings]reloadTimes must >= 0");
+            }
+            values.reloadTimes = reloadTimes;
+            return this;
+        }
+
+        /**
          * if true, TILoader will load plugin : module "turquoise.imageloader.plugin"
          * @param enabled true by default
          */
@@ -364,6 +376,7 @@ public class ServerSettings implements ComponentManager.Component{
     public static final int DEFAULT_NETWORK_LOAD_MAX_THREAD = 3;
     public static final long DEFAULT_NETWORK_CONNECT_TIMEOUT = 3000;//ms
     public static final long DEFAULT_NETWORK_READ_TIMEOUT = 3000;//ms
+    private static final int DEFAULT_RELOAD_TIMES = 1;
 
     public static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
     public static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
@@ -455,6 +468,10 @@ public class ServerSettings implements ComponentManager.Component{
             values.diskCachePath = fetchDiskCachePath(manager.getApplicationContextImage(), DEFAULT_DISK_CACHE_PATH, null);
         }
         return values.diskCachePath;
+    }
+
+    public int getReloadTimes(){
+        return values.reloadTimes;
     }
 
     //handler////////////////////////////////////////////////////////////////////////////
