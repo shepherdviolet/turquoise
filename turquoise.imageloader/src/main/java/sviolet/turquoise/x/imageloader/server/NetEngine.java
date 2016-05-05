@@ -36,6 +36,9 @@ public class NetEngine extends Engine {
 
     @Override
     protected void executeNewTask(Task task) {
+        //reset progress
+        task.getLoadProgress().reset();
+        //timeout
         long connectTimeout = getNetworkConnectTimeout(task);
         long readTimeout = getNetworkReadTimeout(task);
         //network loading, callback's timeout is triple of network timeout
@@ -62,8 +65,15 @@ public class NetEngine extends Engine {
                             new Exception("[TILoader:NetworkLoadHandler]callback return null result!"), getComponentManager().getLogger());
                     responseFailed(task);
                 }else if (data.getType() == NetworkLoadHandler.ResultType.BYTES){
+                    //set progress
+                    task.getLoadProgress().setTotal(data.getBytes().length);
+                    task.getLoadProgress().setLoaded(data.getBytes().length);
+                    //handle
                     handleBytesResult(task, data.getBytes());
                 }else if (data.getType() == NetworkLoadHandler.ResultType.INPUTSTREAM){
+                    //set progress
+                    task.getLoadProgress().setTotal(data.getLength());
+                    //handle
                     handleInputStreamResult(task, data.getInputStream());
                 }
                 return;

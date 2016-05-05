@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.node;
 
+import sviolet.turquoise.x.imageloader.entity.LoadProgress;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.server.Server;
@@ -36,8 +37,8 @@ public class Task {
 
     private Info values;
 
-    Task(String nodeId, Stub.Type type, String url, Params params, String key, String resourceKey) {
-        this.values = new Info(nodeId, type, url, params, key, resourceKey);
+    Task(String nodeId, Stub.Type type, String url, Params params, String key, String resourceKey, LoadProgress loadProgress) {
+        this.values = new Info(nodeId, type, url, params, key, resourceKey, loadProgress);
     }
 
     @Override
@@ -85,6 +86,10 @@ public class Task {
         values.state = state;
     }
 
+    public LoadProgress getLoadProgress(){
+        return values.loadProgress;
+    }
+
     public NodeSettings getNodeSettings() {
         return values.nodeSettings;
     }
@@ -112,6 +117,7 @@ public class Task {
         private Stub.Type type;
         private Server.Type serverType = Server.Type.MEMORY_ENGINE;
         private volatile State state = State.STAND_BY;
+        private LoadProgress loadProgress;
 
         //node//////////////////////////
         private String nodeId;
@@ -123,13 +129,14 @@ public class Task {
         private String key;
         private String resourceKey;
 
-        Info(String nodeId, Stub.Type type, String url, Params params, String key, String resourceKey) {
+        Info(String nodeId, Stub.Type type, String url, Params params, String key, String resourceKey, LoadProgress loadProgress) {
             this.nodeId = nodeId;
             this.type = type;
             this.url = url;
             this.params = params;
             this.key = key;
             this.resourceKey = resourceKey;
+            this.loadProgress = loadProgress;
         }
 
         @Override
@@ -182,6 +189,10 @@ public class Task {
 
         public String getResourceKey() {
             return resourceKey;
+        }
+
+        public LoadProgress getLoadProgress(){
+            return loadProgress;
         }
     }
 

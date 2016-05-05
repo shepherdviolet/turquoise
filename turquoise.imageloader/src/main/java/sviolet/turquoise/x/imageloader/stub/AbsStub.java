@@ -27,6 +27,7 @@ import sviolet.turquoise.util.crypt.DigestCipher;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.entity.LoadProgress;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
 
@@ -51,6 +52,7 @@ public abstract class AbsStub implements Stub {
     //stat///////////////////////////////
 
     private AtomicInteger state = new AtomicInteger(State.INITIAL);
+    private LoadProgress loadProgress = new LoadProgress();
     private int reloadTimes = 0;
 
     private WeakReference<NodeController> nodeController;
@@ -409,6 +411,11 @@ public abstract class AbsStub implements Stub {
     @Override
     public int getState() {
         return state.get();
+    }
+
+    @Override
+    public LoadProgress getLoadProgress() {
+        return loadProgress;
     }
 
     @Override

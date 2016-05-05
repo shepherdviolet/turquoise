@@ -38,7 +38,7 @@ public class TaskFactoryImpl implements TaskFactory {
 
     @Override
     public Task newTask(NodeController controller, Stub stub) {
-        return new Task(controller.getNodeId(), stub.getType(), stub.getUrl(), stub.getParams(), stub.getKey(), stub.getResourceKey());
+        return new Task(controller.getNodeId(), stub.getType(), stub.getUrl(), stub.getParams(), stub.getKey(), stub.getResourceKey(), stub.getLoadProgress().reset());
     }
 
 }

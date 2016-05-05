@@ -22,6 +22,7 @@ package sviolet.turquoise.x.imageloader.stub;
 import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.entity.LoadProgress;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
 import sviolet.turquoise.x.imageloader.node.Node;
@@ -101,6 +102,8 @@ public interface Stub extends Destroyable {
     String getResourceKey();
 
     int getState();
+
+    LoadProgress getLoadProgress();
 
     /***********************************************************
      * getter
