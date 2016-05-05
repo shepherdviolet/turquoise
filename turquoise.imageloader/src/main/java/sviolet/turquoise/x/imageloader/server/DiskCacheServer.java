@@ -345,7 +345,7 @@ public class DiskCacheServer extends DiskCacheModule {
         float progress = -1;
         //check progress
         if (task.getLoadProgress().total() > 0) {
-            progress = task.getLoadProgress().loaded() / task.getLoadProgress().total();
+            progress = (float)task.getLoadProgress().loaded() / (float)task.getLoadProgress().total();
             if (progress > getComponentManager().getServerSettings().getAbortOnLowNetworkSpeedBoundaryProgress()){
                 return false;
             }
