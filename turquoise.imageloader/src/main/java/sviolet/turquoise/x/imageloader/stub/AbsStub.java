@@ -278,7 +278,7 @@ public abstract class AbsStub implements Stub {
             return false;
         }
 
-        return reloadTimes < controller.getNodeSettings().getReloadTimes();
+        return reloadTimes < controller.getReloadTimes();
 
     }
 
