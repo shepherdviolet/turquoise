@@ -41,7 +41,7 @@ import sviolet.turquoise.x.imageloader.server.Server;
  */
 public class DiskCacheModule implements ComponentManager.Component, Server {
 
-    public static final int BUFFER_SIZE = 1024;
+    public static final int BUFFER_SIZE = 1024 * 4;
 
     private static final int DEFAULT_APP_VERSION = 1;
     private static final long PAUSE_DELAY_NANOS = 20 * 1000000000L;//20s to pause diskCache
