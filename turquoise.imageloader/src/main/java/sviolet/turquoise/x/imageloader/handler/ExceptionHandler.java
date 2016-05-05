@@ -89,6 +89,9 @@ public interface ExceptionHandler {
 
     /**
      * exception while image data length out of limit (cancel loading), notify user generally
+     *
+     * <p>TODO</p>
+     *
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
@@ -100,6 +103,9 @@ public interface ExceptionHandler {
 
     /**
      * exception while memory buffer length out of limit (cancel loading), notify user generally
+     *
+     * <p>TODO</p>
+     *
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
@@ -111,6 +117,9 @@ public interface ExceptionHandler {
 
     /**
      * call while task is aborted by low speed network (cancel loading), notify user generally
+     *
+     * <p>TODO</p>
+     *
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo

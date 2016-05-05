@@ -261,6 +261,9 @@ public class ServerSettings implements ComponentManager.Component{
 
         /**
          * <p>[Senior Setting]set image data length limit by percent of app's memoryClass</p>
+         *
+         * <p>TODO</p>
+         *
          * @param context context
          * @param percent percent of app's memoryClass (>0), default:{@value DEFAULT_IMAGE_DATA_LENGTH_LIMIT_PERCENT}, min-size:{@value MIN_IMAGE_DATA_LENGTH_LIMIT}bytes
          */
@@ -281,6 +284,9 @@ public class ServerSettings implements ComponentManager.Component{
 
         /**
          * <p>[Senior Setting]set memory buffer length limit by percent of app's memoryClass</p>
+         *
+         * <p>TODO</p>
+         *
          * @param context context
          * @param percent percent of app's memoryClass (0~0.2f), default:{@value DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT}, min-size:{@value MIN_MEMORY_BUFFER_LENGTH_LIMIT}bytes
          */
@@ -304,6 +310,9 @@ public class ServerSettings implements ComponentManager.Component{
 
         /**
          * <p>[Senior Setting]</p>
+         *
+         * <p>TODO</p>
+         *
          * @param windowPeriod ms,
          * @param boundarySpeed byte/s,
          * @param boundaryProgress 0~1f,
@@ -457,8 +466,8 @@ public class ServerSettings implements ComponentManager.Component{
     private static final long MIN_MEMORY_BUFFER_LENGTH_LIMIT = 512 * 1024;
     private static final float DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT = 0.02f;
     private static final long DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD = 60 * 1000;//ms
-    private static final int DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED = 5 * 1024;//bytes/s
-    private static final float DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_PROGRESS = 0.7f;//0~1
+    private static final int DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED = 10 * 1024;//bytes/s
+    private static final float DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_PROGRESS = 0.5f;//0~1
 
     public static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
     public static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
