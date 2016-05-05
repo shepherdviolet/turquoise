@@ -93,6 +93,19 @@ public interface NetworkLoadHandler {
         private InputStream inputStream;
         private int length = UNKNOWN_LENGTH;
 
+        public Result(InputStream inputStream){
+            if (inputStream == null){
+                this.type = ResultType.NULL;
+                return;
+            }
+            this.type = ResultType.INPUTSTREAM;
+            this.inputStream = inputStream;
+        }
+
+        /**
+         * @deprecated Best to use {@link Result(InputStream)}, bytes result will cost more memory!!!
+         */
+        @Deprecated
         public Result(byte[] bytes){
             if (bytes == null){
                 this.type = ResultType.NULL;
@@ -101,15 +114,6 @@ public interface NetworkLoadHandler {
             this.type = ResultType.BYTES;
             this.bytes = bytes;
             this.length = bytes.length;
-        }
-
-        public Result(InputStream inputStream){
-            if (inputStream == null){
-                this.type = ResultType.NULL;
-                return;
-            }
-            this.type = ResultType.INPUTSTREAM;
-            this.inputStream = inputStream;
         }
 
         public ResultType getType() {
