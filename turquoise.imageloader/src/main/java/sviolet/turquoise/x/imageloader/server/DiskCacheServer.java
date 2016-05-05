@@ -93,7 +93,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                         getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
                         new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, write disk cache failed"), getComponentManager().getLogger());
-                writeToMemoryBuffer(task, inputStream, result, null);
+                writeToMemoryBuffer(task, inputStream, result, null, 0);
                 return result;
             }
             /*
@@ -148,7 +148,7 @@ public class DiskCacheServer extends DiskCacheModule {
                             abortEditor(editor);
                             getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                                     getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-                            writeToMemoryBuffer(task, inputStream, result, buffer);
+                            writeToMemoryBuffer(task, inputStream, result, buffer, readLength);
                             return result;
                         }
                         throw e;
@@ -164,7 +164,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 setHealthy(true);
             }else{
                 //if disk is not healthy, data write to memory buffer, and return bytes, in order to ensure pictures display normally.
-                writeToMemoryBuffer(task, inputStream, result, null);
+                writeToMemoryBuffer(task, inputStream, result, null, 0);
                 //trying to write to disk cache
                 if (result.getType() == ResultType.RETURN_MEMORY_BUFFER && result.getMemoryBuffer().length > 0) {
                     try {
@@ -275,10 +275,11 @@ public class DiskCacheServer extends DiskCacheModule {
      * @param inputStream inputStream
      * @param result result of write task
      * @param buffer fix buffer, might have data
+     * @param bufferDataLength data length of fix buffer
      * @throws NetworkException exception of network
      * @throws IOException exception of io
      */
-    private void writeToMemoryBuffer(Task task, InputStream inputStream, Result result, byte[] buffer) throws NetworkException, IOException  {
+    private void writeToMemoryBuffer(Task task, InputStream inputStream, Result result, byte[] buffer, int bufferDataLength) throws NetworkException, IOException  {
         //cancel loading if memory buffer out of limit
         if (task.getLoadProgress().total() > getComponentManager().getServerSettings().getMemoryBufferLengthLimit()){
             getComponentManager().getServerSettings().getExceptionHandler().onMemoryBufferLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
@@ -290,7 +291,7 @@ public class DiskCacheServer extends DiskCacheModule {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         //fix buffer
         if (buffer != null) {
-            outputStream.write(buffer);
+            outputStream.write(buffer, 0, bufferDataLength);
         }else{
             buffer = new byte[DiskCacheServer.BUFFER_SIZE];
         }
