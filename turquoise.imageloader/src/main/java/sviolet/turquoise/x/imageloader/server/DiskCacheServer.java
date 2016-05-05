@@ -109,6 +109,8 @@ public class DiskCacheServer extends DiskCacheModule {
                 //buffer, to save memory
                 byte[] buffer = new byte[DiskCacheServer.BUFFER_SIZE];
                 boolean hasWrite = false;
+                long startTime = System.currentTimeMillis();
+                long imageDataLengthLimit = getComponentManager().getServerSettings().getImageDataLengthLimit();
                 int readLength;
                 //read and write
                 while (true) {
@@ -120,6 +122,19 @@ public class DiskCacheServer extends DiskCacheModule {
                     }
                     if (readLength < 0) {
                         break;
+                    }
+                    //record progress
+                    task.getLoadProgress().increaseLoaded(readLength);
+                    //check if data out of limit
+                    if (task.getLoadProgress().loaded() > imageDataLengthLimit){
+                        getComponentManager().getServerSettings().getExceptionHandler().onImageDataLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                                task.getTaskInfo(), task.getLoadProgress().loaded(), getComponentManager().getServerSettings().getImageDataLengthLimit(), getComponentManager().getLogger());
+                        result.setType(ResultType.CANCELED);
+                        return result;
+                    }
+                    //check if speed is low
+                    if (checkNetworkSpeed(startTime, task, result)){
+                        return result;
                     }
                     try {
                         //try to write disk
@@ -260,11 +275,17 @@ public class DiskCacheServer extends DiskCacheModule {
      * @param inputStream inputStream
      * @param result result of write task
      * @param buffer fix buffer, might have data
-     * @return result of write task
      * @throws NetworkException exception of network
      * @throws IOException exception of io
      */
-    private Result writeToMemoryBuffer(Task task, InputStream inputStream, Result result, byte[] buffer) throws NetworkException, IOException  {
+    private void writeToMemoryBuffer(Task task, InputStream inputStream, Result result, byte[] buffer) throws NetworkException, IOException  {
+        //cancel loading if memory buffer out of limit
+        if (task.getLoadProgress().total() > getComponentManager().getServerSettings().getMemoryBufferLengthLimit()){
+            getComponentManager().getServerSettings().getExceptionHandler().onMemoryBufferLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                    task.getTaskInfo(), task.getLoadProgress().total(), getComponentManager().getServerSettings().getMemoryBufferLengthLimit(), getComponentManager().getLogger());
+            result.setType(ResultType.CANCELED);
+            return;
+        }
         //full size buffer
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         //fix buffer
@@ -273,6 +294,8 @@ public class DiskCacheServer extends DiskCacheModule {
         }else{
             buffer = new byte[DiskCacheServer.BUFFER_SIZE];
         }
+        long startTime = System.currentTimeMillis();
+        long memoryBufferLengthLimit = getComponentManager().getServerSettings().getMemoryBufferLengthLimit();
         int readLength;
         while (true) {
             try {
@@ -283,6 +306,19 @@ public class DiskCacheServer extends DiskCacheModule {
             if (readLength < 0) {
                 break;
             }
+            //record progress
+            task.getLoadProgress().increaseLoaded(readLength);
+            //check if data out of limit
+            if (task.getLoadProgress().loaded() > memoryBufferLengthLimit){
+                getComponentManager().getServerSettings().getExceptionHandler().onMemoryBufferLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                        task.getTaskInfo(), task.getLoadProgress().loaded(), getComponentManager().getServerSettings().getMemoryBufferLengthLimit(), getComponentManager().getLogger());
+                result.setType(ResultType.CANCELED);
+                return;
+            }
+            //check if speed is low
+            if (checkNetworkSpeed(startTime, task, result)){
+                return;
+            }
             outputStream.write(buffer, 0, readLength);
             outputStream.flush();
         }
@@ -292,7 +328,31 @@ public class DiskCacheServer extends DiskCacheModule {
         //return memory buffer
         result.setType(ResultType.RETURN_MEMORY_BUFFER);
         result.setMemoryBuffer(outputStream.toByteArray());
-        return result;
+    }
+
+    private boolean checkNetworkSpeed(long startTime, Task task, Result result){
+        long elapseTime = System.currentTimeMillis() - startTime;
+        //if in window period, skip speed check
+        if (elapseTime < getComponentManager().getServerSettings().getAbortOnLowNetworkSpeedWindowPeriod()){
+            return false;
+        }
+        //check speed
+        int speed = (int) (task.getLoadProgress().loaded() / (elapseTime / 1000));
+        if (speed > getComponentManager().getServerSettings().getAbortOnLowNetworkSpeedBoundarySpeed()){
+            return false;
+        }
+        float progress = -1;
+        //check progress
+        if (task.getLoadProgress().total() > 0) {
+            progress = task.getLoadProgress().loaded() / task.getLoadProgress().total();
+            if (progress > getComponentManager().getServerSettings().getAbortOnLowNetworkSpeedBoundaryProgress()){
+                return false;
+            }
+        }
+        getComponentManager().getServerSettings().getExceptionHandler().onTaskAbortOnLowSpeedNetwork(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                task.getTaskInfo(), elapseTime, speed, progress, getComponentManager().getLogger());
+        result.setType(ResultType.CANCELED);
+        return true;
     }
 
     private void closeStream(InputStream stream){
@@ -325,7 +385,8 @@ public class DiskCacheServer extends DiskCacheModule {
     public enum ResultType{
         SUCCEED,
         FAILED,
-        RETURN_MEMORY_BUFFER
+        RETURN_MEMORY_BUFFER,
+        CANCELED
     }
 
     public static class Result{

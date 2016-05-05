@@ -20,12 +20,12 @@
 package sviolet.turquoise.x.imageloader.server;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  * <p>Net Load Engine</p>
@@ -127,6 +127,17 @@ public class NetEngine extends Engine {
      * @param inputStream image input stream
      */
     private void handleInputStreamResult(Task task, InputStream inputStream){
+        //cancel loading if image data out of limit
+        if (task.getLoadProgress().total() > getComponentManager().getServerSettings().getImageDataLengthLimit()){
+            getComponentManager().getServerSettings().getExceptionHandler().onImageDataLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                    task.getTaskInfo(), task.getLoadProgress().total(), getComponentManager().getServerSettings().getImageDataLengthLimit(), getComponentManager().getLogger());
+            try {
+                inputStream.close();
+            } catch (IOException ignored) {
+            }
+            responseCanceled(task);
+            return;
+        }
         //try to write disk cache
         DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream);
         //decode
@@ -138,6 +149,9 @@ public class NetEngine extends Engine {
             case RETURN_MEMORY_BUFFER:
                 imageResource = decode(task, result.getMemoryBuffer(), null);
                 break;
+            case CANCELED:
+                responseCanceled(task);
+                return;
             case FAILED:
             default:
                 responseFailed(task);

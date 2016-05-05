@@ -87,6 +87,40 @@ public interface ExceptionHandler {
      */
     void onNetworkLoadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
 
+    /**
+     * exception while image data length out of limit (cancel loading), notify user generally
+     * @param applicationContext application context
+     * @param context activity context, maybe null
+     * @param taskInfo taskInfo
+     * @param dataLength length of data
+     * @param lengthLimit limit of image data
+     * @param logger logger
+     */
+    void onImageDataLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger);
+
+    /**
+     * exception while memory buffer length out of limit (cancel loading), notify user generally
+     * @param applicationContext application context
+     * @param context activity context, maybe null
+     * @param taskInfo taskInfo
+     * @param dataLength length of data
+     * @param lengthLimit limit of memory buffer
+     * @param logger logger
+     */
+    void onMemoryBufferLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger);
+
+    /**
+     * call while task is aborted by low speed network (cancel loading), notify user generally
+     * @param applicationContext application context
+     * @param context activity context, maybe null
+     * @param taskInfo taskInfo
+     * @param elapseTime elapse time of loading
+     * @param speed speed of loading
+     * @param progress progress of loading (-1 or 0~1)
+     * @param logger logger
+     */
+    void onTaskAbortOnLowSpeedNetwork(Context applicationContext, Context context, Task.Info taskInfo, long elapseTime, int speed, float progress, TLogger logger);
+
     /*************************************************************
      * decode
      */

@@ -43,6 +43,7 @@ import sviolet.turquoise.x.imageloader.handler.common.CommonImageResourceHandler
 import sviolet.turquoise.x.imageloader.handler.common.CommonNetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.TaskFactory;
 import sviolet.turquoise.x.imageloader.node.TaskFactoryImpl;
+import sviolet.turquoise.x.imageloader.server.MemoryCacheServer;
 import sviolet.turquoise.x.imageloader.stub.StubFactory;
 import sviolet.turquoise.x.imageloader.stub.StubFactoryImpl;
 
@@ -69,6 +70,12 @@ public class ServerSettings implements ComponentManager.Component{
         private long networkReadTimeout = DEFAULT_NETWORK_READ_TIMEOUT;
         private int reloadTimes = DEFAULT_RELOAD_TIMES;
         private File diskCachePath = null;
+
+        private long imageDataLengthLimit = DEFAULT_IMAGE_DATA_LENGTH_LIMIT;
+        private long memoryBufferLengthLimit = DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT;
+        private long abortOnLowNetworkSpeedWindowPeriod = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD;
+        private int abortOnLowNetworkSpeedBoundarySpeed = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED;
+        private float abortOnLowNetworkSpeedBoundaryProgress = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_PROGRESS;
 
         //handler////////////////////////////////////////////////////////////////////////////
 
@@ -126,7 +133,7 @@ public class ServerSettings implements ComponentManager.Component{
         /**
          * set the memory cache size by percent of app's MemoryClass
          * @param context context
-         * @param percent percent of app's MemoryClass (0f-0.5f)
+         * @param percent percent of app's MemoryClass (0f-0.5f), default:{@value MemoryCacheServer#DEFAULT_MEMORY_CACHE_PERCENT}, min-size:{@value MemoryCacheServer#MIN_MEMORY_CACHE_SIZE}bytes
          */
         public Builder setMemoryCachePercent(Context context, float percent){
             if (context == null){
@@ -155,30 +162,6 @@ public class ServerSettings implements ComponentManager.Component{
                 throw new RuntimeException("[ServerSettings]setDiskCacheSize: size must be >0");
             }
             values.diskCacheSize = (int) (sizeMb * 1024 * 1024);
-            return this;
-        }
-
-        /**
-         * set the max thread of memory loading engine
-         * @param maxThread max thread num, >=1, {@value DEFAULT_MEMORY_LOAD_MAX_THREAD} by default
-         */
-        public Builder setMemoryLoadMaxThread(int maxThread){
-            if (maxThread < 1){
-                throw new RuntimeException("[ServerSettings]setMemoryLoadMaxThread must >= 1");
-            }
-            values.memoryLoadMaxThread = maxThread;
-            return this;
-        }
-
-        /**
-         * set the max thread of disk loading engine
-         * @param maxThread max thread num, >=1, {@value DEFAULT_DISK_LOAD_MAX_THREAD} by default
-         */
-        public Builder setDiskLoadMaxThread(int maxThread){
-            if (maxThread < 1){
-                throw new RuntimeException("[ServerSettings]diskLoadMaxThread must >= 1");
-            }
-            values.diskLoadMaxThread = maxThread;
             return this;
         }
 
@@ -249,6 +232,95 @@ public class ServerSettings implements ComponentManager.Component{
          */
         public Builder setPluginEnabled(boolean enabled){
             values.pluginEnabled = enabled;
+            return this;
+        }
+
+        /**
+         * [Senior Setting]set the max thread of memory loading engine
+         * @param maxThread max thread num, >=1, {@value DEFAULT_MEMORY_LOAD_MAX_THREAD} by default
+         */
+        public Builder setMemoryLoadMaxThread(int maxThread){
+            if (maxThread < 1){
+                throw new RuntimeException("[ServerSettings]setMemoryLoadMaxThread must >= 1");
+            }
+            values.memoryLoadMaxThread = maxThread;
+            return this;
+        }
+
+        /**
+         * [Senior Setting]set the max thread of disk loading engine
+         * @param maxThread max thread num, >=1, {@value DEFAULT_DISK_LOAD_MAX_THREAD} by default
+         */
+        public Builder setDiskLoadMaxThread(int maxThread){
+            if (maxThread < 1){
+                throw new RuntimeException("[ServerSettings]diskLoadMaxThread must >= 1");
+            }
+            values.diskLoadMaxThread = maxThread;
+            return this;
+        }
+
+        /**
+         * <p>[Senior Setting]set image data length limit by percent of app's memoryClass</p>
+         * @param context context
+         * @param percent percent of app's memoryClass (>0), default:{@value DEFAULT_IMAGE_DATA_LENGTH_LIMIT_PERCENT}, min-size:{@value MIN_IMAGE_DATA_LENGTH_LIMIT}bytes
+         */
+        public Builder setImageDataLengthLimitPercent(Context context, float percent){
+            if (context == null){
+                throw new RuntimeException("[ServerSettings]setImageDataLengthLimit:　context is null!");
+            }
+            //app memory class
+            final int memoryClass = DeviceUtils.getMemoryClass(context);
+            //calculate
+            long limit = (long) (1024 * 1024 * memoryClass * percent);
+            if (limit < MIN_IMAGE_DATA_LENGTH_LIMIT){
+                limit = MIN_IMAGE_DATA_LENGTH_LIMIT;
+            }
+            values.imageDataLengthLimit = limit;
+            return this;
+        }
+
+        /**
+         * <p>[Senior Setting]set memory buffer length limit by percent of app's memoryClass</p>
+         * @param context context
+         * @param percent percent of app's memoryClass (0~0.2f), default:{@value DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT}, min-size:{@value MIN_MEMORY_BUFFER_LENGTH_LIMIT}bytes
+         */
+        public Builder setMemoryBufferLengthLimitPercent(Context context, float percent){
+            if (context == null){
+                throw new RuntimeException("[ServerSettings]setMemoryBufferLengthLimitPercent:　context is null!");
+            }
+            if (percent > 0.2f){
+                percent = 0.2f;
+            }
+            //app memory class
+            final int memoryClass = DeviceUtils.getMemoryClass(context);
+            //calculate
+            long limit = (long) (1024 * 1024 * memoryClass * percent);
+            if (limit < MIN_MEMORY_BUFFER_LENGTH_LIMIT){
+                limit = MIN_MEMORY_BUFFER_LENGTH_LIMIT;
+            }
+            values.memoryBufferLengthLimit = limit;
+            return this;
+        }
+
+        /**
+         * <p>[Senior Setting]</p>
+         * @param windowPeriod ms,
+         * @param boundarySpeed byte/s,
+         * @param boundaryProgress 0~1f,
+         */
+        public Builder setAbortOnLowNetworkSpeed(long windowPeriod, int boundarySpeed, float boundaryProgress){
+            if (windowPeriod < 0){
+                throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: windowPeriod must >= 0");
+            }
+            if (boundarySpeed < 0){
+                throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: boundarySpeed must >= 0");
+            }
+            if (boundaryProgress < 0f || boundaryProgress > 1f){
+                throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: boundaryProgress must >= 0f && <= 1f");
+            }
+            values.abortOnLowNetworkSpeedWindowPeriod = windowPeriod;
+            values.abortOnLowNetworkSpeedBoundarySpeed = boundarySpeed;
+            values.abortOnLowNetworkSpeedBoundaryProgress = boundaryProgress;
             return this;
         }
 
@@ -378,6 +450,16 @@ public class ServerSettings implements ComponentManager.Component{
     public static final long DEFAULT_NETWORK_READ_TIMEOUT = 3000;//ms
     private static final int DEFAULT_RELOAD_TIMES = 1;
 
+    private static final long DEFAULT_IMAGE_DATA_LENGTH_LIMIT = -1;
+    private static final long MIN_IMAGE_DATA_LENGTH_LIMIT = 1024 * 1024;
+    private static final float DEFAULT_IMAGE_DATA_LENGTH_LIMIT_PERCENT = 0.3f;
+    private static final long DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT = -1;
+    private static final long MIN_MEMORY_BUFFER_LENGTH_LIMIT = 512 * 1024;
+    private static final float DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT = 0.02f;
+    private static final long DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD = 60 * 1000;//ms
+    private static final int DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED = 5 * 1024;//bytes/s
+    private static final float DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_PROGRESS = 0.7f;//0~1
+
     public static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
     public static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
 
@@ -472,6 +554,50 @@ public class ServerSettings implements ComponentManager.Component{
 
     public int getReloadTimes(){
         return values.reloadTimes;
+    }
+
+    public long getImageDataLengthLimit(){
+        if (values.imageDataLengthLimit > 0){
+            return values.imageDataLengthLimit;
+        }
+        Context context = manager.getApplicationContextImage();
+        if (context == null){
+            //return min data length limit, if context == null
+            return MIN_IMAGE_DATA_LENGTH_LIMIT;
+        }
+        //app memory class
+        final int memoryClass = DeviceUtils.getMemoryClass(context);
+        //calculate by default percent
+        values.imageDataLengthLimit = (long) (1024 * 1024 * memoryClass * DEFAULT_IMAGE_DATA_LENGTH_LIMIT_PERCENT);
+        return values.imageDataLengthLimit;
+    }
+
+    public long getMemoryBufferLengthLimit(){
+        if (values.memoryBufferLengthLimit > 0){
+            return values.memoryBufferLengthLimit;
+        }
+        Context context = manager.getApplicationContextImage();
+        if (context == null){
+            //return min memory buffer length limit, if context == null
+            return MIN_MEMORY_BUFFER_LENGTH_LIMIT;
+        }
+        //app memory class
+        final int memoryClass = DeviceUtils.getMemoryClass(context);
+        //calculate by default percent
+        values.memoryBufferLengthLimit = (long) (1024 * 1024 * memoryClass * DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT);
+        return values.memoryBufferLengthLimit;
+    }
+
+    public long getAbortOnLowNetworkSpeedWindowPeriod(){
+        return values.abortOnLowNetworkSpeedWindowPeriod;
+    }
+
+    public int getAbortOnLowNetworkSpeedBoundarySpeed(){
+        return values.abortOnLowNetworkSpeedBoundarySpeed;
+    }
+
+    public float getAbortOnLowNetworkSpeedBoundaryProgress(){
+        return values.abortOnLowNetworkSpeedBoundaryProgress;
     }
 
     //handler////////////////////////////////////////////////////////////////////////////

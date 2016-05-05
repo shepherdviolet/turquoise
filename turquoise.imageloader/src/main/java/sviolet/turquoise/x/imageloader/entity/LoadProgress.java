@@ -46,6 +46,20 @@ public class LoadProgress {
         return this;
     }
 
+    /**
+     * @return loaded data count (network load), return {@value Info#UNKNOWN} before network load
+     */
+    public long loaded(){
+        return info.loaded;
+    }
+
+    /**
+     * @return total count of source data, return {@value Info#UNKNOWN} if can't get from http header
+     */
+    public long total(){
+        return info.total;
+    }
+
     public Info getInfo(){
         return info;
     }

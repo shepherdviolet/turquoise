@@ -45,6 +45,13 @@ public class CommonExceptionHandler implements ExceptionHandler {
     private static final String DISK_CACHE_EXCEPTION_TOAST_EN = "Image disk cache access fails, check your phone memory, image will loading from network always.";
     private static final long DISK_CACHE_EXCEPTION_NOTICE_INTERVAL = 20 * 1000L;//20s
 
+    private static final String IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_CN = "部分图片过大, 加载取消.";
+    private static final String IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_EN = "Some images are too large, load tasks ware canceled.";
+    private static final String MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_CN = "由于磁盘访问失败, 大图的加载取消.";
+    private static final String MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_EN = "Owing to failure of disk cache access, load tasks of large image canceled.";
+    private static final String TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_CN = "由于网速过慢, 部分图片取消加载.";
+    private static final String TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_EN = "Network speed is too slow, some of the load tasks were canceled.";
+
     private AtomicLong diskCacheExceptionNoticeTime = new AtomicLong(0);
 
     @Override
@@ -54,7 +61,7 @@ public class CommonExceptionHandler implements ExceptionHandler {
         if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
             if (diskCacheExceptionNoticeTime.compareAndSet(previousTime, time)) {
                 Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
-                msg.obj = new Info(applicationContext, throwable);
+                msg.obj = new Info(applicationContext);
                 msg.sendToTarget();
             }
         }
@@ -68,7 +75,7 @@ public class CommonExceptionHandler implements ExceptionHandler {
         if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
             if (diskCacheExceptionNoticeTime.compareAndSet(previousTime, time)) {
                 Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
-                msg.obj = new Info(applicationContext, throwable);
+                msg.obj = new Info(applicationContext);
                 msg.sendToTarget();
             }
         }
@@ -82,7 +89,7 @@ public class CommonExceptionHandler implements ExceptionHandler {
         if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
             if (diskCacheExceptionNoticeTime.compareAndSet(previousTime, time)) {
                 Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION);
-                msg.obj = new Info(applicationContext, throwable);
+                msg.obj = new Info(applicationContext);
                 msg.sendToTarget();
             }
         }
@@ -100,6 +107,38 @@ public class CommonExceptionHandler implements ExceptionHandler {
     }
 
     @Override
+    public void onImageDataLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger) {
+        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT);
+        msg.obj = new Info(applicationContext);
+        msg.sendToTarget();
+        logger.e("ImageDataLengthOutOfLimit: image is too large, cancel loading, ServerSettings->setImageDataLengthLimitPercent() can adjust limit, dataLength:" + dataLength + ", limit:" + lengthLimit + ", task:" + taskInfo);
+    }
+
+    @Override
+    public void onMemoryBufferLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger) {
+        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT);
+        msg.obj = new Info(applicationContext);
+        msg.sendToTarget();
+        logger.e("MemoryBufferLengthOutOfLimit: diskCache is unhealthy, we have to write data into memory buffer, but the image is too large, so we cancel loading, ServerSettings->setMemoryBufferLengthLimitPercent() can adjust limit, dataLength:" + dataLength + ", limit:" + lengthLimit + ", task:" + taskInfo);
+
+    }
+
+    @Override
+    public void onTaskAbortOnLowSpeedNetwork(Context applicationContext, Context context, Task.Info taskInfo, long elapseTime, int speed, float progress, TLogger logger) {
+        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK);
+        msg.obj = new Info(applicationContext);
+        msg.sendToTarget();
+
+        String progressStr;
+        if (progress >= 0){
+            progressStr = Float.toString(progress * 100);
+        }else{
+            progressStr = "?";
+        }
+        logger.e("TaskAbortOnLowSpeedNetwork: network speed is too slow, cancel loading, " + elapseTime + "ms elapse, " + speed / 1024 + "k/s, " + progressStr + "%loaded, ServerSettings->setAbortOnLowNetworkSpeed() can adjust configuration, task:" + taskInfo);
+    }
+
+    @Override
     public void onDecodeException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
         logger.e("DecodeException:" + taskInfo, throwable);
     }
@@ -108,12 +147,12 @@ public class CommonExceptionHandler implements ExceptionHandler {
      * protected
      */
 
-    protected void onDiskCacheOpenExceptionInner(final Context context, Throwable throwable) {
+    protected void showToast(final Context context, String msgCn, String msgEn) {
         if (context != null){
             if (DeviceUtils.isLocaleZhCn(context)){
-                Toast.makeText(context, DISK_CACHE_EXCEPTION_TOAST_CN, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, msgCn, Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(context, DISK_CACHE_EXCEPTION_TOAST_EN, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, msgEn, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -127,6 +166,9 @@ public class CommonExceptionHandler implements ExceptionHandler {
     private static class MyHandler extends WeakHandler<CommonExceptionHandler>{
 
         private static final int HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION = 1;
+        private static final int HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT = 2;
+        private static final int HANDLER_ON_MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT = 3;
+        private static final int HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK = 4;
 
         public MyHandler(Looper looper, CommonExceptionHandler host) {
             super(looper, host);
@@ -136,9 +178,16 @@ public class CommonExceptionHandler implements ExceptionHandler {
         protected void handleMessageWithHost(Message msg, CommonExceptionHandler host) {
             switch (msg.what){
                 case HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION:
-                    if (msg.obj instanceof Info) {
-                        host.onDiskCacheOpenExceptionInner(((Info) msg.obj).getApplicationContext(), ((Info) msg.obj).getThrowable());
-                    }
+                    host.showToast(((Info) msg.obj).getApplicationContext(), DISK_CACHE_EXCEPTION_TOAST_CN, DISK_CACHE_EXCEPTION_TOAST_EN);
+                    break;
+                case HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT:
+                    host.showToast(((Info) msg.obj).getApplicationContext(), IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_CN, IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_EN);
+                    break;
+                case HANDLER_ON_MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT:
+                    host.showToast(((Info) msg.obj).getApplicationContext(), MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_CN, MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_EN);
+                    break;
+                case HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK:
+                    host.showToast(((Info) msg.obj).getApplicationContext(), TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_CN, TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_EN);
                     break;
                 default:
                     break;
@@ -151,9 +200,8 @@ public class CommonExceptionHandler implements ExceptionHandler {
         private WeakReference<Context> applicationContext;
         private Throwable throwable;
 
-        private Info(Context context, Throwable throwable){
+        private Info(Context context){
             setApplicationContext(context);
-            setThrowable(throwable);
         }
 
         public Context getApplicationContext() {
