@@ -227,7 +227,13 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * if true, TILoader will load plugin : module "turquoise.imageloader.plugin"
+         * <p>If true, TILoader will load plugin automatically:</p>
+         *
+         * <p>1.plugin module "turquoise.imageloader.plugin"</p>
+         *
+         * <p>NOTICE:: TILoader will load plugins automatically, as long as your project dependent on
+         * those modules. Don't need to do anything else.</p>
+         *
          * @param enabled true by default
          */
         public Builder setPluginEnabled(boolean enabled){
