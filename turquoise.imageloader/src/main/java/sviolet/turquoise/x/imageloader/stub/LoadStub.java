@@ -138,7 +138,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             return false;
         }
         //create and set drawable
-        Drawable drawable = controller.getLoadingDrawableFactory().create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLogger());
+        Drawable drawable = controller.getLoadingDrawableFactory().create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLoadProgress().getInfo(), getLogger());
         if (drawable == null){
             throw new RuntimeException("[LoadStub]LoadingDrawableFactory create a null drawable");
         }
