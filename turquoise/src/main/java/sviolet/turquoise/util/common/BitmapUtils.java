@@ -777,21 +777,29 @@ public class BitmapUtils {
      * 根据指定的需求宽高计算缩放因子
      */
     private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        return calculateInSampleSize(options.outWidth, options.outHeight, reqWidth, reqHeight);
+    }
+
+    /**
+     * 根据指定的需求宽高计算缩放因子
+     * @param originWidth 原图宽度
+     * @param originHeight 原图高度
+     * @param reqWidth 需求宽度
+     * @param reqHeight 需求高度
+     */
+    public static int calculateInSampleSize(int originWidth, int originHeight, int reqWidth, int reqHeight){
         //不缩放的情况
         if (reqWidth <= 0 || reqHeight <= 0) {
             return 1;
         }
-        // 源图片宽高
-        final int width = options.outWidth;
-        final int height = options.outHeight;
         //缩放因子
         int inSampleSize = 1;
         //原图大于需求尺寸时缩放
-        if (height > reqHeight || width > reqWidth) {
-            final int heightRatio = Math.round((float) height / (float) reqHeight);
-            final int widthRatio = Math.round((float) width / (float) reqWidth);
+        if (originHeight > reqHeight || originWidth > reqWidth) {
+            final int heightRatio = Math.round((float) originHeight / (float) reqHeight);
+            final int widthRatio = Math.round((float) originWidth / (float) reqWidth);
             inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-            final float totalPixels = width * height;
+            final float totalPixels = originWidth * originHeight;
             final float totalReqPixelsCap = reqWidth * reqHeight * 2;
             while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
                 inSampleSize++;
