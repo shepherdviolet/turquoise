@@ -25,6 +25,7 @@ import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
 import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.imageloader.entity.LoadProgress;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
@@ -47,9 +48,10 @@ public interface LoadingDrawableFactory extends Destroyable {
      * @param applicationContext applicationContext
      * @param context context of activity, might be null
      * @param params params of stub
+     * @param progressInfo progress info of load task
      * @param logger logger
      * @return Drawable
      */
-    Drawable create(Context applicationContext, Context context, Params params, TLogger logger);
+    Drawable create(Context applicationContext, Context context, Params params, LoadProgress.Info progressInfo, TLogger logger);
 
 }

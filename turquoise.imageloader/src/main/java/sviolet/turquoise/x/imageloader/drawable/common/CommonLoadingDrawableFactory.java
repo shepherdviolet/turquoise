@@ -36,6 +36,7 @@ import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.ResourceBitmapWrapper;
 import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
+import sviolet.turquoise.x.imageloader.entity.LoadProgress;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
@@ -62,7 +63,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
     private Settings settings = new Settings();
 
     @Override
-    public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
+    public Drawable create(Context applicationContext, Context context, Params params, LoadProgress.Info progressInfo, TLogger logger) {
         //size, match reqSize Params->sizeMatchView is false
         int drawableWidth = -1;
         int drawableHeight = -1;
@@ -85,7 +86,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         //animation
         Drawable animationDrawable = animationDrawableFactory.create(applicationContext, context, params, logger);
         //loading drawable
-        return new LoadingDrawable(settings, animationDrawable, imageDrawable, backgroundDrawable, drawableWidth, drawableHeight);
+        return new LoadingDrawable(settings, animationDrawable, imageDrawable, backgroundDrawable, drawableWidth, drawableHeight, progressInfo);
     }
 
     @Override
@@ -160,16 +161,18 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         private Drawable animationDrawable;
         private BitmapDrawable imageDrawable;
         private Drawable backgroundDrawable;
-        int drawableWidth = 0;
-        int drawableHeight = 0;
+        private int drawableWidth = 0;
+        private int drawableHeight = 0;
+        private LoadProgress.Info progressInfo;
 
-        public LoadingDrawable(Settings settings, Drawable animationDrawable, BitmapDrawable imageDrawable, Drawable backgroundDrawable, int drawableWidth, int drawableHeight){
+        public LoadingDrawable(Settings settings, Drawable animationDrawable, BitmapDrawable imageDrawable, Drawable backgroundDrawable, int drawableWidth, int drawableHeight, LoadProgress.Info progressInfo){
             this.settings = settings;
+            this.animationDrawable = animationDrawable;
             this.imageDrawable = imageDrawable;
             this.backgroundDrawable = backgroundDrawable;
             this.drawableWidth = drawableWidth;
             this.drawableHeight = drawableHeight;
-            this.animationDrawable = animationDrawable;
+            this.progressInfo = progressInfo;
         }
 
         @Override
