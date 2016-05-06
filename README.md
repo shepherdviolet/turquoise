@@ -5,8 +5,8 @@
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/logo/turquoise.jpg)<br/>
 
 ## Module "turquoise"
-[![API](https://img.shields.io/badge/API-10%2B-2ed8a8.svg?style=flat)]
-[![Dependency](https://img.shields.io/badge/Dependency-support--v4-2ed8a8.svg?style=flat)]
+![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
 > <br/>
 > The basic library module, as detailed below:<br/>
 > <br/>
@@ -28,8 +28,9 @@
 > ┈┈ 4.WeakHandler: help Handler to avoid Memory Leak(design specifications)<br/>
 
 ## Module "turquoise.v7"
-> API level 10 above.<br/>
-> Dependency: turquoise, support-v7;<br/>
+![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v7-dc143c.svg?style=flat)
 > <br/>
 > Expansion Module of "turquoise", Add support for "support-v7". Optional module.<br/>
 > <br/>
@@ -37,8 +38,8 @@
 > 2.Add support for RecyclerView.<br/>
 
 ## Module "turquoise.imageloader"
-> API level 11 above.<br/>
-> Dependency: turquoise;<br/>
+![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 > <br/>
 > TurquoiseImageLoader. it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.<br/>
 > Alpha version release!!!<br/>
@@ -85,8 +86,9 @@
 ```
 
 ## Module "turquoise.imageloader.plugin"
-> API level 11 above.<br/>
-> Dependency: turquoise, turquoise.imageloader, android-gif-drawable;<br/>
+![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise.imageloader-2ed8a8.svg?style=flat)
+[![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
 > <br/>
 > Expansion Module of "turquoise.imageloader", Add support for GIF. Optional module.<br/>
 > <br/>
