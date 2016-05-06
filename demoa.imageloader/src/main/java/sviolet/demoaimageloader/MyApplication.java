@@ -88,13 +88,13 @@ public class MyApplication extends TApplication {
 //                        .setImageScaleType(CommonLoadingDrawableFactory.ImageScaleType.FORCE_CENTER)//设置加载图拉伸方式为强制居中
 //                        .setAnimationEnabled(true)//允许动画(默认true)
 ////                        .setAnimationDrawableFactory(new MyAnimationDrawableFactory())//方式1:自定义实现动画(完全自己实现)
-//                        .setAnimationDrawableFactory(new PointLoadingAnimationDrawableFactory()//方式2:配置通用动画
-//                                .setAnimationDuration(500)//动画时间
-//                                .setPointColor(0xFFB0A0A0)//动画点颜色
-//                                .setPointInterval(MeasureUtils.dp2px(getApplicationContext(), 9))//动画点间隔
-//                                .setPointRadius(MeasureUtils.dp2px(getApplicationContext(), 3))//动画点半径
-//                                .setPointOffsetX(0.5f)//动画偏移位置
-//                                .setPointOffsetY(0.5f)))//动画偏移位置
+//                        .setAnimationDrawableFactory(new CircleLoadingAnimationDrawableFactory()//方式2:配置通用动画
+//                                .setAnimationDuration(1000)//单位ms
+//                                .setRadius(0.15f, CircleLoadingAnimationDrawableFactory.SizeUnit.PERCENT_OF_WIDTH)//半径为控件宽度的15%
+//                                .setCircleColor(0x20000000)//背景圈颜色
+//                                .setCircleStrokeWidth(0.012f, CircleLoadingAnimationDrawableFactory.SizeUnit.PERCENT_OF_WIDTH)//背景圈宽度为控件宽度的1.2%
+//                                .setProgressColor(0x40000000)//进度圈颜色
+//                                .setProgressStrokeWidth(0.015f, CircleLoadingAnimationDrawableFactory.SizeUnit.PERCENT_OF_WIDTH)))//进度圈宽度为控件宽度的1.5%
 ////                .setFailedDrawableFactory(new MyFailedDrawableFactory())//方式1:自定义实现加载失败图
 //                .setFailedDrawableFactory(new CommonFailedDrawableFactory()//方式2:配置通用失败图
 //                        .setColor(0xFFB0B0B0)//失败图背景色
