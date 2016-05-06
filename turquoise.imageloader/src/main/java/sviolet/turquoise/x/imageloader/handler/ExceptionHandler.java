@@ -88,9 +88,11 @@ public interface ExceptionHandler {
     void onNetworkLoadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
 
     /**
-     * exception while image data length out of limit (cancel loading), notify user generally
+     * <p>exception while image data length out of limit (cancel loading), notify user generally</p>
      *
-     * <p>TODO</p>
+     * <p>To avoid OOM, TILoader will cancel load task if data length of source image is out of limit,
+     * then call ExceptionHandler->onImageDataLengthOutOfLimitException() to handle this event. You can
+     * adjust the limit value by ServerSettings->setImageDataLengthLimitPercent();</p>
      *
      * @param applicationContext application context
      * @param context activity context, maybe null
@@ -102,9 +104,13 @@ public interface ExceptionHandler {
     void onImageDataLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger);
 
     /**
-     * exception while memory buffer length out of limit (cancel loading), notify user generally
+     * <p>exception while memory buffer length out of limit (cancel loading), notify user generally</p>
      *
-     * <p>TODO</p>
+     * <p>When disk cache of TILoader is not healthy (memory full or access failed), to show image as usual,
+     * we have to write all data into memory buffer, and decoding image from memory buffer.
+     * To avoid OOM, we will cancel load task if data length of source image is out of buffer limit,
+     * then call ExceptionHandler->onMemoryBufferLengthOutOfLimitException() to handle this event.
+     * You can adjust the limit value by ServerSettings->setMemoryBufferLengthLimitPercent();</p>
      *
      * @param applicationContext application context
      * @param context activity context, maybe null
@@ -116,9 +122,17 @@ public interface ExceptionHandler {
     void onMemoryBufferLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger);
 
     /**
-     * call while task is aborted by low speed network (cancel loading), notify user generally
+     * <p>call while task is aborted by low speed network (cancel loading), notify user generally</p>
      *
-     * <p>TODO</p>
+     * <p>Some times, network speed is very slow, but uninterruptedly, it will hardly to cause read-timeout exception,
+     * In order to avoid this situation, TILoader will cancel load task with slow speed.</p>
+     *
+     * <p>At the beginning of loading, task will keep loading in any case, even if the speed is very slow,
+     * we called it windowPeriod.
+     * After windowPeriod, it start to check loading speed, if faster than boundarySpeed, task will keep
+     * loading. if not, it will check loading progress, if current progress exceed boundaryProgress, task
+     * will keep loading. if not, task will be canceled, then call ExceptionHandler->onTaskAbortOnLowSpeedNetwork()
+     * method to handle this event. You can adjust params by ServerSettings->setAbortOnLowNetworkSpeed().</p>
      *
      * @param applicationContext application context
      * @param context activity context, maybe null

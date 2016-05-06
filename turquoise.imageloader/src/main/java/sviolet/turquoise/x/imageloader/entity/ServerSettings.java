@@ -268,7 +268,9 @@ public class ServerSettings implements ComponentManager.Component{
         /**
          * <p>[Senior Setting]set image data length limit by percent of app's memoryClass</p>
          *
-         * <p>TODO</p>
+         * <p>To avoid OOM, TILoader will cancel load task if data length of source image is out of limit,
+         * then call ExceptionHandler->onImageDataLengthOutOfLimitException() to handle this event. You can
+         * adjust the limit value by ServerSettings->setImageDataLengthLimitPercent();</p>
          *
          * @param context context
          * @param percent percent of app's memoryClass (>0), default:{@value DEFAULT_IMAGE_DATA_LENGTH_LIMIT_PERCENT}, min-size:{@value MIN_IMAGE_DATA_LENGTH_LIMIT}bytes
@@ -291,7 +293,11 @@ public class ServerSettings implements ComponentManager.Component{
         /**
          * <p>[Senior Setting]set memory buffer length limit by percent of app's memoryClass</p>
          *
-         * <p>TODO</p>
+         * <p>When disk cache of TILoader is not healthy (memory full or access failed), to show image as usual,
+         * we have to write all data into memory buffer, and decoding image from memory buffer.
+         * To avoid OOM, we will cancel load task if data length of source image is out of buffer limit,
+         * then call ExceptionHandler->onMemoryBufferLengthOutOfLimitException() to handle this event.
+         * You can adjust the limit value by ServerSettings->setMemoryBufferLengthLimitPercent();</p>
          *
          * @param context context
          * @param percent percent of app's memoryClass (0~0.2f), default:{@value DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT}, min-size:{@value MIN_MEMORY_BUFFER_LENGTH_LIMIT}bytes
@@ -317,11 +323,19 @@ public class ServerSettings implements ComponentManager.Component{
         /**
          * <p>[Senior Setting]</p>
          *
-         * <p>TODO</p>
+         * <p>Some times, network speed is very slow, but uninterruptedly, it will hardly to cause read-timeout exception,
+         * In order to avoid this situation, TILoader will cancel load task with slow speed.</p>
          *
-         * @param windowPeriod ms,
-         * @param boundarySpeed byte/s,
-         * @param boundaryProgress 0~1f,
+         * <p>At the beginning of loading, task will keep loading in any case, even if the speed is very slow,
+         * we called it windowPeriod.
+         * After windowPeriod, it start to check loading speed, if faster than boundarySpeed, task will keep
+         * loading. if not, it will check loading progress, if current progress exceed boundaryProgress, task
+         * will keep loading. if not, task will be canceled, then call ExceptionHandler->onTaskAbortOnLowSpeedNetwork()
+         * method to handle this event. You can adjust params by ServerSettings->setAbortOnLowNetworkSpeed().</p>
+         *
+         * @param windowPeriod ms, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD}
+         * @param boundarySpeed byte/s, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED}
+         * @param boundaryProgress 0f~1f, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_PROGRESS}
          */
         public Builder setAbortOnLowNetworkSpeed(long windowPeriod, int boundarySpeed, float boundaryProgress){
             if (windowPeriod < 0){
