@@ -100,7 +100,7 @@ public class NodeManager {
     }
 
     public List<Task> pullTasks(Server.Type type){
-        List<Task> taskList = new ArrayList<>();
+        List<Task> taskList = new ArrayList<>(1);
 
         for (Map.Entry<String, Node> entry : nodes.entrySet()) {
             Task task = entry.getValue().pullTask(type);
