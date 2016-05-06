@@ -22,6 +22,11 @@ package sviolet.turquoise.x.imageloader.server;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
@@ -34,9 +39,30 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public class NetEngine extends Engine {
 
+    private Map<String, List<Task>> taskGroups = new HashMap<>();
+    private ReentrantLock lock = new ReentrantLock();
+
     @Override
     protected void executeNewTask(Task task) {
-        loadByHandler(task);
+
+        boolean executable = false;
+
+        try{
+            lock.lock();
+            List<Task> group = taskGroups.get(task.getResourceKey());
+            if (group == null){
+                group = new ArrayList<>(1);
+                taskGroups.put(task.getResourceKey(), group);
+                executable = true;
+            }
+            group.add(task);
+        } finally {
+            lock.unlock();
+        }
+
+        if (executable) {
+            loadByHandler(task);
+        }
     }
 
     private void loadByHandler(Task task) {
@@ -51,7 +77,7 @@ public class NetEngine extends Engine {
             getNetworkLoadHandler(task).onHandle(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), callback, connectTimeout, readTimeout, getComponentManager().getLogger());
         }catch(Exception e){
             getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-            responseFailed(task);
+            handleFailed(task);
             return;
         }
         //waiting for result
@@ -62,16 +88,16 @@ public class NetEngine extends Engine {
         switch(result){
             //load succeed
             case EngineCallback.RESULT_SUCCEED:
-                handleResultSucceed(task, callback.getData());
+                onResultSucceed(task, callback.getData());
                 return;
             //load failed
             case EngineCallback.RESULT_FAILED:
-                handleResultFailed(task, callback.getException());
+                onResultFailed(task, callback.getException());
                 return;
             //load canceled
             case EngineCallback.RESULT_CANCELED:
             default:
-                handleResultCanceled(task);
+                onResultCanceled(task);
                 break;
         }
     }
@@ -80,64 +106,53 @@ public class NetEngine extends Engine {
      * handle network result
      */
 
-    private void handleResultSucceed(Task task, NetworkLoadHandler.Result data) {
+    private void onResultSucceed(Task task, NetworkLoadHandler.Result data) {
         //dispatch by type
         if (data.getType() == NetworkLoadHandler.ResultType.NULL){
             getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
                     new Exception("[TILoader:NetworkLoadHandler]callback return null result!"), getComponentManager().getLogger());
-            responseFailed(task);
+            handleFailed(task);
         }else if (data.getType() == NetworkLoadHandler.ResultType.BYTES){
             //set progress
             task.getLoadProgress().setTotal(data.getBytes().length);
             task.getLoadProgress().setLoaded(data.getBytes().length);
             //handle
-            handleBytesResult(task, data.getBytes());
+            onBytesResult(task, data.getBytes());
         }else if (data.getType() == NetworkLoadHandler.ResultType.INPUTSTREAM){
             //set progress
             task.getLoadProgress().setTotal(data.getLength());
             //handle
-            handleInputStreamResult(task, data.getInputStream());
+            onInputStreamResult(task, data.getInputStream());
         }
     }
 
-    private void handleResultFailed(Task task, Exception exception) {
+    private void onResultFailed(Task task, Exception exception) {
         if (exception != null){
             getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), exception, getComponentManager().getLogger());
         }
-        responseFailed(task);
+        handleFailed(task);
     }
 
-    private void handleResultCanceled(Task task) {
-        responseCanceled(task);
+    private void onResultCanceled(Task task) {
+        handleCanceled(task);
     }
-
-    /*********************************************************************
-     * handle data
-     */
 
     /**
      * @param task task
      * @param bytes image bytes data
      */
-    private void handleBytesResult(Task task, byte[] bytes){
+    private void onBytesResult(Task task, byte[] bytes){
         //try to write disk cache
         getComponentManager().getDiskCacheServer().write(task, bytes);
-        //decode
-        ImageResource<?> imageResource = decode(task, bytes, null);
-        if (imageResource == null){
-            responseFailed(task);
-            return;
-        }
-        //cache by memory
-        getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
-        responseSucceed(task);
+        //handle data
+        handleImageData(task, bytes, null);
     }
 
     /**
      * @param task task
      * @param inputStream image input stream
      */
-    private void handleInputStreamResult(Task task, InputStream inputStream){
+    private void onInputStreamResult(Task task, InputStream inputStream){
         //cancel loading if image data out of limit
         if (task.getLoadProgress().total() > getComponentManager().getServerSettings().getImageDataLengthLimit()){
             getComponentManager().getServerSettings().getExceptionHandler().onImageDataLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
@@ -146,35 +161,86 @@ public class NetEngine extends Engine {
                 inputStream.close();
             } catch (IOException ignored) {
             }
-            responseCanceled(task);
+            handleCanceled(task);
             return;
         }
         //try to write disk cache
         DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream);
-        //decode
-        ImageResource<?> imageResource = null;
         switch (result.getType()){
             case SUCCEED:
-                imageResource = decode(task, null, result.getTargetFile());
+                handleImageData(task, null, result.getTargetFile());
                 break;
             case RETURN_MEMORY_BUFFER:
-                imageResource = decode(task, result.getMemoryBuffer(), null);
+                handleImageData(task, result.getMemoryBuffer(), null);
                 break;
             case CANCELED:
-                responseCanceled(task);
-                return;
+                handleCanceled(task);
+                break;
             case FAILED:
             default:
-                responseFailed(task);
-                return;
+                handleFailed(task);
+                break;
         }
-        if (imageResource == null){
-            responseFailed(task);
+    }
+
+    /*********************************************************************
+     * handle data
+     */
+
+    private void handleImageData(Task task, byte[] bytes, File file){
+        List<Task> group = null;
+        try{
+            lock.lock();
+            group = taskGroups.remove(task.getResourceKey());
+        }finally {
+            lock.unlock();
+        }
+        if (group == null){
             return;
         }
-        //cache by memory
-        getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
-        responseSucceed(task);
+        for (Task t : group) {
+            //decode
+            ImageResource<?> imageResource = decode(t, bytes, file);
+            if (imageResource == null) {
+                responseFailed(t);
+                continue;
+            }
+            //cache by memory
+            getComponentManager().getMemoryCacheServer().put(t.getKey(), imageResource);
+            responseSucceed(t);
+        }
+    }
+
+    private void handleFailed(Task task){
+        List<Task> group = null;
+        try{
+            lock.lock();
+            group = taskGroups.remove(task.getResourceKey());
+        }finally {
+            lock.unlock();
+        }
+        if (group == null){
+            return;
+        }
+        for (Task t : group) {
+            responseFailed(t);
+        }
+    }
+
+    private void handleCanceled(Task task){
+        List<Task> group = null;
+        try{
+            lock.lock();
+            group = taskGroups.remove(task.getResourceKey());
+        }finally {
+            lock.unlock();
+        }
+        if (group == null){
+            return;
+        }
+        for (Task t : group) {
+            responseCanceled(t);
+        }
     }
 
     private ImageResource<?> decode(Task task, byte[] bytes, File file){
