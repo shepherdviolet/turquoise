@@ -1,12 +1,12 @@
-# Turquoise 3.0.160503
+# Turquoise 3.0.160506
 > A comprehensive Android library for private use.<br/>
 > https://github.com/shepherdviolet/turquoise <br/>
 
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/logo/turquoise.jpg)<br/>
 
 ## Module "turquoise"
-> API level 10 above.<br/>
-> Dependency: support-v4;<br/>
+[![API](https://img.shields.io/badge/API-10%2B-2ed8a8.svg?style=flat)]
+[![Dependency](https://img.shields.io/badge/Dependency-support--v4-2ed8a8.svg?style=flat)]
 > <br/>
 > The basic library module, as detailed below:<br/>
 > <br/>
