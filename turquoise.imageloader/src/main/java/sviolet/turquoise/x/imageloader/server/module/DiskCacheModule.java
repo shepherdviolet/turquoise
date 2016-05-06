@@ -195,6 +195,10 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
         }finally {
             statusLock.unlock();
         }
+        tryToClose();
+    }
+
+    private void tryToClose() {
         //try to pause cache
         dispatchThreadPool.execute(new Runnable() {
             @Override

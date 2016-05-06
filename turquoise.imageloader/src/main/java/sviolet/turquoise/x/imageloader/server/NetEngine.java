@@ -36,6 +36,10 @@ public class NetEngine extends Engine {
 
     @Override
     protected void executeNewTask(Task task) {
+        loadByHandler(task);
+    }
+
+    private void loadByHandler(Task task) {
         //reset progress
         task.getLoadProgress().reset();
         //timeout
@@ -58,51 +62,58 @@ public class NetEngine extends Engine {
         switch(result){
             //load succeed
             case EngineCallback.RESULT_SUCCEED:
-                NetworkLoadHandler.Result data = callback.getData();
-                //dispatch by type
-                if (data.getType() == NetworkLoadHandler.ResultType.NULL){
-                    getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                            new Exception("[TILoader:NetworkLoadHandler]callback return null result!"), getComponentManager().getLogger());
-                    responseFailed(task);
-                }else if (data.getType() == NetworkLoadHandler.ResultType.BYTES){
-                    //set progress
-                    task.getLoadProgress().setTotal(data.getBytes().length);
-                    task.getLoadProgress().setLoaded(data.getBytes().length);
-                    //handle
-                    handleBytesResult(task, data.getBytes());
-                }else if (data.getType() == NetworkLoadHandler.ResultType.INPUTSTREAM){
-                    //set progress
-                    task.getLoadProgress().setTotal(data.getLength());
-                    //handle
-                    handleInputStreamResult(task, data.getInputStream());
-                }
+                handleResultSucceed(task, callback.getData());
                 return;
             //load failed
             case EngineCallback.RESULT_FAILED:
-                Exception exception = callback.getException();
-                if (exception != null){
-                    getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), exception, getComponentManager().getLogger());
-                }
-                responseFailed(task);
+                handleResultFailed(task, callback.getException());
                 return;
             //load canceled
             case EngineCallback.RESULT_CANCELED:
             default:
-                responseCanceled(task);
+                handleResultCanceled(task);
                 break;
         }
-
     }
 
-    @Override
-    protected int getMaxThread() {
-        return getComponentManager().getServerSettings().getNetworkLoadMaxThread();
+    /*********************************************************************
+     * handle network result
+     */
+
+    private void handleResultSucceed(Task task, NetworkLoadHandler.Result data) {
+        //dispatch by type
+        if (data.getType() == NetworkLoadHandler.ResultType.NULL){
+            getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                    new Exception("[TILoader:NetworkLoadHandler]callback return null result!"), getComponentManager().getLogger());
+            responseFailed(task);
+        }else if (data.getType() == NetworkLoadHandler.ResultType.BYTES){
+            //set progress
+            task.getLoadProgress().setTotal(data.getBytes().length);
+            task.getLoadProgress().setLoaded(data.getBytes().length);
+            //handle
+            handleBytesResult(task, data.getBytes());
+        }else if (data.getType() == NetworkLoadHandler.ResultType.INPUTSTREAM){
+            //set progress
+            task.getLoadProgress().setTotal(data.getLength());
+            //handle
+            handleInputStreamResult(task, data.getInputStream());
+        }
     }
 
-    @Override
-    public Type getServerType() {
-        return Type.NETWORK_ENGINE;
+    private void handleResultFailed(Task task, Exception exception) {
+        if (exception != null){
+            getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), exception, getComponentManager().getLogger());
+        }
+        responseFailed(task);
     }
+
+    private void handleResultCanceled(Task task) {
+        responseCanceled(task);
+    }
+
+    /*********************************************************************
+     * handle data
+     */
 
     /**
      * @param task task
@@ -192,6 +203,10 @@ public class NetEngine extends Engine {
         return imageResource;
     }
 
+    /*********************************************************************
+     * response
+     */
+
     private void responseSucceed(Task task){
         task.setState(Task.State.SUCCEED);
         response(task);
@@ -205,6 +220,20 @@ public class NetEngine extends Engine {
     private void responseCanceled(Task task){
         task.setState(Task.State.CANCELED);
         response(task);
+    }
+
+    /*********************************************************************
+     * override
+     */
+
+    @Override
+    protected int getMaxThread() {
+        return getComponentManager().getServerSettings().getNetworkLoadMaxThread();
+    }
+
+    @Override
+    public Type getServerType() {
+        return Type.NETWORK_ENGINE;
     }
 
 }
