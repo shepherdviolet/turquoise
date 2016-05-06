@@ -26,7 +26,11 @@ import sviolet.turquoise.x.imageloader.plugin.handler.EnhancedImageResourceHandl
 import sviolet.turquoise.x.imageloader.server.Engine;
 
 /**
- * <p>TILoader will automatic load this PluginManager, if your module dependent on module "turquoise.imageloader.plugin"</p>
+ * <p>NOTICE:: TILoader will load this plugin automatically, as long as your project dependent on
+ * module "turquoise.imageloader.plugin". Don't need to do anything else.</p>
+ *
+ * <p>1.Add support for GIF.</p>
+ *
  */
 public class PluginManager implements PluginInterface {
 

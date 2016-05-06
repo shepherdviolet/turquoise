@@ -28,7 +28,14 @@ import java.io.IOException;
 import sviolet.turquoise.util.common.BitmapUtils;
 
 /**
- * TODO
+ * <p>EnhancedGifDrawable</p>
+ *
+ * <p>NOTICE:: TILoader will load this plugin automatically, as long as your project dependent on
+ * module "turquoise.imageloader.plugin". Don't need to do anything else.</p>
+ *
+ * <p>1.Add decode method, calculate sample size before decoding, to save memory</p>
+ *
+ * <p>2.Add getByteCount method.</p>
  *
  * Created by S.Violet on 2016/5/4.
  */

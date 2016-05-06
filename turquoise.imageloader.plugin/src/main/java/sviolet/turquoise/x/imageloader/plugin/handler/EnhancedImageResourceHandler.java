@@ -29,6 +29,9 @@ import pl.droidsonroids.gif.EnhancedGifDrawable;
 /**
  * <p>Enhanced ImageResourceHandler</p>
  *
+ * <p>NOTICE:: TILoader will load this plugin automatically, as long as your project dependent on
+ * module "turquoise.imageloader.plugin". Don't need to do anything else.</p>
+ *
  * <p>1.Add support for GIF</p>
  *
  * Created by S.Violet on 2016/5/4.

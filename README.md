@@ -32,7 +32,7 @@
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v7-dc143c.svg?style=flat)
 > <br/>
-> Expansion Module of "turquoise", Add support for "support-v7". Optional module.<br/>
+> Expansion Module of "turquoise", Add support for "support-v7". Optional.<br/>
 > <br/>
 > 1.Add support for AppCompatActivity.<br/>
 > 2.Add support for RecyclerView.<br/>
@@ -90,9 +90,12 @@
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise.imageloader-2ed8a8.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
 > <br/>
-> Expansion Module of "turquoise.imageloader", Add support for GIF. Optional module.<br/>
+> Expansion Module of "turquoise.imageloader". Optional.<br/>
 > <br/>
-> 1.Add support for GIF.<br/>
+> 1.Add support for GIF, make TILoader to load GIF.<br/>
+> <br/>
+> Usage::<br/>
+> TILoader will load this plugin automatically, as long as your project dependent on this module. Don't need to do anything else.<br/>
 
 ## Package Releases (aar/source)
 > https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
