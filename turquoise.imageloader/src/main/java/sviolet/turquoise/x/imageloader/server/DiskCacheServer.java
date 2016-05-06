@@ -38,6 +38,10 @@ import sviolet.turquoise.x.imageloader.server.module.DiskCacheModule;
  */
 public class DiskCacheServer extends DiskCacheModule {
 
+    /************************************************************************
+     * read
+     */
+
     /**
      * read Image from disk cache
      * @param task task
@@ -66,6 +70,10 @@ public class DiskCacheServer extends DiskCacheModule {
         release();
         return imageResource;
     }
+
+    /************************************************************************
+     * write
+     */
 
     /**
      * ResultType.SUCCEED :<br/>
@@ -199,6 +207,11 @@ public class DiskCacheServer extends DiskCacheModule {
             release();
         }
         //fetch target file while succeed
+        fetchTargetFile(task, result);
+        return result;
+    }
+
+    private void fetchTargetFile(Task task, Result result) {
         if (result.getType() == ResultType.SUCCEED){
             File targetFile = get(task);
             if (targetFile == null || !targetFile.exists()){
@@ -211,7 +224,6 @@ public class DiskCacheServer extends DiskCacheModule {
                 result.setTargetFile(targetFile);
             }
         }
-        return result;
     }
 
     /**
@@ -356,6 +368,10 @@ public class DiskCacheServer extends DiskCacheModule {
         return true;
     }
 
+    /************************************************************************
+     * function
+     */
+
     private void closeStream(InputStream stream){
         if (stream != null){
             try {
@@ -382,6 +398,10 @@ public class DiskCacheServer extends DiskCacheModule {
             }
         }
     }
+
+    /************************************************************************
+     * inner
+     */
 
     public enum ResultType{
         SUCCEED,
