@@ -23,13 +23,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 
-import sviolet.turquoise.util.common.DateTimeUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
@@ -58,7 +56,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
     private ResourceBitmapWrapper imageBitmap = new ResourceBitmapWrapper();
     private int backgroundColor = BACKGROUND_COLOR_DEF;
-    private AnimationDrawableFactory animationDrawableFactory = new CommonAnimationDrawableFactory();
+    private AnimationDrawableFactory animationDrawableFactory = new PointLoadingAnimationDrawableFactory();//default animation factory
 
     private Settings settings = new Settings();
 
@@ -131,7 +129,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
     }
 
     /**
-     * set custom animation, reference {@link CommonLoadingDrawableFactory.CommonAnimationDrawableFactory} & {@link CommonLoadingDrawableFactory.CommonAnimationDrawable}
+     * set custom animation, reference {@link PointLoadingAnimationDrawableFactory}
      * @param factory AnimationDrawableFactory
      */
     public CommonLoadingDrawableFactory setAnimationDrawableFactory(AnimationDrawableFactory factory){
@@ -315,156 +313,6 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
         Drawable create(Context applicationContext, Context context, Params params, LoadProgress.Info progressInfo, TLogger logger);
 
-    }
-
-    /**********************************************************************************************************************
-     * Common Animation
-     **********************************************************************************************************************/
-
-    /**
-     * settings of animation factory
-     */
-    protected static class AnimationSettings{
-
-        static final int COLOR_DEF = 0xFFC0C0C0;
-        static final int RADIUS_DEF = 10;
-        static final int INTERVAL_DEF = 40;
-        static final int DURATION = 1000;
-        static final float OFFSET_X_DEF = 0.5f;
-        static final float OFFSET_Y_DEF = 0.5f;
-
-        int pointColor = COLOR_DEF;
-        int pointRadius = RADIUS_DEF;
-        int pointInterval = INTERVAL_DEF;
-        long animationDuration = DURATION;
-        float pointOffsetX = OFFSET_X_DEF;
-        float pointOffsetY = OFFSET_Y_DEF;
-
-    }
-
-    /**
-     * common AnimationDrawableFactory
-     */
-    public static class CommonAnimationDrawableFactory implements AnimationDrawableFactory{
-
-        private AnimationSettings settings = new AnimationSettings();
-
-        @Override
-        public Drawable create(Context applicationContext, Context context, Params params, LoadProgress.Info progressInfo, TLogger logger) {
-            return new CommonAnimationDrawable(settings);
-        }
-
-        public CommonAnimationDrawableFactory setPointColor(int color){
-            settings.pointColor = color;
-            return this;
-        }
-
-        public CommonAnimationDrawableFactory setPointRadius(int radius){
-            settings.pointRadius = radius;
-            return this;
-        }
-
-        public CommonAnimationDrawableFactory setPointInterval(int interval){
-            settings.pointInterval = interval;
-            return this;
-        }
-
-        public CommonAnimationDrawableFactory setAnimationDuration(long duration){
-            settings.animationDuration = duration;
-            return this;
-        }
-
-        public CommonAnimationDrawableFactory setPointOffsetX(float offsetX){
-            settings.pointOffsetX = offsetX;
-            return this;
-        }
-
-        public CommonAnimationDrawableFactory setPointOffsetY(float offsetY){
-            settings.pointOffsetY = offsetY;
-            return this;
-        }
-
-    }
-
-    /**
-     * Common AnimationDrawable
-     */
-    public static class CommonAnimationDrawable extends Drawable {
-
-        private AnimationSettings settings;
-
-        private static final int QUANTITY = 3;
-        private static final int MIN_POSITION = -2;
-        private static final int MAX_POSITION = 4;
-        private long startTime = DateTimeUtils.getUptimeMillis();
-
-        private Paint paint;
-
-        public CommonAnimationDrawable(AnimationSettings settings) {
-            this.settings = settings;
-            initPaint();
-        }
-
-        @Override
-        public void draw(Canvas canvas) {
-            //skip
-            if(settings.pointRadius <= 0 || settings.pointInterval < 0 || settings.animationDuration <= 0)
-                return;
-
-            //draw
-            drawCircle(canvas, calculateCurrentPosition());
-        }
-
-        private int calculateCurrentPosition(){
-            final float progress = (float)((DateTimeUtils.getUptimeMillis() - startTime) % settings.animationDuration) / (float)settings.animationDuration;
-            final int distance = MAX_POSITION - MIN_POSITION;
-            final int position = (int) ((2 * distance + 1) * progress);
-            if (position <= distance){
-                return MIN_POSITION + position;
-            }else{
-                return MIN_POSITION + distance - (position - distance - 1);
-            }
-        }
-
-        private void drawCircle(Canvas canvas, int currentPosition) {
-            Rect drawBounds = getBounds();
-            Rect canvasBounds = new Rect();
-            canvas.getClipBounds(canvasBounds);
-
-            final float scale = (float)canvasBounds.width() / (float)canvas.getWidth();//calculate scale of canvas
-
-            final int length = (int) ((QUANTITY - 1) * settings.pointInterval * scale);
-
-            int x = (int) (drawBounds.left + drawBounds.width() * settings.pointOffsetX - length / 2);
-            int y = (int) (drawBounds.top + drawBounds.height() * settings.pointOffsetY);
-
-            for(int i = 0 ; i < QUANTITY ; i++){
-                canvas.drawCircle(x, y, i == currentPosition ? (float) (settings.pointRadius * 1.5 * scale) : settings.pointRadius * scale, paint);
-                x += settings.pointInterval * scale;
-            }
-        }
-
-        private void initPaint() {
-            paint = new Paint();
-            paint.setColor(settings.pointColor);
-            paint.setAntiAlias(true);
-            paint.setStyle(Paint.Style.FILL);
-        }
-
-        @Override
-        public void setAlpha(int alpha) {
-            paint.setAlpha(alpha);
-        }
-
-        @Override
-        public void setColorFilter(ColorFilter colorFilter) {
-            paint.setColorFilter(colorFilter);
-        }
-
-        @Override
-        public int getOpacity() {
-            return 0;
-        }
     }
 
 }
