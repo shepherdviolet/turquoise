@@ -29,6 +29,7 @@ import android.graphics.drawable.Drawable;
 import sviolet.turquoise.util.common.DateTimeUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.drawable.common.CommonLoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.entity.LoadProgress;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
@@ -45,7 +46,7 @@ public class MyAnimationDrawableFactory implements CommonLoadingDrawableFactory.
     private AnimationSettings settings = new AnimationSettings();
 
     @Override
-    public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
+    public Drawable create(Context applicationContext, Context context, Params params, LoadProgress.Info progressInfo, TLogger logger) {
         //返回Drawable
         return new MyAnimationDrawable(settings);
     }

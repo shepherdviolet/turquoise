@@ -16,6 +16,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.drawable.common.CommonLoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.common.PointLoadingAnimationDrawableFactory;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
@@ -91,7 +92,7 @@ public class BasicActivity extends TActivity {
                         .setImageScaleType(CommonLoadingDrawableFactory.ImageScaleType.FORCE_CENTER)//设置加载图拉伸方式为强制居中
                         .setAnimationEnabled(true)//允许动画(默认true)
 //                        .setAnimationDrawableFactory(new MyAnimationDrawableFactory())//方式1:自定义实现动画(完全自己实现)
-                        .setAnimationDrawableFactory(new CommonLoadingDrawableFactory.CommonAnimationDrawableFactory()//方式2:配置通用动画
+                        .setAnimationDrawableFactory(new PointLoadingAnimationDrawableFactory()//方式2:配置通用动画
                                 .setAnimationDuration(500)//动画时间
                                 .setPointColor(0xFFB0A0A0)//动画点颜色
                                 .setPointInterval(MeasureUtils.dp2px(getApplicationContext(), 9))//动画点间隔
