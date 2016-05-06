@@ -26,6 +26,8 @@ import android.widget.ListView;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import sviolet.turquoise.util.droid.DeviceUtils;
+
 /**
  * <p>Remoter of Node, helps smooth slide, for {@link ListView} / {@link GridView} / RecyclerView,
  * but not necessary.</p>
@@ -137,6 +139,23 @@ public class NodeRemoter {
                     controller.getLogger().d("[NodeRemoter]resume, nodeId:" + controller.getNodeId());
                 }
             }
+        }
+    }
+
+    /**
+     * destroy Node, this method only for api < 11, do not call if min api 11+
+     * @deprecated this method only for api < 11, do not call if min api 11+
+     */
+    @Deprecated
+    public void destroy(){
+        if (DeviceUtils.getVersionSDK() >= 11){
+            //just for api < 11
+            return;
+        }
+        final NodeController controller = this.controller.get();
+        if (controller != null) {
+            controller.onDestroy();
+            controller.getLogger().d("[NodeRemoter]destroy (api<11), nodeId:" + controller.getNodeId());
         }
     }
 

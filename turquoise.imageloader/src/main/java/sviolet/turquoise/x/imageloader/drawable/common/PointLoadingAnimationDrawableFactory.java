@@ -50,26 +50,41 @@ public class PointLoadingAnimationDrawableFactory implements CommonLoadingDrawab
         return this;
     }
 
+    /**
+     * @param radius px
+     */
     public PointLoadingAnimationDrawableFactory setPointRadius(int radius){
         settings.pointRadius = radius;
         return this;
     }
 
+    /**
+     * @param interval px
+     */
     public PointLoadingAnimationDrawableFactory setPointInterval(int interval){
         settings.pointInterval = interval;
         return this;
     }
 
+    /**
+     * @param duration ms
+     */
     public PointLoadingAnimationDrawableFactory setAnimationDuration(long duration){
         settings.animationDuration = duration;
         return this;
     }
 
+    /**
+     * @param offsetX 0f~1f, position of width
+     */
     public PointLoadingAnimationDrawableFactory setPointOffsetX(float offsetX){
         settings.pointOffsetX = offsetX;
         return this;
     }
 
+    /**
+     * @param offsetY 0f~1f, position of height
+     */
     public PointLoadingAnimationDrawableFactory setPointOffsetY(float offsetY){
         settings.pointOffsetY = offsetY;
         return this;

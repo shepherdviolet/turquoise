@@ -56,7 +56,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
 
     private ResourceBitmapWrapper imageBitmap = new ResourceBitmapWrapper();
     private int backgroundColor = BACKGROUND_COLOR_DEF;
-    private AnimationDrawableFactory animationDrawableFactory = new PointLoadingAnimationDrawableFactory();//default animation factory
+    private AnimationDrawableFactory animationDrawableFactory = new CircleLoadingAnimationDrawableFactory();//default animation factory
 
     private Settings settings = new Settings();
 
@@ -129,7 +129,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
     }
 
     /**
-     * set custom animation, reference {@link PointLoadingAnimationDrawableFactory}
+     * set custom animation, refer to {@link CircleLoadingAnimationDrawableFactory}/{@link PointLoadingAnimationDrawableFactory}
      * @param factory AnimationDrawableFactory
      */
     public CommonLoadingDrawableFactory setAnimationDrawableFactory(AnimationDrawableFactory factory){
