@@ -54,12 +54,6 @@ public class BasicActivity extends TActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        try {
-            TILoaderUtils.wipeDiskCache(this, null);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         //必须在加载之前设置节点,否则无效
         initNode();
         loadImage();

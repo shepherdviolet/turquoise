@@ -58,7 +58,25 @@ public class GifActivity extends TAppCompatActivity {
         loadGIF();
     }
 
+    /**
+     * <p>TILoader支持GIF加载, 但基础包不加载GIF图片. 请根据实际情况选择, 如果需要, 请追加插件包.</p>
+     *
+     * <p>工程同时依赖"turquoise.imageloader"和"turquoise.imageloader.plugin"即可, TILoader会自动加载插件
+     * 模块, 并提供GIF加载支持. 无需其他配置, 使用方式不变.</p>
+     *
+     * <pre>{@code
+     *     //基础包
+     *     compile project(':turquoise')
+     *     compile project(':turquoise.imageloader')
+     *     //插件包(可选,增加GIF支持等)
+     *     compile project(':turquoise.imageloader.plugin')
+     * }</pre>
+     *
+     */
     private void loadGIF(){
+        /**
+         * 像加载普通图片一样加载GIF即可
+         */
         String url1 = "https://camo.githubusercontent.com/d406ac5a03a2b1fa5cf41fadc8d2408cb8709bdc/68747470733a2f2f6431337961637572716a676172612e636c6f756466726f6e742e6e65742f75736572732f3132353035362f73637265656e73686f74732f313635303331372f7265616c6573746174652d70756c6c5f312d322d332e676966";
         TILoader.node(this).load(url1, imageView1);
     }
