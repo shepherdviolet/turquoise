@@ -113,6 +113,7 @@ public abstract class DecodeHandler {
      */
     public enum DecodeStrategy{
         /**
+         * <p>recommended option</p>
          * scale image appropriately by reqWidth/reqHeight, to save memory
          */
         APPROXIMATE_SCALE,

@@ -125,7 +125,7 @@ public class BasicActivity extends TActivity {
 //        Params paramsDemo = new Params.Builder()
 //                .setReqSize(100, 100)//指定加载尺寸, 默认匹配控件尺寸
 //                .setBitmapConfig(Bitmap.Config.ARGB_8888)//设置Bitmap格式, ARGB_8888支持透明, 默认ARGB_565
-//                .setExactDecoding(true)//设置精确解码, true:图片尺寸等于指定尺寸, false:图片尺寸接近指定尺寸, 默认false
+//                .setDecodeStrategy(DecodeHandler.DecodeStrategy.ACCURATE_SCALE)//设置精确解码, 图片尺寸等于指定尺寸, 默认:APPROXIMATE_SCALE, 非精确解码
 //                .setDecodeInterceptor(new MyDecodeInterceptor())//设置解码拦截器, 对图片进行特殊解码处理
 //                .build();
 
