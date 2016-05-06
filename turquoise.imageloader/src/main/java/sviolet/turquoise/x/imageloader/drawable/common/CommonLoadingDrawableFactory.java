@@ -84,9 +84,9 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
             backgroundDrawable = new ColorDrawable(backgroundColor);
         }
         //animation
-        Drawable animationDrawable = animationDrawableFactory.create(applicationContext, context, params, logger);
+        Drawable animationDrawable = animationDrawableFactory.create(applicationContext, context, params, progressInfo, logger);
         //loading drawable
-        return new LoadingDrawable(settings, animationDrawable, imageDrawable, backgroundDrawable, drawableWidth, drawableHeight, progressInfo);
+        return new LoadingDrawable(settings, animationDrawable, imageDrawable, backgroundDrawable, drawableWidth, drawableHeight);
     }
 
     @Override
@@ -163,16 +163,14 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         private Drawable backgroundDrawable;
         private int drawableWidth = 0;
         private int drawableHeight = 0;
-        private LoadProgress.Info progressInfo;
 
-        public LoadingDrawable(Settings settings, Drawable animationDrawable, BitmapDrawable imageDrawable, Drawable backgroundDrawable, int drawableWidth, int drawableHeight, LoadProgress.Info progressInfo){
+        public LoadingDrawable(Settings settings, Drawable animationDrawable, BitmapDrawable imageDrawable, Drawable backgroundDrawable, int drawableWidth, int drawableHeight){
             this.settings = settings;
             this.animationDrawable = animationDrawable;
             this.imageDrawable = imageDrawable;
             this.backgroundDrawable = backgroundDrawable;
             this.drawableWidth = drawableWidth;
             this.drawableHeight = drawableHeight;
-            this.progressInfo = progressInfo;
         }
 
         @Override
@@ -315,7 +313,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
      */
     public interface AnimationDrawableFactory{
 
-        Drawable create(Context applicationContext, Context context, Params params, TLogger logger);
+        Drawable create(Context applicationContext, Context context, Params params, LoadProgress.Info progressInfo, TLogger logger);
 
     }
 
@@ -352,7 +350,7 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
         private AnimationSettings settings = new AnimationSettings();
 
         @Override
-        public Drawable create(Context applicationContext, Context context, Params params, TLogger logger) {
+        public Drawable create(Context applicationContext, Context context, Params params, LoadProgress.Info progressInfo, TLogger logger) {
             return new CommonAnimationDrawable(settings);
         }
 
