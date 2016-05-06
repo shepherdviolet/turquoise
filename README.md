@@ -74,10 +74,17 @@
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise.imageloader-2ed8a8.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
 > Expansion Module of `turquoise.imageloader`. Optional.<br/>
-> 1.Add support for GIF, be able to load GIF.<br/>
+> 1.Add support for GIF loading, dependent on `pl.droidsonroids.gif:android-gif-drawable:1.1.15`.<br/>
 ### Usage:<br/>
 > `TILoader` will load this plugin automatically, as long as your project dependent on this module.<br/>
 > `Don't need to do anything else`.<br/>
+
+```java
+
+    compile project(':turquoise.imageloader')
+    compile project(':turquoise.imageloader.plugin')
+
+```
 
 ## Package Releases (aar/source)
 > https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
