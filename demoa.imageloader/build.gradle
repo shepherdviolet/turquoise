@@ -53,8 +53,9 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':turquoise.imageloader')
+    compile project(':turquoise.imageloader.plugin')
+    compile project(':turquoise.v7')
     compile 'com.android.support:appcompat-v7:23.3.0'
     compile 'com.android.support:recyclerview-v7:23.3.0'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
-    compile project(':turquoise.imageloader.plugin')
 }
