@@ -33,7 +33,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
 import pl.droidsonroids.gif.EnhancedGifDrawable;
 
 /**
- *
+ * TODO
  * Created by S.Violet on 2016/5/4.
  */
 public class EnhancedDecodeHandler extends CommonDecodeHandler {
