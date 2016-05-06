@@ -59,6 +59,22 @@ public class MyExceptionHandler implements ExceptionHandler {
     }
 
     @Override
+    public void onImageDataLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger) {
+        Log.e("MyExceptionHandler", "onImageDataLengthOutOfLimitException", null);
+    }
+
+    @Override
+    public void onMemoryBufferLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger) {
+        Log.e("MyExceptionHandler", "onMemoryBufferLengthOutOfLimitException", null);
+    }
+
+    @Override
+    public void onTaskAbortOnLowSpeedNetwork(Context applicationContext, Context context, Task.Info taskInfo, long elapseTime, int speed, float progress, TLogger logger) {
+        Log.e("MyExceptionHandler", "onTaskAbortOnLowSpeedNetwork", null);
+
+    }
+
+    @Override
     public void onDecodeException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
         Log.e("MyExceptionHandler", "onDecodeException", throwable);
     }
