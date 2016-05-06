@@ -30,7 +30,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.common.CommonDecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.plugin.drawable.EnhancedGifDrawable;
+import pl.droidsonroids.gif.EnhancedGifDrawable;
 
 /**
  *
@@ -46,7 +46,7 @@ public class EnhancedDecodeHandler extends CommonDecodeHandler {
             return super.onDecode(applicationContext, context, taskInfo, data, logger);
         }
         try {
-            return new ImageResource<>(ImageResource.Type.GIF, new EnhancedGifDrawable(data));
+            return new ImageResource<>(ImageResource.Type.GIF, EnhancedGifDrawable.decode(data, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight()));
         } catch (IOException e) {
             throw new RuntimeException("[TILoader:EnhancedDecodeHandler]error while decoding gif from bytes", e);
         }
@@ -58,7 +58,7 @@ public class EnhancedDecodeHandler extends CommonDecodeHandler {
             return super.onDecode(applicationContext, context, taskInfo, file, logger);
         }
         try {
-            return new ImageResource<>(ImageResource.Type.GIF, new EnhancedGifDrawable(file));
+            return new ImageResource<>(ImageResource.Type.GIF, EnhancedGifDrawable.decode(file, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight()));
         } catch (IOException e) {
             throw new RuntimeException("[TILoader:EnhancedDecodeHandler]error while decoding gif from file", e);
         }

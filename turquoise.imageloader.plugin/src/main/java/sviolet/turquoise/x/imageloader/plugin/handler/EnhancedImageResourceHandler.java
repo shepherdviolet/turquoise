@@ -22,10 +22,9 @@ package sviolet.turquoise.x.imageloader.plugin.handler;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 
-import pl.droidsonroids.gif.GifDrawable;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.common.CommonImageResourceHandler;
-import sviolet.turquoise.x.imageloader.plugin.drawable.EnhancedGifDrawable;
+import pl.droidsonroids.gif.EnhancedGifDrawable;
 
 /**
  * <p>Enhanced ImageResourceHandler</p>
@@ -41,8 +40,8 @@ public class EnhancedImageResourceHandler extends CommonImageResourceHandler {
         switch (resource.getType()){
             case GIF:
                 Object res = resource.getResource();
-                if (res instanceof GifDrawable){
-                    return !((GifDrawable) res).isRecycled();
+                if (res instanceof EnhancedGifDrawable){
+                    return !((EnhancedGifDrawable) res).isRecycled();
                 }
                 break;
             default:
@@ -56,8 +55,8 @@ public class EnhancedImageResourceHandler extends CommonImageResourceHandler {
         switch (resource.getType()){
             case GIF:
                 Object res = resource.getResource();
-                if ((res instanceof GifDrawable) && (!((GifDrawable) res).isRecycled())){
-                    ((GifDrawable) res).recycle();
+                if ((res instanceof EnhancedGifDrawable) && (!((EnhancedGifDrawable) res).isRecycled())){
+                    ((EnhancedGifDrawable) res).recycle();
                     return true;
                 }
                 break;

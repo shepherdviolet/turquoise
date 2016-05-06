@@ -789,7 +789,7 @@ public class BitmapUtils {
      */
     public static int calculateInSampleSize(int originWidth, int originHeight, int reqWidth, int reqHeight){
         //不缩放的情况
-        if (reqWidth <= 0 || reqHeight <= 0) {
+        if (originWidth <= 0 || originHeight <= 0 || reqWidth <= 0 || reqHeight <= 0) {
             return 1;
         }
         //缩放因子

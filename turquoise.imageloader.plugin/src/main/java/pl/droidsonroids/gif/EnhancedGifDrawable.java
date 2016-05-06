@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.plugin.drawable;
+package pl.droidsonroids.gif;
 
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
@@ -25,7 +25,7 @@ import android.support.annotation.NonNull;
 import java.io.File;
 import java.io.IOException;
 
-import pl.droidsonroids.gif.GifDrawable;
+import sviolet.turquoise.util.common.BitmapUtils;
 
 /**
  *
@@ -39,13 +39,38 @@ public class EnhancedGifDrawable extends GifDrawable {
     private int fixedWidth = Integer.MIN_VALUE;
     private int fixedHeight = Integer.MIN_VALUE;
 
-    public EnhancedGifDrawable(@NonNull File file) throws IOException {
-        super(file);
+    public static EnhancedGifDrawable decode(@NonNull File file, int reqWidth, int reqHeight) throws IOException {
+        //decode meta data only, get size
+        GifInfoHandle gifInfoHandle = new GifInfoHandle(file.getPath(), true);
+        final int width = gifInfoHandle.getWidth();
+        final int height = gifInfoHandle.getHeight();
+        gifInfoHandle.recycle();
+        //calculate sample size
+        int sampleSize = BitmapUtils.calculateInSampleSize(width, height, reqWidth, reqHeight);
+        //decode gif
+        gifInfoHandle = new GifInfoHandle(file.getPath(), false);
+        //set sample size
+        gifInfoHandle.setSampleSize(sampleSize);
+        return new EnhancedGifDrawable(gifInfoHandle);
     }
 
-    public EnhancedGifDrawable(@NonNull byte[] bytes) throws IOException {
-        super(bytes);
-        bytesDataMode = true;
+    public static EnhancedGifDrawable decode(@NonNull byte[] bytes, int reqWidth, int reqHeight) throws IOException {
+        //decode meta data only, get size
+        GifInfoHandle gifInfoHandle = new GifInfoHandle(bytes, true);
+        final int width = gifInfoHandle.getWidth();
+        final int height = gifInfoHandle.getHeight();
+        gifInfoHandle.recycle();
+        //calculate sample size
+        int sampleSize = BitmapUtils.calculateInSampleSize(width, height, reqWidth, reqHeight);
+        //decode gif
+        gifInfoHandle = new GifInfoHandle(bytes, false);
+        //set sample size
+        gifInfoHandle.setSampleSize(sampleSize);
+        return new EnhancedGifDrawable(gifInfoHandle).setBytesDataMode();
+    }
+
+    private EnhancedGifDrawable(GifInfoHandle gifInfoHandle) {
+        super(gifInfoHandle, null, null, true);
     }
 
     @Override
@@ -116,6 +141,11 @@ public class EnhancedGifDrawable extends GifDrawable {
         }else{
             return getAllocationByteCount();
         }
+    }
+
+    private EnhancedGifDrawable setBytesDataMode(){
+        this.bytesDataMode = true;
+        return this;
     }
 
 }
