@@ -7,7 +7,6 @@
 ## Module `turquoise`
 ![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
-> <br/>
 > The basic library module, as detailed below:<br/>
 > <br/>
 ### Utils/Models ┃ sviolet.turquoise.util/utilx/model/modelx <br/>
@@ -31,8 +30,7 @@
 ![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v7-dc143c.svg?style=flat)
-> <br/>
-> Expansion Module of "turquoise", Add support for "support-v7". Optional.<br/>
+> Expansion Module of `turquoise`, Add support for `support-v7`. `Optional`.<br/>
 > <br/>
 > 1.Add support for AppCompatActivity.<br/>
 > 2.Add support for RecyclerView.<br/>
@@ -40,9 +38,7 @@
 ## Module `turquoise.imageloader`
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
-> <br/>
 > TurquoiseImageLoader. it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.<br/>
-> Alpha version release!!!<br/>
 > <br/>
 ### Overview:<br/>
 ![](https://github.com/shepherdviolet/turquoise/blob/master/doc/turquoise-overview.png)<br/>
@@ -83,13 +79,12 @@
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise.imageloader-2ed8a8.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
+> Expansion Module of `turquoise.imageloader`. `Optional`.<br/>
 > <br/>
-> Expansion Module of "turquoise.imageloader". Optional.<br/>
+> 1.Add support for GIF, be able to load GIF.<br/>
 > <br/>
-> 1.Add support for GIF, make TILoader to load GIF.<br/>
-> <br/>
-### Usage::<br/>
-> TILoader will load this plugin automatically, as long as your project dependent on this module. Don't need to do anything else.<br/>
+### Usage:<br/>
+> `TILoader` will load this plugin automatically, as long as your project dependent on this module. `Don't need to do anything else`.<br/>
 
 ## Package Releases (aar/source)
 > https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
