@@ -22,9 +22,13 @@ package sviolet.demoaimageloader;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 import sviolet.demoaimageloader.common.DemoDefault;
 import sviolet.demoaimageloader.common.DemoList;
@@ -35,6 +39,7 @@ import sviolet.demoaimageloader.demos.ListViewActivity;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.x.imageloader.TILoaderUtils;
 
 /**************************************************************
  * Demo配置
@@ -57,6 +62,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 
 @ResourceId(R.layout.guide_main)
 @ActivitySettings(
+        optionsMenuId = R.menu.menu_guide,
         noTitle = false,
         translucentBar = false,
         statusBarColor = 0xFF209090,
@@ -79,6 +85,38 @@ public class GuideActivity extends TActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    /**
+     * 菜单
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.guide_menu_settings) {
+            return true;
+        } else if (id == R.id.guide_menu_about) {
+            //版本显示
+            Toast.makeText(this, "TILoader Demo " + BuildConfig.VERSION_NAME, Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (id == R.id.guide_menu_wipe_cache){
+            /*
+                清空磁盘缓存, 此处为简易写法, 为保证流畅, 应另启线程处理,
+                同时显示进度条遮罩, 阻止用户操作. 要确保该方法执行时, 对
+                应磁盘缓存区无读写操作, 否则会抛出异常.
+            */
+            try {
+                TILoaderUtils.wipeDiskCache(this, null);
+                Toast.makeText(this, "disk cache wiped", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(this, "disk cache wipe failed", Toast.LENGTH_SHORT).show();
+            }
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**************************************************************
