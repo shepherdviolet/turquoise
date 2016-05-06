@@ -36,7 +36,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
  * <p>1.decoding image, format refer to taskInfo->Params->bitmapConfig, size refer to taskInfo->Params->reqWidth/reqHeight,
  * size does not require very precise.</p>
  *
- * <p>2.if taskInfo->Params->exactDecoding is true, scale image to reqSize(reqWidth/reqHeight) exactly</p>
+ * <p>2.scale image base on taskInfo->Params->decodeStrategy, {@link DecodeStrategy}</p>
  *
  * Created by S.Violet on 2016/2/19.
  */
@@ -99,6 +99,31 @@ public abstract class DecodeHandler {
 
         ImageResource<?> intercept(Context applicationContext, Context context, Task.Info taskInfo, ImageResource<?> imageResource, TLogger logger);
 
+    }
+
+    /**
+     * <p>decoding strategy</p>
+     *
+     * <p>APPROXIMATE_SCALE::scale image appropriately by reqWidth/reqHeight, to save memory</p>
+     *
+     * <p>ACCURATE_SCALE::scale image to reqWidth * reqHeight accurately</p>
+     *
+     * <p>NO_SCALE::do not scale, keep origin size</p>
+     *
+     */
+    public enum DecodeStrategy{
+        /**
+         * scale image appropriately by reqWidth/reqHeight, to save memory
+         */
+        APPROXIMATE_SCALE,
+        /**
+         * scale image to reqWidth * reqHeight accurately
+         */
+        ACCURATE_SCALE,
+        /**
+         * do not scale, keep origin size
+         */
+        NO_SCALE
     }
 
 }

@@ -36,9 +36,9 @@ public class Params {
         private int reqWidth = SIZE_MATCH_RESOURCE;
         private int reqHeight = SIZE_MATCH_RESOURCE;
         private boolean sizeMatchView = true;
-        private boolean exactDecoding = false;
-        private Bitmap.Config bitmapConfig = DEFAULT_BITMAP_CONFIG;
+        private DecodeHandler.DecodeStrategy decodeStrategy = DecodeHandler.DecodeStrategy.APPROXIMATE_SCALE;
         private DecodeHandler.Interceptor decodeInterceptor;
+        private Bitmap.Config bitmapConfig = DEFAULT_BITMAP_CONFIG;
 
         /**
          * you must implement cloning method, including all values.
@@ -49,9 +49,9 @@ public class Params {
             newValues.reqWidth = reqWidth;
             newValues.reqHeight = reqHeight;
             newValues.sizeMatchView = sizeMatchView;
-            newValues.exactDecoding = exactDecoding;
-            newValues.bitmapConfig = bitmapConfig;
+            newValues.decodeStrategy = decodeStrategy;
             newValues.decodeInterceptor = decodeInterceptor;
+            newValues.bitmapConfig = bitmapConfig;
             return newValues;
         }
     }
@@ -108,11 +108,18 @@ public class Params {
         }
 
         /**
-         * if true, Image will decoding according to precise parameters, but it will cost more system resources.
-         * @param exactDecoding false by default
+         * <p>decoding strategy</p>
+         *
+         * <p>APPROXIMATE_SCALE::scale image appropriately by reqWidth/reqHeight, to save memory</p>
+         *
+         * <p>ACCURATE_SCALE::scale image to reqWidth * reqHeight accurately</p>
+         *
+         * <p>NO_SCALE::do not scale, keep origin size</p>
+         *
+         * @param decodeStrategy see:{@link DecodeHandler.DecodeStrategy}
          */
-        public Builder setExactDecoding(boolean exactDecoding){
-            values.exactDecoding = exactDecoding;
+        public Builder setDecodeStrategy(DecodeHandler.DecodeStrategy decodeStrategy){
+            values.decodeStrategy = decodeStrategy;
             return this;
         }
 
@@ -173,8 +180,8 @@ public class Params {
         return values.sizeMatchView;
     }
 
-    public boolean isExactDecoding(){
-        return values.exactDecoding;
+    public DecodeHandler.DecodeStrategy getDecodeStrategy(){
+        return values.decodeStrategy;
     }
 
     public Bitmap.Config getBitmapConfig(){

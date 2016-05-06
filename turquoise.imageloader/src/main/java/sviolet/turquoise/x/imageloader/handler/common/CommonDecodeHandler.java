@@ -39,30 +39,42 @@ public class CommonDecodeHandler extends DecodeHandler {
 
     @Override
     public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
+        int reqWidth = taskInfo.getParams().getReqWidth();
+        int reqHeight = taskInfo.getParams().getReqHeight();
+        if (taskInfo.getParams().getDecodeStrategy() == DecodeStrategy.NO_SCALE){
+            reqWidth = 0;
+            reqHeight = 0;
+        }
         //routine decoding
-        Bitmap bitmap = BitmapUtils.decodeFromByteArray(data,taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getBitmapConfig());
+        Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig());
         if (bitmap == null)
             throw new RuntimeException("[TILoader:CommonDecodeHandler]decoding failed, illegal image data");
-        //exact decoding
-        if (taskInfo.getParams().isExactDecoding()){
-            bitmap = BitmapUtils.scaleTo(bitmap, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), true);
+        //accurate scale
+        if (taskInfo.getParams().getDecodeStrategy() == DecodeStrategy.ACCURATE_SCALE){
+            bitmap = BitmapUtils.scaleTo(bitmap, reqWidth, reqHeight, true);
             if (bitmap == null)
-                throw new RuntimeException("[TILoader:CommonDecodeHandler]exact decoding: scale failed");
+                throw new RuntimeException("[TILoader:CommonDecodeHandler]accurate scale: scale failed");
         }
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
 
     @Override
     public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
+        int reqWidth = taskInfo.getParams().getReqWidth();
+        int reqHeight = taskInfo.getParams().getReqHeight();
+        if (taskInfo.getParams().getDecodeStrategy() == DecodeStrategy.NO_SCALE){
+            reqWidth = 0;
+            reqHeight = 0;
+        }
         //routine decoding
-        Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getBitmapConfig());
+        Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig());
         if (bitmap == null)
             throw new RuntimeException("[TILoader:CommonDecodeHandler]decoding failed, illegal image data");
-        //exact decoding
-        if (taskInfo.getParams().isExactDecoding()){
-            bitmap = BitmapUtils.scaleTo(bitmap, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), true);
+        //accurate scale
+        if (taskInfo.getParams().getDecodeStrategy() == DecodeStrategy.ACCURATE_SCALE){
+            bitmap = BitmapUtils.scaleTo(bitmap, reqWidth, reqHeight, true);
             if (bitmap == null)
-                throw new RuntimeException("[TILoader:CommonDecodeHandler]exact decoding: scale failed");
+                throw new RuntimeException("[TILoader:CommonDecodeHandler]accurate scale: scale failed");
         }
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
