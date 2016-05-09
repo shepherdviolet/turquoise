@@ -114,6 +114,13 @@ public abstract class Engine implements ComponentManager.Component, Server {
             @Override
             public void run() {
                 try {
+                    //cancel if task is dispensable
+                    if (task.getLoadProgress().isDispensable()){
+                        task.setState(Task.State.CANCELED);
+                        response(task);
+                        return;
+                    }
+                    //EXECUTE
                     executeNewTask(task);
                 } finally {
                     taskCount.decrementAndGet();

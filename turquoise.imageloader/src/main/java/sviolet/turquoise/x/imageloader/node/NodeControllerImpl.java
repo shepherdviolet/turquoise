@@ -228,6 +228,11 @@ public class NodeControllerImpl extends NodeController {
             return;
         }
 
+        //Dispensable task callback to stub with cancel state in any case
+        if (task.getLoadProgress().isDispensable()){
+            task.setState(Task.State.CANCELED);
+        }
+
         if (task.getState() == Task.State.SUCCEED){
             callback(task);
             return;
@@ -540,19 +545,35 @@ public class NodeControllerImpl extends NodeController {
         //destroy if not destroyed
         if (status.get() != DESTROYED){
             status.set(DESTROYED);
-            //destroy process
+            //scrap node
             manager.getNodeManager().scrapNode(node);
+            //shutdown thread pool
+            dispatchThreadPool.shutdown();
+            //clear queue
             netRequestQueue.clear();
             diskRequestQueue.clear();
             memoryRequestQueue.clear();
             responseQueue.clear();
+            //clear stubs
+            try {
+                for (Map.Entry<String, StubGroup> entry : stubPool.entrySet()) {
+                    entry.getValue().onDestroy();
+                }
+            }catch (Exception ignored){
+            }
             stubPool.clear();
+            //destroy settings
             if (settings != null) {
                 settings.onDestroy();
             }
-            dispatchThreadPool.shutdown();
             manager.getLogger().i("[NodeControllerImpl]lifecycle: destroyed nodeId:" + nodeId);
         }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        onDestroy();
     }
 
     /******************************************************************

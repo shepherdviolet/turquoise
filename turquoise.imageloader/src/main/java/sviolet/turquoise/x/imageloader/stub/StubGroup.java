@@ -131,4 +131,26 @@ public class StubGroup {
             stubs.clear();
         }
     }
+
+    /**
+     * destroy all stubs
+     */
+    public void onDestroy() {
+        List<Stub> stubs = new ArrayList<>();
+        while(hasStub()) {
+            try {
+                setLock.lock();
+                for (Stub stub : stubSet) {
+                    stubs.add(stub);
+                }
+                stubSet.clear();
+            } finally {
+                setLock.unlock();
+            }
+            for (Stub stub : stubs) {
+                stub.onDestroy();
+            }
+            stubs.clear();
+        }
+    }
 }

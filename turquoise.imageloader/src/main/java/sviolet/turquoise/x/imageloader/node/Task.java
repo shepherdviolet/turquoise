@@ -112,6 +112,7 @@ public class Task {
     public static class Info{
 
         private static final String SEPARATOR = "-";
+        private static final String DISPENSABLE_FLAG = "dispensable";
 
         //status//////////////////////////
         private Stub.Type type;
@@ -145,6 +146,10 @@ public class Task {
             builder.append(serverType);
             builder.append(SEPARATOR);
             builder.append(state);
+            if (loadProgress.isDispensable()){
+                builder.append(SEPARATOR);
+                builder.append(DISPENSABLE_FLAG);
+            }
             builder.append(SEPARATOR);
             builder.append(nodeId);
             builder.append("><");
