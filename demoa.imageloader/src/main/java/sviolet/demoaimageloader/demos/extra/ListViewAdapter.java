@@ -33,6 +33,8 @@ import sviolet.demoaimageloader.R;
 import sviolet.turquoise.ui.util.TViewHolder;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
+import sviolet.turquoise.x.imageloader.stub.Stub;
+import sviolet.turquoise.x.imageloader.stub.StubRemoter;
 
 /**
  * ListView适配器
@@ -68,7 +70,7 @@ public class ListViewAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, final View convertView, ViewGroup parent) {
 
         TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.list_view_main_item);
 
@@ -89,10 +91,19 @@ public class ListViewAdapter extends BaseAdapter {
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //reload
-                        if (!TILoaderUtils.reloadView(imageView)){
-                            //loaded succeed or loading
-                            Toast.makeText(context, "click", Toast.LENGTH_SHORT).show();
+                        //StubRemoter可以对imageView的图片加载任务进行一些控制, 或获得状态
+                        StubRemoter remoter = TILoaderUtils.getStubRemoter(imageView);
+                        if (remoter.getLoadState() == Stub.State.LOAD_SUCCEED){
+                            //图片加载成功状态
+                            Toast.makeText(context, "click (succeed)", Toast.LENGTH_SHORT).show();
+                        } else if (remoter.getLoadState() == Stub.State.LOAD_CANCELED){
+                            //图片加载取消状态, 可以进行重新加载, 其他状态调用relaunch无效
+                            if (remoter.relaunch()){
+                                Toast.makeText(context, "relaunch:" + remoter.getUrl(), Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            //图片加载成功状态
+                            Toast.makeText(context, "click (unknown)", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

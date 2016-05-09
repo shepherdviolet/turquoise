@@ -60,6 +60,17 @@ public class StubRemoter {
     }
 
     /**
+     * @return get loading url, might be null
+     */
+    public String getUrl(){
+        Stub stub = this.stub.get();
+        if (stub != null){
+            return stub.getUrl();
+        }
+        return null;
+    }
+
+    /**
      *  INITIAL = 0;<br/>
      *  LAUNCHING = 1;<br/>
      *  LOADING = 2;<br/>
