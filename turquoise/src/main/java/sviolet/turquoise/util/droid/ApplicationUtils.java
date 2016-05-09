@@ -16,18 +16,33 @@ import android.view.WindowManager;
 public class ApplicationUtils {
 
     /**
-     * 获得应用版本<br/>
+     * 获得应用版本(versionCode)<br/>
      * 默认返回1
      *
-     * @param context
+     * @param context context
      */
-    public static int getAppVersion(Context context) {
+    public static int getAppVersionCode(Context context) {
         try {
             PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
             return info.versionCode;
         } catch (PackageManager.NameNotFoundException ignored) {
         }
         return 1;
+    }
+
+    /**
+     * 获得应用版本(versionName)<br/>
+     * 默认返回"1.0"
+     *
+     * @param context context
+     */
+    public static String getAppVersionName(Context context){
+        try {
+            PackageInfo info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return info.versionName;
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+        return "1.0";
     }
 
     /*******************************************************************
