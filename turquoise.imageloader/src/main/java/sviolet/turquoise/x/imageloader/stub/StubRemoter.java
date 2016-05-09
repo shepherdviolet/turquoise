@@ -29,6 +29,7 @@ import sviolet.turquoise.x.imageloader.entity.LoadProgress;
 /**
  * <p>Stub Remoter</p>
  *
+ * 0.get url of loading<br/>
  * 1.get state of loading<br/>
  * 2.get progress of loading<br/>
  * 3.relaunch canceled task<br/>
@@ -44,6 +45,7 @@ public class StubRemoter {
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
      * Get stub remoter from view, uses:<br/>
+     * 0.get url of loading<br/>
      * 1.get state of loading<br/>
      * 2.get progress of loading<br/>
      * 3.relaunch canceled task<br/>

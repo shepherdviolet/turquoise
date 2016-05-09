@@ -44,6 +44,37 @@ import sviolet.turquoise.x.imageloader.stub.StubRemoter;
  */
 public class TILoaderUtils {
 
+    /***********************************************************************888
+     * loading control / get loading info
+     */
+
+    /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
+     * Get stub remoter from view, uses:<br/>
+     * 0.get url of loading<br/>
+     * 1.get state of loading<br/>
+     * 2.get progress of loading<br/>
+     * 3.relaunch canceled task<br/>
+     * 4.set stub to dispensable<br/>
+     * @param view view
+     * @return return NULL_STUB_REMOTER if failed
+     */
+    public static StubRemoter getStubRemoter(View view){
+        if (view == null){
+            throw new RuntimeException("[TILoaderUtils]can't get stubRemoter from a null View");
+        }
+        ComponentManager.getInstance().waitingForInitialized();
+        synchronized (view) {
+            //get Stub from View Tag
+            Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
+            if (tag instanceof Stub) {
+                //get remoter
+                return ((Stub) tag).getStubRemoter();
+            }
+        }
+        return StubRemoter.NULL_STUB_REMOTER;
+    }
+
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
      * check if ImageResource Valid
@@ -91,31 +122,7 @@ public class TILoaderUtils {
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().toDrawable(context, resource, skipDrawingException);
     }
 
-    /**
-     * [Initialize TILoader]this method will initialize TILoader<br/>
-     * Get stub remoter from view, uses:<br/>
-     * 1.get state of loading<br/>
-     * 2.get progress of loading<br/>
-     * 3.relaunch canceled task<br/>
-     * 4.set stub to dispensable<br/>
-     * @param view view
-     * @return return NULL_STUB_REMOTER if failed
-     */
-    public static StubRemoter getStubRemoter(View view){
-        if (view == null){
-            throw new RuntimeException("[TILoaderUtils]can't get stubRemoter from a null View");
-        }
-        ComponentManager.getInstance().waitingForInitialized();
-        synchronized (view) {
-            //get Stub from View Tag
-            Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
-            if (tag instanceof Stub) {
-                //get remoter
-                return ((Stub) tag).getStubRemoter();
-            }
-        }
-        return StubRemoter.NULL_STUB_REMOTER;
-    }
+
 
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
