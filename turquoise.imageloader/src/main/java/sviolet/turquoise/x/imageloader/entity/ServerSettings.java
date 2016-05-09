@@ -76,6 +76,7 @@ public class ServerSettings implements ComponentManager.Component{
         private long abortOnLowNetworkSpeedWindowPeriod = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD;
         private int abortOnLowNetworkSpeedBoundarySpeed = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED;
         private float abortOnLowNetworkSpeedBoundaryProgress = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_PROGRESS;
+        private long abortOnLowNetworkSpeedDeadline = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_DEADLINE;
 
         //handler////////////////////////////////////////////////////////////////////////////
 
@@ -331,13 +332,15 @@ public class ServerSettings implements ComponentManager.Component{
          * After windowPeriod, it start to check loading speed, if faster than boundarySpeed, task will keep
          * loading. if not, it will check loading progress, if current progress exceed boundaryProgress, task
          * will keep loading. if not, task will be canceled, then call ExceptionHandler->onTaskAbortOnLowSpeedNetwork()
-         * method to handle this event. You can adjust params by ServerSettings->setAbortOnLowNetworkSpeed().</p>
+         * method to handle this event. You can adjust params by ServerSettings->setAbortOnLowNetworkSpeed().
+         * Task will be canceled when reach the deadline.</p>
          *
          * @param windowPeriod ms, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD}
          * @param boundarySpeed byte/s, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED}
          * @param boundaryProgress 0f~1f, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_PROGRESS}
+         * @param deadline ms, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_DEADLINE}
          */
-        public Builder setAbortOnLowNetworkSpeed(long windowPeriod, int boundarySpeed, float boundaryProgress){
+        public Builder setAbortOnLowNetworkSpeed(long windowPeriod, int boundarySpeed, float boundaryProgress, long deadline){
             if (windowPeriod < 0){
                 throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: windowPeriod must >= 0");
             }
@@ -347,9 +350,13 @@ public class ServerSettings implements ComponentManager.Component{
             if (boundaryProgress < 0f || boundaryProgress > 1f){
                 throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: boundaryProgress must >= 0f && <= 1f");
             }
+            if (deadline < windowPeriod){
+                throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: deadline must >= windowPeriod");
+            }
             values.abortOnLowNetworkSpeedWindowPeriod = windowPeriod;
             values.abortOnLowNetworkSpeedBoundarySpeed = boundarySpeed;
             values.abortOnLowNetworkSpeedBoundaryProgress = boundaryProgress;
+            values.abortOnLowNetworkSpeedDeadline = deadline;
             return this;
         }
 
@@ -485,9 +492,10 @@ public class ServerSettings implements ComponentManager.Component{
     private static final long DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT = -1;
     private static final long MIN_MEMORY_BUFFER_LENGTH_LIMIT = 512 * 1024;
     private static final float DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT = 0.02f;
-    private static final long DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD = 60 * 1000;//ms
+    private static final long DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD = 30 * 1000;//ms
     private static final int DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED = 5 * 1024;//bytes/s
-    private static final float DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_PROGRESS = 0.5f;//0~1
+    private static final float DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_PROGRESS = 0.8f;//0~1
+    private static final long DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_DEADLINE = 120 * 1000;//ms
 
     public static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
     public static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
@@ -627,6 +635,10 @@ public class ServerSettings implements ComponentManager.Component{
 
     public float getAbortOnLowNetworkSpeedBoundaryProgress(){
         return values.abortOnLowNetworkSpeedBoundaryProgress;
+    }
+
+    public float getAbortOnLowNetworkSpeedDeadline(){
+        return values.abortOnLowNetworkSpeedDeadline;
     }
 
     //handler////////////////////////////////////////////////////////////////////////////

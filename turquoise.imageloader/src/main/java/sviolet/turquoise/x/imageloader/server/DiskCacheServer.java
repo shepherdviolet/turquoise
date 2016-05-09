@@ -27,6 +27,7 @@ import java.io.OutputStream;
 
 import sviolet.turquoise.model.cache.DiskLruCache;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.module.DiskCacheModule;
@@ -345,24 +346,33 @@ public class DiskCacheServer extends DiskCacheModule {
 
     private boolean checkNetworkSpeed(long startTime, Task task, Result result){
         long elapseTime = System.currentTimeMillis() - startTime + 1;
+        ServerSettings serverSettings = getComponentManager().getServerSettings();
+        //dead line
+        if (elapseTime > serverSettings.getAbortOnLowNetworkSpeedDeadline()){
+            int speed = (int) (task.getLoadProgress().loaded() / (elapseTime / 1000));
+            serverSettings.getExceptionHandler().onTaskAbortOnLowSpeedNetwork(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                    task.getTaskInfo(), elapseTime, speed, -1, getComponentManager().getLogger());
+            result.setType(ResultType.CANCELED);
+            return true;
+        }
         //if in window period, skip speed check
-        if (elapseTime < getComponentManager().getServerSettings().getAbortOnLowNetworkSpeedWindowPeriod()){
+        if (elapseTime < serverSettings.getAbortOnLowNetworkSpeedWindowPeriod()){
             return false;
         }
         //check speed
         int speed = (int) (task.getLoadProgress().loaded() / (elapseTime / 1000));
-        if (speed > getComponentManager().getServerSettings().getAbortOnLowNetworkSpeedBoundarySpeed()){
+        if (speed > serverSettings.getAbortOnLowNetworkSpeedBoundarySpeed()){
             return false;
         }
         float progress = -1;
         //check progress
         if (task.getLoadProgress().total() > 0) {
             progress = (float)task.getLoadProgress().loaded() / (float)task.getLoadProgress().total();
-            if (progress > getComponentManager().getServerSettings().getAbortOnLowNetworkSpeedBoundaryProgress()){
+            if (progress > serverSettings.getAbortOnLowNetworkSpeedBoundaryProgress()){
                 return false;
             }
         }
-        getComponentManager().getServerSettings().getExceptionHandler().onTaskAbortOnLowSpeedNetwork(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+        serverSettings.getExceptionHandler().onTaskAbortOnLowSpeedNetwork(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
                 task.getTaskInfo(), elapseTime, speed, progress, getComponentManager().getLogger());
         result.setType(ResultType.CANCELED);
         return true;
