@@ -65,7 +65,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
         this.manager = manager;
         this.dispatchThreadPool = new LazySingleThreadPool();
         if (manager.getServerSettings().isWipeDiskCacheWhenUpdate() && manager.getApplicationContextImage() != null){
-            this.appVersion = ApplicationUtils.getAppVersion(manager.getApplicationContextImage());
+            this.appVersion = ApplicationUtils.getAppVersionCode(manager.getApplicationContextImage());
         }
         status = Status.PAUSE;
         manager.getLogger().i("[DiskCacheServer]initial, diskCacheSize:" + (manager.getServerSettings().getDiskCacheSize() / 1024) + "K");

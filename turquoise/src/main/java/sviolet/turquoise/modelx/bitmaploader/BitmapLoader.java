@@ -738,7 +738,7 @@ public class BitmapLoader implements LifeCycle {
          *
          */
         public BuildType setWipeOnNewVersion(){
-            settings.appVersionCode = ApplicationUtils.getAppVersion(settings.context.get());
+            settings.appVersionCode = ApplicationUtils.getAppVersionCode(settings.context.get());
             return cast(this);
         }
 
