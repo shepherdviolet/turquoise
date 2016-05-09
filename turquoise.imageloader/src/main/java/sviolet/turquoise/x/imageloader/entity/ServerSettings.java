@@ -637,7 +637,7 @@ public class ServerSettings implements ComponentManager.Component{
         return values.abortOnLowNetworkSpeedBoundaryProgress;
     }
 
-    public float getAbortOnLowNetworkSpeedDeadline(){
+    public long getAbortOnLowNetworkSpeedDeadline(){
         return values.abortOnLowNetworkSpeedDeadline;
     }
 
