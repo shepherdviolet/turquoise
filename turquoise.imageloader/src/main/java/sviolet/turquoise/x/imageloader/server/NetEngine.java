@@ -23,9 +23,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
@@ -39,26 +39,27 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public class NetEngine extends Engine {
 
-    private Map<String, List<Task>> taskGroups = new HashMap<>();
+    private Map<String, List<Task>> taskGroups = new ConcurrentHashMap<>();
     private ReentrantLock lock = new ReentrantLock();
 
     @Override
     protected void executeNewTask(Task task) {
 
         boolean executable = false;
-
+        String resourceKey = task.getResourceKey();
+        List<Task> group;
         try{
             lock.lock();
-            List<Task> group = taskGroups.get(task.getResourceKey());
+            group = taskGroups.get(resourceKey);
             if (group == null){
                 group = new ArrayList<>(1);
-                taskGroups.put(task.getResourceKey(), group);
+                taskGroups.put(resourceKey, group);
                 executable = true;
             }
-            group.add(task);
         } finally {
             lock.unlock();
         }
+        group.add(task);
 
         if (executable) {
             loadByHandler(task);
@@ -188,13 +189,7 @@ public class NetEngine extends Engine {
      */
 
     private void handleImageData(Task task, byte[] bytes, File file){
-        List<Task> group = null;
-        try{
-            lock.lock();
-            group = taskGroups.remove(task.getResourceKey());
-        }finally {
-            lock.unlock();
-        }
+        List<Task> group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;
         }
@@ -217,13 +212,7 @@ public class NetEngine extends Engine {
     }
 
     private void handleFailed(Task task){
-        List<Task> group = null;
-        try{
-            lock.lock();
-            group = taskGroups.remove(task.getResourceKey());
-        }finally {
-            lock.unlock();
-        }
+        List<Task> group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;
         }
@@ -233,13 +222,7 @@ public class NetEngine extends Engine {
     }
 
     private void handleCanceled(Task task){
-        List<Task> group = null;
-        try{
-            lock.lock();
-            group = taskGroups.remove(task.getResourceKey());
-        }finally {
-            lock.unlock();
-        }
+        List<Task> group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;
         }
