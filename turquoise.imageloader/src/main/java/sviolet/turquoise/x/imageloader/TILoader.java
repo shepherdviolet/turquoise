@@ -32,6 +32,7 @@ import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.Node;
+import sviolet.turquoise.x.imageloader.stub.StubRemoter;
 
 /**
  * <p>Turquoise Image Loader</p>
@@ -115,10 +116,11 @@ public class TILoader {
      * @param url URL
      * @param params loading params
      * @param listener callback when loading succeed / canceled / failed
+     * @return {@link StubRemoter}
      */
-    public static void extract(Context context, String url, Params params, OnLoadedListener listener) {
+    public static StubRemoter extract(Context context, String url, Params params, OnLoadedListener listener) {
         checkContext(context);
-        ComponentManager.getInstance().getNodeManager().fetchExtractNode(context).extract(url, params, listener);
+        return ComponentManager.getInstance().getNodeManager().fetchExtractNode(context).extract(url, params, listener);
     }
 
     /**

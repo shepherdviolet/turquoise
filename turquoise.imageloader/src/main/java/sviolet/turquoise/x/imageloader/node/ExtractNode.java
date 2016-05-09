@@ -25,6 +25,7 @@ import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.stub.Stub;
+import sviolet.turquoise.x.imageloader.stub.StubRemoter;
 
 /**
  * <p>Node for extract</p>
@@ -45,12 +46,14 @@ public class ExtractNode extends LoadNode {
      * @param url URL
      * @param params loading params
      * @param listener callback when loading succeed / canceled / failed
+     * @return {@link StubRemoter}
      */
-    public void extract(String url, Params params, OnLoadedListener listener) {
+    public StubRemoter extract(String url, Params params, OnLoadedListener listener) {
         getManager().waitingForInitialized();
         getController().waitingForInitialized();
         Stub stub = getManager().getServerSettings().getStubFactory().newExtractStub(url, params, listener);
         stub.initialize(getController());
+        return stub.getStubRemoter();
     }
 
     @Override

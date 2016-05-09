@@ -35,6 +35,7 @@ import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.stub.Stub;
+import sviolet.turquoise.x.imageloader.stub.StubRemoter;
 
 /**
  * <p>Utils for TILoader</p>
@@ -92,23 +93,28 @@ public class TILoaderUtils {
 
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
-     * reload View which has been canceled, no effect if image is loading or loaded succeed
+     * Get stub remoter from view, uses:<br/>
+     * 1.get state of loading<br/>
+     * 2.get progress of loading<br/>
+     * 3.relaunch canceled task<br/>
+     * 4.set stub to dispensable<br/>
      * @param view view
-     * @return true:this view can be reload (load canceled), false:this view can't be reload (is loading or loaded succeed)
+     * @return return NULL_STUB_REMOTER if failed
      */
-    public static boolean reloadView(View view){
+    public static StubRemoter getStubRemoter(View view){
+        if (view == null){
+            throw new RuntimeException("[TILoaderUtils]can't get stubRemoter from a null View");
+        }
         ComponentManager.getInstance().waitingForInitialized();
-        ComponentManager.getInstance().getLogger().i("[TILoaderUtils]reloadView");
         synchronized (view) {
             //get Stub from View Tag
             Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
-            //destroy obsolete Stub
-            if (tag != null && tag instanceof Stub) {
-                //relaunch (not force)
-                return ((Stub) tag).relaunch(false) == Stub.LaunchResult.SUCCEED;
+            if (tag instanceof Stub) {
+                //get remoter
+                return ((Stub) tag).getStubRemoter();
             }
         }
-        return false;
+        return StubRemoter.NULL_STUB_REMOTER;
     }
 
     /**

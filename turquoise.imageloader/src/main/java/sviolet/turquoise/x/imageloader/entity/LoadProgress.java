@@ -60,9 +60,28 @@ public class LoadProgress {
         return info.total;
     }
 
+    /**
+     * TODO
+     */
+    public void setDispensable(){
+        info.dispensable = true;
+    }
+
+    /**
+     * TODO
+     * @return
+     */
+    public boolean isDispensable(){
+        return info.dispensable;
+    }
+
     public Info getInfo(){
         return info;
     }
+
+    /*****************************************************************************************
+     * inner
+     */
 
     public static class Info {
 
@@ -70,6 +89,7 @@ public class LoadProgress {
 
         private long loaded = UNKNOWN;
         private long total = UNKNOWN;
+        private boolean dispensable = false;
 
         private Info(){
 
@@ -87,6 +107,14 @@ public class LoadProgress {
          */
         public long total(){
             return total;
+        }
+
+        /**
+         * TODO
+         * @return
+         */
+        public boolean isDispensable(){
+            return dispensable;
         }
 
     }

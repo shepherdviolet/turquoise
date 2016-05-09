@@ -98,9 +98,6 @@ public class NodeRemoter {
     private WeakReference<NodeController> controller;
 
     NodeRemoter(NodeController controller){
-        if (controller == null){
-            throw new RuntimeException("[NodeRemoter]can't create NodeRemoter without NodeController");
-        }
         this.controller = new WeakReference<>(controller);
     }
 

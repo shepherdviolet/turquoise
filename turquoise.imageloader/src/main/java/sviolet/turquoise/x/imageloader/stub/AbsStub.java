@@ -419,6 +419,11 @@ public abstract class AbsStub implements Stub {
     }
 
     @Override
+    public StubRemoter getStubRemoter(){
+        return new StubRemoter(this);
+    }
+
+    @Override
     public TLogger getLogger() {
         final NodeController controller = getNodeController();
         if (controller != null){

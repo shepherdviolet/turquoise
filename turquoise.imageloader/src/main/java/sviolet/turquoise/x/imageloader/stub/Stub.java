@@ -109,6 +109,8 @@ public interface Stub extends Destroyable {
      * getter
      */
 
+    StubRemoter getStubRemoter();
+
     TLogger getLogger();
 
     /***********************************************************
@@ -129,14 +131,23 @@ public interface Stub extends Destroyable {
         FAILED
     }
 
+    /**
+     *  INITIAL = 0;<br/>
+     *  LAUNCHING = 1;<br/>
+     *  LOADING = 2;<br/>
+     *  LOAD_SUCCEED = 3;<br/>
+     *  LOAD_FAILED = 4;<br/>
+     *  LOAD_CANCELED = 5;<br/>
+     *  DESTROYED = 6;<br/>
+     */
     class State{
-        static final int INITIAL = 0;
-        static final int LAUNCHING = 1;
-        static final int LOADING = 2;
-        static final int LOAD_SUCCEED = 3;
-        static final int LOAD_FAILED = 4;
-        static final int LOAD_CANCELED = 5;
-        static final int DESTROYED = 6;
+        public static final int INITIAL = 0;
+        public static final int LAUNCHING = 1;
+        public static final int LOADING = 2;
+        public static final int LOAD_SUCCEED = 3;
+        public static final int LOAD_FAILED = 4;
+        public static final int LOAD_CANCELED = 5;
+        public static final int DESTROYED = 6;
     }
 
 }
