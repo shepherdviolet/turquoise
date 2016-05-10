@@ -22,9 +22,9 @@ package sviolet.turquoise.x.imageloader.server;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -39,7 +39,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public class NetEngine extends Engine {
 
-    private Map<String, List<Task>> taskGroups = new ConcurrentHashMap<>();
+    private Map<String, Set<Task>> taskGroups = new ConcurrentHashMap<>();
     private ReentrantLock lock = new ReentrantLock();
 
     @Override
@@ -47,12 +47,12 @@ public class NetEngine extends Engine {
 
         boolean executable = false;
         String resourceKey = task.getResourceKey();
-        List<Task> group;
+        Set<Task> group;
         try{
             lock.lock();
             group = taskGroups.get(resourceKey);
             if (group == null){
-                group = new ArrayList<>(1);
+                group = Collections.newSetFromMap(new ConcurrentHashMap<Task, Boolean>());
                 taskGroups.put(resourceKey, group);
                 executable = true;
             }
@@ -189,7 +189,7 @@ public class NetEngine extends Engine {
      */
 
     private void handleImageData(Task task, byte[] bytes, File file){
-        List<Task> group = taskGroups.remove(task.getResourceKey());
+        Set<Task> group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;
         }
@@ -207,7 +207,7 @@ public class NetEngine extends Engine {
     }
 
     private void handleFailed(Task task){
-        List<Task> group = taskGroups.remove(task.getResourceKey());
+        Set<Task> group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;
         }
@@ -217,7 +217,7 @@ public class NetEngine extends Engine {
     }
 
     private void handleCanceled(Task task){
-        List<Task> group = taskGroups.remove(task.getResourceKey());
+        Set<Task> group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;
         }
