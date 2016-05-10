@@ -194,11 +194,6 @@ public class NetEngine extends Engine {
             return;
         }
         for (Task t : group) {
-            //dispensable task skip decoding and callback to canceled state in any case
-            if (t.getLoadProgress().isDispensable()){
-                responseCanceled(t);
-                continue;
-            }
             //decode
             ImageResource<?> imageResource = decode(t, bytes, file);
             if (imageResource == null) {

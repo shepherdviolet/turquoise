@@ -228,11 +228,6 @@ public class NodeControllerImpl extends NodeController {
             return;
         }
 
-        //Dispensable task callback to stub with cancel state in any case
-        if (task.getLoadProgress().isDispensable()){
-            task.setState(Task.State.CANCELED);
-        }
-
         if (task.getState() == Task.State.SUCCEED){
             callback(task);
             return;

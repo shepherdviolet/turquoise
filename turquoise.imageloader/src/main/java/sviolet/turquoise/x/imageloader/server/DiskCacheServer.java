@@ -349,8 +349,8 @@ public class DiskCacheServer extends DiskCacheModule {
     private boolean checkNetworkSpeed(long startTime, Task task, Result result){
         long elapseTime = System.currentTimeMillis() - startTime + 1;
         ServerSettings serverSettings = getComponentManager().getServerSettings();
-        long deadline = task.getLoadProgress().isDispensable() ? serverSettings.getAbortOnLowNetworkSpeedDeadline() >> 1 : serverSettings.getAbortOnLowNetworkSpeedDeadline();
-        long windowPeriod = task.getLoadProgress().isDispensable() ? serverSettings.getAbortOnLowNetworkSpeedWindowPeriod() >> 1 : serverSettings.getAbortOnLowNetworkSpeedWindowPeriod();
+        long deadline = serverSettings.getAbortOnLowNetworkSpeedDeadline();
+        long windowPeriod = serverSettings.getAbortOnLowNetworkSpeedWindowPeriod();
         //dead line
         if (elapseTime > deadline){
             int speed = (int) (task.getLoadProgress().loaded() / (elapseTime >> 10));

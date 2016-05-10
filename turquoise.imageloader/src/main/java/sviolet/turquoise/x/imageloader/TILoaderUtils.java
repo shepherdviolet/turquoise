@@ -55,7 +55,6 @@ public class TILoaderUtils {
      * 1.get state of loading<br/>
      * 2.get progress of loading<br/>
      * 3.relaunch canceled task<br/>
-     * 4.set stub to dispensable<br/>
      * @param view view
      * @return return NULL_STUB_REMOTER if failed
      */

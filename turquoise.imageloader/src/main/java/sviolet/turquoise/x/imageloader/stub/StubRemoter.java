@@ -33,7 +33,6 @@ import sviolet.turquoise.x.imageloader.entity.LoadProgress;
  * 1.get state of loading<br/>
  * 2.get progress of loading<br/>
  * 3.relaunch canceled task<br/>
- * 4.set stub to dispensable<br/>
  *
  * Created by S.Violet on 2016/5/9.
  */
@@ -49,7 +48,6 @@ public class StubRemoter {
      * 1.get state of loading<br/>
      * 2.get progress of loading<br/>
      * 3.relaunch canceled task<br/>
-     * 4.set stub to dispensable<br/>
      * @param view view
      * @return return NULL_STUB_REMOTER if failed
      */
@@ -112,24 +110,6 @@ public class StubRemoter {
             return stub.relaunch(false) == Stub.LaunchResult.SUCCEED;
         }
         return false;
-    }
-
-    /**
-     * <p>Set loading task to dispensable state</p>
-     *
-     * <p>If a loading task in dispensable state, this means that it is easier to be cancelled.
-     * If dispensable task is in waiting queue, it will be canceled. If dispensable task is loading
-     * from network at that time, "windowPeriod" and "deadline" will be decreased by a half.
-     * Dispensable task will not be decoded, and callback to stub with cancel state in any case.</p>
-     *
-     * <p>In some instance, TILoader will set dispensable state automatically. e.g. ListView scrolling,
-     * Node destroyed.</p>
-     */
-    public void dispensable(){
-        Stub stub = this.stub.get();
-        if (stub != null){
-            stub.getLoadProgress().setDispensable();
-        }
     }
 
 }

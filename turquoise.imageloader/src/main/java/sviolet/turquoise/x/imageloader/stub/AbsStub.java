@@ -342,7 +342,6 @@ public abstract class AbsStub implements Stub {
 
         if (state.get() != State.DESTROYED) {
             state.set(State.DESTROYED);//destroyed state
-            loadProgress.setDispensable();//dispensable state
             onDestroyInner();
             getLogger().d("[AbsStub]destroyed: key:" + getKey());
         }
