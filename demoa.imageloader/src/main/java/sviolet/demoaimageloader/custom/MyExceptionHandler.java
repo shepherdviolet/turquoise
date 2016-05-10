@@ -69,7 +69,7 @@ public class MyExceptionHandler implements ExceptionHandler {
     }
 
     @Override
-    public void onTaskAbortOnLowSpeedNetwork(Context applicationContext, Context context, Task.Info taskInfo, long elapseTime, int speed, float progress, TLogger logger) {
+    public void onTaskAbortOnLowSpeedNetwork(Context applicationContext, Context context, Task.Info taskInfo, long elapseTime, int speed, TLogger logger) {
         Log.e("MyExceptionHandler", "onTaskAbortOnLowSpeedNetwork", null);
 
     }
