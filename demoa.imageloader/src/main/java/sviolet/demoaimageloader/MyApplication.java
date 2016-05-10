@@ -81,7 +81,7 @@ public class MyApplication extends TApplication {
 //                .setPluginEnabled(true)//高级配置:默认true, 若设置false, 将不会加载插件包(无法加载GIF)
 //                .setImageDataLengthLimitPercent(this, 0.3f)//高级配置:图片资源数据长度限制(超过设定值将取消加载任务)
 //                .setMemoryBufferLengthLimitPercent(this, 0.02f)//高级配置:内存缓存区数据长度限制(超过设定值将取消任务), 仅在磁盘缓存访问异常时, 才会用到内存缓存区
-//                .setAbortOnLowNetworkSpeed(60000, 5 * 1024, 0.5f)//高级配置:加载时间超过60s后, 判断加载速度, 若大于5K/s, 继续加载, 若小于5k/s, 判断加载进度, 若已加载超过50%则继续加载, 否则取消加载任务
+//                .setAbortOnLowNetworkSpeed(30000, 5 * 1024, 120000)//高级配置:加载时间超过30s后, 判断加载速度, 若大于5K/s, 继续加载, 若小于5k/s, 取消加载, 若加载时间超过120s取消加载
 ////                .setLoadingDrawableFactory(new MyLoadingDrawableFactory())//方式1:自定义实现加载图(完全自己实现)
 //                .setLoadingDrawableFactory(new CommonLoadingDrawableFactory()//方式2:配置通用加载图
 //                        .setBackgroundColor(0xFFF0F0F0)//加载图背景颜色

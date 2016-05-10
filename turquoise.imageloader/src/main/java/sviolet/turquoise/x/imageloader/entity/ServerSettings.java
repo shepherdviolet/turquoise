@@ -202,7 +202,10 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * set disk cache path
+         * <p>Set disk cache path</p>
+         *
+         * <p>WARNING:: EXTERNAL_STORAGE need permission</p>
+         *
          * @param context context
          * @param diskCachePath {@link DiskCachePath#INNER_STORAGE} by default
          * @param subPath sub path of cache directory
