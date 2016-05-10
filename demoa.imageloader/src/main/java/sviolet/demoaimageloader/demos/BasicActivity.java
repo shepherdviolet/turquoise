@@ -87,7 +87,7 @@ public class BasicActivity extends TActivity {
                         .setAnimationEnabled(true)//允许动画(默认true)
 //                        .setAnimationDrawableFactory(new MyAnimationDrawableFactory())//方式1:自定义实现动画(完全自己实现)
                         .setAnimationDrawableFactory(new CircleLoadingAnimationDrawableFactory()//方式2:配置通用动画
-                                .setRotateStep(10)//旋转步进(速度)
+                                .setRotateStep(7)//旋转步进(速度)
                                 .setRadius(0.15f, CircleLoadingAnimationDrawableFactory.SizeUnit.PERCENT_OF_WIDTH)//半径为控件宽度的15%
                                 .setCircleColor(0x20000000)//背景圈颜色
                                 .setCircleStrokeWidth(0.012f, CircleLoadingAnimationDrawableFactory.SizeUnit.PERCENT_OF_WIDTH)//背景圈宽度为控件宽度的1.2%

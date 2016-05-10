@@ -139,7 +139,7 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
         private int progressColor = 0x40000000;
         private SizeUnit progressStrokeUnit = SizeUnit.PERCENT_OF_WIDTH;
         private float progressStrokeWidth = 0.018f;
-        private int rotateStep = 10;
+        private int rotateStep = 7;
 
     }
 
@@ -200,7 +200,7 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
         }
 
         private void drawByDuration(Canvas canvas){
-            this.displayPosition -= settings.rotateStep;
+            this.displayPosition = (this.displayPosition - settings.rotateStep) % 360;
             final int centerX = (getBounds().left + getBounds().right) >> 1;
             final int centerY = (getBounds().top + getBounds().bottom) >> 1;
             float radius = calculateSizeByUnit(settings.radius, settings.radiusUnit);
