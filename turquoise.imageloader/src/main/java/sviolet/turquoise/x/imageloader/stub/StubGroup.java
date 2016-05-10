@@ -19,11 +19,9 @@
 
 package sviolet.turquoise.x.imageloader.stub;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.ConcurrentHashMap;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 
@@ -34,9 +32,7 @@ import sviolet.turquoise.x.imageloader.entity.ImageResource;
  */
 public class StubGroup {
 
-    private Set<Stub> stubSet = new HashSet<>();
-
-    private final ReentrantLock setLock = new ReentrantLock();
+    private Set<Stub> stubSet = Collections.newSetFromMap(new ConcurrentHashMap<Stub, Boolean>());
 
     public StubGroup(){
 
@@ -48,21 +44,11 @@ public class StubGroup {
     public void add(Stub stub){
         if (stub == null)
             return;
-        try{
-            setLock.lock();
-            stubSet.add(stub);
-        }finally {
-            setLock.unlock();
-        }
+        stubSet.add(stub);
     }
 
     private boolean hasStub(){
-        try{
-            setLock.lock();
-            return stubSet.size() > 0;
-        }finally {
-            setLock.unlock();
-        }
+        return stubSet.size() > 0;
     }
 
     /**
@@ -70,87 +56,39 @@ public class StubGroup {
      * @param resource loaded Image, may be null
      */
     public void onLoadSucceed(ImageResource<?> resource) {
-        List<Stub> stubs = new ArrayList<>();
-        while(hasStub()) {
-            try {
-                setLock.lock();
-                for (Stub stub : stubSet) {
-                    stubs.add(stub);
-                }
-                stubSet.clear();
-            } finally {
-                setLock.unlock();
-            }
-            for (Stub stub : stubs) {
-                stub.onLoadSucceed(resource);
-            }
-            stubs.clear();
+        for (Stub stub : stubSet) {
+            stub.onLoadSucceed(resource);
         }
+        stubSet.clear();
     }
 
     /**
      * callback all stubs to onLoadFailed, this method can only invoke once, all stubs will be removed from this Group after callback
      */
     public void onLoadFailed() {
-        List<Stub> stubs = new ArrayList<>();
-        while(hasStub()) {
-            try {
-                setLock.lock();
-                for (Stub stub : stubSet) {
-                    stubs.add(stub);
-                }
-                stubSet.clear();
-            } finally {
-                setLock.unlock();
-            }
-            for (Stub stub : stubs) {
-                stub.onLoadFailed();
-            }
-            stubs.clear();
+        for (Stub stub : stubSet) {
+            stub.onLoadFailed();
         }
+        stubSet.clear();
     }
 
     /**
      * callback all stubs to onLoadCanceled, this method can only invoke once, all stubs will be removed from this Group after callback
      */
     public void onLoadCanceled() {
-        List<Stub> stubs = new ArrayList<>();
-        while(hasStub()) {
-            try {
-                setLock.lock();
-                for (Stub stub : stubSet) {
-                    stubs.add(stub);
-                }
-                stubSet.clear();
-            } finally {
-                setLock.unlock();
-            }
-            for (Stub stub : stubs) {
-                stub.onLoadCanceled();
-            }
-            stubs.clear();
+        for (Stub stub : stubSet) {
+            stub.onLoadCanceled();
         }
+        stubSet.clear();
     }
 
     /**
      * destroy all stubs
      */
     public void onDestroy() {
-        List<Stub> stubs = new ArrayList<>();
-        while(hasStub()) {
-            try {
-                setLock.lock();
-                for (Stub stub : stubSet) {
-                    stubs.add(stub);
-                }
-                stubSet.clear();
-            } finally {
-                setLock.unlock();
-            }
-            for (Stub stub : stubs) {
-                stub.onDestroy();
-            }
-            stubs.clear();
+        for (Stub stub : stubSet) {
+            stub.onDestroy();
         }
+        stubSet.clear();
     }
 }
