@@ -136,6 +136,7 @@ public class DiskCacheServer extends DiskCacheModule {
                     task.getLoadProgress().increaseLoaded(readLength);
                     //check if data out of limit
                     if (task.getLoadProgress().loaded() > imageDataLengthLimit){
+                        abortEditor(editor);
                         getComponentManager().getServerSettings().getExceptionHandler().onImageDataLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
                                 task.getTaskInfo(), task.getLoadProgress().loaded(), getComponentManager().getServerSettings().getImageDataLengthLimit(), getComponentManager().getLogger());
                         result.setType(ResultType.CANCELED);
@@ -143,6 +144,7 @@ public class DiskCacheServer extends DiskCacheModule {
                     }
                     //check if speed is low
                     if (checkNetworkSpeed(startTime, task, result)){
+                        abortEditor(editor);
                         return result;
                     }
                     try {
@@ -183,15 +185,15 @@ public class DiskCacheServer extends DiskCacheModule {
                         setHealthy(true);
                     }catch(Exception e){
                         setHealthy(false);
-                        editor.abort();
+                        abortEditor(editor);
                         getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                                 getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
                     }
                 }else{
+                    abortEditor(editor);
                     getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(
                             getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
                             new Exception("[TILoader]network load failed, null content received (3)"), getComponentManager().getLogger());
-                    editor.abort();
                 }
             }
         }catch(NetworkException e){
@@ -261,15 +263,15 @@ public class DiskCacheServer extends DiskCacheModule {
                     return true;
                 } catch (Exception e) {
                     setHealthy(false);
-                    editor.abort();
+                    abortEditor(editor);
                     getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                             getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
                 }
             } else {
+                abortEditor(editor);
                 getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                         getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
                         new Exception("[TILoader]disk cache write failed, bytes is null"), getComponentManager().getLogger());
-                editor.abort();
             }
         }catch(Exception e){
             abortEditor(editor);
