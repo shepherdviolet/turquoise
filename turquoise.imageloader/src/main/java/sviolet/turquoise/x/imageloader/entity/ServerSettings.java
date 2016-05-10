@@ -479,7 +479,7 @@ public class ServerSettings implements ComponentManager.Component{
     public static final int DEFAULT_DISK_LOAD_MAX_THREAD = 2;
     public static final int DEFAULT_NETWORK_LOAD_MAX_THREAD = 3;
     public static final long DEFAULT_NETWORK_CONNECT_TIMEOUT = 3000;//ms
-    public static final long DEFAULT_NETWORK_READ_TIMEOUT = 3000;//ms
+    public static final long DEFAULT_NETWORK_READ_TIMEOUT = 7000;//ms
     private static final int DEFAULT_RELOAD_TIMES = 1;
 
     private static final long DEFAULT_IMAGE_DATA_LENGTH_LIMIT = -1;
