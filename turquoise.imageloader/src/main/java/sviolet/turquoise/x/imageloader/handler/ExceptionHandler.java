@@ -130,19 +130,18 @@ public interface ExceptionHandler {
      * <p>At the beginning of loading, task will keep loading in any case, even if the speed is very slow,
      * we called it windowPeriod.
      * After windowPeriod, it start to check loading speed, if faster than boundarySpeed, task will keep
-     * loading. if not, it will check loading progress, if current progress exceed boundaryProgress, task
-     * will keep loading. if not, task will be canceled, then call ExceptionHandler->onTaskAbortOnLowSpeedNetwork()
-     * method to handle this event. You can adjust params by ServerSettings->setAbortOnLowNetworkSpeed().</p>
+     * loading. if not, task will be canceled, then call ExceptionHandler->onTaskAbortOnLowSpeedNetwork()
+     * method to handle this event. You can adjust params by ServerSettings->setAbortOnLowNetworkSpeed().
+     * Task will be canceled when reach the deadline.</p>
      *
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
      * @param elapseTime elapse time of loading
      * @param speed speed of loading
-     * @param progress progress of loading (-1 or 0~1)
      * @param logger logger
      */
-    void onTaskAbortOnLowSpeedNetwork(Context applicationContext, Context context, Task.Info taskInfo, long elapseTime, int speed, float progress, TLogger logger);
+    void onTaskAbortOnLowSpeedNetwork(Context applicationContext, Context context, Task.Info taskInfo, long elapseTime, int speed, TLogger logger);
 
     /*************************************************************
      * decode

@@ -124,18 +124,11 @@ public class CommonExceptionHandler implements ExceptionHandler {
     }
 
     @Override
-    public void onTaskAbortOnLowSpeedNetwork(Context applicationContext, Context context, Task.Info taskInfo, long elapseTime, int speed, float progress, TLogger logger) {
+    public void onTaskAbortOnLowSpeedNetwork(Context applicationContext, Context context, Task.Info taskInfo, long elapseTime, int speed, TLogger logger) {
         Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK);
         msg.obj = new Info(applicationContext);
         msg.sendToTarget();
-
-        String progressStr;
-        if (progress >= 0){
-            progressStr = Float.toString(progress * 100);
-        }else{
-            progressStr = "?";
-        }
-        logger.e("TaskAbortOnLowSpeedNetwork: network speed is too slow, cancel loading, " + elapseTime + "ms elapse, " + speed / 1024 + "k/s, " + progressStr + "%loaded, ServerSettings->setAbortOnLowNetworkSpeed() can adjust configuration, task:" + taskInfo);
+        logger.e("TaskAbortOnLowSpeedNetwork: network speed is too slow, cancel loading, " + elapseTime + "ms elapse, " + speed / 1024 + "k/s, ServerSettings->setAbortOnLowNetworkSpeed() can adjust configuration, task:" + taskInfo);
     }
 
     @Override

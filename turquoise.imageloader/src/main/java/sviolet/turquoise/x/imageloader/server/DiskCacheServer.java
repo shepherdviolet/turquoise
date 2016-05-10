@@ -347,13 +347,13 @@ public class DiskCacheServer extends DiskCacheModule {
     private boolean checkNetworkSpeed(long startTime, Task task, Result result){
         long elapseTime = System.currentTimeMillis() - startTime + 1;
         ServerSettings serverSettings = getComponentManager().getServerSettings();
-        long deadline = task.getLoadProgress().isDispensable() ? serverSettings.getAbortOnLowNetworkSpeedDeadline() / 2 : serverSettings.getAbortOnLowNetworkSpeedDeadline();
-        long windowPeriod = task.getLoadProgress().isDispensable() ? serverSettings.getAbortOnLowNetworkSpeedWindowPeriod() / 2 : serverSettings.getAbortOnLowNetworkSpeedWindowPeriod();
+        long deadline = task.getLoadProgress().isDispensable() ? serverSettings.getAbortOnLowNetworkSpeedDeadline() >> 1 : serverSettings.getAbortOnLowNetworkSpeedDeadline();
+        long windowPeriod = task.getLoadProgress().isDispensable() ? serverSettings.getAbortOnLowNetworkSpeedWindowPeriod() >> 1 : serverSettings.getAbortOnLowNetworkSpeedWindowPeriod();
         //dead line
         if (elapseTime > deadline){
-            int speed = (int) (task.getLoadProgress().loaded() / (elapseTime / 1000));
+            int speed = (int) (task.getLoadProgress().loaded() / (elapseTime >> 10));
             serverSettings.getExceptionHandler().onTaskAbortOnLowSpeedNetwork(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                    task.getTaskInfo(), elapseTime, speed, -1, getComponentManager().getLogger());
+                    task.getTaskInfo(), elapseTime, speed, getComponentManager().getLogger());
             result.setType(ResultType.CANCELED);
             return true;
         }
@@ -362,20 +362,12 @@ public class DiskCacheServer extends DiskCacheModule {
             return false;
         }
         //check speed
-        int speed = (int) (task.getLoadProgress().loaded() / (elapseTime / 1000));
+        int speed = (int) (task.getLoadProgress().loaded() / (elapseTime >> 10));
         if (speed > serverSettings.getAbortOnLowNetworkSpeedBoundarySpeed()){
             return false;
         }
-        float progress = -1;
-        //check progress
-        if (task.getLoadProgress().total() > 0) {
-            progress = (float)task.getLoadProgress().loaded() / (float)task.getLoadProgress().total();
-            if (progress > serverSettings.getAbortOnLowNetworkSpeedBoundaryProgress()){
-                return false;
-            }
-        }
         serverSettings.getExceptionHandler().onTaskAbortOnLowSpeedNetwork(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                task.getTaskInfo(), elapseTime, speed, progress, getComponentManager().getLogger());
+                task.getTaskInfo(), elapseTime, speed, getComponentManager().getLogger());
         result.setType(ResultType.CANCELED);
         return true;
     }
