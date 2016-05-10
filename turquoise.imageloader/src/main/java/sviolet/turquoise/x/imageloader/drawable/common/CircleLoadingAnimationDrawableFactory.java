@@ -110,14 +110,14 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
     }
 
     /**
-     * set duration of animation
-     * @param duration ms
+     * set degrees step of rotate
+     * @param step degrees
      */
-    public CircleLoadingAnimationDrawableFactory setAnimationDuration(long duration){
-        if (duration <= 0){
-            throw new RuntimeException("[CircleLoadingAnimationDrawableFactory]duration must > 0");
+    public CircleLoadingAnimationDrawableFactory setRotateStep(int step){
+        if (step <= 0){
+            throw new RuntimeException("[CircleLoadingAnimationDrawableFactory]step must > 0");
         }
-        settings.duration = duration;
+        settings.rotateStep = step;
         return this;
     }
 
@@ -138,8 +138,8 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
         private float circleStrokeWidth = 0.012f;
         private int progressColor = 0x40000000;
         private SizeUnit progressStrokeUnit = SizeUnit.PERCENT_OF_WIDTH;
-        private float progressStrokeWidth = 0.015f;
-        private long duration = 1000;//ms, >0
+        private float progressStrokeWidth = 0.018f;
+        private int rotateStep = 10;
 
     }
 
@@ -162,7 +162,7 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
         private AnimationSettings settings;
         private LoadProgress.Info progressInfo;
 
-        private long startTime = 0;
+        private int displayPosition = 270;
         private float displayProgress = 0f;
 
         private Paint circlePaint;
@@ -191,9 +191,6 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
             if (getBounds().width() <= 0 || getBounds().height() <= 0){
                 return;
             }
-            if (startTime == 0){
-                startTime = DateTimeUtils.getUptimeMillis();
-            }
             if (progressInfo.total() <= 0){
                 drawByDuration(canvas);
             }else{
@@ -203,10 +200,9 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
         }
 
         private void drawByDuration(Canvas canvas){
-            final long elapseTime = DateTimeUtils.getUptimeMillis() - startTime;
-            final float progress = (float)(elapseTime % settings.duration) / (float)settings.duration;
-            final int centerX = (getBounds().left + getBounds().right) / 2;
-            final int centerY = (getBounds().top + getBounds().bottom) / 2;
+            this.displayPosition -= settings.rotateStep;
+            final int centerX = (getBounds().left + getBounds().right) >> 1;
+            final int centerY = (getBounds().top + getBounds().bottom) >> 1;
             float radius = calculateSizeByUnit(settings.radius, settings.radiusUnit);
             float circleStrokeWidth = calculateSizeByUnit(settings.circleStrokeWidth, settings.circleStrokeUnit);
             float progressStrokeWidth = calculateSizeByUnit(settings.progressStrokeWidth, settings.progressStrokeUnit);
@@ -216,7 +212,7 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
             canvas.drawCircle(centerX, centerY, radius, circlePaint);
 
             progressPaint.setStrokeWidth(progressStrokeWidth);
-            canvas.drawArc(arcBounds, - 360 * progress, 20, false, progressPaint);
+            canvas.drawArc(arcBounds, displayPosition, 20, false, progressPaint);
         }
 
         private void drawByProgress(Canvas canvas){
@@ -235,8 +231,8 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
                 //limit display progress
                 displayProgress = loadingProgress;
             }
-            final int centerX = (getBounds().left + getBounds().right) / 2;
-            final int centerY = (getBounds().top + getBounds().bottom) / 2;
+            final int centerX = (getBounds().left + getBounds().right) >> 1;
+            final int centerY = (getBounds().top + getBounds().bottom) >> 1;
             float radius = calculateSizeByUnit(settings.radius, settings.radiusUnit);
             float circleStrokeWidth = calculateSizeByUnit(settings.circleStrokeWidth, settings.circleStrokeUnit);
             float progressStrokeWidth = calculateSizeByUnit(settings.progressStrokeWidth, settings.progressStrokeUnit);
