@@ -116,11 +116,11 @@ public class DiskCacheServer extends DiskCacheModule {
                 //write to disk first, and return File
                 outputStream = editor.newOutputStream(0);
                 //buffer, to save memory
-                byte[] buffer = new byte[DiskCacheServer.BUFFER_SIZE];
-                boolean hasWrite = false;
                 long startTime = System.currentTimeMillis();
                 long imageDataLengthLimit = getComponentManager().getServerSettings().getImageDataLengthLimit();
+                byte[] buffer = new byte[DiskCacheServer.BUFFER_SIZE];
                 int readLength;
+                int loopCount = 0;
                 //read and write
                 while (true) {
                     try {
@@ -143,7 +143,7 @@ public class DiskCacheServer extends DiskCacheModule {
                         return result;
                     }
                     //check if speed is low
-                    if (checkNetworkSpeed(startTime, task, result)){
+                    if (checkNetworkSpeed(startTime, loopCount, task, result)){
                         abortEditor(editor);
                         return result;
                     }
@@ -155,7 +155,7 @@ public class DiskCacheServer extends DiskCacheModule {
                         //not healthy
                         setHealthy(false);
                         //if error while writing first buffer data, try to write to memory buffer, in order to ensure pictures display normally.
-                        if (!hasWrite){
+                        if (loopCount == 0){
                             abortEditor(editor);
                             getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                                     getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
@@ -164,9 +164,9 @@ public class DiskCacheServer extends DiskCacheModule {
                         }
                         throw e;
                     }
-                    hasWrite = true;
+                    loopCount++;
                 }
-                if (!hasWrite){
+                if (loopCount == 0){
                     throw new Exception("[TILoader]network load failed, null content received (1)");
                 }
                 //succeed
@@ -313,6 +313,7 @@ public class DiskCacheServer extends DiskCacheModule {
         long startTime = System.currentTimeMillis();
         long memoryBufferLengthLimit = getComponentManager().getServerSettings().getMemoryBufferLengthLimit();
         int readLength;
+        int loopCount = 0;
         while (true) {
             try {
                 readLength = inputStream.read(buffer);
@@ -332,11 +333,12 @@ public class DiskCacheServer extends DiskCacheModule {
                 return;
             }
             //check if speed is low
-            if (checkNetworkSpeed(startTime, task, result)){
+            if (checkNetworkSpeed(startTime, loopCount, task, result)){
                 return;
             }
             outputStream.write(buffer, 0, readLength);
             outputStream.flush();
+            loopCount++;
         }
         if (outputStream.size() <= 0){
             throw new NetworkException(new Exception("[TILoader]network load failed, null content received (2)"));
@@ -346,14 +348,24 @@ public class DiskCacheServer extends DiskCacheModule {
         result.setMemoryBuffer(outputStream.toByteArray());
     }
 
-    private boolean checkNetworkSpeed(long startTime, Task task, Result result){
-        long elapseTime = System.currentTimeMillis() - startTime + 1;
+    private boolean checkNetworkSpeed(long startTime, int loopCount, Task task, Result result){
+        //decrease check frequency
+        if (loopCount << 30 != 0){
+            return false;
+        }
+
+        final long elapseTime = System.currentTimeMillis() - startTime + 1;
+        final long loadedData = task.getLoadProgress().loaded();
+        final long totalData = task.getLoadProgress().total();
+
         ServerSettings serverSettings = getComponentManager().getServerSettings();
-        long deadline = serverSettings.getAbortOnLowNetworkSpeedDeadline();
-        long windowPeriod = serverSettings.getAbortOnLowNetworkSpeedWindowPeriod();
+        final long deadline = serverSettings.getAbortOnLowNetworkSpeedDeadline();
+        final long windowPeriod = serverSettings.getAbortOnLowNetworkSpeedWindowPeriod();
+        final int boundarySpeed = serverSettings.getAbortOnLowNetworkSpeedBoundarySpeed();
+
         //dead line
         if (elapseTime > deadline){
-            int speed = (int) (task.getLoadProgress().loaded() / (elapseTime >> 10));
+            int speed = (int) ((float)loadedData / (elapseTime >> 10));
             serverSettings.getExceptionHandler().onTaskAbortOnLowSpeedNetwork(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
                     task.getTaskInfo(), elapseTime, speed, getComponentManager().getLogger());
             result.setType(ResultType.CANCELED);
@@ -364,9 +376,22 @@ public class DiskCacheServer extends DiskCacheModule {
             return false;
         }
         //check speed
-        int speed = (int) (task.getLoadProgress().loaded() / (elapseTime >> 10));
-        if (speed > serverSettings.getAbortOnLowNetworkSpeedBoundarySpeed()){
-            return false;
+        int speed;
+        if (totalData > 0) {
+            //check speed by progress
+            speed = (int) ((float)loadedData / (elapseTime >> 10));
+            //calculate min speed by total data length
+            int minSpeed = (int)((float)totalData / (deadline >> 10));
+            //80% off
+            if (speed > minSpeed * 0.8f){
+                return false;
+            }
+        } else {
+            //check speed by boundarySpeed
+            speed = (int) ((float)loadedData / (elapseTime >> 10));
+            if (speed > boundarySpeed) {
+                return false;
+            }
         }
         serverSettings.getExceptionHandler().onTaskAbortOnLowSpeedNetwork(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
                 task.getTaskInfo(), elapseTime, speed, getComponentManager().getLogger());

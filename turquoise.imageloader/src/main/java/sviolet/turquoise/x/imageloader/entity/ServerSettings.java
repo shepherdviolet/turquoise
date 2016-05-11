@@ -74,8 +74,8 @@ public class ServerSettings implements ComponentManager.Component{
         private long imageDataLengthLimit = DEFAULT_IMAGE_DATA_LENGTH_LIMIT;
         private long memoryBufferLengthLimit = DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT;
         private long abortOnLowNetworkSpeedWindowPeriod = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD;
-        private int abortOnLowNetworkSpeedBoundarySpeed = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED;
         private long abortOnLowNetworkSpeedDeadline = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_DEADLINE;
+        private int abortOnLowNetworkSpeedBoundarySpeed = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED;
 
         //handler////////////////////////////////////////////////////////////////////////////
 
@@ -326,6 +326,7 @@ public class ServerSettings implements ComponentManager.Component{
         /**
          * <p>[Senior Setting]</p>
          *
+         * TODO
          * <p>Some times, network speed is very slow, but uninterruptedly, it will hardly to cause read-timeout exception,
          * In order to avoid this situation, TILoader will cancel load task with slow speed.</p>
          *
@@ -337,22 +338,22 @@ public class ServerSettings implements ComponentManager.Component{
          * Task will be canceled when reach the deadline.</p>
          *
          * @param windowPeriod ms, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD}
-         * @param boundarySpeed byte/s, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED}
          * @param deadline ms, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_DEADLINE}
+         * @param boundarySpeed byte/s, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED}
          */
-        public Builder setAbortOnLowNetworkSpeed(long windowPeriod, int boundarySpeed, long deadline){
+        public Builder setAbortOnLowNetworkSpeed(long windowPeriod, long deadline, int boundarySpeed){
             if (windowPeriod < 0){
                 throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: windowPeriod must >= 0");
-            }
-            if (boundarySpeed < 0){
-                throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: boundarySpeed must >= 0");
             }
             if (deadline < windowPeriod){
                 throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: deadline must >= windowPeriod");
             }
+            if (boundarySpeed < 0){
+                throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: boundarySpeed must >= 0");
+            }
             values.abortOnLowNetworkSpeedWindowPeriod = windowPeriod;
-            values.abortOnLowNetworkSpeedBoundarySpeed = boundarySpeed;
             values.abortOnLowNetworkSpeedDeadline = deadline;
+            values.abortOnLowNetworkSpeedBoundarySpeed = boundarySpeed;
             return this;
         }
 
@@ -489,8 +490,8 @@ public class ServerSettings implements ComponentManager.Component{
     private static final long MIN_MEMORY_BUFFER_LENGTH_LIMIT = 512 * 1024;
     private static final float DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT = 0.02f;
     private static final long DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD = 30 * 1000;//ms
-    private static final int DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED = 5 * 1024;//bytes/s
     private static final long DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_DEADLINE = 120 * 1000;//ms
+    private static final int DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED = 5 * 1024;//bytes/s
 
     public static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
     public static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
