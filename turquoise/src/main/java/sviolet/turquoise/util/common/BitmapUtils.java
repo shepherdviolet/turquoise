@@ -28,15 +28,18 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Picture;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.util.Base64;
 import android.view.View;
+import android.webkit.WebView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -742,11 +745,11 @@ public class BitmapUtils {
     }
 
     /**
-     * 获取View的Bitmap缓存图
+     * 获取View的显示缓存图
      * @param view view
      * @param bitmapConfig 颜色深度
      */
-    public static Bitmap getViewCache(View view, Bitmap.Config bitmapConfig){
+    public static Bitmap getViewDrawingCache(View view, Bitmap.Config bitmapConfig){
         view.setDrawingCacheEnabled(true);
         view.buildDrawingCache();
         Bitmap bitmap = view.getDrawingCache();
@@ -754,6 +757,35 @@ public class BitmapUtils {
         view.destroyDrawingCache();
         view.setDrawingCacheEnabled(false);
         return result;
+    }
+
+    /**
+     * 获得WebView整个页面的图像(包括未显示部分), 图片会比较大, 因此建议设置宽度高度限制, 若超过限制, 图片会
+     * 进行缩小.
+     * @param webView webView
+     * @param bitmapConfig Bitmap参数
+     * @param limitWidth 限制宽度(0不限)
+     * @param limitHeight 限制高度(0不限)
+     */
+    public static Bitmap getWebViewCapturePicture(@NonNull WebView webView, Bitmap.Config bitmapConfig, int limitWidth, int limitHeight){
+        Picture picture = webView.capturePicture();
+        float scale = 1f;
+        if (limitWidth > 0 && picture.getWidth() > limitWidth){
+            scale = (float)limitWidth / (float)picture.getWidth();
+        }
+        if (limitHeight > 0 && picture.getHeight() > limitHeight){
+            float heightScale = (float)limitHeight / (float)picture.getHeight();
+            if (heightScale < scale){
+                scale = heightScale;
+            }
+        }
+        Bitmap bitmap = Bitmap.createBitmap((int)(picture.getWidth() * scale), (int)(picture.getHeight() * scale), bitmapConfig);
+        Matrix matrix = new Matrix();
+        matrix.setScale(scale, scale);
+        Canvas canvas = new Canvas(bitmap);
+        canvas.setMatrix(matrix);
+        picture.draw(canvas);
+        return bitmap;
     }
 
     /**********************************************
