@@ -102,6 +102,15 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
     }
 
     /**
+     * set loading image
+     * @param bitmap bitmap, TILoader will recycle it automatically
+     */
+    public CommonLoadingDrawableFactory setImageBitmap(Bitmap bitmap){
+        imageBitmap.setBitmap(bitmap);
+        return this;
+    }
+
+    /**
      * set scale type of loading image
      * @param imageScaleType ImageScaleType
      */

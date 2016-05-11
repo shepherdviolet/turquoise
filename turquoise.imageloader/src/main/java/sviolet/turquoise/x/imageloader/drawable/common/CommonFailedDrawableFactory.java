@@ -77,6 +77,15 @@ public class CommonFailedDrawableFactory implements FailedDrawableFactory {
         return this;
     }
 
+    /**
+     * set loading image
+     * @param bitmap bitmap, TILoader will recycle it automatically
+     */
+    public CommonFailedDrawableFactory setImageBitmap(Bitmap bitmap){
+        this.bitmap.setBitmap(bitmap);
+        return this;
+    }
+
     public CommonFailedDrawableFactory setColor(int color) {
         this.color = color;
         return this;

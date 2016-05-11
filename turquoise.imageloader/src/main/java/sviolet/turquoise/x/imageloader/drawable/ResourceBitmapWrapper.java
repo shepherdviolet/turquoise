@@ -34,9 +34,11 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  */
 public class ResourceBitmapWrapper {
 
+    private static final int NORMAL = 0;
     private static final int UNDEFINED = -1;
     private static final int DESTROYED = -2;
 
+    private int state = UNDEFINED;
     private int resId = UNDEFINED;
     private Bitmap bitmap;
 
@@ -52,8 +54,24 @@ public class ResourceBitmapWrapper {
         }
         try {
             lock.lock();
-            if (this.resId != DESTROYED){
+            if (this.state == UNDEFINED){
+                this.state = NORMAL;
                 this.resId = resId;
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    /**
+     * @param bitmap set bitmap
+     */
+    public void setBitmap(Bitmap bitmap){
+        try {
+            lock.lock();
+            if (this.state == UNDEFINED){
+                this.state = NORMAL;
+                this.bitmap = bitmap;
             }
         } finally {
             lock.unlock();
@@ -75,7 +93,7 @@ public class ResourceBitmapWrapper {
             if (bitmap != null){
                 return bitmap;
             }
-            if (resId > 0){
+            if (state == NORMAL && resId > 0){
                 try{
                     //decode from resources
                     bitmap = BitmapUtils.decodeFromResource(resources, resId);
@@ -85,7 +103,7 @@ public class ResourceBitmapWrapper {
                 if (bitmap != null){
                     return bitmap;
                 }
-                resId = DESTROYED;
+                state = DESTROYED;
             }
             return null;
         } finally {
@@ -100,7 +118,7 @@ public class ResourceBitmapWrapper {
         Bitmap bitmap = null;
         try {
             lock.lock();
-            resId = DESTROYED;
+            state = DESTROYED;
             bitmap = this.bitmap;
             this.bitmap = null;
         } finally {
