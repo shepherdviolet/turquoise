@@ -22,6 +22,8 @@ package sviolet.turquoise.x.imageloader.entity;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import java.util.Map;
+
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 
 /**
@@ -39,6 +41,7 @@ public class Params {
         private DecodeHandler.DecodeStrategy decodeStrategy = DecodeHandler.DecodeStrategy.APPROXIMATE_SCALE;
         private DecodeHandler.Interceptor decodeInterceptor;
         private Bitmap.Config bitmapConfig = DEFAULT_BITMAP_CONFIG;
+        private Map<?, ?> extras;
 
         /**
          * you must implement cloning method, including all values.
@@ -144,6 +147,11 @@ public class Params {
             return this;
         }
 
+        public Builder setExtras(Map<?, ?> extras){
+            values.extras = extras;
+            return this;
+        }
+
         /**
          * @return build Params
          */
@@ -190,6 +198,10 @@ public class Params {
 
     public DecodeHandler.Interceptor getDecodeInterceptor(){
         return values.decodeInterceptor;
+    }
+
+    public Map<?, ?> getExtras(){
+        return values.extras;
     }
 
     //function////////////////////////////////////////////////////////////
