@@ -65,7 +65,7 @@ class ExtractStub extends AbsStub {
      */
 
     @Override
-    protected void onLoadSucceedInner(ImageResource<?> resource) {
+    protected void onLoadSucceedInner(ImageResource resource) {
         super.onLoadSucceedInner(resource);
         //get & check controller
         NodeController controller = getNodeController();

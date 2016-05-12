@@ -32,7 +32,7 @@ public class DiskEngine extends Engine {
 
     @Override
     protected void executeNewTask(Task task) {
-        ImageResource<?> imageResource = getComponentManager().getDiskCacheServer().read(task, getDecodeHandler(task));
+        ImageResource imageResource = getComponentManager().getDiskCacheServer().read(task, getDecodeHandler(task));
         if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
             task.setState(Task.State.FAILED);
             response(task);

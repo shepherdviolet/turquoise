@@ -62,7 +62,7 @@ public abstract class DecodeHandler {
      * @param logger logger
      * @return ImageResource
      */
-    public abstract ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger);
+    public abstract ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger);
 
     /**
      * decode image from file
@@ -73,16 +73,16 @@ public abstract class DecodeHandler {
      * @param logger logger
      * @return ImageResource
      */
-    public abstract ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger);
+    public abstract ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger);
 
-    public final ImageResource<?> decode(Context applicationContext, Context context, Task task, byte[] data, TLogger logger){
-        ImageResource<?> imageResource = onDecode(applicationContext, context, task.getTaskInfo(), data, logger);
+    public final ImageResource decode(Context applicationContext, Context context, Task task, byte[] data, TLogger logger){
+        ImageResource imageResource = onDecode(applicationContext, context, task.getTaskInfo(), data, logger);
         imageResource = intercept(applicationContext, context, task, logger, imageResource);
         return imageResource;
     }
 
-    public final ImageResource<?> decode(Context applicationContext, Context context, Task task, File file, TLogger logger){
-        ImageResource<?> imageResource = onDecode(applicationContext, context, task.getTaskInfo(), file, logger);
+    public final ImageResource decode(Context applicationContext, Context context, Task task, File file, TLogger logger){
+        ImageResource imageResource = onDecode(applicationContext, context, task.getTaskInfo(), file, logger);
         imageResource = intercept(applicationContext, context, task, logger, imageResource);
         return imageResource;
     }
@@ -90,10 +90,10 @@ public abstract class DecodeHandler {
     /**
      * intercept process
      */
-    private ImageResource<?> intercept(Context applicationContext, Context context, Task task, TLogger logger, ImageResource<?> imageResource) {
+    private ImageResource intercept(Context applicationContext, Context context, Task task, TLogger logger, ImageResource imageResource) {
         //interceptor
         if (task.getParams().getDecodeInterceptor() != null && TILoaderUtils.isImageResourceValid(imageResource)){
-            ImageResource<?> imageResource2 = task.getParams().getDecodeInterceptor().intercept(applicationContext, context, task.getTaskInfo(), imageResource, logger);
+            ImageResource imageResource2 = task.getParams().getDecodeInterceptor().intercept(applicationContext, context, task.getTaskInfo(), imageResource, logger);
             //recycle previous ImageResource
             if (!TILoaderUtils.isImageResourceEqual(imageResource, imageResource2)){
                 TILoaderUtils.recycleImageResource(imageResource);
@@ -108,7 +108,7 @@ public abstract class DecodeHandler {
      */
     public interface Interceptor{
 
-        ImageResource<?> intercept(Context applicationContext, Context context, Task.Info taskInfo, ImageResource<?> imageResource, TLogger logger);
+        ImageResource intercept(Context applicationContext, Context context, Task.Info taskInfo, ImageResource imageResource, TLogger logger);
 
     }
 

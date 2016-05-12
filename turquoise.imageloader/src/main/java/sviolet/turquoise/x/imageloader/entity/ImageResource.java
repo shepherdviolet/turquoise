@@ -24,12 +24,12 @@ package sviolet.turquoise.x.imageloader.entity;
  *
  * Created by S.Violet on 2016/3/15.
  */
-public class ImageResource <T> {
+public class ImageResource {
 
     private Type type;
-    private T resource;
+    private Object resource;
 
-    public ImageResource(Type type, T resource){
+    public ImageResource(Type type, Object resource){
         this.type = type;
         this.resource = resource;
     }
@@ -38,7 +38,7 @@ public class ImageResource <T> {
         return type;
     }
 
-    public T getResource() {
+    public Object getResource() {
         return resource;
     }
 

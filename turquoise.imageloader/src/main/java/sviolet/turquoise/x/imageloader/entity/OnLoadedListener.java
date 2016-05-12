@@ -56,7 +56,7 @@ public abstract class OnLoadedListener<T> {
      * @param params loading params
      * @param resource loaded Image, may be null
      */
-    public abstract void onLoadSucceed(String url, Params params, ImageResource<?> resource);
+    public abstract void onLoadSucceed(String url, Params params, ImageResource resource);
 
     /**
      * callback when loading canceled

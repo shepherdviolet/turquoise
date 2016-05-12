@@ -31,7 +31,7 @@ public class MemoryEngine extends Engine {
 
     @Override
     protected void executeNewTask(Task task) {
-        ImageResource<?> resource = getComponentManager().getMemoryCacheServer().get(task.getKey());
+        ImageResource resource = getComponentManager().getMemoryCacheServer().get(task.getKey());
         if (resource != null) {
             task.setState(Task.State.SUCCEED);
             response(task);

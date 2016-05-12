@@ -92,7 +92,7 @@ public class TILoaderUtils {
      * @param dst resource
      * @return true:equal
      */
-    public static boolean isImageResourceEqual(ImageResource<?> src, ImageResource<?> dst){
+    public static boolean isImageResourceEqual(ImageResource src, ImageResource dst){
         ComponentManager.getInstance().waitingForInitialized();
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().isEqual(src, dst);
     }
@@ -103,7 +103,7 @@ public class TILoaderUtils {
      * @param resource imageResource which will be recycled
      * @return true:recycled
      */
-    public static boolean recycleImageResource(ImageResource<?> resource){
+    public static boolean recycleImageResource(ImageResource resource){
         ComponentManager.getInstance().waitingForInitialized();
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().recycle(resource);
     }
@@ -116,7 +116,7 @@ public class TILoaderUtils {
      * @param skipDrawingException true:skip drawing exception of drawable, if true, it will not throw exceptions even when bitmap has recycled
      * @return drawable
      */
-    public static Drawable imageResourceToDrawable(Context context, ImageResource<?> resource, boolean skipDrawingException){
+    public static Drawable imageResourceToDrawable(Context context, ImageResource resource, boolean skipDrawingException){
         ComponentManager.getInstance().waitingForInitialized();
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().toDrawable(context, resource, skipDrawingException);
     }

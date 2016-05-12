@@ -38,7 +38,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
 public class CommonDecodeHandler extends DecodeHandler {
 
     @Override
-    public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
+    public ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
         Integer customReqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_WIDTH);
         Integer customReqHeight = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_HEIGHT);
         int reqWidth = customReqWidth == null ? taskInfo.getParams().getReqWidth() : customReqWidth;
@@ -66,11 +66,11 @@ public class CommonDecodeHandler extends DecodeHandler {
         if (!logger.isNullLogger()) {
             logger.d("[CommonDecodeHandler]decoded size:" + bitmap.getWidth() + "*" + bitmap.getHeight() + " task:" + taskInfo);
         }
-        return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
+        return new ImageResource(ImageResource.Type.BITMAP, bitmap);
     }
 
     @Override
-    public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
+    public ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
         Integer customReqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_WIDTH);
         Integer customReqHeight = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_HEIGHT);
         int reqWidth = customReqWidth == null ? taskInfo.getParams().getReqWidth() : customReqWidth;
@@ -98,6 +98,6 @@ public class CommonDecodeHandler extends DecodeHandler {
         if (!logger.isNullLogger()) {
             logger.d("[CommonDecodeHandler]decoded size:" + bitmap.getWidth() + "*" + bitmap.getHeight() + " task:" + taskInfo);
         }
-        return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
+        return new ImageResource(ImageResource.Type.BITMAP, bitmap);
     }
 }

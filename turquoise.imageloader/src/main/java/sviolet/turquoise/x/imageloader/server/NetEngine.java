@@ -195,7 +195,7 @@ public class NetEngine extends Engine {
         }
         for (Task t : group) {
             //decode
-            ImageResource<?> imageResource = decode(t, bytes, file);
+            ImageResource imageResource = decode(t, bytes, file);
             if (imageResource == null) {
                 responseFailed(t);
                 continue;
@@ -226,8 +226,8 @@ public class NetEngine extends Engine {
         }
     }
 
-    private ImageResource<?> decode(Task task, byte[] bytes, File file){
-        ImageResource<?> imageResource = null;
+    private ImageResource decode(Task task, byte[] bytes, File file){
+        ImageResource imageResource = null;
         try {
             //dispatch type
             if (bytes != null) {

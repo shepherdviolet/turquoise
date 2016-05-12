@@ -70,7 +70,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
         imageResourceCacheModule = new ImageResourceCacheModule(memoryCacheSize, manager.getServerSettings().getImageResourceHandler(), manager.getLogger());
     }
 
-    public void put(String key, ImageResource<?> resource){
+    public void put(String key, ImageResource resource){
         if (key == null){
             manager.getLogger().e("MemoryCacheServer can't put with null key");
             return;
@@ -78,7 +78,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
         imageResourceCacheModule.put(key, resource);
     }
 
-    public ImageResource<?> get(String key){
+    public ImageResource get(String key){
         if (key == null){
             manager.getLogger().e("MemoryCacheServer can't get with null key");
             return null;
@@ -86,7 +86,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
         return imageResourceCacheModule.get(key);
     }
 
-    public ImageResource<?> extract(String key){
+    public ImageResource extract(String key){
         if (key == null){
             manager.getLogger().e("MemoryCacheServer can't extract with null key");
             return null;

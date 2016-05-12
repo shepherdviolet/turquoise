@@ -294,7 +294,7 @@ public abstract class AbsStub implements Stub {
      * @param resource loaded Image, may be null
      */
     @Override
-    public final void onLoadSucceed(ImageResource<?> resource) {
+    public final void onLoadSucceed(ImageResource resource) {
         //check resource
         if (!TILoaderUtils.isImageResourceValid(resource)){
             onLoadFailed();
@@ -352,7 +352,7 @@ public abstract class AbsStub implements Stub {
      * callbacks inner
      */
 
-    protected void onLoadSucceedInner(ImageResource<?> resource){
+    protected void onLoadSucceedInner(ImageResource resource){
 
     }
 

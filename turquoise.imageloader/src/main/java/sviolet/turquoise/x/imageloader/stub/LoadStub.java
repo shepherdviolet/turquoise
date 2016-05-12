@@ -149,7 +149,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         return true;
     }
 
-    protected boolean showImage(ImageResource<?> resource){
+    protected boolean showImage(ImageResource resource){
         //get & check view
         final V view = getView();
         if (view == null){
@@ -218,7 +218,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
      */
 
     @Override
-    protected void onLoadSucceedInner(ImageResource<?> resource) {
+    protected void onLoadSucceedInner(ImageResource resource) {
         super.onLoadSucceedInner(resource);
         showImage(resource);
     }

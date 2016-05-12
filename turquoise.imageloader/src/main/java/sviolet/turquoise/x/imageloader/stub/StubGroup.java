@@ -55,7 +55,7 @@ public class StubGroup {
      * callback all stubs to onLoadSucceed, this method can only invoke once, all stubs will be removed from this Group after callback
      * @param resource loaded Image, may be null
      */
-    public void onLoadSucceed(ImageResource<?> resource) {
+    public void onLoadSucceed(ImageResource resource) {
         for (Stub stub : stubSet) {
             stub.onLoadSucceed(resource);
         }

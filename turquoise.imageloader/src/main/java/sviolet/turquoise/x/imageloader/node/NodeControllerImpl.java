@@ -319,7 +319,7 @@ public class NodeControllerImpl extends NodeController {
 
         switch (task.getState()){
             case SUCCEED:
-                ImageResource<?> resource;
+                ImageResource resource;
                 if (task.getType() == Stub.Type.EXTRACT){
                     //image will remove from memory cache
                     resource = manager.getMemoryCacheServer().extract(task.getKey());

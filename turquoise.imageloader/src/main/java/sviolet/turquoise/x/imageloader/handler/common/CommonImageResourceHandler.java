@@ -39,7 +39,7 @@ import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
 public class CommonImageResourceHandler implements ImageResourceHandler {
 
     @Override
-    public boolean isValid(ImageResource<?> resource) {
+    public boolean isValid(ImageResource resource) {
         if (resource == null || resource.getResource() == null){
             return false;
         }
@@ -56,12 +56,12 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         return false;
     }
 
-    protected boolean isValidExtension(ImageResource<?> resource){
+    protected boolean isValidExtension(ImageResource resource){
         return false;
     }
 
     @Override
-    public boolean isEqual(ImageResource<?> src, ImageResource<?> dst) {
+    public boolean isEqual(ImageResource src, ImageResource dst) {
         if (src == null && dst == null){
             return true;
         }else if (src == null || dst == null){
@@ -76,7 +76,7 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
     }
 
     @Override
-    public boolean recycle(ImageResource<?> resource) {
+    public boolean recycle(ImageResource resource) {
         if (resource == null || resource.getResource() == null){
             return false;
         }
@@ -94,12 +94,12 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         return false;
     }
 
-    public boolean recycleExtension(ImageResource<?> resource) {
+    public boolean recycleExtension(ImageResource resource) {
         return false;
     }
 
     @Override
-    public Drawable toDrawable(Context applicationContext, ImageResource<?> resource, boolean skipDrawingException) {
+    public Drawable toDrawable(Context applicationContext, ImageResource resource, boolean skipDrawingException) {
         if (resource == null || resource.getResource() == null){
             return null;
         }
@@ -116,13 +116,13 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         return null;
     }
 
-    public Drawable toDrawableExtension(Context applicationContext, ImageResource<?> resource, boolean skipDrawingException){
+    public Drawable toDrawableExtension(Context applicationContext, ImageResource resource, boolean skipDrawingException){
         return null;
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
     @Override
-    public int byteCountOf(ImageResource<?> resource){
+    public int byteCountOf(ImageResource resource){
         if (resource == null || resource.getResource() == null){
             return 0;
         }
@@ -143,7 +143,7 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         return 0;
     }
 
-    public int byteCountOfExtension(ImageResource<?> resource){
+    public int byteCountOfExtension(ImageResource resource){
         return 0;
     }
 

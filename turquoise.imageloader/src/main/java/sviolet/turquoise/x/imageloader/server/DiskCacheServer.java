@@ -49,14 +49,14 @@ public class DiskCacheServer extends DiskCacheModule {
      * @param decodeHandler used to decode file
      * @return ImageResource, might be null
      */
-    public ImageResource<?> read(Task task, DecodeHandler decodeHandler){
+    public ImageResource read(Task task, DecodeHandler decodeHandler){
         //fetch cache file
         File targetFile = get(task);
         if (targetFile == null || !targetFile.exists()){
             return null;
         }
         //decode
-        ImageResource<?> imageResource = null;
+        ImageResource imageResource = null;
         try {
             imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
                     task, targetFile, getComponentManager().getLogger());

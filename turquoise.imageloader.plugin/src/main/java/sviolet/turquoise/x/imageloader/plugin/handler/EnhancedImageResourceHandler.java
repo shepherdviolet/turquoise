@@ -39,7 +39,7 @@ import pl.droidsonroids.gif.EnhancedGifDrawable;
 public class EnhancedImageResourceHandler extends CommonImageResourceHandler {
 
     @Override
-    protected boolean isValidExtension(ImageResource<?> resource) {
+    protected boolean isValidExtension(ImageResource resource) {
         switch (resource.getType()){
             case GIF:
                 Object res = resource.getResource();
@@ -54,7 +54,7 @@ public class EnhancedImageResourceHandler extends CommonImageResourceHandler {
     }
 
     @Override
-    public boolean recycleExtension(ImageResource<?> resource) {
+    public boolean recycleExtension(ImageResource resource) {
         switch (resource.getType()){
             case GIF:
                 Object res = resource.getResource();
@@ -70,7 +70,7 @@ public class EnhancedImageResourceHandler extends CommonImageResourceHandler {
     }
 
     @Override
-    public Drawable toDrawableExtension(Context applicationContext, ImageResource<?> resource, boolean skipDrawingException) {
+    public Drawable toDrawableExtension(Context applicationContext, ImageResource resource, boolean skipDrawingException) {
         switch (resource.getType()){
             case GIF:
                 Object res = resource.getResource();
@@ -85,7 +85,7 @@ public class EnhancedImageResourceHandler extends CommonImageResourceHandler {
     }
 
     @Override
-    public int byteCountOfExtension(ImageResource<?> resource) {
+    public int byteCountOfExtension(ImageResource resource) {
         switch (resource.getType()){
             case GIF:
                 Object res = resource.getResource();

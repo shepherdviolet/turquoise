@@ -36,7 +36,7 @@ public interface ImageResourceHandler {
      * @param resource imageResource
      * @return true:valid
      */
-    boolean isValid(ImageResource<?> resource);
+    boolean isValid(ImageResource resource);
 
     /**
      * judge whether the two resource are equal.
@@ -44,14 +44,14 @@ public interface ImageResourceHandler {
      * @param dst resource
      * @return true:equal
      */
-    boolean isEqual(ImageResource<?> src, ImageResource<?> dst);
+    boolean isEqual(ImageResource src, ImageResource dst);
 
     /**
      * recycle imageResource
      * @param resource imageResource which will be recycled
      * @return true:recycled
      */
-    boolean recycle(ImageResource<?> resource);
+    boolean recycle(ImageResource resource);
 
     /**
      * convert ImageResource to Drawable
@@ -60,13 +60,13 @@ public interface ImageResourceHandler {
      * @param skipDrawingException true:skip drawing exception of drawable, if true, it will not throw exceptions even when bitmap has recycled
      * @return drawable
      */
-    Drawable toDrawable(Context applicationContext, ImageResource<?> resource, boolean skipDrawingException);
+    Drawable toDrawable(Context applicationContext, ImageResource resource, boolean skipDrawingException);
 
     /**
      * get the byte count of ImageResource (memory)
      * @param resource ImageResource
      * @return byte count of ImageResource
      */
-    int byteCountOf(ImageResource<?> resource);
+    int byteCountOf(ImageResource resource);
 
 }

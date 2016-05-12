@@ -52,7 +52,7 @@ public interface Stub extends Destroyable {
      *
      * @param resource loaded Image, may be null
      */
-    void onLoadSucceed(ImageResource<?> resource);
+    void onLoadSucceed(ImageResource resource);
 
     /**
      * callback when loading failed
