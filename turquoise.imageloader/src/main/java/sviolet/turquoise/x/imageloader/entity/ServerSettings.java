@@ -326,16 +326,25 @@ public class ServerSettings implements ComponentManager.Component{
         /**
          * <p>[Senior Setting]</p>
          *
-         * TODO
          * <p>Some times, network speed is very slow, but uninterruptedly, it will hardly to cause read-timeout exception,
          * In order to avoid this situation, TILoader will cancel load task with slow speed.</p>
          *
          * <p>At the beginning of loading, task will keep loading in any case, even if the speed is very slow,
-         * we called it windowPeriod.
-         * After windowPeriod, it start to check loading speed, if faster than boundarySpeed, task will keep
-         * loading. if not, task will be canceled, then call ExceptionHandler->onTaskAbortOnLowSpeedNetwork()
-         * method to handle this event. You can adjust params by ServerSettings->setAbortOnLowNetworkSpeed().
-         * Task will be canceled when reach the deadline.</p>
+         * we called it windowPeriod. After windowPeriod, it start to check loading speed:</p>
+         *
+         * <p>Situation 1:
+         * If we can get image data length from http-header, we will calculate progress of task,
+         * if we found that the speed is too slow to finish loading before deadline, we will cancel
+         * task in advance.(override ExceptionHandler->onTaskAbortOnLowSpeedNetwork() method to handle this event)</p>
+         *
+         * <p>Situation 2:
+         * If we can not get image data length from http-header, we will make reference to boundarySpeed,
+         * if task is faster than boundarySpeed, task will keep loading. if not, task will be canceled.
+         * (override ExceptionHandler->onTaskAbortOnLowSpeedNetwork() method to handle this event)</p>
+         *
+         * <p>Finally, task will be canceled when reach the deadline.</p>
+         *
+         * <p>You can adjust params by ServerSettings->setAbortOnLowNetworkSpeed().</p>
          *
          * @param windowPeriod ms, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD}
          * @param deadline ms, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_DEADLINE}
