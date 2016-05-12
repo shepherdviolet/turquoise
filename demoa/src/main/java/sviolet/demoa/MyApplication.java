@@ -49,7 +49,7 @@ public class MyApplication extends TApplication {
 
     @Override
     public void onUncaughtException(Throwable ex, boolean isCrashRestart) {
-        //TODO 异常处理
+        //异常处理
     }
 
 }
