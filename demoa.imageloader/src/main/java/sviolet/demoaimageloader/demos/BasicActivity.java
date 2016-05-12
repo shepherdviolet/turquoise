@@ -4,8 +4,6 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import java.io.IOException;
-
 import sviolet.demoaimageloader.R;
 import sviolet.demoaimageloader.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
@@ -120,7 +118,8 @@ public class BasicActivity extends TActivity {
 //        Params paramsDemo = new Params.Builder()
 //                .setReqSize(100, 100)//指定加载尺寸, 默认匹配控件尺寸
 //                .setBitmapConfig(Bitmap.Config.ARGB_8888)//设置Bitmap格式, ARGB_8888支持透明, 默认ARGB_565
-//                .setDecodeStrategy(DecodeHandler.DecodeStrategy.ACCURATE_SCALE)//设置精确解码, 图片尺寸等于指定尺寸, 默认:APPROXIMATE_SCALE, 非精确解码
+//                .setDecodeInSampleQuality(BitmapUtils.InSampleQuality.MEDIUM)//解码采样质量为中, 若需要解码原图, 请设置ORIGINAL
+//                .setDecodeScaleStrategy(DecodeHandler.DecodeScaleStrategy.NO_SCALE)//默认不缩放图片, 此参数可以缩放图片
 //                .setDecodeInterceptor(new MyDecodeInterceptor())//设置解码拦截器, 对图片进行特殊解码处理
 //                .build();
 
