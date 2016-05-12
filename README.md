@@ -1,4 +1,4 @@
-# Turquoise 3.0.160510
+# Turquoise 3.0.160512
 > A comprehensive Android library for private use.<br/>
 > https://github.com/shepherdviolet/turquoise <br/>
 
