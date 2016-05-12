@@ -923,8 +923,15 @@ public class BitmapUtils {
      *
      * <p>ORIGINAL::原图</p>
      * <p>HIGH::高质量(缩小)</p>
-     * <p>MEDIUM::中质量(缩小)</p>
+     * <p>MEDIUM::中质量(缩小), 建议值</p>
      * <p>LOW::低质量(缩小)</p>
+     *
+     * <p>Decode inSample quality</p>
+     *
+     * <p>ORIGINAL::original size</p>
+     * <p>HIGH::high quality</p>
+     * <p>MEDIUM::medium quality, by default</p>
+     * <p>LOW::low quality</p>
      */
     public enum InSampleQuality{
         ORIGINAL,
