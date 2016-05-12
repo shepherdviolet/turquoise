@@ -52,7 +52,7 @@ public class EnhancedDecodeHandler extends CommonDecodeHandler {
             return super.onDecode(applicationContext, context, taskInfo, data, logger);
         }
         try {
-            return new ImageResource<>(ImageResource.Type.GIF, EnhancedGifDrawable.decode(data, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight()));
+            return new ImageResource<>(ImageResource.Type.GIF, EnhancedGifDrawable.decode(data, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getDecodeInSampleQuality()));
         } catch (IOException e) {
             throw new RuntimeException("[TILoader:EnhancedDecodeHandler]error while decoding gif from bytes", e);
         }
@@ -64,7 +64,7 @@ public class EnhancedDecodeHandler extends CommonDecodeHandler {
             return super.onDecode(applicationContext, context, taskInfo, file, logger);
         }
         try {
-            return new ImageResource<>(ImageResource.Type.GIF, EnhancedGifDrawable.decode(file, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight()));
+            return new ImageResource<>(ImageResource.Type.GIF, EnhancedGifDrawable.decode(file, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getDecodeInSampleQuality()));
         } catch (IOException e) {
             throw new RuntimeException("[TILoader:EnhancedDecodeHandler]error while decoding gif from file", e);
         }

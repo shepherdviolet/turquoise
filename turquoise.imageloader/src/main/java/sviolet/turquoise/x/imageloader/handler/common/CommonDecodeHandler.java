@@ -39,43 +39,59 @@ public class CommonDecodeHandler extends DecodeHandler {
 
     @Override
     public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
-        int reqWidth = taskInfo.getParams().getReqWidth();
-        int reqHeight = taskInfo.getParams().getReqHeight();
-        if (taskInfo.getParams().getDecodeStrategy() == DecodeStrategy.NO_SCALE){
-            reqWidth = 0;
-            reqHeight = 0;
-        }
-        //routine decoding
-        Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig());
+        Integer customReqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_WIDTH);
+        Integer customReqHeight = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_HEIGHT);
+        int reqWidth = customReqWidth == null ? taskInfo.getParams().getReqWidth() : customReqWidth;
+        int reqHeight = customReqHeight == null ? taskInfo.getParams().getReqHeight() : customReqHeight;
+        //decoding
+        Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), taskInfo.getParams().getDecodeInSampleQuality());
         if (bitmap == null)
             throw new RuntimeException("[TILoader:CommonDecodeHandler]decoding failed, illegal image data");
-        //accurate scale
-        if (taskInfo.getParams().getDecodeStrategy() == DecodeStrategy.ACCURATE_SCALE){
-            bitmap = BitmapUtils.scaleTo(bitmap, reqWidth, reqHeight, true);
-            if (bitmap == null)
-                throw new RuntimeException("[TILoader:CommonDecodeHandler]accurate scale: scale failed");
+        //scale
+        switch (taskInfo.getParams().getDecodeScaleStrategy()){
+            case SCALE_FIT_WIDTH_HEIGHT:
+                bitmap = BitmapUtils.scaleTo(bitmap, reqWidth, reqHeight, true);
+                break;
+            case SCALE_FIT_WIDTH:
+                bitmap = BitmapUtils.scaleTo(bitmap, reqWidth, 0, true);
+                break;
+            case SCALE_FIT_HEIGHT:
+                bitmap = BitmapUtils.scaleTo(bitmap, 0, reqHeight, true);
+                break;
+            default:
+                break;
         }
+        if (bitmap == null)
+            throw new RuntimeException("[TILoader:CommonDecodeHandler]scale: scale failed");
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
 
     @Override
     public ImageResource<?> onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
-        int reqWidth = taskInfo.getParams().getReqWidth();
-        int reqHeight = taskInfo.getParams().getReqHeight();
-        if (taskInfo.getParams().getDecodeStrategy() == DecodeStrategy.NO_SCALE){
-            reqWidth = 0;
-            reqHeight = 0;
-        }
-        //routine decoding
-        Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig());
+        Integer customReqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_WIDTH);
+        Integer customReqHeight = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_HEIGHT);
+        int reqWidth = customReqWidth == null ? taskInfo.getParams().getReqWidth() : customReqWidth;
+        int reqHeight = customReqHeight == null ? taskInfo.getParams().getReqHeight() : customReqHeight;
+        //decoding
+        Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), BitmapUtils.InSampleQuality.MEDIUM);
         if (bitmap == null)
             throw new RuntimeException("[TILoader:CommonDecodeHandler]decoding failed, illegal image data");
-        //accurate scale
-        if (taskInfo.getParams().getDecodeStrategy() == DecodeStrategy.ACCURATE_SCALE){
-            bitmap = BitmapUtils.scaleTo(bitmap, reqWidth, reqHeight, true);
-            if (bitmap == null)
-                throw new RuntimeException("[TILoader:CommonDecodeHandler]accurate scale: scale failed");
+        //scale
+        switch (taskInfo.getParams().getDecodeScaleStrategy()){
+            case SCALE_FIT_WIDTH_HEIGHT:
+                bitmap = BitmapUtils.scaleTo(bitmap, reqWidth, reqHeight, true);
+                break;
+            case SCALE_FIT_WIDTH:
+                bitmap = BitmapUtils.scaleTo(bitmap, reqWidth, 0, true);
+                break;
+            case SCALE_FIT_HEIGHT:
+                bitmap = BitmapUtils.scaleTo(bitmap, 0, reqHeight, true);
+                break;
+            default:
+                break;
         }
+        if (bitmap == null)
+            throw new RuntimeException("[TILoader:CommonDecodeHandler]scale: scale failed");
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
 }

@@ -46,31 +46,25 @@ public class EnhancedGifDrawable extends GifDrawable {
     private int fixedWidth = Integer.MIN_VALUE;
     private int fixedHeight = Integer.MIN_VALUE;
 
-    public static EnhancedGifDrawable decode(@NonNull File file, int reqWidth, int reqHeight) throws IOException {
-        //decode meta data only, get size
-        GifInfoHandle gifInfoHandle = new GifInfoHandle(file.getPath(), true);
+    public static EnhancedGifDrawable decode(@NonNull File file, int reqWidth, int reqHeight, BitmapUtils.InSampleQuality quality) throws IOException {
+        //decode gif
+        GifInfoHandle gifInfoHandle = new GifInfoHandle(file.getPath(), false);
         final int width = gifInfoHandle.getWidth();
         final int height = gifInfoHandle.getHeight();
-        gifInfoHandle.recycle();
         //calculate sample size
-        int sampleSize = BitmapUtils.calculateInSampleSize(width, height, reqWidth, reqHeight);
-        //decode gif
-        gifInfoHandle = new GifInfoHandle(file.getPath(), false);
+        int sampleSize = BitmapUtils.calculateInSampleSize(width, height, reqWidth, reqHeight, quality);
         //set sample size
         gifInfoHandle.setSampleSize(sampleSize);
         return new EnhancedGifDrawable(gifInfoHandle);
     }
 
-    public static EnhancedGifDrawable decode(@NonNull byte[] bytes, int reqWidth, int reqHeight) throws IOException {
-        //decode meta data only, get size
-        GifInfoHandle gifInfoHandle = new GifInfoHandle(bytes, true);
+    public static EnhancedGifDrawable decode(@NonNull byte[] bytes, int reqWidth, int reqHeight, BitmapUtils.InSampleQuality quality) throws IOException {
+        //decode gif
+        GifInfoHandle gifInfoHandle = new GifInfoHandle(bytes, false);
         final int width = gifInfoHandle.getWidth();
         final int height = gifInfoHandle.getHeight();
-        gifInfoHandle.recycle();
         //calculate sample size
-        int sampleSize = BitmapUtils.calculateInSampleSize(width, height, reqWidth, reqHeight);
-        //decode gif
-        gifInfoHandle = new GifInfoHandle(bytes, false);
+        int sampleSize = BitmapUtils.calculateInSampleSize(width, height, reqWidth, reqHeight, quality);
         //set sample size
         gifInfoHandle.setSampleSize(sampleSize);
         return new EnhancedGifDrawable(gifInfoHandle).setBytesDataMode();

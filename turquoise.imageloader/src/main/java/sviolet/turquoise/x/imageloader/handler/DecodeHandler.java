@@ -31,16 +31,16 @@ import sviolet.turquoise.x.imageloader.node.Task;
 /**
  * <p>implement image decoding</p>
  *
- * <p>implement notes::</p>
- *
- * <p>1.decoding image, format refer to taskInfo->Params->bitmapConfig, size refer to taskInfo->Params->reqWidth/reqHeight,
- * size does not require very precise.</p>
- *
- * <p>2.scale image base on taskInfo->Params->decodeStrategy, {@link DecodeStrategy}</p>
- *
  * Created by S.Violet on 2016/2/19.
  */
 public abstract class DecodeHandler {
+
+    /**
+     * <p>TYPE::Integer</p>
+     * TODO
+     */
+    public static final String CUSTOM_REQ_WIDTH = "DecodeHandler_custom_req_width";
+    public static final String CUSTOM_REQ_HEIGHT = "DecodeHandler_custom_req_height";
 
     /**
      * decode image from bytes
@@ -104,27 +104,14 @@ public abstract class DecodeHandler {
     /**
      * <p>decoding strategy</p>
      *
-     * <p>APPROXIMATE_SCALE::scale image appropriately by reqWidth/reqHeight, to save memory</p>
-     *
-     * <p>ACCURATE_SCALE::scale image to reqWidth * reqHeight accurately</p>
-     *
-     * <p>NO_SCALE::do not scale, keep origin size</p>
+     * TODO
      *
      */
-    public enum DecodeStrategy{
-        /**
-         * <p>recommended option</p>
-         * scale image appropriately by reqWidth/reqHeight, to save memory
-         */
-        APPROXIMATE_SCALE,
-        /**
-         * scale image to reqWidth * reqHeight accurately
-         */
-        ACCURATE_SCALE,
-        /**
-         * do not scale, keep origin size
-         */
-        NO_SCALE
+    public enum DecodeScaleStrategy {
+        NO_SCALE,
+        SCALE_FIT_WIDTH_HEIGHT,
+        SCALE_FIT_WIDTH,
+        SCALE_FIT_HEIGHT
     }
 
 }

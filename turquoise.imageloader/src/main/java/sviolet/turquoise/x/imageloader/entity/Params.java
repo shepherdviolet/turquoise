@@ -24,6 +24,7 @@ import android.view.View;
 
 import java.util.Map;
 
+import sviolet.turquoise.util.common.BitmapUtils;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 
 /**
@@ -38,10 +39,13 @@ public class Params {
         private int reqWidth = SIZE_MATCH_RESOURCE;
         private int reqHeight = SIZE_MATCH_RESOURCE;
         private boolean sizeMatchView = true;
-        private DecodeHandler.DecodeStrategy decodeStrategy = DecodeHandler.DecodeStrategy.APPROXIMATE_SCALE;
+
+        private BitmapUtils.InSampleQuality decodeInSampleQuality = BitmapUtils.InSampleQuality.MEDIUM;
+        private DecodeHandler.DecodeScaleStrategy decodeScaleStrategy = DecodeHandler.DecodeScaleStrategy.NO_SCALE;
         private DecodeHandler.Interceptor decodeInterceptor;
         private Bitmap.Config bitmapConfig = DEFAULT_BITMAP_CONFIG;
-        private Map<?, ?> extras;
+
+        private Map<String, Object> extras;
 
         /**
          * you must implement cloning method, including all values.
@@ -52,9 +56,13 @@ public class Params {
             newValues.reqWidth = reqWidth;
             newValues.reqHeight = reqHeight;
             newValues.sizeMatchView = sizeMatchView;
-            newValues.decodeStrategy = decodeStrategy;
+
+            newValues.decodeInSampleQuality = decodeInSampleQuality;
+            newValues.decodeScaleStrategy = decodeScaleStrategy;
             newValues.decodeInterceptor = decodeInterceptor;
             newValues.bitmapConfig = bitmapConfig;
+
+            newValues.extras = extras;
             return newValues;
         }
     }
@@ -111,18 +119,24 @@ public class Params {
         }
 
         /**
+         * TODO
+         * @param decodeInSampleQuality
+         * @return
+         */
+        public Builder setDecodeInSampleQuality(BitmapUtils.InSampleQuality decodeInSampleQuality){
+            values.decodeInSampleQuality = decodeInSampleQuality;
+            return this;
+        }
+
+        /**
          * <p>decoding strategy</p>
          *
-         * <p>APPROXIMATE_SCALE::scale image appropriately by reqWidth/reqHeight, to save memory</p>
+         * TODO
          *
-         * <p>ACCURATE_SCALE::scale image to reqWidth * reqHeight accurately</p>
-         *
-         * <p>NO_SCALE::do not scale, keep origin size</p>
-         *
-         * @param decodeStrategy see:{@link DecodeHandler.DecodeStrategy}
+         * @param decodeScaleStrategy see:{@link DecodeHandler.DecodeScaleStrategy}
          */
-        public Builder setDecodeStrategy(DecodeHandler.DecodeStrategy decodeStrategy){
-            values.decodeStrategy = decodeStrategy;
+        public Builder setDecodeScaleStrategy(DecodeHandler.DecodeScaleStrategy decodeScaleStrategy){
+            values.decodeScaleStrategy = decodeScaleStrategy;
             return this;
         }
 
@@ -147,7 +161,7 @@ public class Params {
             return this;
         }
 
-        public Builder setExtras(Map<?, ?> extras){
+        public Builder setExtras(Map<String, Object> extras){
             values.extras = extras;
             return this;
         }
@@ -188,8 +202,12 @@ public class Params {
         return values.sizeMatchView;
     }
 
-    public DecodeHandler.DecodeStrategy getDecodeStrategy(){
-        return values.decodeStrategy;
+    public BitmapUtils.InSampleQuality getDecodeInSampleQuality(){
+        return values.decodeInSampleQuality;
+    }
+
+    public DecodeHandler.DecodeScaleStrategy getDecodeScaleStrategy(){
+        return values.decodeScaleStrategy;
     }
 
     public Bitmap.Config getBitmapConfig(){
@@ -200,8 +218,37 @@ public class Params {
         return values.decodeInterceptor;
     }
 
-    public Map<?, ?> getExtras(){
+    public Map<String, Object> getExtras(){
         return values.extras;
+    }
+
+    public Object getExtra(String key){
+        if (values.extras != null){
+            return values.extras.get(key);
+        }
+        return null;
+    }
+
+    public Integer getExtraInteger(String key){
+        if (values.extras != null){
+            Object value = values.extras.get(key);
+            if (value instanceof Integer){
+                return (Integer) value;
+            }
+            return null;
+        }
+        return null;
+    }
+
+    public String getExtraString(String key){
+        if (values.extras != null){
+            Object value = values.extras.get(key);
+            if (value instanceof String){
+                return (String) value;
+            }
+            return null;
+        }
+        return null;
     }
 
     //function////////////////////////////////////////////////////////////
