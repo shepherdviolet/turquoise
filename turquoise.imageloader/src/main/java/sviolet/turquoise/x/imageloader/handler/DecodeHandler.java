@@ -36,8 +36,19 @@ import sviolet.turquoise.x.imageloader.node.Task;
 public abstract class DecodeHandler {
 
     /**
+     * <p>To override reqWidth/reqHeight while decoding. DecodeHandler will use custom size to decode
+     * and scale image.</p>
+     *
      * <p>TYPE::Integer</p>
-     * TODO
+     *
+     * <pre>{@code
+     *         Map<String, Object> extras = new HashMap<>();
+     *         extras.put(DecodeHandler.CUSTOM_REQ_WIDTH, 100);
+     *         extras.put(DecodeHandler.CUSTOM_REQ_HEIGHT, 100);
+     *         Params paramsDemo = new Params.Builder()
+     *              .setExtras(extras)
+     *              .build();
+     * }</pre>
      */
     public static final String CUSTOM_REQ_WIDTH = "DecodeHandler_custom_req_width";
     public static final String CUSTOM_REQ_HEIGHT = "DecodeHandler_custom_req_height";
