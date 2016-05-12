@@ -26,7 +26,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
-import sviolet.turquoise.util.common.DateTimeUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.LoadProgress;
 import sviolet.turquoise.x.imageloader.entity.Params;
@@ -121,6 +120,14 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
         return this;
     }
 
+    public CircleLoadingAnimationDrawableFactory setSweepAngle(int sweepAngle){
+        if (sweepAngle <= 0){
+            throw new RuntimeException("[CircleLoadingAnimationDrawableFactory]sweepAngle must > 0");
+        }
+        settings.sweepAngle = sweepAngle;
+        return this;
+    }
+
     @Override
     public Drawable create(Context applicationContext, Context context, Params params, LoadProgress.Info progressInfo, TLogger logger) {
         return new CircleAnimationDrawable(settings, progressInfo);
@@ -139,7 +146,8 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
         private int progressColor = 0x40000000;
         private SizeUnit progressStrokeUnit = SizeUnit.PERCENT_OF_WIDTH;
         private float progressStrokeWidth = 0.018f;
-        private int rotateStep = 7;
+        private int rotateStep = 5;
+        private int sweepAngle = 30;
 
     }
 
@@ -212,7 +220,7 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
             canvas.drawCircle(centerX, centerY, radius, circlePaint);
 
             progressPaint.setStrokeWidth(progressStrokeWidth);
-            canvas.drawArc(arcBounds, displayPosition, 20, false, progressPaint);
+            canvas.drawArc(arcBounds, displayPosition, settings.sweepAngle, false, progressPaint);
         }
 
         private void drawByProgress(Canvas canvas){
