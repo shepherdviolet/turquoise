@@ -70,7 +70,7 @@ public class BitmapUtils {
      * @param resId 资源文件ID
      */
     public static Bitmap decodeFromResource(Resources res, int resId) {
-        return decodeFromResource(res, resId, 0, 0, Config.ARGB_8888);
+        return decodeFromResource(res, resId, 0, 0, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -85,7 +85,7 @@ public class BitmapUtils {
      * @param reqHeight 需求高度 px
      */
     public static Bitmap decodeFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
-        return decodeFromResource(res, resId, reqWidth, reqHeight, Config.ARGB_8888);
+        return decodeFromResource(res, resId, reqWidth, reqHeight, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -99,12 +99,13 @@ public class BitmapUtils {
      * @param reqWidth  需求宽度 px
      * @param reqHeight 需求高度 px
      * @param bitmapConfig 颜色深度
+     * @param quality 图片质量, 默认InSampleQuality.MEDIUM, 若不需要缩小, 设置ORIGINAL
      */
-    public static Bitmap decodeFromResource(Resources res, int resId, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig) {
+    public static Bitmap decodeFromResource(Resources res, int resId, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, InSampleQuality quality) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;//仅计算参数, 不解码
         BitmapFactory.decodeResource(res, resId, options);
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);//缩放因子(整数倍)
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight, quality);//缩放因子(整数倍)
         options.inJustDecodeBounds = false;//解码模式
         options.inPreferredConfig = bitmapConfig;//颜色深度
         return BitmapFactory.decodeResource(res, resId, options);
@@ -116,7 +117,7 @@ public class BitmapUtils {
      * @param path 文件路径
      */
     public static Bitmap decodeFromFile(String path) {
-        return decodeFromFile(path, 0, 0, Config.ARGB_8888);
+        return decodeFromFile(path, 0, 0, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -130,7 +131,7 @@ public class BitmapUtils {
      * @param reqHeight 需求高度 px
      */
     public static Bitmap decodeFromFile(String path, int reqWidth, int reqHeight) {
-        return decodeFromFile(path, reqWidth, reqHeight, Config.ARGB_8888);
+        return decodeFromFile(path, reqWidth, reqHeight, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -143,12 +144,13 @@ public class BitmapUtils {
      * @param reqWidth  需求宽度 px
      * @param reqHeight 需求高度 px
      * @param bitmapConfig 颜色深度
+     * @param quality 图片质量, 默认InSampleQuality.MEDIUM, 若不需要缩小, 设置ORIGINAL
      */
-    public static Bitmap decodeFromFile(String path, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig) {
+    public static Bitmap decodeFromFile(String path, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, InSampleQuality quality) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;//仅计算参数, 不解码
         BitmapFactory.decodeFile(path, options);
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);//缩放因子(整数倍)
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight, quality);//缩放因子(整数倍)
         options.inJustDecodeBounds = false;//解码模式
         options.inPreferredConfig = bitmapConfig;//颜色深度
         return BitmapFactory.decodeFile(path, options);
@@ -160,7 +162,7 @@ public class BitmapUtils {
      * @param data 二进制数据
      */
     public static Bitmap decodeFromByteArray(byte[] data) {
-        return decodeFromByteArray(data, 0, 0, Config.ARGB_8888);
+        return decodeFromByteArray(data, 0, 0, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -174,7 +176,7 @@ public class BitmapUtils {
      * @param reqHeight 需求高度 px
      */
     public static Bitmap decodeFromByteArray(byte[] data, int reqWidth, int reqHeight) {
-        return decodeFromByteArray(data, reqWidth, reqHeight, Config.ARGB_8888);
+        return decodeFromByteArray(data, reqWidth, reqHeight, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -187,12 +189,13 @@ public class BitmapUtils {
      * @param reqWidth  需求宽度 px
      * @param reqHeight 需求高度 px
      * @param bitmapConfig 颜色深度
+     * @param quality 图片质量, 默认InSampleQuality.MEDIUM, 若不需要缩小, 设置ORIGINAL
      */
-    public static Bitmap decodeFromByteArray(byte[] data, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig) {
+    public static Bitmap decodeFromByteArray(byte[] data, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, InSampleQuality quality) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeByteArray(data, 0, data.length, options);
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight, quality);
         options.inJustDecodeBounds = false;
         options.inPreferredConfig = bitmapConfig;//颜色深度
         return BitmapFactory.decodeByteArray(data, 0, data.length, options);
@@ -204,7 +207,7 @@ public class BitmapUtils {
      * @param base64 Base64数据
      */
     public static Bitmap decodeFromBase64(byte[] base64) {
-        return decodeFromBase64(base64, 0, 0, Config.ARGB_8888);
+        return decodeFromBase64(base64, 0, 0, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -218,7 +221,7 @@ public class BitmapUtils {
      * @param reqHeight 需求高度 px
      */
     public static Bitmap decodeFromBase64(byte[] base64, int reqWidth, int reqHeight) {
-        return decodeFromBase64(base64, reqWidth, reqHeight, Config.ARGB_8888);
+        return decodeFromBase64(base64, reqWidth, reqHeight, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -231,9 +234,10 @@ public class BitmapUtils {
      * @param reqWidth  需求宽度 px
      * @param reqHeight 需求高度 px
      * @param bitmapConfig 颜色深度
+     * @param quality 图片质量, 默认InSampleQuality.MEDIUM, 若不需要缩小, 设置ORIGINAL
      */
-    public static Bitmap decodeFromBase64(byte[] base64, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig) {
-        return decodeFromByteArray(Base64.decode(base64, Base64.DEFAULT), reqWidth, reqHeight, bitmapConfig);
+    public static Bitmap decodeFromBase64(byte[] base64, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, InSampleQuality quality) {
+        return decodeFromByteArray(Base64.decode(base64, Base64.DEFAULT), reqWidth, reqHeight, bitmapConfig, quality);
     }
 
     /**
@@ -242,7 +246,7 @@ public class BitmapUtils {
      * @param base64 Base64数据
      */
     public static Bitmap decodeFromBase64(String base64) {
-        return decodeFromBase64(base64, 0, 0, Config.ARGB_8888);
+        return decodeFromBase64(base64, 0, 0, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -256,7 +260,7 @@ public class BitmapUtils {
      * @param reqHeight 需求高度 px
      */
     public static Bitmap decodeFromBase64(String base64, int reqWidth, int reqHeight) {
-        return decodeFromBase64(base64, reqWidth, reqHeight, Config.ARGB_8888);
+        return decodeFromBase64(base64, reqWidth, reqHeight, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -269,9 +273,10 @@ public class BitmapUtils {
      * @param reqWidth  需求宽度 px
      * @param reqHeight 需求高度 px
      * @param bitmapConfig 颜色深度
+     * @param quality 图片质量, 默认InSampleQuality.MEDIUM, 若不需要缩小, 设置ORIGINAL
      */
-    public static Bitmap decodeFromBase64(String base64, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig) {
-        return decodeFromByteArray(Base64.decode(base64, Base64.DEFAULT), reqWidth, reqHeight, bitmapConfig);
+    public static Bitmap decodeFromBase64(String base64, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, InSampleQuality quality) {
+        return decodeFromByteArray(Base64.decode(base64, Base64.DEFAULT), reqWidth, reqHeight, bitmapConfig, quality);
     }
 
     /**
@@ -796,48 +801,83 @@ public class BitmapUtils {
      * 图片保存结束监听
      */
     public interface OnSaveCompleteListener {
-        public void onSaveSucceed();
+        void onSaveSucceed();
 
-        public void onSaveFailed(Throwable e);
+        void onSaveFailed(Throwable e);
     }
 
     /***********************************************
-     * private
+     * in sample size
      */
 
-    /**
-     * 根据指定的需求宽高计算缩放因子
-     */
-    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        return calculateInSampleSize(options.outWidth, options.outHeight, reqWidth, reqHeight);
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight, InSampleQuality quality) {
+        return calculateInSampleSize(options.outWidth, options.outHeight, reqWidth, reqHeight, quality);
     }
 
     /**
-     * 根据指定的需求宽高计算缩放因子
+     * 根据需求尺寸, 计算图片解码采样率, 用于适当缩小图片节省内存, 防止OOM.
      * @param originWidth 原图宽度
      * @param originHeight 原图高度
      * @param reqWidth 需求宽度
      * @param reqHeight 需求高度
+     * @param quality 图片质量, 默认InSampleQuality.MEDIUM, 若不需要缩小, 设置ORIGINAL
+     * @return 采样率
      */
-    public static int calculateInSampleSize(int originWidth, int originHeight, int reqWidth, int reqHeight){
-        //不缩放的情况
-        if (originWidth <= 0 || originHeight <= 0 || reqWidth <= 0 || reqHeight <= 0) {
+    public static int calculateInSampleSize(int originWidth, int originHeight, int reqWidth, int reqHeight, InSampleQuality quality){
+        if (quality == InSampleQuality.ORIGINAL || originWidth <= 0 || originHeight <= 0){
             return 1;
         }
-        //缩放因子
-        int inSampleSize = 1;
-        //原图大于需求尺寸时缩放
-        if (originHeight > reqHeight || originWidth > reqWidth) {
-            final int heightRatio = Math.round((float) originHeight / (float) reqHeight);
-            final int widthRatio = Math.round((float) originWidth / (float) reqWidth);
-            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
-            final float totalPixels = originWidth * originHeight;
-            final float totalReqPixelsCap = reqWidth * reqHeight * 2;
-            while (totalPixels / (inSampleSize * inSampleSize) > totalReqPixelsCap) {
-                inSampleSize++;
-            }
+        final int widthRatio = calculateInSampleRatio(originWidth, reqWidth, quality);
+        final int heightRatio = calculateInSampleRatio(originHeight, reqHeight, quality);
+        int inSampleSize = widthRatio < heightRatio ? widthRatio : heightRatio;
+        if (inSampleSize == Integer.MAX_VALUE){
+            return 1;
+        }
+        final float maxPixels = reqWidth * reqHeight * calculateInSampleMaxPixelsMultiple(quality);
+        if (maxPixels <= 0){
+            return inSampleSize;
+        }
+        final float originalPixels = originWidth * originHeight;
+        while (originalPixels / (inSampleSize * inSampleSize) > maxPixels) {
+            inSampleSize++;
         }
         return inSampleSize;
+    }
+
+    private static float calculateInSampleMaxPixelsMultiple(InSampleQuality quality){
+        switch (quality){
+            case HIGH:
+                return 3f;
+            case LOW:
+                return 1.5f;
+            case MEDIUM:
+            default:
+                return 2f;
+        }
+    }
+
+    private static int calculateInSampleRatio(int origin, int req, InSampleQuality quality){
+        if (req <= 0){
+            return Integer.MAX_VALUE;
+        }
+        int ratio;
+        switch (quality){
+            case HIGH:
+                ratio = (int) Math.floor((float)origin / (float)req);
+                break;
+            case LOW:
+                ratio = (int) Math.ceil((float)origin / (float)req);
+                break;
+            case MEDIUM:
+            default:
+                ratio = Math.round((float)origin / (float)req);
+                break;
+        }
+        //minimum
+        if (ratio < 1){
+            ratio = 1;
+        }
+        return ratio;
     }
 
     /**
@@ -876,6 +916,21 @@ public class BitmapUtils {
         public int value() {
             return params;
         }
+    }
+
+    /**
+     * <p>解码采样质量</p>
+     *
+     * <p>ORIGINAL::原图</p>
+     * <p>HIGH::高质量(缩小)</p>
+     * <p>MEDIUM::中质量(缩小)</p>
+     * <p>LOW::低质量(缩小)</p>
+     */
+    public enum InSampleQuality{
+        ORIGINAL,
+        HIGH,
+        MEDIUM,
+        LOW
     }
 
 }

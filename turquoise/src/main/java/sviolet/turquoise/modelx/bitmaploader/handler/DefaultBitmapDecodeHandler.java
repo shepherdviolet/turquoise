@@ -49,18 +49,18 @@ public class DefaultBitmapDecodeHandler implements BitmapDecodeHandler{
     public Bitmap onDecode(Context context, BitmapLoader loader, BitmapRequest request, byte[] data) {
         //判断需求尺寸是否生效
         if (request.hasReqDimension())
-            return BitmapUtils.decodeFromByteArray(data, request.getReqWidth(), request.getReqHeight(), request.getBitmapConfig());
+            return BitmapUtils.decodeFromByteArray(data, request.getReqWidth(), request.getReqHeight(), request.getBitmapConfig(), BitmapUtils.InSampleQuality.MEDIUM);
         else
-            return BitmapUtils.decodeFromByteArray(data, 0, 0, request.getBitmapConfig());
+            return BitmapUtils.decodeFromByteArray(data, 0, 0, request.getBitmapConfig(), BitmapUtils.InSampleQuality.MEDIUM);
     }
 
     @Override
     public Bitmap onDecode(Context context, BitmapLoader loader, BitmapRequest request, String filePath) {
         //判断需求尺寸是否生效
         if (request.hasReqDimension())
-            return BitmapUtils.decodeFromFile(filePath, request.getReqWidth(), request.getReqHeight(), request.getBitmapConfig());
+            return BitmapUtils.decodeFromFile(filePath, request.getReqWidth(), request.getReqHeight(), request.getBitmapConfig(), BitmapUtils.InSampleQuality.MEDIUM);
         else
-            return BitmapUtils.decodeFromFile(filePath, 0, 0, request.getBitmapConfig());
+            return BitmapUtils.decodeFromFile(filePath, 0, 0, request.getBitmapConfig(), BitmapUtils.InSampleQuality.MEDIUM);
     }
 
     @Override
