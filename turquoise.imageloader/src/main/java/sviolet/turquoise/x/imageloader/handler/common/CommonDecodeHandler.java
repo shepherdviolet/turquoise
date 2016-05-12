@@ -63,6 +63,9 @@ public class CommonDecodeHandler extends DecodeHandler {
         }
         if (bitmap == null)
             throw new RuntimeException("[TILoader:CommonDecodeHandler]scale: scale failed");
+        if (!logger.isNullLogger()) {
+            logger.d("[CommonDecodeHandler]decoded size:" + bitmap.getWidth() + "*" + bitmap.getHeight() + " task:" + taskInfo);
+        }
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
 
@@ -92,6 +95,9 @@ public class CommonDecodeHandler extends DecodeHandler {
         }
         if (bitmap == null)
             throw new RuntimeException("[TILoader:CommonDecodeHandler]scale: scale failed");
+        if (!logger.isNullLogger()) {
+            logger.d("[CommonDecodeHandler]decoded size:" + bitmap.getWidth() + "*" + bitmap.getHeight() + " task:" + taskInfo);
+        }
         return new ImageResource<>(ImageResource.Type.BITMAP, bitmap);
     }
 }
