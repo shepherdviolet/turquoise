@@ -119,9 +119,30 @@ public class Params {
         }
 
         /**
-         * TODO
-         * @param decodeInSampleQuality
-         * @return
+         * <p>There are two steps in DecodeHandler: decode and scale.</p>
+         *
+         * <p>Step 1: Decode........................................................................</p>
+         *
+         * <p>Decode image from file/bytes, keep aspect ratio. The inSampleSize is calculated according
+         * to the reqWidth/reqHeight, and you will get smaller image which take up less memory. In general,
+         * we use InSampleQuality.MEDIUM option.</p>
+         *
+         * Params->decodeInSampleQuality:<br/>
+         * BitmapUtils.InSampleQuality.ORIGINAL: decode into original size (highest quality), take up more memory.<br/>
+         * BitmapUtils.InSampleQuality.HIGH: calculate appropriate inSampleSize (higher quality) and decode into smaller image, take up less memory.<br/>
+         * BitmapUtils.InSampleQuality.MEDIUM: calculate appropriate inSampleSize (medium quality) and decode into smaller image, take up less memory, default option<br/>
+         * BitmapUtils.InSampleQuality.LOW: calculate appropriate inSampleSize (low quality) and decode into smaller image, take up less memory.<br/>
+         *
+         * <p>Step 2: Scale........................................................................</p>
+         *
+         * <p>Scale image to specified size. In general, we use DecodeScaleStrategy.NO_SCALE.</p>
+         *
+         * NO_SCALE::do not scale, keep decoded size, keep aspect ratio, DEFAULT option.<br/>
+         * SCALE_FIT_WIDTH_HEIGHT:scale image to reqWidth * reqHeight, ignore aspect ratio.<br/>
+         * SCALE_FIT_WIDTH:scale image's width to reqWidth, keep aspect ratio<br/>
+         * SCALE_FIT_HEIGHT:scale image's height to reqHeight, keep aspect ratio<br/>
+         *
+         * @param decodeInSampleQuality BitmapUtils.InSampleQuality.MEDIUM by default
          */
         public Builder setDecodeInSampleQuality(BitmapUtils.InSampleQuality decodeInSampleQuality){
             values.decodeInSampleQuality = decodeInSampleQuality;
@@ -129,11 +150,30 @@ public class Params {
         }
 
         /**
-         * <p>decoding strategy</p>
+         * <p>There are two steps in DecodeHandler: decode and scale.</p>
          *
-         * TODO
+         * <p>Step 1: Decode........................................................................</p>
          *
-         * @param decodeScaleStrategy see:{@link DecodeHandler.DecodeScaleStrategy}
+         * <p>Decode image from file/bytes, keep aspect ratio. The inSampleSize is calculated according
+         * to the reqWidth/reqHeight, and you will get smaller image which take up less memory. In general,
+         * we use InSampleQuality.MEDIUM option.</p>
+         *
+         * Params->decodeInSampleQuality:<br/>
+         * BitmapUtils.InSampleQuality.ORIGINAL: decode into original size (highest quality), take up more memory.<br/>
+         * BitmapUtils.InSampleQuality.HIGH: calculate appropriate inSampleSize (higher quality) and decode into smaller image, take up less memory.<br/>
+         * BitmapUtils.InSampleQuality.MEDIUM: calculate appropriate inSampleSize (medium quality) and decode into smaller image, take up less memory, default option<br/>
+         * BitmapUtils.InSampleQuality.LOW: calculate appropriate inSampleSize (low quality) and decode into smaller image, take up less memory.<br/>
+         *
+         * <p>Step 2: Scale........................................................................</p>
+         *
+         * <p>Scale image to specified size. In general, we use DecodeScaleStrategy.NO_SCALE.</p>
+         *
+         * NO_SCALE::do not scale, keep decoded size, keep aspect ratio, DEFAULT option.<br/>
+         * SCALE_FIT_WIDTH_HEIGHT:scale image to reqWidth * reqHeight, ignore aspect ratio.<br/>
+         * SCALE_FIT_WIDTH:scale image's width to reqWidth, keep aspect ratio<br/>
+         * SCALE_FIT_HEIGHT:scale image's height to reqHeight, keep aspect ratio<br/>
+         *
+         * @param decodeScaleStrategy NO_SCALE by default
          */
         public Builder setDecodeScaleStrategy(DecodeHandler.DecodeScaleStrategy decodeScaleStrategy){
             values.decodeScaleStrategy = decodeScaleStrategy;
