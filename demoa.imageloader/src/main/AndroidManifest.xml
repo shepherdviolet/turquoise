@@ -25,11 +25,13 @@
 
         <activity android:name=".demos.BasicActivity"
             android:label="@string/basic_title"/>
-        <activity android:name=".demos.ListViewActivity"
-            android:label="@string/list_view_title"/>
         <activity android:name=".demos.GifActivity"
             android:label="@string/gif_title"
             android:theme="@style/Theme.AppCompat.Light"/>
+        <activity android:name=".demos.ListViewActivity"
+            android:label="@string/list_view_title"/>
+        <activity android:name=".demos.RoundedListActivity"
+            android:label="@string/rounded_list_title"/>
 
     </application>
 

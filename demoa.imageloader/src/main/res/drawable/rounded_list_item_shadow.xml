@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- 阴影 -->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+    <!-- 纯色原型 -->
+    <item>
+        <shape android:shape="rectangle">
+            <corners android:radius="3dp"/>
+            <solid android:color="#03000000"/>
+        </shape>
+    </item>
+    <item android:left="1px"
+        android:right="1px"
+        android:top="1px"
+        android:bottom="1px">
+        <shape android:shape="rectangle">
+            <corners android:radius="3dp"/>
+            <solid android:color="#10000000"/>
+        </shape>
+    </item>
+    <item android:left="2px"
+        android:right="2px"
+        android:top="2px"
+        android:bottom="2px">
+        <shape android:shape="rectangle">
+            <corners android:radius="3dp"/>
+            <solid android:color="#10000000"/>
+        </shape>
+    </item>
+    <item android:left="3px"
+        android:right="3px"
+        android:top="3px"
+        android:bottom="3px">
+        <shape android:shape="rectangle">
+            <corners android:radius="3dp"/>
+            <solid android:color="#10000000"/>
+        </shape>
+    </item>
+    <item android:left="4px"
+        android:right="4px"
+        android:top="4px"
+        android:bottom="4px">
+        <shape android:shape="rectangle">
+            <corners android:radius="3dp"/>
+            <solid android:color="#10000000"/>
+        </shape>
+    </item>
+    <item android:left="5px"
+        android:right="5px"
+        android:top="5px"
+        android:bottom="5px">
+        <shape android:shape="rectangle">
+            <corners android:radius="3dp"/>
+            <solid android:color="#10000000"/>
+        </shape>
+    </item>
+</layer-list>

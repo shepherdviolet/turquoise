@@ -8,4 +8,5 @@
     <string name="basic_title">Basic Usage</string>
     <string name="gif_title">GIF Load Usage</string>
     <string name="list_view_title">ListView Usage</string>
+    <string name="rounded_list_title">Rounded ListView</string>
 </resources>

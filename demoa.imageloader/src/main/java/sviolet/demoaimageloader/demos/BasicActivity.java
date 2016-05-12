@@ -167,7 +167,7 @@ public class BasicActivity extends TActivity {
 
         TILoader.extract(this, "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/cornflower.jpg", null, new OnLoadedListener<ImageView>() {
             @Override
-            public void onLoadSucceed(String url, Params params, ImageResource<?> resource) {
+            public void onLoadSucceed(String url, Params params, ImageResource resource) {
                 //图片下载成功
                 ImageView imageView = getWeakRegister();//获取弱引用持有的ImageView
                 if (imageView != null) {
