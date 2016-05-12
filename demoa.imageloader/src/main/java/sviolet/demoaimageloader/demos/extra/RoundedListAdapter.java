@@ -46,6 +46,8 @@ import sviolet.turquoise.x.imageloader.stub.Stub;
 import sviolet.turquoise.x.imageloader.stub.StubRemoter;
 
 /**
+ * 圆角图列表适配器
+ *
  * Created by S.Violet on 2016/5/11.
  */
 public class RoundedListAdapter extends BaseAdapter {

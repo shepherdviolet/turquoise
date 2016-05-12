@@ -48,6 +48,7 @@ import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 )
 
 /**
+ * 圆角图列表Demo
  *
  * Created by S.Violet on 2015/7/7.
  */
