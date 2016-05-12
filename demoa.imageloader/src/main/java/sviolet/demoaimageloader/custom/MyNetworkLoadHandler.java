@@ -47,6 +47,14 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
     private int resourceIds[] = {R.mipmap.async_image_1, R.mipmap.async_image_2, R.mipmap.async_image_3, R.mipmap.async_image_4, R.mipmap.async_image_5};
     private ExecutorService pool = Executors.newCachedThreadPool();
 
+    public MyNetworkLoadHandler(){
+
+    }
+
+    public MyNetworkLoadHandler(int[] resourceIds){
+        this.resourceIds = resourceIds;
+    }
+
     /**
      * 特别注意:
      *
@@ -102,9 +110,9 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
                 if(getRandomInt(100) > 5) {
                     //加载成功
                     //模拟网络加载, 从资源中获取图片
-//                    Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], reqWidth, reqHeight);
+//                    Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], 0, 0);
                     //模拟网络加载, 从资源获取图片, 并绘制url在图上
-                    Bitmap bitmap = BitmapUtils.drawTextOnResource(context.getResources(), resourceIds[index], taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getUrl(), 0, 50, 50f, 0xFF000000);
+                    Bitmap bitmap = BitmapUtils.drawTextOnResource(context.getResources(), resourceIds[index], 0, 0, taskInfo.getUrl(), 0, 50, 50f, 0xFF000000);
 
                     //转为byteArray
                     byte[] data = null;
@@ -128,7 +136,7 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
             }
         });
 
-        index = (index + 1) % 5;
+        index = (index + 1) % resourceIds.length;
     }
 
     private int getRandomInt(int max){
