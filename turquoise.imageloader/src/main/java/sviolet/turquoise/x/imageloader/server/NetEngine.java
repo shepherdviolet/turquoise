@@ -30,6 +30,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.IndispensableState;
+import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
@@ -85,7 +86,7 @@ public class NetEngine extends Engine {
         //waiting for result
         int result = callback.getResult();
         if (!getComponentManager().getLogger().isNullLogger()) {
-            getComponentManager().getLogger().d("[NetEngine]get result from handler, task:" + task);
+            getComponentManager().getLogger().d("[NetEngine]get result from networkHandler, result:" + result + ", task:" + task);
         }
         switch(result){
             //load succeed
@@ -167,7 +168,11 @@ public class NetEngine extends Engine {
             return;
         }
         //try to write disk cache
-        DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream, indispensableState);
+        LowNetworkSpeedStrategy.Configure lowNetworkSpeedConfig = getComponentManager().getServerSettings().getLowNetworkSpeedStrategy().getConfigure(getComponentManager().getApplicationContextImage(), indispensableState);
+        if (!getComponentManager().getLogger().isNullLogger()) {
+            getComponentManager().getLogger().d("[NetEngine]LowNetworkSpeedStrategy:" + lowNetworkSpeedConfig.getType() + ", task:" + task);
+        }
+        DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream, lowNetworkSpeedConfig);
         switch (result.getType()){
             case SUCCEED:
                 handleImageData(task, null, result.getTargetFile());

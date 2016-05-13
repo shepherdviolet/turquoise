@@ -73,9 +73,7 @@ public class ServerSettings implements ComponentManager.Component{
 
         private long imageDataLengthLimit = DEFAULT_IMAGE_DATA_LENGTH_LIMIT;
         private long memoryBufferLengthLimit = DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT;
-        private long abortOnLowNetworkSpeedWindowPeriod = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD;
-        private long abortOnLowNetworkSpeedDeadline = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_DEADLINE;
-        private int abortOnLowNetworkSpeedBoundarySpeed = DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED;
+        private LowNetworkSpeedStrategy lowNetworkSpeedStrategy = new LowNetworkSpeedStrategy.Builder().build();
 
         //handler////////////////////////////////////////////////////////////////////////////
 
@@ -347,23 +345,13 @@ public class ServerSettings implements ComponentManager.Component{
          *
          * <p>You can adjust params by ServerSettings->setAbortOnLowNetworkSpeed().</p>
          *
-         * @param windowPeriod ms, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD}
-         * @param deadline ms, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_DEADLINE}
-         * @param boundarySpeed byte/s, default:{@value DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED}
+         * @param lowNetworkSpeedStrategy {@link LowNetworkSpeedStrategy}
          */
-        public Builder setAbortOnLowNetworkSpeed(long windowPeriod, long deadline, int boundarySpeed){
-            if (windowPeriod < 0){
-                throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: windowPeriod must >= 0");
+        public Builder setLowNetworkSpeedStrategy(LowNetworkSpeedStrategy lowNetworkSpeedStrategy){
+            if (lowNetworkSpeedStrategy == null){
+                throw new RuntimeException("[ServerSettings]setLowNetworkSpeedStrategy: lowNetworkSpeedStrategy must not be null");
             }
-            if (deadline < windowPeriod){
-                throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: deadline must >= windowPeriod");
-            }
-            if (boundarySpeed < 0){
-                throw new RuntimeException("[ServerSettings]setAbortOnLowNetworkSpeed: boundarySpeed must >= 0");
-            }
-            values.abortOnLowNetworkSpeedWindowPeriod = windowPeriod;
-            values.abortOnLowNetworkSpeedDeadline = deadline;
-            values.abortOnLowNetworkSpeedBoundarySpeed = boundarySpeed;
+            values.lowNetworkSpeedStrategy = lowNetworkSpeedStrategy;
             return this;
         }
 
@@ -631,16 +619,8 @@ public class ServerSettings implements ComponentManager.Component{
         return values.memoryBufferLengthLimit;
     }
 
-    public long getAbortOnLowNetworkSpeedWindowPeriod(){
-        return values.abortOnLowNetworkSpeedWindowPeriod;
-    }
-
-    public int getAbortOnLowNetworkSpeedBoundarySpeed(){
-        return values.abortOnLowNetworkSpeedBoundarySpeed;
-    }
-
-    public long getAbortOnLowNetworkSpeedDeadline(){
-        return values.abortOnLowNetworkSpeedDeadline;
+    public LowNetworkSpeedStrategy getLowNetworkSpeedStrategy(){
+        return values.lowNetworkSpeedStrategy;
     }
 
     //handler////////////////////////////////////////////////////////////////////////////

@@ -27,7 +27,7 @@ import java.io.OutputStream;
 
 import sviolet.turquoise.model.cache.DiskLruCache;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
-import sviolet.turquoise.x.imageloader.entity.IndispensableState;
+import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
@@ -89,10 +89,10 @@ public class DiskCacheServer extends DiskCacheModule {
      *
      * @param task task
      * @param inputStream InputStream
-     * @param indispensableState indispensableState
+     * @param lowNetworkSpeedConfig lowNetworkSpeedConfig
      * @return Result
      */
-    public Result write(Task task, InputStream inputStream, IndispensableState indispensableState) {
+    public Result write(Task task, InputStream inputStream, LowNetworkSpeedStrategy.Configure lowNetworkSpeedConfig) {
         Result result = new Result();//result of write task
         DiskLruCache.Editor editor = null;
         OutputStream outputStream = null;
@@ -104,7 +104,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                         getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
                         new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, write disk cache failed"), getComponentManager().getLogger());
-                writeToMemoryBuffer(task, inputStream, result, null, 0, indispensableState);
+                writeToMemoryBuffer(task, inputStream, result, null, 0, lowNetworkSpeedConfig);
                 return result;
             }
             /*
@@ -145,7 +145,7 @@ public class DiskCacheServer extends DiskCacheModule {
                         return result;
                     }
                     //check if speed is low
-                    if (checkNetworkSpeed(startTime, loopCount, task, result, indispensableState)){
+                    if (checkNetworkSpeed(startTime, loopCount, task, result, lowNetworkSpeedConfig)){
                         abortEditor(editor);
                         return result;
                     }
@@ -161,7 +161,7 @@ public class DiskCacheServer extends DiskCacheModule {
                             abortEditor(editor);
                             getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                                     getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-                            writeToMemoryBuffer(task, inputStream, result, buffer, readLength, indispensableState);
+                            writeToMemoryBuffer(task, inputStream, result, buffer, readLength, lowNetworkSpeedConfig);
                             return result;
                         }
                         throw e;
@@ -177,7 +177,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 setHealthy(true);
             }else{
                 //if disk is not healthy, data write to memory buffer, and return bytes, in order to ensure pictures display normally.
-                writeToMemoryBuffer(task, inputStream, result, null, 0, indispensableState);
+                writeToMemoryBuffer(task, inputStream, result, null, 0, lowNetworkSpeedConfig);
                 //trying to write to disk cache
                 if (result.getType() == ResultType.RETURN_MEMORY_BUFFER && result.getMemoryBuffer().length > 0) {
                     try {
@@ -296,7 +296,7 @@ public class DiskCacheServer extends DiskCacheModule {
      * @throws NetworkException exception of network
      * @throws IOException exception of io
      */
-    private void writeToMemoryBuffer(Task task, InputStream inputStream, Result result, byte[] buffer, int bufferDataLength, IndispensableState indispensableState) throws NetworkException, IOException  {
+    private void writeToMemoryBuffer(Task task, InputStream inputStream, Result result, byte[] buffer, int bufferDataLength, LowNetworkSpeedStrategy.Configure lowNetworkSpeedConfig) throws NetworkException, IOException  {
         //cancel loading if memory buffer out of limit
         if (task.getLoadProgress().total() > getComponentManager().getServerSettings().getMemoryBufferLengthLimit()){
             getComponentManager().getServerSettings().getExceptionHandler().onMemoryBufferLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
@@ -335,7 +335,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 return;
             }
             //check if speed is low
-            if (checkNetworkSpeed(startTime, loopCount, task, result, indispensableState)){
+            if (checkNetworkSpeed(startTime, loopCount, task, result, lowNetworkSpeedConfig)){
                 return;
             }
             outputStream.write(buffer, 0, readLength);
@@ -350,9 +350,9 @@ public class DiskCacheServer extends DiskCacheModule {
         result.setMemoryBuffer(outputStream.toByteArray());
     }
 
-    private boolean checkNetworkSpeed(long startTime, int loopCount, Task task, Result result, IndispensableState indispensableState){
-        //decrease check frequency, indispensable task skip speed check
-        if (indispensableState.isIndispensable() || loopCount << 30 != 0){
+    private boolean checkNetworkSpeed(long startTime, int loopCount, Task task, Result result, LowNetworkSpeedStrategy.Configure lowNetworkSpeedConfig){
+        //decrease check frequency
+        if (loopCount << 30 != 0){
             return false;
         }
 
@@ -361,9 +361,9 @@ public class DiskCacheServer extends DiskCacheModule {
         final long totalData = task.getLoadProgress().total();
 
         ServerSettings serverSettings = getComponentManager().getServerSettings();
-        final long deadline = serverSettings.getAbortOnLowNetworkSpeedDeadline();
-        final long windowPeriod = serverSettings.getAbortOnLowNetworkSpeedWindowPeriod();
-        final int boundarySpeed = serverSettings.getAbortOnLowNetworkSpeedBoundarySpeed();
+        final long deadline = lowNetworkSpeedConfig.getDeadline();
+        final long windowPeriod = lowNetworkSpeedConfig.getWindowPeriod();
+        final int thresholdSpeed = lowNetworkSpeedConfig.getThresholdSpeed();
 
         //dead line
         if (elapseTime > deadline){
@@ -378,20 +378,18 @@ public class DiskCacheServer extends DiskCacheModule {
             return false;
         }
         //check speed
-        int speed;
-        if (totalData > 0) {
-            //check speed by progress
-            speed = (int) ((float)loadedData / (elapseTime >> 10));
-            //calculate min speed by total data length
-            int minSpeed = (int)((float)totalData / (deadline >> 10));
-            //80% off
-            if (speed > minSpeed * 0.8f){
-                return false;
-            }
-        } else {
-            //check speed by boundarySpeed
-            speed = (int) ((float)loadedData / (elapseTime >> 10));
-            if (speed > boundarySpeed) {
+        int speed = (int) ((float)loadedData / (elapseTime >> 10));
+        //check by thresholdSpeed
+        if (speed > thresholdSpeed) {
+            //check by progress
+            if (totalData > 0) {
+                //calculate min speed by total data length
+                int minSpeed = (int)((float)totalData / (deadline >> 10));
+                //80% off
+                if (speed > minSpeed * 0.8f){
+                    return false;
+                }
+            } else {
                 return false;
             }
         }
