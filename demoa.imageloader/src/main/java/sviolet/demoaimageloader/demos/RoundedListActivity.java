@@ -42,7 +42,7 @@ import sviolet.turquoise.x.imageloader.drawable.common.CommonLoadingDrawableFact
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 
 @DemoDescription(
-        title = "RoundedListDemo",
+        title = "RoundedList Demo",
         type = "",
         info = "List with rounded corner"
 )
@@ -72,7 +72,7 @@ public class RoundedListActivity extends TActivity {
         loadingBitmap = BitmapUtils.toRoundedCorner(loadingBitmap, MeasureUtils.dp2px(this, 2), BitmapUtils.RoundedCornerType.TopLeft_And_TopRight, true);
 
         TILoader.node(this).setting(new NodeSettings.Builder()
-                .setNetworkLoadHandler(new MyNetworkLoadHandler(new int[]{R.mipmap.rounded_list_image1}))
+                .setNetworkLoadHandler(new MyNetworkLoadHandler(30f, new int[]{R.mipmap.rounded_list_image1}))
                 .setLoadingDrawableFactory(new CommonLoadingDrawableFactory()
                     .setImageBitmap(loadingBitmap)
                     .setAnimationDrawableFactory(new CircleLoadingAnimationDrawableFactory()
@@ -116,7 +116,7 @@ public class RoundedListActivity extends TActivity {
         for (int i = 0 ; i < 1 ; i++) {
             item.setUrl(i, "http://r" + String.valueOf(id) + "-" + String.valueOf(i));
         }
-        item.setTitle("Title " + String.valueOf(id));
+        item.setTitle("RoundedList Title " + String.valueOf(id));
         item.setContent("State");
         return item;
     }

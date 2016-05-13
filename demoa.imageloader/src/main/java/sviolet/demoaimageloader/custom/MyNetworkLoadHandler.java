@@ -46,12 +46,14 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
     private int index = 0;
     private int resourceIds[] = {R.mipmap.async_image_1, R.mipmap.async_image_2, R.mipmap.async_image_3, R.mipmap.async_image_4, R.mipmap.async_image_5};
     private ExecutorService pool = Executors.newCachedThreadPool();
+    private float textSize = 100f;
 
     public MyNetworkLoadHandler(){
 
     }
 
-    public MyNetworkLoadHandler(int[] resourceIds){
+    public MyNetworkLoadHandler(float textSize, int[] resourceIds){
+        this.textSize = textSize;
         this.resourceIds = resourceIds;
     }
 
@@ -112,7 +114,7 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
                     //模拟网络加载, 从资源中获取图片
 //                    Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resourceIds[index], 0, 0);
                     //模拟网络加载, 从资源获取图片, 并绘制url在图上
-                    Bitmap bitmap = BitmapUtils.drawTextOnResource(context.getResources(), resourceIds[index], 0, 0, taskInfo.getUrl(), 0, 50, 50f, 0xFF000000);
+                    Bitmap bitmap = BitmapUtils.drawTextOnResource(context.getResources(), resourceIds[index], 0, 0, taskInfo.getUrl(), 0, textSize, textSize, 0xFF000000);
 
                     //转为byteArray
                     byte[] data = null;

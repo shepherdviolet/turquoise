@@ -38,9 +38,9 @@ import sviolet.turquoise.x.imageloader.drawable.common.CommonLoadingDrawableFact
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 
 @DemoDescription(
-        title = "ListViewDemo",
+        title = "ListView Usage",
         type = "",
-        info = "loading image in ListView by TILoader"
+        info = "Loading images in ListView by TILoader"
 )
 
 /**
@@ -103,8 +103,8 @@ public class ListViewActivity extends TActivity {
         for (int i = 0 ; i < 5 ; i++) {
             item.setUrl(i, "http://" + String.valueOf(id) + "-" + String.valueOf(i));
         }
-        item.setTitle("Title of ListViewDemo " + String.valueOf(id));
-        item.setContent("Content of ListViewDemo content of ListViewDemo content of ListViewDemo " + String.valueOf(id));
+        item.setTitle("List view usage title " + String.valueOf(id));
+        item.setContent("This is a demo of how to loading images in list view with turquoise image loader.");
         return item;
     }
 }
