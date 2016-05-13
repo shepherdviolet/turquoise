@@ -25,6 +25,7 @@ import android.os.Message;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
+import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
@@ -103,6 +104,11 @@ public class CommonExceptionHandler implements ExceptionHandler {
 
     @Override
     public void onNetworkLoadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        //print unknownHostException
+        if(throwable instanceof UnknownHostException){
+            logger.e("NetworkLoadException:" + taskInfo + "\n" + throwable.getMessage(), throwable);
+            return;
+        }
         logger.e("NetworkLoadException:" + taskInfo, throwable);
     }
 
