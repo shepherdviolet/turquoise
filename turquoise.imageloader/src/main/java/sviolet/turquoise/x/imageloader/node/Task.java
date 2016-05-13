@@ -116,8 +116,6 @@ public class Task {
 
     public static class Info{
 
-        private static final String SEPARATOR = "-";
-
         //status//////////////////////////
         private Stub.Type type;
         private Server.Type serverType = Server.Type.MEMORY_ENGINE;
@@ -146,19 +144,28 @@ public class Task {
             this.indispensableState = indispensableState;
         }
 
+        private static final String STRING_HEADER = "[Task]<";
+        private static final String STRING_LINE = "-";
+        private static final String STRING_INDISPENSABLE = "-indispensable";
+        private static final String STRING_DOUBLE_BRACKET = "><";
+        private static final String STRING_END_BRACKET = ">";
+
         @Override
         public String toString() {
-            StringBuilder builder = new StringBuilder("[Task]<");
+            StringBuilder builder = new StringBuilder(STRING_HEADER);
             builder.append(serverType);
-            builder.append(SEPARATOR);
+            builder.append(STRING_LINE);
             builder.append(state);
-            builder.append(SEPARATOR);
+            if (isIndispensable()){
+                builder.append(STRING_INDISPENSABLE);
+            }
+            builder.append(STRING_DOUBLE_BRACKET);
             builder.append(nodeId);
-            builder.append("><");
+            builder.append(STRING_DOUBLE_BRACKET);
             builder.append(key);
-            builder.append("><");
+            builder.append(STRING_DOUBLE_BRACKET);
             builder.append(url);
-            builder.append(">");
+            builder.append(STRING_END_BRACKET);
             return builder.toString();
         }
 
