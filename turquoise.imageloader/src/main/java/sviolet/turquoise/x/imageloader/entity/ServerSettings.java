@@ -336,12 +336,12 @@ public class ServerSettings implements ComponentManager.Component{
          * <p>Situation 1:
          * If we can get image data length from http-header, we will calculate progress of task,
          * if we found that the speed is too slow to finish loading before deadline, we will cancel
-         * task in advance.(override ExceptionHandler->onTaskAbortOnLowSpeedNetwork() method to handle this event)</p>
+         * task in advance.(override ExceptionHandler->handleLowNetworkSpeedEvent() method to handle this event)</p>
          *
          * <p>Situation 2:
          * If we can not get image data length from http-header, we will make reference to boundarySpeed,
          * if task is faster than boundarySpeed, task will keep loading. if not, task will be canceled.
-         * (override ExceptionHandler->onTaskAbortOnLowSpeedNetwork() method to handle this event)</p>
+         * (override ExceptionHandler->handleLowNetworkSpeedEvent() method to handle this event)</p>
          *
          * <p>Finally, task will be canceled when reach the deadline.</p>
          *

@@ -368,7 +368,7 @@ public class DiskCacheServer extends DiskCacheModule {
         //dead line
         if (elapseTime > deadline){
             int speed = (int) ((float)loadedData / (elapseTime >> 10));
-            serverSettings.getExceptionHandler().onTaskAbortOnLowSpeedNetwork(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+            serverSettings.getExceptionHandler().handleLowNetworkSpeedEvent(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
                     task.getTaskInfo(), elapseTime, speed, getComponentManager().getLogger());
             result.setType(ResultType.CANCELED);
             return true;
@@ -395,7 +395,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 return false;
             }
         }
-        serverSettings.getExceptionHandler().onTaskAbortOnLowSpeedNetwork(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+        serverSettings.getExceptionHandler().handleLowNetworkSpeedEvent(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
                 task.getTaskInfo(), elapseTime, speed, getComponentManager().getLogger());
         result.setType(ResultType.CANCELED);
         return true;
