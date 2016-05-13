@@ -80,8 +80,7 @@ public class GifActivity extends TAppCompatActivity {
          */
         String url1 = "https://camo.githubusercontent.com/d406ac5a03a2b1fa5cf41fadc8d2408cb8709bdc/68747470733a2f2f6431337961637572716a676172612e636c6f756466726f6e742e6e65742f75736572732f3132353035362f73637265656e73686f74732f313635303331372f7265616c6573746174652d70756c6c5f312d322d332e676966";
         Params params = new Params.Builder()
-                //TODO
-                .setIndispensable()//设置为重要任务, 有双倍的超时时间, 不进行低网速检查
+                .setIndispensable()//设置为重要任务, 有双倍的超时时间, 采用专用的低网速策略(延长加载时间)
                 .build();
         TILoader.node(this).load(url1, params, imageView1);
     }
