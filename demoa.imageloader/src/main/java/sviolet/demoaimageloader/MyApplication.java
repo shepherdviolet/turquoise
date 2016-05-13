@@ -27,6 +27,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
+import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 
 @ApplicationSettings(
@@ -62,6 +63,17 @@ public class MyApplication extends TApplication {
      */
     private void initTILoader() {
 
+        /**
+         * 高级配置:
+         * @see LowNetworkSpeedStrategy
+         */
+//        LowNetworkSpeedStrategy lowNetworkSpeedStrategy = new LowNetworkSpeedStrategy.Builder()
+//                .setConfigure(LowNetworkSpeedStrategy.Type.LOW_SPEED_MOBILE_NETWORK, 20000, 60000, 5 * 1024)
+//                .setConfigure(LowNetworkSpeedStrategy.Type.HIGH_SPEED_MOBILE_NETWORK, 10000, 30000, 20 * 1024)
+//                .setConfigure(LowNetworkSpeedStrategy.Type.WIFI_NETWORK, 10000, 30000, 20 * 1024)
+//                .setConfigure(LowNetworkSpeedStrategy.Type.INDISPENSABLE_TASK, 40000, 120000, 256)
+//                .build();
+
         TILoader.setting(new ServerSettings.Builder()
                 .setLogEnabled(true)//允许日志打印
                 .setMemoryCachePercent(getApplicationContext(), 0.1f)//分配10%的APP内存用于图片缓存
@@ -81,7 +93,7 @@ public class MyApplication extends TApplication {
 //                .setPluginEnabled(true)//高级配置:默认true, 若设置false, 将不会加载插件包(无法加载GIF)
 //                .setImageDataLengthLimitPercent(this, 0.3f)//高级配置:图片资源数据长度限制(超过设定值将取消加载任务)
 //                .setMemoryBufferLengthLimitPercent(this, 0.02f)//高级配置:内存缓存区数据长度限制(超过设定值将取消任务), 仅在磁盘缓存访问异常时, 才会用到内存缓存区
-//                .setAbortOnLowNetworkSpeed(30000, 120000, 5 * 1024)//高级配置:加载时间超过30s后,判断速度.根据加载进度计算120秒时间内是否能加载完,若加载不完则取消任务.若无法计算加载进度,则判断网速低于5k/s时取消任务.
+//                .setLowNetworkSpeedStrategy(lowNetworkSpeedStrategy)//高级配置
 ////                .setLoadingDrawableFactory(new MyLoadingDrawableFactory())//方式1:自定义实现加载图(完全自己实现)
 //                .setLoadingDrawableFactory(new CommonLoadingDrawableFactory()//方式2:配置通用加载图
 //                        .setBackgroundColor(0xFFF0F0F0)//加载图背景颜色
