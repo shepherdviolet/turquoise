@@ -20,6 +20,7 @@
 package sviolet.demoaimageloader.demos;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 
 import sviolet.demoaimageloader.R;
@@ -28,6 +29,7 @@ import sviolet.turquoise.enhance.app.TAppCompatActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.x.imageloader.TILoader;
+import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
@@ -83,6 +85,14 @@ public class GifActivity extends TAppCompatActivity {
                 .setIndispensable()//设置为重要任务, 有双倍的超时时间, 采用专用的低网速策略(延长加载时间)
                 .build();
         TILoader.node(this).load(url1, params, imageView1);
+
+        imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
     }
 
 }

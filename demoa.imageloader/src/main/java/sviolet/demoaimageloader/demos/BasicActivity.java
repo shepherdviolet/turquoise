@@ -1,6 +1,7 @@
 package sviolet.demoaimageloader.demos;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
+import sviolet.turquoise.x.imageloader.stub.StubRemoter;
 
 /**
  * Basic Usage of TurquoiseImageLoader
@@ -132,6 +134,14 @@ public class BasicActivity extends TActivity {
         String url1 = "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/slate.jpg";
         TILoader.node(this).load(url1, imageView1);//默认根据控件尺寸加载图片
 
+        imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
+
         /*
          * 适用于:
          * 1.控件尺寸不固定(wrap_content)
@@ -148,6 +158,14 @@ public class BasicActivity extends TActivity {
                 .build();
         TILoader.node(this).load(url2, params, imageView2);
 
+        imageView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
+
         /*
          * 适用于:
          * 1.控件尺寸不固定(wrap_content)
@@ -158,6 +176,14 @@ public class BasicActivity extends TActivity {
         String url3="https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/crimson.jpg";
         TILoader.node(this).load(url3, imageView3);
 
+        imageView3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
+
     }
 
     /**
@@ -165,7 +191,7 @@ public class BasicActivity extends TActivity {
      */
     private void extractImage(){
 
-        TILoader.extract(this, "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/cornflower.jpg", null, new OnLoadedListener<ImageView>() {
+        final StubRemoter remoter = TILoader.extract(this, "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/cornflower.jpg", null, new OnLoadedListener<ImageView>() {
             @Override
             public void onLoadSucceed(String url, Params params, ImageResource resource) {
                 //图片下载成功
@@ -185,6 +211,14 @@ public class BasicActivity extends TActivity {
                 Toast.makeText(BasicActivity.this, "load failed", Toast.LENGTH_SHORT).show();
             }
         }.setWeakRegister(imageView4));//使用弱引用持有ImageView, 防止内存泄漏
+
+        imageView4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                remoter.relaunch();
+            }
+        });
 
     }
 
