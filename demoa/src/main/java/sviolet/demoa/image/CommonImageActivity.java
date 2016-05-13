@@ -248,12 +248,6 @@ public class CommonImageActivity extends TActivity {
 
     private void initLine4() {
 
-        //仅在wifi下显示
-        if (!NetStateUtils.isWifi(getApplicationContext())) {
-            Toast.makeText(getApplicationContext(), "第四行图片请在wifi下查看", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         /**
          * 创建BitmapLoader实例, 配置并启动.
          *
