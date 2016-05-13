@@ -50,11 +50,41 @@ import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
  * to cope with different network environments. See {@link LowNetworkSpeedStrategy.Type}.</p>
  *
  * <p>"Indispensable" task ({@link Params.Builder#setIndispensable}) has double connection-timeout & read-timeout,
- * and loading with {@link LowNetworkSpeedStrategy.Type#INDISPENSABLE_TASK} strategy.</p>
+ * and loading with {@link LowNetworkSpeedStrategy.Type#INDISPENSABLE_TASK} strategy. Generally, it is used for
+ * loading large image and gif.</p></p>
+ *
+ * <p>***************************************************************************************************</p>
+ *
+ * <p>Example & Default value::</p>
+ *
+ * <pre>
+ *      LowNetworkSpeedStrategy lowNetworkSpeedStrategy = new LowNetworkSpeedStrategy.Builder()
+ *          .setConfigure(LowNetworkSpeedStrategy.Type.LOW_SPEED_MOBILE_NETWORK, {@value WINDOW_PERIOD_LOW_SPEED}, {@value DEADLINE_LOW_SPEED}, {@value THRESHOLD_SPEED_LOW_SPEED})
+ *          .setConfigure(LowNetworkSpeedStrategy.Type.HIGH_SPEED_MOBILE_NETWORK, {@value WINDOW_PERIOD_HIGH_SPEED}, {@value DEADLINE_HIGH_SPEED}, {@value THRESHOLD_SPEED_HIGH_SPEED})
+ *          .setConfigure(LowNetworkSpeedStrategy.Type.WIFI_NETWORK, {@value WINDOW_PERIOD_WIFI}, {@value DEADLINE_WIFI}, {@value THRESHOLD_SPEED_WIFI})
+ *          .setConfigure(LowNetworkSpeedStrategy.Type.INDISPENSABLE_TASK, {@value WINDOW_PERIOD_INDISPENSABLE}, {@value DEADLINE_HIGH_INDISPENSABLE}, {@value THRESHOLD_SPEED_INDISPENSABLE})
+ *          .build();
+ *      TILoader.setting(new ServerSettings.Builder()
+ *          .setLowNetworkSpeedStrategy(lowNetworkSpeedStrategy)
+ *          .build());
+ * </pre>
  *
  * Created by S.Violet on 2016/5/13.
  */
 public class LowNetworkSpeedStrategy {
+
+    public static final long WINDOW_PERIOD_LOW_SPEED = 20 * 1000;//20s
+    public static final long DEADLINE_LOW_SPEED = 60 * 1000;//60s
+    public static final int THRESHOLD_SPEED_LOW_SPEED = 5 * 1024;//5k/s
+    public static final long WINDOW_PERIOD_HIGH_SPEED = 10 * 1000;//10s
+    public static final long DEADLINE_HIGH_SPEED = 30 * 1000;//30s
+    public static final int THRESHOLD_SPEED_HIGH_SPEED = 20 * 1024;//20k/s
+    public static final long WINDOW_PERIOD_WIFI = 10 * 1000;//10s
+    public static final long DEADLINE_WIFI = 30 * 1000;//30s
+    public static final int THRESHOLD_SPEED_WIFI = 20 * 1024;//20k/s
+    public static final long WINDOW_PERIOD_INDISPENSABLE = 40 * 1000;//40s
+    public static final long DEADLINE_HIGH_INDISPENSABLE = 120 * 1000;//120s
+    public static final int THRESHOLD_SPEED_INDISPENSABLE = 256;//256byte/s
 
     private Map<Type, Configure> configures;
 
@@ -127,10 +157,10 @@ public class LowNetworkSpeedStrategy {
         private Map<Type, Configure> configures = new HashMap<>();
 
         public Builder(){
-            configures.put(Type.LOW_SPEED_MOBILE_NETWORK, new Configure(Type.LOW_SPEED_MOBILE_NETWORK, 30000, 120000, 5 * 1024));
-            configures.put(Type.HIGH_SPEED_MOBILE_NETWORK, new Configure(Type.HIGH_SPEED_MOBILE_NETWORK, 15000, 60000, 20 * 1024));
-            configures.put(Type.WIFI_NETWORK, new Configure(Type.WIFI_NETWORK, 15000, 60000, 20 * 1024));
-            configures.put(Type.INDISPENSABLE_TASK, new Configure(Type.INDISPENSABLE_TASK, 60000, 300000, 0));
+            configures.put(Type.LOW_SPEED_MOBILE_NETWORK, new Configure(Type.LOW_SPEED_MOBILE_NETWORK, WINDOW_PERIOD_LOW_SPEED, DEADLINE_LOW_SPEED, THRESHOLD_SPEED_LOW_SPEED));
+            configures.put(Type.HIGH_SPEED_MOBILE_NETWORK, new Configure(Type.HIGH_SPEED_MOBILE_NETWORK, WINDOW_PERIOD_HIGH_SPEED, DEADLINE_HIGH_SPEED, THRESHOLD_SPEED_HIGH_SPEED));
+            configures.put(Type.WIFI_NETWORK, new Configure(Type.WIFI_NETWORK, WINDOW_PERIOD_WIFI, DEADLINE_WIFI, THRESHOLD_SPEED_WIFI));
+            configures.put(Type.INDISPENSABLE_TASK, new Configure(Type.INDISPENSABLE_TASK, WINDOW_PERIOD_INDISPENSABLE, DEADLINE_HIGH_INDISPENSABLE, THRESHOLD_SPEED_INDISPENSABLE));
         }
 
         /**

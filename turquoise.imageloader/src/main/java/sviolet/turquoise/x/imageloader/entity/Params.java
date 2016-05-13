@@ -205,7 +205,8 @@ public class Params {
 
         /**
          * <p>"Indispensable" task will keep loading as far as possible, it has double connection-timeout & read-timeout,
-         * and loading with {@link LowNetworkSpeedStrategy.Type#INDISPENSABLE_TASK} strategy.</p>
+         * and loading with {@link LowNetworkSpeedStrategy.Type#INDISPENSABLE_TASK} strategy.
+         * Generally, it is used for loading large image and gif.</p>
          *
          * <p>You should use this option with caution, NetEngine's thread will be occupied by "dispensable" task
          * for a long time.</p>
