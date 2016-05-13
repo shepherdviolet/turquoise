@@ -114,7 +114,7 @@ public class RoundedListActivity extends TActivity {
     private AsyncImageItem makeItem(int id){
         AsyncImageItem item = new AsyncImageItem();
         for (int i = 0 ; i < 1 ; i++) {
-            item.setUrl(i, "http://" + String.valueOf(id) + "-" + String.valueOf(i));
+            item.setUrl(i, "http://r" + String.valueOf(id) + "-" + String.valueOf(i));
         }
         item.setTitle("Title " + String.valueOf(id));
         item.setContent("State");
