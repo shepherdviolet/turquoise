@@ -25,9 +25,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 import sviolet.turquoise.util.droid.NetStateUtils;
+import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 
 /**
- * TODO
+ * <p>[Senior Setting]</p>
+ *
+ * <p>Some times, network speed is very slow, but uninterruptedly, it will hardly to cause read-timeout exception,
+ * In order to avoid this situation, TILoader will cancel load task with slow speed.</p>
+ *
+ * <p>At the beginning of loading, task will keep loading in any case, even if the speed is very slow,
+ * we called it "windowPeriod". After "windowPeriod", it start to check loading speed.
+ * If the speed is slower than "thresholdSpeed", task will be canceled. (you can override
+ * {@link ExceptionHandler#handleLowNetworkSpeedEvent} method to handle this event).
+ * If the speed is faster than "thresholdSpeed", we will try to get data length from http-header,
+ * in order to calculate progress of task. If we found that the speed is too slow to finish task
+ * before "deadline", we will cancel task in advance.(override {@link ExceptionHandler#handleLowNetworkSpeedEvent}
+ * method to handle this event).</p>
+ *
+ * <p>Finally, task will be canceled when reach the "deadline".</p>
+ *
+ * <p>***************************************************************************************************</p>
+ *
+ * <p>You can adjust configure by ServerSettings->setLowNetworkSpeedStrategy(). There are several strategies
+ * to cope with different network environments. See {@link LowNetworkSpeedStrategy.Type}.</p>
+ *
+ * <p>"Indispensable" task ({@link Params.Builder#setIndispensable}) has double connection-timeout & read-timeout,
+ * and loading with {@link LowNetworkSpeedStrategy.Type#INDISPENSABLE_TASK} strategy.</p>
+ *
  * Created by S.Violet on 2016/5/13.
  */
 public class LowNetworkSpeedStrategy {
@@ -54,24 +78,16 @@ public class LowNetworkSpeedStrategy {
     }
 
     /**
-     * TODO
+     * <p>Strategy Type::</p>
+     * <p>LOW_SPEED_MOBILE_NETWORK:: Strategy for 2G network.</p>
+     * <p>HIGH_SPEED_MOBILE_NETWORK:: Strategy for 3G, 4G, and unknown network.</p>
+     * <p>WIFI_NETWORK:: Strategy for WIFI network. </p>
+     * <p>INDISPENSABLE_TASK:: Strategy for indispensable task. (As far as possible to complete the task)</p>
      */
     public enum Type{
-        /**
-         * 2G
-         */
         LOW_SPEED_MOBILE_NETWORK,
-        /**
-         * 3G, 4G, unknown mobile
-         */
         HIGH_SPEED_MOBILE_NETWORK,
-        /**
-         * WIFI
-         */
         WIFI_NETWORK,
-        /**
-         * for indispensable task
-         */
         INDISPENSABLE_TASK
     }
 
@@ -118,12 +134,34 @@ public class LowNetworkSpeedStrategy {
         }
 
         /**
-         * TODO
-         * @param type
-         * @param windowPeriod
-         * @param deadline
-         * @param thresholdSpeed
-         * @return
+         * <p>[Senior Setting]</p>
+         *
+         * <p>Some times, network speed is very slow, but uninterruptedly, it will hardly to cause read-timeout exception,
+         * In order to avoid this situation, TILoader will cancel load task with slow speed.</p>
+         *
+         * <p>At the beginning of loading, task will keep loading in any case, even if the speed is very slow,
+         * we called it "windowPeriod". After "windowPeriod", it start to check loading speed.
+         * If the speed is slower than "thresholdSpeed", task will be canceled. (you can override
+         * {@link ExceptionHandler#handleLowNetworkSpeedEvent} method to handle this event).
+         * If the speed is faster than "thresholdSpeed", we will try to get data length from http-header,
+         * in order to calculate progress of task. If we found that the speed is too slow to finish task
+         * before "deadline", we will cancel task in advance.(override {@link ExceptionHandler#handleLowNetworkSpeedEvent}
+         * method to handle this event).</p>
+         *
+         * <p>Finally, task will be canceled when reach the "deadline".</p>
+         *
+         * <p>***************************************************************************************************</p>
+         *
+         * <p>You can adjust configure by ServerSettings->setLowNetworkSpeedStrategy(). There are several strategies
+         * to cope with different network environments. See {@link LowNetworkSpeedStrategy.Type}.</p>
+         *
+         * <p>"Indispensable" task ({@link Params.Builder#setIndispensable}) has double connection-timeout & read-timeout,
+         * and loading with {@link LowNetworkSpeedStrategy.Type#INDISPENSABLE_TASK} strategy.</p>
+         *
+         * @param type Strategy Type, nonnull
+         * @param windowPeriod ms, >=0
+         * @param deadline ms, >windowPeriod
+         * @param thresholdSpeed bytes/s, >=0
          */
         public Builder setConfigure(Type type, long windowPeriod, long deadline, int thresholdSpeed){
             if (type == null){

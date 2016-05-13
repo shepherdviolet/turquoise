@@ -22,6 +22,8 @@ package sviolet.turquoise.x.imageloader.handler;
 import android.content.Context;
 
 import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
+import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
@@ -122,28 +124,27 @@ public interface ExceptionHandler {
     void onMemoryBufferLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger);
 
     /**
-     * TODO
-     * <p>call while task is aborted by low speed network (cancel loading), notify user generally</p>
-     *
      * <p>Some times, network speed is very slow, but uninterruptedly, it will hardly to cause read-timeout exception,
      * In order to avoid this situation, TILoader will cancel load task with slow speed.</p>
      *
      * <p>At the beginning of loading, task will keep loading in any case, even if the speed is very slow,
-     * we called it windowPeriod. After windowPeriod, it start to check loading speed:</p>
+     * we called it "windowPeriod". After "windowPeriod", it start to check loading speed.
+     * If the speed is slower than "thresholdSpeed", task will be canceled. (you can override
+     * {@link ExceptionHandler#handleLowNetworkSpeedEvent} method to handle this event).
+     * If the speed is faster than "thresholdSpeed", we will try to get data length from http-header,
+     * in order to calculate progress of task. If we found that the speed is too slow to finish task
+     * before "deadline", we will cancel task in advance.(override {@link ExceptionHandler#handleLowNetworkSpeedEvent}
+     * method to handle this event).</p>
      *
-     * <p>Situation 1:
-     * If we can get image data length from http-header, we will calculate progress of task,
-     * if we found that the speed is too slow to finish loading before deadline, we will cancel
-     * task in advance.(override ExceptionHandler->handleLowNetworkSpeedEvent() method to handle this event)</p>
+     * <p>Finally, task will be canceled when reach the "deadline".</p>
      *
-     * <p>Situation 2:
-     * If we can not get image data length from http-header, we will make reference to boundarySpeed,
-     * if task is faster than boundarySpeed, task will keep loading. if not, task will be canceled.
-     * (override ExceptionHandler->handleLowNetworkSpeedEvent() method to handle this event)</p>
+     * <p>***************************************************************************************************</p>
      *
-     * <p>Finally, task will be canceled when reach the deadline.</p>
+     * <p>You can adjust configure by ServerSettings->setLowNetworkSpeedStrategy(). There are several strategies
+     * to cope with different network environments. See {@link LowNetworkSpeedStrategy.Type}.</p>
      *
-     * <p>You can adjust params by ServerSettings->setAbortOnLowNetworkSpeed().</p>
+     * <p>"Indispensable" task ({@link Params.Builder#setIndispensable}) has double connection-timeout & read-timeout,
+     * and loading with {@link LowNetworkSpeedStrategy.Type#INDISPENSABLE_TASK} strategy.</p>
      *
      * @param applicationContext application context
      * @param context activity context, maybe null
