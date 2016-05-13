@@ -44,6 +44,7 @@ public class Params {
         private DecodeHandler.DecodeScaleStrategy decodeScaleStrategy = DecodeHandler.DecodeScaleStrategy.NO_SCALE;
         private DecodeHandler.Interceptor decodeInterceptor;
         private Bitmap.Config bitmapConfig = DEFAULT_BITMAP_CONFIG;
+        private boolean indispensable = false;
 
         private Map<String, Object> extras;
 
@@ -62,6 +63,7 @@ public class Params {
             newValues.decodeInterceptor = decodeInterceptor;
             newValues.bitmapConfig = bitmapConfig;
 
+            newValues.indispensable = indispensable;
             newValues.extras = extras;
             return newValues;
         }
@@ -201,6 +203,18 @@ public class Params {
             return this;
         }
 
+        /**
+         * TODO
+         * <p>Indispensable task will keep loading as far as possible, even if the speed is very slow,
+         * it has double connection-timeout & read-timeout, and ignore AbortOnLowNetworkSpeed check.</p>
+         *
+         * <p>False by default.</p>
+         */
+        public Builder setIndispensable(){
+            values.indispensable = true;
+            return this;
+        }
+
         public Builder setExtras(Map<String, Object> extras){
             values.extras = extras;
             return this;
@@ -256,6 +270,10 @@ public class Params {
 
     public DecodeHandler.Interceptor getDecodeInterceptor(){
         return values.decodeInterceptor;
+    }
+
+    public boolean isIndispensable(){
+        return values.indispensable;
     }
 
     public Map<String, Object> getExtras(){

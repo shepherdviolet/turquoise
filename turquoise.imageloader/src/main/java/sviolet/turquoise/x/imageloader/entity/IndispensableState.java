@@ -17,20 +17,27 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.node;
-
-import sviolet.turquoise.x.imageloader.ComponentManager;
-import sviolet.turquoise.x.imageloader.stub.Stub;
-import sviolet.turquoise.x.imageloader.stub.StubGroup;
+package sviolet.turquoise.x.imageloader.entity;
 
 /**
+ * TODO
+ * <p>Indispensable task will keep loading as far as possible, even if the speed is very slow,
+ * it has double connection-timeout & read-timeout, and ignore AbortOnLowNetworkSpeed check.</p>
  *
- * <p>Task Factory</p>
+ * <p>False by default.</p>
  *
- * Created by S.Violet on 2016/3/3.
+ * Created by S.Violet on 2016/5/13.
  */
-public interface TaskFactory extends ComponentManager.Component {
+public class IndispensableState {
 
-    Task newTask(NodeController controller, Stub stub, StubGroup stubGroup);
+    private boolean indispensable = false;
+
+    public boolean isIndispensable(){
+        return indispensable;
+    }
+
+    public void setIndispensable(){
+        indispensable = true;
+    }
 
 }

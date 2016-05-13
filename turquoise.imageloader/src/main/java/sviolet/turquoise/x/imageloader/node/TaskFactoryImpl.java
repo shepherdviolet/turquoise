@@ -21,6 +21,7 @@ package sviolet.turquoise.x.imageloader.node;
 
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.stub.Stub;
+import sviolet.turquoise.x.imageloader.stub.StubGroup;
 
 /**
  * <p>Task Factory</p>
@@ -37,8 +38,8 @@ public class TaskFactoryImpl implements TaskFactory {
     }
 
     @Override
-    public Task newTask(NodeController controller, Stub stub) {
-        return new Task(controller.getNodeId(), stub.getType(), stub.getUrl(), stub.getParams(), stub.getKey(), stub.getResourceKey(), stub.getLoadProgress().reset());
+    public Task newTask(NodeController controller, Stub stub, StubGroup stubGroup) {
+        return new Task(controller.getNodeId(), stub.getType(), stub.getUrl(), stub.getParams(), stub.getKey(), stub.getResourceKey(), stub.getLoadProgress().reset(), stubGroup.getIndispensableState());
     }
 
 }

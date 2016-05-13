@@ -179,7 +179,7 @@ public class NodeControllerImpl extends NodeController {
 
         //execute if new
         if (newStubGroup) {
-            Task task = manager.getServerSettings().getTaskFactory().newTask(this, stub);
+            Task task = manager.getServerSettings().getTaskFactory().newTask(this, stub, stubGroup);
             task.setNodeSettings(settings);
             executeTask(task);
         }

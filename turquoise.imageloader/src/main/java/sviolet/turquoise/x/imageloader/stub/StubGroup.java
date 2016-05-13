@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.entity.IndispensableState;
 
 /**
  * <p>Group of stubs. All tasks for the same purpose will be bundled into a group.</p>
@@ -33,6 +34,7 @@ import sviolet.turquoise.x.imageloader.entity.ImageResource;
 public class StubGroup {
 
     private Set<Stub> stubSet = Collections.newSetFromMap(new ConcurrentHashMap<Stub, Boolean>());
+    private IndispensableState indispensableState = new IndispensableState();
 
     public StubGroup(){
 
@@ -45,6 +47,10 @@ public class StubGroup {
         if (stub == null)
             return;
         stubSet.add(stub);
+        //check and set indispensable state
+        if (stub.getParams().isIndispensable()){
+            indispensableState.setIndispensable();
+        }
     }
 
     private boolean hasStub(){
@@ -90,5 +96,9 @@ public class StubGroup {
             stub.onDestroy();
         }
         stubSet.clear();
+    }
+
+    public IndispensableState getIndispensableState(){
+        return indispensableState;
     }
 }

@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.node;
 
+import sviolet.turquoise.x.imageloader.entity.IndispensableState;
 import sviolet.turquoise.x.imageloader.entity.LoadProgress;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.Params;
@@ -37,8 +38,8 @@ public class Task {
 
     private Info values;
 
-    Task(String nodeId, Stub.Type type, String url, Params params, String key, String resourceKey, LoadProgress loadProgress) {
-        this.values = new Info(nodeId, type, url, params, key, resourceKey, loadProgress);
+    Task(String nodeId, Stub.Type type, String url, Params params, String key, String resourceKey, LoadProgress loadProgress, IndispensableState indispensableState) {
+        this.values = new Info(nodeId, type, url, params, key, resourceKey, loadProgress, indispensableState);
     }
 
     @Override
@@ -90,6 +91,10 @@ public class Task {
         return values.loadProgress;
     }
 
+    public boolean isIndispensable(){
+        return values.isIndispensable();
+    }
+
     public NodeSettings getNodeSettings() {
         return values.nodeSettings;
     }
@@ -118,6 +123,7 @@ public class Task {
         private Server.Type serverType = Server.Type.MEMORY_ENGINE;
         private volatile State state = State.STAND_BY;
         private LoadProgress loadProgress;
+        private IndispensableState indispensableState;
 
         //node//////////////////////////
         private String nodeId;
@@ -129,7 +135,7 @@ public class Task {
         private String key;
         private String resourceKey;
 
-        Info(String nodeId, Stub.Type type, String url, Params params, String key, String resourceKey, LoadProgress loadProgress) {
+        Info(String nodeId, Stub.Type type, String url, Params params, String key, String resourceKey, LoadProgress loadProgress, IndispensableState indispensableState) {
             this.nodeId = nodeId;
             this.type = type;
             this.url = url;
@@ -137,6 +143,7 @@ public class Task {
             this.key = key;
             this.resourceKey = resourceKey;
             this.loadProgress = loadProgress;
+            this.indispensableState = indispensableState;
         }
 
         @Override
@@ -193,6 +200,10 @@ public class Task {
 
         public LoadProgress getLoadProgress(){
             return loadProgress;
+        }
+
+        public boolean isIndispensable(){
+            return indispensableState.isIndispensable();
         }
     }
 

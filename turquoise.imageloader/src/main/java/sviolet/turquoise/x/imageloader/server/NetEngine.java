@@ -29,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.entity.IndispensableState;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
@@ -39,7 +40,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public class NetEngine extends Engine {
 
-    private Map<String, Set<Task>> taskGroups = new ConcurrentHashMap<>();
+    private Map<String, TaskGroup> taskGroups = new ConcurrentHashMap<>();
     private ReentrantLock lock = new ReentrantLock();
 
     @Override
@@ -47,12 +48,12 @@ public class NetEngine extends Engine {
 
         boolean executable = false;
         String resourceKey = task.getResourceKey();
-        Set<Task> group;
+        TaskGroup group;
         try{
             lock.lock();
             group = taskGroups.get(resourceKey);
             if (group == null){
-                group = Collections.newSetFromMap(new ConcurrentHashMap<Task, Boolean>());
+                group = new TaskGroup();
                 taskGroups.put(resourceKey, group);
                 executable = true;
             }
@@ -62,16 +63,16 @@ public class NetEngine extends Engine {
         group.add(task);
 
         if (executable) {
-            loadByHandler(task);
+            loadByHandler(task, group.getIndispensableState());
         }
     }
 
-    private void loadByHandler(Task task) {
+    private void loadByHandler(Task task, IndispensableState indispensableState) {
         //reset progress
         task.getLoadProgress().reset();
-        //timeout
-        long connectTimeout = getNetworkConnectTimeout(task);
-        long readTimeout = getNetworkReadTimeout(task);
+        //timeout, indispensable task has double timeout
+        long connectTimeout = indispensableState.isIndispensable() ? getNetworkConnectTimeout(task) << 1 : getNetworkConnectTimeout(task);
+        long readTimeout = indispensableState.isIndispensable() ? getNetworkReadTimeout(task) << 1 : getNetworkReadTimeout(task);
         //network loading, callback's timeout is triple of network timeout
         EngineCallback<NetworkLoadHandler.Result> callback = new EngineCallback<>((connectTimeout + readTimeout) * 3, getComponentManager().getLogger());
         try {
@@ -89,16 +90,16 @@ public class NetEngine extends Engine {
         switch(result){
             //load succeed
             case EngineCallback.RESULT_SUCCEED:
-                onResultSucceed(task, callback.getData());
+                onResultSucceed(task, callback.getData(), indispensableState);
                 return;
             //load failed
             case EngineCallback.RESULT_FAILED:
-                onResultFailed(task, callback.getException());
+                onResultFailed(task, callback.getException(), indispensableState);
                 return;
             //load canceled
             case EngineCallback.RESULT_CANCELED:
             default:
-                onResultCanceled(task);
+                onResultCanceled(task, indispensableState);
                 break;
         }
     }
@@ -107,7 +108,7 @@ public class NetEngine extends Engine {
      * handle network result
      */
 
-    private void onResultSucceed(Task task, NetworkLoadHandler.Result data) {
+    private void onResultSucceed(Task task, NetworkLoadHandler.Result data, IndispensableState indispensableState) {
         //dispatch by type
         if (data.getType() == NetworkLoadHandler.ResultType.NULL){
             getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
@@ -118,23 +119,23 @@ public class NetEngine extends Engine {
             task.getLoadProgress().setTotal(data.getBytes().length);
             task.getLoadProgress().setLoaded(data.getBytes().length);
             //handle
-            onBytesResult(task, data.getBytes());
+            onBytesResult(task, data.getBytes(), indispensableState);
         }else if (data.getType() == NetworkLoadHandler.ResultType.INPUTSTREAM){
             //set progress
             task.getLoadProgress().setTotal(data.getLength());
             //handle
-            onInputStreamResult(task, data.getInputStream());
+            onInputStreamResult(task, data.getInputStream(), indispensableState);
         }
     }
 
-    private void onResultFailed(Task task, Exception exception) {
+    private void onResultFailed(Task task, Exception exception, IndispensableState indispensableState) {
         if (exception != null){
             getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), exception, getComponentManager().getLogger());
         }
         handleFailed(task);
     }
 
-    private void onResultCanceled(Task task) {
+    private void onResultCanceled(Task task, IndispensableState indispensableState) {
         handleCanceled(task);
     }
 
@@ -142,7 +143,7 @@ public class NetEngine extends Engine {
      * @param task task
      * @param bytes image bytes data
      */
-    private void onBytesResult(Task task, byte[] bytes){
+    private void onBytesResult(Task task, byte[] bytes, IndispensableState indispensableState){
         //try to write disk cache
         getComponentManager().getDiskCacheServer().write(task, bytes);
         //handle data
@@ -153,7 +154,7 @@ public class NetEngine extends Engine {
      * @param task task
      * @param inputStream image input stream
      */
-    private void onInputStreamResult(Task task, InputStream inputStream){
+    private void onInputStreamResult(Task task, InputStream inputStream, IndispensableState indispensableState){
         //cancel loading if image data out of limit
         if (task.getLoadProgress().total() > getComponentManager().getServerSettings().getImageDataLengthLimit()){
             getComponentManager().getServerSettings().getExceptionHandler().onImageDataLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
@@ -166,7 +167,7 @@ public class NetEngine extends Engine {
             return;
         }
         //try to write disk cache
-        DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream);
+        DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream, indispensableState);
         switch (result.getType()){
             case SUCCEED:
                 handleImageData(task, null, result.getTargetFile());
@@ -189,11 +190,11 @@ public class NetEngine extends Engine {
      */
 
     private void handleImageData(Task task, byte[] bytes, File file){
-        Set<Task> group = taskGroups.remove(task.getResourceKey());
+        TaskGroup group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;
         }
-        for (Task t : group) {
+        for (Task t : group.getSet()) {
             //decode
             ImageResource imageResource = decode(t, bytes, file);
             if (imageResource == null) {
@@ -204,26 +205,29 @@ public class NetEngine extends Engine {
             getComponentManager().getMemoryCacheServer().put(t.getKey(), imageResource);
             responseSucceed(t);
         }
+        group.getSet().clear();
     }
 
     private void handleFailed(Task task){
-        Set<Task> group = taskGroups.remove(task.getResourceKey());
+        TaskGroup group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;
         }
-        for (Task t : group) {
+        for (Task t : group.getSet()) {
             responseFailed(t);
         }
+        group.getSet().clear();
     }
 
     private void handleCanceled(Task task){
-        Set<Task> group = taskGroups.remove(task.getResourceKey());
+        TaskGroup group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;
         }
-        for (Task t : group) {
+        for (Task t : group.getSet()) {
             responseCanceled(t);
         }
+        group.getSet().clear();
     }
 
     private ImageResource decode(Task task, byte[] bytes, File file){
@@ -283,6 +287,38 @@ public class NetEngine extends Engine {
     @Override
     public Type getServerType() {
         return Type.NETWORK_ENGINE;
+    }
+
+    /*********************************************************************
+     * inner class
+     */
+
+    private static class TaskGroup{
+
+        private Set<Task> stubSet = Collections.newSetFromMap(new ConcurrentHashMap<Task, Boolean>());
+        private IndispensableState indispensableState = new IndispensableState();
+
+        /**
+         * @param task add the task into group, non-repetitive(Set)
+         */
+        public void add(Task task){
+            if (task == null)
+                return;
+            stubSet.add(task);
+            //check and set indispensable state
+            if (task.isIndispensable()){
+                indispensableState.setIndispensable();
+            }
+        }
+
+        public Set<Task> getSet(){
+            return stubSet;
+        }
+
+        public IndispensableState getIndispensableState(){
+            return indispensableState;
+        }
+
     }
 
 }

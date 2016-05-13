@@ -27,6 +27,7 @@ import java.io.OutputStream;
 
 import sviolet.turquoise.model.cache.DiskLruCache;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.entity.IndispensableState;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
@@ -88,9 +89,10 @@ public class DiskCacheServer extends DiskCacheModule {
      *
      * @param task task
      * @param inputStream InputStream
+     * @param indispensableState indispensableState
      * @return Result
      */
-    public Result write(Task task, InputStream inputStream) {
+    public Result write(Task task, InputStream inputStream, IndispensableState indispensableState) {
         Result result = new Result();//result of write task
         DiskLruCache.Editor editor = null;
         OutputStream outputStream = null;
@@ -102,7 +104,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                         getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
                         new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, write disk cache failed"), getComponentManager().getLogger());
-                writeToMemoryBuffer(task, inputStream, result, null, 0);
+                writeToMemoryBuffer(task, inputStream, result, null, 0, indispensableState);
                 return result;
             }
             /*
@@ -143,7 +145,7 @@ public class DiskCacheServer extends DiskCacheModule {
                         return result;
                     }
                     //check if speed is low
-                    if (checkNetworkSpeed(startTime, loopCount, task, result)){
+                    if (checkNetworkSpeed(startTime, loopCount, task, result, indispensableState)){
                         abortEditor(editor);
                         return result;
                     }
@@ -159,7 +161,7 @@ public class DiskCacheServer extends DiskCacheModule {
                             abortEditor(editor);
                             getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                                     getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-                            writeToMemoryBuffer(task, inputStream, result, buffer, readLength);
+                            writeToMemoryBuffer(task, inputStream, result, buffer, readLength, indispensableState);
                             return result;
                         }
                         throw e;
@@ -175,7 +177,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 setHealthy(true);
             }else{
                 //if disk is not healthy, data write to memory buffer, and return bytes, in order to ensure pictures display normally.
-                writeToMemoryBuffer(task, inputStream, result, null, 0);
+                writeToMemoryBuffer(task, inputStream, result, null, 0, indispensableState);
                 //trying to write to disk cache
                 if (result.getType() == ResultType.RETURN_MEMORY_BUFFER && result.getMemoryBuffer().length > 0) {
                     try {
@@ -294,7 +296,7 @@ public class DiskCacheServer extends DiskCacheModule {
      * @throws NetworkException exception of network
      * @throws IOException exception of io
      */
-    private void writeToMemoryBuffer(Task task, InputStream inputStream, Result result, byte[] buffer, int bufferDataLength) throws NetworkException, IOException  {
+    private void writeToMemoryBuffer(Task task, InputStream inputStream, Result result, byte[] buffer, int bufferDataLength, IndispensableState indispensableState) throws NetworkException, IOException  {
         //cancel loading if memory buffer out of limit
         if (task.getLoadProgress().total() > getComponentManager().getServerSettings().getMemoryBufferLengthLimit()){
             getComponentManager().getServerSettings().getExceptionHandler().onMemoryBufferLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
@@ -333,7 +335,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 return;
             }
             //check if speed is low
-            if (checkNetworkSpeed(startTime, loopCount, task, result)){
+            if (checkNetworkSpeed(startTime, loopCount, task, result, indispensableState)){
                 return;
             }
             outputStream.write(buffer, 0, readLength);
@@ -348,9 +350,9 @@ public class DiskCacheServer extends DiskCacheModule {
         result.setMemoryBuffer(outputStream.toByteArray());
     }
 
-    private boolean checkNetworkSpeed(long startTime, int loopCount, Task task, Result result){
-        //decrease check frequency
-        if (loopCount << 30 != 0){
+    private boolean checkNetworkSpeed(long startTime, int loopCount, Task task, Result result, IndispensableState indispensableState){
+        //decrease check frequency, indispensable task skip speed check
+        if (indispensableState.isIndispensable() || loopCount << 30 != 0){
             return false;
         }
 

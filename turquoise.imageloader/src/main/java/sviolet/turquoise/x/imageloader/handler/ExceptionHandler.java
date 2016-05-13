@@ -122,6 +122,7 @@ public interface ExceptionHandler {
     void onMemoryBufferLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger);
 
     /**
+     * TODO
      * <p>call while task is aborted by low speed network (cancel loading), notify user generally</p>
      *
      * <p>Some times, network speed is very slow, but uninterruptedly, it will hardly to cause read-timeout exception,
