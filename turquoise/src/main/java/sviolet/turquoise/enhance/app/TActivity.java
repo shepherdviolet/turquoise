@@ -21,7 +21,6 @@ package sviolet.turquoise.enhance.app;
 
 import android.app.Activity;
 import android.os.*;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.Menu;
 
@@ -176,7 +175,7 @@ public class TActivity extends Activity implements TActivityProvider.RequestPerm
      * 已被改造, 若采用原生方法获取权限, 请复写{@link TActivity#onRequestPermissionsResult(int, String[], int[], boolean)}<p/>
      */
     @Override
-    public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public final void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         provider.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 

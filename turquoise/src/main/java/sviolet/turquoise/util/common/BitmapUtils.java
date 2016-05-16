@@ -35,7 +35,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.text.TextPaint;
 import android.util.Base64;
 import android.view.View;
@@ -772,7 +771,7 @@ public class BitmapUtils {
      * @param limitWidth 限制宽度(0不限)
      * @param limitHeight 限制高度(0不限)
      */
-    public static Bitmap getWebViewCapturePicture(@NonNull WebView webView, Bitmap.Config bitmapConfig, int limitWidth, int limitHeight){
+    public static Bitmap getWebViewCapturePicture(WebView webView, Bitmap.Config bitmapConfig, int limitWidth, int limitHeight){
         Picture picture = webView.capturePicture();
         float scale = 1f;
         if (limitWidth > 0 && picture.getWidth() > limitWidth){

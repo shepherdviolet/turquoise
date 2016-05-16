@@ -21,10 +21,8 @@ package sviolet.turquoise.utilx.lifecycle;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Fragment;
 import android.os.Build;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 
 import sviolet.turquoise.util.common.ParasiticVars;
 import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
@@ -77,7 +75,7 @@ public class LifeCycleUtils {
      * @param fragmentActivity 被监听的FragmentActivity
      * @param lifeCycle 监听器
      */
-    public static void attach(FragmentActivity fragmentActivity, LifeCycle lifeCycle){
+    public static void attach(android.support.v4.app.FragmentActivity fragmentActivity, LifeCycle lifeCycle){
         if (fragmentActivity == null)
             throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
         if (lifeCycle == null)
@@ -96,13 +94,13 @@ public class LifeCycleUtils {
      * @param fragment 被监听的Fragment
      * @param lifeCycle 监听器
      */
-    public static void attach(Fragment fragment, LifeCycle lifeCycle){
+    public static void attach(android.support.v4.app.Fragment fragment, LifeCycle lifeCycle){
         if (fragment == null)
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
         if (lifeCycle == null)
             return;
 
-        FragmentActivity activity = fragment.getActivity();
+        android.support.v4.app.FragmentActivity activity = fragment.getActivity();
         if (activity == null)
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
         addListener(activity, lifeCycle);
@@ -119,7 +117,7 @@ public class LifeCycleUtils {
      * @param lifeCycle 监听器
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static void attach(android.app.Fragment fragment, LifeCycle lifeCycle){
+    public static void attach(Fragment fragment, LifeCycle lifeCycle){
         if (fragment == null)
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
         if (lifeCycle == null)
@@ -158,7 +156,7 @@ public class LifeCycleUtils {
         ((LifeCycleManager)manager).addListener(lifeCycle);
     }
 
-    private static void addListener(FragmentActivity fragmentActivity, LifeCycle lifeCycle) {
+    private static void addListener(android.support.v4.app.FragmentActivity fragmentActivity, LifeCycle lifeCycle) {
 
         //ParasiticVars中获取FragmentActivity的生命周期管理器
         Object manager = ParasiticVars.get(fragmentActivity, LifeCycleManager.MANAGER_TAG);
@@ -166,9 +164,9 @@ public class LifeCycleUtils {
         //生命周期管理器不存在则新建
         if (manager == null || !(manager instanceof LifeCycleManager)){
             manager = new LifeCycleManagerImpl();//新建管理器
-            Fragment oldFragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
-            Fragment fragment = new LifeCycleFragmentV4(fragmentActivity, (LifeCycleManager) manager);//新生命周期监听Fragment
-            FragmentTransaction transaction = fragmentActivity.getSupportFragmentManager().beginTransaction();
+            android.support.v4.app.Fragment oldFragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
+            android.support.v4.app.Fragment fragment = new LifeCycleFragmentV4(fragmentActivity, (LifeCycleManager) manager);//新生命周期监听Fragment
+            android.support.v4.app.FragmentTransaction transaction = fragmentActivity.getSupportFragmentManager().beginTransaction();
             if (oldFragment != null) {
                 transaction.remove(oldFragment);//移除原有Fragment
             }

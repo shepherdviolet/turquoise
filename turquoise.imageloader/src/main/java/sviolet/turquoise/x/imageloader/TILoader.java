@@ -21,10 +21,9 @@ package sviolet.turquoise.x.imageloader;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Context;
 import android.os.Build;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 
 import java.lang.ref.WeakReference;
 
@@ -58,7 +57,7 @@ public class TILoader {
      * @param context context
      * @return get Node of Context, used to loading image
      */
-    public static Node node(FragmentActivity context){
+    public static Node node(android.support.v4.app.FragmentActivity context){
         checkContext(context);
         return ComponentManager.getInstance().getNodeManager().fetchNode(context);
     }
@@ -68,7 +67,7 @@ public class TILoader {
      * @param context context
      * @return get Node of Context, used to loading image
      */
-    public static Node node(Fragment context){
+    public static Node node(android.support.v4.app.Fragment context){
         checkContext(context);
         return ComponentManager.getInstance().getNodeManager().fetchNode(context.getActivity());
     }
@@ -79,7 +78,7 @@ public class TILoader {
      * @return get Node of Context, used to loading image
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    public static Node node(android.app.Fragment context){
+    public static Node node(Fragment context){
         checkContext(context);
         return ComponentManager.getInstance().getNodeManager().fetchNode(context.getActivity());
     }
