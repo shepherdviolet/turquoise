@@ -74,6 +74,10 @@ public class TILoaderUtils {
         return StubRemoter.NULL_STUB_REMOTER;
     }
 
+    /***********************************************************************888
+     * ImageResource
+     */
+
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
      * check if ImageResource Valid
@@ -121,7 +125,9 @@ public class TILoaderUtils {
         return ComponentManager.getInstance().getServerSettings().getImageResourceHandler().toDrawable(context, resource, skipDrawingException);
     }
 
-
+    /***********************************************************************888
+     * cache
+     */
 
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
@@ -173,6 +179,10 @@ public class TILoaderUtils {
         ComponentManager.getInstance().waitingForInitialized();
         return ComponentManager.getInstance().getMemoryCacheServer().getMemoryReport();
     }
+
+    /***********************************************************************888
+     * other
+     */
 
     /**
      * set TILoader's log level, valid only in SimpleTLoggerModule, it will be invalid if you use custom TLoggerModule
