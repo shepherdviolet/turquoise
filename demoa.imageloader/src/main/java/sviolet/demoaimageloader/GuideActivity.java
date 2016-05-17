@@ -66,7 +66,6 @@ import sviolet.turquoise.x.imageloader.TILoaderUtils;
 @ActivitySettings(
         optionsMenuId = R.menu.menu_guide,
         noTitle = false,
-        translucentBar = false,
         statusBarColor = 0xFF209090,
         navigationBarColor = 0xFF209090
 )

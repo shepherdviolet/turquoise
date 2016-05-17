@@ -97,8 +97,8 @@ public class TActivityProvider {
 
         //5.0效果
         //透明状态栏/底部按钮, 最大化Activity
-        if (getActivitySettings(activity).translucentBar()) {
-            StatusBarUtils.setTranslucent(activity);
+        if (getActivitySettings(activity).translucentStatus() || getActivitySettings(activity).translucentNavigation()) {
+            StatusBarUtils.setTranslucent(activity, getActivitySettings(activity).translucentStatus(), getActivitySettings(activity).translucentNavigation());
         }
         //状态栏颜色
         if (getActivitySettings(activity).statusBarColor() != ActivitySettings.DEF_STATUS_BAR_COLOR) {

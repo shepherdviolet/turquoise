@@ -72,9 +72,15 @@ public @interface ActivitySettings {
 
     /**
      * 5.0
-     * 状态栏/底部按钮透明, 并最大化Activity撑满屏幕
+     * 状态栏透明, 并最大化Activity撑满屏幕
      */
-    boolean translucentBar() default false;
+    boolean translucentStatus() default false;
+
+    /**
+     * 5.0
+     * 底部按钮透明, 并最大化Activity撑满屏幕
+     */
+    boolean translucentNavigation() default false;
 
     /**
      * 5.0

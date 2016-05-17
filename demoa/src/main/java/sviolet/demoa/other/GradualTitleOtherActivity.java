@@ -32,7 +32,7 @@ import sviolet.turquoise.util.droid.MeasureUtils;
 @ResourceId(R.layout.other_gradualtitle_main)
 @ActivitySettings(
         noTitle = true,
-        translucentBar = true,
+        translucentStatus = true,
         statusBarColor = 0x40000000,
         navigationBarColor = 0xFF209090
 )

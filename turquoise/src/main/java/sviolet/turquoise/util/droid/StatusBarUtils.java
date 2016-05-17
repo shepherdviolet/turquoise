@@ -35,30 +35,31 @@ public class StatusBarUtils {
     /**
      * [API21]透明状态栏/底部按钮, 最大化Activity
      * @param activity activity
+     * @param translucentStatus 状态栏透明
+     * @param translucentNavigation 底部按钮透明
      * @return true:设置成功
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static boolean setTranslucent(Activity activity){
+    public static boolean setTranslucent(Activity activity, boolean translucentStatus, boolean translucentNavigation){
         if (activity == null){
             return false;
         }
         if (DeviceUtils.getVersionSDK() >= Build.VERSION_CODES.LOLLIPOP) {
-            activity.getWindow().clearFlags(
-                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-                            | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            activity.getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
-            activity.getWindow().addFlags(
-                    WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            int flag = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+            if (translucentStatus){
+                flag |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
+            }
+            if (translucentNavigation){
+                flag |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+            }
+            activity.getWindow().getDecorView().setSystemUiVisibility(flag);
             return true;
         }
         return false;
     }
 
     /**
-     * [API21]设置状态栏颜色, 若需要透明, 请先调用{@link StatusBarUtils#setTranslucent(Activity)}
+     * [API21]设置状态栏颜色, 若需要透明, 请先调用{@link StatusBarUtils#setTranslucent}
      * @param activity activity
      * @param color 颜色
      * @return true:设置成功
@@ -69,6 +70,10 @@ public class StatusBarUtils {
             return false;
         }
         if (DeviceUtils.getVersionSDK() >= Build.VERSION_CODES.LOLLIPOP) {
+            //必须清除标志
+            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            //必须设置标志
+            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             activity.getWindow().setStatusBarColor(color);
             return true;
         }
@@ -76,7 +81,7 @@ public class StatusBarUtils {
     }
 
     /**
-     * [API21]设置底部按钮颜色, 若需要透明, 请先调用{@link StatusBarUtils#setTranslucent(Activity)}
+     * [API21]设置底部按钮颜色, 若需要透明, 请先调用{@link StatusBarUtils#setTranslucent}
      * @param activity activity
      * @param color 颜色
      * @return true:设置成功
@@ -87,6 +92,10 @@ public class StatusBarUtils {
             return false;
         }
         if (DeviceUtils.getVersionSDK() >= Build.VERSION_CODES.LOLLIPOP) {
+            //必须清除标志
+            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+            //必须设置标志
+            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             activity.getWindow().setNavigationBarColor(color);
             return true;
         }

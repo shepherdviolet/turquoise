@@ -63,7 +63,6 @@ import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 @ActivitySettings(
         optionsMenuId = R.menu.menu_guide,
         noTitle = false,
-        translucentBar = false,
         statusBarColor = 0xFF209090,
         navigationBarColor = 0xFF209090
 )
