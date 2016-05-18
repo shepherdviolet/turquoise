@@ -39,7 +39,9 @@ import sviolet.turquoise.x.imageloader.server.MemoryEngine;
 import sviolet.turquoise.x.imageloader.server.NetEngine;
 
 /**
- * <p>manage all component</p>
+ * <p>Manage all components</p>
+ *
+ * <p>Internal class, not for user interface</p>
  *
  * Created by S.Violet on 2016/2/18.
  */
