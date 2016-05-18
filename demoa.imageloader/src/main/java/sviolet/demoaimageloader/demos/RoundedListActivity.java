@@ -86,7 +86,7 @@ public class RoundedListActivity extends TActivity {
         //设置适配器, 传入图片加载器, 图片解码工具
         adapter = new RoundedListAdapter(this, makeItemList());
         listView.setAdapter(adapter);
-        listView.setOnScrollListener(TILoader.node(this).newNodeRemoter().getPauseOnListViewScrollListener());
+        listView.setOnScrollListener(TILoader.node(this).newNodeRemoter().getPauseOnListViewScrollListener());//改善流畅度, 非必须
     }
 
     @Override
