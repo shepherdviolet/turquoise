@@ -72,6 +72,8 @@ public class RoundedListAdapter extends BaseAdapter {
                             case BITMAP:
                                 Bitmap bitmap = BitmapUtils.toRoundedCorner((Bitmap) imageResource.getResource(), MeasureUtils.dp2px(context, 2), BitmapUtils.RoundedCornerType.TopLeft_And_TopRight, true);
                                 return new ImageResource(ImageResource.Type.BITMAP, bitmap);
+                            default:
+                                break;
                         }
                         return imageResource;
                     }
