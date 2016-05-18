@@ -36,6 +36,7 @@ import sviolet.demoaimageloader.common.DemoListAdapter;
 import sviolet.demoaimageloader.demos.BasicActivity;
 import sviolet.demoaimageloader.demos.GifActivity;
 import sviolet.demoaimageloader.demos.ListViewActivity;
+import sviolet.demoaimageloader.demos.RecyclerViewActivity;
 import sviolet.demoaimageloader.demos.RoundedListActivity;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
@@ -55,7 +56,8 @@ import sviolet.turquoise.x.imageloader.TILoaderUtils;
         BasicActivity.class,
         GifActivity.class,
         ListViewActivity.class,
-        RoundedListActivity.class
+        RoundedListActivity.class,
+        RecyclerViewActivity.class
 })
 
 /**************************************************************

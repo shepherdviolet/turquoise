@@ -32,6 +32,9 @@
             android:label="@string/list_view_title"/>
         <activity android:name=".demos.RoundedListActivity"
             android:label="@string/rounded_list_title"/>
+        <activity android:name=".demos.RecyclerViewActivity"
+            android:label="@string/recycler_view_title"
+            android:theme="@style/Theme.AppCompat.Light"/>
 
     </application>
 
