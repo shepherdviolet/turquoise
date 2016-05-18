@@ -48,6 +48,10 @@ public class NodeManager {
         this.manager = manager;
     }
 
+    /**
+     * fetch Node, create if not found
+     * @param context context
+     */
     public Node fetchNode(Context context) {
         if (context == null){
             throw new RuntimeException("[NodeManager]can not fetch Node with out Context");
@@ -73,6 +77,22 @@ public class NodeManager {
         return node;
     }
 
+    /**
+     * seek Node, return null if not found
+     * @param context context
+     */
+    public Node seekNode(Context context){
+        if (context == null){
+            throw new RuntimeException("[NodeManager]can not seek Node with out Context");
+        }
+        final String nodeId = parseNodeId(context);
+        return nodes.get(nodeId);
+    }
+
+    /**
+     * fetch Extract Node, create if not found
+     * @param context context
+     */
     public ExtractNode fetchExtractNode(Context context) {
         if (context == null){
             throw new RuntimeException("[NodeManager]can not fetch extract Node with out Context");

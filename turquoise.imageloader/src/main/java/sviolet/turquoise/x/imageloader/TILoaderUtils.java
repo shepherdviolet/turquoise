@@ -34,6 +34,7 @@ import sviolet.turquoise.utilx.tlogger.TLoggerModule;
 import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
+import sviolet.turquoise.x.imageloader.node.Node;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 import sviolet.turquoise.x.imageloader.stub.StubRemoter;
 
@@ -72,6 +73,19 @@ public class TILoaderUtils {
             }
         }
         return StubRemoter.NULL_STUB_REMOTER;
+    }
+
+    /**
+     * [Initialize TILoader]this method will initialize TILoader<br/>
+     * Seek Node (LoadNode only), return null if not found. This method is different from {@link TILoader#node},
+     * {@link TILoader#node} will create Node if not found.<br/>
+     * @param context context, nonnull
+     * @deprecated call {@link TILoader#node} to fetch Node in general
+     */
+    @Deprecated
+    public static Node seekNode(Context context){
+        ComponentManager.getInstance().waitingForInitialized();
+        return ComponentManager.getInstance().getNodeManager().seekNode(context);
     }
 
     /***********************************************************************888
