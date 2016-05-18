@@ -154,7 +154,7 @@ public class NodeControllerImpl extends NodeController {
     @Override
     public void execute(Stub stub) {
         if (status.get() <= INITIAL){
-            getLogger().d("[NodeControllerImpl]destroyed/initial, skip execute");
+//            getLogger().d("[NodeControllerImpl]destroyed/initial, skip execute");
             return;
         }
 
@@ -188,7 +188,7 @@ public class NodeControllerImpl extends NodeController {
     @Override
     Task pullTask(Server.Type type) {
         if (nodePauseCount.get() > 0 || status.get() < NORMAL){
-            getLogger().d("[NodeControllerImpl]pause/destroyed/initial/frozen, skip pullTask");
+//            getLogger().d("[NodeControllerImpl]pause/destroyed/initial/frozen, skip pullTask");
             return null;
         }
 
@@ -209,7 +209,7 @@ public class NodeControllerImpl extends NodeController {
     @Override
     void response(Task task) {
         if (status.get() <= INITIAL){
-            getLogger().d("[NodeControllerImpl]destroyed/initial, skip response");
+//            getLogger().d("[NodeControllerImpl]destroyed/initial, skip response");
             return;
         }
 
@@ -464,7 +464,7 @@ public class NodeControllerImpl extends NodeController {
     public void postDispatch() {
         //check state
         if (nodePauseCount.get() > 0 || status.get() < NORMAL){
-            getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
+//            getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
             return;
         }
         dispatchThreadPool.execute(new Runnable() {
@@ -472,7 +472,7 @@ public class NodeControllerImpl extends NodeController {
             public void run() {
                 //check state
                 if (nodePauseCount.get() > 0 || status.get() < NORMAL){
-                    getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
+//                    getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
                     return;
                 }
                 Task task;
@@ -481,7 +481,7 @@ public class NodeControllerImpl extends NodeController {
                     executeTask(task);
                     //check state
                     if (nodePauseCount.get() > 0 || status.get() < NORMAL){
-                        getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
+//                        getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
                         return;
                     }
                 }
@@ -492,7 +492,7 @@ public class NodeControllerImpl extends NodeController {
     @Override
     void postIgnite(){
         if (status.get() <= INITIAL){
-            getLogger().d("[NodeControllerImpl]destroyed/initial, skip postIgnite");
+//            getLogger().d("[NodeControllerImpl]destroyed/initial, skip postIgnite");
             return;
         }
         manager.getMemoryEngine().ignite();
