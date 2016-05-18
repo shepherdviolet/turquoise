@@ -72,15 +72,15 @@ public class RoundedListActivity extends TActivity {
         loadingBitmap = BitmapUtils.toRoundedCorner(loadingBitmap, MeasureUtils.dp2px(this, 2), BitmapUtils.RoundedCornerType.TopLeft_And_TopRight, true);
 
         TILoader.node(this).setting(new NodeSettings.Builder()
-                .setNetworkLoadHandler(new MyNetworkLoadHandler(30f, new int[]{R.mipmap.rounded_list_image1}))
+                .setNetworkLoadHandler(new MyNetworkLoadHandler(30f, new int[]{R.mipmap.rounded_list_image1, R.mipmap.rounded_list_image2, R.mipmap.rounded_list_image3, R.mipmap.rounded_list_image4, R.mipmap.rounded_list_image5}))
                 .setLoadingDrawableFactory(new CommonLoadingDrawableFactory()
                     .setImageBitmap(loadingBitmap)
                     .setAnimationDrawableFactory(new CircleLoadingAnimationDrawableFactory()
-                        .setRadius(0.15f, CircleLoadingAnimationDrawableFactory.SizeUnit.PERCENT_OF_HEIGHT)
-                        .setCircleStrokeWidth(0.02f, CircleLoadingAnimationDrawableFactory.SizeUnit.PERCENT_OF_HEIGHT)
-                        .setProgressStrokeWidth(0.02f, CircleLoadingAnimationDrawableFactory.SizeUnit.PERCENT_OF_HEIGHT)))
+                        .setRadius(0.05f, CircleLoadingAnimationDrawableFactory.SizeUnit.PERCENT_OF_HEIGHT)
+                        .setCircleStrokeWidth(0.01f, CircleLoadingAnimationDrawableFactory.SizeUnit.PERCENT_OF_HEIGHT)
+                        .setProgressStrokeWidth(0.01f, CircleLoadingAnimationDrawableFactory.SizeUnit.PERCENT_OF_HEIGHT)))
                 .setBackgroundColor(0xFFF0F0F0)
-                .setRequestQueueSize(6)
+                .setRequestQueueSize(5)
                 .build());
 
         //设置适配器, 传入图片加载器, 图片解码工具

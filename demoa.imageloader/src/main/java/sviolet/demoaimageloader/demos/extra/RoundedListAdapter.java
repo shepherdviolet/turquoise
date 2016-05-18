@@ -62,7 +62,7 @@ public class RoundedListAdapter extends BaseAdapter {
         this.itemList = itemList;
 
         params = new Params.Builder()
-                .setReqSize(640, 200)//提前约定的图片尺寸
+                .setReqSize(600, 400)//提前约定的图片尺寸
                 .setBitmapConfig(Bitmap.Config.ARGB_8888)//圆角需要透明度
                 .setDecodeScaleStrategy(DecodeHandler.DecodeScaleStrategy.SCALE_FIT_WIDTH)
                 .setDecodeInterceptor(new DecodeHandler.Interceptor() {
