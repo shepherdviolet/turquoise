@@ -40,6 +40,7 @@ import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.drawable.common.CircleLoadingAnimationDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.common.CommonLoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
+import sviolet.turquoise.x.imageloader.node.NodeRemoter;
 
 @DemoDescription(
         title = "RecyclerView Demo",
@@ -82,6 +83,9 @@ public class RecyclerViewActivity extends TAppCompatActivity {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new RecyclerViewAdapter(this, makeItemList()));
+
+        //滑动流畅度优化(非必须)
+        recyclerView.addOnScrollListener(new PauseOnRecyclerViewScrollListener(TILoader.node(this).newNodeRemoter()));
     }
 
     @Override
@@ -115,4 +119,35 @@ public class RecyclerViewActivity extends TAppCompatActivity {
         item.setContent("RecyclerView Title content");
         return item;
     }
+
+    /****************************************************
+     * 滑动流畅度优化(非必须)
+     */
+
+    public class PauseOnRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
+
+        private NodeRemoter nodeRemoter;
+
+        private PauseOnRecyclerViewScrollListener(NodeRemoter nodeRemoter) {
+            this.nodeRemoter = nodeRemoter;
+        }
+
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            switch (newState) {
+                case RecyclerView.SCROLL_STATE_IDLE:
+                case RecyclerView.SCROLL_STATE_DRAGGING:
+                    nodeRemoter.resume();
+                    break;
+                case RecyclerView.SCROLL_STATE_SETTLING:
+                    nodeRemoter.pause();
+                    break;
+            }
+        }
+
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+
+        }
+
+    }
+
 }
