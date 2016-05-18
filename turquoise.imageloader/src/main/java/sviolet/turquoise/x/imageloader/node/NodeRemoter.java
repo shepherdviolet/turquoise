@@ -49,21 +49,20 @@ import sviolet.turquoise.util.droid.DeviceUtils;
  * <pre>{@code
  *      //Node will pause util all RecyclerViews are not fling.
  *      //You should new different NodeRemoter for each RecyclerViews, Do not re-use.
- *      recyclerView1.setOnScrollListener(new PauseOnRecyclerViewScrollListener(TILoader.node(this).newNodeRemoter()));
- *      recyclerView2.setOnScrollListener(new PauseOnRecyclerViewScrollListener(TILoader.node(this).newNodeRemoter()));
+ *      recyclerView1.addOnScrollListener(new PauseOnRecyclerViewScrollListener(TILoader.node(this).newNodeRemoter()));
+ *      recyclerView2.addOnScrollListener(new PauseOnRecyclerViewScrollListener(TILoader.node(this).newNodeRemoter()));
  *
  *      //implement RecyclerView.OnScrollListener
- *      public class PauseOnRecyclerViewScrollListener extends RecyclerView.OnScrollListener{
+ *      public class PauseOnRecyclerViewScrollListener extends RecyclerView.OnScrollListener {
  *
  *          private NodeRemoter nodeRemoter;
- *          private RecyclerView.OnScrollListener customOnScrollListener;
  *
- *          private PauseOnRecyclerViewScrollListener(NodeRemoter nodeRemoter){
+ *          private PauseOnRecyclerViewScrollListener(NodeRemoter nodeRemoter) {
  *              this.nodeRemoter = nodeRemoter;
  *          }
  *
  *          public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
- *              switch (newState){
+ *              switch (newState) {
  *                  case RecyclerView.SCROLL_STATE_IDLE:
  *                  case RecyclerView.SCROLL_STATE_DRAGGING:
  *                      nodeRemoter.resume();
@@ -72,21 +71,12 @@ import sviolet.turquoise.util.droid.DeviceUtils;
  *                      nodeRemoter.pause();
  *                      break;
  *              }
- *
- *              if (customOnScrollListener != null) {
- *                  customOnScrollListener.onScrollStateChanged(recyclerView, newState);
- *              }
  *          }
  *
  *          public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
- *              if (customOnScrollListener != null) {
- *                  customOnScrollListener.onScrolled(recyclerView, dx, dy);
- *              }
+ *
  *          }
  *
- *          public void setCustomOnScrollListener(RecyclerView.OnScrollListener customOnScrollListener){
- *              this.customOnScrollListener = customOnScrollListener;
- *          }
  *      }
  * }</pre>
  *
