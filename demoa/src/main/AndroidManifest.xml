@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
+    <!-- android:resizableActivity="false" 禁用7.0多窗口 -->
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
