@@ -145,6 +145,8 @@ public class TActivityProvider {
                 ((TApplication) activity.getApplication()).removeActivity(activity);
             }catch (Exception ignored){}
         }
+        //清空权限请求任务池
+        mPermissionRequestTaskPool.clear();
     }
 
     /**********************************************
@@ -298,8 +300,9 @@ public class TActivityProvider {
             TextView textView = new TextView(getContext());
             if (!CheckUtils.isEmpty(rationaleContent)) {
                 textView.setText(rationaleContent);
+                textView.setTextColor(0xFF606060);
+                textView.setTextSize(16f);
             }
-            textView.setTextColor(0xFF808080);
             final int dp15 = MeasureUtils.dp2px(getContext(), 15);
             final int dp10 = MeasureUtils.dp2px(getContext(), 10);
             textView.setPadding(dp15, dp15, dp10, dp10);
