@@ -20,13 +20,13 @@
 package sviolet.turquoise.enhance.app;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
+import sviolet.turquoise.enhance.app.utils.RuntimePermissionManager;
 import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
 import sviolet.turquoise.utilx.tlogger.TLogger;
@@ -43,9 +43,10 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  *
  * @author S.Violet
  */
-public class TAppCompatActivity extends AppCompatActivity  implements TActivityProvider.RequestPermissionsCallback, ActivityCompat.OnRequestPermissionsResultCallback {
+public class TAppCompatActivity extends AppCompatActivity  implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private final TActivityProvider provider = new TActivityProvider();
+    private RuntimePermissionManager runtimePermissionManager = new RuntimePermissionManager(this);
 
     private int contentId;
 
@@ -69,6 +70,7 @@ public class TAppCompatActivity extends AppCompatActivity  implements TActivityP
     protected void onDestroy() {
         super.onDestroy();
         provider.onDestroy(this);
+        runtimePermissionManager.onDestroy();
     }
 
     /**
@@ -117,46 +119,46 @@ public class TAppCompatActivity extends AppCompatActivity  implements TActivityP
 
     /**
      * 执行一个需要权限的任务, 兼容低版本<br/>
-     * 检查权限->显示说明->请求权限->回调{@link TActivityProvider.RequestPermissionTask}<br/>
-     * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
+     * 检查权限->显示说明->请求权限->回调{@link RuntimePermissionManager.RequestPermissionTask}<br/>
+     * 目的任务在{@link RuntimePermissionManager.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
      *
      * @param permission 所需权限 android.Manifest.permission....
      * @param task 需要权限的任务
      */
-    public void executePermissionTask(String permission, TActivityProvider.RequestPermissionTask task){
-        provider.executePermissionTask(this, new String[]{permission}, null, null, task);
+    public void executePermissionTask(String permission, RuntimePermissionManager.RequestPermissionTask task){
+        runtimePermissionManager.executePermissionTask(new String[]{permission}, null, null, task);
     }
 
     /**
      * 执行一个需要权限的任务, 兼容低版本<br/>
-     * 检查权限->显示说明->请求权限->回调{@link TActivityProvider.RequestPermissionTask}<br/>
-     * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
+     * 检查权限->显示说明->请求权限->回调{@link RuntimePermissionManager.RequestPermissionTask}<br/>
+     * 目的任务在{@link RuntimePermissionManager.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
      *
      * @param permissions 所需权限 android.Manifest.permission....
      * @param task 需要权限的任务
      */
-    public void executePermissionTask(String[] permissions, TActivityProvider.RequestPermissionTask task){
-        provider.executePermissionTask(this, permissions, null, null, task);
+    public void executePermissionTask(String[] permissions, RuntimePermissionManager.RequestPermissionTask task){
+        runtimePermissionManager.executePermissionTask(permissions, null, null, task);
     }
 
     /**
      * 执行一个需要权限的任务, 兼容低版本<br/>
-     * 检查权限->显示说明->请求权限->回调{@link TActivityProvider.RequestPermissionTask}<br/>
-     * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
+     * 检查权限->显示说明->请求权限->回调{@link RuntimePermissionManager.RequestPermissionTask}<br/>
+     * 目的任务在{@link RuntimePermissionManager.RequestPermissionTask}中实现, 需要判断权限是否被授予<br/>
      *
      * @param permission 所需权限 android.Manifest.permission....
      * @param rationaleTitle 权限说明标题(标题和内容都送空, 则不提示)
      * @param rationaleContent 权限说明内容(标题和内容都送空, 则不提示)
      * @param task 需要权限的任务
      */
-    public void executePermissionTask(String permission, String rationaleTitle, String rationaleContent, TActivityProvider.RequestPermissionTask task){
-        provider.executePermissionTask(this, new String[]{permission}, rationaleTitle, rationaleContent, task);
+    public void executePermissionTask(String permission, String rationaleTitle, String rationaleContent, RuntimePermissionManager.RequestPermissionTask task){
+        runtimePermissionManager.executePermissionTask(new String[]{permission}, rationaleTitle, rationaleContent, task);
     }
 
     /**
      * 执行一个需要权限的任务, 兼容低版本<br/>
-     * 检查权限->显示说明->请求权限->回调{@link TActivityProvider.RequestPermissionTask}<br/>
-     * 目的任务在{@link TActivityProvider.RequestPermissionTask}中实现, 需要判断权限是否被授予<p/>
+     * 检查权限->显示说明->请求权限->回调{@link RuntimePermissionManager.RequestPermissionTask}<br/>
+     * 目的任务在{@link RuntimePermissionManager.RequestPermissionTask}中实现, 需要判断权限是否被授予<p/>
      *
      * 注意:会占用requestCode 201-250 , 建议不要与原生方法requestPermission同时使用.<br/>
      *
@@ -165,34 +167,16 @@ public class TAppCompatActivity extends AppCompatActivity  implements TActivityP
      * @param rationaleContent 权限说明内容(标题和内容都送空, 则不提示)
      * @param task 需要权限的任务
      */
-    public void executePermissionTask(String[] permissions, String rationaleTitle, String rationaleContent, TActivityProvider.RequestPermissionTask task){
-        provider.executePermissionTask(this, permissions, rationaleTitle, rationaleContent, task);
+    public void executePermissionTask(String[] permissions, String rationaleTitle, String rationaleContent, RuntimePermissionManager.RequestPermissionTask task){
+        runtimePermissionManager.executePermissionTask(permissions, rationaleTitle, rationaleContent, task);
     }
 
     /**
-     * 原生权限请求结果回调方法<p/>
-     *
-     * 已被改造, 若采用原生方法获取权限, 请复写{@link TActivity#onRequestPermissionsResult(int, String[], int[], boolean)}<p/>
+     * 原生权限请求结果回调方法, 已被改造<p/>
      */
     @Override
-    public final void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        provider.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
-    }
-
-    /**
-     * 权限请求结果回调方法<p/>
-     *
-     * 仅用于原生方法获取权限. 若使用{@link TActivity#executePermissionTask}请求权限,
-     * 无需复写此方法, 程序会回调{@link TActivityProvider.RequestPermissionTask}处理.<br/>
-     *
-     * @param requestCode 请求码
-     * @param permissions 权限列表 android.Manifest.permission....
-     * @param grantResults 结果列表
-     * @param allGranted 是否所有请求的权限都被允许
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults, boolean allGranted) {
-
+    public final void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        runtimePermissionManager.handleRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
 }
