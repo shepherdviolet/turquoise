@@ -22,6 +22,7 @@
     <string name="other_title">Other Demo</string>
     <string name="other_shadow_title">Shadow Demo</string>
     <string name="other_gradualtitle_title">Gradual Title Demo</string>
+    <string name="other_runtime_permission_title">Runtime Permission Demo</string>
 
     <string name="temp_main_title">Temp</string>
 

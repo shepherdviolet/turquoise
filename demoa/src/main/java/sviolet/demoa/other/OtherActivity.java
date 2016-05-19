@@ -30,7 +30,8 @@ import sviolet.demoa.common.DemoList;
 // Demo列表
 @DemoList({
         ShadowOtherActivity.class,
-        GradualTitleOtherActivity.class
+        GradualTitleOtherActivity.class,
+        RuntimePermissionOtherActivity.class
 })
 
 /**************************************************************
