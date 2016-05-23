@@ -545,9 +545,15 @@ public class NodeControllerImpl extends NodeController {
             //shutdown thread pool
             dispatchThreadPool.shutdown();
             //clear queue
-            netRequestQueue.clear();
-            diskRequestQueue.clear();
-            memoryRequestQueue.clear();
+            if (netRequestQueue != null) {
+                netRequestQueue.clear();
+            }
+            if (diskRequestQueue != null) {
+                diskRequestQueue.clear();
+            }
+            if (memoryRequestQueue != null) {
+                memoryRequestQueue.clear();
+            }
             responseQueue.clear();
             //clear stubs
             try {
