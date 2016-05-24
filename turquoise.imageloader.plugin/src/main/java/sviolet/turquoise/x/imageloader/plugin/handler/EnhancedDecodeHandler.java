@@ -47,24 +47,24 @@ public class EnhancedDecodeHandler extends CommonDecodeHandler {
     private static final byte[] GIF_HEADER = ByteUtils.hexToBytes("47494638");
 
     @Override
-    public ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
+    public ImageResource onDecodeInner(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger, int reqWidth, int reqHeight) {
         if (!isGif(data)){
-            return super.onDecode(applicationContext, context, taskInfo, data, logger);
+            return super.onDecodeInner(applicationContext, context, taskInfo, data, logger, reqWidth, reqHeight);
         }
         try {
-            return new ImageResource(ImageResource.Type.GIF, EnhancedGifDrawable.decode(data, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getDecodeInSampleQuality()));
+            return new ImageResource(ImageResource.Type.GIF, EnhancedGifDrawable.decode(data, reqWidth, reqHeight, taskInfo.getParams().getDecodeInSampleQuality()));
         } catch (IOException e) {
             throw new RuntimeException("[TILoader:EnhancedDecodeHandler]error while decoding gif from bytes", e);
         }
     }
 
     @Override
-    public ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
+    public ImageResource onDecodeInner(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger, int reqWidth, int reqHeight) {
         if (!isGif(file)) {
-            return super.onDecode(applicationContext, context, taskInfo, file, logger);
+            return super.onDecodeInner(applicationContext, context, taskInfo, file, logger, reqWidth, reqHeight);
         }
         try {
-            return new ImageResource(ImageResource.Type.GIF, EnhancedGifDrawable.decode(file, taskInfo.getParams().getReqWidth(), taskInfo.getParams().getReqHeight(), taskInfo.getParams().getDecodeInSampleQuality()));
+            return new ImageResource(ImageResource.Type.GIF, EnhancedGifDrawable.decode(file, reqWidth, reqHeight, taskInfo.getParams().getDecodeInSampleQuality()));
         } catch (IOException e) {
             throw new RuntimeException("[TILoader:EnhancedDecodeHandler]error while decoding gif from file", e);
         }
