@@ -43,6 +43,10 @@ public class CommonDecodeHandler extends DecodeHandler {
         Integer customReqHeight = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_HEIGHT);
         int reqWidth = customReqWidth == null ? taskInfo.getParams().getReqWidth() : customReqWidth;
         int reqHeight = customReqHeight == null ? taskInfo.getParams().getReqHeight() : customReqHeight;
+        return onDecodeInner(applicationContext, context, taskInfo, data, logger, reqWidth, reqHeight);
+    }
+
+    protected ImageResource onDecodeInner(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger, int reqWidth, int reqHeight){
         //decoding
         Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), taskInfo.getParams().getDecodeInSampleQuality());
         if (bitmap == null)
@@ -75,6 +79,10 @@ public class CommonDecodeHandler extends DecodeHandler {
         Integer customReqHeight = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_HEIGHT);
         int reqWidth = customReqWidth == null ? taskInfo.getParams().getReqWidth() : customReqWidth;
         int reqHeight = customReqHeight == null ? taskInfo.getParams().getReqHeight() : customReqHeight;
+        return onDecodeInner(applicationContext, context, taskInfo, file, logger, reqWidth, reqHeight);
+    }
+
+    protected ImageResource onDecodeInner(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger, int reqWidth, int reqHeight){
         //decoding
         Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), BitmapUtils.InSampleQuality.MEDIUM);
         if (bitmap == null)
