@@ -1,13 +1,13 @@
 # Turquoise 3.2.160525
-> A comprehensive Android library for private use.<br/>
-> https://github.com/shepherdviolet/turquoise <br/>
+A comprehensive Android library for private use.<br/>
+https://github.com/shepherdviolet/turquoise <br/>
 
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/logo/turquoise.jpg)<br/>
 <br/>
 <br/>
 <br/>
 
-## Module `turquoise`
+# Module *turquoise*
 ![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
 The basic library module, as detailed below:<br/>
@@ -29,7 +29,7 @@ The basic library module, as detailed below:<br/>
 <br/>
 <br/>
 
-## Module `turquoise.v7`
+# Module *turquoise.v7*
 ![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v7-dc143c.svg?style=flat)
@@ -40,7 +40,7 @@ Expansion Module of `turquoise`, Add support for `support-v7`. Optional.<br/>
 <br/>
 <br/>
 
-## Module `turquoise.imageloader`
+# Module *turquoise.imageloader*
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 TurquoiseImageLoader. it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.<br/>
@@ -84,7 +84,7 @@ TurquoiseImageLoader. it's a new ImageLoader instead of BitmapLoader/SimpleBitma
 <br/>
 <br/>
 
-## Module `turquoise.imageloader.plugin`
+# Module *turquoise.imageloader.plugin*
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise.imageloader-2ed8a8.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
@@ -106,13 +106,13 @@ Expansion Module of `turquoise.imageloader`. Optional.<br/>
 <br/>
 <br/>
 
-## Package Releases (aar/source)
+# Package Releases (aar/source)
 https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
 <br/>
 <br/>
 <br/>
 
-## How to import Turquoise into your project
+# How to import Turquoise into your project
 https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md <br/>
 <br/>
 <br/>
