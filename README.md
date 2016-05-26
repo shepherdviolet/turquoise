@@ -3,25 +3,28 @@
 > https://github.com/shepherdviolet/turquoise <br/>
 
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/logo/turquoise.jpg)<br/>
+<br/>
+<br/>
+<br/>
 
 ## Module `turquoise`
 ![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
-> The basic library module, as detailed below:<br/>
+The basic library module, as detailed below:<br/>
 ### Utils/Models ┃ sviolet.turquoise.util/utilx/model/modelx <br/>
-> ┈┈ 1.LifeCycleUtils: monitor LifeCycle of Activity/Fragment<br/>
-> ┈┈ 2.TLogger: extensible log utils<br/>
-> ┈┈ ~~3.BitmapLoader/SimpleBitmapLoader: deprecated, use TILoader instead (for API11 above)~~<br/>
-> ┈┈ cache/queue/conversion/crypt/sort/android system utils/......<br/>
+┈┈ 1.LifeCycleUtils: monitor LifeCycle of Activity/Fragment<br/>
+┈┈ 2.TLogger: extensible log utils<br/>
+┈┈ ~~3.BitmapLoader/SimpleBitmapLoader: deprecated, use TILoader instead (for API11 above)~~<br/>
+┈┈ cache/queue/conversion/crypt/sort/android system utils/......<br/>
 ### Views ┃ sviolet.turquoise.ui/uix <br/>
-> ┈┈ 1.SlideEngine: help to build sliding view, and provides some ready-made Views<br/>
-> ┈┈ 2.TViewHolder: easy to build Adapter of View<br/>
-> ┈┈ shadow/gif/ripple/rotate/scrape/......<br/>
+┈┈ 1.SlideEngine: help to build sliding view, and provides some ready-made Views<br/>
+┈┈ 2.TViewHolder: easy to build Adapter of View<br/>
+┈┈ shadow/gif/ripple/rotate/scrape/......<br/>
 ### enhanced android component ┃ sviolet.turquoise.enhance <br/>
-> ┈┈ 1.InjectUtils: inject Views by annotation way<br/>
-> ┈┈ 2.TApplication/TActivity: enhanced Component<br/>
-> ┈┈ 3.TActivity.executePermissionTask: easy to use Runtime Permission<br/>
-> ┈┈ 4.WeakHandler: help Handler to avoid Memory Leak(design specifications)<br/>
+┈┈ 1.InjectUtils: inject Views by annotation way<br/>
+┈┈ 2.TApplication/TActivity: enhanced Component<br/>
+┈┈ 3.TActivity.executePermissionTask: easy to use Runtime Permission<br/>
+┈┈ 4.WeakHandler: help Handler to avoid Memory Leak(design specifications)<br/>
 <br/>
 <br/>
 <br/>
@@ -30,9 +33,9 @@
 ![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v7-dc143c.svg?style=flat)
-> Expansion Module of `turquoise`, Add support for `support-v7`. Optional.<br/>
-> 1.Add support for AppCompatActivity.<br/>
-> 2.Add support for RecyclerView.<br/>
+Expansion Module of `turquoise`, Add support for `support-v7`. Optional.<br/>
+1.Add support for AppCompatActivity.<br/>
+2.Add support for RecyclerView.<br/>
 <br/>
 <br/>
 <br/>
@@ -40,7 +43,7 @@
 ## Module `turquoise.imageloader`
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
-> TurquoiseImageLoader. it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.<br/>
+TurquoiseImageLoader. it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.<br/>
 ### Overview:<br/>
 ![](https://github.com/shepherdviolet/turquoise/blob/master/doc/turquoise-overview.png)<br/>
 ### Basic Usage:<br/>
@@ -85,11 +88,11 @@
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise.imageloader-2ed8a8.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
-> Expansion Module of `turquoise.imageloader`. Optional.<br/>
-> 1.Add support for GIF loading, dependent on `pl.droidsonroids.gif:android-gif-drawable:1.1.15`.<br/>
+Expansion Module of `turquoise.imageloader`. Optional.<br/>
+1.Add support for GIF loading, dependent on `pl.droidsonroids.gif:android-gif-drawable:1.1.15`.<br/>
 ### Usage:<br/>
-> `TILoader` will load this plugin automatically, as long as your project dependent on this module.<br/>
-> `Don't need to do anything else`.<br/>
+`TILoader` will load this plugin automatically, as long as your project dependent on this module.<br/>
+`Don't need to do anything else`.<br/>
 
 ```java
 
@@ -104,13 +107,13 @@
 <br/>
 
 ## Package Releases (aar/source)
-> https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
+https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
 <br/>
 <br/>
 <br/>
 
 ## How to import Turquoise into your project
-> https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md <br/>
+https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md <br/>
 <br/>
 <br/>
 <br/>
