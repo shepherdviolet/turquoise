@@ -22,6 +22,9 @@
 > ┈┈ 2.TApplication/TActivity: enhanced Component<br/>
 > ┈┈ 3.TActivity.executePermissionTask: easy to use Runtime Permission<br/>
 > ┈┈ 4.WeakHandler: help Handler to avoid Memory Leak(design specifications)<br/>
+<br/>
+<br/>
+<br/>
 
 ## Module `turquoise.v7`
 ![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
@@ -30,6 +33,9 @@
 > Expansion Module of `turquoise`, Add support for `support-v7`. Optional.<br/>
 > 1.Add support for AppCompatActivity.<br/>
 > 2.Add support for RecyclerView.<br/>
+<br/>
+<br/>
+<br/>
 
 ## Module `turquoise.imageloader`
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
@@ -68,6 +74,12 @@
         TILoader.node(this).load(url, params, imageView);
 
 ```
+### Preview
+![](https://github.com/shepherdviolet/static-resources/blob/master/image/tiloader/tiloader_demo_list.gif)
+![](https://github.com/shepherdviolet/static-resources/blob/master/image/tiloader/tiloader_demo_rounded.gif)<br/>
+<br/>
+<br/>
+<br/>
 
 ## Module `turquoise.imageloader.plugin`
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
@@ -85,9 +97,20 @@
     compile project(':turquoise.imageloader.plugin')
 
 ```
+### Preview
+![](https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/tiloader/tiloader_demo_gif.gif)<br/>
+<br/>
+<br/>
+<br/>
 
 ## Package Releases (aar/source)
 > https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
+<br/>
+<br/>
+<br/>
 
 ## How to import Turquoise into your project
 > https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md <br/>
+<br/>
+<br/>
+<br/>
