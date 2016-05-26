@@ -108,7 +108,7 @@
 
 ### Usage:
 `TILoader` will load this plugin automatically, as long as your project dependent on this module.<br/>
-`Don't need to do anything else`.<br/>
+Don't need to do anything else.<br/>
 
 ```java
 
