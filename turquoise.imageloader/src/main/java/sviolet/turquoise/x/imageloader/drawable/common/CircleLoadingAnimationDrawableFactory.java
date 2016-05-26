@@ -170,6 +170,7 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
         private AnimationSettings settings;
         private LoadProgress.Info progressInfo;
 
+        private int skipCount;
         private int displayPosition = 270;
         private int displayProgress = 0;
 
@@ -208,16 +209,22 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
         }
 
         private void drawByDuration(Canvas canvas){
-            this.displayPosition = (this.displayPosition - settings.rotateStep) % 360;
             final int centerX = (getBounds().left + getBounds().right) >> 1;
             final int centerY = (getBounds().top + getBounds().bottom) >> 1;
             float radius = calculateSizeByUnit(settings.radius, settings.radiusUnit);
             float circleStrokeWidth = calculateSizeByUnit(settings.circleStrokeWidth, settings.circleStrokeUnit);
-            float progressStrokeWidth = calculateSizeByUnit(settings.progressStrokeWidth, settings.progressStrokeUnit);
-            RectF arcBounds = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
 
             circlePaint.setStrokeWidth(circleStrokeWidth);
             canvas.drawCircle(centerX, centerY, radius, circlePaint);
+
+            if (skipCount < 4){
+                skipCount++;
+                return;
+            }
+
+            this.displayPosition = (this.displayPosition - settings.rotateStep) % 360;
+            float progressStrokeWidth = calculateSizeByUnit(settings.progressStrokeWidth, settings.progressStrokeUnit);
+            RectF arcBounds = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
 
             progressPaint.setStrokeWidth(progressStrokeWidth);
             canvas.drawArc(arcBounds, displayPosition, settings.sweepAngle, false, progressPaint);
