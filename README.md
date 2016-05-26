@@ -105,9 +105,10 @@
 
 * Add support for GIF loading, dependent on `pl.droidsonroids.gif:android-gif-drawable:1.1.15`.
 <br/>
+
 ### Usage:
-* `TILoader` will load this plugin automatically, as long as your project dependent on this module.
-* `Don't need to do anything else`.
+`TILoader` will load this plugin automatically, as long as your project dependent on this module.<br/>
+`Don't need to do anything else`.<br/>
 
 ```java
 
@@ -116,7 +117,6 @@
 
 ```
 
-<br/>
 ### Preview:
 ![](https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/tiloader/tiloader_demo_gif.gif)
 <br/>
