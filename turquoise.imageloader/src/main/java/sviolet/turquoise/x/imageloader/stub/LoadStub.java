@@ -258,7 +258,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             //if old stub exists
             if (tag instanceof Stub) {
                 Stub oldStub = (Stub) tag;
-                if (getParams().isSkipSameUrlInSameView() && getUrl().equals(oldStub.getUrl())){
+                if (getParams().isSkipSameUrlInSameView() && getUrl().equals(oldStub.getUrl()) && oldStub.getState() < State.LOAD_CANCELED){
                     //skip if same url
                     return false;
                 } else {

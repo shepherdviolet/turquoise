@@ -223,10 +223,21 @@ public class Params {
         }
 
         /**
-         * <p>[Senior Params]For TILoader.node(context).load(...)/loadBackground(...) only, there is no effective in extract way.</p>
+         * <p>[Senior Params]For TILoader.node(context).load(...)/loadBackground(...) only, there is no effective in "extract" way.</p>
          *
+         * <p>In generally, when you call TILoader.node(context).load(...)/loadBackground(...), we will
+         * cancel previous task of target view, and launch new task in any case, even if the previous task's
+         * url is same as new task. If you refresh UI, you will find the phenomenon of image blinking.</p>
          *
-         * TODO
+         * <p>In some environments, for instance, you want to refresh a ListView by calling Adapter.notifyDataSetChanges,
+         * to avoid the phenomenon of image blinking, you can set this option ({@link Builder#skipSameUrlInSameView()}).
+         * In this mode, if the url of previous task is same as new task, we will continue the previous one,
+         * and cancel the new one.</p>
+         *
+         * <p>WARNING:: If you set this option ({@link Builder#skipSameUrlInSameView()}), you will not be able to
+         * change loading params, we will cancel the new task always. You should not set this option
+         * if you want to change load params of same url in same target view.</p>
+         *
          */
         public Builder skipSameUrlInSameView(){
             values.skipSameUrlInSameView = true;
