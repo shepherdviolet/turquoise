@@ -53,9 +53,7 @@
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 
 ###### TurquoiseImageLoader. it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.
-<br/>
-### Overview:
-![](https://github.com/shepherdviolet/turquoise/blob/master/doc/turquoise-overview.png)
+
 <br/>
 ### Basic Usage:
 ```java
