@@ -171,7 +171,7 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
         private LoadProgress.Info progressInfo;
 
         private int displayPosition = 270;
-        private float displayProgress = 0f;
+        private int displayProgress = 0;
 
         private Paint circlePaint;
         private Paint progressPaint;
@@ -225,19 +225,21 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
 
         private void drawByProgress(Canvas canvas){
             //calculate loading progress
-            float loadingProgress = (float)progressInfo.loaded() / (float)progressInfo.total();
-            if (loadingProgress > 1f){
-                loadingProgress = 1f;
+            int loadingProgress = (int) ((progressInfo.loaded() * 360) / progressInfo.total());
+            if (loadingProgress > 360){
+                loadingProgress = 360;
             }
             if (displayProgress > loadingProgress){
                 //reset display progress
-                displayProgress = 0f;
-            }
-            //increase display progress
-            displayProgress += 0.04;
-            if (displayProgress > loadingProgress){
-                //limit display progress
-                displayProgress = loadingProgress;
+                displayProgress = 0;
+            } else if (displayProgress < loadingProgress) {
+                //increase display progress
+                int step = (loadingProgress - displayProgress) >> 3;
+                if (step > 0){
+                    displayProgress += step;
+                }else{
+                    displayProgress++;
+                }
             }
             final int centerX = (getBounds().left + getBounds().right) >> 1;
             final int centerY = (getBounds().top + getBounds().bottom) >> 1;
@@ -250,7 +252,7 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
             canvas.drawCircle(centerX, centerY, radius, circlePaint);
 
             progressPaint.setStrokeWidth(progressStrokeWidth);
-            canvas.drawArc(arcBounds, 270, 360 * displayProgress, false, progressPaint);
+            canvas.drawArc(arcBounds, 270, displayProgress, false, progressPaint);
         }
 
         private float calculateSizeByUnit(float value, SizeUnit unit){
