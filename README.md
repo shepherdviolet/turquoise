@@ -1,4 +1,4 @@
-# Turquoise 3.2.160525
+# Turquoise 3.2.160526
 * A comprehensive Android library for private use.
 * https://github.com/shepherdviolet/turquoise
 
@@ -54,7 +54,6 @@
 
 ###### TurquoiseImageLoader. it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.
 
-<br/>
 ### Basic Usage:
 ```java
 
@@ -85,7 +84,7 @@
         TILoader.node(this).load(url, params, imageView);
 
 ```
-<br/>
+
 ### Preview:
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/tiloader/tiloader_demo_list.gif)
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/tiloader/tiloader_demo_rounded.gif)
@@ -105,11 +104,10 @@
 <br/>
 
 ### Usage:
-`TILoader` will load this plugin automatically, as long as your project dependent on this module.<br/>
-Don't need to do anything else.<br/>
 
 ```java
 
+    //TILoader will load this plugin automatically, as long as your project dependent on this plugin module. Don't need to do anything else.
     compile project(':turquoise.imageloader')
     compile project(':turquoise.imageloader.plugin')
 
