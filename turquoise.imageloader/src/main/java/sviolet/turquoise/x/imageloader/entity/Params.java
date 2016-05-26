@@ -44,8 +44,9 @@ public class Params {
         private DecodeHandler.DecodeScaleStrategy decodeScaleStrategy = DecodeHandler.DecodeScaleStrategy.NO_SCALE;
         private DecodeHandler.Interceptor decodeInterceptor;
         private Bitmap.Config bitmapConfig = DEFAULT_BITMAP_CONFIG;
-        private boolean indispensable = false;
 
+        private boolean indispensable = false;
+        private boolean skipSameUrlInSameView = false;
         private Map<String, Object> extras;
 
         /**
@@ -64,6 +65,7 @@ public class Params {
             newValues.bitmapConfig = bitmapConfig;
 
             newValues.indispensable = indispensable;
+            newValues.skipSameUrlInSameView = skipSameUrlInSameView;
             newValues.extras = extras;
             return newValues;
         }
@@ -220,6 +222,17 @@ public class Params {
             return this;
         }
 
+        /**
+         * <p>[Senior Params]For TILoader.node(context).load(...)/loadBackground(...) only, there is no effective in extract way.</p>
+         *
+         *
+         * TODO
+         */
+        public Builder skipSameUrlInSameView(){
+            values.skipSameUrlInSameView = true;
+            return this;
+        }
+
         public Builder setExtras(Map<String, Object> extras){
             values.extras = extras;
             return this;
@@ -279,6 +292,10 @@ public class Params {
 
     public boolean isIndispensable(){
         return values.indispensable;
+    }
+
+    public boolean isSkipSameUrlInSameView(){
+        return values.skipSameUrlInSameView;
     }
 
     public Map<String, Object> getExtras(){

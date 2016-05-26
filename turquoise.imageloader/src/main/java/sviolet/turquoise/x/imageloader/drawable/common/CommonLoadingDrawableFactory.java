@@ -82,7 +82,10 @@ public class CommonLoadingDrawableFactory implements LoadingDrawableFactory {
             backgroundDrawable = new ColorDrawable(backgroundColor);
         }
         //animation
-        Drawable animationDrawable = animationDrawableFactory.create(applicationContext, context, params, progressInfo, logger);
+        Drawable animationDrawable = null;
+        if (settings.animationEnabled) {
+            animationDrawable = animationDrawableFactory.create(applicationContext, context, params, progressInfo, logger);
+        }
         //loading drawable
         return new LoadingDrawable(settings, animationDrawable, imageDrawable, backgroundDrawable, drawableWidth, drawableHeight);
     }

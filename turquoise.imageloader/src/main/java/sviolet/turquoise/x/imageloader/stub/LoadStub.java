@@ -49,8 +49,11 @@ public abstract class LoadStub<V extends View> extends AbsStub {
     @Override
     public void initialize(NodeController controller) {
         super.initialize(controller);
-        bindView(getView());
-        showLoading();
+        if (bindView(getView())) {
+            showLoading();
+        } else {
+            onDestroy();
+        }
     }
 
     /*******************************************************8
@@ -245,21 +248,28 @@ public abstract class LoadStub<V extends View> extends AbsStub {
      * protected
      */
 
-    protected void bindView(V view){
+    protected boolean bindView(V view){
         if (view == null){
-            onDestroy();
-            return;
+            return false;
         }
         synchronized (view) {
             //get Stub from View Tag
             Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
-            //destroy obsolete Stub
-            if (tag != null && tag instanceof Stub) {
-                ((Stub) tag).onDestroy();
+            //if old stub exists
+            if (tag instanceof Stub) {
+                Stub oldStub = (Stub) tag;
+                if (getParams().isSkipSameUrlInSameView() && getUrl().equals(oldStub.getUrl())){
+                    //skip if same url
+                    return false;
+                } else {
+                    //replace stub
+                    oldStub.onDestroy();
+                }
             }
             //bind Stub on View
             view.setTag(SpecialResourceId.ViewTag.TILoaderStub, this);
         }
+        return true;
     }
 
     /***********************************************************
