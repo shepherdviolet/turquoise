@@ -26,14 +26,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * [InjectUtils注释]点击事件方法绑定
- * 
+ * [InjectUtils注释]点击事件方法绑定, 不建议使用
+ *
+ * @deprecated i don't like this way
  * @author S.Violet
  */
 
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
+@Deprecated
 public @interface OnClickMethod {
 	int value() default 0;
 }
