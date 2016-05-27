@@ -29,13 +29,15 @@ import java.lang.annotation.Target;
  * [TActivity注释]Activity设置
  * <p/>
  *
-     @ActivitySettings(
-        optionsMenuId = R.menu.menu_guide,
-        noTitle = false,
-        translucentBar = false,
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
-     )
+ * <pre>{@code
+ *      @ActivitySettings(
+ *      optionsMenuId = R.menu.menu_guide,
+ *      noTitle = false,
+ *      translucentBar = false,
+ *      statusBarColor = 0xFF209090,
+ *      navigationBarColor = 0xFF209090
+ *      )
+ * }</pre>
  *
  * @author S.Violet
  */
@@ -53,14 +55,16 @@ public @interface ActivitySettings {
      * OptionsMenu菜单布局ID
      * <p/>
      * 标注注释后, 复写如下方法:
-     * <p/>
-     * public boolean onOptionsItemSelected(MenuItem item) {
-     *      int id = item.getItemId();
-     *      if (id == R.id.guide_menu_settings) {
-     *          return true;
-     *      }
-     *      return super.onOptionsItemSelected(item);
-     * }
+     *
+     * <pre>{@code
+     *  public boolean onOptionsItemSelected(MenuItem item) {
+     *       int id = item.getItemId();
+     *       if (id == R.id.guide_menu_settings) {
+     *           return true;
+     *       }
+     *       return super.onOptionsItemSelected(item);
+     *  }
+     * }</pre>
      *
      */
     int optionsMenuId() default DEF_OPTIONS_MENU_ID;
