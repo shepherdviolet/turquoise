@@ -169,7 +169,7 @@ public class DiskCacheServer extends DiskCacheModule {
                     loopCount++;
                 }
                 if (loopCount == 0){
-                    throw new Exception("[TILoader]network load failed, null content received (1)");
+                    throw new NetworkException(new Exception("[TILoader]network load failed, null content received (1)"));
                 }
                 //succeed
                 editor.commit();
