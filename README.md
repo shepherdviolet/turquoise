@@ -10,6 +10,7 @@
 # Module turquoise
 ![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v7-dc143c.svg?style=flat)
 
 ###### The basic library module, as detailed below:
 
@@ -29,19 +30,16 @@
 * TActivity.executePermissionTask: easy to use Runtime Permission
 * WeakHandler: help Handler to avoid Memory Leak(design specifications)
 
-<br/>
-<br/>
-<br/>
+### Maven Dependency:
+```java
 
-# Module turquoise.v7
-![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v7-dc143c.svg?style=flat)
+    //required
+    compile 'com.android.support:support-v4:23.4.0'
+    //optional
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
 
-###### Expansion Module of `turquoise`, Add support for `support-v7`. Optional.
-
-* Add support for AppCompatActivity.
-* Add support for RecyclerView.
+```
 
 <br/>
 <br/>
@@ -102,7 +100,6 @@
 <br/>
 
 ### Usage:
-
 ```java
 
     //TILoader will load this plugin automatically, as long as your project dependent on this plugin module. Don't need to do anything else.
@@ -111,9 +108,15 @@
 
 ```
 
+### Maven Dependency:
+```java
+
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
+
+```
+
 ### Preview:
-![](https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/tiloader/tiloader_demo_gif.gif)
-<br/>
+![](https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/tiloader/tiloader_demo_gif.gif)<br/>
 <br/>
 <br/>
 <br/>
