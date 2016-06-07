@@ -88,6 +88,7 @@
     //required
     compile project(':turquoise')
     compile project(':turquoise.imageloader')
+    compile 'com.android.support:support-v4:23.4.0'
 
 ```
 
@@ -117,6 +118,7 @@
     compile project(':turquoise')
     compile project(':turquoise.imageloader')
     compile project(':turquoise.imageloader.plugin')
+    compile 'com.android.support:support-v4:23.4.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
 
 ```
