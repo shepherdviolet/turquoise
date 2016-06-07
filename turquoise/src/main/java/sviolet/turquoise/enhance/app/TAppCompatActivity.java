@@ -24,6 +24,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 
+import sviolet.turquoise.enhance.app.TActivityProvider;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
 import sviolet.turquoise.enhance.app.utils.RuntimePermissionManager;
@@ -32,8 +33,10 @@ import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
- * [组件扩展]Activity<br>
- * <br>
+ * <p>[组件扩展]Activity</p>
+ *
+ * <p>Dependency:com.android.support:appcompat-v7</p>
+ *
  * 0.Activity注释式设置<br/>
  * {@link ActivitySettings};<br/>
  * <br/>

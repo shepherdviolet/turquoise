@@ -31,6 +31,8 @@ import android.view.ViewGroup;
  *
  * <p>建议直接使用{@link TRecyclerViewAdapter}.</p>
  *
+ * <p>Dependency:com.android.support:recyclerview-v7</p>
+ *
  * <pre>{@code
  *  public class XXXAdapter extends RecyclerView.Adapter<TRecyclerViewHolder> {
  *

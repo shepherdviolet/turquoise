@@ -13,7 +13,6 @@
             <option value="$PROJECT_DIR$/turquoise" />
             <option value="$PROJECT_DIR$/turquoise.imageloader" />
             <option value="$PROJECT_DIR$/turquoise.imageloader.plugin" />
-            <option value="$PROJECT_DIR$/turquoise.v7" />
           </set>
         </option>
         <option name="myModules">
@@ -24,7 +23,6 @@
             <option value="$PROJECT_DIR$/turquoise" />
             <option value="$PROJECT_DIR$/turquoise.imageloader" />
             <option value="$PROJECT_DIR$/turquoise.imageloader.plugin" />
-            <option value="$PROJECT_DIR$/turquoise.v7" />
           </set>
         </option>
       </GradleProjectSettings>

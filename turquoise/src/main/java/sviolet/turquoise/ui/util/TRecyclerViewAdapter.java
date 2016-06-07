@@ -26,6 +26,8 @@ import android.view.ViewGroup;
 /**
  * <p>[RecyclerView专用] RecyclerView.Adapter增强</p>
  *
+ * <p>Dependency:com.android.support:recyclerview-v7</p>
+ *
  * <pre>{@code
  *
  *  protected void onCreate(Bundle savedInstanceState) {
