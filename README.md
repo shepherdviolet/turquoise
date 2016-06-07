@@ -16,7 +16,6 @@
 ### Utils/Models ┃ sviolet.turquoise.util/utilx/model/modelx
 * LifeCycleUtils: monitor LifeCycle of Activity/Fragment
 * TLogger: extensible log utils
-* ~~3.BitmapLoader/SimpleBitmapLoader: deprecated, use TILoader instead (for API11 above)~~
 * cache/queue/conversion/crypt/sort/android system utils/......
 
 ### Views ┃ sviolet.turquoise.ui/uix
@@ -52,12 +51,12 @@
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 
-###### TurquoiseImageLoader. it's a new ImageLoader instead of BitmapLoader/SimpleBitmapLoader.
+###### TurquoiseImageLoader. it's a new image loader.
 
 ### Basic Usage:
 ```java
 
-        //TILoader setting, Non essential
+        //TILoader setting, non-essential
         TILoader.setting(
             new ServerSettings.Builder()
                 .setMemoryCachePercent(getApplicationContext(), 0.1f)
@@ -65,17 +64,16 @@
                 .setLogEnabled(true)
                 .build());
 
-        //Node setting, Non essential
+        //Node setting, non-essential
         TILoader.node(this).setting(
             new NodeSettings.Builder()
-                .setNetworkLoadHandler(new MyNetworkLoadHandler())
                 .setLoadingDrawableFactory(
                     new CommonLoadingDrawableFactory()
                         .setImageResId(R.mipmap.loading_image)
                         .setBackgroundColor(0xFFF0F0F0))
                 .build());
 
-        //Load setting, Non essential
+        //Load setting, non-essential
         Params params = new Params.Builder()
             .setBitmapConfig(Bitmap.Config.ARGB_8888)
             .build();

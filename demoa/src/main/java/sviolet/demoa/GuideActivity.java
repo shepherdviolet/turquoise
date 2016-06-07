@@ -31,13 +31,11 @@ import android.widget.Toast;
 import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
-import sviolet.demoa.image.ImageActivity;
 import sviolet.demoa.other.OtherActivity;
 import sviolet.demoa.slide.SlideActivity;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 
 /**************************************************************
  * Demo配置
@@ -50,7 +48,6 @@ import sviolet.turquoise.modelx.bitmaploader.BitmapLoader;
 // Demo列表
 @DemoList({
         SlideActivity.class,
-        ImageActivity.class,
         OtherActivity.class,
         TempActivity.class
 })
@@ -97,21 +94,6 @@ public class GuideActivity extends TActivity {
         } else if (id == R.id.guide_menu_about) {
             //版本显示
             Toast.makeText(this, "Turquoise Demo " + BuildConfig.VERSION_NAME, Toast.LENGTH_SHORT).show();
-            return true;
-        } else if (id == R.id.guide_menu_wipe_cache){
-            /*
-                清空磁盘缓存, 此处为简易写法, 为保证流畅, 应另启线程处理,
-                同时显示进度条遮罩, 阻止用户操作. 要确保该方法执行时, 对
-                应磁盘缓存区无读写操作, 否则会抛出异常.
-            */
-            try {
-                BitmapLoader.wipeDiskCache(this, "AsyncImageActivity");//若有外部储存, 清除外部缓存, 否则清除内部缓存
-//                BitmapLoader.wipeInnerDiskCache(this, "AsyncImageActivity");//强制清除内部储存的缓存
-                Toast.makeText(getApplicationContext(), "cache wipe complete", Toast.LENGTH_SHORT).show();
-            } catch (Exception e) {
-                Toast.makeText(getApplicationContext(), "cache wipe failed", Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
             return true;
         }
 
