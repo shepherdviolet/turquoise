@@ -30,10 +30,11 @@
 * TActivity.executePermissionTask: easy to use Runtime Permission
 * WeakHandler: help Handler to avoid Memory Leak(design specifications)
 
-### Maven Dependency:
+### Dependency:
 ```java
 
     //required
+    compile project(':turquoise')
     compile 'com.android.support:support-v4:23.4.0'
     //optional
     compile 'com.android.support:appcompat-v7:23.4.0'
@@ -81,6 +82,15 @@
 
 ```
 
+### Dependency:
+```java
+
+    //required
+    compile project(':turquoise')
+    compile project(':turquoise.imageloader')
+
+```
+
 ### Preview:
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/tiloader/tiloader_demo_list.gif)
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/tiloader/tiloader_demo_rounded.gif)
@@ -97,20 +107,16 @@
 ###### Expansion Module of `turquoise.imageloader`. Optional.
 
 * Add support for GIF loading, dependent on `pl.droidsonroids.gif:android-gif-drawable:1.1.15`.
+* TILoader will load this plugin automatically, as long as your project dependent on this plugin module. Don't need to do anything else.
 <br/>
 
-### Usage:
+### Dependency:
 ```java
 
-    //TILoader will load this plugin automatically, as long as your project dependent on this plugin module. Don't need to do anything else.
+    //required
+    compile project(':turquoise')
     compile project(':turquoise.imageloader')
     compile project(':turquoise.imageloader.plugin')
-
-```
-
-### Maven Dependency:
-```java
-
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
 
 ```
