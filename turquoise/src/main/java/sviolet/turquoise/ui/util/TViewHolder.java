@@ -151,6 +151,24 @@ public class TViewHolder {
     }
 
     /**
+     * 创建(获取)convertView的子控件
+     *
+     * @param resId 子控件资源ID
+     * @param type 指定返回类型
+     * @return 获取convertView的子控件
+     */
+    public <V extends View> V get(int resId, Class<V> type){
+        View view = views.get(resId);
+        if (view == null){
+            view = findView(resId);
+            if (view != null){
+                views.put(resId, view);
+            }
+        }
+        return (V) view;
+    }
+
+    /**
      * create次数 (指ViewHolder.create())<p/>
      *
      * 通常用于判断convertView是否为新实例, 当createTimes() == 1 时可进行一些控件初始化操作, 如:绑定监听器等

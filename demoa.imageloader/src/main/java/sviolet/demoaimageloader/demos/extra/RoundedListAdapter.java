@@ -101,8 +101,8 @@ public class RoundedListAdapter extends BaseAdapter {
         TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.rounded_list_main_item);
 
         AsyncImageItem item = itemList.get(position);
-        ((TextView) holder.get(R.id.rounded_list_item_topic)).setText(item.getTitle());
-        ((TextView) holder.get(R.id.rounded_list_item_state)).setText(item.getContent());
+        holder.get(R.id.rounded_list_item_topic, TextView.class).setText(item.getTitle());
+        holder.get(R.id.rounded_list_item_state, TextView.class).setText(item.getContent());
 
         final ImageView imageView = holder.get(R.id.rounded_list_item_image);
 

@@ -43,7 +43,7 @@ import android.view.ViewGroup;
  *
  *      public void onBindViewHolder(TRecyclerViewHolder holder, int position) {
  *          //装载数据
- *          ((TextView)holder.get(R.id.xxx)).setText(datas.get(position));
+ *          holder.get(R.id.xxx, TextView.class).setText(datas.get(position));
  *      }
  *
  *      public int getItemCount() {
@@ -87,6 +87,24 @@ public class TRecyclerViewHolder extends RecyclerView.ViewHolder {
      * @return 子控件
      */
     public <V extends View> V get(int resId){
+        View view = subViews.get(resId);
+        if (view == null){
+            view = findView(resId);
+            if (view != null){
+                subViews.put(resId, view);
+            }
+        }
+        return (V)view;
+    }
+
+    /**
+     * 创建(获取)itemView的子控件
+     *
+     * @param resId 子控件资源ID
+     * @param type 指定返回类型
+     * @return 子控件
+     */
+    public <V extends View> V get(int resId, Class<V> type){
         View view = subViews.get(resId);
         if (view == null){
             view = findView(resId);
