@@ -96,11 +96,11 @@ public class MySlideListAdapter extends BaseAdapter implements SlideListAdapter 
     public View getView(int position, View convertView, ViewGroup parent) {
         TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.slide_list_item);
 
-        final LinearLayoutDrawer drawerView = (LinearLayoutDrawer) holder.get(R.id.slide_list_drawer);
-        TextView titleView = (TextView) holder.get(R.id.common_list_item_title);
-        TextView typeView = (TextView) holder.get(R.id.common_list_item_type);
-        TextView infoView = (TextView) holder.get(R.id.common_list_item_info);
-        Button backgroundButton = (Button) holder.get(R.id.slide_list_background_button);
+        final LinearLayoutDrawer drawerView = holder.get(R.id.slide_list_drawer);
+        TextView titleView = holder.get(R.id.common_list_item_title);
+        TextView typeView = holder.get(R.id.common_list_item_type);
+        TextView infoView = holder.get(R.id.common_list_item_info);
+        Button backgroundButton = holder.get(R.id.slide_list_background_button);
 
         /*
             初始化, 当createTimes() == 1 时, convertView为新实例, 在此时可以进行控件初始化操作.

@@ -104,7 +104,7 @@ public class RoundedListAdapter extends BaseAdapter {
         ((TextView) holder.get(R.id.rounded_list_item_topic)).setText(item.getTitle());
         ((TextView) holder.get(R.id.rounded_list_item_state)).setText(item.getContent());
 
-        final ImageView imageView = (ImageView) holder.get(R.id.rounded_list_item_image);
+        final ImageView imageView = holder.get(R.id.rounded_list_item_image);
 
         if (holder.createTimes() == 1){
             imageView.setOnClickListener(new View.OnClickListener() {

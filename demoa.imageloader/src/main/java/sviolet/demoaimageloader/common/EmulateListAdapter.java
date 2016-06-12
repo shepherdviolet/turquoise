@@ -103,9 +103,9 @@ public class EmulateListAdapter extends BaseAdapter {
     private void inflateView(int position, TViewHolder holder) {
         String tail = Integer.toString(position);
 
-        TextView titleView = (TextView) holder.get(R.id.common_list_item_title);
-        TextView typeView = (TextView) holder.get(R.id.common_list_item_type);
-        TextView infoView = (TextView) holder.get(R.id.common_list_item_info);
+        TextView titleView = holder.get(R.id.common_list_item_title);
+        TextView typeView = holder.get(R.id.common_list_item_type);
+        TextView infoView = holder.get(R.id.common_list_item_info);
 
         if (title != null)
             titleView.setText(title + tail);

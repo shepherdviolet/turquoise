@@ -79,11 +79,11 @@ public class ListViewAdapter extends BaseAdapter {
         ((TextView) holder.get(R.id.list_view_main_item_content)).setText(item.getContent());
 
         ImageView[] images = new ImageView[5];
-        images[0] = (ImageView) holder.get(R.id.list_view_main_item_imageview0);
-        images[1] = (ImageView) holder.get(R.id.list_view_main_item_imageview1);
-        images[2] = (ImageView) holder.get(R.id.list_view_main_item_imageview2);
-        images[3] = (ImageView) holder.get(R.id.list_view_main_item_imageview3);
-        images[4] = (ImageView) holder.get(R.id.list_view_main_item_imageview4);
+        images[0] = holder.get(R.id.list_view_main_item_imageview0);
+        images[1] = holder.get(R.id.list_view_main_item_imageview1);
+        images[2] = holder.get(R.id.list_view_main_item_imageview2);
+        images[3] = holder.get(R.id.list_view_main_item_imageview3);
+        images[4] = holder.get(R.id.list_view_main_item_imageview4);
 
         if (holder.createTimes() == 1){
             for (int i = 0 ; i < 5 ; i++) {

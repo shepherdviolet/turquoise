@@ -110,7 +110,7 @@ public class GradualTitleListAdapter extends BaseAdapter {
      */
 
     private void inflateTitleView(TViewHolder holder) {
-        ImageView imageView = (ImageView) holder.get(R.id.other_gradualtitle_main_item_title_imageview);
+        ImageView imageView = holder.get(R.id.other_gradualtitle_main_item_title_imageview);
         imageView.setAlpha(200);
     }
 
@@ -123,9 +123,9 @@ public class GradualTitleListAdapter extends BaseAdapter {
     private void inflateContentView(int position, TViewHolder holder) {
         String tail = Integer.toString(position);
 
-        TextView titleView = (TextView) holder.get(R.id.common_list_item_title);
-        TextView typeView = (TextView) holder.get(R.id.common_list_item_type);
-        TextView infoView = (TextView) holder.get(R.id.common_list_item_info);
+        TextView titleView = holder.get(R.id.common_list_item_title);
+        TextView typeView = holder.get(R.id.common_list_item_type);
+        TextView infoView = holder.get(R.id.common_list_item_info);
 
         if (title != null)
             titleView.setText(title + tail);

@@ -38,8 +38,8 @@ import sviolet.turquoise.common.statics.SpecialResourceId;
  *          TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.xxx);
  *
  *          //获取控件
- *          LinearLayoutDrawer drawer = (LinearLayoutDrawer) holder.get(R.id.drawer);
- *          TextView titleView = (TextView) holder.get(R.id.title);
+ *          LinearLayoutDrawer drawer = holder.get(R.id.drawer);
+ *          TextView titleView = holder.get(R.id.title);
  *
  *          //可选代码块
  *          //createTimes()方法可以获得同一个convertView create次数
@@ -139,7 +139,7 @@ public class TViewHolder {
      * @param resId 子控件资源ID
      * @return 获取convertView的子控件
      */
-    public View get(int resId){
+    public <V extends View> V get(int resId){
         View view = views.get(resId);
         if (view == null){
             view = findView(resId);
@@ -147,7 +147,7 @@ public class TViewHolder {
                 views.put(resId, view);
             }
         }
-        return view;
+        return (V) view;
     }
 
     /**
