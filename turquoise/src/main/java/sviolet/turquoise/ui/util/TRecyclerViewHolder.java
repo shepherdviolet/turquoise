@@ -86,7 +86,7 @@ public class TRecyclerViewHolder extends RecyclerView.ViewHolder {
      * @param resId 子控件资源ID
      * @return 子控件
      */
-    public View get(int resId){
+    public <V extends View> V get(int resId){
         View view = subViews.get(resId);
         if (view == null){
             view = findView(resId);
@@ -94,7 +94,7 @@ public class TRecyclerViewHolder extends RecyclerView.ViewHolder {
                 subViews.put(resId, view);
             }
         }
-        return view;
+        return (V)view;
     }
 
     private View findView(int resId){
