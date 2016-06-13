@@ -88,12 +88,12 @@ public class ClassPrinter {
 
         stringBuilder.append("\n--------------Constructors--------------");
         Constructor<?>[] constructors = clazz.getDeclaredConstructors();
-        for (int i = 0 ; i < constructors.length - 1 ; i++) {
+        for (Constructor<?> constructor : constructors) {
             stringBuilder.append("\n");
-            printModifiers(constructors[i].getModifiers(), stringBuilder);
+            printModifiers(constructor.getModifiers(), stringBuilder);
             stringBuilder.append(clazz.getSimpleName());
             stringBuilder.append("(");
-            Class<?>[] paramTypes = constructors[i].getParameterTypes();
+            Class<?>[] paramTypes = constructor.getParameterTypes();
             if (paramTypes != null) {
                 for (int j = 0 ; j < paramTypes.length ; j++){
                     if (j != 0){
