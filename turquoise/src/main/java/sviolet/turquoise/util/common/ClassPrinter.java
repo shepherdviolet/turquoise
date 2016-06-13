@@ -69,17 +69,18 @@ public class ClassPrinter {
         stringBuilder.append("\n--------------Fields--------------");
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
+            int modifiers = field.getModifiers();
             String name = field.getName();
             if (name.contains("$")){
                 continue;
             }
             field.setAccessible(true);
             stringBuilder.append("\n");
-            printModifiers(field.getModifiers(), stringBuilder);
+            printModifiers(modifiers, stringBuilder);
             stringBuilder.append(field.getType().getName());
             stringBuilder.append(" ");
             stringBuilder.append(name);
-            if (obj != null) {
+            if (obj != null || CheckUtils.isFlagMatch(modifiers, Modifier.STATIC)) {
                 stringBuilder.append(" = ");
                 stringBuilder.append(field.get(obj));
             }
