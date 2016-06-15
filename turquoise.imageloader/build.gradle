@@ -19,6 +19,9 @@ android {
 }
 
 dependencies {
+    //required
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':turquoise')
+    //optional
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
 }

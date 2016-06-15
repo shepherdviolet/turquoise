@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.util.common.DateTimeUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
+import sviolet.turquoise.util.droid.NetStateUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
@@ -53,7 +54,12 @@ public class CommonExceptionHandler implements ExceptionHandler {
     private static final String TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_CN = "由于网速过慢, 部分图片取消加载.";
     private static final String TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_EN = "Network speed is too slow, some of the load tasks were canceled.";
 
+    private static final String NETWORK_NOT_CONNECTED_CN = "图片加载失败, 网络未连接.";
+    private static final String NETWORK_NOT_CONNECTED_EN = "Failed to load image, your network is not connected.";
+    private static final long NETWORK_EXCEPTION_NOTICE_INTERVAL = 20 * 1000L;//20s
+
     private AtomicLong diskCacheExceptionNoticeTime = new AtomicLong(0);
+    private AtomicLong networkExceptionNoticeTime = new AtomicLong(0);
 
     @Override
     public void onDiskCacheOpenException(Context applicationContext, Context context, Throwable throwable, TLogger logger) {
@@ -104,6 +110,17 @@ public class CommonExceptionHandler implements ExceptionHandler {
 
     @Override
     public void onNetworkLoadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        if (!NetStateUtils.isNetworkConnected(applicationContext)){
+            long time = DateTimeUtils.getUptimeMillis();
+            long previousTime = networkExceptionNoticeTime.get();
+            if ((time - previousTime) > NETWORK_EXCEPTION_NOTICE_INTERVAL) {
+                if (networkExceptionNoticeTime.compareAndSet(previousTime, time)) {
+                    Message msg = myHandler.obtainMessage(MyHandler.HANDLER_NETWORK_NOT_CONNECTED);
+                    msg.obj = new Info(applicationContext);
+                    msg.sendToTarget();
+                }
+            }
+        }
         //print unknownHostException
         if(throwable instanceof UnknownHostException){
             logger.e("NetworkLoadException:" + taskInfo + "\n" + throwable.getMessage(), throwable);
@@ -168,6 +185,7 @@ public class CommonExceptionHandler implements ExceptionHandler {
         private static final int HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT = 2;
         private static final int HANDLER_ON_MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT = 3;
         private static final int HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK = 4;
+        private static final int HANDLER_NETWORK_NOT_CONNECTED = 5;
 
         public MyHandler(Looper looper, CommonExceptionHandler host) {
             super(looper, host);
@@ -187,6 +205,9 @@ public class CommonExceptionHandler implements ExceptionHandler {
                     break;
                 case HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK:
                     host.showToast(((Info) msg.obj).getApplicationContext(), TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_CN, TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_EN);
+                    break;
+                case HANDLER_NETWORK_NOT_CONNECTED:
+                    host.showToast(((Info) msg.obj).getApplicationContext(), NETWORK_NOT_CONNECTED_CN, NETWORK_NOT_CONNECTED_EN);
                     break;
                 default:
                     break;

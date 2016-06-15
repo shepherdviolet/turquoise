@@ -19,6 +19,7 @@
 
 package sviolet.demoaimageloader;
 
+import okhttp3.OkHttpClient;
 import sviolet.demoaimageloader.common.Constants;
 import sviolet.demoaimageloader.custom.MyStubFactory;
 import sviolet.turquoise.enhance.app.TApplication;
@@ -29,6 +30,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
+import sviolet.turquoise.x.imageloader.handler.common.OkHttpNetworkLoadHandler;
 
 @ApplicationSettings(
         DEBUG = BuildConfig._DEBUG //Debug模式, 装载DebugSetting配置
@@ -79,13 +81,13 @@ public class MyApplication extends TApplication {
                 .setMemoryCachePercent(getApplicationContext(), 0.1f)//分配10%的APP内存用于图片缓存
                 .setDiskCacheSize(30)//分配30M用于图片磁盘缓存
                 .setCustomStubFactory(new MyStubFactory())//自定义实现Stub工厂(用于增加对新控件的支持)
+                .setNetworkLoadHandler(new OkHttpNetworkLoadHandler(new OkHttpClient()))//改用OkHttp
 //                .setDiskCachePath(getApplicationContext(), ServerSettings.DiskCachePath.EXTERNAL_STORAGE, "TILoaderDemo")//设置优先使用外部存储作为磁盘缓存, 子目录"TILoaderDemo"
 //                .setMemoryLoadMaxThread(1)//设置内存加载线程数(默认1, 通常无需修改)
 //                .setDiskLoadMaxThread(2)//设置磁盘加载线程数(默认2, 通常无需修改)
 //                .setNetworkLoadMaxThread(3)//设置网络加载线程数(默认3, 通常无需修改)
 //                .setNetworkConnectTimeout(3000)//设置网络加载连接超时
 //                .setNetworkReadTimeout(7000)//设置网络加载读取超时
-//                .setNetworkLoadHandler(new MyNetworkLoadHandler())//自定义实现网络加载
 //                .setExceptionHandler(new MyExceptionHandler())//自定义实现异常处理
 //                .setBackgroundColor(0xFFF0F0F0)//自定义背景色(作为加载目标图的背景)
 //                .setBackgroundImageResId(R.mipmap.async_image_loading)//自定义背景图(作为加载目标图的背景, 不常用)

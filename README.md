@@ -10,7 +10,6 @@
 # Module turquoise
 ![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v7-dc143c.svg?style=flat)
 
 ###### The basic library module, as detailed below:
 
@@ -89,6 +88,8 @@
     compile project(':turquoise')
     compile project(':turquoise.imageloader')
     compile 'com.android.support:support-v4:23.4.0'
+    //optional
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
 
 ```
 
@@ -120,6 +121,8 @@
     compile project(':turquoise.imageloader.plugin')
     compile 'com.android.support:support-v4:23.4.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
+    //optional
+    compile 'com.squareup.okhttp3:okhttp:3.2.0'
 
 ```
 
