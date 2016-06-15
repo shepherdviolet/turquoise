@@ -37,7 +37,7 @@ import sviolet.turquoise.x.imageloader.server.EngineCallback;
 /**
  * <p>NetworkLoadHandler on okhttp</p>
  *
- * <p>dependency::com.squareup.okhttp3:okhttp:3.2.0</p>
+ * <p>dependency::com.squareup.okhttp3:okhttp:3.3.1</p>
  *
  * Created by S.Violet on 2016/6/15.
  */

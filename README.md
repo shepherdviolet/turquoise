@@ -89,7 +89,7 @@
     compile project(':turquoise.imageloader')
     compile 'com.android.support:support-v4:23.4.0'
     //optional
-    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.squareup.okhttp3:okhttp:3.3.1'
 
 ```
 
@@ -122,7 +122,7 @@
     compile 'com.android.support:support-v4:23.4.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
     //optional
-    compile 'com.squareup.okhttp3:okhttp:3.2.0'
+    compile 'com.squareup.okhttp3:okhttp:3.3.1'
 
 ```
 
