@@ -27,7 +27,7 @@ android {
         minSdkVersion 11
         targetSdkVersion 23
         versionCode 3
-        versionName "3.3.160622"
+        versionName "3.4.160622"
     }
     buildTypes {
         release {
