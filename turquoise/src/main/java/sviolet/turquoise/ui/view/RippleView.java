@@ -243,18 +243,18 @@ public class RippleView extends RelativeLayout{
 	 */
 	private void initSetting(final Context context, AttributeSet attrs) {
 		TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.RippleView);
-        rippleColor = typedArray.getColor(R.styleable.RippleView_colour, RIPPLE_COLOR_DEF);
+        rippleColor = typedArray.getColor(R.styleable.RippleView_android_color, RIPPLE_COLOR_DEF);
         rippleType = typedArray.getInt(R.styleable.RippleView_RippleView_type, RIPPLE_TYPE_DEF);
-        duration = typedArray.getInteger(R.styleable.RippleView_duration, DURATION_DEF) * SLOW_DOWN;//不松开时减速
-        frameRate = typedArray.getInteger(R.styleable.RippleView_framerate, FRAME_RATE_DEF);
-        paintAlpha = typedArray.getInteger(R.styleable.RippleView_alpha, PAINT_ALPHA_DEF);
-        ripplePadding = typedArray.getDimensionPixelSize(R.styleable.RippleView_padding, RIPPLE_PADDING_DEF);
+        duration = typedArray.getInteger(R.styleable.RippleView_android_duration, DURATION_DEF) * SLOW_DOWN;//不松开时减速
+        frameRate = typedArray.getInteger(R.styleable.RippleView_frameRate, FRAME_RATE_DEF);
+        paintAlpha = typedArray.getInteger(R.styleable.RippleView_android_alpha, PAINT_ALPHA_DEF);
+        ripplePadding = typedArray.getDimensionPixelSize(R.styleable.RippleView_android_padding, RIPPLE_PADDING_DEF);
         zoomScale = typedArray.getFloat(R.styleable.RippleView_zoomScale, ZOOM_SCALE_DEF);
         zoomDuration = typedArray.getInt(R.styleable.RippleView_zoomDuration, ZOOM_DURATION_DEF);
         isCenter = typedArray.getBoolean(R.styleable.RippleView_center, false);
         isZoom = typedArray.getBoolean(R.styleable.RippleView_zoomEnable, false);
-        longpressEnabled = typedArray.getBoolean(R.styleable.RippleView_longpressEnabled, true);
-        abordTouchEvent = typedArray.getBoolean(R.styleable.RippleView_abordTouchEvent, false);
+        longpressEnabled = typedArray.getBoolean(R.styleable.RippleView_longPressEnabled, true);
+        abordTouchEvent = typedArray.getBoolean(R.styleable.RippleView_abortTouchEvent, false);
         typedArray.recycle();
 	}
     

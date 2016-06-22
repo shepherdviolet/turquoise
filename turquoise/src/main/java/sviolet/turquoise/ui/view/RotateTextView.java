@@ -58,7 +58,7 @@ public class RotateTextView extends TextView {
 	 */
 	private void init(Context context, AttributeSet attrs){
 		TypedArray types = context.obtainStyledAttributes(attrs, R.styleable.RotateTextView);
-		angle = types.getFloat(R.styleable.RotateTextView_angle, 0f);
+		angle = types.getFloat(R.styleable.RotateTextView_android_angle, 0f);
 		types.recycle();
 	}
 	

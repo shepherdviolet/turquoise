@@ -88,9 +88,9 @@ public class DotPageIndicator extends View implements SlideIndicator {
 	 */
 	private void initParams(Context context, AttributeSet attrs) {
 		TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.DotPageIndicator);
-		color = typedArray.getColor(R.styleable.DotPageIndicator_colour, COLOR_DEF);
+		color = typedArray.getColor(R.styleable.DotPageIndicator_android_color, COLOR_DEF);
 		colorHighLight = typedArray.getColor(R.styleable.DotPageIndicator_highLightColor, COLOR_HIGH_LIGHT_DEF);
-		radius = typedArray.getDimensionPixelOffset(R.styleable.DotPageIndicator_radius, RADIUS_DEF);
+		radius = typedArray.getDimensionPixelOffset(R.styleable.DotPageIndicator_android_radius, RADIUS_DEF);
 		interval = typedArray.getDimensionPixelOffset(R.styleable.DotPageIndicator_interval, INTERVAL_DEF);
 		quantity = typedArray.getInt(R.styleable.DotPageIndicator_quantity, 0);
         typedArray.recycle();

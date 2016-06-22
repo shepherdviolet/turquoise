@@ -101,7 +101,7 @@ public class RotateImageView extends ImageView {
 	private void init(AttributeSet attrs){
 		// 获取控件参数
 		TypedArray types = context.obtainStyledAttributes(attrs, R.styleable.RotateImageView);
-		resId = types.getResourceId(R.styleable.RotateImageView_src, 0);
+		resId = types.getResourceId(R.styleable.RotateImageView_android_src, 0);
 		types.recycle();
 		imageRefresh = true;
 	}

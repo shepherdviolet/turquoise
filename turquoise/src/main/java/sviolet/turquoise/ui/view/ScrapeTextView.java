@@ -207,11 +207,11 @@ public class ScrapeTextView extends TextView {
 		widthProportion = types.getFloat(R.styleable.ScrapeTextView_widthProportion, -1);
 		heightProportion = types.getFloat(R.styleable.ScrapeTextView_heightProportion, -1);
 		widthHeightRatio = types.getFloat(R.styleable.ScrapeTextView_widthHeightRatio, -1);
-		strokeWidth = (int)types.getDimension(R.styleable.ScrapeTextView_strokeWidth, 50);
+		strokeWidth = (int)types.getDimension(R.styleable.ScrapeTextView_android_strokeWidth, 50);
 		touchEnabled = types.getBoolean(R.styleable.ScrapeTextView_touchEnabled, true);
-		color = types.getColor(R.styleable.ScrapeTextView_colour, 0xFFC0C0C0);
-		String text = types.getString(R.styleable.ScrapeTextView_text);
-		resId = types.getResourceId(R.styleable.ScrapeTextView_src, 0);
+		color = types.getColor(R.styleable.ScrapeTextView_android_color, 0xFFC0C0C0);
+		String text = types.getString(R.styleable.ScrapeTextView_android_text);
+		resId = types.getResourceId(R.styleable.ScrapeTextView_android_src, 0);
 		types.recycle();
 
 		// 初始化路径

@@ -105,6 +105,6 @@
         android:layout_width="match_parent"
         android:layout_height="3dp"
         sviolet:LinearShadowView_direction="bottom"
-        sviolet:colour="#20000000" />
+        android:color="#20000000" />
 
 </LinearLayout>

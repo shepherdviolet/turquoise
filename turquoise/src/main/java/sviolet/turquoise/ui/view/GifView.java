@@ -70,9 +70,9 @@ public class GifView extends View {
 	
 	private void init(Context context, AttributeSet attrs, int defStyleAttr){
         TypedArray typedArray = context.obtainStyledAttributes(attrs,  R.styleable.GifView, defStyleAttr, 0);  
-        int src = typedArray.getResourceId(R.styleable.GifView_src, 0);
+        int src = typedArray.getResourceId(R.styleable.GifView_android_src, 0);
         repeat = typedArray.getBoolean(R.styleable.GifView_repeat, true);
-        duration = typedArray.getInteger(R.styleable.GifView_duration, 1000);
+        duration = typedArray.getInteger(R.styleable.GifView_android_duration, 1000);
         typedArray.recycle();  
         
         mMovie = null;

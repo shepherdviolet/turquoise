@@ -103,9 +103,9 @@ public abstract class ShadowLayoutProvider {
 		TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LinearShadowLayout);
 		scale = typedArray.getFloat(R.styleable.LinearShadowLayout_scale, DEF_SCALE);
 		background = typedArray.getColor(R.styleable.LinearShadowLayout_backgroundColor, DEF_BACKGROUND);
-		color = typedArray.getColor(R.styleable.LinearShadowLayout_colour, DEF_COLOR);
-		alpha = typedArray.getInt(R.styleable.LinearShadowLayout_alpha, DEF_ALPHA);
-		radius = typedArray.getDimensionPixelOffset(R.styleable.LinearShadowLayout_radius, MeasureUtils.dp2px(mViewGroup.getContext(), DEF_RADIUS));
+		color = typedArray.getColor(R.styleable.LinearShadowLayout_android_color, DEF_COLOR);
+		alpha = typedArray.getInt(R.styleable.LinearShadowLayout_android_alpha, DEF_ALPHA);
+		radius = typedArray.getDimensionPixelOffset(R.styleable.LinearShadowLayout_android_radius, MeasureUtils.dp2px(mViewGroup.getContext(), DEF_RADIUS));
 		shadowOffsetX = typedArray.getDimensionPixelOffset(
 				getShadowOffsetXStyleable(), MeasureUtils.dp2px(mViewGroup.getContext(), DEF_SHADOW_OFFSET_X));
 		shadowOffsetY = typedArray.getDimensionPixelOffset(

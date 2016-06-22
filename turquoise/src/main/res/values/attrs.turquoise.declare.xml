@@ -78,80 +78,80 @@
 
     <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/slide/view/DotPageIndicator.java -->
     <declare-styleable name="DotPageIndicator">
-        <attr name="colour" />
         <!-- 颜色 -->
-        <attr name="highLightColor" />
-        <!-- 高亮处颜色 -->
-        <attr name="radius" />
+        <attr name="android:color" />
         <!-- 半径 -->
-        <attr name="quantity" />
+        <attr name="android:radius" />
+        <!-- 高亮处颜色 -->
+        <attr name="highLightColor" />
         <!-- 数量 -->
-        <attr name="interval" />
+        <attr name="quantity" />
         <!-- 间隔 -->
+        <attr name="interval" />
     </declare-styleable>
 
     <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/shadow/LinearShadowView.java -->
     <declare-styleable name="LinearShadowView">
-        <attr name="colour" />
         <!-- 阴影颜色 -->
+        <attr name="android:color" />
+        <!-- 阴影方向 -->
         <attr name="LinearShadowView_direction">
             <enum name="top" value="0" />
             <enum name="bottom" value="1" />
             <enum name="left" value="2" />
             <enum name="right" value="3" />
         </attr>
-        <!-- 阴影方向 -->
     </declare-styleable>
 
     <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/shadow/LinearShadowLayout.java -->
     <declare-styleable name="LinearShadowLayout">
-        <attr name="scale" />
         <!-- 缩放比例 -->
-        <attr name="backgroundColor" />
+        <attr name="scale" />
         <!-- 背景色 -->
-        <attr name="colour" />
+        <attr name="backgroundColor" />
         <!-- 阴影颜色 -->
-        <attr name="alpha" />
+        <attr name="android:color" />
         <!-- 阴影透明度 -->
-        <attr name="radius" />
+        <attr name="android:alpha" />
         <!-- 阴影半径 -->
-        <attr name="LinearShadowLayout_shadowOffsetX" format="dimension" />
+        <attr name="android:radius" />
         <!-- 阴影位移X -->
-        <attr name="LinearShadowLayout_shadowOffsetY" format="dimension" />
+        <attr name="LinearShadowLayout_shadowOffsetX" format="dimension" />
         <!-- 阴影位移Y -->
+        <attr name="LinearShadowLayout_shadowOffsetY" format="dimension" />
     </declare-styleable>
 
     <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/shadow/RelativeShadowLayout.java -->
     <declare-styleable name="RelativeShadowLayout">
-        <attr name="scale" />
         <!-- 缩放比例 -->
-        <attr name="backgroundColor" />
+        <attr name="scale" />
         <!-- 背景色 -->
-        <attr name="colour" />
+        <attr name="backgroundColor" />
         <!-- 阴影颜色 -->
-        <attr name="alpha" />
+        <attr name="android:color" />
         <!-- 阴影透明度 -->
-        <attr name="radius" />
+        <attr name="android:alpha" />
         <!-- 阴影半径 -->
-        <attr name="RelativeShadowLayout_shadowOffsetX" format="dimension" />
+        <attr name="android:radius" />
         <!-- 阴影位移X -->
-        <attr name="RelativeShadowLayout_shadowOffsetY" format="dimension" />
+        <attr name="RelativeShadowLayout_shadowOffsetX" format="dimension" />
         <!-- 阴影位移Y -->
+        <attr name="RelativeShadowLayout_shadowOffsetY" format="dimension" />
     </declare-styleable>
 
     <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/RippleView.java -->
     <declare-styleable name="RippleView">
-        <attr name="colour"/><!-- 颜色 -->
-        <attr name="duration"/><!-- 持续时间 -->
-        <attr name="framerate"/><!-- 动画刷新帧间隔 -->
-        <attr name="alpha" /><!-- 透明度 -->
-        <attr name="padding" /><!-- 内边距 -->
+        <attr name="android:color"/><!-- 颜色 -->
+        <attr name="android:duration"/><!-- 持续时间 -->
+        <attr name="frameRate"/><!-- 动画刷新帧间隔 -->
+        <attr name="android:alpha" /><!-- 透明度 -->
+        <attr name="android:padding" /><!-- 内边距 -->
         <attr name="zoomScale" /><!-- 缩放比例 -->
         <attr name="zoomDuration"/><!-- 缩放动画持续时间 -->
-        <attr name="center" /><!-- 中心居中 -->
         <attr name="zoomEnable" /><!-- 允许缩放 -->
-        <attr name="longpressEnabled" /><!-- 允许长按 -->
-        <attr name="abordTouchEvent" /><!-- 阻断触摸事件(不向下分发) -->
+        <attr name="center" /><!-- 中心居中 -->
+        <attr name="longPressEnabled" /><!-- 允许长按 -->
+        <attr name="abortTouchEvent" /><!-- 阻断触摸事件(不向下分发) -->
         <attr name="RippleView_type" format="enum"><!-- 波纹类型 -->
             <enum name="largeRipple" value="0"/><!-- 大波纹(填满矩形) -->
             <enum name="smallRipple" value="1" /><!-- 小波纹 -->
@@ -160,19 +160,19 @@
 
     <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/GifView.java -->
     <declare-styleable name="GifView">
-        <attr name="src" /><!-- 图片资源ID -->
-        <attr name="duration" /><!-- 持续时间 -->
+        <attr name="android:src" /><!-- 图片资源ID -->
+        <attr name="android:duration" /><!-- 持续时间 -->
         <attr name="repeat" /><!-- 是否重复 -->
     </declare-styleable>
 
     <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/RotateImageView.java -->
     <declare-styleable name="RotateImageView">
-        <attr name="src" /><!-- 图片资源ID -->
+        <attr name="android:src" /><!-- 图片资源ID -->
     </declare-styleable>
 
     <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/RotateTextView.java -->
     <declare-styleable name="RotateTextView">
-        <attr name="angle" /><!-- 图片资源ID -->
+        <attr name="android:angle" /><!-- 旋转角度 -->
     </declare-styleable>
 
     <!-- /SVIOLET.TURQUOISE/src/sviolet/turquoise/view/ScrapeTextView.java -->
@@ -182,11 +182,11 @@
         <attr name="widthProportion" /><!-- 宽度占屏幕宽度的比例 -->
         <attr name="heightProportion" /><!-- 高度占屏幕高度的比例 -->
         <attr name="widthHeightRatio" /><!-- 宽度/高度的比例, 适用于widthProportion/heightProportion -->
-        <attr name="strokeWidth" /><!-- 画笔宽度 -->
+        <attr name="android:strokeWidth" /><!-- 画笔宽度 -->
         <attr name="touchEnabled" /><!-- 允许触摸 -->
-        <attr name="colour" /><!-- 颜色 -->
-        <attr name="text"/><!-- 文本 -->
-        <attr name="src" /><!-- 图片资源ID -->
+        <attr name="android:color" /><!-- 颜色 -->
+        <attr name="android:text"/><!-- 文本 -->
+        <attr name="android:src" /><!-- 图片资源ID -->
     </declare-styleable>
 
 </resources>
