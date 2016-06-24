@@ -36,14 +36,17 @@ public class ClassLoaderIntrudeUtils {
      *
      * @param originClassLoader 原ClassLoader
      * @param intrusionClassLoader 侵入的ClassLoader
+     * @param clonePathList true:克隆originClassLoader的pathList到intrusionClassLoader中
      * @throws IntrusionException 侵入异常
      */
-    public static void intrudeBaseDexClassLoader(BaseDexClassLoader originClassLoader, BaseDexClassLoader intrusionClassLoader) throws IntrusionException {
+    public static void intrudeBaseDexClassLoader(BaseDexClassLoader originClassLoader, BaseDexClassLoader intrusionClassLoader, boolean clonePathList) throws IntrusionException {
         try {
             //克隆dexPathList
-            Field dexPathListField = BaseDexClassLoader.class.getDeclaredField("pathList");
-            dexPathListField.setAccessible(true);
-            dexPathListField.set(intrusionClassLoader, dexPathListField.get(originClassLoader));
+            if (clonePathList) {
+                Field dexPathListField = BaseDexClassLoader.class.getDeclaredField("pathList");
+                dexPathListField.setAccessible(true);
+                dexPathListField.set(intrusionClassLoader, dexPathListField.get(originClassLoader));
+            }
 
             //替换parent
             Field parentField = ClassLoader.class.getDeclaredField("parent");
