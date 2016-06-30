@@ -37,6 +37,8 @@ import javax.crypto.NoSuchPaddingException;
 /**
  * <p>RSA加密工具</p>
  *
+ * <p>PC端JDK默认加密填充方式为RSA/None/PKCS1Padding，Android默认为RSA/None/NoPadding</p>
+ *
  */
 public class RSACipher {
 
@@ -45,6 +47,8 @@ public class RSACipher {
 
     public static final String CRYPTO_TRANSFORMATION_RSA_ECB_PKCS1 = "RSA/ECB/PKCS1Padding";
     public static final String CRYPTO_TRANSFORMATION_RSA_ECB_NOPADDING = "RSA/ECB/NoPadding";
+    public static final String CRYPTO_TRANSFORMATION_RSA_NONE_PKCS1PADDING = "RSA/None/PKCS1Padding";
+    public static final String CRYPTO_TRANSFORMATION_RSA_NONE_NOPADDING = "RSA/None/NoPadding";
     public static final String CRYPTO_TRANSFORMATION_RSA = "RSA";
 	  
     /**
