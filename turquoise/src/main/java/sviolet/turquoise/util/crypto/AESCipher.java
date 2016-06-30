@@ -19,20 +19,14 @@
 
 package sviolet.turquoise.util.crypto;
 
-import android.annotation.SuppressLint;
-
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.SecureRandom;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -45,84 +39,48 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AESCipher{
 	
-	//public static final String PADDING_MODE = "AES";
-	public static final String PADDING_MODE = "AES/ECB/PKCS5Padding";
-	//public static final String VIPARA = "0102030405060708"; 
-	
-	/**
-	 * String-byte[]转换乱码解决：<p>
-	 * 
-	 * byte[] b = String.getByte("utf-8");//或gb2312<p>
-	 * String s = new String(byte[],"utf-8");//或gb2312<p>
-	 * 
-	 */
-	
-	/**
-	 * 生成随机密钥(不同系统平台相同password生成结果不同,跨平台可以使用MD5/SHA1生成密钥)<p>
-	 * 
-	 * android专用，该代码生成的密钥为固定
-	 * 
-	 * @param password 随机种子
-	 * @return
-	 * @throws NoSuchAlgorithmException
-	 * @throws NoSuchProviderException 
-	 */
-	@SuppressLint("TrulyRandom")
-	public static byte[] makeRandomKey(byte[] password) throws NoSuchAlgorithmException, NoSuchProviderException{
-		KeyGenerator kgen = KeyGenerator.getInstance("AES"); 
-		SecureRandom secureRandom = null;
-		if (android.os.Build.VERSION.SDK_INT >=  17) {  
-			secureRandom = SecureRandom.getInstance("SHA1PRNG", "Crypto");  
-	    } else {  
-	    	secureRandom = SecureRandom.getInstance("SHA1PRNG");  
-	    }   
-        secureRandom.setSeed(password); 
-		kgen.init(128,secureRandom); 
-		SecretKey secretKey = kgen.generateKey(); 
-		return secretKey.getEncoded(); 
-	}
-	
+	public static final String CRYPTO_TRANSFORMATION_AES = "AES";
+	public static final String CRYPTO_TRANSFORMATION_AES_ECB_PKCS5PADDING = "AES/ECB/PKCS5Padding";
+
 	/**
 	 * 加密
 	 * 
-	 * @param Content
-	 * @param password
-	 * @return
-	 * @throws NoSuchAlgorithmException
-	 * @throws NoSuchPaddingException
-	 * @throws InvalidKeyException
-	 * @throws IllegalBlockSizeException
-	 * @throws BadPaddingException
-	 * @throws InvalidAlgorithmParameterException
+	 * @param data 数据
+	 * @param key 秘钥
+	 * @param cryptoTransformation 加密算法/填充算法
+	 *
+	 * @throws NoSuchAlgorithmException 加密算法无效
+	 * @throws NoSuchPaddingException 填充算法无效
+	 * @throws InvalidKeyException 秘钥无效
+	 * @throws IllegalBlockSizeException 块大小无效
+	 * @throws BadPaddingException 填充错误(密码错?)
+	 * @throws InvalidAlgorithmParameterException 算法参数无效
 	 */
-	public static byte[] encrypt(byte[] Content, byte[] password) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException{ 
-		//IvParameterSpec zeroIv =  new  IvParameterSpec(VIPARA.getBytes());  
-		SecretKeySpec key = new SecretKeySpec(password, "AES"); 
-		Cipher cipher = Cipher.getInstance(PADDING_MODE);// 创建密码器 
-		cipher.init(Cipher.ENCRYPT_MODE,key);// 初始化 
-		byte[] result = cipher.doFinal(Content); 
-		return result; // 加密 
+	public static byte[] encrypt(byte[] data, byte[] key, String cryptoTransformation) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException{
+		SecretKeySpec keySpec = new SecretKeySpec(key, AESKeyGenerator.AES_KEY_ALGORITHM);
+		Cipher cipher = Cipher.getInstance(cryptoTransformation);// 创建密码器
+		cipher.init(Cipher.ENCRYPT_MODE, keySpec);// 初始化
+		return cipher.doFinal(data);
 	} 
 	
 	/**
 	 * 解密
-	 * 
-	 * @param content
-	 * @param password
-	 * @return
-	 * @throws NoSuchAlgorithmException
-	 * @throws NoSuchPaddingException
-	 * @throws InvalidKeyException
-	 * @throws IllegalBlockSizeException
-	 * @throws BadPaddingException
-	 * @throws InvalidAlgorithmParameterException
+	 *
+	 * @param data 数据
+	 * @param key 秘钥
+	 * @param cryptoTransformation 加密算法/填充算法
+	 *
+	 * @throws NoSuchAlgorithmException 加密算法无效
+	 * @throws NoSuchPaddingException 填充算法无效
+	 * @throws InvalidKeyException 秘钥无效
+	 * @throws IllegalBlockSizeException 块大小无效
+	 * @throws BadPaddingException 填充错误(密码错?)
+	 * @throws InvalidAlgorithmParameterException 算法参数无效
 	 */
-	public static byte[] decrypt(byte[] content, byte[] password) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException{ 
-		//IvParameterSpec zeroIv =  new  IvParameterSpec(VIPARA.getBytes());  
-		SecretKeySpec key = new SecretKeySpec(password, "AES");             
-		Cipher cipher = Cipher.getInstance(PADDING_MODE);// 创建密码器 
-		cipher.init(Cipher.DECRYPT_MODE,key);// 初始化 
-		byte[] result = cipher.doFinal(content); 
-		return result; // 加密 
+	public static byte[] decrypt(byte[] data, byte[] key, String cryptoTransformation) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException, InvalidAlgorithmParameterException{
+		SecretKeySpec keySpec = new SecretKeySpec(key, AESKeyGenerator.AES_KEY_ALGORITHM);
+		Cipher cipher = Cipher.getInstance(cryptoTransformation);// 创建密码器
+		cipher.init(Cipher.DECRYPT_MODE, keySpec);// 初始化
+		return cipher.doFinal(data);
 	}
 }
