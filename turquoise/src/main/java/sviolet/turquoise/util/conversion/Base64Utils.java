@@ -2,6 +2,8 @@ package sviolet.turquoise.util.conversion;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterOutputStream;
@@ -53,7 +55,24 @@ public class Base64Utils {
      * @return
      */
     public static String encodeToString(byte[] data) {
-        return new String(encode(data));
+        try {
+            return new String(encode(data), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 编码为Url专用的String, 用于Http的Url参数, 否则+号会变空格
+     * @param data
+     * @return
+     */
+    public static String encodeToUrlEncodedString(byte[] data){
+        try {
+            return URLEncoder.encode(encodeToString(data), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
