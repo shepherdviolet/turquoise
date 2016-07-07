@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+import sviolet.turquoise.common.entity.Destroyable;
 
 /**
  * <p>运行时权限管理器, 兼容低版本, 占用Activity的requestCode 201-250</p>

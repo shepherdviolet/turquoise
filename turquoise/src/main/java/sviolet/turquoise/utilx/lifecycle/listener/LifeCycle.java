@@ -19,6 +19,8 @@
 
 package sviolet.turquoise.utilx.lifecycle.listener;
 
+import sviolet.turquoise.common.entity.Destroyable;
+
 /**
  * 生命周期监听器(Android Activity生命周期监听)
  *

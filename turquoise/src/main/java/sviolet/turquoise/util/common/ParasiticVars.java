@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.model.thread.LazySingleThreadPool;
-import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+import sviolet.turquoise.common.entity.Destroyable;
 
 /**
  * 寄生变量<p/>

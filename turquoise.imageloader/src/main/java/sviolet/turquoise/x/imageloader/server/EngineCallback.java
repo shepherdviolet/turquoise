@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+import sviolet.turquoise.common.entity.Destroyable;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**

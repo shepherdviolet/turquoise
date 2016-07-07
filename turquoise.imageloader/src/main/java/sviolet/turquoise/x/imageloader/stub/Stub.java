@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.stub;
 
-import sviolet.turquoise.utilx.lifecycle.listener.Destroyable;
+import sviolet.turquoise.common.entity.Destroyable;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.LoadProgress;
