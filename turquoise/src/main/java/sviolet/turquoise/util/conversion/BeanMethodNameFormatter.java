@@ -50,7 +50,7 @@ public class BeanMethodNameFormatter {
      * 将FieldName转化为getter方法名(boolean属性专用的isXXX())
      * @param fieldName fieldName of java bean
      */
-    public static String toBooleanSetterName(String fieldName){
+    public static String toBooleanGetterName(String fieldName){
         return "is" + formatFieldName(fieldName);
     }
 
