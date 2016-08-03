@@ -24,6 +24,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.SparseArray;
@@ -80,6 +81,7 @@ import sviolet.turquoise.common.entity.Destroyable;
  */
 public class RuntimePermissionManager implements Destroyable {
 
+    private RationaleDialogFactory dialogFactory;
     private WeakReference<Activity> activity;
     //权限请求请求码
     private AtomicInteger mPermissionRequestCode = new AtomicInteger(0);
@@ -87,7 +89,19 @@ public class RuntimePermissionManager implements Destroyable {
     private SparseArray<RequestPermissionTask> mPermissionRequestTaskPool = new SparseArray<>();
 
     public RuntimePermissionManager(Activity activity){
+        this(activity, null);
+    }
+
+    public RuntimePermissionManager(Activity activity, RationaleDialogFactory dialogFactory){
+        if (activity == null){
+            throw new RuntimeException("[RuntimePermissionManager]activity is null");
+        }
+        if (dialogFactory == null){
+            dialogFactory = new CommonRationaleDialogFactory();
+        }
+
         this.activity = new WeakReference<>(activity);
+        this.dialogFactory = dialogFactory;
     }
 
     /**
@@ -162,7 +176,7 @@ public class RuntimePermissionManager implements Destroyable {
 
             if ((!CheckUtils.isEmpty(rationaleTitle) || !CheckUtils.isEmpty(rationaleContent)) && shouldShowRationale) {
                 //显示权限提示
-                new PermissionRationaleDialog(activity, rationaleTitle, rationaleContent, new DialogInterface.OnCancelListener(){
+                dialogFactory.create(activity, rationaleTitle, rationaleContent, new DialogInterface.OnCancelListener(){
                     @Override
                     public void onCancel(DialogInterface dialog) {
                         //请求权限
@@ -221,20 +235,69 @@ public class RuntimePermissionManager implements Destroyable {
     }
 
     /**
-     * 权限说明窗口
+     * 权限说明对话框工厂
      */
-    private static final class PermissionRationaleDialog extends Dialog {
+    public interface RationaleDialogFactory{
 
-        public PermissionRationaleDialog(Context context, String rationaleTitle, String rationaleContent, DialogInterface.OnCancelListener listener) {
+        RationaleDialog create(Context context, String rationaleTitle, String rationaleContent, DialogInterface.OnCancelListener listener);
+
+    }
+
+    /**
+     * 权限说明对话框
+     */
+    public static abstract class RationaleDialog extends Dialog{
+
+        private String rationaleTitle;
+        private String rationaleContent;
+
+        public RationaleDialog(Context context, String rationaleTitle, String rationaleContent, OnCancelListener listener) {
             super(context, true, listener);
+            this.rationaleTitle = rationaleTitle;
+            this.rationaleContent  = rationaleContent;
+        }
 
-            if(!CheckUtils.isEmpty(rationaleTitle)) {
-                setTitle(rationaleTitle);
+        public String getRationaleTitle() {
+            return rationaleTitle;
+        }
+
+        public String getRationaleContent() {
+            return rationaleContent;
+        }
+    }
+
+    /**
+     * 通用权限说明对话框工厂
+     */
+    private static final class CommonRationaleDialogFactory implements RationaleDialogFactory{
+
+        @Override
+        public RationaleDialog create(Context context, String rationaleTitle, String rationaleContent, DialogInterface.OnCancelListener listener) {
+            return new CommonRationaleDialog(context, rationaleTitle, rationaleContent, listener);
+        }
+
+    }
+
+    /**
+     * 通用权限说明对话框
+     */
+    private static final class CommonRationaleDialog extends RationaleDialog {
+
+        protected CommonRationaleDialog(Context context, String rationaleTitle, String rationaleContent, OnCancelListener listener) {
+            super(context, rationaleTitle, rationaleContent, listener);
+        }
+
+        @Override
+        protected void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+
+            if(!CheckUtils.isEmpty(getRationaleTitle())) {
+                setTitle(getRationaleTitle());
             }
 
             TextView textView = new TextView(getContext());
-            if (!CheckUtils.isEmpty(rationaleContent)) {
-                textView.setText(rationaleContent);
+            if (!CheckUtils.isEmpty(getRationaleContent())) {
+                textView.setText(getRationaleContent());
                 textView.setTextColor(0xFF606060);
                 textView.setTextSize(16f);
             }
@@ -243,7 +306,6 @@ public class RuntimePermissionManager implements Destroyable {
             textView.setPadding(dp15, dp15, dp10, dp10);
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
             addContentView(textView, params);
-
         }
     }
 
