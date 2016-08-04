@@ -34,9 +34,9 @@ import android.widget.TextView;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import sviolet.turquoise.common.entity.Destroyable;
 import sviolet.turquoise.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.common.entity.Destroyable;
 
 /**
  * <p>运行时权限管理器, 兼容低版本, 占用Activity的requestCode 201-250</p>
@@ -290,6 +290,16 @@ public class RuntimePermissionManager implements Destroyable {
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
+
+//            requestWindowFeature(Window.FEATURE_NO_TITLE);
+//            setCancelable(false);
+//            setCanceledOnTouchOutside(false);
+
+//            WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+//            layoutParams.width = MeasureUtils.getScreenWidth(getContext());
+//            layoutParams.height = MeasureUtils.getScreenWidth(getContext());
+//            getWindow().setAttributes(layoutParams);
+//            getWindow().setGravity(Gravity.CENTER);
 
             if(!CheckUtils.isEmpty(getRationaleTitle())) {
                 setTitle(getRationaleTitle());
