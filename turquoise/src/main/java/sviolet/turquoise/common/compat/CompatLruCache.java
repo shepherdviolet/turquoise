@@ -76,17 +76,31 @@ public class CompatLruCache<K, V> {
     private int hitCount;
     private int missCount;
 
+    private boolean trimRecentItem = false;
+
     /**
      * @param maxSize for caches that do not override {@link #sizeOf}, this is
      *     the maximum number of entries in the cache. For all other caches,
      *     this is the maximum sum of the sizes of the entries in this cache.
      */
-    public CompatLruCache(int maxSize) {
+    public CompatLruCache(int maxSize){
+        this(maxSize, false);
+    }
+
+    /**
+     * @param maxSize for caches that do not override {@link #sizeOf}, this is
+     *     the maximum number of entries in the cache. For all other caches,
+     *     this is the maximum sum of the sizes of the entries in this cache.
+     * @param trimRecentItem if true, we will trim recent or most used item first,
+     *     if false, we will trim oldest or less used item first, false by default
+     */
+    public CompatLruCache(int maxSize, boolean trimRecentItem) {
         if (maxSize <= 0) {
             throw new IllegalArgumentException("maxSize <= 0");
         }
         this.maxSize = maxSize;
         this.map = new LinkedHashMap<K, V>(0, 0.75f, true);
+        this.trimRecentItem = trimRecentItem;
     }
 
     /**
@@ -214,6 +228,11 @@ public class CompatLruCache<K, V> {
                 Map.Entry<K, V> toEvict = null;
                 for (Map.Entry<K, V> entry : map.entrySet()) {
                     toEvict = entry;
+                    //if true, we will trim recent or most used item first,
+                    //if false, we will trim oldest or less used item first, false by default
+                    if (!trimRecentItem){
+                        break;
+                    }
                 }
                 // END LAYOUTLIB CHANGE
 
