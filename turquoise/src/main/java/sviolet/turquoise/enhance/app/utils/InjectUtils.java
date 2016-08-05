@@ -20,6 +20,7 @@
 package sviolet.turquoise.enhance.app.utils;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.view.View;
 
 import java.lang.reflect.Field;
@@ -27,9 +28,11 @@ import java.lang.reflect.Field;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 
 /**
- * Activity的注释式注入工具<br/>
- * <br/>
- * 1.根据"类"的@ResourceId注释注入对应的Activity布局文件<br/>
+ * <p>Activity/Dialog的注释式注入工具</p>
+ *
+ * <p>无需再使用setContentView()和findViewById()方法</p>
+ *
+ * 1.根据"类"的@ResourceId注释注入对应的Activity/Dialog布局文件<br/>
  * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
  *
  * Created by S.Violet on 2015/8/3.
@@ -47,10 +50,23 @@ public class InjectUtils {
     }
 
     /**
+     * 1.根据"类"的@ResourceId注释注入对应的Activity布局文件<br/>
+     * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
+     * @param dialog dialog
+     */
+    public static void inject(Dialog dialog){
+        InjectUtils.injectClassAnnotation(dialog);// 注入类的注释
+        InjectUtils.injectFieldAnnotation(dialog);// 注入成员变量的注释
+    }
+
+    /**
      * 根据"类"的注释注入<Br/>
      * 1.根据"类"的@ResourceId注释注入对应的Activity布局文件<br/>
      */
     public static void injectClassAnnotation(Activity activity) {
+        if (activity == null){
+            return;
+        }
         if (activity.getClass().isAnnotationPresent(ResourceId.class)) {
             try {
                 int layoutId = activity.getClass().getAnnotation(ResourceId.class).value();
@@ -62,17 +78,46 @@ public class InjectUtils {
     }
 
     /**
-     * 根据成员变量的注释注入<br/>
-     * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
+     * 根据"类"的注释注入<Br/>
+     * 1.根据"类"的@ResourceId注释注入对应的Dialog布局文件<br/>
      */
-    public static void injectFieldAnnotation(Activity activity){
-        injectFieldAnnotation(activity, activity.getClass());
+    public static void injectClassAnnotation(Dialog dialog) {
+        if (dialog == null){
+            return;
+        }
+        if (dialog.getClass().isAnnotationPresent(ResourceId.class)) {
+            try {
+                int layoutId = dialog.getClass().getAnnotation(ResourceId.class).value();
+                dialog.setContentView(layoutId);
+            } catch (Exception e) {
+                throw new InjectException("[InjectUtils]inject ContentView failed", e);
+            }
+        }
     }
 
     /**
      * 根据成员变量的注释注入<br/>
+     * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
      */
-    private static void injectFieldAnnotation(Activity activity, Class<?> clazz) {
+    public static void injectFieldAnnotation(Activity activity){
+        if (activity == null){
+            return;
+        }
+        injectFieldAnnotation(activity, activity.getClass(), activityInjectCallback);
+    }
+
+    /**
+     * 根据成员变量的注释注入<br/>
+     * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
+     */
+    public static void injectFieldAnnotation(Dialog dialog){
+        if (dialog == null){
+            return;
+        }
+        injectFieldAnnotation(dialog, dialog.getClass(), dialogInjectCallback);
+    }
+
+    private static void injectFieldAnnotation(Object object, Class<?> clazz, InjectCallback callback) {
         Field[] fields = clazz.getDeclaredFields();
         int resourceId;
         View view;
@@ -80,21 +125,53 @@ public class InjectUtils {
             if (field.isAnnotationPresent(ResourceId.class)) {
                 try {
                     resourceId = field.getAnnotation(ResourceId.class).value();
-                    view = activity.findViewById(resourceId);
+                    view = callback.findViewById(object, resourceId);
                     if (view == null)
                         throw new InjectException("[InjectUtils]inject view [" + field.getName() + "] failed, can't find resource");
                     field.setAccessible(true);
-                    field.set(activity, view);
+                    field.set(object, view);
                 } catch (IllegalAccessException | IllegalArgumentException e) {
                     throw new InjectException("[InjectUtils]inject view [" + field.getName() + "] failed", e);
                 }
             }
         }
         Class superClazz = clazz.getSuperclass();
-        if (!Activity.class.equals(superClazz)) {
-            injectFieldAnnotation(activity, superClazz);
+        if (callback.continueInjectSuper(superClazz)) {
+            injectFieldAnnotation(object, superClazz, callback);
         }
     }
+
+    private interface InjectCallback{
+
+        View findViewById(Object object, int resId);
+
+        boolean continueInjectSuper(Class superClazz);
+
+    }
+
+    private static final InjectCallback activityInjectCallback = new InjectCallback() {
+        @Override
+        public View findViewById(Object object, int resId) {
+            return ((Activity)object).findViewById(resId);
+        }
+
+        @Override
+        public boolean continueInjectSuper(Class superClazz) {
+            return !Activity.class.equals(superClazz);
+        }
+    };
+
+    private static final InjectCallback dialogInjectCallback = new InjectCallback() {
+        @Override
+        public View findViewById(Object object, int resId) {
+            return ((Dialog)object).findViewById(resId);
+        }
+
+        @Override
+        public boolean continueInjectSuper(Class superClazz) {
+            return !Dialog.class.equals(superClazz);
+        }
+    };
 
 //    /**
 //     * 根据成员方法的注释注入<br/>
