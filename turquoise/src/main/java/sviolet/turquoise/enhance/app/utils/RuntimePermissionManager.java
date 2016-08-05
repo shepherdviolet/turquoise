@@ -291,11 +291,12 @@ public class RuntimePermissionManager implements Destroyable {
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
 
-//            requestWindowFeature(Window.FEATURE_NO_TITLE);
-//            setCancelable(false);
-//            setCanceledOnTouchOutside(false);
+//            requestWindowFeature(Window.FEATURE_NO_TITLE);//无标题
+//            setContentView();//设置布局
+//            setCancelable(false);//禁止取消
+//            setCanceledOnTouchOutside(false);//禁止点外部取消
 
-//            WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+//            WindowManager.LayoutParams layoutParams = getWindow().getAttributes();//设置窗体尺寸
 //            layoutParams.width = MeasureUtils.getScreenWidth(getContext());
 //            layoutParams.height = MeasureUtils.getScreenWidth(getContext());
 //            getWindow().setAttributes(layoutParams);
