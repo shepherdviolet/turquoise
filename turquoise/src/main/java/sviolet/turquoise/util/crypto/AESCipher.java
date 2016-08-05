@@ -31,7 +31,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * 
- * Android专用固定AES加密
+ * AES加密工具
  * 
  * @author S.Violet (ZhuQinChao)
  *
