@@ -69,7 +69,7 @@ public class ClassPrinter {
         stringBuilder.append(clazz.getName());
 
         stringBuilder.append("\n--------------Fields--------------");
-        Field[] fields = clazz.getDeclaredFields();
+        Field[] fields = ReflectCache.getDeclaredFields(clazz);
         for (Field field : fields) {
             int modifiers = field.getModifiers();
             String name = field.getName();
@@ -89,7 +89,7 @@ public class ClassPrinter {
         }
 
         stringBuilder.append("\n--------------Constructors--------------");
-        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+        Constructor<?>[] constructors = ReflectCache.getDeclaredConstructors(clazz);
         for (Constructor<?> constructor : constructors) {
             stringBuilder.append("\n");
             printModifiers(constructor.getModifiers(), stringBuilder);
@@ -108,7 +108,7 @@ public class ClassPrinter {
         }
 
         stringBuilder.append("\n--------------Methods--------------");
-        Method[] methods = clazz.getDeclaredMethods();
+        Method[] methods = ReflectCache.getDeclaredMethods(clazz);
         for (Method method : methods) {
             String name = method.getName();
             if (name.contains("$")){

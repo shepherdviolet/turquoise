@@ -26,6 +26,7 @@ import android.view.View;
 import java.lang.reflect.Field;
 
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
+import sviolet.turquoise.util.reflect.ReflectCache;
 
 /**
  * <p>Activity/Dialog的注释式注入工具</p>
@@ -118,7 +119,7 @@ public class InjectUtils {
     }
 
     private static void injectFieldAnnotation(Object object, Class<?> clazz, InjectCallback callback) {
-        Field[] fields = clazz.getDeclaredFields();
+        Field[] fields = ReflectCache.getDeclaredFields(clazz);
         int resourceId;
         View view;
         for (Field field : fields) {
