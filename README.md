@@ -38,6 +38,7 @@
     //optional
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'org.bouncycastle:bcprov-jdk16:1.46'
 
 ```
 
