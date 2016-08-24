@@ -26,7 +26,11 @@ import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.security.spec.*;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.RSAPrivateKeySpec;
+import java.security.spec.RSAPublicKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 /**
  * RSA秘钥生成工具
@@ -37,18 +41,20 @@ public class RSAKeyGenerator {
 
     /**
      * 随机生成RSA密钥对(1024位)
+     *
      * @return 密钥对
      */
-    public static RSAKeyPair generateKeyPair(){
+    public static RSAKeyPair generateKeyPair() {
         return generateKeyPair(1024);
     }
 
     /**
      * 随机生成RSA密钥对
+     *
      * @param bits 秘钥位数(默认1024)
      * @return 密钥对
      */
-    public static RSAKeyPair generateKeyPair(int bits){
+    public static RSAKeyPair generateKeyPair(int bits) {
         KeyPairGenerator keyPairGen;
         try {
             keyPairGen = KeyPairGenerator.getInstance(RSA_KEY_ALGORITHM);
@@ -80,7 +86,7 @@ public class RSAKeyGenerator {
     /**
      * <p>根据PKCS8格式的私钥数据生成私钥</p>
      *
-     * @param pkcs8EncodedPrivateKey  PKCS8格式私钥数据
+     * @param pkcs8EncodedPrivateKey PKCS8格式私钥数据
      * @return 私钥
      */
     public static RSAPrivateKey generatePrivateKeyByPKCS8(byte[] pkcs8EncodedPrivateKey) throws InvalidKeySpecException {
@@ -97,7 +103,7 @@ public class RSAKeyGenerator {
     /**
      * 用模和指数生成RSA公钥
      *
-     * @param modulus 模
+     * @param modulus  模
      * @param exponent 指数
      */
     public static RSAPublicKey generatePublicKey(BigInteger modulus, BigInteger exponent) throws InvalidKeySpecException {
@@ -108,13 +114,13 @@ public class RSAKeyGenerator {
             throw new RuntimeException(e);
         }
         RSAPublicKeySpec keySpec = new RSAPublicKeySpec(modulus, exponent);
-            return (RSAPublicKey) keyFactory.generatePublic(keySpec);
+        return (RSAPublicKey) keyFactory.generatePublic(keySpec);
     }
 
     /**
      * 用模和指数生成RSA私钥
      *
-     * @param modulus 模
+     * @param modulus  模
      * @param exponent 指数
      */
     public static RSAPrivateKey generatePrivateKey(BigInteger modulus, BigInteger exponent) throws InvalidKeySpecException {
@@ -125,15 +131,15 @@ public class RSAKeyGenerator {
             throw new RuntimeException(e);
         }
         RSAPrivateKeySpec keySpec = new RSAPrivateKeySpec(modulus, exponent);
-            return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
+        return (RSAPrivateKey) keyFactory.generatePrivate(keySpec);
     }
 
-    public static class RSAKeyPair{
+    public static class RSAKeyPair {
 
         private RSAPublicKey publicKey = null;
         private RSAPrivateKey privateKey = null;
 
-        private RSAKeyPair(RSAPublicKey publicKey, RSAPrivateKey privateKey){
+        private RSAKeyPair(RSAPublicKey publicKey, RSAPrivateKey privateKey) {
             this.publicKey = publicKey;
             this.privateKey = privateKey;
         }
@@ -141,35 +147,35 @@ public class RSAKeyGenerator {
         /**
          * 获取公钥
          */
-        public RSAPublicKey getPublicKey(){
+        public RSAPublicKey getPublicKey() {
             return publicKey;
         }
 
         /**
          * 获取私钥
          */
-        public RSAPrivateKey getPrivateKey(){
+        public RSAPrivateKey getPrivateKey() {
             return privateKey;
         }
 
         /**
          * 获取模数
          */
-        public BigInteger getModulus(){
+        public BigInteger getModulus() {
             return publicKey.getModulus();
         }
 
         /**
          * 获取公钥指数
          */
-        public BigInteger getPublicExponent(){
+        public BigInteger getPublicExponent() {
             return publicKey.getPublicExponent();
         }
 
         /**
          * 获取私钥指数
          */
-        public BigInteger getPrivateExponent(){
+        public BigInteger getPrivateExponent() {
             return privateKey.getPrivateExponent();
         }
 
