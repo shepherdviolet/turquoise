@@ -52,12 +52,15 @@ public class ReflectCache {
             declaredMethods = null;
             publicFields = null;
             publicMethods = null;
+            declaredConstructors = null;
+            publicConstructors = null;
         }else {
             declaredFields = new CompatLruCache<>(size);
             declaredMethods = new CompatLruCache<>(size);
             publicFields = new CompatLruCache<>(size);
             publicMethods = new CompatLruCache<>(size);
-        }
+            declaredConstructors = new CompatLruCache<>(size);
+        }   publicConstructors = new CompatLruCache<>(size);
     }
 
     public static Field[] getDeclaredFields(Class clazz){
