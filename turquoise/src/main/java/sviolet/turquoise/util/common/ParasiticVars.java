@@ -305,13 +305,16 @@ public class ParasiticVars {
          */
         @Override
         protected void finalize() throws Throwable {
-            getGcTaskPool().execute(new Runnable() {
-                @Override
-                public void run() {
-                    ParasiticVars.gc();
-                }
-            });
-            super.finalize();
+            try {
+                getGcTaskPool().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        ParasiticVars.gc();
+                    }
+                });
+            } finally {
+                super.finalize();
+            }
         }
     }
 
