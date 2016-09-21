@@ -48,7 +48,6 @@ import android.view.ViewConfiguration;
  * ViewGroup::<br>
  * <br>
 	//复写事件拦截
-	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		boolean original = super.onInterceptTouchEvent(ev);
 		if(mGestureDriver != null && mGestureDriver.onInterceptTouchEvent(ev))
@@ -57,7 +56,6 @@ import android.view.ViewConfiguration;
 	}
 	
 	//复写触摸事件处理
-	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		boolean original = super.onTouchEvent(event);
 		if(mGestureDriver != null && mGestureDriver.onTouchEvent(event))
@@ -65,6 +63,17 @@ import android.view.ViewConfiguration;
 		return original;
 	}
  * <br>
+ * View::<br>
+ * <br>
+    //复写触摸事件处理
+    public boolean onTouchEvent(MotionEvent event) {
+        mGestureDriver.onInterceptTouchEvent(event)
+        boolean original = super.onTouchEvent(event);
+        if(mGestureDriver != null && mGestureDriver.onTouchEvent(event))
+            return true;
+        return original;
+    }
+  * <br>
  * *************************************************************************************<br>
  * 永久触摸区域::<br>
  * 若设置了永久触摸区域, 该区域内, 若没有子View捕获事件, ViewGroup.onTouchEvent
@@ -607,10 +616,10 @@ public class LinearGestureDriver implements GestureDriver {
 		//是否被跳过本次拦截
 		if(skipIntercepted)
 			return false;
-		//计算坐标
-		calculateCoordinate(event);
 		//判断是否有效滑动, 有效滑动通知engine持有
 		if(state == STATE_DOWN){
+			//计算坐标
+			calculateCoordinate(event);
 			checkValidMove();
 		}
 		//有效滑动后拦截事件

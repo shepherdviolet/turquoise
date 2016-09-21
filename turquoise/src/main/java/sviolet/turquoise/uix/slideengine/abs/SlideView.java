@@ -108,6 +108,7 @@ package sviolet.turquoise.uix.slideengine.abs;
  * <pre>{@code
  *	//实现通知刷新UI接口
  *	public void notifyRefresh() {
+ *		//注意:此方法只会在触摸开始和结束时调用, 滑动过程的刷新必须在onDraw中实现
  *		postInvalidate();
  *	}
  *
@@ -115,6 +116,7 @@ package sviolet.turquoise.uix.slideengine.abs;
  *	public void computeScroll() {
  *		if(mSlideEngine != null){
  *			scrollTo(mSlideEngine.getPosition(), 0);
+ *			//必须实现自刷新
  *			if(!mSlideEngine.isStop())
  *				postInvalidate();
  *		}
@@ -124,6 +126,7 @@ package sviolet.turquoise.uix.slideengine.abs;
  *	public void computeScroll() {
  *		if(mSlideEngine != null){
  *			scrollTo(mSlideEngine.getPosition() - mSlideEngine.getRange(), 0);
+ *			//必须实现自刷新
  *			if(!mSlideEngine.isStop())
  *				postInvalidate();
  *		}
@@ -145,7 +148,7 @@ package sviolet.turquoise.uix.slideengine.abs;
  *		//滑动至engine所在位置
  *		if(mSlideEngine != null){
  *			scrollTo(mSlideEngine.getPosition(), 0);
- *			//判断是否停止
+ *			//必须实现自刷新
  *			if(!mSlideEngine.isStop())
  *				postInvalidate();
  *		}
@@ -175,7 +178,22 @@ package sviolet.turquoise.uix.slideengine.abs;
  *          return true;
  *      return original;
  *  }
+ *  }</pre>
+ *
+ * View::<p/>
+ *
+ * <pre>{@code
+ *	//复写触摸事件处理
+ *	public boolean onTouchEvent(MotionEvent event) {
+ *		mGestureDriver.onInterceptTouchEvent(event)
+ *		boolean original = super.onTouchEvent(event);
+ *		if(mGestureDriver != null && mGestureDriver.onTouchEvent(event))
+ *			return true;
+ *		return original;
+ *	}
  * }</pre>
+ * <br>
+ *
  * *************************************************************************************<br/>
  * XML示例:<p/>
  *
