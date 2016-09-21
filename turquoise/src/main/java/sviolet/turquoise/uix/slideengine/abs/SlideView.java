@@ -22,6 +22,9 @@ package sviolet.turquoise.uix.slideengine.abs;
 /**
  * 滑动效果控件<p/>
  *
+ * #SlideEngine常用于ViewGroup拦截触摸事件, 控制其子View滑动.<br/>
+ * #GestureController常用于View自身的触摸控制.<p/>
+ *
  * 通常情况下::<br/>
  * [View] TouchEvent--> {@link GestureDriver} <--bind--> {@link SlideEngine} notify--> {@link SlideView}<p/>
  * 
