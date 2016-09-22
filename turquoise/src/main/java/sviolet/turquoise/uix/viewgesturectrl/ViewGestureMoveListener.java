@@ -17,18 +17,18 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.uix.gesturectrl;
+package sviolet.turquoise.uix.viewgesturectrl;
 
 /**
  * Created by S.Violet on 2016/9/21.
  */
 
-public interface ViewGestureRotateListener {
+public interface ViewGestureMoveListener {
 
-    void holdRotate();
+    void holdMove();
 
-    void releaseRotate(int angularVelocity);
+    void releaseMove(int velocityX, int velocityY);
 
-    void rotate(int currentAngle, int angularOffset, int angularVelocity);
+    void move(int currentX, int offsetX, int velocityX, int currentY, int offsetY, int velocityY);
 
 }

@@ -17,24 +17,40 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.uix.gesturectrl;
+package sviolet.turquoise.uix.viewgesturectrl;
 
 import android.view.MotionEvent;
 
 /**
- *
- * <p>
- *      #ViewGestureController常用于View自身的触摸控制.<br/>
- *      #SlideEngine常用于ViewGroup拦截触摸事件, 控制其子View滑动.<br/>
- * </p>
- *
- * Created by S.Violet on 2016/9/21.
+ * Created by S.Violet on 2016/9/22.
  */
 
-public interface ViewGestureController {
+public abstract class ViewGestureControllerAbs implements ViewGestureController {
 
-    boolean onTouchEvent(MotionEvent event);
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
 
-    void addOutput(Object listener);
+        return true;
+    }
+
+    @Override
+    public void addOutput(Object listener) {
+
+    }
+
+    public ViewGestureControllerAbs addMoveListener(ViewGestureMoveListener listener){
+
+        return this;
+    }
+
+    public ViewGestureControllerAbs addRotateListener(ViewGestureRotateListener listener){
+
+        return this;
+    }
+
+    public ViewGestureControllerAbs addZoomListener(ViewGestureZoomListener listener){
+
+        return this;
+    }
 
 }

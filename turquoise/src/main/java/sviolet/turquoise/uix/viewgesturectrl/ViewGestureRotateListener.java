@@ -17,40 +17,18 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.uix.gesturectrl;
-
-import android.view.MotionEvent;
+package sviolet.turquoise.uix.viewgesturectrl;
 
 /**
- * Created by S.Violet on 2016/9/22.
+ * Created by S.Violet on 2016/9/21.
  */
 
-public abstract class ViewGestureControllerAbs implements ViewGestureController {
+public interface ViewGestureRotateListener {
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    void holdRotate();
 
-        return true;
-    }
+    void releaseRotate(int angularVelocity);
 
-    @Override
-    public void addOutput(Object listener) {
-
-    }
-
-    public ViewGestureControllerAbs addMoveListener(ViewGestureMoveListener listener){
-
-        return this;
-    }
-
-    public ViewGestureControllerAbs addRotateListener(ViewGestureRotateListener listener){
-
-        return this;
-    }
-
-    public ViewGestureControllerAbs addZoomListener(ViewGestureZoomListener listener){
-
-        return this;
-    }
+    void rotate(int currentAngle, int angularOffset, int angularVelocity);
 
 }

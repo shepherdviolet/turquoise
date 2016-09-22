@@ -17,18 +17,18 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.uix.gesturectrl;
+package sviolet.turquoise.uix.viewgesturectrl;
 
 /**
  * Created by S.Violet on 2016/9/21.
  */
 
-public interface ViewGestureMoveListener {
+public interface ViewGestureZoomListener {
 
-    void holdMove();
+    void holdZoom();
 
-    void releaseMove(int velocityX, int velocityY);
+    void releaseZoom(int basicPointX, int basicPointY,int velocity);
 
-    void move(int currentX, int offsetX, int velocityX, int currentY, int offsetY, int velocityY);
+    void zoom(int basicPointX, int basicPointY, int current, int offset, int velocity);
 
 }

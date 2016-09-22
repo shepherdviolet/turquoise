@@ -17,18 +17,24 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.uix.gesturectrl;
+package sviolet.turquoise.uix.viewgesturectrl;
+
+import android.view.MotionEvent;
 
 /**
+ *
+ * <p>
+ *      #ViewGestureController常用于View自身的触摸控制.<br/>
+ *      #SlideEngine常用于ViewGroup拦截触摸事件, 控制其子View滑动.<br/>
+ * </p>
+ *
  * Created by S.Violet on 2016/9/21.
  */
 
-public interface ViewGestureZoomListener {
+public interface ViewGestureController {
 
-    void holdZoom();
+    boolean onTouchEvent(MotionEvent event);
 
-    void releaseZoom(int basicPointX, int basicPointY,int velocity);
-
-    void zoom(int basicPointX, int basicPointY, int current, int offset, int velocity);
+    void addOutput(Object listener);
 
 }
