@@ -17,18 +17,40 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.uix.gesturectrl.view;
+package sviolet.turquoise.uix.gesturectrl;
+
+import android.view.MotionEvent;
 
 /**
- * Created by S.Violet on 2016/9/21.
+ * Created by S.Violet on 2016/9/22.
  */
 
-public interface ViewGestureZoomListener {
+public abstract class ViewGestureControllerAbs implements ViewGestureController {
 
-    void holdZoom();
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
 
-    void releaseZoom(int basicPointX, int basicPointY,int velocity);
+        return true;
+    }
 
-    void zoom(int basicPointX, int basicPointY, int current, int offset, int velocity);
+    @Override
+    public void addOutput(Object listener) {
+
+    }
+
+    public ViewGestureControllerAbs addMoveListener(ViewGestureMoveListener listener){
+
+        return this;
+    }
+
+    public ViewGestureControllerAbs addRotateListener(ViewGestureRotateListener listener){
+
+        return this;
+    }
+
+    public ViewGestureControllerAbs addZoomListener(ViewGestureZoomListener listener){
+
+        return this;
+    }
 
 }

@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.uix.gesturectrl.view;
+package sviolet.turquoise.uix.gesturectrl;
 
 /**
  * Created by S.Violet on 2016/9/21.

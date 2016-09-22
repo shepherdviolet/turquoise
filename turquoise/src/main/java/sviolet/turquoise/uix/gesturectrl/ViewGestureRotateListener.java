@@ -17,14 +17,18 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.uix.gesturectrl.view;
+package sviolet.turquoise.uix.gesturectrl;
 
 /**
- * Created by S.Violet on 2016/9/22.
+ * Created by S.Violet on 2016/9/21.
  */
 
-public class ViewGestureControllerImpl extends ViewGestureControllerAbs {
+public interface ViewGestureRotateListener {
 
+    void holdRotate();
 
+    void releaseRotate(int angularVelocity);
+
+    void rotate(int currentAngle, int angularOffset, int angularVelocity);
 
 }
