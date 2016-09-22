@@ -33,11 +33,7 @@ import android.view.MotionEvent;
 
 public interface ViewGestureController {
 
-    boolean onViewTouchEvent(MotionEvent event);
-
-    boolean onViewGroupInterceptTouchEvent(MotionEvent event);
-
-    boolean onViewGroupTouchEvent(MotionEvent event);
+    boolean onTouchEvent(MotionEvent event);
 
     void addOutput(Object listener);
 

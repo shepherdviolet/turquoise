@@ -28,19 +28,9 @@ import android.view.MotionEvent;
 public abstract class ViewGestureControllerAbs implements ViewGestureController {
 
     @Override
-    public boolean onViewTouchEvent(MotionEvent event) {
-        onViewGroupInterceptTouchEvent(event);
-        return onViewGroupTouchEvent(event);
-    }
+    public boolean onTouchEvent(MotionEvent event) {
 
-    @Override
-    public boolean onViewGroupInterceptTouchEvent(MotionEvent event) {
-        return false;
-    }
-
-    @Override
-    public boolean onViewGroupTouchEvent(MotionEvent event) {
-        return false;
+        return true;
     }
 
     @Override

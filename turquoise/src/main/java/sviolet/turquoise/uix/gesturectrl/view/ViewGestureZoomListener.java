@@ -27,8 +27,8 @@ public interface ViewGestureZoomListener {
 
     void holdZoom();
 
-    void releaseZoom(int velocity);
+    void releaseZoom(int basicPointX, int basicPointY,int velocity);
 
-    void zoom(int current, int offset, int velocity);
+    void zoom(int basicPointX, int basicPointY, int current, int offset, int velocity);
 
 }
