@@ -36,6 +36,8 @@ import sviolet.turquoise.enhance.common.WeakHandler;
  */
 public class ViewGestureControllerImpl implements ViewGestureController {
 
+    private static final int VELOCITY_UNITS = 1000;//速度采样周期
+
     //settings/////////////////////////////////////////////////
 
     private long longClickElapse = 1000;//长按时间
@@ -161,6 +163,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 resetHoldState();
+                resetVelocityTracker();
                 startLongClickCounter();
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -227,7 +230,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
             case HOLD:
                 if (touchPointGroup.getPointNum() <= 0) {
                     //无触点, 返回release状态
-                    stateToRelease();
+                    stateToRelease(abandonedPoint);
                 } else if (touchPointGroup.getPointNum() >= 2) {
                     stateToMultiTouch();
                 } else {
@@ -241,7 +244,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
             case SINGLE_TOUCH:
                 if (touchPointGroup.getPointNum() <= 0) {
                     //无触点, 返回release状态
-                    stateToRelease();
+                    stateToRelease(abandonedPoint);
                 } else if (touchPointGroup.getPointNum() >= 2) {
                     stateToMultiTouch();
                 }
@@ -249,7 +252,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
             case MULTI_TOUCH:
                 if (touchPointGroup.getPointNum() <= 0) {
                     //无触点, 返回release状态
-                    stateToRelease();
+                    stateToRelease(abandonedPoint);
                 } else if (touchPointGroup.getPointNum() == 1) {
                     stateToSingleTouch();
                 }
@@ -259,10 +262,18 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         }
     }
 
-    private void stateToRelease() {
+    private void stateToRelease(ViewGestureTouchPoint abandonedPoint) {
         if (hasSingleTouchHold) {
             for (ViewGestureMoveListener listener : moveListeners) {
-                listener.releaseMove(0, 0);//TODO velocity
+                //计算速度
+                getVelocityTracker().computeCurrentVelocity(VELOCITY_UNITS);
+                float velocityX = 0;
+                float velocityY = 0;
+                if (abandonedPoint != null){
+                    velocityX = getVelocityTracker().getXVelocity(abandonedPoint.id);
+                    velocityY = getVelocityTracker().getYVelocity(abandonedPoint.id);
+                }
+                listener.releaseMove(velocityX, velocityY);
             }
         }
         if (hasMultiTouchHold) {
@@ -275,6 +286,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         }
         motionState = MotionState.RELEASE;
         resetHoldState();
+        resetVelocityTracker();
     }
 
     private void stateToHold() {
@@ -329,6 +341,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         if (motionState == MotionState.RELEASE || motionState == MotionState.HOLD){
             return;
         }
+        updateVelocity(event);
         //TODO
     }
 
