@@ -40,7 +40,7 @@ public interface ViewGestureRotateListener {
 
     /**
      * 旋转
-     * @param currentAngle 当前角度
+     * @param currentAngle 当前角度, 12点钟位置为0, 顺时针增加, 范围不限定在0~360之间, 可能出现负数或大于360的情况
      * @param angularOffset 角度位移量
      * @param angularVelocity 角速度, 顺时针为正, 逆时针为负
      */

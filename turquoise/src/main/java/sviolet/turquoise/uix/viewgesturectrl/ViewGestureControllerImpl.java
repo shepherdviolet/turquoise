@@ -22,15 +22,17 @@ package sviolet.turquoise.uix.viewgesturectrl;
 import android.content.Context;
 import android.os.Message;
 import android.view.MotionEvent;
+import android.view.ViewConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.util.common.MathUtils;
 
 /**
  * <p>View触摸控制器实现类</p>
- *
+ * <p>
  * Created by S.Violet on 2016/9/22.
  */
 public class ViewGestureControllerImpl implements ViewGestureController {
@@ -46,17 +48,22 @@ public class ViewGestureControllerImpl implements ViewGestureController {
 
     //state/////////////////////////////////////////////////
 
+    private int mTouchSlop;
+    private int rotateGesturePointDistanceThreshold;
+
     private ViewGestureTouchPointGroup touchPointGroup;//触点组
 
     private boolean longClicked = false;//长按触发标记
 
     private MotionState motionState = MotionState.RELEASE;//状态
 
-    /**************************************************************************88
+    /**************************************************************************
      * public
      */
 
     public ViewGestureControllerImpl(Context context) {
+        mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
+        rotateGesturePointDistanceThreshold = mTouchSlop * 10;
         touchPointGroup = new ViewGestureTouchPointGroup(context);
     }
 
@@ -68,60 +75,60 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         return true;
     }
 
-    /**************************************************************************88
+    /**************************************************************************
      * settings
      */
 
     @Override
     public void addOutput(Object listener) {
-        if (listener instanceof ViewGestureMoveListener){
+        if (listener instanceof ViewGestureMoveListener) {
             addMoveListener((ViewGestureMoveListener) listener);
         }
-        if (listener instanceof ViewGestureRotateListener){
+        if (listener instanceof ViewGestureRotateListener) {
             addRotateListener((ViewGestureRotateListener) listener);
         }
-        if (listener instanceof ViewGestureZoomListener){
+        if (listener instanceof ViewGestureZoomListener) {
             addZoomListener((ViewGestureZoomListener) listener);
         }
-        if (listener instanceof ViewGestureClickListener){
+        if (listener instanceof ViewGestureClickListener) {
             addClickListener((ViewGestureClickListener) listener);
         }
     }
 
-    public ViewGestureController addMoveListener(ViewGestureMoveListener listener){
+    public ViewGestureController addMoveListener(ViewGestureMoveListener listener) {
         if (listener != null) {
             moveListeners.add(listener);
         }
         return this;
     }
 
-    public ViewGestureController addRotateListener(ViewGestureRotateListener listener){
+    public ViewGestureController addRotateListener(ViewGestureRotateListener listener) {
         if (listener != null) {
             rotateListeners.add(listener);
         }
         return this;
     }
 
-    public ViewGestureController addZoomListener(ViewGestureZoomListener listener){
+    public ViewGestureController addZoomListener(ViewGestureZoomListener listener) {
         if (listener != null) {
             zoomListeners.add(listener);
         }
         return this;
     }
 
-    public ViewGestureController addClickListener(ViewGestureClickListener listener){
+    public ViewGestureController addClickListener(ViewGestureClickListener listener) {
         if (listener != null) {
             clickListeners.add(listener);
         }
         return this;
     }
 
-    /*******************************************************************************8
+    /*******************************************************************************
      * handle click
      */
 
     private void handleClickEvent(MotionEvent event, ViewGestureTouchPoint abandonedPoint) {
-        switch(event.getActionMasked()){
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 startLongClickCounter();
                 break;
@@ -135,8 +142,8 @@ public class ViewGestureControllerImpl implements ViewGestureController {
 
                 break;
             case MotionEvent.ACTION_UP:
-                if (touchPointGroup.getMaxPointNum() == 1 && abandonedPoint != null && !abandonedPoint.isEffectiveMoved && !longClicked){
-                    for (ViewGestureClickListener listener : clickListeners){
+                if (touchPointGroup.getMaxPointNum() == 1 && abandonedPoint != null && !abandonedPoint.isEffectiveMoved && !longClicked) {
+                    for (ViewGestureClickListener listener : clickListeners) {
                         listener.onClick(abandonedPoint.downX, abandonedPoint.downY);
                     }
                 }
@@ -149,41 +156,51 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         }
     }
 
-    private void startLongClickCounter(){
+    private void startLongClickCounter() {
         cancelLongClickCounter();
         myHandler.sendEmptyMessageDelayed(MyHandler.WHAT_LONG_CLICK, longClickElapse);
     }
 
-    private void cancelLongClickCounter(){
+    private void cancelLongClickCounter() {
         myHandler.removeMessages(MyHandler.WHAT_LONG_CLICK);
         longClicked = false;
     }
 
-    private void onLongClick(){
+    private void onLongClick() {
         ViewGestureTouchPoint point = touchPointGroup.getPoint(0);
-        if (touchPointGroup.getMaxPointNum() != 1 || point == null || point.isEffectiveMoved){
+        if (touchPointGroup.getMaxPointNum() != 1 || point == null || point.isEffectiveMoved) {
             return;
         }
         longClicked = true;
-        for (ViewGestureClickListener listener : clickListeners){
+        for (ViewGestureClickListener listener : clickListeners) {
             listener.onLongClick(point.downX, point.downY);
         }
     }
 
-    /*******************************************************************************8
+    /*******************************************************************************
      * handle state
      */
 
-    private void handleState(MotionEvent event, ViewGestureTouchPoint abandonedPoint){
-        switch (motionState){
+    private void handleState(MotionEvent event, ViewGestureTouchPoint abandonedPoint) {
+        switch (motionState) {
             case RELEASE:
-                if (touchPointGroup.getPointNum() > 0){
-                    motionState = MotionState.HOLD;
+                if (touchPointGroup.getPointNum() > 0) {
+                    stateToHold();
                 }
                 break;
             case HOLD:
-                if (touchPointGroup.getPointNum() <= 0){
-                    motionState = MotionState.RELEASE;
+                if (touchPointGroup.getPointNum() <= 0) {
+                    //无触点, 返回release状态
+                    stateToRelease();
+                } else if (touchPointGroup.getMaxPointNum() >= 2) {
+                    //多触点, 判断是平移还是缩放还是旋转
+                    //TODO
+                } else {
+                    //单触点, 判断平移距离
+                    ViewGestureTouchPoint point = touchPointGroup.getPoint(0);
+                    if (point != null && point.isEffectiveMoved) {
+                        stateToMove();
+                    }
                 }
                 break;
             case MOVE:
@@ -200,13 +217,102 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         }
     }
 
+    private boolean isRotateGesture(ViewGestureTouchPoint pointSrc, ViewGestureTouchPoint pointDst){
+        //两个触点间距过小, 不判定为旋转手势
+        float pointDistance = calculatePointDistance(pointSrc, pointDst);
+        if (pointDistance < rotateGesturePointDistanceThreshold){
+            return false;
+        }
+        //两个触点之中有一个没有有效位移, 则不判定为旋转手势
+        if (!isPointMoving(pointSrc) || !isPointMoving(pointDst)){
+            return false;
+        }
+        float twoPointVectorAngle = calculatePointMotionVectorAngle(pointDst.currX - pointSrc.currX, pointDst.currY - pointDst.currY);
+        float srcVectorAngle = calculatePointMotionVectorAngle(pointSrc.stepX, pointSrc.stepY);
+        float dstVectorAngle = calculatePointMotionVectorAngle(pointDst.stepX, pointDst.stepY);
+
+        //TODO
+
+        return false;
+    }
+
+    private float calculatePointDistance(ViewGestureTouchPoint pointSrc, ViewGestureTouchPoint pointDst) {
+        double _x = Math.abs(pointDst.currX - pointSrc.currX);
+        double _y = Math.abs(pointDst.currY - pointSrc.currY);
+        return (float) Math.sqrt(_x * _x + _y * _y);
+    }
+
+    private boolean isPointMoving(ViewGestureTouchPoint point){
+        if (point.stepX > mTouchSlop || point.stepY > mTouchSlop){
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 计算点运动的矢量角度, 12点钟位置为0, 顺时针增加
+     */
+    private float calculatePointMotionVectorAngle(float offsetX, float offsetY){
+        if (offsetX == 0 && offsetY == 0){
+            //点没有任何位移, 此处理论上不可能发生, 因为isRotateGesture方法中先判断了点是否有效位移
+            return 0;
+        }
+        if (offsetX == 0){
+            if (offsetY > 0){
+                return 180;
+            }else{
+                return 0;
+            }
+        }
+        if (offsetY == 0){
+            if (offsetX > 0){
+                return 90;
+            } else{
+                return 270;
+            }
+        }
+        if (offsetX > 0){
+            if (offsetY > 0){
+                return (float) (180 - MathUtils.atanAngle(Math.abs(offsetX / offsetY)));
+            } else {
+                return (float) (MathUtils.atanAngle(Math.abs(offsetX / offsetY)));
+            }
+        } else {
+            if (offsetY > 0){
+                return (float) (180 + MathUtils.atanAngle(Math.abs(offsetX / offsetY)));
+            } else {
+                return (float) (360 - MathUtils.atanAngle(Math.abs(offsetX / offsetY)));
+            }
+        }
+    }
+
+    private void stateToRelease() {
+        motionState = MotionState.RELEASE;
+    }
+
+    private void stateToHold() {
+        motionState = MotionState.HOLD;
+    }
+
+    private void stateToMove() {
+        motionState = MotionState.MOVE;
+    }
+
+    private void stateToMoveAndZoom() {
+        motionState = MotionState.MOVE_AND_ZOOM;
+    }
+
+    private void stateToRotate() {
+        motionState = MotionState.ROTATE;
+    }
+
     /***************************************************************
      * handler
      */
 
     private MyHandler myHandler = new MyHandler(this);
 
-    private static class MyHandler extends WeakHandler<ViewGestureControllerImpl>{
+    private static class MyHandler extends WeakHandler<ViewGestureControllerImpl> {
 
         private static final int WHAT_LONG_CLICK = 1;
 
@@ -216,7 +322,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
 
         @Override
         protected void handleMessageWithHost(Message msg, ViewGestureControllerImpl host) {
-            switch (msg.what){
+            switch (msg.what) {
                 case WHAT_LONG_CLICK:
                     host.onLongClick();
                     break;
@@ -230,7 +336,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      * inner class
      */
 
-    private enum MotionState{
+    private enum MotionState {
         RELEASE,//释放
         HOLD,//持有
         MOVE,//移动
