@@ -29,20 +29,32 @@ import java.util.List;
 import sviolet.turquoise.enhance.common.WeakHandler;
 
 /**
+ * <p>View触摸控制器实现类</p>
+ *
  * Created by S.Violet on 2016/9/22.
  */
-
 public class ViewGestureControllerImpl implements ViewGestureController {
 
-    private long longClickElapse = 1000;
-    private List<ViewGestureMoveListener> moveListeners = new ArrayList<>();
-    private List<ViewGestureZoomListener> zoomListeners = new ArrayList<>();
-    private List<ViewGestureRotateListener> rotateListeners = new ArrayList<>();
-    private List<ViewGestureClickListener> clickListeners = new ArrayList<>();
+    //settings/////////////////////////////////////////////////
 
-    private ViewGestureTouchPointGroup touchPointGroup;
+    private long longClickElapse = 1000;//长按时间
 
-    private boolean longClicked = false;
+    private List<ViewGestureMoveListener> moveListeners = new ArrayList<>();//移动监听
+    private List<ViewGestureZoomListener> zoomListeners = new ArrayList<>();//缩放监听
+    private List<ViewGestureRotateListener> rotateListeners = new ArrayList<>();//旋转监听
+    private List<ViewGestureClickListener> clickListeners = new ArrayList<>();//点击监听
+
+    //state/////////////////////////////////////////////////
+
+    private ViewGestureTouchPointGroup touchPointGroup;//触点组
+
+    private boolean longClicked = false;//长按触发标记
+
+    private MotionState motionState = MotionState.RELEASE;//状态
+
+    /**************************************************************************88
+     * public
+     */
 
     public ViewGestureControllerImpl(Context context) {
         touchPointGroup = new ViewGestureTouchPointGroup(context);
@@ -51,36 +63,14 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         ViewGestureTouchPoint abandonedPoint = touchPointGroup.update(event);
-
-        switch(event.getActionMasked()){
-            case MotionEvent.ACTION_DOWN:
-                startLongClickCounter();
-                break;
-            case MotionEvent.ACTION_MOVE:
-
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                cancelLongClickCounter();
-                break;
-            case MotionEvent.ACTION_POINTER_UP:
-
-                break;
-            case MotionEvent.ACTION_UP:
-                if (touchPointGroup.getMaxPointNum() == 1 && abandonedPoint != null && !abandonedPoint.isEffectiveMoved && !longClicked){
-                    for (ViewGestureClickListener listener : clickListeners){
-                        listener.onClick(abandonedPoint.downX, abandonedPoint.downY);
-                    }
-                }
-            case MotionEvent.ACTION_CANCEL:
-                //以下代码UP/CANCEL都执行
-                cancelLongClickCounter();
-                break;
-            default:
-                return true;
-        }
+        handleClickEvent(event, abandonedPoint);
 
         return true;
     }
+
+    /**************************************************************************88
+     * settings
+     */
 
     @Override
     public void addOutput(Object listener) {
@@ -126,6 +116,39 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         return this;
     }
 
+    /*******************************************************************************8
+     * handle click
+     */
+
+    private void handleClickEvent(MotionEvent event, ViewGestureTouchPoint abandonedPoint) {
+        switch(event.getActionMasked()){
+            case MotionEvent.ACTION_DOWN:
+                startLongClickCounter();
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                cancelLongClickCounter();
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+
+                break;
+            case MotionEvent.ACTION_UP:
+                if (touchPointGroup.getMaxPointNum() == 1 && abandonedPoint != null && !abandonedPoint.isEffectiveMoved && !longClicked){
+                    for (ViewGestureClickListener listener : clickListeners){
+                        listener.onClick(abandonedPoint.downX, abandonedPoint.downY);
+                    }
+                }
+            case MotionEvent.ACTION_CANCEL:
+                //以下代码UP/CANCEL都执行
+                cancelLongClickCounter();
+                break;
+            default:
+                break;
+        }
+    }
+
     private void startLongClickCounter(){
         cancelLongClickCounter();
         myHandler.sendEmptyMessageDelayed(MyHandler.WHAT_LONG_CLICK, longClickElapse);
@@ -144,6 +167,36 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         longClicked = true;
         for (ViewGestureClickListener listener : clickListeners){
             listener.onLongClick(point.downX, point.downY);
+        }
+    }
+
+    /*******************************************************************************8
+     * handle state
+     */
+
+    private void handleState(MotionEvent event, ViewGestureTouchPoint abandonedPoint){
+        switch (motionState){
+            case RELEASE:
+                if (touchPointGroup.getPointNum() > 0){
+                    motionState = MotionState.HOLD;
+                }
+                break;
+            case HOLD:
+                if (touchPointGroup.getPointNum() <= 0){
+                    motionState = MotionState.RELEASE;
+                }
+                break;
+            case MOVE:
+
+                break;
+            case MOVE_AND_ZOOM:
+
+                break;
+            case ROTATE:
+
+                break;
+            default:
+                break;
         }
     }
 
@@ -171,6 +224,18 @@ public class ViewGestureControllerImpl implements ViewGestureController {
                     break;
             }
         }
+    }
+
+    /***************************************************************
+     * inner class
+     */
+
+    private enum MotionState{
+        RELEASE,//释放
+        HOLD,//持有
+        MOVE,//移动
+        MOVE_AND_ZOOM,//移动和缩放
+        ROTATE//旋转
     }
 
 }
