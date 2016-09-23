@@ -47,6 +47,7 @@ class ViewGestureTouchPointGroup {
 
         ViewGestureTouchPoint point;
         ViewGestureTouchPoint abandonedPoint = null;
+        int index;
 
         switch(event.getActionMasked()){
             case MotionEvent.ACTION_DOWN:
@@ -57,17 +58,18 @@ class ViewGestureTouchPointGroup {
                 points.add(point);
                 break;
             case MotionEvent.ACTION_MOVE:
-                for (int i = 0 ; i < points.size() ; i++){
-                    updatePoint(points.get(i), event, i);
+                for (index = 0 ; index < points.size() ; index++){
+                    updatePoint(points.get(index), event, index);
                 }
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
+                index = getPointIndexFromEvent(event);
                 point = new ViewGestureTouchPoint();
-                resetPoint(point, event, points.size());
-                points.add(point);
+                resetPoint(point, event, index);
+                points.add(index, point);//插入到index位置
                 break;
             case MotionEvent.ACTION_POINTER_UP:
-                int index = getPointIndexFromEvent(event);
+                index = getPointIndexFromEvent(event);
                 if (index < 0 || index >= points.size()){
                     break;
                 }
@@ -97,6 +99,7 @@ class ViewGestureTouchPointGroup {
         point.currY = getYFromEvent(event, index);
         point.downX = point.currX;
         point.downY = point.currY;
+        point.id = event.getPointerId(index);
     }
 
     private void updatePoint(ViewGestureTouchPoint point, MotionEvent event, int index){

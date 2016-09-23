@@ -27,6 +27,8 @@ package sviolet.turquoise.uix.viewgesturectrl;
 
 class ViewGestureTouchPoint {
 
+    int id = 0;
+
     //按下时的坐标
     float downX = 0;
     float downY = 0;
@@ -44,6 +46,6 @@ class ViewGestureTouchPoint {
 
     @Override
     public String toString() {
-        return "down:[" + downX + "," + downY + "] curr:[" + currX + "," + currY + "] step[" + stepX + "," + stepY + "] moved:" + isEffectiveMoved;
+        return "id:" + id + "down:[" + downX + "," + downY + "] curr:[" + currX + "," + currY + "] step[" + stepX + "," + stepY + "] moved:" + isEffectiveMoved;
     }
 }
