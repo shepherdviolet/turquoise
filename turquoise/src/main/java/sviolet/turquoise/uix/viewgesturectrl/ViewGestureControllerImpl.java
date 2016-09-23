@@ -22,7 +22,6 @@ package sviolet.turquoise.uix.viewgesturectrl;
 import android.content.Context;
 import android.os.Message;
 import android.view.MotionEvent;
-import android.view.ViewConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +52,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
 
     private MotionState motionState = MotionState.RELEASE;//状态
 
+    private boolean hasSingleTouchHold = false;//单点触摸触发标记
+    private boolean hasMultiTouchHold = false;//多点触摸触发标记
+
     /**************************************************************************
      * public
      */
@@ -65,7 +67,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     public boolean onTouchEvent(MotionEvent event) {
         ViewGestureTouchPoint abandonedPoint = touchPointGroup.update(event);
         handleClickEvent(event, abandonedPoint);
-
+        handleState(event, abandonedPoint);
         return true;
     }
 
@@ -124,6 +126,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     private void handleClickEvent(MotionEvent event, ViewGestureTouchPoint abandonedPoint) {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                resetHoldState();
                 startLongClickCounter();
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -148,6 +151,11 @@ public class ViewGestureControllerImpl implements ViewGestureController {
             default:
                 break;
         }
+    }
+
+    private void resetHoldState() {
+        hasSingleTouchHold = false;
+        hasMultiTouchHold = false;
     }
 
     private void startLongClickCounter() {
@@ -218,7 +226,21 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     }
 
     private void stateToRelease() {
+        if (hasSingleTouchHold) {
+            for (ViewGestureMoveListener listener : moveListeners) {
+                listener.releaseMove(0, 0);//TODO velocity
+            }
+        }
+        if (hasMultiTouchHold) {
+            for (ViewGestureZoomListener listener : zoomListeners) {
+                listener.releaseZoom(0, 0, 0);//TODO velocity
+            }
+            for (ViewGestureRotateListener listener : rotateListeners) {
+                listener.releaseRotate(0);//TODO velocity
+            }
+        }
         motionState = MotionState.RELEASE;
+        resetHoldState();
     }
 
     private void stateToHold() {
@@ -226,10 +248,42 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     }
 
     private void stateToSingleTouch() {
+        switch (motionState) {
+            case HOLD:
+                if (!hasSingleTouchHold) {
+                    hasSingleTouchHold = true;
+                    for (ViewGestureMoveListener listener : moveListeners) {
+                        listener.holdMove();
+                    }
+                }
+                break;
+            case MULTI_TOUCH:
+                break;
+        }
         motionState = MotionState.SINGLE_TOUCH;
     }
 
     private void stateToMultiTouch() {
+        switch (motionState) {
+            case HOLD:
+                if (!hasSingleTouchHold) {
+                    hasSingleTouchHold = true;
+                    for (ViewGestureMoveListener listener : moveListeners) {
+                        listener.holdMove();
+                    }
+                }
+            case SINGLE_TOUCH:
+                if (!hasMultiTouchHold) {
+                    hasMultiTouchHold = true;
+                    for (ViewGestureZoomListener listener : zoomListeners) {
+                        listener.holdZoom();
+                    }
+                    for (ViewGestureRotateListener listener : rotateListeners) {
+                        listener.holdRotate();
+                    }
+                }
+                break;
+        }
         motionState = MotionState.MULTI_TOUCH;
     }
 
