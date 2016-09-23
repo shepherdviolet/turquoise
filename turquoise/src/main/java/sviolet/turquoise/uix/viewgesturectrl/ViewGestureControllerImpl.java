@@ -37,6 +37,8 @@ import sviolet.turquoise.util.common.MathUtils;
  */
 public class ViewGestureControllerImpl implements ViewGestureController {
 
+    private static final int VERTICAL_ANGLE_TOLERANCE = 20;//判定为垂直角的允许容差
+
     //settings/////////////////////////////////////////////////
 
     private long longClickElapse = 1000;//长按时间
@@ -231,7 +233,15 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         float srcVectorAngle = calculatePointMotionVectorAngle(pointSrc.stepX, pointSrc.stepY);
         float dstVectorAngle = calculatePointMotionVectorAngle(pointDst.stepX, pointDst.stepY);
 
-        //TODO
+        //触点位移矢量角度与触点连线垂直且反向时, 认定为旋转
+        int isSrcMovingVertical = calculateMovingVertical(twoPointVectorAngle, srcVectorAngle);
+        int isDstMovingVertical = calculateMovingVertical(twoPointVectorAngle, dstVectorAngle);
+        if (isSrcMovingVertical > 0 && isDstMovingVertical < 0){
+            return true;
+        }
+        if (isSrcMovingVertical < 0 && isDstMovingVertical > 0){
+            return true;
+        }
 
         return false;
     }
@@ -284,6 +294,48 @@ public class ViewGestureControllerImpl implements ViewGestureController {
                 return (float) (360 - MathUtils.atanAngle(Math.abs(offsetX / offsetY)));
             }
         }
+    }
+
+    /**
+     * 判断pointVectorAngle是否在lineVectorAngle垂直方向上, 允许一定的容差, 若在垂直方向上, 且角度大于
+     * lineVectorAngle则返回1, 若在垂直方向上, 且角度小于lineVectorAngle, 则返回-1, 若不在垂直方向上则返回0
+     */
+    private int calculateMovingVertical(float lineVectorAngle, float pointVectorAngle){
+        //逆时针方向的垂直角范围
+        float leftVerticalAngleMin = lineVectorAngle - 90 - VERTICAL_ANGLE_TOLERANCE;
+        float leftVerticalAngleMax = lineVectorAngle - 90 + VERTICAL_ANGLE_TOLERANCE;
+        if (leftVerticalAngleMin < 0 && leftVerticalAngleMax >= 0){
+            if (pointVectorAngle >= 0 && pointVectorAngle <= leftVerticalAngleMax){
+                return -1;//逆时针方向垂直
+            }
+            if (pointVectorAngle >= MathUtils.standardizeAngle(leftVerticalAngleMin) && pointVectorAngle <= 360){
+                return -1;//逆时针方向垂直
+            }
+        } else {
+            //min>=0&&max>=0, min<0&&max<0, 另外还有一种可能min>=0&&max<0, 在容差小于360时不可能出现, 故忽略
+            if (pointVectorAngle >= MathUtils.standardizeAngle(leftVerticalAngleMin) && pointVectorAngle <= MathUtils.standardizeAngle(leftVerticalAngleMax)){
+                return -1;//逆时针方向垂直
+            }
+        }
+
+        //顺时针方向的垂直角范围
+        float rightVerticalAngleMin = lineVectorAngle + 90 - VERTICAL_ANGLE_TOLERANCE;
+        float rightVerticalAngleMax = lineVectorAngle + 90 + VERTICAL_ANGLE_TOLERANCE;
+        if (rightVerticalAngleMin < 360 && rightVerticalAngleMax >= 360){
+            if (pointVectorAngle >= 0 && pointVectorAngle <= rightVerticalAngleMax){
+                return 1;//顺时针方向垂直
+            }
+            if (pointVectorAngle >= MathUtils.standardizeAngle(rightVerticalAngleMin) && pointVectorAngle <= 360){
+                return 1;//顺时针方向垂直
+            }
+        } else {
+            //min>=0&&max>=0, min<0&&max<0, 另外还有一种可能min>=0&&max<0, 在容差小于360时不可能出现, 故忽略
+            if (pointVectorAngle >= MathUtils.standardizeAngle(rightVerticalAngleMin) && pointVectorAngle <= MathUtils.standardizeAngle(rightVerticalAngleMax)){
+                return 1;//顺时针方向垂直
+            }
+        }
+
+        return 0;
     }
 
     private void stateToRelease() {
