@@ -21,13 +21,55 @@ package sviolet.turquoise.util.common;
 
 public class MathUtils {
 	/**
-	 * 根据角度计算sin值<p>
-	 * Math.sin()中的参数为弧度值, 弧度值 = 角度 * PI / 180
+	 * <p>
+	 *	根据角度计算sin值 <br/>
+	 *	Math.sin()中的参数为弧度值, 弧度值 = 角度 * PI / 180 <br/>
+	 * </p>
 	 * 
-	 * @param angle (0~360)
-	 * @return sin值(-1~1)
+	 * @param angle [0, 360]
+	 * @return sin值 [-1, 1]
 	 */
-	public static double sin(float angle){
+	public static double sinAngle(double angle){
 		return Math.sin(angle * Math.PI / 180);
 	}
+
+	/**
+	 * <p>
+	 *	根据sin值计算角度 <br/>
+	 *	Math.asin()返回值为弧度值, 弧度值 = 角度 * PI / 180 <br/>
+	 * </p>
+	 *
+	 * @param sin sin值 [-1, 1]
+	 * @return 角度 [0, 360]
+     */
+	public static double asinAngle(double sin){
+		return Math.asin(sin) / (Math.PI / 180);
+	}
+
+	/**
+	 * <p>
+	 *	根据角度计算tan值 <br/>
+	 *	Math.tan()中的参数为弧度值, 弧度值 = 角度 * PI / 180 <br/>
+	 * </p>
+	 *
+	 * @param angle [0, 360]
+	 * @return tan值
+     */
+	public static double tanAngle(double angle){
+		return Math.tan(angle * Math.PI / 180);
+	}
+
+	/**
+	 * <p>
+	 *	根据tan值计算角度 <br/>
+	 *	Math.atan()返回值为弧度值, 弧度值 = 角度 * PI / 180 <br/>
+	 * </p>
+	 *
+	 * @param tan tan值
+	 * @return 角度 [0, 360]
+     */
+	public static double atanAngle(double tan){
+		return Math.atan(tan) / (Math.PI / 180);
+	}
+
 }
