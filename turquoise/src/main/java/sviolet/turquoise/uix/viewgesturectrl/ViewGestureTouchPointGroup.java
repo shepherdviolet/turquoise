@@ -100,8 +100,8 @@ class ViewGestureTouchPointGroup {
     }
 
     private void updatePoint(ViewGestureTouchPoint point, MotionEvent event, int index){
-        int _currX = getXFromEvent(event, index);
-        int _currY = getYFromEvent(event, index);
+        float _currX = getXFromEvent(event, index);
+        float _currY = getYFromEvent(event, index);
         point.stepX = _currX - point.currX;
         point.stepY = _currY - point.currY;
         point.currX = _currX;
@@ -118,12 +118,12 @@ class ViewGestureTouchPointGroup {
         return (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
     }
 
-    private int getXFromEvent(MotionEvent event, int index){
-        return (int) event.getX(index);//相对于容器的坐标
+    private float getXFromEvent(MotionEvent event, int index){
+        return event.getX(index);//相对于容器的坐标
     }
 
-    private int getYFromEvent(MotionEvent event, int index){
-        return (int) event.getY(index);//相对于容器的坐标
+    private float getYFromEvent(MotionEvent event, int index){
+        return event.getY(index);//相对于容器的坐标
     }
 
     int getPointNum(){

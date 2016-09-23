@@ -37,7 +37,7 @@ public interface ViewGestureMoveListener {
      * @param velocityX X轴方向速度
      * @param velocityY Y轴方向速度
      */
-    void releaseMove(int velocityX, int velocityY);
+    void releaseMove(float velocityX, float velocityY);
 
     /**
      * 移动
@@ -48,6 +48,6 @@ public interface ViewGestureMoveListener {
      * @param offsetY y轴方向位移量
      * @param velocityY y轴方向速度
      */
-    void move(int currentX, int offsetX, int velocityX, int currentY, int offsetY, int velocityY);
+    void move(float currentX, float offsetX, float velocityX, float currentY, float offsetY, float velocityY);
 
 }

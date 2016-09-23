@@ -38,7 +38,7 @@ public interface ViewGestureZoomListener {
      * @param basicPointY 基点坐标Y
      * @param velocity 缩放速度(放大为正, 缩小为负)
      */
-    void releaseZoom(int basicPointX, int basicPointY, int velocity);
+    void releaseZoom(float basicPointX, float basicPointY, float velocity);
 
     /**
      * 缩放
@@ -48,6 +48,6 @@ public interface ViewGestureZoomListener {
      * @param offset 缩放偏移量(两点间距变化量)
      * @param velocity 缩放速度(放大为正, 缩小为负)
      */
-    void zoom(int basicPointX, int basicPointY, int current, int offset, int velocity);
+    void zoom(float basicPointX, float basicPointY, float current, float offset, float velocity);
 
 }

@@ -31,13 +31,13 @@ public interface ViewGestureClickListener {
      * @param x x
      * @param y y
      */
-    void onClick(int x, int y);
+    void onClick(float x, float y);
 
     /**
      * 长按
      * @param x x
      * @param y y
      */
-    void onLongClick(int x, int y);
+    void onLongClick(float x, float y);
 
 }

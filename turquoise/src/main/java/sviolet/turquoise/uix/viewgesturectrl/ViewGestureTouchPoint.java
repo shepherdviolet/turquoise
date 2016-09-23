@@ -28,16 +28,16 @@ package sviolet.turquoise.uix.viewgesturectrl;
 class ViewGestureTouchPoint {
 
     //按下时的坐标
-    int downX = 0;
-    int downY = 0;
+    float downX = 0;
+    float downY = 0;
 
     //当前坐标
-    int currX = 0;
-    int currY = 0;
+    float currX = 0;
+    float currY = 0;
 
     //单次位移
-    int stepX = 0;
-    int stepY = 0;
+    float stepX = 0;
+    float stepY = 0;
 
     //是否产生了有效移动
     boolean isEffectiveMoved = false;

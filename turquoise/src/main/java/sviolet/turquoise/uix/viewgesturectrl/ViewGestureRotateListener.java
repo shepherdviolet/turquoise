@@ -36,7 +36,7 @@ public interface ViewGestureRotateListener {
      * 旋转释放, 可用于做惯性滑动
      * @param angularVelocity 角速度, 顺时针为正, 逆时针为负
      */
-    void releaseRotate(int angularVelocity);
+    void releaseRotate(float angularVelocity);
 
     /**
      * 旋转
@@ -44,6 +44,6 @@ public interface ViewGestureRotateListener {
      * @param angularOffset 角度位移量
      * @param angularVelocity 角速度, 顺时针为正, 逆时针为负
      */
-    void rotate(int currentAngle, int angularOffset, int angularVelocity);
+    void rotate(float currentAngle, float angularOffset, float angularVelocity);
 
 }
