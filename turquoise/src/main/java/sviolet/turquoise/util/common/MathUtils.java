@@ -20,6 +20,11 @@
 package sviolet.turquoise.util.common;
 
 public class MathUtils {
+
+	/*********************************************************************
+	 * trigonometric
+	 */
+
 	/**
 	 * <p>
 	 *	根据角度计算sin值 <br/>
@@ -70,6 +75,20 @@ public class MathUtils {
      */
 	public static double atanAngle(double tan){
 		return Math.atan(tan) / (Math.PI / 180);
+	}
+
+	/************************************************************************************
+	 * other
+     */
+
+	/**
+	 * 角度标准化, 将任意不在0-360范围内的角度转换为0-360范围内的角度, 例如:-90 -> 270
+	 * @param angle 角度
+	 * @return 0-360范围的角度
+     */
+	public static float standardizeAngle(float angle){
+		float m = angle % 360;
+		return m > 0 ? m : m + 360;
 	}
 
 }
