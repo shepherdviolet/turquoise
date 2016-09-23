@@ -39,7 +39,7 @@ class ViewGestureTouchPointGroup {
     private int mTouchSlop;
 
 
-    public ViewGestureTouchPointGroup(Context context) {
+    ViewGestureTouchPointGroup(Context context) {
         this.mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
     }
 
@@ -114,27 +114,27 @@ class ViewGestureTouchPointGroup {
         }
     }
 
-    protected int getPointIndexFromEvent(MotionEvent event){
+    private int getPointIndexFromEvent(MotionEvent event){
         return (event.getAction() & MotionEvent.ACTION_POINTER_INDEX_MASK) >> MotionEvent.ACTION_POINTER_INDEX_SHIFT;
     }
 
-    protected int getXFromEvent(MotionEvent event, int index){
+    private int getXFromEvent(MotionEvent event, int index){
         return (int) event.getX(index);//相对于容器的坐标
     }
 
-    protected int getYFromEvent(MotionEvent event, int index){
+    private int getYFromEvent(MotionEvent event, int index){
         return (int) event.getY(index);//相对于容器的坐标
     }
 
-    public int getPointNum(){
+    int getPointNum(){
         return points.size();
     }
 
-    public int getMaxPointNum(){
+    int getMaxPointNum(){
         return maxPointNum;
     }
 
-    public ViewGestureTouchPoint getPoint(int index){
+    ViewGestureTouchPoint getPoint(int index){
         if (index >= points.size()){
             return null;
         }
