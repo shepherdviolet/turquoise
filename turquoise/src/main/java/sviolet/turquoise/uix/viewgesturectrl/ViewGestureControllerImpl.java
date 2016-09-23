@@ -19,12 +19,158 @@
 
 package sviolet.turquoise.uix.viewgesturectrl;
 
+import android.content.Context;
+import android.os.Message;
+import android.view.MotionEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import sviolet.turquoise.enhance.common.WeakHandler;
+
 /**
  * Created by S.Violet on 2016/9/22.
  */
 
-public class ViewGestureControllerImpl extends ViewGestureControllerAbs {
+public class ViewGestureControllerImpl implements ViewGestureController {
 
+    private long longClickElapse = 1000;
+    private List<ViewGestureMoveListener> moveListeners = new ArrayList<>();
+    private List<ViewGestureZoomListener> zoomListeners = new ArrayList<>();
+    private List<ViewGestureRotateListener> rotateListeners = new ArrayList<>();
+    private List<ViewGestureClickListener> clickListeners = new ArrayList<>();
 
+    private ViewGestureTouchPointGroup touchPointGroup;
+
+    private boolean longClicked = false;
+
+    public ViewGestureControllerImpl(Context context) {
+        touchPointGroup = new ViewGestureTouchPointGroup(context);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        ViewGestureTouchPoint abandonedPoint = touchPointGroup.update(event);
+
+        switch(event.getActionMasked()){
+            case MotionEvent.ACTION_DOWN:
+                startLongClickCounter();
+                break;
+            case MotionEvent.ACTION_MOVE:
+
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                cancelLongClickCounter();
+                break;
+            case MotionEvent.ACTION_POINTER_UP:
+
+                break;
+            case MotionEvent.ACTION_UP:
+                if (touchPointGroup.getMaxPointNum() == 1 && abandonedPoint != null && !abandonedPoint.isEffectiveMoved && !longClicked){
+                    for (ViewGestureClickListener listener : clickListeners){
+                        listener.onClick(abandonedPoint.downX, abandonedPoint.downY);
+                    }
+                }
+            case MotionEvent.ACTION_CANCEL:
+                //以下代码UP/CANCEL都执行
+                cancelLongClickCounter();
+                break;
+            default:
+                return true;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void addOutput(Object listener) {
+        if (listener instanceof ViewGestureMoveListener){
+            addMoveListener((ViewGestureMoveListener) listener);
+        }
+        if (listener instanceof ViewGestureRotateListener){
+            addRotateListener((ViewGestureRotateListener) listener);
+        }
+        if (listener instanceof ViewGestureZoomListener){
+            addZoomListener((ViewGestureZoomListener) listener);
+        }
+        if (listener instanceof ViewGestureClickListener){
+            addClickListener((ViewGestureClickListener) listener);
+        }
+    }
+
+    public ViewGestureController addMoveListener(ViewGestureMoveListener listener){
+        if (listener != null) {
+            moveListeners.add(listener);
+        }
+        return this;
+    }
+
+    public ViewGestureController addRotateListener(ViewGestureRotateListener listener){
+        if (listener != null) {
+            rotateListeners.add(listener);
+        }
+        return this;
+    }
+
+    public ViewGestureController addZoomListener(ViewGestureZoomListener listener){
+        if (listener != null) {
+            zoomListeners.add(listener);
+        }
+        return this;
+    }
+
+    public ViewGestureController addClickListener(ViewGestureClickListener listener){
+        if (listener != null) {
+            clickListeners.add(listener);
+        }
+        return this;
+    }
+
+    private void startLongClickCounter(){
+        cancelLongClickCounter();
+        myHandler.sendEmptyMessageDelayed(MyHandler.WHAT_LONG_CLICK, longClickElapse);
+    }
+
+    private void cancelLongClickCounter(){
+        myHandler.removeMessages(MyHandler.WHAT_LONG_CLICK);
+        longClicked = false;
+    }
+
+    private void onLongClick(){
+        ViewGestureTouchPoint point = touchPointGroup.getPoint(0);
+        if (touchPointGroup.getMaxPointNum() != 1 || point == null || point.isEffectiveMoved){
+            return;
+        }
+        longClicked = true;
+        for (ViewGestureClickListener listener : clickListeners){
+            listener.onLongClick(point.downX, point.downY);
+        }
+    }
+
+    /***************************************************************
+     * handler
+     */
+
+    private MyHandler myHandler = new MyHandler(this);
+
+    private static class MyHandler extends WeakHandler<ViewGestureControllerImpl>{
+
+        private static final int WHAT_LONG_CLICK = 1;
+
+        public MyHandler(ViewGestureControllerImpl host) {
+            super(host);
+        }
+
+        @Override
+        protected void handleMessageWithHost(Message msg, ViewGestureControllerImpl host) {
+            switch (msg.what){
+                case WHAT_LONG_CLICK:
+                    host.onLongClick();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
 }

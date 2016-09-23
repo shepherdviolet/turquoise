@@ -23,18 +23,44 @@ import android.view.MotionEvent;
 
 /**
  *
+ * <p>View触摸控制器</p>
+ *
  * <p>
  *      #ViewGestureController常用于View自身的触摸控制.<br/>
  *      #SlideEngine常用于ViewGroup拦截触摸事件, 控制其子View滑动.<br/>
  * </p>
+ *
+ * <p>======================================================================</p>
+ *
+ * <pre>{@code
+ *     //View的onTouchEvent方法中获取触摸事件
+ *     public boolean onTouchEvent(MotionEvent event) {
+ *          super.onTouchEvent(event);
+ *          viewGestureController.onTouchEvent(event);
+ *          return true;
+ *     }
+ * }</pre>
  *
  * Created by S.Violet on 2016/9/21.
  */
 
 public interface ViewGestureController {
 
+    /**
+     * <pre>{@code
+     *     //View的onTouchEvent方法中获取触摸事件
+     *     public boolean onTouchEvent(MotionEvent event) {
+     *          super.onTouchEvent(event);
+     *          viewGestureController.onTouchEvent(event);
+     *          return true;
+     *     }
+     * }</pre>
+     */
     boolean onTouchEvent(MotionEvent event);
 
+    /**
+     * <p>添加输出监听器, 该方法不保证能绑定成功, 方法内部通过判断listener实现的接口来绑定事件监听</p>
+     */
     void addOutput(Object listener);
 
 }

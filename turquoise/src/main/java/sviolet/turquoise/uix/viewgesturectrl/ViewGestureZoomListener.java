@@ -20,15 +20,34 @@
 package sviolet.turquoise.uix.viewgesturectrl;
 
 /**
+ * <p>ViewGestureController缩放监听器</p>
+ *
  * Created by S.Violet on 2016/9/21.
  */
 
 public interface ViewGestureZoomListener {
 
+    /**
+     * 缩放开始
+     */
     void holdZoom();
 
-    void releaseZoom(int basicPointX, int basicPointY,int velocity);
+    /**
+     * 缩放释放
+     * @param basicPointX 基点坐标X
+     * @param basicPointY 基点坐标Y
+     * @param velocity 缩放速度(放大为正, 缩小为负)
+     */
+    void releaseZoom(int basicPointX, int basicPointY, int velocity);
 
+    /**
+     * 缩放
+     * @param basicPointX 基点坐标X
+     * @param basicPointY 基点坐标Y
+     * @param current 当前缩放值(即两点间距)
+     * @param offset 缩放偏移量(两点间距变化量)
+     * @param velocity 缩放速度(放大为正, 缩小为负)
+     */
     void zoom(int basicPointX, int basicPointY, int current, int offset, int velocity);
 
 }

@@ -20,15 +20,34 @@
 package sviolet.turquoise.uix.viewgesturectrl;
 
 /**
+ * <p>ViewGestureController移动事件监听器</p>
+ *
  * Created by S.Violet on 2016/9/21.
  */
 
 public interface ViewGestureMoveListener {
 
+    /**
+     * 移动开始
+     */
     void holdMove();
 
+    /**
+     * 移动释放, 可用于做惯性滑动
+     * @param velocityX X轴方向速度
+     * @param velocityY Y轴方向速度
+     */
     void releaseMove(int velocityX, int velocityY);
 
+    /**
+     * 移动
+     * @param currentX x轴方向当前位置
+     * @param offsetX x轴方向位移量
+     * @param velocityX x轴方向速度
+     * @param currentY y轴方向当前位置
+     * @param offsetY y轴方向位移量
+     * @param velocityY y轴方向速度
+     */
     void move(int currentX, int offsetX, int velocityX, int currentY, int offsetY, int velocityY);
 
 }

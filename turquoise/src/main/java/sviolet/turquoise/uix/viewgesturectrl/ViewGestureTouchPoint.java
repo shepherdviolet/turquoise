@@ -19,38 +19,31 @@
 
 package sviolet.turquoise.uix.viewgesturectrl;
 
-import android.view.MotionEvent;
-
 /**
+ * <p>触点信息</p>
+ *
  * Created by S.Violet on 2016/9/22.
  */
 
-public abstract class ViewGestureControllerAbs implements ViewGestureController {
+class ViewGestureTouchPoint {
+
+    //按下时的坐标
+    int downX = 0;
+    int downY = 0;
+
+    //当前坐标
+    int currX = 0;
+    int currY = 0;
+
+    //单次位移
+    int stepX = 0;
+    int stepY = 0;
+
+    //是否产生了有效移动
+    boolean isEffectiveMoved = false;
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
-
-        return true;
+    public String toString() {
+        return "down:[" + downX + "," + downY + "] curr:[" + currX + "," + currY + "] step[" + stepX + "," + stepY + "] moved:" + isEffectiveMoved;
     }
-
-    @Override
-    public void addOutput(Object listener) {
-
-    }
-
-    public ViewGestureControllerAbs addMoveListener(ViewGestureMoveListener listener){
-
-        return this;
-    }
-
-    public ViewGestureControllerAbs addRotateListener(ViewGestureRotateListener listener){
-
-        return this;
-    }
-
-    public ViewGestureControllerAbs addZoomListener(ViewGestureZoomListener listener){
-
-        return this;
-    }
-
 }

@@ -20,30 +20,24 @@
 package sviolet.turquoise.uix.viewgesturectrl;
 
 /**
- * <p>ViewGestureController旋转监听器</p>
+ * <p>ViewGestureController点击事件监听器</p>
  *
- * Created by S.Violet on 2016/9/21.
+ * Created by S.Violet on 2016/9/23.
  */
-
-public interface ViewGestureRotateListener {
-
-    /**
-     * 移动开始
-     */
-    void holdRotate();
+public interface ViewGestureClickListener {
 
     /**
-     * 旋转释放, 可用于做惯性滑动
-     * @param angularVelocity 角速度, 顺时针为正, 逆时针为负
+     * 点击
+     * @param x x
+     * @param y y
      */
-    void releaseRotate(int angularVelocity);
+    void onClick(int x, int y);
 
     /**
-     * 旋转
-     * @param currentAngle 当前角度
-     * @param angularOffset 角度位移量
-     * @param angularVelocity 角速度, 顺时针为正, 逆时针为负
+     * 长按
+     * @param x x
+     * @param y y
      */
-    void rotate(int currentAngle, int angularOffset, int angularVelocity);
+    void onLongClick(int x, int y);
 
 }
