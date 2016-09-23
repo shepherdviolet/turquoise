@@ -102,8 +102,8 @@ class ViewGestureTouchPointGroup {
     private void updatePoint(ViewGestureTouchPoint point, MotionEvent event, int index){
         int _currX = getXFromEvent(event, index);
         int _currY = getYFromEvent(event, index);
-        point.stepX = point.currX - _currX;
-        point.stepY = point.currY - _currY;
+        point.stepX = _currX - point.currX;
+        point.stepY = _currY - point.currY;
         point.currX = _currX;
         point.currY = _currY;
 
