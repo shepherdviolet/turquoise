@@ -22,6 +22,7 @@ package sviolet.turquoise.uix.viewgesturectrl;
 import android.content.Context;
 import android.os.Message;
 import android.view.MotionEvent;
+import android.view.VelocityTracker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     //state/////////////////////////////////////////////////
 
     private ViewGestureTouchPointGroup touchPointGroup;//触点组
+    private VelocityTracker mVelocityTracker;//速度捕获器
 
     private boolean longClicked = false;//长按触发标记
 
@@ -68,6 +70,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         ViewGestureTouchPoint abandonedPoint = touchPointGroup.update(event);
         handleClickEvent(event, abandonedPoint);
         handleState(event, abandonedPoint);
+        handleMove(event, abandonedPoint);
         return true;
     }
 
@@ -117,6 +120,37 @@ public class ViewGestureControllerImpl implements ViewGestureController {
             clickListeners.add(listener);
         }
         return this;
+    }
+
+    /**************************************************************************
+     * velocity
+     */
+
+    /**
+     * 获得速度捕获器
+     */
+    private VelocityTracker getVelocityTracker(){
+        if(mVelocityTracker == null){
+            mVelocityTracker = VelocityTracker.obtain();
+        }
+        return mVelocityTracker;
+    }
+
+    /**
+     * 重置/回收速度捕获器
+     */
+    private void resetVelocityTracker(){
+        if (mVelocityTracker != null) {
+            mVelocityTracker.recycle();
+            mVelocityTracker = null;
+        }
+    }
+
+    /**
+     * 速度捕获器更新数据
+     */
+    private void updateVelocity(MotionEvent event){
+        getVelocityTracker().addMovement(event);
     }
 
     /*******************************************************************************
@@ -233,10 +267,10 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         }
         if (hasMultiTouchHold) {
             for (ViewGestureZoomListener listener : zoomListeners) {
-                listener.releaseZoom(0, 0, 0);//TODO velocity
+                listener.releaseZoom();
             }
             for (ViewGestureRotateListener listener : rotateListeners) {
-                listener.releaseRotate(0);//TODO velocity
+                listener.releaseRotate();
             }
         }
         motionState = MotionState.RELEASE;
@@ -285,6 +319,17 @@ public class ViewGestureControllerImpl implements ViewGestureController {
                 break;
         }
         motionState = MotionState.MULTI_TOUCH;
+    }
+
+    /*******************************************************************************
+     * handle move
+     */
+
+    private void handleMove(MotionEvent event, ViewGestureTouchPoint abandonedPoint){
+        if (motionState == MotionState.RELEASE || motionState == MotionState.HOLD){
+            return;
+        }
+        //TODO
     }
 
     /***************************************************************
