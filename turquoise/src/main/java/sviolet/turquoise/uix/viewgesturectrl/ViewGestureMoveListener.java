@@ -41,10 +41,10 @@ public interface ViewGestureMoveListener {
 
     /**
      * 移动
-     * @param currentX x轴方向当前位置
+     * @param currentX x轴方向当前位置(触点位置)
      * @param offsetX x轴方向位移量
      * @param velocityX x轴方向速度
-     * @param currentY y轴方向当前位置
+     * @param currentY y轴方向当前位置(触点位置)
      * @param offsetY y轴方向位移量
      * @param velocityY y轴方向速度
      */

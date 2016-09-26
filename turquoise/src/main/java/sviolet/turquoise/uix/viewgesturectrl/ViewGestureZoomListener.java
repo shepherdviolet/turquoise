@@ -39,9 +39,9 @@ public interface ViewGestureZoomListener {
 
     /**
      * 缩放
-     * @param basicPointX 基点坐标X
-     * @param basicPointY 基点坐标Y
-     * @param current 当前缩放值(即两点间距)
+     * @param basicPointX 基点坐标X(两个触点的中点)
+     * @param basicPointY 基点坐标Y(两个触点的中点)
+     * @param current 当前缩放值(两个触点的间距)
      * @param offset 缩放偏移量(两点间距变化量)
      */
     void zoom(float basicPointX, float basicPointY, float current, float offset);
