@@ -338,11 +338,25 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      */
 
     private void handleMove(MotionEvent event, ViewGestureTouchPoint abandonedPoint){
-        if (motionState == MotionState.RELEASE || motionState == MotionState.HOLD){
+        //只处理SINGLE_TOUCH/MULTI_TOUCH两个状态
+        if (!(motionState == MotionState.SINGLE_TOUCH || motionState == MotionState.MULTI_TOUCH)){
             return;
         }
+        //更新移动速度
         updateVelocity(event);
-        //TODO
+
+        //取第一个点
+        ViewGestureTouchPoint point = touchPointGroup.getPoint(0);
+
+        //计算速度
+        getVelocityTracker().computeCurrentVelocity(VELOCITY_UNITS);
+        float velocityX = getVelocityTracker().getXVelocity(point.id);
+        float velocityY = getVelocityTracker().getYVelocity(point.id);
+
+        //输出
+        for (ViewGestureMoveListener listener : moveListeners) {
+            listener.move(point.currX, point.stepX, velocityX, point.currY, point.stepY, velocityY);
+        }
     }
 
     /***************************************************************
