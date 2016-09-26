@@ -73,6 +73,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         handleClickEvent(event, abandonedPoint);
         handleState(event, abandonedPoint);
         handleMove(event, abandonedPoint);
+        handleZoom(event, abandonedPoint);
         return true;
     }
 
@@ -162,7 +163,8 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     private void handleClickEvent(MotionEvent event, ViewGestureTouchPoint abandonedPoint) {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                resetHoldState();
+                hasSingleTouchHold = false;
+                hasMultiTouchHold = false;
                 resetVelocityTracker();
                 startLongClickCounter();
                 break;
@@ -188,11 +190,6 @@ public class ViewGestureControllerImpl implements ViewGestureController {
             default:
                 break;
         }
-    }
-
-    private void resetHoldState() {
-        hasSingleTouchHold = false;
-        hasMultiTouchHold = false;
     }
 
     private void startLongClickCounter() {
@@ -263,29 +260,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     }
 
     private void stateToRelease(ViewGestureTouchPoint abandonedPoint) {
-        if (hasSingleTouchHold) {
-            for (ViewGestureMoveListener listener : moveListeners) {
-                //计算速度
-                getVelocityTracker().computeCurrentVelocity(VELOCITY_UNITS);
-                float velocityX = 0;
-                float velocityY = 0;
-                if (abandonedPoint != null){
-                    velocityX = getVelocityTracker().getXVelocity(abandonedPoint.id);
-                    velocityY = getVelocityTracker().getYVelocity(abandonedPoint.id);
-                }
-                listener.releaseMove(velocityX, velocityY);
-            }
-        }
-        if (hasMultiTouchHold) {
-            for (ViewGestureZoomListener listener : zoomListeners) {
-                listener.releaseZoom();
-            }
-            for (ViewGestureRotateListener listener : rotateListeners) {
-                listener.releaseRotate();
-            }
-        }
+        singleTouchReleaseCallback(abandonedPoint);
+        multiTouchReleaseCallback();
         motionState = MotionState.RELEASE;
-        resetHoldState();
         resetVelocityTracker();
     }
 
@@ -296,14 +273,10 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     private void stateToSingleTouch() {
         switch (motionState) {
             case HOLD:
-                if (!hasSingleTouchHold) {
-                    hasSingleTouchHold = true;
-                    for (ViewGestureMoveListener listener : moveListeners) {
-                        listener.holdMove();
-                    }
-                }
+                singleTouchHoldCallback();
                 break;
             case MULTI_TOUCH:
+                multiTouchReleaseCallback();
                 break;
         }
         motionState = MotionState.SINGLE_TOUCH;
@@ -312,25 +285,62 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     private void stateToMultiTouch() {
         switch (motionState) {
             case HOLD:
-                if (!hasSingleTouchHold) {
-                    hasSingleTouchHold = true;
-                    for (ViewGestureMoveListener listener : moveListeners) {
-                        listener.holdMove();
-                    }
-                }
+                singleTouchHoldCallback();
             case SINGLE_TOUCH:
-                if (!hasMultiTouchHold) {
-                    hasMultiTouchHold = true;
-                    for (ViewGestureZoomListener listener : zoomListeners) {
-                        listener.holdZoom();
-                    }
-                    for (ViewGestureRotateListener listener : rotateListeners) {
-                        listener.holdRotate();
-                    }
-                }
+                multiTouchHoldCallback();
                 break;
         }
         motionState = MotionState.MULTI_TOUCH;
+    }
+
+    private void singleTouchHoldCallback() {
+        if (!hasSingleTouchHold) {
+            hasSingleTouchHold = true;
+            for (ViewGestureMoveListener listener : moveListeners) {
+                listener.holdMove();
+            }
+        }
+    }
+
+    private void multiTouchHoldCallback() {
+        if (!hasMultiTouchHold) {
+            hasMultiTouchHold = true;
+            for (ViewGestureZoomListener listener : zoomListeners) {
+                listener.holdZoom();
+            }
+            for (ViewGestureRotateListener listener : rotateListeners) {
+                listener.holdRotate();
+            }
+        }
+    }
+
+    private void singleTouchReleaseCallback(ViewGestureTouchPoint abandonedPoint) {
+        if (hasSingleTouchHold) {
+            //计算速度
+            getVelocityTracker().computeCurrentVelocity(VELOCITY_UNITS);
+            float velocityX = 0;
+            float velocityY = 0;
+            if (abandonedPoint != null){
+                velocityX = getVelocityTracker().getXVelocity(abandonedPoint.id);
+                velocityY = getVelocityTracker().getYVelocity(abandonedPoint.id);
+            }
+            for (ViewGestureMoveListener listener : moveListeners) {
+                listener.releaseMove(velocityX, velocityY);
+            }
+            hasSingleTouchHold = false;
+        }
+    }
+
+    private void multiTouchReleaseCallback() {
+        if (hasMultiTouchHold) {
+            for (ViewGestureZoomListener listener : zoomListeners) {
+                listener.releaseZoom();
+            }
+            for (ViewGestureRotateListener listener : rotateListeners) {
+                listener.releaseRotate();
+            }
+            hasMultiTouchHold = false;
+        }
     }
 
     /*******************************************************************************
@@ -357,6 +367,18 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         for (ViewGestureMoveListener listener : moveListeners) {
             listener.move(point.currX, point.stepX, velocityX, point.currY, point.stepY, velocityY);
         }
+    }
+
+    /*******************************************************************************
+     * handle zoom
+     */
+
+    private void handleZoom(MotionEvent event, ViewGestureTouchPoint abandonedPoint){
+        //只处理MULTI_TOUCH两个状态
+        if (motionState != MotionState.MULTI_TOUCH){
+            return;
+        }
+        //TODO
     }
 
     /***************************************************************
