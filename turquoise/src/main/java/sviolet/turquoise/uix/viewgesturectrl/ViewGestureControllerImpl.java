@@ -59,6 +59,8 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     private boolean hasSingleTouchHold = false;//单点触摸触发标记
     private boolean hasMultiTouchHold = false;//多点触摸触发标记
 
+    private float currentPointsDistance = -1;//[缩放]当前两点间距, -1表示未定义
+
     /**************************************************************************
      * public
      */
@@ -291,6 +293,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
                 break;
         }
         motionState = MotionState.MULTI_TOUCH;
+        currentPointsDistance = -1;
     }
 
     private void singleTouchHoldCallback() {
@@ -373,12 +376,43 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      * handle zoom
      */
 
+
+
     private void handleZoom(MotionEvent event, ViewGestureTouchPoint abandonedPoint){
-        //只处理MULTI_TOUCH两个状态
+        //只处理MULTI_TOUCH状态
         if (motionState != MotionState.MULTI_TOUCH){
             return;
         }
-        //TODO
+        //取前两个点
+        ViewGestureTouchPoint point0 = touchPointGroup.getPoint(0);
+        ViewGestureTouchPoint point1 = touchPointGroup.getPoint(1);
+
+        //计算两点之间距离
+        float distance = calculatePointDistance(point0, point1);
+        //计算偏移量
+        float offset = currentPointsDistance < 0 ? 0 : distance - currentPointsDistance;
+        currentPointsDistance = distance;
+
+        //计算中点
+        float[] midpoint = calculateMidpoint(point0, point1);
+
+        //输出
+        for (ViewGestureZoomListener listener : zoomListeners) {
+            listener.zoom(midpoint[0], midpoint[1], distance, offset);
+        }
+    }
+
+    private float calculatePointDistance(ViewGestureTouchPoint pointSrc, ViewGestureTouchPoint pointDst) {
+        double _x = Math.abs(pointDst.currX - pointSrc.currX);
+        double _y = Math.abs(pointDst.currY - pointSrc.currY);
+        return (float) Math.sqrt(_x * _x + _y * _y);
+    }
+
+    private float[] calculateMidpoint(ViewGestureTouchPoint pointSrc, ViewGestureTouchPoint pointDst){
+        float[] midpoint = new float[2];
+        midpoint[0] = (pointSrc.currX + pointDst.currX) / 2;
+        midpoint[1] = (pointSrc.currY + pointDst.currY) / 2;
+        return midpoint;
     }
 
     /***************************************************************
