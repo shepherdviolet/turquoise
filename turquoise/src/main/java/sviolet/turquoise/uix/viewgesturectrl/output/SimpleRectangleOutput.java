@@ -67,9 +67,6 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     //当前放大率
     private float currMagnification;
 
-    private Rect srcRect = new Rect();
-    private Rect dstRect = new Rect();
-
     /*******************************************************************
      * init
      */
@@ -100,14 +97,16 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         float actualAspectRatio = actualWidth / actualHeight;
         float displayAspectRatio = displayWidth / displayHeight;
         if (actualAspectRatio > displayAspectRatio){
+            float a = (actualWidth / displayAspectRatio - actualHeight) / 2;
             maxLeft = 0;
-            maxTop = -((actualWidth / displayAspectRatio) - actualHeight) / 2;
+            maxTop = -a;
             maxRight = actualWidth;
-            maxBottom = (((actualWidth / displayAspectRatio) - actualHeight) / 2) + actualHeight;
+            maxBottom = a + actualHeight;
         } else if (actualAspectRatio < displayAspectRatio){
-            maxLeft = -(((actualHeight * displayAspectRatio) - actualWidth) / 2);
+            float a = (actualHeight * displayAspectRatio - actualWidth) / 2;
+            maxLeft = -a;
             maxTop = 0;
-            maxRight = (((actualHeight * displayAspectRatio) - actualWidth) / 2) + actualWidth;
+            maxRight = a + actualWidth;
             maxBottom = actualHeight;
         } else {
             maxLeft = 0;
@@ -275,23 +274,25 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         float x = currX + offsetX;
         float y = currY + offsetY;
 
-        if ((maxWidth / magnification) > actualWidth){
-            x = -((maxWidth / magnification) - actualWidth) / 2;
+        float actualDisplayWidth = maxWidth / magnification;
+        if (actualDisplayWidth > actualWidth){
+            x = -(actualDisplayWidth - actualWidth) / 2;
         } else {
             if (x < 0){
                 x = 0;
-            } else if ((x + (maxWidth / magnification)) > actualWidth){
-                x = actualWidth - (maxWidth / magnification);
+            } else if ((x + actualDisplayWidth) > actualWidth){
+                x = actualWidth - actualDisplayWidth;
             }
         }
 
-        if ((maxHeight / magnification) > actualHeight){
-            y = -((maxHeight / magnification) - actualHeight) / 2;
+        float actualDisplayHeight = maxHeight / magnification;
+        if (actualDisplayHeight > actualHeight){
+            y = -(actualDisplayHeight - actualHeight) / 2;
         } else if (offsetY > 0){
             if (y < 0){
                 y = 0;
-            } else if ((y + (maxHeight / magnification)) > actualHeight){
-                y = actualHeight - (maxHeight / magnification);
+            } else if ((y + actualDisplayHeight) > actualHeight){
+                y = actualHeight - actualDisplayHeight;
             }
         }
 
@@ -304,35 +305,48 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     }
 
     /*******************************************************************
+     * mapping
+     */
+
+    private float[] mappingDisplayPointToActual(float x, float y){
+        float positionX = x / displayWidth;
+        float positionY = y / displayHeight;
+        //TODO
+
+        return null;
+    }
+
+    /*******************************************************************
      * output
      */
 
-    public void calculate(){
+    public void getSrcRect(Rect rect){
         if (invalidWidthOrHeight){
+            rect.left = 0;
+            rect.top = 0;
+            rect.right = 0;
+            rect.bottom = 0;
             return;
         }
 
+        rect.left = currX < 0 ? 0 : (int) currX;
+        rect.right = (currX + (maxWidth / currMagnification)) > actualWidth ? actualWidth : (int) (currX + (maxWidth / currMagnification));
+        rect.top = currY < 0 ? 0 : (int) currY;
+        rect.bottom = (currY + (maxHeight / currMagnification)) > actualHeight ? actualHeight : (int) (currY + (maxHeight / currMagnification));
+
     }
 
-    public Rect getSrcRect(){
+    public void getDstRect(Rect rect){
         if (invalidWidthOrHeight){
-            return INVALID_RECT;
+            rect.left = 0;
+            rect.top = 0;
+            rect.right = 0;
+            rect.bottom = 0;
+            return;
         }
 
-        srcRect.left = currX < 0 ? 0 : (int) currX;
-        srcRect.right = (currX + (maxWidth / currMagnification)) > actualWidth ? actualWidth : (int) (currX + (maxWidth / currMagnification));
-        srcRect.top = currY < 0 ? 0 : (int) currY;
-        srcRect.bottom = (currY + (maxHeight / currMagnification)) > actualHeight ? actualHeight : (int) (currY + (maxHeight / currMagnification));
+        //TODO
 
-        return srcRect;
-    }
-
-    public Rect getDstRect(){
-        if (invalidWidthOrHeight){
-            return INVALID_RECT;
-        }
-
-        return null;
     }
 
 }
