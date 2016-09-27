@@ -308,12 +308,31 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * mapping
      */
 
+    /**
+     * 将显示矩形(特殊坐标系)中的触点坐标映射到实际矩形上
+     */
     private float[] mappingDisplayPointToActual(float x, float y){
-        float positionX = x / displayWidth;
-        float positionY = y / displayHeight;
-        //TODO
+        float[] actual = new float[2];
 
-        return null;
+        if (invalidWidthOrHeight){
+            return actual;
+        }
+
+        actual[0] = currX + (x / displayWidth) * (maxWidth / currMagnification);
+        actual[1] = currY + (y / displayHeight) * (maxHeight / currMagnification);
+
+        return actual;
+    }
+
+    private float[] mappingActualPointToDisplay(float x, float y){
+        float[] display = new float[2];
+
+        if (invalidWidthOrHeight){
+            return display;
+        }
+
+        //TODO
+        return display;
     }
 
     /*******************************************************************
