@@ -74,7 +74,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * init
      */
 
-    private SimpleRectangleOutput(int actualWidth, int actualHeight, float displayWidth, float displayHeight, float magnificationLimit){
+    public SimpleRectangleOutput(int actualWidth, int actualHeight, float displayWidth, float displayHeight, float magnificationLimit){
         if (magnificationLimit < 1){
             throw new RuntimeException("magnificationLimit must >= 1");
         }
