@@ -20,30 +20,13 @@
 package sviolet.turquoise.uix.viewgesturectrl;
 
 /**
- * <p>ViewGestureController缩放监听器</p>
+ * <p>控件手势控制器输出接口, 象征性接口</p>
  *
- * Created by S.Violet on 2016/9/21.
+ * Created by S.Violet on 2016/9/27.
  */
 
-public interface ViewGestureZoomListener extends ViewGestureOutput {
+public interface ViewGestureOutput {
 
-    /**
-     * 缩放开始
-     */
-    void holdZoom();
 
-    /**
-     * 缩放释放
-     */
-    void releaseZoom();
-
-    /**
-     * 缩放
-     * @param basicPointX 基点坐标X(两个触点的中点)
-     * @param basicPointY 基点坐标Y(两个触点的中点)
-     * @param current 当前缩放值(两个触点的间距)
-     * @param offset 缩放偏移量(两点间距变化量)
-     */
-    void zoom(float basicPointX, float basicPointY, float current, float offset);
 
 }

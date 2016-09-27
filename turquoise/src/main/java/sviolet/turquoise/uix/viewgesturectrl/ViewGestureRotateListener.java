@@ -25,7 +25,7 @@ package sviolet.turquoise.uix.viewgesturectrl;
  * Created by S.Violet on 2016/9/21.
  */
 
-public interface ViewGestureRotateListener {
+public interface ViewGestureRotateListener extends ViewGestureOutput {
 
     /**
      * 移动开始

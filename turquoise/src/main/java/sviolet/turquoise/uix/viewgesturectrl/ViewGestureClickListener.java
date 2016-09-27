@@ -24,7 +24,7 @@ package sviolet.turquoise.uix.viewgesturectrl;
  *
  * Created by S.Violet on 2016/9/23.
  */
-public interface ViewGestureClickListener {
+public interface ViewGestureClickListener extends ViewGestureOutput {
 
     /**
      * 点击

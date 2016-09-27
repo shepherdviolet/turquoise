@@ -61,6 +61,6 @@ public interface ViewGestureController {
     /**
      * <p>添加输出监听器, 该方法不保证能绑定成功, 方法内部通过判断listener实现的接口来绑定事件监听</p>
      */
-    void addOutput(Object listener);
+    void addOutput(ViewGestureOutput listener);
 
 }

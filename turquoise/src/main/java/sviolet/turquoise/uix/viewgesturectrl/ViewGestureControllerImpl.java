@@ -87,7 +87,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      */
 
     @Override
-    public void addOutput(Object listener) {
+    public void addOutput(ViewGestureOutput listener) {
         if (listener instanceof ViewGestureMoveListener) {
             addMoveListener((ViewGestureMoveListener) listener);
         }
