@@ -67,6 +67,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     //当前放大率
     private float currMagnification;
 
+    private Rect srcRect = new Rect();
+    private Rect dstRect = new Rect();
+
     /*******************************************************************
      * init
      */
@@ -316,7 +319,12 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return INVALID_RECT;
         }
 
-        return null;
+        srcRect.left = currX < 0 ? 0 : (int) currX;
+        srcRect.right = (currX + (maxWidth / currMagnification)) > actualWidth ? actualWidth : (int) (currX + (maxWidth / currMagnification));
+        srcRect.top = currY < 0 ? 0 : (int) currY;
+        srcRect.bottom = (currY + (maxHeight / currMagnification)) > actualHeight ? actualHeight : (int) (currY + (maxHeight / currMagnification));
+
+        return srcRect;
     }
 
     public Rect getDstRect(){
