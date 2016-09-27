@@ -309,7 +309,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      */
 
     /**
-     * 将显示矩形(特殊坐标系)中的触点坐标映射到实际矩形上
+     * 将显示矩形(显示/触摸坐标系)中的触点坐标映射到实际矩形(默认坐标系)上
      */
     private float[] mappingDisplayPointToActual(float x, float y){
         float[] actual = new float[2];
@@ -324,6 +324,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         return actual;
     }
 
+    /**
+     * 将实际矩阵(默认坐标系)上的点坐标映射到显示矩形(显示/触摸坐标系)中
+     */
     private float[] mappingActualPointToDisplay(float x, float y){
         float[] display = new float[2];
 
@@ -331,7 +334,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return display;
         }
 
-        //TODO
+        display[0] = (x - currX) * displayWidth / (maxWidth / currMagnification);
+        display[1] = (y - currY) * displayHeight / (maxHeight / currMagnification);
+
         return display;
     }
 
@@ -364,7 +369,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
-        //TODO
+//        rect.left =
 
     }
 
