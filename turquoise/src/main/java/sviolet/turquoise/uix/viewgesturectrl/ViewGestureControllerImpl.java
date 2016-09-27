@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.util.common.MathUtils;
 
 /**
  * <p>View触摸控制器实现类</p>
@@ -60,6 +61,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     private boolean hasMultiTouchHold = false;//多点触摸触发标记
 
     private float currentPointsDistance = -1;//[缩放]当前两点间距, -1表示未定义
+    private float currentRotateAngle = -1;//[缩放]当前旋转角度, -1表示未定义
 
     /**************************************************************************
      * public
@@ -76,6 +78,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         handleState(event, abandonedPoint);
         handleMove(event, abandonedPoint);
         handleZoom(event, abandonedPoint);
+        handleRotate(event, abandonedPoint);
         return true;
     }
 
@@ -293,7 +296,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
                 break;
         }
         motionState = MotionState.MULTI_TOUCH;
+        //重置触点间距和旋转角度值, 保证offset输出正常
         currentPointsDistance = -1;
+        currentRotateAngle = -1;
     }
 
     private void singleTouchHoldCallback() {
@@ -376,13 +381,12 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      * handle zoom
      */
 
-
-
     private void handleZoom(MotionEvent event, ViewGestureTouchPoint abandonedPoint){
         //只处理MULTI_TOUCH状态
         if (motionState != MotionState.MULTI_TOUCH){
             return;
         }
+
         //取前两个点
         ViewGestureTouchPoint point0 = touchPointGroup.getPoint(0);
         ViewGestureTouchPoint point1 = touchPointGroup.getPoint(1);
@@ -413,6 +417,81 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         midpoint[0] = (pointSrc.currX + pointDst.currX) / 2;
         midpoint[1] = (pointSrc.currY + pointDst.currY) / 2;
         return midpoint;
+    }
+
+    /*******************************************************************************
+     * handle rotate
+     */
+
+    private void handleRotate(MotionEvent event, ViewGestureTouchPoint abandonedPoint){
+        //只处理MULTI_TOUCH状态
+        if (motionState != MotionState.MULTI_TOUCH){
+            return;
+        }
+
+        //取前两个点
+        ViewGestureTouchPoint point0 = touchPointGroup.getPoint(0);
+        ViewGestureTouchPoint point1 = touchPointGroup.getPoint(1);
+
+        //计算当前角度
+        float angle = calculateRotateAngle(point0, point1);
+        //计算偏移量
+        float offset = currentRotateAngle < 0 ? 0 : angle - currentRotateAngle;
+        currentRotateAngle = angle;
+
+        //解决当角度变化越过0度时的偏移量异常
+        if (offset > 270){
+            offset -= 360;
+        } else if (offset < -270){
+            offset += 360;
+        }
+
+        //输出
+        for (ViewGestureRotateListener listener : rotateListeners) {
+            listener.rotate(angle, offset);
+        }
+
+    }
+
+    /**
+     * 根据两个触点坐标计算旋转角度
+     */
+    private float calculateRotateAngle(ViewGestureTouchPoint point0, ViewGestureTouchPoint point1){
+        //计算两个触点的偏移量, 用于三角函数计算
+        float offsetX = point1.currX - point0.currX;
+        float offsetY = point1.currY - point0.currY;
+
+        if (offsetX == 0 && offsetY == 0){
+            //点没有任何位移, 此处理论上不可能发生, 两个触点不可能没有间距
+            return -1;
+        }
+        if (offsetX == 0){
+            if (offsetY > 0){
+                return 180;
+            }else{
+                return 0;
+            }
+        }
+        if (offsetY == 0){
+            if (offsetX > 0){
+                return 90;
+            } else{
+                return 270;
+            }
+        }
+        if (offsetX > 0){
+            if (offsetY > 0){
+                return (float) (180 - MathUtils.atanAngle(Math.abs(offsetX / offsetY)));
+            } else {
+                return (float) (MathUtils.atanAngle(Math.abs(offsetX / offsetY)));
+            }
+        } else {
+            if (offsetY > 0){
+                return (float) (180 + MathUtils.atanAngle(Math.abs(offsetX / offsetY)));
+            } else {
+                return (float) (360 - MathUtils.atanAngle(Math.abs(offsetX / offsetY)));
+            }
+        }
     }
 
     /***************************************************************
