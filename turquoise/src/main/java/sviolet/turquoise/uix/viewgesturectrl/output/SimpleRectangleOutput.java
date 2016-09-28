@@ -344,32 +344,43 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * output
      */
 
-    public void getSrcRect(Rect rect){
+    public void getSrcDstRect(Rect srcRect, Rect dstRect){
         if (invalidWidthOrHeight){
-            rect.left = 0;
-            rect.top = 0;
-            rect.right = 0;
-            rect.bottom = 0;
+            if (srcRect != null) {
+                srcRect.left = 0;
+                srcRect.top = 0;
+                srcRect.right = 0;
+                srcRect.bottom = 0;
+            }
+            if (dstRect != null){
+                dstRect.left = 0;
+                dstRect.top = 0;
+                dstRect.right = 0;
+                dstRect.bottom = 0;
+            }
             return;
         }
 
-        rect.left = currX < 0 ? 0 : (int) currX;
-        rect.right = (currX + (maxWidth / currMagnification)) > actualWidth ? actualWidth : (int) (currX + (maxWidth / currMagnification));
-        rect.top = currY < 0 ? 0 : (int) currY;
-        rect.bottom = (currY + (maxHeight / currMagnification)) > actualHeight ? actualHeight : (int) (currY + (maxHeight / currMagnification));
+        int left = currX < 0 ? 0 : (int) currX;
+        int right = (currX + (maxWidth / currMagnification)) > actualWidth ? actualWidth : (int) (currX + (maxWidth / currMagnification));
+        int top = currY < 0 ? 0 : (int) currY;
+        int bottom = (currY + (maxHeight / currMagnification)) > actualHeight ? actualHeight : (int) (currY + (maxHeight / currMagnification));
 
-    }
-
-    public void getDstRect(Rect rect){
-        if (invalidWidthOrHeight){
-            rect.left = 0;
-            rect.top = 0;
-            rect.right = 0;
-            rect.bottom = 0;
-            return;
+        if (srcRect != null) {
+            srcRect.left = left;
+            srcRect.right = right;
+            srcRect.top = top;
+            srcRect.bottom = bottom;
         }
 
-//        rect.left =
+        if (dstRect != null){
+            float[] leftTopPoint = mappingActualPointToDisplay(left, top);
+            float[] rightBottomPoint = mappingActualPointToDisplay(right, top);
+            dstRect.left = (int) leftTopPoint[0];
+            dstRect.top = (int) leftTopPoint[1];
+            dstRect.right = (int) rightBottomPoint[0];
+            dstRect.bottom = (int) rightBottomPoint[1];
+        }
 
     }
 
