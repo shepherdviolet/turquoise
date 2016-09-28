@@ -20,6 +20,9 @@
 package sviolet.turquoise.uix.viewgesturectrl.output;
 
 import android.graphics.Rect;
+import android.view.View;
+
+import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureClickListener;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureMoveListener;
@@ -32,8 +35,6 @@ import sviolet.turquoise.uix.viewgesturectrl.ViewGestureZoomListener;
  */
 
 public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGestureMoveListener, ViewGestureZoomListener {
-
-    private static final Rect INVALID_RECT = new Rect(0, 0, 0, 0);
 
     //setting///////////////////////////////////
 
@@ -50,7 +51,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
     //variable//////////////////////////////////
 
-    private boolean invalidWidthOrHeight = false;
+    private WeakReference<View> view;
+    private boolean isActive = false;//是否在运动
+    private boolean invalidWidthOrHeight = false;//无效的宽高
 
     //显示区域最大界限
     private float maxLeft;
@@ -71,11 +74,12 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * init
      */
 
-    public SimpleRectangleOutput(int actualWidth, int actualHeight, float displayWidth, float displayHeight, float magnificationLimit){
+    public SimpleRectangleOutput(View view, int actualWidth, int actualHeight, float displayWidth, float displayHeight, float magnificationLimit){
         if (magnificationLimit < 1){
             throw new RuntimeException("magnificationLimit must >= 1");
         }
 
+        this.view = new WeakReference<>(view);
         this.actualWidth = actualWidth;
         this.actualHeight = actualHeight;
         this.displayWidth = displayWidth;
@@ -164,6 +168,13 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         if (invalidWidthOrHeight){
             return;
         }
+
+        isActive = true;
+
+        View v = view.get();
+        if (v != null){
+            v.postInvalidate();
+        }
     }
 
     @Override
@@ -171,6 +182,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         if (invalidWidthOrHeight){
             return;
         }
+        isActive = false;
     }
 
     @Override
@@ -226,17 +238,17 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
     @Override
     public void holdZoom() {
-        if (invalidWidthOrHeight){
-            return;
-        }
+//        if (invalidWidthOrHeight){
+//            return;
+//        }
 
     }
 
     @Override
     public void releaseZoom() {
-        if (invalidWidthOrHeight){
-            return;
-        }
+//        if (invalidWidthOrHeight){
+//            return;
+//        }
 
     }
 
@@ -361,6 +373,10 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     /*******************************************************************
      * output
      */
+
+    public boolean isActive(){
+        return isActive;
+    }
 
     public void getSrcDstRect(Rect srcRect, Rect dstRect){
         if (invalidWidthOrHeight){
