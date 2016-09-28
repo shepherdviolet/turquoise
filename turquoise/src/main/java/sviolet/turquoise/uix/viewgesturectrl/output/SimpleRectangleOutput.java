@@ -237,9 +237,10 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
+        float[] actualBasicPoint = mappingDisplayPointToActual(basicPointX, basicPointY);
         float zoomRateOffset = offset / (current - offset);
 
-        zoomBy(basicPointX, basicPointY, zoomRateOffset);
+        zoomBy(actualBasicPoint[0], actualBasicPoint[1], zoomRateOffset);
     }
 
     private void zoomBy(float basicPointX, float basicPointY, float zoomRateOffset){
