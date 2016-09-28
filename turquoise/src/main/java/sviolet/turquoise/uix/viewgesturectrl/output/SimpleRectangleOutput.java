@@ -165,7 +165,11 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         if (invalidWidthOrHeight){
             return;
         }
-        moveBy(-offsetX, -offsetY);
+
+        float actualOffsetX = -offsetX * (maxWidth / currMagnification) / displayWidth;
+        float actualOffsetY = -offsetY * (maxHeight / currMagnification) / displayHeight;
+
+        moveBy(actualOffsetX, actualOffsetY);
     }
 
     /**

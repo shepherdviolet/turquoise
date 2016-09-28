@@ -399,6 +399,8 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         float stepX = (point0.stepX + point1.stepX) / 2;
         float stepY = (point0.stepY + point1.stepY) / 2;
 
+        System.out.println("x:" + currX + " y:" + currY + " sX:" + stepX + " sY:" + stepY);
+
         //计算速度
         getVelocityTracker().computeCurrentVelocity(VELOCITY_UNITS);
         float velocityX = (getVelocityTracker().getXVelocity(point0.id) + getVelocityTracker().getXVelocity(point1.id)) / 2;
