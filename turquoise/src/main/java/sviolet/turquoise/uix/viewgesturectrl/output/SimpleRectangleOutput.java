@@ -398,6 +398,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             dstRect.top = (int) leftTopPoint[1];
             dstRect.right = (int) rightBottomPoint[0];
             dstRect.bottom = (int) rightBottomPoint[1];
+            //TODO 建议做贴边处理, 在边界很接近Rect边缘的时候, 将数值设置为边界值可防止抖动
         }
 
     }
