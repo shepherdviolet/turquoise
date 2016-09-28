@@ -86,6 +86,13 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     }
 
     private void init(){
+        initMaxBounds();
+        currX = maxLeft;
+        currY = maxTop;
+        currMagnification = 1;
+    }
+
+    private void initMaxBounds() {
         if (actualWidth <= 0 || actualHeight <= 0 || displayWidth <= 0 || displayHeight <= 0){
             invalidWidthOrHeight = true;
             return;
@@ -117,11 +124,17 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
         maxWidth = maxRight - maxLeft;
         maxHeight = maxBottom - maxTop;
+    }
 
-        currX = maxLeft;
-        currY = maxTop;
-        currMagnification = 1;
-
+    /**
+     * [慎用]重置显示矩形尺寸, 请在UI线程调用, 该方法线程不安全
+     * @param displayWidth 显示矩形宽度
+     * @param displayHeight 显示矩形高度
+     */
+    public void resetDisplayDimension(float displayWidth, float displayHeight){
+        this.displayWidth = displayWidth;
+        this.displayHeight = displayHeight;
+        init();
     }
 
     /*******************************************************************
