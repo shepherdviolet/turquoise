@@ -375,7 +375,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
         if (dstRect != null){
             float[] leftTopPoint = mappingActualPointToDisplay(left, top);
-            float[] rightBottomPoint = mappingActualPointToDisplay(right, top);
+            float[] rightBottomPoint = mappingActualPointToDisplay(right, bottom);
             dstRect.left = (int) leftTopPoint[0];
             dstRect.top = (int) leftTopPoint[1];
             dstRect.right = (int) rightBottomPoint[0];
