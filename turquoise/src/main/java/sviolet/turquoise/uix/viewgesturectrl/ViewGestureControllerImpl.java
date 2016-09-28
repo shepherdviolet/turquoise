@@ -76,9 +76,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         ViewGestureTouchPoint abandonedPoint = touchPointGroup.update(event);
         handleClickEvent(event, abandonedPoint);
         handleState(event, abandonedPoint);
-        handleMove(event, abandonedPoint);
-        handleZoom(event, abandonedPoint);
-        handleRotate(event, abandonedPoint);
+        handleMove(event);
+        handleZoom(event);
+        handleRotate(event);
         return true;
     }
 
@@ -355,9 +355,14 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      * handle move
      */
 
-    private void handleMove(MotionEvent event, ViewGestureTouchPoint abandonedPoint){
-        //只处理SINGLE_TOUCH/MULTI_TOUCH两个状态
-        if (!(motionState == MotionState.SINGLE_TOUCH || motionState == MotionState.MULTI_TOUCH)){
+    private void handleMove(MotionEvent event){
+        handleSingleTouchMove(event);
+        handleMultiTouchMove(event);
+    }
+
+    private void handleSingleTouchMove(MotionEvent event){
+        //只处理SINGLE_TOUCH状态
+        if (motionState != MotionState.SINGLE_TOUCH){
             return;
         }
         //更新移动速度
@@ -377,11 +382,39 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         }
     }
 
+    private void handleMultiTouchMove(MotionEvent event){
+        //只处理MULTI_TOUCH状态
+        if (motionState != MotionState.MULTI_TOUCH){
+            return;
+        }
+        //更新移动速度
+        updateVelocity(event);
+
+        //取前两个点
+        ViewGestureTouchPoint point0 = touchPointGroup.getPoint(0);
+        ViewGestureTouchPoint point1 = touchPointGroup.getPoint(1);
+
+        float currX = (point0.currX + point1.currX) / 2;
+        float currY = (point0.currY + point1.currY) / 2;
+        float stepX = (point0.stepX + point1.stepX) / 2;
+        float stepY = (point0.stepY + point1.stepY) / 2;
+
+        //计算速度
+        getVelocityTracker().computeCurrentVelocity(VELOCITY_UNITS);
+        float velocityX = (getVelocityTracker().getXVelocity(point0.id) + getVelocityTracker().getXVelocity(point1.id)) / 2;
+        float velocityY = (getVelocityTracker().getYVelocity(point0.id) + getVelocityTracker().getYVelocity(point1.id)) / 2;
+
+        //输出
+        for (ViewGestureMoveListener listener : moveListeners) {
+            listener.move(currX, stepX, velocityX, currY, stepY, velocityY);
+        }
+    }
+
     /*******************************************************************************
      * handle zoom
      */
 
-    private void handleZoom(MotionEvent event, ViewGestureTouchPoint abandonedPoint){
+    private void handleZoom(MotionEvent event){
         //只处理MULTI_TOUCH状态
         if (motionState != MotionState.MULTI_TOUCH){
             return;
@@ -423,7 +456,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      * handle rotate
      */
 
-    private void handleRotate(MotionEvent event, ViewGestureTouchPoint abandonedPoint){
+    private void handleRotate(MotionEvent event){
         //只处理MULTI_TOUCH状态
         if (motionState != MotionState.MULTI_TOUCH){
             return;
