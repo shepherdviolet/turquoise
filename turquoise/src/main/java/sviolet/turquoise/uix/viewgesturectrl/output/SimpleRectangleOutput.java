@@ -284,14 +284,14 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
         //计算因缩放引起的坐标移动
 
-        float xMoveRate = basicPointX / displayWidth;
+        float xMoveRate = (basicPointX - currX) / (maxWidth / currMagnification);
         if (xMoveRate < 0){
             xMoveRate = 0;
         } else if (xMoveRate > 1){
             xMoveRate = 1;
         }
 
-        float yMoveRate = basicPointY / displayHeight;
+        float yMoveRate = (basicPointY - currY) / (maxHeight / currMagnification);
         if (yMoveRate < 0){
             yMoveRate = 0;
         } else if (yMoveRate > 1){
