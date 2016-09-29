@@ -262,10 +262,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
-        float[] actualBasicPoint = mappingDisplayPointToActual(basicPointX, basicPointY);
         float zoomRateOffset = offset / (current - offset);
 
-        zoomBy(actualBasicPoint[0], actualBasicPoint[1], zoomRateOffset);
+        zoomBy(basicPointX, basicPointY, zoomRateOffset);
     }
 
     private void zoomBy(float basicPointX, float basicPointY, float zoomRateOffset){
@@ -284,14 +283,14 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
         //计算因缩放引起的坐标移动
 
-        float xMoveRate = (basicPointX - currX) / (maxWidth / currMagnification);
+        float xMoveRate = basicPointX / displayWidth;
         if (xMoveRate < 0){
             xMoveRate = 0;
         } else if (xMoveRate > 1){
             xMoveRate = 1;
         }
 
-        float yMoveRate = (basicPointY - currY) / (maxHeight / currMagnification);
+        float yMoveRate = basicPointY / displayHeight;
         if (yMoveRate < 0){
             yMoveRate = 0;
         } else if (yMoveRate > 1){
