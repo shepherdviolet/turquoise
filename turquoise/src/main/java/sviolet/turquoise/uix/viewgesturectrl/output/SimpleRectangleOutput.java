@@ -19,8 +19,10 @@
 
 package sviolet.turquoise.uix.viewgesturectrl.output;
 
+import android.content.Context;
 import android.graphics.Rect;
 
+import sviolet.turquoise.common.compat.CompatScroller23;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureClickListener;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureMoveListener;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureZoomListener;
@@ -58,7 +60,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
     //variable//////////////////////////////////
 
-    private boolean isActive = false;//是否在运动
+    private boolean isHold = false;//是否被持有(有触点)
     private boolean invalidWidthOrHeight = false;//无效的宽高
 
     //显示区域最大界限
@@ -79,6 +81,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     //当前是否是多触点状态
     private boolean isMultiTouch = false;
 
+    //惯性滑动
+    private CompatScroller23 flingScroller;
+
     /*******************************************************************
      * init
      */
@@ -87,17 +92,22 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * 例如做一个图片缩放控件, actualWidth/actualHeight为图片(Bitmap)尺寸,
      * displayWidth/displayHeight为控件尺寸
      *
+     * @param context context
      * @param actualWidth 实际宽度, 相当于dstRect的宽度
      * @param actualHeight 实际高度, 相当于dstRect的高度
      * @param displayWidth 显示宽度, 相当于srcRect的宽度
      * @param displayHeight 显示高度, 相当于srcRect的高度
      * @param magnificationLimit 最大放大倍数
      */
-    public SimpleRectangleOutput(double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit) {
+    public SimpleRectangleOutput(Context context, double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit) {
+        if (context == null){
+            throw new RuntimeException("context is null");
+        }
         if (magnificationLimit < 1) {
             throw new RuntimeException("magnificationLimit must >= 1");
         }
 
+        this.flingScroller = new CompatScroller23(context);
         this.actualWidth = actualWidth;
         this.actualHeight = actualHeight;
         this.displayWidth = displayWidth;
@@ -204,7 +214,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
-        isActive = true;
+        isHold = true;
+
+        flingScroller.abortAnimation();
 
         if (refreshListener != null) {
             refreshListener.onRefresh();
@@ -216,7 +228,19 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         if (invalidWidthOrHeight) {
             return;
         }
-        isActive = false;
+
+        isHold = false;
+
+        //惯性滑动
+        fling(velocityX * (maxWidth / currMagnification) / displayWidth, velocityY * (maxHeight / currMagnification) / displayHeight);
+
+        if (refreshListener != null) {
+            refreshListener.onRefresh();
+        }
+    }
+
+    private void fling(double velocityX, double velocityY) {
+        flingScroller.fling((int)currX, (int)currY, (int)-velocityX, (int)-velocityY, 0, (int)(actualWidth - maxWidth / currMagnification), 0, (int)(actualHeight - maxHeight / currMagnification));
     }
 
     @Override
@@ -438,7 +462,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * 是否需要继续刷新, 用于View判断是否继续刷新
      */
     public boolean isActive() {
-        return isActive;
+        calculateFlingPosition();
+        return isHold || !flingScroller.isFinished();
     }
 
     /**
@@ -462,6 +487,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             }
             return;
         }
+
+        calculateFlingPosition();
 
         //计算显示范围(实际坐标系)
         double left = currX < 0 ? 0 : currX;
@@ -491,6 +518,13 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             dstRect.bottom = (int) Math.ceil(rightBottomPoint[1]);
         }
 
+    }
+
+    private void calculateFlingPosition(){
+        if (!flingScroller.isFinished() && !isHold){
+            flingScroller.computeScrollOffset();
+            moveBy(flingScroller.getCurrX() - currX, flingScroller.getCurrY() - currY);
+        }
     }
 
     /*****************************************************************************8
