@@ -14,15 +14,11 @@
     <string name="slide_list_background_button">OK</string>
     <string name="slide_activity_title">SlideActivity</string>
 
-    <string name="image_title">Image Demo</string>
-    <string name="image_common_title">Simple Image Demo</string>
-    <string name="image_async_title">Async Image List</string>
-    <string name="image_async2_title">Async Image List 2</string>
-
     <string name="other_title">Other Demo</string>
     <string name="other_shadow_title">Shadow Demo</string>
     <string name="other_gradualtitle_title">Gradual Title Demo</string>
     <string name="other_runtime_permission_title">Runtime Permission Demo</string>
+    <string name="other_motion_image_title">Gesture Ctrl Demo</string>
 
     <string name="temp_main_title">Temp</string>
 

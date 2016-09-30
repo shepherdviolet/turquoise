@@ -41,7 +41,7 @@ import sviolet.turquoise.util.droid.MeasureUtils;
  * Created by S.Violet on 2016/9/22.
  */
 
-public class ImageMotionView extends View implements ViewCommonUtils.InitListener {
+public class MotionImageView extends View implements ViewCommonUtils.InitListener {
 
     //触摸控制器
     private ViewGestureControllerImpl viewGestureController;
@@ -54,17 +54,17 @@ public class ImageMotionView extends View implements ViewCommonUtils.InitListene
     private Rect canvasRect = new Rect();
     private Rect bitmapRect = new Rect();
 
-    public ImageMotionView(Context context) {
+    public MotionImageView(Context context) {
         super(context);
         init(context, null, -1);
     }
 
-    public ImageMotionView(Context context, AttributeSet attrs) {
+    public MotionImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs, -1);
     }
 
-    public ImageMotionView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MotionImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, null, defStyleAttr);
     }
@@ -100,7 +100,7 @@ public class ImageMotionView extends View implements ViewCommonUtils.InitListene
         output.setRefreshListener(new SimpleRectangleOutput.RefreshListener() {
             @Override
             public void onRefresh() {
-                ImageMotionView.this.postInvalidate();
+                MotionImageView.this.postInvalidate();
             }
         });
         //点击事件
@@ -109,7 +109,7 @@ public class ImageMotionView extends View implements ViewCommonUtils.InitListene
             public void onClick(float actualX, float actualY, float displayX, float displayY) {
                 Canvas bitmapCanvas = new Canvas(bitmap);
                 bitmapCanvas.drawCircle(actualX, actualY, 30, clickPaint);
-                ImageMotionView.this.postInvalidate();
+                MotionImageView.this.postInvalidate();
             }
         });
         //长按时间
@@ -118,7 +118,7 @@ public class ImageMotionView extends View implements ViewCommonUtils.InitListene
             public void onLongClick(float actualX, float actualY, float displayX, float displayY) {
                 Canvas bitmapCanvas = new Canvas(bitmap);
                 bitmapCanvas.drawCircle(actualX, actualY, 80, longClickPaint);
-                ImageMotionView.this.postInvalidate();
+                MotionImageView.this.postInvalidate();
             }
         });
 
