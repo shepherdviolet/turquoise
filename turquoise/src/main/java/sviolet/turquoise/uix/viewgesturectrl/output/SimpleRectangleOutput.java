@@ -386,9 +386,11 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         }
 
         double left = currX < 0 ? 0 : currX;
-        double right = (currX + (maxWidth / currMagnification)) > actualWidth ? actualWidth : (currX + (maxWidth / currMagnification));
+        double right = currX + (maxWidth / currMagnification);
+        right = right > actualWidth ? actualWidth : right;
         double top = currY < 0 ? 0 : currY;
-        double bottom = (currY + (maxHeight / currMagnification)) > actualHeight ? actualHeight : (currY + (maxHeight / currMagnification));
+        double bottom = currY + (maxHeight / currMagnification);
+        bottom = bottom > actualHeight ? actualHeight : bottom;
 
         if (srcRect != null) {
             srcRect.left = (int) left;
