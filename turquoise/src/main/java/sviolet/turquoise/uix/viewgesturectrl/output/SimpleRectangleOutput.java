@@ -74,6 +74,17 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * init
      */
 
+    /**
+     * 例如做一个图片缩放控件, view为控件实例, actualWidth/actualHeight为图片(Bitmap)尺寸,
+     * displayWidth/displayHeight为控件尺寸
+     *
+     * @param view view(在需要时会调用view的postInvalidate()方法刷新UI)
+     * @param actualWidth 实际宽度, 相当于dstRect的宽度
+     * @param actualHeight 实际高度, 相当于dstRect的高度
+     * @param displayWidth 显示宽度, 相当于srcRect的宽度
+     * @param displayHeight 显示高度, 相当于srcRect的高度
+     * @param magnificationLimit 最大放大倍数
+     */
     public SimpleRectangleOutput(View view, double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit) {
         if (magnificationLimit < 1) {
             throw new RuntimeException("magnificationLimit must >= 1");
@@ -151,6 +162,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         if (invalidWidthOrHeight) {
             return;
         }
+        //处理点击
     }
 
     @Override
@@ -158,6 +170,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         if (invalidWidthOrHeight) {
             return;
         }
+        //处理长按
     }
 
     /*******************************************************************
@@ -192,6 +205,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
+        //offsetX/offsetY为显示矩形坐标系中的数据, 需要变换为实际矩形中的数据
         double actualOffsetX = -offsetX * (maxWidth / currMagnification) / displayWidth;
         double actualOffsetY = -offsetY * (maxHeight / currMagnification) / displayHeight;
 
@@ -207,6 +221,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         double x = currX + offsetX;
         double y = currY + offsetY;
 
+        //越界控制
         if (offsetX < 0) {
             if (x < 0) {
                 x = currX;
@@ -266,6 +281,12 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         zoomBy(basicPointX, basicPointY, current, current - offset);
     }
 
+    /**
+     * @param basicPointX 基点X, 显示坐标系
+     * @param basicPointY 基点Y, 显示坐标系
+     * @param currDistance 当前的两个触点距离
+     * @param lastDistance 之前的两个触点距离
+     */
     private void zoomBy(double basicPointX, double basicPointY, double currDistance, double lastDistance) {
         //计算新的放大率
         double magnification = currDistance * currMagnification / lastDistance;
@@ -280,7 +301,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
-        //计算因缩放引起的坐标移动
+        //根据基点位置计算因缩放引起的坐标移动的比率
 
         double xMoveRate = basicPointX / displayWidth;
         if (xMoveRate < 0) {
@@ -296,11 +317,17 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             yMoveRate = 1;
         }
 
+        //计算因缩放引起的坐标移动
+
         double offsetX = xMoveRate * (maxWidth / currMagnification - maxWidth / magnification);
         double offsetY = yMoveRate * (maxHeight / currMagnification - maxHeight / magnification);
 
+        //计算当前坐标
+
         double x = currX + offsetX;
         double y = currY + offsetY;
+
+        //控制越界
 
         double actualDisplayWidth = maxWidth / magnification;
         if (x < maxLeft) {
@@ -319,6 +346,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         //更新坐标
         currX = x;
         currY = y;
+
         //更新当前放大率
         currMagnification = magnification;
 
@@ -368,6 +396,11 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         return isActive;
     }
 
+    /**
+     * 主要的数据输出方法, 在传入的两个Rect中赋值
+     * @param srcRect 源矩形, 即为实际矩形, 例如:图片(Bitmap)的矩形
+     * @param dstRect 目标矩形, 即为显示矩形, 例如:控件矩形
+     */
     public void getSrcDstRect(Rect srcRect, Rect dstRect) {
         if (invalidWidthOrHeight) {
             if (srcRect != null) {
@@ -385,6 +418,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
+        //计算显示范围(实际坐标系)
         double left = currX < 0 ? 0 : currX;
         double right = currX + (maxWidth / currMagnification);
         right = right > actualWidth ? actualWidth : right;
@@ -392,6 +426,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         double bottom = currY + (maxHeight / currMagnification);
         bottom = bottom > actualHeight ? actualHeight : bottom;
 
+        //原矩形
         if (srcRect != null) {
             srcRect.left = (int) left;
             srcRect.right = (int) right;
@@ -399,7 +434,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             srcRect.bottom = (int) bottom;
         }
 
+        //目标矩形
         if (dstRect != null) {
+            //将实际矩形的点映射到显示矩形中
             double[] leftTopPoint = mappingActualPointToDisplay(left, top);
             double[] rightBottomPoint = mappingActualPointToDisplay(right, bottom);
 

@@ -23,7 +23,7 @@ import android.view.MotionEvent;
 
 /**
  *
- * <p>View触摸控制器</p>
+ * <p>View触摸控制器, 捕获View触摸事件, 转换为点击/移动/缩放/旋转事件</p>
  *
  * <p>
  *      #ViewGestureController常用于View自身的触摸控制.<br/>

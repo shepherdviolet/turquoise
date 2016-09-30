@@ -31,9 +31,26 @@ import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.util.common.MathUtils;
 
 /**
- * <p>View触摸控制器实现类</p>
+ *
+ * <p>View触摸控制器, 捕获View触摸事件, 转换为点击/移动/缩放/旋转事件</p>
+ *
  * <p>
- * Created by S.Violet on 2016/9/22.
+ *      #ViewGestureController常用于View自身的触摸控制.<br/>
+ *      #SlideEngine常用于ViewGroup拦截触摸事件, 控制其子View滑动.<br/>
+ * </p>
+ *
+ * <p>======================================================================</p>
+ *
+ * <pre>{@code
+ *     //View的onTouchEvent方法中获取触摸事件
+ *     public boolean onTouchEvent(MotionEvent event) {
+ *          super.onTouchEvent(event);
+ *          viewGestureController.onTouchEvent(event);
+ *          return true;
+ *     }
+ * }</pre>
+ *
+ * Created by S.Violet on 2016/9/21.
  */
 public class ViewGestureControllerImpl implements ViewGestureController {
 
@@ -41,7 +58,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
 
     //settings/////////////////////////////////////////////////
 
-    private long longClickElapse = 1000;//长按时间
+    private long longClickDuration = 1000;//长按时间
 
     private List<ViewGestureMoveListener> moveListeners = new ArrayList<>();//移动监听
     private List<ViewGestureZoomListener> zoomListeners = new ArrayList<>();//缩放监听
@@ -71,6 +88,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         touchPointGroup = new ViewGestureTouchPointGroup(context);
     }
 
+    /**
+     * 处理触摸事件
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         ViewGestureTouchPoint abandonedPoint = touchPointGroup.update(event);
@@ -130,6 +150,18 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         return this;
     }
 
+    /**
+     * 设置长按事件触发的事件, 默认1000
+     * @param longClickDuration ms
+     */
+    public ViewGestureController setLongClickDuration(long longClickDuration){
+        if (longClickDuration <= 0){
+            throw new RuntimeException("longClickDuration must > 0");
+        }
+        this.longClickDuration = longClickDuration;
+        return this;
+    }
+
     /**************************************************************************
      * velocity
      */
@@ -165,24 +197,31 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      * handle click
      */
 
+    /**
+     * 处理点击事件
+     */
     private void handleClickEvent(MotionEvent event, ViewGestureTouchPoint abandonedPoint) {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
+                //重置状态
                 hasSingleTouchHold = false;
                 hasMultiTouchHold = false;
                 resetVelocityTracker();
+                //触发长按计时
                 startLongClickCounter();
                 break;
             case MotionEvent.ACTION_MOVE:
 
                 break;
             case MotionEvent.ACTION_POINTER_DOWN:
+                //取消长按计时
                 cancelLongClickCounter();
                 break;
             case MotionEvent.ACTION_POINTER_UP:
 
                 break;
             case MotionEvent.ACTION_UP:
+                //点击事件
                 if (touchPointGroup.getMaxPointNum() == 1 && abandonedPoint != null && !abandonedPoint.isEffectiveMoved && !longClicked) {
                     for (ViewGestureClickListener listener : clickListeners) {
                         listener.onClick(abandonedPoint.downX, abandonedPoint.downY);
@@ -190,6 +229,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
                 }
             case MotionEvent.ACTION_CANCEL:
                 //以下代码UP/CANCEL都执行
+                //取消长按计时
                 cancelLongClickCounter();
                 break;
             default:
@@ -199,7 +239,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
 
     private void startLongClickCounter() {
         cancelLongClickCounter();
-        myHandler.sendEmptyMessageDelayed(MyHandler.WHAT_LONG_CLICK, longClickElapse);
+        myHandler.sendEmptyMessageDelayed(MyHandler.WHAT_LONG_CLICK, longClickDuration);
     }
 
     private void cancelLongClickCounter() {
@@ -222,14 +262,19 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      * handle state
      */
 
+    /**
+     * 判断当前触摸状态
+     */
     private void handleState(MotionEvent event, ViewGestureTouchPoint abandonedPoint) {
         switch (motionState) {
             case RELEASE:
+                //释放状态转为持有状态
                 if (touchPointGroup.getPointNum() > 0) {
                     stateToHold();
                 }
                 break;
             case HOLD:
+                //持有状态可变换为释放/单点触摸/多点触摸
                 if (touchPointGroup.getPointNum() <= 0) {
                     //无触点, 返回release状态
                     stateToRelease(abandonedPoint);
@@ -244,6 +289,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
                 }
                 break;
             case SINGLE_TOUCH:
+                //单点触摸状态可变为释放/多点触摸状态
                 if (touchPointGroup.getPointNum() <= 0) {
                     //无触点, 返回release状态
                     stateToRelease(abandonedPoint);
@@ -252,6 +298,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
                 }
                 break;
             case MULTI_TOUCH:
+                //多点触摸状态可变为释放/单点触摸状态
                 if (touchPointGroup.getPointNum() <= 0) {
                     //无触点, 返回release状态
                     stateToRelease(abandonedPoint);
@@ -265,8 +312,10 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     }
 
     private void stateToRelease(ViewGestureTouchPoint abandonedPoint) {
+        //回调release
         singleTouchReleaseCallback(abandonedPoint);
         multiTouchReleaseCallback();
+        //重置状态
         motionState = MotionState.RELEASE;
         resetVelocityTracker();
     }
@@ -278,9 +327,11 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     private void stateToSingleTouch() {
         switch (motionState) {
             case HOLD:
+                //回调hold
                 singleTouchHoldCallback();
                 break;
             case MULTI_TOUCH:
+                //回调release
                 multiTouchReleaseCallback();
                 break;
         }
@@ -290,8 +341,10 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     private void stateToMultiTouch() {
         switch (motionState) {
             case HOLD:
+                //回调hold
                 singleTouchHoldCallback();
             case SINGLE_TOUCH:
+                //回调hold
                 multiTouchHoldCallback();
                 break;
         }
@@ -301,6 +354,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         currentRotateAngle = -1;
     }
 
+    /**
+     * 回调单点持有
+     */
     private void singleTouchHoldCallback() {
         if (!hasSingleTouchHold) {
             hasSingleTouchHold = true;
@@ -310,6 +366,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         }
     }
 
+    /**
+     * 回调多点持有
+     */
     private void multiTouchHoldCallback() {
         if (!hasMultiTouchHold) {
             hasMultiTouchHold = true;
@@ -322,6 +381,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         }
     }
 
+    /**
+     * 回调单点释放
+     */
     private void singleTouchReleaseCallback(ViewGestureTouchPoint abandonedPoint) {
         if (hasSingleTouchHold) {
             //计算速度
@@ -339,6 +401,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         }
     }
 
+    /**
+     * 回调多点释放
+     */
     private void multiTouchReleaseCallback() {
         if (hasMultiTouchHold) {
             for (ViewGestureZoomListener listener : zoomListeners) {
@@ -355,6 +420,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      * handle move
      */
 
+    /**
+     * 处理移动
+     */
     private void handleMove(MotionEvent event){
         handleSingleTouchMove(event);
         handleMultiTouchMove(event);
@@ -414,6 +482,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      * handle zoom
      */
 
+    /**
+     * 处理缩放
+     */
     private void handleZoom(MotionEvent event){
         //只处理MULTI_TOUCH状态
         if (motionState != MotionState.MULTI_TOUCH){
@@ -439,12 +510,18 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         }
     }
 
+    /**
+     * 计算两个点的距离
+     */
     private float calculatePointDistance(ViewGestureTouchPoint pointSrc, ViewGestureTouchPoint pointDst) {
         double _x = Math.abs(pointDst.currX - pointSrc.currX);
         double _y = Math.abs(pointDst.currY - pointSrc.currY);
         return (float) Math.sqrt(_x * _x + _y * _y);
     }
 
+    /**
+     * 计算中点
+     */
     private float[] calculateMidpoint(ViewGestureTouchPoint pointSrc, ViewGestureTouchPoint pointDst){
         float[] midpoint = new float[2];
         midpoint[0] = (pointSrc.currX + pointDst.currX) / 2;
@@ -456,6 +533,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
      * handle rotate
      */
 
+    /**
+     * 处理旋转
+     */
     private void handleRotate(MotionEvent event){
         //只处理MULTI_TOUCH状态
         if (motionState != MotionState.MULTI_TOUCH){
