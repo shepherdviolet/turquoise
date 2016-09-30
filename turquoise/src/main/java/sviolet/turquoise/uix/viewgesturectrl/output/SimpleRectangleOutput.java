@@ -39,15 +39,15 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     //setting///////////////////////////////////
 
     //实际宽高
-    private int actualWidth;
-    private int actualHeight;
+    private double actualWidth;
+    private double actualHeight;
 
     //显示宽高
-    private float displayWidth;
-    private float displayHeight;
+    private double displayWidth;
+    private double displayHeight;
 
     //放大倍数上限
-    private float magnificationLimit;
+    private double magnificationLimit;
 
     //variable//////////////////////////////////
 
@@ -56,25 +56,25 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     private boolean invalidWidthOrHeight = false;//无效的宽高
 
     //显示区域最大界限
-    private float maxLeft;
-    private float maxTop;
-    private float maxRight;
-    private float maxBottom;
-    private float maxWidth;
-    private float maxHeight;
+    private double maxLeft;
+    private double maxTop;
+    private double maxRight;
+    private double maxBottom;
+    private double maxWidth;
+    private double maxHeight;
 
     //当前显示矩形坐标, 相对于实际矩形左上角的位置
-    private float currX;
-    private float currY;
+    private double currX;
+    private double currY;
 
     //当前放大率
-    private float currMagnification;
+    private double currMagnification;
 
     /*******************************************************************
      * init
      */
 
-    public SimpleRectangleOutput(View view, int actualWidth, int actualHeight, float displayWidth, float displayHeight, float magnificationLimit) {
+    public SimpleRectangleOutput(View view, double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit) {
         if (magnificationLimit < 1) {
             throw new RuntimeException("magnificationLimit must >= 1");
         }
@@ -105,16 +105,16 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         }
 
         //计算显示界限
-        float actualAspectRatio = actualWidth / actualHeight;
-        float displayAspectRatio = displayWidth / displayHeight;
+        double actualAspectRatio = actualWidth / actualHeight;
+        double displayAspectRatio = displayWidth / displayHeight;
         if (actualAspectRatio > displayAspectRatio) {
-            float a = (actualWidth / displayAspectRatio - actualHeight) / 2;
+            double a = (actualWidth / displayAspectRatio - actualHeight) / 2;
             maxLeft = 0;
             maxTop = -a;
             maxRight = actualWidth;
             maxBottom = a + actualHeight;
         } else if (actualAspectRatio < displayAspectRatio) {
-            float a = (actualHeight * displayAspectRatio - actualWidth) / 2;
+            double a = (actualHeight * displayAspectRatio - actualWidth) / 2;
             maxLeft = -a;
             maxTop = 0;
             maxRight = a + actualWidth;
@@ -136,7 +136,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * @param displayWidth  显示矩形宽度
      * @param displayHeight 显示矩形高度
      */
-    public void resetDisplayDimension(float displayWidth, float displayHeight) {
+    public void resetDisplayDimension(double displayWidth, double displayHeight) {
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
         init();
@@ -192,8 +192,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
-        float actualOffsetX = -offsetX * (maxWidth / currMagnification) / displayWidth;
-        float actualOffsetY = -offsetY * (maxHeight / currMagnification) / displayHeight;
+        double actualOffsetX = -offsetX * (maxWidth / currMagnification) / displayWidth;
+        double actualOffsetY = -offsetY * (maxHeight / currMagnification) / displayHeight;
 
         moveBy(actualOffsetX, actualOffsetY);
     }
@@ -202,10 +202,10 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * @param offsetX DisplayRect在X方向的偏移量, 与手势方向相反
      * @param offsetY DisplayRect在Y方向的偏移量, 与手势方向相反
      */
-    private void moveBy(float offsetX, float offsetY) {
+    private void moveBy(double offsetX, double offsetY) {
 
-        float x = currX + offsetX;
-        float y = currY + offsetY;
+        double x = currX + offsetX;
+        double y = currY + offsetY;
 
         if (offsetX < 0) {
             if (x < 0) {
@@ -266,9 +266,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         zoomBy(basicPointX, basicPointY, current, current - offset);
     }
 
-    private void zoomBy(float basicPointX, float basicPointY, float currDistance, float lastDistance) {
+    private void zoomBy(double basicPointX, double basicPointY, double currDistance, double lastDistance) {
         //计算新的放大率
-        float magnification = currDistance * currMagnification / lastDistance;
+        double magnification = currDistance * currMagnification / lastDistance;
         //限制放大率
         if (magnification < 1) {
             magnification = 1;
@@ -282,34 +282,34 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
         //计算因缩放引起的坐标移动
 
-        float xMoveRate = basicPointX / displayWidth;
+        double xMoveRate = basicPointX / displayWidth;
         if (xMoveRate < 0) {
             xMoveRate = 0;
         } else if (xMoveRate > 1) {
             xMoveRate = 1;
         }
 
-        float yMoveRate = basicPointY / displayHeight;
+        double yMoveRate = basicPointY / displayHeight;
         if (yMoveRate < 0) {
             yMoveRate = 0;
         } else if (yMoveRate > 1) {
             yMoveRate = 1;
         }
 
-        float offsetX = xMoveRate * (maxWidth / currMagnification - maxWidth / magnification);
-        float offsetY = yMoveRate * (maxHeight / currMagnification - maxHeight / magnification);
+        double offsetX = xMoveRate * (maxWidth / currMagnification - maxWidth / magnification);
+        double offsetY = yMoveRate * (maxHeight / currMagnification - maxHeight / magnification);
 
-        float x = currX + offsetX;
-        float y = currY + offsetY;
+        double x = currX + offsetX;
+        double y = currY + offsetY;
 
-        float actualDisplayWidth = maxWidth / magnification;
+        double actualDisplayWidth = maxWidth / magnification;
         if (x < maxLeft) {
             x = maxLeft;
         } else if ((x + actualDisplayWidth) > maxRight) {
             x = maxRight - actualDisplayWidth;
         }
 
-        float actualDisplayHeight = maxHeight / magnification;
+        double actualDisplayHeight = maxHeight / magnification;
         if (y < maxTop) {
             y = maxTop;
         } else if ((y + actualDisplayHeight) > maxBottom) {
@@ -331,8 +331,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     /**
      * 将显示矩形(显示/触摸坐标系)中的触点坐标映射到实际矩形(默认坐标系)上
      */
-    private float[] mappingDisplayPointToActual(float x, float y) {
-        float[] actual = new float[2];
+    private double[] mappingDisplayPointToActual(double x, double y) {
+        double[] actual = new double[2];
 
         if (invalidWidthOrHeight) {
             return actual;
@@ -347,8 +347,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     /**
      * 将实际矩阵(默认坐标系)上的点坐标映射到显示矩形(显示/触摸坐标系)中
      */
-    private float[] mappingActualPointToDisplay(float x, float y) {
-        float[] display = new float[2];
+    private double[] mappingActualPointToDisplay(double x, double y) {
+        double[] display = new double[2];
 
         if (invalidWidthOrHeight) {
             return display;
@@ -385,26 +385,26 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
-        int left = currX < 0 ? 0 : (int) currX;
-        int right = (currX + (maxWidth / currMagnification)) > actualWidth ? actualWidth : (int) (currX + (maxWidth / currMagnification));
-        int top = currY < 0 ? 0 : (int) currY;
-        int bottom = (currY + (maxHeight / currMagnification)) > actualHeight ? actualHeight : (int) (currY + (maxHeight / currMagnification));
+        double left = currX < 0 ? 0 : currX;
+        double right = (currX + (maxWidth / currMagnification)) > actualWidth ? actualWidth : (currX + (maxWidth / currMagnification));
+        double top = currY < 0 ? 0 : currY;
+        double bottom = (currY + (maxHeight / currMagnification)) > actualHeight ? actualHeight : (currY + (maxHeight / currMagnification));
 
         if (srcRect != null) {
-            srcRect.left = left;
-            srcRect.right = right;
-            srcRect.top = top;
-            srcRect.bottom = bottom;
+            srcRect.left = (int) left;
+            srcRect.right = (int) right;
+            srcRect.top = (int) top;
+            srcRect.bottom = (int) bottom;
         }
 
         if (dstRect != null) {
-            float[] leftTopPoint = mappingActualPointToDisplay(left, top);
-            float[] rightBottomPoint = mappingActualPointToDisplay(right, bottom);
+            double[] leftTopPoint = mappingActualPointToDisplay(left, top);
+            double[] rightBottomPoint = mappingActualPointToDisplay(right, bottom);
+
             dstRect.left = (int) leftTopPoint[0];
             dstRect.top = (int) leftTopPoint[1];
-            dstRect.right = (int) rightBottomPoint[0];
-            dstRect.bottom = (int) rightBottomPoint[1];
-            //TODO 建议做贴边处理, 在边界很接近Rect边缘的时候, 将数值设置为边界值可防止抖动
+            dstRect.right = (int) Math.ceil(rightBottomPoint[0]);
+            dstRect.bottom = (int) Math.ceil(rightBottomPoint[1]);
         }
 
     }
