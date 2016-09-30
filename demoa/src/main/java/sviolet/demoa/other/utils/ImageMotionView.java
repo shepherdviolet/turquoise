@@ -33,14 +33,19 @@ import sviolet.turquoise.ui.util.ViewCommonUtils;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureControllerImpl;
 import sviolet.turquoise.uix.viewgesturectrl.output.SimpleRectangleOutput;
 import sviolet.turquoise.util.common.BitmapUtils;
+import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**
+ * 图片移动/缩放/编辑Demo控件
+ *
  * Created by S.Violet on 2016/9/22.
  */
 
 public class ImageMotionView extends View implements ViewCommonUtils.InitListener {
 
+    //触摸控制器
     private ViewGestureControllerImpl viewGestureController;
+    //触摸输出
     private SimpleRectangleOutput output;
 
     private Bitmap bitmap;
@@ -65,32 +70,40 @@ public class ImageMotionView extends View implements ViewCommonUtils.InitListene
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr){
+        //初始化
         ViewCommonUtils.setInitListener(this, this);
     }
 
     @Override
     public void onInit() {
+        //解码图片, 测试用, 这种方式如果图片大了会OOM~
         bitmap = BitmapUtils.copy(BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_1), true);
 
+        //点击画笔
         clickPaint = new Paint();
-        clickPaint.setColor(0x80FF0000);
-        clickPaint.setStrokeWidth(5);
+        clickPaint.setColor(0x80FF0000);//颜色写死
+        clickPaint.setStrokeWidth(MeasureUtils.dp2px(getContext(), 3));//写死3dp
         clickPaint.setAntiAlias(true);
 
+        //长按画笔
         longClickPaint = new Paint();
-        longClickPaint.setColor(0x800000FF);
-        longClickPaint.setStrokeWidth(5);
+        longClickPaint.setColor(0x800000FF);//颜色写死
+        clickPaint.setStrokeWidth(MeasureUtils.dp2px(getContext(), 3));//写死3dp
         longClickPaint.setAntiAlias(true);
 
+        //手势控制器实例化
         viewGestureController = new ViewGestureControllerImpl(getContext());
+        //简单的矩形输出, 图片长宽作为实际矩形, 控件长宽作为显示矩形, 最大放大率10
         output = new SimpleRectangleOutput(getContext(), bitmap.getWidth(), bitmap.getHeight(), getWidth(), getHeight(), 10);
         output.setMultiTouchMoveEnabled(true);
+        //必须实现刷新接口, 调用postInvalidate()刷新
         output.setRefreshListener(new SimpleRectangleOutput.RefreshListener() {
             @Override
             public void onRefresh() {
                 ImageMotionView.this.postInvalidate();
             }
         });
+        //点击事件
         output.setClickListener(new SimpleRectangleOutput.ClickListener() {
             @Override
             public void onClick(float actualX, float actualY, float displayX, float displayY) {
@@ -99,6 +112,7 @@ public class ImageMotionView extends View implements ViewCommonUtils.InitListene
                 ImageMotionView.this.postInvalidate();
             }
         });
+        //长按时间
         output.setLongClickListener(new SimpleRectangleOutput.LongClickListener() {
             @Override
             public void onLongClick(float actualX, float actualY, float displayX, float displayY) {
@@ -107,6 +121,8 @@ public class ImageMotionView extends View implements ViewCommonUtils.InitListene
                 ImageMotionView.this.postInvalidate();
             }
         });
+
+        //给手势控制器设置简单矩形输出
         viewGestureController.addOutput(output);
 
     }
@@ -114,16 +130,20 @@ public class ImageMotionView extends View implements ViewCommonUtils.InitListene
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
+        //接收触摸事件
         viewGestureController.onTouchEvent(event);
         return true;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.getClipBounds(canvasRect);
+
+        //从output获得当前矩形
         output.getSrcDstRect(bitmapRect, canvasRect);
+        //绘制图片
         canvas.drawBitmap(bitmap, bitmapRect, canvasRect, null);
 
+        //必须:继续刷新
         if (output.isActive())
             postInvalidate();
     }
