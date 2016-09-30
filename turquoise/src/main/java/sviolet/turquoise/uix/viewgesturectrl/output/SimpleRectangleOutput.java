@@ -20,9 +20,6 @@
 package sviolet.turquoise.uix.viewgesturectrl.output;
 
 import android.graphics.Rect;
-import android.view.View;
-
-import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureClickListener;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureMoveListener;
@@ -49,9 +46,15 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     //放大倍数上限
     private double magnificationLimit;
 
+    //刷新回调
+    private RefreshListener refreshListener;
+
+    //点击长按回调
+    private ClickListener clickListener;
+    private LongClickListener longClickListener;
+
     //variable//////////////////////////////////
 
-    private WeakReference<View> view;
     private boolean isActive = false;//是否在运动
     private boolean invalidWidthOrHeight = false;//无效的宽高
 
@@ -75,22 +78,20 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      */
 
     /**
-     * 例如做一个图片缩放控件, view为控件实例, actualWidth/actualHeight为图片(Bitmap)尺寸,
+     * 例如做一个图片缩放控件, actualWidth/actualHeight为图片(Bitmap)尺寸,
      * displayWidth/displayHeight为控件尺寸
      *
-     * @param view view(在需要时会调用view的postInvalidate()方法刷新UI)
      * @param actualWidth 实际宽度, 相当于dstRect的宽度
      * @param actualHeight 实际高度, 相当于dstRect的高度
      * @param displayWidth 显示宽度, 相当于srcRect的宽度
      * @param displayHeight 显示高度, 相当于srcRect的高度
      * @param magnificationLimit 最大放大倍数
      */
-    public SimpleRectangleOutput(View view, double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit) {
+    public SimpleRectangleOutput(double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit) {
         if (magnificationLimit < 1) {
             throw new RuntimeException("magnificationLimit must >= 1");
         }
 
-        this.view = new WeakReference<>(view);
         this.actualWidth = actualWidth;
         this.actualHeight = actualHeight;
         this.displayWidth = displayWidth;
@@ -162,7 +163,10 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         if (invalidWidthOrHeight) {
             return;
         }
-        //处理点击
+        if (clickListener != null){
+            double[] actualPoint = mappingDisplayPointToActual(x, y);
+            clickListener.onClick((float)actualPoint[0], (float)actualPoint[1], x, y);
+        }
     }
 
     @Override
@@ -170,7 +174,10 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         if (invalidWidthOrHeight) {
             return;
         }
-        //处理长按
+        if (longClickListener != null){
+            double[] actualPoint = mappingDisplayPointToActual(x, y);
+            longClickListener.onLongClick((float)actualPoint[0], (float)actualPoint[1], x, y);
+        }
     }
 
     /*******************************************************************
@@ -185,9 +192,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
         isActive = true;
 
-        View v = view.get();
-        if (v != null) {
-            v.postInvalidate();
+        if (refreshListener != null) {
+            refreshListener.onRefresh();
         }
     }
 
@@ -392,6 +398,27 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * output
      */
 
+    /**
+     * 设置刷新监听器, 用于Output告知View需要刷新显示
+     */
+    public SimpleRectangleOutput setRefreshListener(RefreshListener listener){
+        this.refreshListener = listener;
+        return this;
+    }
+
+    public SimpleRectangleOutput setClickListener(ClickListener listener){
+        this.clickListener = listener;
+        return this;
+    }
+
+    public SimpleRectangleOutput setLongClickListener(LongClickListener listener){
+        this.longClickListener = listener;
+        return this;
+    }
+
+    /**
+     * 是否需要继续刷新, 用于View判断是否继续刷新
+     */
     public boolean isActive() {
         return isActive;
     }
@@ -445,6 +472,43 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             dstRect.right = (int) Math.ceil(rightBottomPoint[0]);
             dstRect.bottom = (int) Math.ceil(rightBottomPoint[1]);
         }
+
+    }
+
+    /*****************************************************************************8
+     * inner
+     */
+
+    /**
+     * <p>用于Output通知View刷新(通常实现为postInvalidate())</p>
+     */
+    public interface RefreshListener {
+
+        void onRefresh();
+
+    }
+
+    public interface ClickListener {
+
+        /**
+         * @param actualX 即srcRect坐标系中的点, 即图片坐标系
+         * @param actualY 即srcRect坐标系中的点, 即图片坐标系
+         * @param displayX 即dstRect坐标系中的点, 即控件坐标系
+         * @param displayY 即dstRect坐标系中的点, 即控件坐标系
+         */
+        void onClick(float actualX, float actualY, float displayX, float displayY);
+
+    }
+
+    public interface LongClickListener {
+
+        /**
+         * @param actualX 即srcRect坐标系中的点, 即图片坐标系
+         * @param actualY 即srcRect坐标系中的点, 即图片坐标系
+         * @param displayX 即dstRect坐标系中的点, 即控件坐标系
+         * @param displayY 即dstRect坐标系中的点, 即控件坐标系
+         */
+        void onLongClick(float actualX, float actualY, float displayX, float displayY);
 
     }
 
