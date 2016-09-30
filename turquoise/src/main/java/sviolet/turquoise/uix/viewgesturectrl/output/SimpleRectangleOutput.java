@@ -330,6 +330,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     }
 
     /**
+     * 根据手势变化量缩放
      * @param basicPointX 基点X, 显示坐标系
      * @param basicPointY 基点Y, 显示坐标系
      * @param currDistance 当前的两个触点距离
@@ -338,14 +339,24 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     private void zoomBy(double basicPointX, double basicPointY, double currDistance, double lastDistance) {
         //计算新的放大率
         double magnification = currDistance * currMagnification / lastDistance;
+        zoomTo(basicPointX, basicPointY, magnification);
+    }
+
+    /**
+     * 缩放到指定放大率
+     * @param basicPointX 基点X, 显示坐标系
+     * @param basicPointY 基点Y, 显示坐标系
+     * @param newMagnification 指定放大率
+     */
+    private void zoomTo(double basicPointX, double basicPointY, double newMagnification){
         //限制放大率
-        if (magnification < 1) {
-            magnification = 1;
-        } else if (magnification > magnificationLimit) {
-            magnification = magnificationLimit;
+        if (newMagnification < 1) {
+            newMagnification = 1;
+        } else if (newMagnification > magnificationLimit) {
+            newMagnification = magnificationLimit;
         }
         //如果放大率不变, 则跳过后续步骤
-        if (magnification == currMagnification) {
+        if (newMagnification == currMagnification) {
             return;
         }
 
@@ -367,8 +378,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
         //计算因缩放引起的坐标移动
 
-        double offsetX = xMoveRate * (maxWidth / currMagnification - maxWidth / magnification);
-        double offsetY = yMoveRate * (maxHeight / currMagnification - maxHeight / magnification);
+        double offsetX = xMoveRate * (maxWidth / currMagnification - maxWidth / newMagnification);
+        double offsetY = yMoveRate * (maxHeight / currMagnification - maxHeight / newMagnification);
 
         //计算当前坐标
 
@@ -377,14 +388,14 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
         //控制越界
 
-        double actualDisplayWidth = maxWidth / magnification;
+        double actualDisplayWidth = maxWidth / newMagnification;
         if (x < maxLeft) {
             x = maxLeft;
         } else if ((x + actualDisplayWidth) > maxRight) {
             x = maxRight - actualDisplayWidth;
         }
 
-        double actualDisplayHeight = maxHeight / magnification;
+        double actualDisplayHeight = maxHeight / newMagnification;
         if (y < maxTop) {
             y = maxTop;
         } else if ((y + actualDisplayHeight) > maxBottom) {
@@ -396,8 +407,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         currY = y;
 
         //更新当前放大率
-        currMagnification = magnification;
-
+        currMagnification = newMagnification;
     }
 
     /*******************************************************************
