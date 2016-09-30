@@ -262,14 +262,12 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
-        float zoomRateOffset = offset / (current - offset);
-
-        zoomBy(basicPointX, basicPointY, zoomRateOffset);
+        zoomBy(basicPointX, basicPointY, current, current - offset);
     }
 
-    private void zoomBy(float basicPointX, float basicPointY, float zoomRateOffset){
+    private void zoomBy(float basicPointX, float basicPointY, float currDistance, float lastDistance){
         //计算新的放大率
-        float magnification = currMagnification + zoomRateOffset * currMagnification;
+        float magnification = currDistance * currMagnification / lastDistance;
         //限制放大率
         if (magnification < 1){
             magnification = 1;
@@ -297,8 +295,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             yMoveRate = 1;
         }
 
-        float offsetX = xMoveRate * maxWidth * (magnification - currMagnification);
-        float offsetY = yMoveRate * maxHeight * (magnification - currMagnification);
+        float offsetX = xMoveRate * (maxWidth / currMagnification - maxWidth / magnification);
+        float offsetY = yMoveRate * (maxHeight / currMagnification - maxHeight / magnification);
 
         float x = currX + offsetX;
         float y = currY + offsetY;
