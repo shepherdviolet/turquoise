@@ -53,6 +53,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     private ClickListener clickListener;
     private LongClickListener longClickListener;
 
+    //允许多触点移动
+    private boolean multiTouchMoveEnabled = true;
+
     //variable//////////////////////////////////
 
     private boolean isActive = false;//是否在运动
@@ -72,6 +75,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
     //当前放大率
     private double currMagnification;
+
+    //当前是否是多触点状态
+    private boolean isMultiTouch = false;
 
     /*******************************************************************
      * init
@@ -154,6 +160,14 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         init();
     }
 
+    /**
+     * 是否允许多触点移动
+     * @param enabled true:允许
+     */
+    public void setMultiTouchMoveEnabled(boolean enabled){
+        this.multiTouchMoveEnabled = enabled;
+    }
+
     /*******************************************************************
      * click
      */
@@ -211,6 +225,10 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
+        if (!multiTouchMoveEnabled && isMultiTouch){
+            return;
+        }
+
         //offsetX/offsetY为显示矩形坐标系中的数据, 需要变换为实际矩形中的数据
         double actualOffsetX = -offsetX * (maxWidth / currMagnification) / displayWidth;
         double actualOffsetY = -offsetY * (maxHeight / currMagnification) / displayHeight;
@@ -260,18 +278,18 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
     @Override
     public void holdZoom() {
-//        if (invalidWidthOrHeight){
-//            return;
-//        }
-
+        if (invalidWidthOrHeight){
+            return;
+        }
+        isMultiTouch = true;
     }
 
     @Override
     public void releaseZoom() {
-//        if (invalidWidthOrHeight){
-//            return;
-//        }
-
+        if (invalidWidthOrHeight){
+            return;
+        }
+        isMultiTouch = false;
     }
 
     @Override
