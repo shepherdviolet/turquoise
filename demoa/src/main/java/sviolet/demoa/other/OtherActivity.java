@@ -31,7 +31,8 @@ import sviolet.demoa.common.DemoList;
 @DemoList({
         ShadowOtherActivity.class,
         GradualTitleOtherActivity.class,
-        RuntimePermissionOtherActivity.class
+        RuntimePermissionOtherActivity.class,
+        MotionImageOtherActivity.class
 })
 
 /**************************************************************
