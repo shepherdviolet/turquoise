@@ -77,7 +77,7 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
     @Override
     public void onInit() {
         //解码图片, 测试用, 这种方式如果图片大了会OOM~
-        bitmap = BitmapUtils.copy(BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_1), true);
+        bitmap = BitmapUtils.copy(BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_2), true);
 
         //点击画笔
         clickPaint = new Paint();
