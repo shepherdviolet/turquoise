@@ -84,6 +84,11 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     //惯性滑动
     private CompatScroller23 flingScroller;
 
+    //临时参数, 优化性能
+    private Point actualTouchPoint = new Point();
+    private Point leftTopDisplayPoint = new Point();
+    private Point rightBottomDisplayPoint = new Point();
+
     /*******************************************************************
      * init
      */
@@ -188,8 +193,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
         if (clickListener != null){
-            double[] actualPoint = mappingDisplayPointToActual(x, y);
-            clickListener.onClick((float)actualPoint[0], (float)actualPoint[1], x, y);
+            mappingDisplayPointToActual(x, y, actualTouchPoint);
+            clickListener.onClick((float)actualTouchPoint.getX(), (float)actualTouchPoint.getY(), x, y);
         }
     }
 
@@ -199,8 +204,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
         if (longClickListener != null){
-            double[] actualPoint = mappingDisplayPointToActual(x, y);
-            longClickListener.onLongClick((float)actualPoint[0], (float)actualPoint[1], x, y);
+            mappingDisplayPointToActual(x, y, actualTouchPoint);
+            longClickListener.onLongClick((float)actualTouchPoint.getX(), (float)actualTouchPoint.getY(), x, y);
         }
     }
 
@@ -416,34 +421,36 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
     /**
      * 将显示矩形(显示/触摸坐标系)中的触点坐标映射到实际矩形(默认坐标系)上
+     * @param displayX 显示矩形(显示/触摸坐标系)中的坐标
+     * @param displayY 显示矩形(显示/触摸坐标系)中的坐标
+     * @param actualPoint 输出参数, 实际矩形(默认坐标系)上的点
      */
-    private double[] mappingDisplayPointToActual(double x, double y) {
-        double[] actual = new double[2];
+    public void mappingDisplayPointToActual(double displayX, double displayY, Point actualPoint) {
 
         if (invalidWidthOrHeight) {
-            return actual;
+            return;
         }
 
-        actual[0] = currX + (x / displayWidth) * (maxWidth / currMagnification);
-        actual[1] = currY + (y / displayHeight) * (maxHeight / currMagnification);
+        actualPoint.setX(currX + (displayX / displayWidth) * (maxWidth / currMagnification));
+        actualPoint.setY(currY + (displayY / displayHeight) * (maxHeight / currMagnification));
 
-        return actual;
     }
 
     /**
      * 将实际矩阵(默认坐标系)上的点坐标映射到显示矩形(显示/触摸坐标系)中
+     * @param actualX 实际矩阵(默认坐标系)上的点坐标
+     * @param actualY 实际矩阵(默认坐标系)上的点坐标
+     * @param displayPoint 输出参数, 显示矩形(显示/触摸坐标系)中的点
      */
-    private double[] mappingActualPointToDisplay(double x, double y) {
-        double[] display = new double[2];
+    public void mappingActualPointToDisplay(double actualX, double actualY, Point displayPoint) {
 
         if (invalidWidthOrHeight) {
-            return display;
+            return;
         }
 
-        display[0] = (x - currX) * displayWidth / (maxWidth / currMagnification);
-        display[1] = (y - currY) * displayHeight / (maxHeight / currMagnification);
+        displayPoint.setX((actualX - currX) * displayWidth / (maxWidth / currMagnification));
+        displayPoint.setY((actualY - currY) * displayHeight / (maxHeight / currMagnification));
 
-        return display;
     }
 
     /*******************************************************************
@@ -519,13 +526,13 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         //目标矩形
         if (dstRect != null) {
             //将实际矩形的点映射到显示矩形中
-            double[] leftTopPoint = mappingActualPointToDisplay(left, top);
-            double[] rightBottomPoint = mappingActualPointToDisplay(right, bottom);
+            mappingActualPointToDisplay(left, top, leftTopDisplayPoint);
+            mappingActualPointToDisplay(right, bottom, rightBottomDisplayPoint);
 
-            dstRect.left = (int) leftTopPoint[0];
-            dstRect.top = (int) leftTopPoint[1];
-            dstRect.right = (int) Math.ceil(rightBottomPoint[0]);
-            dstRect.bottom = (int) Math.ceil(rightBottomPoint[1]);
+            dstRect.left = (int) leftTopDisplayPoint.getX();
+            dstRect.top = (int) leftTopDisplayPoint.getY();
+            dstRect.right = (int) Math.ceil(rightBottomDisplayPoint.getX());
+            dstRect.bottom = (int) Math.ceil(rightBottomDisplayPoint.getY());
         }
 
     }
@@ -572,6 +579,35 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
          */
         void onLongClick(float actualX, float actualY, float displayX, float displayY);
 
+    }
+
+    public static class Point {
+        private double x;
+        private double y;
+
+        public Point() {
+        }
+
+        public Point(double x, double y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public double getX() {
+            return x;
+        }
+
+        public void setX(double x) {
+            this.x = x;
+        }
+
+        public double getY() {
+            return y;
+        }
+
+        public void setY(double y) {
+            this.y = y;
+        }
     }
 
 }
