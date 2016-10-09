@@ -66,7 +66,7 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
 
     public MotionImageView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, null, defStyleAttr);
+        init(context, attrs, defStyleAttr);
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr){
