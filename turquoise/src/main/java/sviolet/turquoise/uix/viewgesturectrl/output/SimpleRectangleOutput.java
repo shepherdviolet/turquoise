@@ -35,6 +35,8 @@ import sviolet.turquoise.uix.viewgesturectrl.ViewGestureZoomListener;
 
 public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGestureMoveListener, ViewGestureZoomListener {
 
+    public static final double AUTO_MAGNIFICATION_LIMIT = -1;
+
     //setting///////////////////////////////////
 
     //实际宽高
@@ -57,6 +59,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
     //允许多触点移动
     private boolean multiTouchMoveEnabled = true;
+
+    //初始显示状态
+    private InitScaleType initScaleType;
 
     //variable//////////////////////////////////
 
@@ -102,23 +107,23 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * @param actualHeight 实际高度, 相当于dstRect的高度
      * @param displayWidth 显示宽度, 相当于srcRect的宽度
      * @param displayHeight 显示高度, 相当于srcRect的高度
-     * @param magnificationLimit 最大放大倍数
+     * @param magnificationLimit 最大放大倍数, 可设置自适应放大倍数:{@link SimpleRectangleOutput#AUTO_MAGNIFICATION_LIMIT}
      */
-    public SimpleRectangleOutput(Context context, double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit) {
+    public SimpleRectangleOutput(Context context, double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit, InitScaleType initScaleType) {
         if (context == null){
             throw new RuntimeException("context is null");
         }
         this.flingScroller = new CompatScroller23(context);
-        reset(actualWidth, actualHeight, displayWidth, displayHeight, magnificationLimit);
+        reset(actualWidth, actualHeight, displayWidth, displayHeight, magnificationLimit, initScaleType);
     }
 
     /**
      * 实际矩形和显示矩形长宽均为0, 放大倍数限制为1, 的默认输出实例, 需要后续调用
-     * {@link SimpleRectangleOutput#reset(double, double, double, double, double)}方法方可正常输出.
+     * {@link SimpleRectangleOutput#reset(double, double, double, double, double, InitScaleType)}方法方可正常输出.
      * @param context context
      */
     public SimpleRectangleOutput(Context context){
-        this(context, 0, 0, 0, 0, 1);
+        this(context, 0, 0, 0, 0, 1, InitScaleType.FIT_CENTER);
     }
 
     private void init() {
@@ -137,25 +142,58 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         }
 
         //计算显示界限
-        double actualAspectRatio = actualWidth / actualHeight;
-        double displayAspectRatio = displayWidth / displayHeight;
-        if (actualAspectRatio > displayAspectRatio) {
-            double a = (actualWidth / displayAspectRatio - actualHeight) / 2;
-            maxLeft = 0;
-            maxTop = -a;
-            maxRight = actualWidth;
-            maxBottom = a + actualHeight;
-        } else if (actualAspectRatio < displayAspectRatio) {
-            double a = (actualHeight * displayAspectRatio - actualWidth) / 2;
-            maxLeft = -a;
-            maxTop = 0;
-            maxRight = a + actualWidth;
-            maxBottom = actualHeight;
+        if (initScaleType.getScaleFactor() == ScaleFactor.FIT || actualWidth >= displayWidth || actualHeight >= displayHeight) {
+            //FIT模式 或 实际尺寸大于显示尺寸时
+            double actualAspectRatio = actualWidth / actualHeight;
+            double displayAspectRatio = displayWidth / displayHeight;
+            if (actualAspectRatio > displayAspectRatio) {
+                double a = (actualWidth / displayAspectRatio - actualHeight) / 2;
+                maxLeft = 0;
+                maxTop = -a + initScaleType.getVerticalFactor() * a;
+                maxRight = actualWidth;
+                maxBottom = a + initScaleType.getVerticalFactor() * a + actualHeight;
+                if (magnificationLimit == AUTO_MAGNIFICATION_LIMIT) {
+                    magnificationLimit = actualWidth / displayWidth;
+                    if (magnificationLimit < 1){
+                        magnificationLimit = 1;
+                    }
+                }
+            } else if (actualAspectRatio < displayAspectRatio) {
+                double a = (actualHeight * displayAspectRatio - actualWidth) / 2;
+                maxLeft = -a + initScaleType.getHorizontalFactor() * a;
+                maxTop = 0;
+                maxRight = a + initScaleType.getHorizontalFactor() * a + actualWidth;
+                maxBottom = actualHeight;
+                if (magnificationLimit == AUTO_MAGNIFICATION_LIMIT) {
+                    magnificationLimit = actualHeight / displayHeight;
+                    if (magnificationLimit < 1){
+                        magnificationLimit = 1;
+                    }
+                }
+            } else {
+                maxLeft = 0;
+                maxTop = 0;
+                maxRight = actualWidth;
+                maxBottom = actualHeight;
+                if (magnificationLimit == AUTO_MAGNIFICATION_LIMIT) {
+                    magnificationLimit = actualWidth / displayWidth;
+                    if (magnificationLimit < 1){
+                        magnificationLimit = 1;
+                    }
+                }
+            }
         } else {
-            maxLeft = 0;
-            maxTop = 0;
-            maxRight = actualWidth;
-            maxBottom = actualHeight;
+            //NORMAL模式 且 实际尺寸小于显示尺寸时
+            //FIT模式 或 实际尺寸大于显示尺寸时
+            double xOffset = (displayWidth - actualWidth) / 2;
+            double yOffset = (displayHeight - actualHeight) / 2;
+            maxLeft = -xOffset + initScaleType.getHorizontalFactor() * xOffset;
+            maxTop = -yOffset + initScaleType.getVerticalFactor() * yOffset;
+            maxRight = xOffset + initScaleType.getHorizontalFactor() * xOffset + actualWidth;
+            maxBottom = yOffset + initScaleType.getVerticalFactor() * yOffset + actualHeight;
+            if (magnificationLimit == AUTO_MAGNIFICATION_LIMIT) {
+                magnificationLimit = 1;
+            }
         }
 
         maxWidth = maxRight - maxLeft;
@@ -189,13 +227,30 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     /**
      * [慎用]重置最大放大倍数, 请在UI线程调用, 该方法线程不安全
      *
-     * @param magnificationLimit 最大放大倍数
+     * @param magnificationLimit 最大放大倍数, 可设置自适应放大倍数:{@link SimpleRectangleOutput#AUTO_MAGNIFICATION_LIMIT}
      */
     public void resetMagnificationLimit(double magnificationLimit){
-        if (magnificationLimit < 1) {
-            throw new RuntimeException("magnificationLimit must >= 1");
+        if (magnificationLimit < 1 && magnificationLimit != AUTO_MAGNIFICATION_LIMIT) {
+            throw new RuntimeException("magnificationLimit must >= 1 or SimpleRectangleOutput.AUTO_MAGNIFICATION_LIMIT");
         }
+
         this.magnificationLimit = magnificationLimit;
+
+        init();
+    }
+
+    /**
+     * [慎用]重置初始显示方式, 请在UI线程调用, 该方法线程不安全
+     *
+     * @param initScaleType 初始显示方式
+     */
+    public void resetInitScaleType(InitScaleType initScaleType){
+        if (initScaleType == null){
+            throw new RuntimeException("initScaleType is null");
+        }
+
+        this.initScaleType = initScaleType;
+
         init();
     }
 
@@ -206,11 +261,15 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      * @param actualHeight 实际高度, 相当于dstRect的高度
      * @param displayWidth 显示宽度, 相当于srcRect的宽度
      * @param displayHeight 显示高度, 相当于srcRect的高度
-     * @param magnificationLimit 最大放大倍数
+     * @param magnificationLimit 最大放大倍数, 可设置自适应放大倍数:{@link SimpleRectangleOutput#AUTO_MAGNIFICATION_LIMIT}
+     * @param initScaleType 初始显示方式
      */
-    public void reset(double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit) {
-        if (magnificationLimit < 1) {
-            throw new RuntimeException("magnificationLimit must >= 1");
+    public void reset(double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit, InitScaleType initScaleType) {
+        if (magnificationLimit < 1 && magnificationLimit != AUTO_MAGNIFICATION_LIMIT) {
+            throw new RuntimeException("magnificationLimit must >= 1 or SimpleRectangleOutput.AUTO_MAGNIFICATION_LIMIT");
+        }
+        if (initScaleType == null){
+            throw new RuntimeException("initScaleType is null");
         }
 
         this.actualWidth = actualWidth;
@@ -218,6 +277,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
         this.magnificationLimit = magnificationLimit;
+        this.initScaleType = initScaleType;
 
         init();
     }
@@ -654,6 +714,61 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
         public void setY(double y) {
             this.y = y;
+        }
+    }
+
+    public enum ScaleFactor{
+        NORMAL,
+        FIT
+    }
+
+    /**
+     * 初始显示方式, 即未放大时的显示方式
+     */
+    public enum InitScaleType{
+        CENTER(ScaleFactor.NORMAL, 0, 0),//若实际矩形小于显示矩形, 居中显示, 四边留空
+        LEFT(ScaleFactor.NORMAL, 1, 0),//若实际矩形小于显示矩形, 靠左显示, 其他三边留空
+        TOP(ScaleFactor.NORMAL, 0, 1),//若实际矩形小于显示矩形, 靠上显示, 其他三边留空
+        RIGHT(ScaleFactor.NORMAL, -1, 0),//若实际矩形小于显示矩形, 靠右显示, 其他三边留空
+        BOTTOM(ScaleFactor.NORMAL, 0, -1),//若实际矩形小于显示矩形, 靠下显示, 其他三边留空
+        LEFT_TOP(ScaleFactor.NORMAL, 1, 1),//若实际矩形小于显示矩形, 靠左上显示, 其他两边留空
+        RIGHT_TOP(ScaleFactor.NORMAL, -1, 1),//若实际矩形小于显示矩形, 靠右上显示, 其他两边留空
+        LEFT_BOTTOM(ScaleFactor.NORMAL, 1, -1),//若实际矩形小于显示矩形, 靠左下显示, 其他两边留空
+        RIGHT_BOTTOM(ScaleFactor.NORMAL, -1, -1),//若实际矩形小于显示矩形, 靠右下显示, 其他两边留空
+        FIT_CENTER(ScaleFactor.FIT, 0, 0),//若实际矩形小于显示矩形, 等比例拉伸, 使得长或宽之一填充满显示矩形, 其他两边留空, 居中显示
+        FIT_LEFT(ScaleFactor.FIT, 1, 0),//若实际矩形小于显示矩形, 等比例拉伸, 使得长或宽之一填充满显示矩形, 靠左显示, 垂直方向居中
+        FIT_TOP(ScaleFactor.FIT, 0, 1),//若实际矩形小于显示矩形, 等比例拉伸, 使得长或宽之一填充满显示矩形, 靠上显示, 水平方向居中
+        FIT_RIGHT(ScaleFactor.FIT, -1, 0),//若实际矩形小于显示矩形, 等比例拉伸, 使得长或宽之一填充满显示矩形, 靠右显示, 垂直方向居中
+        FIT_BOTTOM(ScaleFactor.FIT, 0, -1),//若实际矩形小于显示矩形, 等比例拉伸, 使得长或宽之一填充满显示矩形, 靠下显示, 水平方向居中
+        FIT_LEFT_TOP(ScaleFactor.FIT, 1, 1),//若实际矩形小于显示矩形, 等比例拉伸, 使得长或宽之一填充满显示矩形, 靠左上显示
+        FIT_RIGHT_TOP(ScaleFactor.FIT, -1, 1),//若实际矩形小于显示矩形, 等比例拉伸, 使得长或宽之一填充满显示矩形, 靠右上显示
+        FIT_LEFT_BOTTOM(ScaleFactor.FIT, 1, -1),//若实际矩形小于显示矩形, 等比例拉伸, 使得长或宽之一填充满显示矩形, 靠左下显示
+        FIT_RIGHT_BOTTOM(ScaleFactor.FIT, -1, -1);//若实际矩形小于显示矩形, 等比例拉伸, 使得长或宽之一填充满显示矩形, 靠右下显示
+
+        private ScaleFactor scaleFactor;
+        private int horizontalFactor;
+        private int verticalFactor;
+
+        /**
+         * @param horizontalFactor +1靠左 0居中 -1靠右
+         * @param verticalFactor +1靠上 0居中 -1靠下
+         */
+        InitScaleType(ScaleFactor scaleFactor, int horizontalFactor, int verticalFactor){
+            this.scaleFactor = scaleFactor;
+            this.horizontalFactor = horizontalFactor;
+            this.verticalFactor = verticalFactor;
+        }
+
+        public ScaleFactor getScaleFactor() {
+            return scaleFactor;
+        }
+
+        public int getHorizontalFactor() {
+            return horizontalFactor;
+        }
+
+        public int getVerticalFactor() {
+            return verticalFactor;
         }
     }
 
