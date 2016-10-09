@@ -108,18 +108,17 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         if (context == null){
             throw new RuntimeException("context is null");
         }
-        if (magnificationLimit < 1) {
-            throw new RuntimeException("magnificationLimit must >= 1");
-        }
-
         this.flingScroller = new CompatScroller23(context);
-        this.actualWidth = actualWidth;
-        this.actualHeight = actualHeight;
-        this.displayWidth = displayWidth;
-        this.displayHeight = displayHeight;
-        this.magnificationLimit = magnificationLimit;
+        reset(actualWidth, actualHeight, displayWidth, displayHeight, magnificationLimit);
+    }
 
-        init();
+    /**
+     * 实际矩形和显示矩形长宽均为0, 放大倍数限制为1, 的默认输出实例, 需要后续调用
+     * {@link SimpleRectangleOutput#reset(double, double, double, double, double)}方法方可正常输出.
+     * @param context context
+     */
+    public SimpleRectangleOutput(Context context){
+        this(context, 0, 0, 0, 0, 1);
     }
 
     private void init() {
@@ -172,6 +171,54 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     public void resetDisplayDimension(double displayWidth, double displayHeight) {
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
+        init();
+    }
+
+    /**
+     * [慎用]重置实际矩形尺寸, 请在UI线程调用, 该方法线程不安全
+     *
+     * @param actualWidth 实际矩形宽度
+     * @param actualHeight 实际矩形高度
+     */
+    public void resetActualDimension(double actualWidth, double actualHeight) {
+        this.actualWidth = actualWidth;
+        this.actualHeight = actualHeight;
+        init();
+    }
+
+    /**
+     * [慎用]重置最大放大倍数, 请在UI线程调用, 该方法线程不安全
+     *
+     * @param magnificationLimit 最大放大倍数
+     */
+    public void resetMagnificationLimit(double magnificationLimit){
+        if (magnificationLimit < 1) {
+            throw new RuntimeException("magnificationLimit must >= 1");
+        }
+        this.magnificationLimit = magnificationLimit;
+        init();
+    }
+
+    /**
+     * [慎用]重置参数, 请在UI线程调用, 该方法线程不安全
+     *
+     * @param actualWidth 实际宽度, 相当于dstRect的宽度
+     * @param actualHeight 实际高度, 相当于dstRect的高度
+     * @param displayWidth 显示宽度, 相当于srcRect的宽度
+     * @param displayHeight 显示高度, 相当于srcRect的高度
+     * @param magnificationLimit 最大放大倍数
+     */
+    public void reset(double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit) {
+        if (magnificationLimit < 1) {
+            throw new RuntimeException("magnificationLimit must >= 1");
+        }
+
+        this.actualWidth = actualWidth;
+        this.actualHeight = actualHeight;
+        this.displayWidth = displayWidth;
+        this.displayHeight = displayHeight;
+        this.magnificationLimit = magnificationLimit;
+
         init();
     }
 
