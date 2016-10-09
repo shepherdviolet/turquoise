@@ -184,7 +184,6 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             }
         } else {
             //NORMAL模式 且 实际尺寸小于显示尺寸时
-            //FIT模式 或 实际尺寸大于显示尺寸时
             double xOffset = (displayWidth - actualWidth) / 2;
             double yOffset = (displayHeight - actualHeight) / 2;
             maxLeft = -xOffset + initScaleType.getHorizontalFactor() * xOffset;
