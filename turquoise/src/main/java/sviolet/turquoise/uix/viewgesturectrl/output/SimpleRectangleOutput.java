@@ -371,6 +371,10 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         moveBy(actualOffsetX, actualOffsetY);
     }
 
+    private void moveTo(double x, double y){
+        moveBy(x - currX, y - currY);
+    }
+
     /**
      * @param offsetX DisplayRect在X方向的偏移量, 与手势方向相反
      * @param offsetY DisplayRect在Y方向的偏移量, 与手势方向相反
