@@ -89,8 +89,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     //当前是否是多触点状态
     private boolean isMultiTouch = false;
 
-    //惯性滑动
-    private CompatScroller23 flingScroller;
+    //惯性滑动, 因为有可能需要一个方向scroll到边界, 一个惯性fling, 因此分为两个
+    private CompatScroller23 flingScrollerX;
+    private CompatScroller23 flingScrollerY;
 
     //临时参数, 优化性能
     private Point actualTouchPoint = new Point();
@@ -116,7 +117,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         if (context == null){
             throw new RuntimeException("context is null");
         }
-        this.flingScroller = new CompatScroller23(context);
+        this.flingScrollerX = new CompatScroller23(context);
+        this.flingScrollerY = new CompatScroller23(context);
         reset(actualWidth, actualHeight, displayWidth, displayHeight, magnificationLimit, initScaleType);
     }
 
@@ -330,7 +332,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
         isHold = true;
 
-        flingScroller.abortAnimation();
+        flingScrollerX.abortAnimation();
+        flingScrollerY.abortAnimation();
 
         if (refreshListener != null) {
             refreshListener.onRefresh();
@@ -366,38 +369,46 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         double bottom = top + height;
 
         //是否需要越界弹回
-        boolean scrollToDst = false;
+        boolean xScrollToDst = false;
+        boolean yScrollToDst = false;
         //越界弹回目标
         int dstX = (int) currX;
         int dstY = (int) currY;
 
         if (width > actualWidth) {
             dstX = (int) ((actualWidth - width) / 2);
-            scrollToDst = true;
+            xScrollToDst = true;
         } else if (left < 0) {
             dstX = 0;
-            scrollToDst = true;
+            xScrollToDst = true;
         } else if (right > actualWidth){
             dstX = (int) (currX + right - actualWidth);
-            scrollToDst = true;
+            xScrollToDst = true;
         }
 
         if (height > actualHeight) {
             dstY = (int) ((actualHeight - height) / 2);
-            scrollToDst = true;
+            yScrollToDst = true;
         } else if (top < 0) {
             dstY = 0;
-            scrollToDst = true;
+            yScrollToDst = true;
         } else if (bottom > actualHeight){
             dstY = (int) (currY + bottom - actualHeight);
-            scrollToDst = true;
+            yScrollToDst = true;
         }
 
-        if (scrollToDst){
-            flingScroller.startScroll((int)currX, (int)currY, dstX, dstY, scrollDuration);
+        if (xScrollToDst){
+            flingScrollerX.startScroll((int)currX, 0, dstX, 0, scrollDuration);
         } else {
-            flingScroller.fling((int) currX, (int) currY, (int) -velocityX, (int) -velocityY, 0, (int) (actualWidth - width), 0, (int) (actualHeight - height));
+            flingScrollerX.fling((int) currX, 0, (int) -velocityX, 0, 0, (int) (actualWidth - width), 0, 0);
         }
+
+        if (yScrollToDst){
+            flingScrollerY.startScroll(0, (int) currY, 0, dstY, scrollDuration);
+        } else {
+            flingScrollerY.fling(0, (int) currY, 0, (int) -velocityY, 0, 0, 0, (int) (actualHeight - height));
+        }
+
     }
 
     @Override
@@ -636,7 +647,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
      */
     public boolean isActive() {
         calculateFlingPosition();
-        return isHold || !flingScroller.isFinished();
+        return isHold || !flingScrollerX.isFinished() || !flingScrollerY.isFinished();
     }
 
     /**
@@ -694,13 +705,23 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     }
 
     private void calculateFlingPosition(){
-        if (!flingScroller.isFinished() && !isHold){
-            flingScroller.computeScrollOffset();
-            moveBy(flingScroller.getCurrX() - currX, flingScroller.getCurrY() - currY);
+        if (isHold){
+            return;
         }
+        double offsetX = 0;
+        double offsetY = 0;
+        if (!flingScrollerX.isFinished()){
+            flingScrollerX.computeScrollOffset();
+            offsetX = flingScrollerX.getCurrX() - currX;
+        }
+        if (!flingScrollerY.isFinished()){
+            flingScrollerY.computeScrollOffset();
+            offsetY = flingScrollerY.getCurrY() - currY;
+        }
+        moveBy(offsetX, offsetY);
     }
 
-    /*****************************************************************************8
+    /*****************************************************************************
      * inner
      */
 
