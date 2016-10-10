@@ -94,7 +94,7 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
         //手势控制器实例化
         viewGestureController = new ViewGestureControllerImpl(getContext());
         //简单的矩形输出, 图片长宽作为实际矩形, 控件长宽作为显示矩形, 最大放大率10
-        output = new SimpleRectangleOutput(getContext(), bitmap.getWidth(), bitmap.getHeight(), getWidth(), getHeight(), 10);
+        output = new SimpleRectangleOutput(getContext(), bitmap.getWidth(), bitmap.getHeight(), getWidth(), getHeight(), 5, SimpleRectangleOutput.InitScaleType.FIT_CENTER);
         output.setMultiTouchMoveEnabled(true);
         //必须实现刷新接口, 调用postInvalidate()刷新
         output.setRefreshListener(new SimpleRectangleOutput.RefreshListener() {
