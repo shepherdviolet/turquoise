@@ -22,6 +22,7 @@ package sviolet.turquoise.uix.viewgesturectrl.output;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.view.ViewConfiguration;
 
 import sviolet.turquoise.common.compat.CompatScroller23;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureClickListener;
@@ -37,6 +38,8 @@ import sviolet.turquoise.uix.viewgesturectrl.ViewGestureZoomListener;
 public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGestureMoveListener, ViewGestureZoomListener {
 
     public static final double AUTO_MAGNIFICATION_LIMIT = -1;
+
+    private static final float DEFAULT_FLING_FRICTION = 0.007f;
 
     //setting///////////////////////////////////
 
@@ -125,8 +128,13 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         if (context == null){
             throw new RuntimeException("context is null");
         }
+
         this.flingScrollerX = new CompatScroller23(context);
         this.flingScrollerY = new CompatScroller23(context);
+
+        this.flingScrollerX.setFriction(DEFAULT_FLING_FRICTION);
+        this.flingScrollerY.setFriction(DEFAULT_FLING_FRICTION);
+
         reset(actualWidth, actualHeight, displayWidth, displayHeight, magnificationLimit, initScaleType);
     }
 
@@ -310,6 +318,21 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             throw new RuntimeException("scroll duration must >= 0");
         }
         this.scrollDuration = scrollDuration;
+    }
+
+    /**
+     * 惯性滑动的减速率, 值越小滑动距离越长, 默认值为{@value SimpleRectangleOutput#DEFAULT_FLING_FRICTION}
+     * ({@link SimpleRectangleOutput#DEFAULT_FLING_FRICTION}),
+     * 系统推荐值为{@link ViewConfiguration#getScrollFriction}.
+     *
+     * @param flingFriction > 0
+     */
+    public void setFlingFriction(int flingFriction){
+        if (flingFriction <= 0){
+            throw new RuntimeException("flingFriction must > 0");
+        }
+        this.flingScrollerX.setFriction(flingFriction);
+        this.flingScrollerY.setFriction(flingFriction);
     }
 
     /**
