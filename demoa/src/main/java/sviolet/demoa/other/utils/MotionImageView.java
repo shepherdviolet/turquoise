@@ -24,6 +24,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,8 +52,8 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
     private Bitmap bitmap;
     private Paint clickPaint;
     private Paint longClickPaint;
-    private Rect canvasRect = new Rect();
     private Rect bitmapRect = new Rect();
+    private RectF canvasRectF = new RectF();
 
     public MotionImageView(Context context) {
         super(context);
@@ -139,9 +140,10 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
     protected void onDraw(Canvas canvas) {
 
         //从output获得当前矩形
-        output.getSrcDstRect(bitmapRect, canvasRect);
+        output.getSrcDstRect(bitmapRect, canvasRectF);
+
         //绘制图片
-        canvas.drawBitmap(bitmap, bitmapRect, canvasRect, null);
+        canvas.drawBitmap(bitmap, bitmapRect, canvasRectF, null);
 
         //必须:继续刷新
         if (output.isActive())
