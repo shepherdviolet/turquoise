@@ -27,6 +27,7 @@ import android.view.ViewConfiguration;
 import sviolet.turquoise.common.compat.CompatScroller23;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureClickListener;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureMoveListener;
+import sviolet.turquoise.uix.viewgesturectrl.ViewGestureTouchListener;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureZoomListener;
 
 /**
@@ -35,7 +36,7 @@ import sviolet.turquoise.uix.viewgesturectrl.ViewGestureZoomListener;
  * Created by S.Violet on 2016/9/27.
  */
 
-public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGestureMoveListener, ViewGestureZoomListener {
+public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGestureClickListener, ViewGestureMoveListener, ViewGestureZoomListener {
 
     public static final double AUTO_MAGNIFICATION_LIMIT = -1;
 
@@ -354,6 +355,39 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     }
 
     /*******************************************************************
+     * touch
+     */
+
+    @Override
+    public void hold() {
+        if (invalidWidthOrHeight) {
+            return;
+        }
+
+        isHold = true;
+
+        flingScrollerX.abortAnimation();
+        flingScrollerY.abortAnimation();
+
+        if (refreshListener != null) {
+            refreshListener.onRefresh();
+        }
+    }
+
+    @Override
+    public void release() {
+        if (invalidWidthOrHeight) {
+            return;
+        }
+
+        isHold = false;
+
+        if (refreshListener != null) {
+            refreshListener.onRefresh();
+        }
+    }
+
+    /*******************************************************************
      * click
      */
 
@@ -385,18 +419,10 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
     @Override
     public void holdMove() {
-        if (invalidWidthOrHeight) {
-            return;
-        }
+//        if (invalidWidthOrHeight) {
+//            return;
+//        }
 
-        isHold = true;
-
-        flingScrollerX.abortAnimation();
-        flingScrollerY.abortAnimation();
-
-        if (refreshListener != null) {
-            refreshListener.onRefresh();
-        }
     }
 
     @Override
@@ -405,14 +431,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             return;
         }
 
-        isHold = false;
-
         //惯性滑动
         fling(velocityX * (maxWidth / currMagnification) / displayWidth, velocityY * (maxHeight / currMagnification) / displayHeight);
-
-        if (refreshListener != null) {
-            refreshListener.onRefresh();
-        }
     }
 
     private void fling(double velocityX, double velocityY) {

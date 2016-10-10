@@ -60,6 +60,7 @@ public class ViewGestureControllerImpl implements ViewGestureController {
 
     private long longClickDuration = 1000;//长按时间
 
+    private List<ViewGestureTouchListener> touchListeners = new ArrayList<>();//触摸监听
     private List<ViewGestureMoveListener> moveListeners = new ArrayList<>();//移动监听
     private List<ViewGestureZoomListener> zoomListeners = new ArrayList<>();//缩放监听
     private List<ViewGestureRotateListener> rotateListeners = new ArrayList<>();//旋转监听
@@ -108,6 +109,9 @@ public class ViewGestureControllerImpl implements ViewGestureController {
 
     @Override
     public void addOutput(ViewGestureOutput listener) {
+        if (listener instanceof ViewGestureTouchListener) {
+            addTouchListener((ViewGestureTouchListener) listener);
+        }
         if (listener instanceof ViewGestureMoveListener) {
             addMoveListener((ViewGestureMoveListener) listener);
         }
@@ -120,6 +124,13 @@ public class ViewGestureControllerImpl implements ViewGestureController {
         if (listener instanceof ViewGestureClickListener) {
             addClickListener((ViewGestureClickListener) listener);
         }
+    }
+
+    public ViewGestureController addTouchListener(ViewGestureTouchListener listener) {
+        if (listener != null) {
+            touchListeners.add(listener);
+        }
+        return this;
     }
 
     public ViewGestureController addMoveListener(ViewGestureMoveListener listener) {
@@ -313,14 +324,16 @@ public class ViewGestureControllerImpl implements ViewGestureController {
 
     private void stateToRelease(ViewGestureTouchPoint abandonedPoint) {
         //回调release
-        singleTouchReleaseCallback(abandonedPoint);
         multiTouchReleaseCallback();
+        singleTouchReleaseCallback(abandonedPoint);
+        touchReleaseCallback();
         //重置状态
         motionState = MotionState.RELEASE;
         resetVelocityTracker();
     }
 
     private void stateToHold() {
+        touchHoldCallback();
         motionState = MotionState.HOLD;
     }
 
@@ -355,7 +368,16 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     }
 
     /**
-     * 回调单点持有
+     * 回调触摸持有
+     */
+    private void touchHoldCallback(){
+        for (ViewGestureTouchListener listener : touchListeners){
+            listener.hold();
+        }
+    }
+
+    /**
+     * 回调单点滑动持有
      */
     private void singleTouchHoldCallback() {
         if (!hasSingleTouchHold) {
@@ -378,6 +400,12 @@ public class ViewGestureControllerImpl implements ViewGestureController {
             for (ViewGestureRotateListener listener : rotateListeners) {
                 listener.holdRotate();
             }
+        }
+    }
+
+    private void touchReleaseCallback(){
+        for (ViewGestureTouchListener listener : touchListeners){
+            listener.release();
         }
     }
 
