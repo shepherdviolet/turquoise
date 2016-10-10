@@ -63,6 +63,9 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     //初始显示状态
     private InitScaleType initScaleType;
 
+    //归位滑动时间
+    private int scrollDuration = 250;
+
     //variable//////////////////////////////////
 
     private boolean isHold = false;//是否被持有(有触点)
@@ -351,7 +354,50 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     }
 
     private void fling(double velocityX, double velocityY) {
-        flingScroller.fling((int)currX, (int)currY, (int)-velocityX, (int)-velocityY, 0, (int)(actualWidth - maxWidth / currMagnification), 0, (int)(actualHeight - maxHeight / currMagnification));
+
+        //显示矩形在实际矩形中的宽高
+        double width = maxWidth / currMagnification;
+        double height = maxHeight / currMagnification;
+
+        //显示矩形在实际矩形中的位置
+        double left = currX;
+        double right = left + width;
+        double top = currY;
+        double bottom = top + height;
+
+        //是否需要越界弹回
+        boolean scrollToDst = false;
+        //越界弹回目标
+        int dstX = (int) currX;
+        int dstY = (int) currY;
+
+        if (width > actualWidth) {
+            dstX = (int) ((actualWidth - width) / 2);
+            scrollToDst = true;
+        } else if (left < 0) {
+            dstX = 0;
+            scrollToDst = true;
+        } else if (right > actualWidth){
+            dstX = (int) (currX + right - actualWidth);
+            scrollToDst = true;
+        }
+
+        if (height > actualHeight) {
+            dstY = (int) ((actualHeight - height) / 2);
+            scrollToDst = true;
+        } else if (top < 0) {
+            dstY = 0;
+            scrollToDst = true;
+        } else if (bottom > actualHeight){
+            dstY = (int) (currY + bottom - actualHeight);
+            scrollToDst = true;
+        }
+
+        if (scrollToDst){
+            flingScroller.startScroll((int)currX, (int)currY, dstX, dstY, scrollDuration);
+        } else {
+            flingScroller.fling((int) currX, (int) currY, (int) -velocityX, (int) -velocityY, 0, (int) (actualWidth - width), 0, (int) (actualHeight - height));
+        }
     }
 
     @Override
