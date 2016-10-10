@@ -742,6 +742,19 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     }
 
     /**
+     * [必须在UI线程调用]主要的数据输出方法, 在传入的两个Rect中赋值
+     * @param srcRect 源矩形, 即为实际矩形, 例如:图片(Bitmap)的矩形
+     * @param dstRect 目标矩形, 即为显示矩形, 例如:控件矩形
+     */
+    public void getSrcDstRect(Rect srcRect, RectF dstRect){
+        getSrcDstRectF(tempSrcRectF, dstRect);
+        srcRect.left = (int) tempSrcRectF.left;
+        srcRect.top = (int) tempSrcRectF.top;
+        srcRect.right = (int) tempSrcRectF.right;
+        srcRect.bottom = (int) tempSrcRectF.bottom;
+    }
+
+    /**
      * 主要的数据输出方法, 在传入的两个RectF中赋值
      * @param srcRect 源矩形, 即为实际矩形, 例如:图片(Bitmap)的矩形
      * @param dstRect 目标矩形, 即为显示矩形, 例如:控件矩形
