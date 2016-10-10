@@ -294,6 +294,16 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         this.multiTouchMoveEnabled = enabled;
     }
 
+    /**
+     * 设置归位滚动时间
+     */
+    public void setScrollDuration(int scrollDuration){
+        if (scrollDuration < 0){
+            throw new RuntimeException("scroll duration must >= 0");
+        }
+        this.scrollDuration = scrollDuration;
+    }
+
     /*******************************************************************
      * click
      */
