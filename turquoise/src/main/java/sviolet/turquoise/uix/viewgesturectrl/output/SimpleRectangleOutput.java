@@ -21,6 +21,7 @@ package sviolet.turquoise.uix.viewgesturectrl.output;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.graphics.RectF;
 
 import sviolet.turquoise.common.compat.CompatScroller23;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureClickListener;
@@ -102,6 +103,8 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     private Point actualTouchPoint = new Point();
     private Point leftTopDisplayPoint = new Point();
     private Point rightBottomDisplayPoint = new Point();
+    private RectF tempSrcRectF = new RectF();
+    private RectF tempDstRectF = new RectF();
 
     /*******************************************************************
      * init
@@ -722,11 +725,28 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     }
 
     /**
-     * 主要的数据输出方法, 在传入的两个Rect中赋值
+     * [必须在UI线程调用]主要的数据输出方法, 在传入的两个Rect中赋值
      * @param srcRect 源矩形, 即为实际矩形, 例如:图片(Bitmap)的矩形
      * @param dstRect 目标矩形, 即为显示矩形, 例如:控件矩形
      */
-    public void getSrcDstRect(Rect srcRect, Rect dstRect) {
+    public void getSrcDstRect(Rect srcRect, Rect dstRect){
+        getSrcDstRectF(tempSrcRectF, tempDstRectF);
+        srcRect.left = (int) tempSrcRectF.left;
+        srcRect.top = (int) tempSrcRectF.top;
+        srcRect.right = (int) tempSrcRectF.right;
+        srcRect.bottom = (int) tempSrcRectF.bottom;
+        dstRect.left = (int) tempDstRectF.left;
+        dstRect.top = (int) tempDstRectF.top;
+        dstRect.right = (int) Math.ceil(tempDstRectF.right);
+        dstRect.bottom = (int) Math.ceil(tempDstRectF.bottom);
+    }
+
+    /**
+     * 主要的数据输出方法, 在传入的两个RectF中赋值
+     * @param srcRect 源矩形, 即为实际矩形, 例如:图片(Bitmap)的矩形
+     * @param dstRect 目标矩形, 即为显示矩形, 例如:控件矩形
+     */
+    public void getSrcDstRectF(RectF srcRect, RectF dstRect) {
         if (invalidWidthOrHeight) {
             if (srcRect != null) {
                 srcRect.left = 0;
@@ -755,10 +775,10 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
 
         //原矩形
         if (srcRect != null) {
-            srcRect.left = (int) left;
-            srcRect.right = (int) right;
-            srcRect.top = (int) top;
-            srcRect.bottom = (int) bottom;
+            srcRect.left = (float) left;
+            srcRect.right = (float) right;
+            srcRect.top = (float) top;
+            srcRect.bottom = (float) bottom;
         }
 
         //目标矩形
@@ -767,10 +787,10 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             mappingActualPointToDisplay(left, top, leftTopDisplayPoint);
             mappingActualPointToDisplay(right, bottom, rightBottomDisplayPoint);
 
-            dstRect.left = (int) leftTopDisplayPoint.getX();
-            dstRect.top = (int) leftTopDisplayPoint.getY();
-            dstRect.right = (int) Math.ceil(rightBottomDisplayPoint.getX());
-            dstRect.bottom = (int) Math.ceil(rightBottomDisplayPoint.getY());
+            dstRect.left = (float) leftTopDisplayPoint.getX();
+            dstRect.top = (float) leftTopDisplayPoint.getY();
+            dstRect.right = (float) rightBottomDisplayPoint.getX();
+            dstRect.bottom = (float) rightBottomDisplayPoint.getY();
         }
 
     }
