@@ -66,6 +66,11 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     //归位滑动时间
     private int scrollDuration = 250;
 
+    //平移越界开关
+    private boolean overMoveEnabled = true;
+    //平移越界阻尼
+    private float overMoveResistance = 5;
+
     //variable//////////////////////////////////
 
     private boolean isHold = false;//是否被持有(有触点)
@@ -382,39 +387,55 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         boolean xScrollToDst = false;
         boolean yScrollToDst = false;
         //越界弹回目标
-        int dstX = (int) currX;
-        int dstY = (int) currY;
+        double dstX = currX;
+        double dstY = currY;
 
         if (width > actualWidth) {
-            dstX = (int) ((actualWidth - width) / 2);
+            double a = (width - actualWidth) / 2;
+            dstX = -a + initScaleType.getHorizontalFactor() * a;
             xScrollToDst = true;
         } else if (left < 0) {
             dstX = 0;
             xScrollToDst = true;
         } else if (right > actualWidth){
-            dstX = (int) (currX + right - actualWidth);
+            dstX = currX - right + actualWidth;
             xScrollToDst = true;
         }
 
         if (height > actualHeight) {
-            dstY = (int) ((actualHeight - height) / 2);
+            double a = (height - actualHeight) / 2;
+            dstY = -a + initScaleType.getVerticalFactor() * a;
             yScrollToDst = true;
         } else if (top < 0) {
             dstY = 0;
             yScrollToDst = true;
         } else if (bottom > actualHeight){
-            dstY = (int) (currY + bottom - actualHeight);
+            dstY = currY - bottom + actualHeight;
             yScrollToDst = true;
         }
 
         if (xScrollToDst){
-            flingScrollerX.startScroll((int)currX, 0, dstX, 0, scrollDuration);
+            int dx;
+            //消除回弹时和边界的缝隙
+            if (dstX > currX){
+                dx = (int) Math.ceil(dstX - currX);
+            } else {
+                dx = (int) Math.floor(dstX - currX);
+            }
+            flingScrollerX.startScroll((int)currX, 0, dx, 0, scrollDuration);
         } else {
             flingScrollerX.fling((int) currX, 0, (int) -velocityX, 0, 0, (int) (actualWidth - width), 0, 0);
         }
 
         if (yScrollToDst){
-            flingScrollerY.startScroll(0, (int) currY, 0, dstY, scrollDuration);
+            int dy;
+            //消除回弹时和边界的缝隙
+            if (dstY > currY){
+                dy = (int) Math.ceil(dstY - currY);
+            } else {
+                dy = (int) Math.floor(dstY - currY);
+            }
+            flingScrollerY.startScroll(0, (int) currY, 0, dy, scrollDuration);
         } else {
             flingScrollerY.fling(0, (int) currY, 0, (int) -velocityY, 0, 0, 0, (int) (actualHeight - height));
         }
@@ -454,21 +475,37 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         //越界控制
         if (offsetX < 0) {
             if (x < 0) {
-                x = currX;
+                if (overMoveEnabled){
+                    x = currX + offsetX / overMoveResistance;
+                }else {
+                    x = currX;
+                }
             }
         } else if (offsetX > 0) {
             if ((x + (maxWidth / currMagnification)) > actualWidth) {
-                x = currX;
+                if (overMoveEnabled){
+                    x = currX + offsetX / overMoveResistance;
+                }else {
+                    x = currX;
+                }
             }
         }
 
         if (offsetY < 0) {
             if (y < 0) {
-                y = currY;
+                if (overMoveEnabled){
+                    y = currY + offsetY / overMoveResistance;
+                }else {
+                    y = currY;
+                }
             }
         } else if (offsetY > 0) {
             if ((y + (maxHeight / currMagnification)) > actualHeight) {
-                y = currY;
+                if (overMoveEnabled){
+                    y = currY + offsetY / overMoveResistance;
+                }else {
+                    y = currY;
+                }
             }
         }
 
