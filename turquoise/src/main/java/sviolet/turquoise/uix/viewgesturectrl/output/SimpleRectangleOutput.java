@@ -415,12 +415,15 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         }
 
         if (xScrollToDst){
+            double dxDouble = dstX - currX;
             int dx;
             //消除回弹时和边界的缝隙
-            if (dstX > currX){
-                dx = (int) Math.ceil(dstX - currX);
+            if (dxDouble > -1 && dxDouble < 1){
+                dx = 0;
+            }else if (dstX > currX){
+                dx = (int) Math.ceil(dxDouble);
             } else {
-                dx = (int) Math.floor(dstX - currX);
+                dx = (int) Math.floor(dxDouble);
             }
             flingScrollerX.startScroll((int)currX, 0, dx, 0, scrollDuration);
         } else {
@@ -428,12 +431,15 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
         }
 
         if (yScrollToDst){
+            double dyDouble = dstY - currY;
             int dy;
             //消除回弹时和边界的缝隙
-            if (dstY > currY){
-                dy = (int) Math.ceil(dstY - currY);
+            if (dyDouble > -1 && dyDouble < 1) {
+                dy = 0;
+            }else if (dstY > currY){
+                dy = (int) Math.ceil(dyDouble);
             } else {
-                dy = (int) Math.floor(dstY - currY);
+                dy = (int) Math.floor(dyDouble);
             }
             flingScrollerY.startScroll(0, (int) currY, 0, dy, scrollDuration);
         } else {
