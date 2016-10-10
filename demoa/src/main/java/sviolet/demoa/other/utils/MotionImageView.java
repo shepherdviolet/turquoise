@@ -53,7 +53,7 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
     private Paint clickPaint;
     private Paint longClickPaint;
     private Rect bitmapRect = new Rect();
-    private RectF canvasRectF = new RectF();
+    private Rect canvasRect = new Rect();
 
     public MotionImageView(Context context) {
         super(context);
@@ -140,10 +140,10 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
     protected void onDraw(Canvas canvas) {
 
         //从output获得当前矩形
-        output.getSrcDstRect(bitmapRect, canvasRectF);
+        output.getSrcDstRect(bitmapRect, canvasRect);
 
         //绘制图片
-        canvas.drawBitmap(bitmap, bitmapRect, canvasRectF, null);
+        canvas.drawBitmap(bitmap, bitmapRect, canvasRect, null);
 
         //必须:继续刷新
         if (output.isActive())
