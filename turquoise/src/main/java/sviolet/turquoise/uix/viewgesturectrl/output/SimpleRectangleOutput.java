@@ -69,7 +69,7 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
     //平移越界开关
     private boolean overMoveEnabled = true;
     //平移越界阻尼
-    private float overMoveResistance = 5;
+    private double overMoveResistance = 5;
 
     //variable//////////////////////////////////
 
@@ -307,6 +307,24 @@ public class SimpleRectangleOutput implements ViewGestureClickListener, ViewGest
             throw new RuntimeException("scroll duration must >= 0");
         }
         this.scrollDuration = scrollDuration;
+    }
+
+    /**
+     * @param overMoveEnabled true:允许越界移动
+     */
+    public void setOverMoveEnabled(boolean overMoveEnabled){
+        this.overMoveEnabled = overMoveEnabled;
+    }
+
+    /**
+     * 设置越界移动阻尼
+     * @param overMoveResistance >=1, 值越大移动越慢
+     */
+    public void setOverMoveResistance(double overMoveResistance){
+        if (overMoveResistance < 1){
+            throw new RuntimeException("overMoveResistance must >= 1");
+        }
+        this.overMoveResistance= overMoveResistance;
     }
 
     /*******************************************************************
