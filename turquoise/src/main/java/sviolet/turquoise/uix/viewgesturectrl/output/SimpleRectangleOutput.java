@@ -611,7 +611,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             return;
         }
         //过滤偏移量很小的情况
-        if (((int) (offset * 100)) == 0) {
+        if ((int) offset == 0) {
             return;
         }
 
