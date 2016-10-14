@@ -22,13 +22,11 @@ import android.os.Build;
 import android.view.ViewConfiguration;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Interpolator;
-import android.widget.OverScroller;
-import android.widget.Scroller;
 
 
 /**
- * <p>This class encapsulates scrolling. You can use scrollers ({@link Scroller}
- * or {@link OverScroller}) to collect the data you need to produce a scrolling
+ * <p>This class encapsulates scrolling. You can use scrollers ({@link CompatScroller}
+ * or {@link CompatOverScroller}) to collect the data you need to produce a scrolling
  * animation&mdash;for example, in response to a fling gesture. Scrollers track
  * scroll offsets for you over time, but they don't automatically apply those
  * positions to your view. It's your responsibility to get and apply new
@@ -62,7 +60,7 @@ import android.widget.Scroller;
  * }</pre>
  */
 
-//api23
+//api24
 public class CompatScroller {
     private final Interpolator mInterpolator;
 
@@ -232,7 +230,7 @@ public class CompatScroller {
     }
 
     /**
-     * Returns the current X offset in the scroll. 
+     * Returns the current X offset in the scroll.
      *
      * @return The new X offset as an absolute distance from the origin.
      */
@@ -241,7 +239,7 @@ public class CompatScroller {
     }
 
     /**
-     * Returns the current Y offset in the scroll. 
+     * Returns the current Y offset in the scroll.
      *
      * @return The new Y offset as an absolute distance from the origin.
      */
@@ -261,7 +259,7 @@ public class CompatScroller {
     }
 
     /**
-     * Returns the start X offset in the scroll. 
+     * Returns the start X offset in the scroll.
      *
      * @return The start X offset as an absolute distance from the origin.
      */
@@ -270,7 +268,7 @@ public class CompatScroller {
     }
 
     /**
-     * Returns the start Y offset in the scroll. 
+     * Returns the start Y offset in the scroll.
      *
      * @return The start Y offset as an absolute distance from the origin.
      */
