@@ -63,7 +63,7 @@ import android.widget.Scroller;
  */
 
 //api23
-public class CompatScroller23 {
+public class CompatScroller {
     private final Interpolator mInterpolator;
 
     private int mMode;
@@ -151,7 +151,7 @@ public class CompatScroller23 {
     /**
      * Create a Scroller with the default duration and interpolator.
      */
-    public CompatScroller23(Context context) {
+    public CompatScroller(Context context) {
         this(context, null);
     }
 
@@ -160,7 +160,7 @@ public class CompatScroller23 {
      * null, the default (viscous) interpolator will be used. "Flywheel" behavior will
      * be in effect for apps targeting Honeycomb or newer.
      */
-    public CompatScroller23(Context context, Interpolator interpolator) {
+    public CompatScroller(Context context, Interpolator interpolator) {
         this(context, interpolator,
                 context.getApplicationInfo().targetSdkVersion >= Build.VERSION_CODES.HONEYCOMB);
     }
@@ -170,7 +170,7 @@ public class CompatScroller23 {
      * null, the default (viscous) interpolator will be used. Specify whether or
      * not to support progressive "flywheel" behavior in flinging.
      */
-    public CompatScroller23(Context context, Interpolator interpolator, boolean flywheel) {
+    public CompatScroller(Context context, Interpolator interpolator, boolean flywheel) {
         mFinished = true;
         if (interpolator == null) {
             mInterpolator = new ViscousFluidInterpolator();
