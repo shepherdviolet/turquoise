@@ -76,7 +76,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     //缩放越界开关
     private boolean overZoomEnabled = false;
     //缩放越界阻尼
-    private double overZoomResistance = 5;
+    private double overZoomResistance = 3;
 
     //variable//////////////////////////////////
 
@@ -104,9 +104,11 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     //惯性滑动, 因为有可能需要一个方向scroll到边界, 一个惯性fling, 因此分为两个
     private CompatOverScroller flingScrollerX;
     private CompatOverScroller flingScrollerY;
+    private double releaseVelocityX = 0;//移动释放时的速度
+    private double releaseVelocityY = 0;//移动释放时的速度
     //缩放越界归位
     private CompatOverScroller zoomBackScroller;
-    private boolean isZoomBack = false;
+    private boolean isZoomBack = false;//是否是缩放越界弹回
 
     //临时参数, 优化性能
     private Point actualTouchPoint = new Point();
@@ -387,6 +389,16 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             return;
         }
 
+        if (zoomBack()) {
+            isZoomBack = false;
+            fling(releaseVelocityX * (maxWidth / currMagnification) / displayWidth, releaseVelocityY * (maxHeight / currMagnification) / displayHeight);
+        }else{
+            isZoomBack = true;
+        }
+
+        releaseVelocityX = 0;
+        releaseVelocityY = 0;
+
         isHold = false;
 
         if (refreshListener != null) {
@@ -438,12 +450,9 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             return;
         }
 
-        if (zoomBack()) {
-            isZoomBack = false;
-            fling(velocityX * (maxWidth / currMagnification) / displayWidth, velocityY * (maxHeight / currMagnification) / displayHeight);
-        }else{
-            isZoomBack = true;
-        }
+        //记录速度
+        releaseVelocityX = velocityX;
+        releaseVelocityY = velocityY;
 
     }
 
