@@ -328,7 +328,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      *
      * @param flingFriction > 0
      */
-    public void setFlingFriction(int flingFriction){
+    public void setFlingFriction(float flingFriction){
         if (flingFriction <= 0){
             throw new RuntimeException("flingFriction must > 0");
         }
