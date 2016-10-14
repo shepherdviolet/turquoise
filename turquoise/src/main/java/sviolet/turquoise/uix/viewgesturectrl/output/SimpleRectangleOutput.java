@@ -40,8 +40,6 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
     public static final double AUTO_MAGNIFICATION_LIMIT = -1;
 
-    private static final float DEFAULT_FLING_FRICTION = 0.007f;
-
     //setting///////////////////////////////////
 
     //实际宽高
@@ -132,9 +130,6 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         this.flingScrollerX = new CompatScroller(context);
         this.flingScrollerY = new CompatScroller(context);
-
-        this.flingScrollerX.setFriction(DEFAULT_FLING_FRICTION);
-        this.flingScrollerY.setFriction(DEFAULT_FLING_FRICTION);
 
         reset(actualWidth, actualHeight, displayWidth, displayHeight, magnificationLimit, initScaleType);
     }
@@ -322,9 +317,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     }
 
     /**
-     * 惯性滑动的减速率, 值越小滑动距离越长, 默认值为{@value SimpleRectangleOutput#DEFAULT_FLING_FRICTION}
-     * ({@link SimpleRectangleOutput#DEFAULT_FLING_FRICTION}),
-     * 系统推荐值为{@link ViewConfiguration#getScrollFriction}.
+     * 惯性滑动的减速率, 值越小滑动距离越长, 默认值为{@link ViewConfiguration#getScrollFriction}
      *
      * @param flingFriction > 0
      */
