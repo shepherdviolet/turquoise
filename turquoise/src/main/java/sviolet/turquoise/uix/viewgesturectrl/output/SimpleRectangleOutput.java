@@ -73,6 +73,10 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     private boolean overMoveEnabled = true;
     //平移越界阻尼
     private double overMoveResistance = 5;
+    //缩放越界开关
+    private boolean overZoomEnabled = false;
+    //缩放越界阻尼
+    private double overZoomResistance = 5;
 
     //variable//////////////////////////////////
 
@@ -100,6 +104,9 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     //惯性滑动, 因为有可能需要一个方向scroll到边界, 一个惯性fling, 因此分为两个
     private CompatOverScroller flingScrollerX;
     private CompatOverScroller flingScrollerY;
+    //缩放越界归位
+    private CompatOverScroller zoomBackScroller;
+    private boolean isZoomBack = false;
 
     //临时参数, 优化性能
     private Point actualTouchPoint = new Point();
@@ -130,6 +137,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         this.flingScrollerX = new CompatOverScroller(context);
         this.flingScrollerY = new CompatOverScroller(context);
+        this.zoomBackScroller = new CompatOverScroller(context);
 
         reset(actualWidth, actualHeight, displayWidth, displayHeight, magnificationLimit, initScaleType);
     }
@@ -144,6 +152,10 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     }
 
     private void init() {
+        flingScrollerX.abortAnimation();
+        flingScrollerY.abortAnimation();
+        zoomBackScroller.abortAnimation();
+
         initMaxBounds();
         currX = maxLeft;
         currY = maxTop;
@@ -358,9 +370,11 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         }
 
         isHold = true;
+        isZoomBack = false;
 
         flingScrollerX.abortAnimation();
         flingScrollerY.abortAnimation();
+        zoomBackScroller.abortAnimation();
 
         if (refreshListener != null) {
             refreshListener.onRefresh();
@@ -424,8 +438,21 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             return;
         }
 
-        //惯性滑动
-        fling(velocityX * (maxWidth / currMagnification) / displayWidth, velocityY * (maxHeight / currMagnification) / displayHeight);
+        if (zoomBack()) {
+            isZoomBack = false;
+            fling(velocityX * (maxWidth / currMagnification) / displayWidth, velocityY * (maxHeight / currMagnification) / displayHeight);
+        }else{
+            isZoomBack = true;
+        }
+
+    }
+
+    private boolean zoomBack(){
+        if (!overZoomEnabled){
+            return true;
+        }
+        //TODO 一次性计算目标XY和magnification, 一次性弹回
+        return true;//TODO 如果不进行缩放弹回, 则返回true, 如果做了一次性缩放弹回, 则返回false
     }
 
     private void fling(double velocityX, double velocityY) {
@@ -633,9 +660,17 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     private void zoomTo(double basicPointX, double basicPointY, double newMagnification){
         //限制放大率
         if (newMagnification < 1) {
-            newMagnification = 1;
+            if (overZoomEnabled){
+                newMagnification = currMagnification + (newMagnification - currMagnification) / overZoomResistance;
+            }else{
+                newMagnification = 1;
+            }
         } else if (newMagnification > magnificationLimit) {
-            newMagnification = magnificationLimit;
+            if (overZoomEnabled){
+                newMagnification = currMagnification + (newMagnification - currMagnification) / overZoomResistance;
+            }else{
+                newMagnification = magnificationLimit;
+            }
         }
         //如果放大率不变, 则跳过后续步骤
         if (newMagnification == currMagnification) {
@@ -668,20 +703,22 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         double x = currX + offsetX;
         double y = currY + offsetY;
 
-        //控制越界
-
-        double actualDisplayWidth = maxWidth / newMagnification;
-        if (x < maxLeft) {
-            x = maxLeft;
-        } else if ((x + actualDisplayWidth) > maxRight) {
-            x = maxRight - actualDisplayWidth;
-        }
-
-        double actualDisplayHeight = maxHeight / newMagnification;
-        if (y < maxTop) {
-            y = maxTop;
-        } else if ((y + actualDisplayHeight) > maxBottom) {
-            y = maxBottom - actualDisplayHeight;
+        //控制越界(若允许缩放越界模, 则不控制)
+        if (!overZoomEnabled) {
+            //X
+            double actualDisplayWidth = maxWidth / newMagnification;
+            if (x < maxLeft) {
+                x = maxLeft;
+            } else if ((x + actualDisplayWidth) > maxRight) {
+                x = maxRight - actualDisplayWidth;
+            }
+            //Y
+            double actualDisplayHeight = maxHeight / newMagnification;
+            if (y < maxTop) {
+                y = maxTop;
+            } else if ((y + actualDisplayHeight) > maxBottom) {
+                y = maxBottom - actualDisplayHeight;
+            }
         }
 
         //更新坐标
@@ -756,8 +793,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      * 是否需要继续刷新, 用于View判断是否继续刷新
      */
     public boolean isActive() {
-        calculateFlingPosition();
-        return isHold || !flingScrollerX.isFinished() || !flingScrollerY.isFinished();
+//        calculateFlingPosition();
+        return isHold || !flingScrollerX.isFinished() || !flingScrollerY.isFinished() || !zoomBackScroller.isFinished();
     }
 
     /**
@@ -848,17 +885,21 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         if (isHold){
             return;
         }
-        double offsetX = 0;
-        double offsetY = 0;
-        if (!flingScrollerX.isFinished()){
-            flingScrollerX.computeScrollOffset();
-            offsetX = flingScrollerX.getCurrX() - currX;
+        if (isZoomBack){
+            //TODO 特殊的针对一次性缩放移动弹回的处理
+        }else {
+            double offsetX = 0;
+            double offsetY = 0;
+            if (!flingScrollerX.isFinished()) {
+                flingScrollerX.computeScrollOffset();
+                offsetX = flingScrollerX.getCurrX() - currX;
+            }
+            if (!flingScrollerY.isFinished()) {
+                flingScrollerY.computeScrollOffset();
+                offsetY = flingScrollerY.getCurrY() - currY;
+            }
+            moveBy(offsetX, offsetY);
         }
-        if (!flingScrollerY.isFinished()){
-            flingScrollerY.computeScrollOffset();
-            offsetY = flingScrollerY.getCurrY() - currY;
-        }
-        moveBy(offsetX, offsetY);
     }
 
     /*****************************************************************************
