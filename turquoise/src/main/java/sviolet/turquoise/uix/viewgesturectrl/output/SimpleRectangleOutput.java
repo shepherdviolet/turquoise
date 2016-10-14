@@ -24,7 +24,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.ViewConfiguration;
 
-import sviolet.turquoise.common.compat.CompatScroller;
+import sviolet.turquoise.common.compat.CompatOverScroller;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureClickListener;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureMoveListener;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureTouchListener;
@@ -98,8 +98,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     private boolean isMultiTouch = false;
 
     //惯性滑动, 因为有可能需要一个方向scroll到边界, 一个惯性fling, 因此分为两个
-    private CompatScroller flingScrollerX;
-    private CompatScroller flingScrollerY;
+    private CompatOverScroller flingScrollerX;
+    private CompatOverScroller flingScrollerY;
 
     //临时参数, 优化性能
     private Point actualTouchPoint = new Point();
@@ -128,8 +128,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             throw new RuntimeException("context is null");
         }
 
-        this.flingScrollerX = new CompatScroller(context);
-        this.flingScrollerY = new CompatScroller(context);
+        this.flingScrollerX = new CompatOverScroller(context);
+        this.flingScrollerY = new CompatOverScroller(context);
 
         reset(actualWidth, actualHeight, displayWidth, displayHeight, magnificationLimit, initScaleType);
     }
