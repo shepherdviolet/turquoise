@@ -446,7 +446,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             return true;
         } else if (currMagnification > magnificationLimit){
             //根据基点位置计算因缩放引起的坐标移动的比率
-            calculateZoomCausedMovement(lastBasicPointX, lastBasicPointY, currMagnification, magnificationLimit, true, zoomCausedMovementPoint);
+            calculateZoomCausedMovement(lastBasicPointX, lastBasicPointY, currMagnification, magnificationLimit, zoomCausedMovementPoint);
+            limitZoomCausedMovementByActual(zoomCausedMovementPoint, magnificationLimit);//越界控制(严格)
             flingScrollerX.startScroll((int)currX, 0, (int) (zoomCausedMovementPoint.getX() - currX), 0, scrollDuration);
             flingScrollerY.startScroll(0, (int)currY, 0, (int)(zoomCausedMovementPoint.getY() - currY), scrollDuration);
             zoomBackScroller.startScroll((int)(currMagnification * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, (int)Math.floor((magnificationLimit - currMagnification) * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, scrollDuration);
@@ -729,7 +730,12 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         lastBasicPointY = basicPointY;
 
         //根据基点位置计算因缩放引起的坐标移动的比率
-        calculateZoomCausedMovement(basicPointX, basicPointY, currMagnification, newMagnification, !overZoomEnabled, zoomCausedMovementPoint);
+        calculateZoomCausedMovement(basicPointX, basicPointY, currMagnification, newMagnification, zoomCausedMovementPoint);
+
+        //控制越界(宽松)
+        if (!overZoomEnabled){
+            limitZoomCausedMovementByMax(zoomCausedMovementPoint, newMagnification);
+        }
 
         //更新坐标
         currX = zoomCausedMovementPoint.getX();
@@ -742,7 +748,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     /**
      * 根据基点位置计算因缩放引起的坐标移动的比率
      */
-    private void calculateZoomCausedMovement(double basicPointX, double basicPointY, double oldMagnification, double newMagnification, boolean limit, Point newPosition){
+    private void calculateZoomCausedMovement(double basicPointX, double basicPointY, double oldMagnification, double newMagnification, Point newPosition){
 
         double xMoveRate = basicPointX / displayWidth;
         if (xMoveRate < 0) {
@@ -768,26 +774,48 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         double x = currX + offsetX;
         double y = currY + offsetY;
 
-        //控制越界
-        if (limit) {
-            //X
-            double actualDisplayWidth = maxWidth / newMagnification;
-            if (x < maxLeft) {
-                x = maxLeft;
-            } else if ((x + actualDisplayWidth) > maxRight) {
-                x = maxRight - actualDisplayWidth;
-            }
-            //Y
-            double actualDisplayHeight = maxHeight / newMagnification;
-            if (y < maxTop) {
-                y = maxTop;
-            } else if ((y + actualDisplayHeight) > maxBottom) {
-                y = maxBottom - actualDisplayHeight;
-            }
-        }
-
         newPosition.setX(x);
         newPosition.setY(y);
+    }
+
+    /**
+     * 控制因缩放引起的位移的越界, 用max尺寸宽松控制
+     */
+    private void limitZoomCausedMovementByMax(Point point, double newMagnification){
+        //X
+        double actualDisplayWidth = maxWidth / newMagnification;
+        if (point.getX() < maxLeft) {
+            point.setX(maxLeft);
+        } else if ((point.getX() + actualDisplayWidth) > maxRight) {
+            point.setX(maxRight - actualDisplayWidth);
+        }
+        //Y
+        double actualDisplayHeight = maxHeight / newMagnification;
+        if (point.getY() < maxTop) {
+            point.setY(maxTop);
+        } else if ((point.getY() + actualDisplayHeight) > maxBottom) {
+            point.setY(maxBottom - actualDisplayHeight);
+        }
+    }
+
+    /**
+     * 控制因缩放引起的位移的越界, 用actual尺寸严格控制
+     */
+    private void limitZoomCausedMovementByActual(Point point, double newMagnification){
+        //X
+        double actualDisplayWidth = maxWidth / newMagnification;
+        if (point.getX() < 0) {
+            point.setX(0);
+        } else if ((point.getX() + actualDisplayWidth) > actualWidth) {
+            point.setX(actualWidth - actualDisplayWidth);
+        }
+        //Y
+        double actualDisplayHeight = maxHeight / newMagnification;
+        if (point.getY() < 0) {
+            point.setY(0);
+        } else if ((point.getY() + actualDisplayHeight) > actualHeight) {
+            point.setY(actualHeight - actualDisplayHeight);
+        }
     }
 
     /*******************************************************************
