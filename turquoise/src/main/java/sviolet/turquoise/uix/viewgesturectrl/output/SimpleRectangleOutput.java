@@ -601,7 +601,10 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         if (offsetX < 0) {
             if (x < 0) {
                 if (overMoveEnabled){
-                    x = currX + offsetX / overMoveResistance;
+                    //允许移动越界的情况下, 持有状态用阻尼限制
+                    if(isHold){
+                        x = currX + offsetX / overMoveResistance;
+                    }
                 }else {
                     x = currX;
                 }
@@ -609,7 +612,10 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         } else if (offsetX > 0) {
             if ((x + (maxWidth / currMagnification)) > actualWidth) {
                 if (overMoveEnabled){
-                    x = currX + offsetX / overMoveResistance;
+                    //允许移动越界的情况下, 持有状态用阻尼限制
+                    if(isHold) {
+                        x = currX + offsetX / overMoveResistance;
+                    }
                 }else {
                     x = currX;
                 }
@@ -619,7 +625,10 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         if (offsetY < 0) {
             if (y < 0) {
                 if (overMoveEnabled){
-                    y = currY + offsetY / overMoveResistance;
+                    //允许移动越界的情况下, 持有状态用阻尼限制
+                    if(isHold) {
+                        y = currY + offsetY / overMoveResistance;
+                    }
                 }else {
                     y = currY;
                 }
@@ -627,7 +636,10 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         } else if (offsetY > 0) {
             if ((y + (maxHeight / currMagnification)) > actualHeight) {
                 if (overMoveEnabled){
-                    y = currY + offsetY / overMoveResistance;
+                    //允许移动越界的情况下, 持有状态用阻尼限制
+                    if(isHold) {
+                        y = currY + offsetY / overMoveResistance;
+                    }
                 }else {
                     y = currY;
                 }
