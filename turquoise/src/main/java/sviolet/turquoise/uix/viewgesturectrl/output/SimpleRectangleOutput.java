@@ -367,6 +367,24 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         this.overMoveResistance= overMoveResistance;
     }
 
+    /**
+     * @param overZoomEnabled true:允许越界缩放
+     */
+    public void setOverZoomEnabled(boolean overZoomEnabled){
+        this.overZoomEnabled = overZoomEnabled;
+    }
+
+    /**
+     * 设置越界缩放阻尼
+     * @param overZoomResistance >=1, 值越大移动越慢
+     */
+    public void setOverZoomResistance(double overZoomResistance){
+        if (overZoomResistance < 1){
+            throw new RuntimeException("overZoomResistance must >= 1");
+        }
+        this.overZoomResistance = overZoomResistance;
+    }
+
     /*******************************************************************
      * touch
      */
