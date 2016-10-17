@@ -865,14 +865,18 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     public void getSrcDstRect(Rect srcRect, Rect dstRect){
         getSrcDstRectF(tempSrcRectF, tempDstRectF);
-        srcRect.left = (int) tempSrcRectF.left;
-        srcRect.top = (int) tempSrcRectF.top;
-        srcRect.right = (int) tempSrcRectF.right;
-        srcRect.bottom = (int) tempSrcRectF.bottom;
-        dstRect.left = (int) tempDstRectF.left;
-        dstRect.top = (int) tempDstRectF.top;
-        dstRect.right = (int) tempDstRectF.right;
-        dstRect.bottom = (int) tempDstRectF.bottom;
+        if (srcRect != null) {
+            srcRect.left = (int) tempSrcRectF.left;
+            srcRect.top = (int) tempSrcRectF.top;
+            srcRect.right = (int) tempSrcRectF.right;
+            srcRect.bottom = (int) tempSrcRectF.bottom;
+        }
+        if (dstRect != null) {
+            dstRect.left = (int) tempDstRectF.left;
+            dstRect.top = (int) tempDstRectF.top;
+            dstRect.right = (int) tempDstRectF.right;
+            dstRect.bottom = (int) tempDstRectF.bottom;
+        }
     }
 
     /**
@@ -882,10 +886,12 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     public void getSrcDstRect(Rect srcRect, RectF dstRect){
         getSrcDstRectF(tempSrcRectF, dstRect);
-        srcRect.left = (int) tempSrcRectF.left;
-        srcRect.top = (int) tempSrcRectF.top;
-        srcRect.right = (int) tempSrcRectF.right;
-        srcRect.bottom = (int) tempSrcRectF.bottom;
+        if (srcRect != null) {
+            srcRect.left = (int) tempSrcRectF.left;
+            srcRect.top = (int) tempSrcRectF.top;
+            srcRect.right = (int) tempSrcRectF.right;
+            srcRect.bottom = (int) tempSrcRectF.bottom;
+        }
     }
 
     /**
