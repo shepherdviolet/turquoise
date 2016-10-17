@@ -449,7 +449,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             calculateZoomCausedMovement(lastBasicPointX, lastBasicPointY, currMagnification, magnificationLimit, true, zoomCausedMovementPoint);
             flingScrollerX.startScroll((int)currX, 0, (int) (zoomCausedMovementPoint.getX() - currX), 0, scrollDuration);
             flingScrollerY.startScroll(0, (int)currY, 0, (int)(zoomCausedMovementPoint.getY() - currY), scrollDuration);
-            zoomBackScroller.startScroll((int)(currMagnification * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, (int)Math.ceil((magnificationLimit - currMagnification) * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, scrollDuration);
+            zoomBackScroller.startScroll((int)(currMagnification * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, (int)Math.floor((magnificationLimit - currMagnification) * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, scrollDuration);
             return true;
         }
         return false;
