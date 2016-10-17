@@ -40,7 +40,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
     public static final double AUTO_MAGNIFICATION_LIMIT = -1;
 
-    private static final double EDGE_PROCESS_FACTOR = 2;
+    private static final double EDGE_PROCESS_FACTOR = 2;//边缘处理因子
+    private static final double ZOOM_BACK_MAGNIFICATION_ACCURACY = 10000;//缩放越界弹回放大率精度
 
     //setting///////////////////////////////////
 
@@ -76,7 +77,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     //平移越界阻尼
     private double overMoveResistance = 5;
     //缩放越界开关
-    private boolean overZoomEnabled = false;
+    private boolean overZoomEnabled = true;
     //缩放越界阻尼
     private double overZoomResistance = 3;
 
@@ -111,8 +112,11 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     //缩放越界归位
     private CompatOverScroller zoomBackScroller;
     private boolean isZoomBack = false;//是否是缩放越界弹回
+    private double lastBasicPointX = 0;
+    private double lastBasicPointY = 0;
 
     //临时参数, 优化性能
+    private Point zoomCausedMovementPoint = new Point();
     private Point actualTouchPoint = new Point();
     private Point leftTopDisplayPoint = new Point();
     private Point rightBottomDisplayPoint = new Point();
@@ -392,10 +396,12 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         }
 
         if (zoomBack()) {
+            //缩放越界弹回
+            isZoomBack = true;
+        }else{
+            //移动越界弹回
             isZoomBack = false;
             fling(releaseVelocityX * (maxWidth / currMagnification) / displayWidth, releaseVelocityY * (maxHeight / currMagnification) / displayHeight);
-        }else{
-            isZoomBack = true;
         }
 
         releaseVelocityX = 0;
@@ -408,64 +414,32 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         }
     }
 
-    /*******************************************************************
-     * click
+    /**
+     * 缩放越界弹回
      */
-
-    @Override
-    public void onClick(float x, float y) {
-        if (invalidWidthOrHeight) {
-            return;
-        }
-        if (clickListener != null){
-            mappingDisplayPointToActual(x, y, actualTouchPoint);
-            clickListener.onClick((float)actualTouchPoint.getX(), (float)actualTouchPoint.getY(), x, y);
-        }
-    }
-
-    @Override
-    public void onLongClick(float x, float y) {
-        if (invalidWidthOrHeight) {
-            return;
-        }
-        if (longClickListener != null){
-            mappingDisplayPointToActual(x, y, actualTouchPoint);
-            longClickListener.onLongClick((float)actualTouchPoint.getX(), (float)actualTouchPoint.getY(), x, y);
-        }
-    }
-
-    /*******************************************************************
-     * move
-     */
-
-    @Override
-    public void holdMove() {
-//        if (invalidWidthOrHeight) {
-//            return;
-//        }
-
-    }
-
-    @Override
-    public void releaseMove(float velocityX, float velocityY) {
-        if (invalidWidthOrHeight) {
-            return;
-        }
-
-        //记录速度
-        releaseVelocityX = velocityX;
-        releaseVelocityY = velocityY;
-
-    }
-
     private boolean zoomBack(){
         if (!overZoomEnabled){
+            return false;
+        }
+        if (currMagnification < 1){
+            flingScrollerX.startScroll((int)currX, 0, (int) (maxLeft - currX), 0, scrollDuration);
+            flingScrollerY.startScroll(0, (int)currY, 0, (int)(maxTop - currY), scrollDuration);
+            zoomBackScroller.startScroll((int)(currMagnification * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, (int)Math.ceil((1d - currMagnification) * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, scrollDuration);
+            return true;
+        } else if (currMagnification > magnificationLimit){
+            //根据基点位置计算因缩放引起的坐标移动的比率
+            calculateZoomCausedMovement(lastBasicPointX, lastBasicPointY, currMagnification, magnificationLimit, true, zoomCausedMovementPoint);
+            flingScrollerX.startScroll((int)currX, 0, (int) (zoomCausedMovementPoint.getX() - currX), 0, scrollDuration);
+            flingScrollerY.startScroll(0, (int)currY, 0, (int)(zoomCausedMovementPoint.getY() - currY), scrollDuration);
+            zoomBackScroller.startScroll((int)(currMagnification * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, (int)Math.ceil((magnificationLimit - currMagnification) * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, scrollDuration);
             return true;
         }
-        //TODO 一次性计算目标XY和magnification, 一次性弹回
-        return true;//TODO 如果不进行缩放弹回, 则返回true, 如果做了一次性缩放弹回, 则返回false
+        return false;
     }
 
+    /**
+     * 移动越界弹回
+     */
     private void fling(double velocityX, double velocityY) {
 
         //显示矩形在实际矩形中的宽高
@@ -522,6 +496,56 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         } else {
             flingScrollerY.fling(0, (int) currY, 0, (int) -velocityY, 0, 0, 0, (int) (actualHeight - height));
         }
+
+    }
+
+    /*******************************************************************
+     * click
+     */
+
+    @Override
+    public void onClick(float x, float y) {
+        if (invalidWidthOrHeight) {
+            return;
+        }
+        if (clickListener != null){
+            mappingDisplayPointToActual(x, y, actualTouchPoint);
+            clickListener.onClick((float)actualTouchPoint.getX(), (float)actualTouchPoint.getY(), x, y);
+        }
+    }
+
+    @Override
+    public void onLongClick(float x, float y) {
+        if (invalidWidthOrHeight) {
+            return;
+        }
+        if (longClickListener != null){
+            mappingDisplayPointToActual(x, y, actualTouchPoint);
+            longClickListener.onLongClick((float)actualTouchPoint.getX(), (float)actualTouchPoint.getY(), x, y);
+        }
+    }
+
+    /*******************************************************************
+     * move
+     */
+
+    @Override
+    public void holdMove() {
+//        if (invalidWidthOrHeight) {
+//            return;
+//        }
+
+    }
+
+    @Override
+    public void releaseMove(float velocityX, float velocityY) {
+        if (invalidWidthOrHeight) {
+            return;
+        }
+
+        //记录速度
+        releaseVelocityX = velocityX;
+        releaseVelocityY = velocityY;
 
     }
 
@@ -670,7 +694,25 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             return;
         }
 
+        //记录上次缩放基点
+        lastBasicPointX = basicPointX;
+        lastBasicPointY = basicPointY;
+
         //根据基点位置计算因缩放引起的坐标移动的比率
+        calculateZoomCausedMovement(basicPointX, basicPointY, currMagnification, newMagnification, !overZoomEnabled, zoomCausedMovementPoint);
+
+        //更新坐标
+        currX = zoomCausedMovementPoint.getX();
+        currY = zoomCausedMovementPoint.getY();
+
+        //更新当前放大率
+        currMagnification = newMagnification;
+    }
+
+    /**
+     * 根据基点位置计算因缩放引起的坐标移动的比率
+     */
+    private void calculateZoomCausedMovement(double basicPointX, double basicPointY, double oldMagnification, double newMagnification, boolean limit, Point newPosition){
 
         double xMoveRate = basicPointX / displayWidth;
         if (xMoveRate < 0) {
@@ -688,16 +730,16 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         //计算因缩放引起的坐标移动
 
-        double offsetX = xMoveRate * (maxWidth / currMagnification - maxWidth / newMagnification);
-        double offsetY = yMoveRate * (maxHeight / currMagnification - maxHeight / newMagnification);
+        double offsetX = xMoveRate * (maxWidth / oldMagnification - maxWidth / newMagnification);
+        double offsetY = yMoveRate * (maxHeight / oldMagnification - maxHeight / newMagnification);
 
         //计算当前坐标
 
         double x = currX + offsetX;
         double y = currY + offsetY;
 
-        //控制越界(若允许缩放越界模, 则不控制)
-        if (!overZoomEnabled) {
+        //控制越界
+        if (limit) {
             //X
             double actualDisplayWidth = maxWidth / newMagnification;
             if (x < maxLeft) {
@@ -714,12 +756,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             }
         }
 
-        //更新坐标
-        currX = x;
-        currY = y;
-
-        //更新当前放大率
-        currMagnification = newMagnification;
+        newPosition.setX(x);
+        newPosition.setY(y);
     }
 
     /*******************************************************************
@@ -879,8 +917,21 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             return;
         }
         if (isZoomBack){
-            //TODO 特殊的针对一次性缩放移动弹回的处理
-        }else {
+            //缩放越界弹回
+            if (!flingScrollerX.isFinished()){
+                flingScrollerX.computeScrollOffset();
+                currX = flingScrollerX.getCurrX();
+            }
+            if (!flingScrollerY.isFinished()) {
+                flingScrollerY.computeScrollOffset();
+                currY = flingScrollerY.getCurrY();
+            }
+            if (!zoomBackScroller.isFinished()){
+                zoomBackScroller.computeScrollOffset();
+                currMagnification = (double)zoomBackScroller.getCurrX() / ZOOM_BACK_MAGNIFICATION_ACCURACY;
+            }
+        } else {
+            //移动越界弹回
             double offsetX = 0;
             double offsetY = 0;
             if (!flingScrollerX.isFinished()) {
