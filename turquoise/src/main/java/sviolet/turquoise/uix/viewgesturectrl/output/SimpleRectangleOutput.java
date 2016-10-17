@@ -40,6 +40,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
     public static final double AUTO_MAGNIFICATION_LIMIT = -1;
 
+    private static final double EDGE_PROCESS_FACTOR = 2;
+
     //setting///////////////////////////////////
 
     //实际宽高
@@ -508,33 +510,15 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         }
 
         if (xScrollToDst){
-            double dxDouble = dstX - currX;
-            int dx;
-            //消除回弹时和边界的缝隙
-            if (dxDouble > -1 && dxDouble < 1){
-                dx = 0;
-            }else if (dstX > currX){
-                dx = (int) Math.ceil(dxDouble);
-            } else {
-                dx = (int) Math.floor(dxDouble);
-            }
-            flingScrollerX.startScroll((int)currX, 0, dx, 0, scrollDuration);
+            double dx = dstX - currX;
+            flingScrollerX.startScroll((int)currX, 0, (int) dx, 0, scrollDuration);
         } else {
             flingScrollerX.fling((int) currX, 0, (int) -velocityX, 0, 0, (int) (actualWidth - width), 0, 0);
         }
 
         if (yScrollToDst){
-            double dyDouble = dstY - currY;
-            int dy;
-            //消除回弹时和边界的缝隙
-            if (dyDouble > -1 && dyDouble < 1) {
-                dy = 0;
-            }else if (dstY > currY){
-                dy = (int) Math.ceil(dyDouble);
-            } else {
-                dy = (int) Math.floor(dyDouble);
-            }
-            flingScrollerY.startScroll(0, (int) currY, 0, dy, scrollDuration);
+            double dy = dstY - currY;
+            flingScrollerY.startScroll(0, (int) currY, 0, (int) dy, scrollDuration);
         } else {
             flingScrollerY.fling(0, (int) currY, 0, (int) -velocityY, 0, 0, 0, (int) (actualHeight - height));
         }
@@ -819,8 +803,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         srcRect.bottom = (int) tempSrcRectF.bottom;
         dstRect.left = (int) tempDstRectF.left;
         dstRect.top = (int) tempDstRectF.top;
-        dstRect.right = (int) Math.ceil(tempDstRectF.right);
-        dstRect.bottom = (int) Math.ceil(tempDstRectF.bottom);
+        dstRect.right = (int) tempDstRectF.right;
+        dstRect.bottom = (int) tempDstRectF.bottom;
     }
 
     /**
@@ -870,10 +854,10 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         //原矩形
         if (srcRect != null) {
-            srcRect.left = (float) left;
-            srcRect.right = (float) right;
-            srcRect.top = (float) top;
-            srcRect.bottom = (float) bottom;
+            srcRect.left = edgeProcess(left, 0);
+            srcRect.right = edgeProcess(right, actualWidth);
+            srcRect.top = edgeProcess(top, 0);
+            srcRect.bottom = edgeProcess(bottom, actualHeight);
         }
 
         //目标矩形
@@ -882,10 +866,10 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             mappingActualPointToDisplay(left, top, leftTopDisplayPoint);
             mappingActualPointToDisplay(right, bottom, rightBottomDisplayPoint);
 
-            dstRect.left = (float) leftTopDisplayPoint.getX();
-            dstRect.top = (float) leftTopDisplayPoint.getY();
-            dstRect.right = (float) rightBottomDisplayPoint.getX();
-            dstRect.bottom = (float) rightBottomDisplayPoint.getY();
+            dstRect.left = edgeProcess(leftTopDisplayPoint.getX(), 0);
+            dstRect.top = edgeProcess(leftTopDisplayPoint.getY(), 0);
+            dstRect.right = edgeProcess(rightBottomDisplayPoint.getX(), displayWidth);
+            dstRect.bottom = edgeProcess(rightBottomDisplayPoint.getY(), displayHeight);
         }
 
     }
@@ -909,6 +893,20 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             }
             moveBy(offsetX, offsetY);
         }
+    }
+
+    /**
+     * 边缘处理, 防止矩形与边界出现细微的缝隙
+     */
+    private float edgeProcess(double value, double edge){
+        //持有状态不处理
+        if (isHold){
+            return (float) value;
+        }
+        if (Math.abs(value - edge) < EDGE_PROCESS_FACTOR){
+            return (float) edge;
+        }
+        return (float) value;
     }
 
     /*****************************************************************************
