@@ -40,7 +40,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
     public static final double AUTO_MAGNIFICATION_LIMIT = -1;
 
-    private static final double EDGE_PROCESS_FACTOR = 2;//边缘处理因子
+    private static final double EDGE_PROCESS_FACTOR = 3;//边缘处理因子
     private static final double ZOOM_BACK_MAGNIFICATION_ACCURACY = 10000;//缩放越界弹回放大率精度
 
     //setting///////////////////////////////////
