@@ -228,18 +228,27 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         this(context, 0, 0, 0, 0, 1, InitScaleType.FIT_CENTER);
     }
 
+    /**
+     * 初始化/重置
+     */
     private void init() {
+        //停止滑动/归位
         flingScrollerX.abortAnimation();
         flingScrollerY.abortAnimation();
         zoomBackScroller.abortAnimation();
 
+        //初始化/重置
         initMaxBounds();
         currX = maxLeft;
         currY = maxTop;
         currMagnification = 1;
     }
 
+    /**
+     * 初始化/重置MAX边界
+     */
     private void initMaxBounds() {
+        //若实际尺寸或显示尺寸为0, 则为无效状态, 不输出数据
         if (actualWidth <= 0 || actualHeight <= 0 || displayWidth <= 0 || displayHeight <= 0) {
             invalidWidthOrHeight = true;
             return;
@@ -249,15 +258,20 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         //计算显示界限
         if (initScaleType.getScaleFactor() == ScaleFactor.FIT || actualWidth >= displayWidth || actualHeight >= displayHeight) {
-            //FIT模式 或 实际尺寸大于显示尺寸时
+            /*
+                FIT模式 或 实际尺寸大于显示尺寸时, 初始状态撑满屏幕的一边
+             */
+            //计算长宽比
             double actualAspectRatio = actualWidth / actualHeight;
             double displayAspectRatio = displayWidth / displayHeight;
+            //根据长宽比决定计算方法
             if (actualAspectRatio > displayAspectRatio) {
                 double a = (actualWidth / displayAspectRatio - actualHeight) / 2;
                 maxLeft = 0;
                 maxTop = -a + initScaleType.getVerticalFactor() * a;
                 maxRight = actualWidth;
                 maxBottom = a + initScaleType.getVerticalFactor() * a + actualHeight;
+                //自动放大率
                 if (magnificationLimit == AUTO_MAGNIFICATION_LIMIT) {
                     magnificationLimit = actualWidth / displayWidth;
                     if (magnificationLimit < 1){
@@ -270,6 +284,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
                 maxTop = 0;
                 maxRight = a + initScaleType.getHorizontalFactor() * a + actualWidth;
                 maxBottom = actualHeight;
+                //自动放大率
                 if (magnificationLimit == AUTO_MAGNIFICATION_LIMIT) {
                     magnificationLimit = actualHeight / displayHeight;
                     if (magnificationLimit < 1){
@@ -281,6 +296,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
                 maxTop = 0;
                 maxRight = actualWidth;
                 maxBottom = actualHeight;
+                //自动放大率
                 if (magnificationLimit == AUTO_MAGNIFICATION_LIMIT) {
                     magnificationLimit = actualWidth / displayWidth;
                     if (magnificationLimit < 1){
@@ -289,18 +305,22 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
                 }
             }
         } else {
-            //NORMAL模式 且 实际尺寸小于显示尺寸时
+            /*
+                NORMAL模式 且 实际尺寸小于显示尺寸时, 图片不拉伸, 居中或按照设置至于显示矩形中
+             */
             double xOffset = (displayWidth - actualWidth) / 2;
             double yOffset = (displayHeight - actualHeight) / 2;
             maxLeft = -xOffset + initScaleType.getHorizontalFactor() * xOffset;
             maxTop = -yOffset + initScaleType.getVerticalFactor() * yOffset;
             maxRight = xOffset + initScaleType.getHorizontalFactor() * xOffset + actualWidth;
             maxBottom = yOffset + initScaleType.getVerticalFactor() * yOffset + actualHeight;
+            //自动放大率
             if (magnificationLimit == AUTO_MAGNIFICATION_LIMIT) {
                 magnificationLimit = 1;
             }
         }
 
+        //计算对应的宽高
         maxWidth = maxRight - maxLeft;
         maxHeight = maxBottom - maxTop;
     }
@@ -458,30 +478,40 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      * touch
      */
 
+    /**
+     * 触摸开始时调用
+     */
     @Override
     public void hold() {
         if (invalidWidthOrHeight) {
             return;
         }
 
+        //状态设置
         isHold = true;
         isZoomBack = false;
 
+        //停止滑动/归位
         flingScrollerX.abortAnimation();
         flingScrollerY.abortAnimation();
         zoomBackScroller.abortAnimation();
 
+        //通知刷新
         if (refreshListener != null) {
             refreshListener.onRefresh();
         }
     }
 
+    /**
+     * 触摸完全释放后调用
+     */
     @Override
     public void release() {
         if (invalidWidthOrHeight) {
             return;
         }
 
+        //越界弹回
         if (zoomBack()) {
             //缩放越界弹回
             isZoomBack = true;
@@ -491,42 +521,59 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             fling(releaseVelocityX * (maxWidth / currMagnification) / displayWidth, releaseVelocityY * (maxHeight / currMagnification) / displayHeight);
         }
 
+        //重置释放时的速度
         releaseVelocityX = 0;
         releaseVelocityY = 0;
 
+        //状态设置
         isHold = false;
 
+        //通知刷新
         if (refreshListener != null) {
             refreshListener.onRefresh();
         }
     }
 
     /**
-     * 缩放越界弹回
+     * 缩放越界弹回, 当缩放超过限制时, 一次性计算位移目标和缩放目标, 一次性弹回
      */
     private boolean zoomBack(){
+
+        //禁止缩放越界模式下, 直接返回false, 执行惯性滑动/移动越界弹回
         if (!overZoomEnabled){
             return false;
         }
+
         if (currMagnification < 1){
+            /*
+                图片被过度缩小时, 弹回初始位置
+             */
             flingScrollerX.startScroll((int)currX, 0, (int) (maxLeft - currX), 0, scrollDuration);
             flingScrollerY.startScroll(0, (int)currY, 0, (int)(maxTop - currY), scrollDuration);
             zoomBackScroller.startScroll((int)(currMagnification * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, (int)Math.ceil((1d - currMagnification) * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, scrollDuration);
             return true;
         } else if (currMagnification > magnificationLimit){
-            //根据基点位置计算因缩放引起的坐标移动的比率
+            /*
+                图片被过度放大时, 归位
+             */
+            //根据上一次的基点位置计算因缩放引起的坐标移动
             calculateZoomCausedMovement(lastBasicPointX, lastBasicPointY, currMagnification, magnificationLimit, zoomCausedMovementPoint);
-            limitZoomCausedMovementByActual(zoomCausedMovementPoint, magnificationLimit);//越界控制(严格)
+            //平移越界控制(严格)
+            limitZoomCausedMovementByActual(zoomCausedMovementPoint, magnificationLimit);
+            //弹回
             flingScrollerX.startScroll((int)currX, 0, (int) (zoomCausedMovementPoint.getX() - currX), 0, scrollDuration);
             flingScrollerY.startScroll(0, (int)currY, 0, (int)(zoomCausedMovementPoint.getY() - currY), scrollDuration);
             zoomBackScroller.startScroll((int)(currMagnification * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, (int)Math.floor((magnificationLimit - currMagnification) * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, scrollDuration);
             return true;
         }
+
+        //执行惯性滑动/移动越界弹回
         return false;
+
     }
 
     /**
-     * 移动越界弹回
+     * 惯性滑动/移动越界弹回
      */
     private void fling(double velocityX, double velocityY) {
 
