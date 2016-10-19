@@ -33,6 +33,75 @@ import sviolet.turquoise.uix.viewgesturectrl.ViewGestureZoomListener;
 /**
  * <p>简易的矩形输出</p>
  *
+ * <p>作为手势引擎的输出, 将简单的手势变化, 转变为实际矩形和显示矩形的变化, 便于图形绘制.</p>
+ *
+ * <p>实际尺寸(actualWidth/actualHeight):即实际需要绘制的图形的尺寸, 以图片缩放控件为例, 实际尺寸即为图片的尺寸.</p>
+ *
+ * <p>显示尺寸(displayWidth/displayHeight):即显示区域尺寸, 以图片缩放控件为例, 显示尺寸即为控件(View)自身尺寸.</p>
+ *
+ * <p>实际矩形(actual rect/src rect):源图形当前被绘制的区域(矩形), 以图片缩放控件为例, 即为图片中的一块区域,
+ * 该区域将被绘制到控件上(显示矩形上).</p>
+ *
+ * <p>显示矩形(display rect/dst rect):控件(View)中, 当前绘制图形的区域. 整个绘制过程实际就是, 将源图形实际矩形的区域,
+ * 绘制到控件上显示矩形的区域.</p>
+ *
+ * <pre>{@code
+ *
+ *      //设置(必须在view layout完毕后进行, 必须获得控件当前尺寸!)
+ *      public void onInit() {
+ *          //解码图片, 测试用, 这种方式如果图片大了会OOM~
+ *          bitmap = BitmapUtils.copy(BitmapUtils.decodeFromResource(getResources(), R.mipmap.async_image_2), true);
+ *
+ *          //手势控制器实例化
+ *          viewGestureController = new ViewGestureControllerImpl(getContext());
+ *          //简单的矩形输出, 图片长宽作为实际矩形, 控件长宽作为显示矩形, 最大放大率10
+ *          output = new SimpleRectangleOutput(getContext(), bitmap.getWidth(), bitmap.getHeight(), getWidth(), getHeight(), 5, SimpleRectangleOutput.InitScaleType.FIT_CENTER);
+ *
+ *          //必须实现刷新接口, 调用postInvalidate()刷新
+ *          output.setRefreshListener(new SimpleRectangleOutput.RefreshListener() {
+ *              public void onRefresh() {
+ *                  MotionImageView.this.postInvalidate();
+ *              }
+ *          });
+ *
+ *          //点击事件
+ *          output.setClickListener(new SimpleRectangleOutput.ClickListener() {
+ *              public void onClick(float actualX, float actualY, float displayX, float displayY) {
+ *                  //处理点击
+ *              }
+ *          });
+ *          //长按时间
+ *          output.setLongClickListener(new SimpleRectangleOutput.LongClickListener() {
+ *              public void onLongClick(float actualX, float actualY, float displayX, float displayY) {
+ *                  //处理长按
+ *              }
+ *          });
+ *
+ *          //给手势控制器设置简单矩形输出
+ *          viewGestureController.addOutput(output);
+ *
+ *      }
+ *
+ *      //触摸事件捕获
+ *      public boolean onTouchEvent(MotionEvent event) {
+ *          super.onTouchEvent(event);
+ *          //接收触摸事件
+ *          viewGestureController.onTouchEvent(event);
+ *          return true;
+ *      }
+ *
+ *      //绘制示例
+ *      protected void onDraw(Canvas canvas) {
+ *          //bitmapRect即为实际矩形(源矩形), canvasRect即为显示矩形(目标矩形)
+ *          output.getSrcDstRect(bitmapRect, canvasRect);
+ *          //绘制图片
+ *          canvas.drawBitmap(bitmap, bitmapRect, canvasRect, null);
+ *          //必须:继续刷新
+ *          if (output.isActive())
+ *              postInvalidate();
+ *      }
+ * }</pre>
+ *
  * Created by S.Violet on 2016/9/27.
  */
 
