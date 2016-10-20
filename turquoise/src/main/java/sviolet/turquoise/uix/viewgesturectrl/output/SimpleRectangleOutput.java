@@ -684,6 +684,9 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      * move
      */
 
+    /**
+     * 开始平移
+     */
     @Override
     public void holdMove() {
 //        if (invalidWidthOrHeight) {
@@ -692,6 +695,9 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
     }
 
+    /**
+     * 结束平移
+     */
     @Override
     public void releaseMove(float velocityX, float velocityY) {
         if (invalidWidthOrHeight) {
@@ -704,12 +710,16 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
     }
 
+    /**
+     * 平移
+     */
     @Override
     public void move(float currentX, float offsetX, float velocityX, float currentY, float offsetY, float velocityY) {
         if (invalidWidthOrHeight) {
             return;
         }
 
+        //判断是否允许多点触摸时平移
         if (!multiTouchMoveEnabled && isMultiTouch){
             return;
         }
@@ -721,16 +731,21 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         moveBy(actualOffsetX, actualOffsetY);
     }
 
+    /**
+     * 移动到指定点
+     */
     private void moveTo(double x, double y){
         moveBy(x - currX, y - currY);
     }
 
     /**
+     * 根据偏移量移动
      * @param offsetX DisplayRect在X方向的偏移量, 与手势方向相反
      * @param offsetY DisplayRect在Y方向的偏移量, 与手势方向相反
      */
     private void moveBy(double offsetX, double offsetY) {
 
+        //计算移动到的目标点
         double x = currX + offsetX;
         double y = currY + offsetY;
 
@@ -759,6 +774,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             }
         }
 
+        //越界控制
         if (offsetY < 0) {
             if (y < 0) {
                 if (overMoveEnabled){
@@ -793,6 +809,9 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      * zoom
      */
 
+    /**
+     * 开始缩放
+     */
     @Override
     public void holdZoom() {
         if (invalidWidthOrHeight){
@@ -801,6 +820,9 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         isMultiTouch = true;
     }
 
+    /**
+     * 结束缩放
+     */
     @Override
     public void releaseZoom() {
         if (invalidWidthOrHeight){
@@ -809,6 +831,9 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         isMultiTouch = false;
     }
 
+    /**
+     * 缩放
+     */
     @Override
     public void zoom(float basicPointX, float basicPointY, float current, float offset) {
         if (invalidWidthOrHeight) {
@@ -832,6 +857,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     private void zoomBy(double basicPointX, double basicPointY, double currDistance, double lastDistance) {
         //计算新的放大率
         double magnification = currDistance * currMagnification / lastDistance;
+        //缩放到指定放大率
         zoomTo(basicPointX, basicPointY, magnification);
     }
 
@@ -845,23 +871,26 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         //限制放大率
         if (newMagnification < 1) {
             if (overZoomEnabled){
+                //缩放越界阻尼
                 newMagnification = currMagnification + (newMagnification - currMagnification) / overZoomResistance;
             }else{
                 newMagnification = 1;
             }
         } else if (newMagnification > magnificationLimit) {
             if (overZoomEnabled){
+                //缩放越界阻尼
                 newMagnification = currMagnification + (newMagnification - currMagnification) / overZoomResistance;
             }else{
                 newMagnification = magnificationLimit;
             }
         }
+
         //如果放大率不变, 则跳过后续步骤
         if (newMagnification == currMagnification) {
             return;
         }
 
-        //记录上次缩放基点
+        //记录上次缩放基点, 用于回弹
         lastBasicPointX = basicPointX;
         lastBasicPointY = basicPointY;
 
@@ -885,6 +914,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      * 根据基点位置计算因缩放引起的坐标移动的比率
      */
     private void calculateZoomCausedMovement(double basicPointX, double basicPointY, double oldMagnification, double newMagnification, Point newPosition){
+
+        //根据基点在屏幕上的位置, 计算平移的比例
 
         double xMoveRate = basicPointX / displayWidth;
         if (xMoveRate < 0) {
@@ -1080,6 +1111,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             return;
         }
 
+        //计算惯性滑动/归位回弹的位置
         calculateFlingPosition();
 
         //计算显示范围(实际坐标系)
@@ -1113,6 +1145,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     }
 
     private void calculateFlingPosition(){
+        //持有状态不滑动或回弹
         if (isHold){
             return;
         }
