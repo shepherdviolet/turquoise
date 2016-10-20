@@ -594,41 +594,53 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         double dstX = currX;
         double dstY = currY;
 
+        //X方向平移越界弹回
         if (width > actualWidth) {
+            //宽度大于实际宽度时, 居中
             double a = (width - actualWidth) / 2;
             dstX = -a + initScaleType.getHorizontalFactor() * a;
             xScrollToDst = true;
         } else if (left < 0) {
+            //左边留白时
             dstX = 0;
             xScrollToDst = true;
         } else if (right > actualWidth){
+            //右边留白时
             dstX = currX - right + actualWidth;
             xScrollToDst = true;
         }
 
+        //Y方向平移越界弹回
         if (height > actualHeight) {
+            //高度大于实际高度时, 居中
             double a = (height - actualHeight) / 2;
             dstY = -a + initScaleType.getVerticalFactor() * a;
             yScrollToDst = true;
         } else if (top < 0) {
+            //上边留白时
             dstY = 0;
             yScrollToDst = true;
         } else if (bottom > actualHeight){
+            //下边留白时
             dstY = currY - bottom + actualHeight;
             yScrollToDst = true;
         }
 
         if (xScrollToDst){
+            //X轴方向回弹
             double dx = dstX - currX;
             flingScrollerX.startScroll((int)currX, 0, (int) dx, 0, scrollDuration);
         } else {
+            //X轴方向惯性滑动
             flingScrollerX.fling((int) currX, 0, (int) -velocityX, 0, 0, (int) (actualWidth - width), 0, 0);
         }
 
         if (yScrollToDst){
+            //Y轴方向回弹
             double dy = dstY - currY;
             flingScrollerY.startScroll(0, (int) currY, 0, (int) dy, scrollDuration);
         } else {
+            //Y轴方向惯性滑动
             flingScrollerY.fling(0, (int) currY, 0, (int) -velocityY, 0, 0, 0, (int) (actualHeight - height));
         }
 
@@ -638,23 +650,31 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      * click
      */
 
+    /**
+     * 点击事件
+     */
     @Override
     public void onClick(float x, float y) {
         if (invalidWidthOrHeight) {
             return;
         }
         if (clickListener != null){
+            //由于入参为显示矩形上的点, 需要映射到实际矩形
             mappingDisplayPointToActual(x, y, actualTouchPoint);
             clickListener.onClick((float)actualTouchPoint.getX(), (float)actualTouchPoint.getY(), x, y);
         }
     }
 
+    /**
+     * 长按事件
+     */
     @Override
     public void onLongClick(float x, float y) {
         if (invalidWidthOrHeight) {
             return;
         }
         if (longClickListener != null){
+            //由于入参为显示矩形上的点, 需要映射到实际矩形
             mappingDisplayPointToActual(x, y, actualTouchPoint);
             longClickListener.onLongClick((float)actualTouchPoint.getX(), (float)actualTouchPoint.getY(), x, y);
         }
