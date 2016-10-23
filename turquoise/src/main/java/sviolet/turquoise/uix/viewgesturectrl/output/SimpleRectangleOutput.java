@@ -144,11 +144,11 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     //平移越界开关
     private boolean overMoveEnabled = true;
     //平移越界阻尼
-    private double overMoveResistance = 5;
+    private double overMoveResistance = 2;
     //缩放越界开关
     private boolean overZoomEnabled = true;
     //缩放越界阻尼
-    private double overZoomResistance = 3;
+    private double overZoomResistance = 2;
 
     //variable//////////////////////////////////
 
