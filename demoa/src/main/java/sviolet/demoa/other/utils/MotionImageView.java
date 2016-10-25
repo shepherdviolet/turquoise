@@ -24,7 +24,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -111,6 +110,12 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
                 Canvas bitmapCanvas = new Canvas(bitmap);
                 bitmapCanvas.drawCircle(actualX, actualY, 30, clickPaint);
                 MotionImageView.this.postInvalidate();
+
+                //若当前放大率低于2, 则缩放到2
+                if (output.getCurrZoomMagnification() < 2){
+                    //手动缩放过程中, 所有手势会被禁用
+                    output.manualZoom(displayX, displayY, 2);
+                }
             }
         });
         //长按时间

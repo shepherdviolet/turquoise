@@ -95,11 +95,11 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         ViewGestureTouchPoint abandonedPoint = touchPointGroup.update(event);
-        handleClickEvent(event, abandonedPoint);
         handleState(event, abandonedPoint);
         handleMove(event);
         handleZoom(event);
         handleRotate(event);
+        handleClickEvent(event, abandonedPoint);
         return true;
     }
 
@@ -214,10 +214,6 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     private void handleClickEvent(MotionEvent event, ViewGestureTouchPoint abandonedPoint) {
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                //重置状态
-                hasSingleTouchHold = false;
-                hasMultiTouchHold = false;
-                resetVelocityTracker();
                 //触发长按计时
                 startLongClickCounter();
                 break;
@@ -280,6 +276,10 @@ public class ViewGestureControllerImpl implements ViewGestureController {
     private void handleState(MotionEvent event, ViewGestureTouchPoint abandonedPoint) {
         switch (motionState) {
             case RELEASE:
+                //重置状态
+                hasSingleTouchHold = false;
+                hasMultiTouchHold = false;
+                resetVelocityTracker();
                 //释放状态转为持有状态
                 if (touchPointGroup.getPointNum() > 0) {
                     stateToHold();

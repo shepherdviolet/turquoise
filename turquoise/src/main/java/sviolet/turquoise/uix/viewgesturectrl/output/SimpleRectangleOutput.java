@@ -172,6 +172,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
     //当前是否是多触点状态
     private boolean isMultiTouch = false;
+    //当前是否在手动操作, 例如手动缩放, 此刻禁止手势移动手势缩放和惯性滑动等
+    private boolean manualOperating = false;
 
     //惯性滑动, 因为有可能需要一个方向scroll到边界, 一个惯性fling, 因此分为两个
     private CompatOverScroller flingScrollerX;
@@ -233,9 +235,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     private void init() {
         //停止滑动/归位
-        flingScrollerX.abortAnimation();
-        flingScrollerY.abortAnimation();
-        zoomBackScroller.abortAnimation();
+        abortAnimation();
 
         //初始化/重置
         initMaxBounds();
@@ -474,6 +474,12 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         this.overZoomResistance = overZoomResistance;
     }
 
+    private void abortAnimation() {
+        flingScrollerX.abortAnimation();
+        flingScrollerY.abortAnimation();
+        zoomBackScroller.abortAnimation();
+    }
+
     /*******************************************************************
      * touch
      */
@@ -483,7 +489,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     @Override
     public void hold() {
-        if (invalidWidthOrHeight) {
+        if (invalidWidthOrHeight || manualOperating) {
             return;
         }
 
@@ -507,7 +513,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     @Override
     public void release() {
-        if (invalidWidthOrHeight) {
+        if (invalidWidthOrHeight || manualOperating) {
             return;
         }
 
@@ -655,7 +661,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     @Override
     public void onClick(float x, float y) {
-        if (invalidWidthOrHeight) {
+        if (invalidWidthOrHeight || manualOperating) {
             return;
         }
         if (clickListener != null){
@@ -670,7 +676,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     @Override
     public void onLongClick(float x, float y) {
-        if (invalidWidthOrHeight) {
+        if (invalidWidthOrHeight || manualOperating) {
             return;
         }
         if (longClickListener != null){
@@ -689,7 +695,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     @Override
     public void holdMove() {
-//        if (invalidWidthOrHeight) {
+//        if (invalidWidthOrHeight || manualOperating) {
 //            return;
 //        }
 
@@ -700,7 +706,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     @Override
     public void releaseMove(float velocityX, float velocityY) {
-        if (invalidWidthOrHeight) {
+        if (invalidWidthOrHeight || manualOperating) {
             return;
         }
 
@@ -715,7 +721,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     @Override
     public void move(float currentX, float offsetX, float velocityX, float currentY, float offsetY, float velocityY) {
-        if (invalidWidthOrHeight) {
+        if (invalidWidthOrHeight || manualOperating) {
             return;
         }
 
@@ -814,7 +820,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     @Override
     public void holdZoom() {
-        if (invalidWidthOrHeight){
+        if (invalidWidthOrHeight || manualOperating){
             return;
         }
         isMultiTouch = true;
@@ -825,7 +831,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     @Override
     public void releaseZoom() {
-        if (invalidWidthOrHeight){
+        if (invalidWidthOrHeight || manualOperating){
             return;
         }
         isMultiTouch = false;
@@ -836,7 +842,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     @Override
     public void zoom(float basicPointX, float basicPointY, float current, float offset) {
-        if (invalidWidthOrHeight) {
+        if (invalidWidthOrHeight || manualOperating) {
             return;
         }
         //过滤偏移量很小的情况
@@ -985,6 +991,50 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         }
     }
 
+    /**
+     * 手动缩放到指定放大率, 为了防止线程同步问题, 请在UI线程调用, 手动缩放期间会禁用手势移动手势缩放和惯性滑动
+     *
+     * @param basicPointX 基点X, 显示坐标系
+     * @param basicPointY 基点Y, 显示坐标系
+     * @param newMagnification 新放大率
+     */
+    public void manualZoom(float basicPointX, float basicPointY, double newMagnification){
+        //手动操作标记
+        manualOperating = true;
+        //zoomBack模式
+        isZoomBack = true;
+        //停止原有滑动
+        abortAnimation();
+
+        //计算缩放造成的平移
+        calculateZoomCausedMovement(basicPointX, basicPointY, currMagnification, newMagnification, zoomCausedMovementPoint);
+        //越界控制(严格)
+        limitZoomCausedMovementByActual(zoomCausedMovementPoint, newMagnification);
+        //弹回
+        flingScrollerX.startScroll((int)currX, 0, (int) (zoomCausedMovementPoint.getX() - currX), 0, scrollDuration);
+        flingScrollerY.startScroll(0, (int)currY, 0, (int)(zoomCausedMovementPoint.getY() - currY), scrollDuration);
+        zoomBackScroller.startScroll((int)(currMagnification * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, (int)Math.floor((newMagnification - currMagnification) * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, scrollDuration);
+
+        //通知刷新
+        if (refreshListener != null) {
+            refreshListener.onRefresh();
+        }
+    }
+
+    /**
+     * @return 获得当前的放大率
+     */
+    public double getCurrZoomMagnification(){
+        return currMagnification;
+    }
+
+    /**
+     * @return 获得最大放大率
+     */
+    public double getMaxZoomMagnification(){
+        return magnificationLimit;
+    }
+
     /*******************************************************************
      * mapping
      */
@@ -1050,7 +1100,15 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      */
     public boolean isActive() {
 //        calculateFlingPosition();
-        return isHold || !flingScrollerX.isFinished() || !flingScrollerY.isFinished() || !zoomBackScroller.isFinished();
+        if (isHold || !flingScrollerX.isFinished() || !flingScrollerY.isFinished() || !zoomBackScroller.isFinished()){
+            //活跃状态, 继续刷新
+            return true;
+        } else {
+            //重置手动操作标记
+            manualOperating = false;
+            //非活跃状态, 停止刷新
+            return false;
+        }
     }
 
     /**
@@ -1174,6 +1232,11 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             if (!flingScrollerY.isFinished()) {
                 flingScrollerY.computeScrollOffset();
                 offsetY = flingScrollerY.getCurrY() - currY;
+            }
+            //万一zoomBackScroller没停止, 则计算放大率, 一般情况下不可能出现
+            if (!zoomBackScroller.isFinished()){
+                zoomBackScroller.computeScrollOffset();
+                currMagnification = (double)zoomBackScroller.getCurrX() / ZOOM_BACK_MAGNIFICATION_ACCURACY;
             }
             moveBy(offsetX, offsetY);
         }
