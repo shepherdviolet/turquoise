@@ -208,6 +208,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      * @param displayWidth 显示宽度, 相当于srcRect的宽度
      * @param displayHeight 显示高度, 相当于srcRect的高度
      * @param magnificationLimit 最大放大倍数, 可设置自适应放大倍数:{@link SimpleRectangleOutput#AUTO_MAGNIFICATION_LIMIT}
+     * @param initScaleType 初始显示模式
      */
     public SimpleRectangleOutput(Context context, double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit, InitScaleType initScaleType) {
         if (context == null){
