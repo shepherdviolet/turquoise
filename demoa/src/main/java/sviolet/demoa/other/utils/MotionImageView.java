@@ -114,7 +114,7 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
                 //若当前放大率低于2, 则缩放到2
                 if (output.getCurrZoomMagnification() < 2){
                     //手动缩放过程中, 所有手势会被禁用
-                    output.manualZoom(displayX, displayY, 2);
+                    output.manualZoom(displayX, displayY, 2, 300);
                 }
             }
         });

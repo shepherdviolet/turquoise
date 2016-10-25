@@ -997,8 +997,12 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      * @param basicPointX 基点X, 显示坐标系
      * @param basicPointY 基点Y, 显示坐标系
      * @param newMagnification 新放大率
+     * @param duration 缩放时间 ms
      */
-    public void manualZoom(float basicPointX, float basicPointY, double newMagnification){
+    public void manualZoom(float basicPointX, float basicPointY, double newMagnification, int duration){
+        if (duration < 0){
+            duration = 0;
+        }
         //手动操作标记
         manualOperating = true;
         //zoomBack模式
@@ -1011,9 +1015,9 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         //越界控制(严格)
         limitZoomCausedMovementByActual(zoomCausedMovementPoint, newMagnification);
         //弹回
-        flingScrollerX.startScroll((int)currX, 0, (int) (zoomCausedMovementPoint.getX() - currX), 0, scrollDuration);
-        flingScrollerY.startScroll(0, (int)currY, 0, (int)(zoomCausedMovementPoint.getY() - currY), scrollDuration);
-        zoomBackScroller.startScroll((int)(currMagnification * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, (int)Math.floor((newMagnification - currMagnification) * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, scrollDuration);
+        flingScrollerX.startScroll((int)currX, 0, (int) (zoomCausedMovementPoint.getX() - currX), 0, duration);
+        flingScrollerY.startScroll(0, (int)currY, 0, (int)(zoomCausedMovementPoint.getY() - currY), duration);
+        zoomBackScroller.startScroll((int)(currMagnification * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, (int)Math.floor((newMagnification - currMagnification) * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, duration);
 
         //通知刷新
         if (refreshListener != null) {
