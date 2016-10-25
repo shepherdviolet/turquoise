@@ -1035,6 +1035,13 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         return magnificationLimit;
     }
 
+    /**
+     * @return 获得最小放大率, 固定1
+     */
+    public double getMinZoomMagnification(){
+        return 1;
+    }
+
     /*******************************************************************
      * mapping
      */
