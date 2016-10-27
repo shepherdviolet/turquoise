@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "sviolet.demoaimageloader"
         minSdkVersion 11
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 3
-        versionName "3.4.160622"
+        versionName "3.4.161027"
 
         //true:多dex允许,突破类65535的限制
         multiDexEnabled false
@@ -55,7 +55,7 @@ dependencies {
     compile project(':turquoise')
     compile project(':turquoise.imageloader')
     compile project(':turquoise.imageloader.plugin')
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:recyclerview-v7:25.0.0'
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
 }

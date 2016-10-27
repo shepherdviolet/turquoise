@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "sviolet.demoa"
         minSdkVersion 10
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 3
-        versionName "3.4.160622"
+        versionName "3.4.161027"
 
         //true:多dex允许,突破类65535的限制
         multiDexEnabled false
