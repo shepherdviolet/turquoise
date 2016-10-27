@@ -1,4 +1,4 @@
-# Turquoise 3.4.160805
+# Turquoise 3.4.161027
 * A comprehensive Android library for private use.
 * https://github.com/shepherdviolet/turquoise
 
@@ -19,6 +19,7 @@
 * cache/queue/conversion/crypt/sort/android system utils/......
 
 ### Views ┃ sviolet.turquoise.ui/uix
+* ViewGestureController: easy to build gesture-driven view
 * SlideEngine: help to build sliding view, and provides some ready-made Views
 * TViewHolder: easy to build Adapter of View
 * shadow/gif/ripple/rotate/scrape/......
@@ -32,12 +33,12 @@
 ### Dependency:
 ```java
 
-    //required
     compile project(':turquoise')
-    compile 'com.android.support:support-v4:23.4.0'
+    //required
+    compile 'com.android.support:support-v4:25.0.0'
     //optional
-    compile 'com.android.support:appcompat-v7:23.4.0'
-    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
+    compile 'com.android.support:recyclerview-v7:25.0.0'
     compile 'org.bouncycastle:bcprov-jdk16:1.46'
 
 ```
@@ -85,10 +86,10 @@
 ### Dependency:
 ```java
 
-    //required
     compile project(':turquoise')
     compile project(':turquoise.imageloader')
-    compile 'com.android.support:support-v4:23.4.0'
+    //required
+    compile 'com.android.support:support-v4:25.0.0'
     //optional
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
 
@@ -116,11 +117,11 @@
 ### Dependency:
 ```java
 
-    //required
     compile project(':turquoise')
     compile project(':turquoise.imageloader')
     compile project(':turquoise.imageloader.plugin')
-    compile 'com.android.support:support-v4:23.4.0'
+    //required
+    compile 'com.android.support:support-v4:25.0.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
     //optional
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
