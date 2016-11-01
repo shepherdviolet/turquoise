@@ -27,6 +27,10 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import java.util.Random;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.ui.util.ViewCommonUtils;
@@ -54,6 +58,10 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
     private Rect bitmapRect = new Rect();
     private Rect canvasRect = new Rect();
 
+    private boolean sizeChanged = false;
+    private int originHeight;
+    private Random random = new Random(System.currentTimeMillis());
+
     public MotionImageView(Context context) {
         super(context);
         init(context, null, -1);
@@ -72,6 +80,12 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
     private void init(Context context, AttributeSet attrs, int defStyleAttr){
         //初始化
         ViewCommonUtils.setInitListener(this, this);
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        sizeChanged = true;
     }
 
     @Override
@@ -122,15 +136,19 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
         output.setLongClickListener(new SimpleRectangleOutput.LongClickListener() {
             @Override
             public void onLongClick(float actualX, float actualY, float displayX, float displayY) {
-                Canvas bitmapCanvas = new Canvas(bitmap);
-                bitmapCanvas.drawCircle(actualX, actualY, 80, longClickPaint);
-                MotionImageView.this.postInvalidate();
+                //长按时随机调整控件高度
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) getLayoutParams();
+                layoutParams.height = random.nextInt(originHeight);
+                setLayoutParams(layoutParams);
+                Toast.makeText(getContext(), "控件高度调整为:" + layoutParams.height, Toast.LENGTH_LONG).show();
             }
         });
 
         //给手势控制器设置简单矩形输出
         viewGestureController.addOutput(output);
 
+        //记录控件原始长宽
+        originHeight = getHeight();
     }
 
     @Override
@@ -144,6 +162,15 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
     @Override
     protected void onDraw(Canvas canvas) {
 
+        if (output == null)
+            return;
+
+        //控件尺寸变化时, 调整输出的显示矩形尺寸
+        if (sizeChanged){
+            sizeChanged = false;
+            output.resetDisplayDimension(getWidth(), getHeight());
+        }
+
         //从output获得当前矩形
         output.getSrcDstRect(bitmapRect, canvasRect);
 
@@ -153,6 +180,7 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
         //必须:继续刷新
         if (output.isActive())
             postInvalidate();
+
     }
 
 }
