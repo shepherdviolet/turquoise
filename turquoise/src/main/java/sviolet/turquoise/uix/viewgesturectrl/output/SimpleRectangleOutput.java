@@ -324,10 +324,14 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         //停止滑动/归位
         abortAnimation();
-
+        //记录上次MAX宽度
+        double lastMaxWidth = maxWidth;
         //初始化MAX值
         initMaxBounds();
-
+        //仅改变显示矩形尺寸时, 为了保持显示状态不变, 根据MAX变化率调整当前放大率, 使得图像保持稳定
+        if (maxWidth > 0 && lastMaxWidth > 0) {
+            currMagnification = currMagnification * maxWidth / lastMaxWidth;
+        }
         //越界弹回或惯性滑动
         free();
     }
@@ -344,10 +348,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         //停止滑动/归位
         abortAnimation();
-
         //初始化MAX值
         initMaxBounds();
-
         //越界弹回或惯性滑动
         free();
     }
@@ -366,10 +368,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         //停止滑动/归位
         abortAnimation();
-
         //初始化MAX值
         initMaxBounds();
-
         //越界弹回或惯性滑动
         free();
     }
@@ -388,10 +388,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         //停止滑动/归位
         abortAnimation();
-
         //初始化MAX值
         initMaxBounds();
-
         //越界弹回或惯性滑动
         free();
     }
@@ -423,10 +421,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         //停止滑动/归位
         abortAnimation();
-
         //初始化MAX值
         initMaxBounds();
-
         //重置位置
         currX = maxLeft;
         currY = maxTop;
