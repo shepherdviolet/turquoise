@@ -164,11 +164,11 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     private double maxHeight;
 
     //当前显示矩形坐标, 相对于实际矩形左上角的位置
-    private double currX;
-    private double currY;
+    private double currX = 0;
+    private double currY = 0;
 
     //当前放大率
-    private double currMagnification;
+    private double currMagnification = 1;
 
     //当前是否是多触点状态
     private boolean isMultiTouch = false;
@@ -219,30 +219,16 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         this.flingScrollerY = new CompatOverScroller(context);
         this.zoomBackScroller = new CompatOverScroller(context);
 
-        reset(actualWidth, actualHeight, displayWidth, displayHeight, magnificationLimit, initScaleType);
+        init(actualWidth, actualHeight, displayWidth, displayHeight, magnificationLimit, initScaleType);
     }
 
     /**
      * 实际矩形和显示矩形长宽均为0, 放大倍数限制为1, 的默认输出实例, 需要后续调用
-     * {@link SimpleRectangleOutput#reset(double, double, double, double, double, InitScaleType)}方法方可正常输出.
+     * {@link SimpleRectangleOutput#init(double, double, double, double, double, InitScaleType)}方法方可正常输出.
      * @param context context
      */
     public SimpleRectangleOutput(Context context){
         this(context, 0, 0, 0, 0, 1, InitScaleType.FIT_CENTER);
-    }
-
-    /**
-     * 初始化/重置
-     */
-    private void init() {
-        //停止滑动/归位
-        abortAnimation();
-
-        //初始化/重置
-        initMaxBounds();
-        currX = maxLeft;
-        currY = maxTop;
-        currMagnification = 1;
     }
 
     /**
@@ -335,7 +321,15 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     public void resetDisplayDimension(double displayWidth, double displayHeight) {
         this.displayWidth = displayWidth;
         this.displayHeight = displayHeight;
-        init();
+
+        //停止滑动/归位
+        abortAnimation();
+
+        //初始化MAX值
+        initMaxBounds();
+
+        //越界弹回或惯性滑动
+        free();
     }
 
     /**
@@ -347,7 +341,15 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     public void resetActualDimension(double actualWidth, double actualHeight) {
         this.actualWidth = actualWidth;
         this.actualHeight = actualHeight;
-        init();
+
+        //停止滑动/归位
+        abortAnimation();
+
+        //初始化MAX值
+        initMaxBounds();
+
+        //越界弹回或惯性滑动
+        free();
     }
 
     /**
@@ -362,7 +364,14 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         this.magnificationLimit = magnificationLimit;
 
-        init();
+        //停止滑动/归位
+        abortAnimation();
+
+        //初始化MAX值
+        initMaxBounds();
+
+        //越界弹回或惯性滑动
+        free();
     }
 
     /**
@@ -377,11 +386,18 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
         this.initScaleType = initScaleType;
 
-        init();
+        //停止滑动/归位
+        abortAnimation();
+
+        //初始化MAX值
+        initMaxBounds();
+
+        //越界弹回或惯性滑动
+        free();
     }
 
     /**
-     * [慎用]重置参数, 请在UI线程调用, 该方法线程不安全
+     * [慎用]初始化参数, 中途使用会重置位置和放大率, 请在UI线程调用, 该方法线程不安全
      *
      * @param actualWidth 实际宽度, 相当于dstRect的宽度
      * @param actualHeight 实际高度, 相当于dstRect的高度
@@ -390,7 +406,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      * @param magnificationLimit 最大放大倍数, 可设置自适应放大倍数:{@link SimpleRectangleOutput#AUTO_MAGNIFICATION_LIMIT}
      * @param initScaleType 初始显示方式
      */
-    public void reset(double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit, InitScaleType initScaleType) {
+    public void init(double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit, InitScaleType initScaleType) {
         if (magnificationLimit < 1 && magnificationLimit != AUTO_MAGNIFICATION_LIMIT) {
             throw new RuntimeException("magnificationLimit must >= 1 or SimpleRectangleOutput.AUTO_MAGNIFICATION_LIMIT");
         }
@@ -405,7 +421,16 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         this.magnificationLimit = magnificationLimit;
         this.initScaleType = initScaleType;
 
-        init();
+        //停止滑动/归位
+        abortAnimation();
+
+        //初始化MAX值
+        initMaxBounds();
+
+        //重置位置
+        currX = maxLeft;
+        currY = maxTop;
+        currMagnification = 1;
     }
 
     /**
@@ -518,15 +543,8 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
             return;
         }
 
-        //越界弹回
-        if (zoomBack()) {
-            //缩放越界弹回
-            isZoomBack = true;
-        }else{
-            //移动越界弹回
-            isZoomBack = false;
-            fling(releaseVelocityX * (maxWidth / currMagnification) / displayWidth, releaseVelocityY * (maxHeight / currMagnification) / displayHeight);
-        }
+        //越界弹回或惯性滑动
+        free();
 
         //重置释放时的速度
         releaseVelocityX = 0;
@@ -538,6 +556,20 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         //通知刷新
         if (refreshListener != null) {
             refreshListener.onRefresh();
+        }
+    }
+
+    /**
+     * 越界弹回或惯性滑动
+     */
+    private void free() {
+        if (zoomBack()) {
+            //缩放越界弹回
+            isZoomBack = true;
+        }else{
+            //移动越界弹回
+            isZoomBack = false;
+            flingBack(releaseVelocityX * (maxWidth / currMagnification) / displayWidth, releaseVelocityY * (maxHeight / currMagnification) / displayHeight);
         }
     }
 
@@ -582,7 +614,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     /**
      * 惯性滑动/移动越界弹回
      */
-    private void fling(double velocityX, double velocityY) {
+    private void flingBack(double velocityX, double velocityY) {
 
         //显示矩形在实际矩形中的宽高
         double width = maxWidth / currMagnification;
