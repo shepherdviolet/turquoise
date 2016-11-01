@@ -232,6 +232,41 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     }
 
     /**
+     * [慎用]初始化参数, 中途使用会重置位置和放大率, 请在UI线程调用, 该方法线程不安全
+     *
+     * @param actualWidth 实际宽度, 相当于dstRect的宽度
+     * @param actualHeight 实际高度, 相当于dstRect的高度
+     * @param displayWidth 显示宽度, 相当于srcRect的宽度
+     * @param displayHeight 显示高度, 相当于srcRect的高度
+     * @param magnificationLimit 最大放大倍数, 可设置自适应放大倍数:{@link SimpleRectangleOutput#AUTO_MAGNIFICATION_LIMIT}
+     * @param initScaleType 初始显示方式
+     */
+    public void init(double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit, InitScaleType initScaleType) {
+        if (magnificationLimit < 1 && magnificationLimit != AUTO_MAGNIFICATION_LIMIT) {
+            throw new RuntimeException("magnificationLimit must >= 1 or SimpleRectangleOutput.AUTO_MAGNIFICATION_LIMIT");
+        }
+        if (initScaleType == null){
+            throw new RuntimeException("initScaleType is null");
+        }
+
+        this.actualWidth = actualWidth;
+        this.actualHeight = actualHeight;
+        this.displayWidth = displayWidth;
+        this.displayHeight = displayHeight;
+        this.magnificationLimit = magnificationLimit;
+        this.initScaleType = initScaleType;
+
+        //停止滑动/归位
+        abortAnimation();
+        //初始化MAX值
+        initMaxBounds();
+        //重置位置
+        currX = maxLeft;
+        currY = maxTop;
+        currMagnification = 1;
+    }
+
+    /**
      * 初始化/重置MAX边界
      */
     private void initMaxBounds() {
@@ -392,41 +427,6 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         initMaxBounds();
         //越界弹回或惯性滑动
         free();
-    }
-
-    /**
-     * [慎用]初始化参数, 中途使用会重置位置和放大率, 请在UI线程调用, 该方法线程不安全
-     *
-     * @param actualWidth 实际宽度, 相当于dstRect的宽度
-     * @param actualHeight 实际高度, 相当于dstRect的高度
-     * @param displayWidth 显示宽度, 相当于srcRect的宽度
-     * @param displayHeight 显示高度, 相当于srcRect的高度
-     * @param magnificationLimit 最大放大倍数, 可设置自适应放大倍数:{@link SimpleRectangleOutput#AUTO_MAGNIFICATION_LIMIT}
-     * @param initScaleType 初始显示方式
-     */
-    public void init(double actualWidth, double actualHeight, double displayWidth, double displayHeight, double magnificationLimit, InitScaleType initScaleType) {
-        if (magnificationLimit < 1 && magnificationLimit != AUTO_MAGNIFICATION_LIMIT) {
-            throw new RuntimeException("magnificationLimit must >= 1 or SimpleRectangleOutput.AUTO_MAGNIFICATION_LIMIT");
-        }
-        if (initScaleType == null){
-            throw new RuntimeException("initScaleType is null");
-        }
-
-        this.actualWidth = actualWidth;
-        this.actualHeight = actualHeight;
-        this.displayWidth = displayWidth;
-        this.displayHeight = displayHeight;
-        this.magnificationLimit = magnificationLimit;
-        this.initScaleType = initScaleType;
-
-        //停止滑动/归位
-        abortAnimation();
-        //初始化MAX值
-        initMaxBounds();
-        //重置位置
-        currX = maxLeft;
-        currY = maxTop;
-        currMagnification = 1;
     }
 
     /**
