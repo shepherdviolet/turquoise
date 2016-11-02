@@ -840,6 +840,67 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
 
     }
 
+    /**
+     * 手动平移矩形到指定坐标, 为了防止线程同步问题, 请在UI线程调用, 手动平移期间会禁用手势移动手势缩放和惯性滑动
+     *
+     * @param x 矩形左上角点坐标(实际矩形坐标系)
+     * @param y 矩形左上角点坐标(实际矩形坐标系)
+     * @param duration 平移时间 ms
+     */
+    public void manualMoveTo(double x, double y, int duration){
+        if (invalidWidthOrHeight){
+            return;
+        }
+
+        //手动操作标记
+        manualOperating = true;
+        //停止原有滑动
+        abortAnimation();
+
+        //放大率越界控制
+        double magnification = currMagnification;
+        if (magnification < 1){
+            magnification = 1;
+        } else if (magnification > magnificationLimit){
+            magnification = magnificationLimit;
+        }
+
+        //实际矩形上的显示区域宽高
+        double actualDisplayWidth = maxWidth / magnification;
+        double actualDisplayHeight = maxHeight / magnification;
+
+        //平移越界控制
+        if (x < maxLeft){
+            x = maxLeft;
+        } else if (x > maxRight - actualDisplayWidth){
+            x = maxRight - actualDisplayWidth;
+        }
+        if (y < maxTop){
+            y = maxTop;
+        } else if (y > maxBottom - actualDisplayHeight){
+            y = maxBottom - actualDisplayHeight;
+        }
+
+        if (duration > 0) {
+            //动画缩放
+            flingScrollerX.startScroll((int) currX, 0, (int) (x - currX), 0, duration);
+            flingScrollerY.startScroll(0, (int) currY, 0, (int) (y - currY), duration);
+            if (magnification != currMagnification) {
+                zoomBackScroller.startScroll((int) (currMagnification * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, (int) Math.floor((magnification - currMagnification) * ZOOM_BACK_MAGNIFICATION_ACCURACY), 0, duration);
+            }
+        }else{
+            //直接缩放
+            currX = x;
+            currY = y;
+            currMagnification = magnification;
+        }
+
+        //通知刷新
+        if (refreshListener != null) {
+            refreshListener.onRefresh();
+        }
+    }
+
     /*******************************************************************
      * zoom
      */
