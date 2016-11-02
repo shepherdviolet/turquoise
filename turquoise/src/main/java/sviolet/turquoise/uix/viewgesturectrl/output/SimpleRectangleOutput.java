@@ -1029,6 +1029,9 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
      * @param duration 缩放时间 ms
      */
     public void manualZoom(float basicPointX, float basicPointY, double newMagnification, int duration){
+        if (invalidWidthOrHeight){
+            return;
+        }
 
         //手动操作标记
         manualOperating = true;
