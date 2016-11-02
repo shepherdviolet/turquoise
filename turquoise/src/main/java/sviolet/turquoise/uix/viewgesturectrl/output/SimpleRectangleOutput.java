@@ -841,7 +841,21 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
     }
 
     /**
-     * 手动平移矩形到指定坐标, 为了防止线程同步问题, 请在UI线程调用, 手动平移期间会禁用手势移动手势缩放和惯性滑动
+     * 手动平移显示区域矩形指定的位移量, 为了防止线程同步问题, 请在UI线程调用, 手动平移期间会禁用手势移动手势缩放和惯性滑动
+     *
+     * @param offsetX 平移位移量(实际矩形坐标系)
+     * @param offsetY 平移位移量(实际矩形坐标系)
+     * @param duration 平移时间 ms
+     */
+    public void manualMoveBy(double offsetX, double offsetY, int duration){
+        if (offsetX == 0 && offsetY == 0){
+            return;
+        }
+        manualMoveTo(currX + offsetX, currY + offsetY, duration);
+    }
+
+    /**
+     * 手动平移显示区域矩形到指定坐标, 为了防止线程同步问题, 请在UI线程调用, 手动平移期间会禁用手势移动手势缩放和惯性滑动
      *
      * @param x 矩形左上角点坐标(实际矩形坐标系)
      * @param y 矩形左上角点坐标(实际矩形坐标系)
@@ -899,6 +913,56 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         if (refreshListener != null) {
             refreshListener.onRefresh();
         }
+    }
+
+    /**
+     * 手动平移矩形使得指定点出现在显示区域中, 为了防止线程同步问题, 请在UI线程调用, 手动平移期间会禁用手势移动手势缩放和惯性滑动
+     *
+     * @param pointX 需要显示的指定点(实际矩形坐标系)
+     * @param pointY 需要显示的指定点(实际矩形坐标系)
+     * @param pointRadius 需要显示的指定点半径(实际矩形坐标系)
+     * @param duration 平移时间 ms
+     */
+    public void manualMoveToShow(double pointX, double pointY, double pointRadius, int duration){
+        if(pointRadius < 0){
+            throw new RuntimeException("point radius must >= 0");
+        }
+
+        //位移量
+        double offsetX = 0;
+        double offsetY = 0;
+
+        //实际矩形上的显示区域宽高
+        double actualDisplayWidth = maxWidth / currMagnification;
+        double actualDisplayHeight = maxHeight / currMagnification;
+
+        //实际矩形中的显示区域
+        double displayAreaLeft = currX;
+        double displayAreaTop = currY;
+        double displayAreaRight = displayAreaLeft + actualDisplayWidth;
+        double displayAreaBottom = displayAreaTop + actualDisplayHeight;
+
+        //计算X位移量
+        if (pointRadius * 2 > actualDisplayWidth){
+            offsetX = pointX - actualDisplayWidth / 2 - currX;
+        } else if (pointX - pointRadius < displayAreaLeft){
+            offsetX = pointX - pointRadius - displayAreaLeft;
+        } else if (pointX + pointRadius > displayAreaRight){
+            offsetX = pointX + pointRadius - displayAreaRight;
+        }
+
+        //计算Y位移量
+        if (pointRadius * 2 > actualDisplayHeight){
+            offsetY = pointY - actualDisplayHeight / 2 - currY;
+        } else if (pointY - pointRadius < displayAreaTop){
+            offsetY = pointY - pointRadius - displayAreaTop;
+        } else if (pointY + pointRadius > displayAreaBottom){
+            offsetY = pointY + pointRadius - displayAreaBottom;
+        }
+
+        //位移
+        manualMoveBy(offsetX, offsetY, duration);
+
     }
 
     /*******************************************************************
