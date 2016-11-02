@@ -1496,7 +1496,7 @@ public class SimpleRectangleOutput implements ViewGestureTouchListener, ViewGest
         }
     }
 
-    public enum ScaleFactor{
+    private enum ScaleFactor{
         NORMAL,
         FIT
     }
