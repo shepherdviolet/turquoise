@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 S.Violet
+ * Copyright (C) 2015-2016 S.Violet
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.ui.view;
+package sviolet.turquoise.ui.viewgroup.anim;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -54,7 +54,7 @@ import sviolet.turquoise.enhance.common.WeakHandler;
  *		});
  *
  *  <!-- 本身也会触发onClick事件 -->
- *  <sviolet.lib.android.view.RippleView
+ *  <sviolet.turquoise.ui.viewgroup.anim.RippleView
  *      android:layout_width="300dp"
  *      android:layout_height="50dp"
  *      android:background="#209090">
@@ -62,7 +62,7 @@ import sviolet.turquoise.enhance.common.WeakHandler;
  *      <TextView
  *          android:layout_width="wrap_content"
  *          android:layout_height="wrap_content"/>
- *  </sviolet.lib.android.view.RippleView>
+ *  </sviolet.turquoise.ui.viewgroup.anim.RippleView>
  *
  *	}</pre>
  * 

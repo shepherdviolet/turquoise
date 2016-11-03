@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 S.Violet
+ * Copyright (C) 2015-2016 S.Violet
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.ui.view.shadow;
+package sviolet.turquoise.ui.viewgroup.shadow;
 
 import sviolet.turquoise.R;
 import android.content.Context;
@@ -35,7 +35,7 @@ import android.widget.LinearLayout;
  * <br>
  * <pre>{@code
  *  <!-- 若android:background未设置, 则有可能显示无效 -->
- *  <sviolet.turquoise.view.shadow.LinearShadowLayout
+ *  <sviolet.turquoise.ui.viewgroup.shadow.LinearShadowLayout
  *      android:layout_width="match_parent"
  *      android:layout_height="match_parent"
  *      android:background="#209090"
@@ -52,7 +52,7 @@ import android.widget.LinearLayout;
  *          android:layout_height="wrap_content"
  *          android:text="@string/hello_world" />
  *
- *  </sviolet.turquoise.view.shadow.LinearShadowLayout>
+ *  </sviolet.turquoise.ui.viewgroup.shadow.LinearShadowLayout>
  * }</pre>
  *
  * @author S.Violet
