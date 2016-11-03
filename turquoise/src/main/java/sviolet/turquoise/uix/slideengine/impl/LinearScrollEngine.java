@@ -511,7 +511,7 @@ public class LinearScrollEngine extends LinearDragEngine {
 		if(range > 0)
 			return (int)((float)stageDuration * (float)Math.abs(position - target) / (float)range);
 		else
-			return 0;
+			return stageDuration;
 	}
 	
 }
