@@ -404,7 +404,11 @@ public class RippleView extends RelativeLayout{
 	private void resetCanvas(Canvas canvas) {
 		animationRunning = false;
 		timer = TIMER_MIN;
-		canvas.restore();//画布恢复初始状态
+		try {
+			canvas.restore();//画布恢复初始状态
+		} catch (IllegalStateException e){
+			//6.0以上可能会报错
+		}
 		invalidate();
 	}
 
