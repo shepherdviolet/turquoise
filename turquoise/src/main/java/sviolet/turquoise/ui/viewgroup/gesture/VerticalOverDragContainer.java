@@ -20,6 +20,7 @@
 package sviolet.turquoise.ui.viewgroup.gesture;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,9 +32,11 @@ import android.widget.ScrollView;
 import java.util.ArrayList;
 import java.util.List;
 
+import sviolet.turquoise.R;
 import sviolet.turquoise.common.compat.CompatOverScroller;
 import sviolet.turquoise.ui.util.ListViewUtils;
 import sviolet.turquoise.ui.util.ScrollViewUtils;
+import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.util.droid.MotionEventUtils;
 
 /**
@@ -88,7 +91,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
     //////////////////////////////////////////////////////
 
     //true:当出现水平方向的手势时, 禁用越界拖动
-    private boolean disableIfHorizontalDrag = true;
+    private boolean disableIfHorizontalDrag = false;
 
     //越界拖动界限, 超过该界限则进入PARK状态(停止在界限上, 用于实现下拉刷新上拉加载)
     private int overDragThreshold = 300;
@@ -99,9 +102,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private int scrollDuration = 300;
 
     //顶部PARK允许
-    private boolean topParkEnabled = true;
+    private boolean topParkEnabled = false;
     //底部PARK允许
-    private boolean bottomParkEnabled = true;
+    private boolean bottomParkEnabled = false;
 
     //监听器
     private OnOverDragStateChangeListener onOverDragStateChangeListener;
@@ -144,12 +147,14 @@ public class VerticalOverDragContainer extends RelativeLayout {
         super(context, attrs);
         //初始化
         init();
+        initSetting(context, attrs);
     }
 
     public VerticalOverDragContainer(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         //初始化
         init();
+        initSetting(context, attrs);
     }
 
     /**
@@ -158,6 +163,20 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private void init() {
         this.mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         this.scroller = new CompatOverScroller(getContext());
+    }
+
+    /**
+     * 初始化配置
+     */
+    private void initSetting(final Context context, AttributeSet attrs) {
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.VerticalOverDragContainer);
+        setDisableIfHorizontalDrag(typedArray.getBoolean(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_disableIfHorizontalDrag, false));
+        setOverDragThreshold(typedArray.getDimensionPixelOffset(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_overDragThreshold, MeasureUtils.dp2px(getContext(), 70)));
+        setOverDragResistance(typedArray.getFloat(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_overDragResistance, 0.4f));
+        setScrollDuration(typedArray.getInteger(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_scrollDuration, 300));
+        setTopParkEnabled(typedArray.getBoolean(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_topParkEnabled, false));
+        setBottomParkEnabled(typedArray.getBoolean(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_bottomParkEnabled, false));
+        typedArray.recycle();
     }
 
     @Override
