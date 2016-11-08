@@ -47,7 +47,13 @@ import sviolet.turquoise.ui.util.RecyclerViewUtils;
  * <pre>{@code
  *      <sviolet.turquoise.ui.viewgroup.gesture.RecyclerViewVerticalOverDragContainer
  *          android:layout_width="match_parent"
- *          android:layout_height="match_parent">
+ *          android:layout_height="match_parent"
+ *          sviolet:VerticalOverDragContainer_disableIfHorizontalDrag="false"
+ *          sviolet:VerticalOverDragContainer_overDragThreshold="70dp"
+ *          sviolet:VerticalOverDragContainer_overDragResistance="0.4"
+ *          sviolet:VerticalOverDragContainer_scrollDuration="300"
+ *          sviolet:VerticalOverDragContainer_topParkEnabled="false"
+ *          sviolet:VerticalOverDragContainer_bottomParkEnabled="true">
  *
  *          ...
  *
