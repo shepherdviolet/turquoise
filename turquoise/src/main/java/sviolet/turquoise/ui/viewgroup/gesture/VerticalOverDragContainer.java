@@ -62,6 +62,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private boolean topParkEnabled = true;
     private boolean bottomParkEnabled = true;
 
+    private OnStateChangedListener onStateChangedListener;
+    private OnScrollListener onScrollListener;
+    private OnParkListener onParkListener;
+
     //////////////////////////////////////////////////////
 
     private int mTouchSlop;
@@ -312,29 +316,20 @@ public class VerticalOverDragContainer extends RelativeLayout {
                 switch (lastState){
                     case STATE_TOP_OVER_DRAG:
                         if (topParkEnabled && scrollY > overDragThreshold){
-                            //TODO 刷新
-                            System.out.println("refresh");//TODO
-                            postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    free();
-                                }
-                            }, 1000);
+                            if (onParkListener != null){
+                                onParkListener.onTopPark();
+                            }
                         }
                         //弹回
                         free();
                         return true;
                     case STATE_BOTTOM_OVER_DRAG:
                         if (bottomParkEnabled && scrollY < -overDragThreshold){
-                            //TODO 加载
-                            System.out.println("load");//TODO
-                            postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    free();
-                                }
-                            }, 1000);
+                            if (onParkListener != null){
+                                onParkListener.onBottomPark();
+                            }
                         }
+                        //弹回
                         free();
                         return true;
                     case STATE_HOLD:
@@ -351,32 +346,51 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
     private void stateToRelease() {
         this.state = STATE_RELEASE;
+        callbackStateChanged();
     }
 
     private void stateToHorizontalDrag() {
         this.state = STATE_HORIZONTAL_DRAG;
+        callbackStateChanged();
     }
 
     private void stateToBottomOverDrag() {
         this.state = STATE_BOTTOM_OVER_DRAG;
+        callbackStateChanged();
     }
 
     private void stateToTopOverDrag() {
         this.state = STATE_TOP_OVER_DRAG;
+        callbackStateChanged();
     }
 
     private void stateToHold() {
         this.state = STATE_HOLD;
+        callbackStateChanged();
+    }
+
+    private void callbackStateChanged() {
+        if (onStateChangedListener != null){
+            onStateChangedListener.onStateChanged(this.state);
+        }
     }
 
     private void scrollByOffset(float offset){
         scrollY += offset;
         postInvalidate();
+        callbackScroll();
     }
 
     private void scrollToTarget(float target){
         scrollY = target;
         postInvalidate();
+        callbackScroll();
+    }
+
+    private void callbackScroll() {
+        if (onScrollListener != null){
+            onScrollListener.onScroll(this.state, this.scrollY);
+        }
     }
 
     /**
@@ -408,6 +422,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
         scroller.startScroll(0, currScrollY, 0, target - currScrollY, scrollDuration);
         //刷新
         postInvalidate();
+    }
+
+    public void scrollBack(){
+        free();
     }
 
     private void emulateCancelEvent(MotionEvent ev){
@@ -530,6 +548,62 @@ public class VerticalOverDragContainer extends RelativeLayout {
             return reachBottom;
         }
 
+    }
+
+    public interface OnStateChangedListener{
+
+        void onStateChanged(int state);
+
+    }
+
+    public interface OnScrollListener{
+
+        void onScroll(int state, float scrollY);
+
+    }
+
+    public interface OnParkListener{
+
+        void onTopPark();
+
+        void onBottomPark();
+
+    }
+
+    public void setOnStateChangedListener(OnStateChangedListener onStateChangedListener) {
+        this.onStateChangedListener = onStateChangedListener;
+    }
+
+    public void setOnScrollListener(OnScrollListener onScrollListener) {
+        this.onScrollListener = onScrollListener;
+    }
+
+    public void setOnParkListener(OnParkListener onParkListener) {
+        this.onParkListener = onParkListener;
+    }
+
+    public void setDisableIfHorizontalDrag(boolean disableIfHorizontalDrag) {
+        this.disableIfHorizontalDrag = disableIfHorizontalDrag;
+    }
+
+    public void setOverDragResistance(float overDragResistance) {
+        this.overDragResistance = overDragResistance;
+    }
+
+    public void setScrollDuration(int scrollDuration) {
+        this.scrollDuration = scrollDuration;
+    }
+
+    public void setOverDragThreshold(int overDragThreshold) {
+        this.overDragThreshold = overDragThreshold;
+    }
+
+    public void setTopParkEnabled(boolean topParkEnabled) {
+        this.topParkEnabled = topParkEnabled;
+    }
+
+    public void setBottomParkEnabled(boolean bottomParkEnabled) {
+        this.bottomParkEnabled = bottomParkEnabled;
     }
 
 }
