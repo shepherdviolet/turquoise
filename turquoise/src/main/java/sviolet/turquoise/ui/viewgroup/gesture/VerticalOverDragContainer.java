@@ -28,6 +28,9 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import sviolet.turquoise.common.compat.CompatOverScroller;
 import sviolet.turquoise.ui.util.ListViewUtils;
 import sviolet.turquoise.ui.util.ScrollViewUtils;
@@ -104,6 +107,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private OnOverDragStateChangeListener onOverDragStateChangeListener;
     private OnOverDragScrollListener onOverDragScrollListener;
     private OnOverDragParkListener onOverDragParkListener;
+    private List<RefreshView> refreshViewList;
 
     //////////////////////////////////////////////////////
 
@@ -332,9 +336,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
                     case STATE_TOP_OVER_DRAG:
                         if (!isCancel) {
                             if (topParkEnabled && scrollY > overDragThreshold) {
-                                if (onOverDragParkListener != null && !topParked) {
+                                if (!topParked) {
                                     topParked = true;
-                                    onOverDragParkListener.onTopPark();
+                                    callbackTopPark();
                                 }
                             }
                         }
@@ -344,9 +348,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
                     case STATE_BOTTOM_OVER_DRAG:
                         if (!isCancel) {
                             if (bottomParkEnabled && scrollY < -overDragThreshold) {
-                                if (onOverDragParkListener != null && !bottomParked) {
+                                if (!bottomParked) {
                                     bottomParked = true;
-                                    onOverDragParkListener.onBottomPark();
+                                    callbackBottomPark();
                                 }
                             }
                         }
@@ -430,6 +434,11 @@ public class VerticalOverDragContainer extends RelativeLayout {
         if (onOverDragStateChangeListener != null){
             onOverDragStateChangeListener.onStateChanged(this.state);
         }
+        if (refreshViewList != null){
+            for (RefreshView refreshView : refreshViewList){
+                refreshView.onStateChanged(this.state);
+            }
+        }
     }
 
     /**********************************************************************
@@ -451,6 +460,37 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private void callbackScroll() {
         if (onOverDragScrollListener != null){
             onOverDragScrollListener.onScroll(this.state, this.scrollY);
+        }
+        if (refreshViewList != null){
+            for (RefreshView refreshView : refreshViewList){
+                refreshView.onScroll(this.state, this.scrollY);
+            }
+        }
+    }
+
+    /************************************************************************
+     * PARK
+     */
+
+    private void callbackTopPark() {
+        if (onOverDragParkListener != null) {
+            onOverDragParkListener.onTopPark();
+        }
+        if (refreshViewList != null){
+            for (RefreshView refreshView : refreshViewList){
+                refreshView.onTopPark();
+            }
+        }
+    }
+
+    private void callbackBottomPark() {
+        if (onOverDragParkListener != null) {
+            onOverDragParkListener.onBottomPark();
+        }
+        if (refreshViewList != null){
+            for (RefreshView refreshView : refreshViewList){
+                refreshView.onBottomPark();
+            }
         }
     }
 
@@ -522,6 +562,19 @@ public class VerticalOverDragContainer extends RelativeLayout {
      */
     public void setOnOverDragParkListener(OnOverDragParkListener onOverDragParkListener) {
         this.onOverDragParkListener = onOverDragParkListener;
+    }
+
+    /**
+     * @param refreshView 下拉刷新/上拉加载的效果需要实现RefreshView接口, 并通过该方法添加
+     */
+    public void addRefreshView(RefreshView refreshView){
+        if (refreshView == null){
+            return;
+        }
+        if (refreshViewList == null){
+            refreshViewList = new ArrayList<>();
+        }
+        refreshViewList.add(refreshView);
     }
 
     /**
@@ -719,6 +772,13 @@ public class VerticalOverDragContainer extends RelativeLayout {
          * 底部PARK, 事件发生后需要手动重置状态(resetBottomPark方法), 在重置状态前, 不会再发生相同事件
          */
         void onBottomPark();
+
+    }
+
+    /**
+     * 下拉刷新上拉加载效果控件接口
+     */
+    public interface RefreshView extends OnOverDragStateChangeListener, OnOverDragScrollListener, OnOverDragParkListener{
 
     }
 
