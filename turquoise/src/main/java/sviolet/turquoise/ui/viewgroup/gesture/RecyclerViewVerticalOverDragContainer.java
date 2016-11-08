@@ -30,6 +30,15 @@ import sviolet.turquoise.ui.util.RecyclerViewUtils;
 /**
  * <p>垂直方向越界拖动容器(RelativeLayout), 可用于实现下拉刷新上拉加载</p>
  *
+ * <p>PARK: 即越界拖动超过设定值(overDragThreshold)后, 停止在设定位置, 用于实现下拉刷新/上拉加载,
+ * PARK状态即下拉刷新中的状态.</p>
+ *
+ * <p>注意!!! 当发生PARK事件后, VerticalOverDragContainer会保持PARK状态, 不会再发生相同的PARK事件,
+ * 必须调用resetTopPark/resetBottomPark方法, 重置状态, 才会再次发生PARK事件. 在实际使用中,
+ * 接收到PARK事件时, 开始进行数据刷新, 当数据刷新完成后, 调用resetTopPark/resetBottomPark方法重置状态.
+ * 当你使用{@link SimpleVerticalOverDragRefreshView}配合实现下拉刷新时, 调用{@link SimpleVerticalOverDragRefreshView}
+ * 的{@link SimpleVerticalOverDragRefreshView#reset()}可以起到相同的作用.</p>
+ *
  * <p>
  *     支持的子控件:<br/>
  *     1.ScrollView<br/>
