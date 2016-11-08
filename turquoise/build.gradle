@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 25
+    compileSdkVersion 24
     buildToolsVersion '24.0.3'
     defaultConfig {
         minSdkVersion 10
@@ -22,9 +22,9 @@ android {
 dependencies {
     //required
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.android.support:support-v4:24.2.1'
     //optional
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:recyclerview-v7:25.0.0'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'org.bouncycastle:bcprov-jdk16:1.46'
 }

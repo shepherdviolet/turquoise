@@ -35,10 +35,10 @@
 
     compile project(':turquoise')
     //required
-    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.android.support:support-v4:24.2.1'
     //optional
-    compile 'com.android.support:appcompat-v7:25.0.0'
-    compile 'com.android.support:recyclerview-v7:25.0.0'
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.android.support:recyclerview-v7:24.2.1'
     compile 'org.bouncycastle:bcprov-jdk16:1.46'
 
 ```
@@ -89,7 +89,7 @@
     compile project(':turquoise')
     compile project(':turquoise.imageloader')
     //required
-    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.android.support:support-v4:24.2.1'
     //optional
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
 
@@ -121,7 +121,7 @@
     compile project(':turquoise.imageloader')
     compile project(':turquoise.imageloader.plugin')
     //required
-    compile 'com.android.support:support-v4:25.0.0'
+    compile 'com.android.support:support-v4:24.2.1'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
     //optional
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
