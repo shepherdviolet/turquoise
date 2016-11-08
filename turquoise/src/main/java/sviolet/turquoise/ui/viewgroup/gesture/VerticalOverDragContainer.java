@@ -31,7 +31,6 @@ import android.widget.ScrollView;
 import sviolet.turquoise.common.compat.CompatOverScroller;
 import sviolet.turquoise.ui.util.ListViewUtils;
 import sviolet.turquoise.ui.util.ScrollViewUtils;
-import sviolet.turquoise.ui.util.ViewCommonUtils;
 import sviolet.turquoise.util.droid.MotionEventUtils;
 
 /**
@@ -102,9 +101,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private boolean bottomParkEnabled = true;
 
     //监听器
-    private OnStateChangedListener onStateChangedListener;
-    private OnScrollListener onScrollListener;
-    private OnParkListener onParkListener;
+    private OnOverDragStateChangeListener onOverDragStateChangeListener;
+    private OnOverDragScrollListener onOverDragScrollListener;
+    private OnOverDragParkListener onOverDragParkListener;
 
     //////////////////////////////////////////////////////
 
@@ -337,8 +336,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                     case STATE_TOP_OVER_DRAG:
                         if (!isCancel) {
                             if (topParkEnabled && scrollY > overDragThreshold) {
-                                if (onParkListener != null) {
-                                    onParkListener.onTopPark();
+                                if (onOverDragParkListener != null) {
+                                    onOverDragParkListener.onTopPark();
                                 }
                             }
                         }
@@ -348,8 +347,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                     case STATE_BOTTOM_OVER_DRAG:
                         if (!isCancel) {
                             if (bottomParkEnabled && scrollY < -overDragThreshold) {
-                                if (onParkListener != null) {
-                                    onParkListener.onBottomPark();
+                                if (onOverDragParkListener != null) {
+                                    onOverDragParkListener.onBottomPark();
                                 }
                             }
                         }
@@ -430,8 +429,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
     }
 
     private void callbackStateChanged() {
-        if (onStateChangedListener != null){
-            onStateChangedListener.onStateChanged(this.state);
+        if (onOverDragStateChangeListener != null){
+            onOverDragStateChangeListener.onStateChanged(this.state);
         }
     }
 
@@ -452,8 +451,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
     }
 
     private void callbackScroll() {
-        if (onScrollListener != null){
-            onScrollListener.onScroll(this.state, this.scrollY);
+        if (onOverDragScrollListener != null){
+            onOverDragScrollListener.onScroll(this.state, this.scrollY);
         }
     }
 
@@ -504,24 +503,24 @@ public class VerticalOverDragContainer extends RelativeLayout {
     }
 
     /**
-     * @param onStateChangedListener 设置状态变化监听器
+     * @param onOverDragStateChangeListener 设置状态变化监听器
      */
-    public void setOnStateChangedListener(OnStateChangedListener onStateChangedListener) {
-        this.onStateChangedListener = onStateChangedListener;
+    public void setOnOverDragStateChangeListener(OnOverDragStateChangeListener onOverDragStateChangeListener) {
+        this.onOverDragStateChangeListener = onOverDragStateChangeListener;
     }
 
     /**
-     * @param onScrollListener 设置滚动位置监听器
+     * @param onOverDragScrollListener 设置滚动位置监听器
      */
-    public void setOnScrollListener(OnScrollListener onScrollListener) {
-        this.onScrollListener = onScrollListener;
+    public void setOnOverDragScrollListener(OnOverDragScrollListener onOverDragScrollListener) {
+        this.onOverDragScrollListener = onOverDragScrollListener;
     }
 
     /**
-     * @param onParkListener 设置顶部/底部驻留监听器(可用于实现下拉刷新/上拉加载)
+     * @param onOverDragParkListener 设置顶部/底部驻留监听器(可用于实现下拉刷新/上拉加载)
      */
-    public void setOnParkListener(OnParkListener onParkListener) {
-        this.onParkListener = onParkListener;
+    public void setOnOverDragParkListener(OnOverDragParkListener onOverDragParkListener) {
+        this.onOverDragParkListener = onOverDragParkListener;
     }
 
     /**
@@ -685,19 +684,19 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
     }
 
-    public interface OnStateChangedListener{
+    public interface OnOverDragStateChangeListener {
 
         void onStateChanged(int state);
 
     }
 
-    public interface OnScrollListener{
+    public interface OnOverDragScrollListener {
 
         void onScroll(int state, float scrollY);
 
     }
 
-    public interface OnParkListener{
+    public interface OnOverDragParkListener {
 
         void onTopPark();
 
