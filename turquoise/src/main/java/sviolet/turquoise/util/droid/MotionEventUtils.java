@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.util.droid;
 
+import android.annotation.TargetApi;
 import android.os.Looper;
 import android.view.MotionEvent;
 
@@ -35,6 +36,7 @@ import sviolet.turquoise.util.common.DateTimeUtils;
  *
  * Created by S.Violet on 2016/11/4.
  */
+@TargetApi(14)
 public class MotionEventUtils {
 
     private static final int TEMP_SIZE = 20;//最大支持的触点数
