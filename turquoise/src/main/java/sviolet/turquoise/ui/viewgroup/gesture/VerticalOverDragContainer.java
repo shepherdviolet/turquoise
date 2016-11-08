@@ -401,15 +401,15 @@ public class VerticalOverDragContainer extends RelativeLayout {
         }
 
         //计算当前位置
-        int _scrollY;
+        int currScrollY;
         if (Math.abs(scrollY) < 1){
-            _scrollY = 0;
+            currScrollY = 0;
         } else {
-            _scrollY = (int) -scrollY;
+            currScrollY = (int) scrollY;
         }
 
-        //滚动控件
-        scrollTo(0, _scrollY);
+        //滚动控件(手势坐标系与scroll反方向)
+        scrollTo(0, -currScrollY);
 
         //必须实现自刷新
         if (this.state == STATE_RELEASE && !scroller.isFinished())
@@ -483,12 +483,19 @@ public class VerticalOverDragContainer extends RelativeLayout {
     }
 
     private void callbackScroll() {
+        int currScrollY;
+        if (Math.abs(scrollY) < 1){
+            currScrollY = 0;
+        } else {
+            currScrollY = (int) scrollY;
+        }
+
         if (onOverDragScrollListener != null){
-            onOverDragScrollListener.onScroll(this.state, this.scrollY);
+            onOverDragScrollListener.onScroll(this.state, currScrollY);
         }
         if (refreshViewList != null){
             for (RefreshView refreshView : refreshViewList){
-                refreshView.onScroll(this.state, this.scrollY);
+                refreshView.onScroll(this.state, currScrollY);
             }
         }
     }
@@ -787,7 +794,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
          * @param state 当前状态
          * @param scrollY Y方向越界拖动位置, +:顶部越界拖动, -:底部越界拖动
          */
-        void onScroll(int state, float scrollY);
+        void onScroll(int state, int scrollY);
 
     }
 
