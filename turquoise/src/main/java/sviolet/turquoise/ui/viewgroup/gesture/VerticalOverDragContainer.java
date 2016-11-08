@@ -35,33 +35,73 @@ import sviolet.turquoise.ui.util.ViewCommonUtils;
 import sviolet.turquoise.util.droid.MotionEventUtils;
 
 /**
+ * <p>垂直方向越界拖动容器(RelativeLayout), 可用于实现下拉刷新上拉加载</p>
+ *
+ * <p>
+ *     支持的子控件:<br/>
+ *     1.ScrollView<br/>
+ *     2.ListView<br/>
+ * </p>
+ *
+ * <p>
+ *     将VerticalOverDragContainer作为父控件, 将需要越界拖动的ScrollView/ListView等作为子控件放置在其内部,
+ *     原则上, VerticalOverDragContainer只能容纳一个子控件, 如果必须要容纳多个控件, 请务必将ScrollView/ListView等
+ *     自身会滚动的控件放置在最后一个, VerticalOverDragContainer会根据最后一个子控件是否到达顶部/底部来判断
+ *     是否要发生越界滚动.
+ * </p>
+ *
+ * <pre>{@code
+ *      <sviolet.turquoise.ui.viewgroup.gesture.VerticalOverDragContainer
+ *          android:layout_width="match_parent"
+ *          android:layout_height="match_parent">
+ *
+ *          ...
+ *
+ *          <ScrollView
+ *              android:layout_width="match_parent"
+ *              android:layout_height="match_parent">
+ *
+ *              ...
+ *
+ *          </ScrollView>
+ *      </sviolet.turquoise.ui.viewgroup.gesture.VerticalOverDragContainer>
+ * }</pre>
+ *
  * Created by S.Violet on 2016/11/3.
  */
-
 public class VerticalOverDragContainer extends RelativeLayout {
 
+    //状态
     private static final int STATE_RELEASE = 0;
     private static final int STATE_HOLD = 1;
     private static final int STATE_TOP_OVER_DRAG = 2;
     private static final int STATE_BOTTOM_OVER_DRAG = 3;
     private static final int STATE_HORIZONTAL_DRAG = 4;
 
+    //手势方向
     private static final int DRAG_DIRECTION_HORIZONTAL = -1;
     private static final int DRAG_DIRECTION_UNKNOWN = 0;
     private static final int DRAG_DIRECTION_VERTICAL = 1;
 
     //////////////////////////////////////////////////////
 
+    //true:当出现水平方向的手势时, 禁用越界拖动
     private boolean disableIfHorizontalDrag = true;
 
+    //越界拖动界限, 超过该界限则进入PARK状态(停止在界限上, 用于实现下拉刷新上拉加载)
+    private int overDragThreshold = 300;
+    //越界拖动阻尼, 0-1, 值越小拖动越慢
     private float overDragResistance = 0.4f;
+
+    //scroller的回弹时间
     private int scrollDuration = 300;
 
-    private int overDragThreshold = 300;
-
+    //顶部PARK允许
     private boolean topParkEnabled = true;
+    //底部PARK允许
     private boolean bottomParkEnabled = true;
 
+    //监听器
     private OnStateChangedListener onStateChangedListener;
     private OnScrollListener onScrollListener;
     private OnParkListener onParkListener;
@@ -73,11 +113,15 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private int state = STATE_RELEASE;
     private int dragDirection = DRAG_DIRECTION_UNKNOWN;
 
+    //当前位置
     private float scrollY;
 
+    //按下时的坐标
     private float downX;
     private float downY;
+    //上一次的Y值
     private float lastY;
+    //上一次触点ID
     private int lastPointId = -1;
 
     private CompatOverScroller scroller;
@@ -109,20 +153,16 @@ public class VerticalOverDragContainer extends RelativeLayout {
         this.mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         this.scroller = new CompatOverScroller(getContext());
 
-        ViewCommonUtils.setInitListener(this, new ViewCommonUtils.InitListener() {
-            @Override
-            public void onInit() {
-
-            }
-        });
+//        ViewCommonUtils.setInitListener(this, new ViewCommonUtils.InitListener() {
+//            @Override
+//            public void onInit() {
+//
+//            }
+//        });
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-
-        System.out.println("container ev:" + ev);//TODO
-        System.out.println("container last scroll y:" + scrollY);//TODO
-
         //没有子控件时直接分发事件
         int childCount = getChildCount();
         if (childCount < 1) {
@@ -134,8 +174,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
         //子控件是否在顶部或底部
         ReachState reachState = checkReachState(child);
 
-        System.out.println("container reach state:" + reachState);//TODO
-
         //当前坐标
         float currX = ev.getX();
         float currY = ev.getY();
@@ -143,7 +181,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
         //Y方向位移量
         float distanceY = calculateMoveDistance(ev);
 
-        System.out.println("container distanceY:" + distanceY);//TODO
+        //ACTION_CANCEL
+        boolean isCancel = false;
 
         switch (ev.getActionMasked()){
             case MotionEvent.ACTION_DOWN:
@@ -155,24 +194,20 @@ public class VerticalOverDragContainer extends RelativeLayout {
                 this.lastY = currY;
 
                 if (scrollY == 0) {
-                    System.out.println("container down_hold");//TODO
                     //没有越界, 普通持有模式
                     stateToHold();
                     //事件分发给子控件处理
                     return super.dispatchTouchEvent(ev);
                 } else if (scrollY > 0){
-                    System.out.println("container down_to_top");//TODO
                     //上方越界
                     stateToTopOverDrag();
                     return true;
                 } else {
-                    System.out.println("container down_to_bottom");//TODO
                     //下方越界
                     stateToBottomOverDrag();
                     return true;
                 }
             case MotionEvent.ACTION_POINTER_DOWN:
-                System.out.println("container point_down");//TODO
                 if (this.state == STATE_HOLD || this.state == STATE_HORIZONTAL_DRAG){
                     return super.dispatchTouchEvent(ev);
                 }
@@ -180,7 +215,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
             case MotionEvent.ACTION_MOVE:
                 switch (this.state){
                     case STATE_HOLD:
-                        System.out.println("container move_hold");//TODO
                         /**
                          * 判定为横向滑动时, 禁止拦截事件, 可配置
                          */
@@ -188,7 +222,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             if (Math.abs(currY - downY) > mTouchSlop){
                                 dragDirection = DRAG_DIRECTION_VERTICAL;
                             } else if (Math.abs(currX - downX) > mTouchSlop) {
-                                System.out.println("container move_hold horizontal!!");//TODO
                                 dragDirection = DRAG_DIRECTION_HORIZONTAL;
                                 stateToHorizontalDrag();
                                 return super.dispatchTouchEvent(ev);
@@ -199,7 +232,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             /**
                              * 子控件到达顶部, 且继续向下拉动
                              */
-                            System.out.println("container move_hold upup");//TODO
                             //上边越界
                             stateToTopOverDrag();
                             //模拟取消事件给子控件
@@ -210,13 +242,11 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             }
                             //越界滚动
                             scrollByOffset(distanceY);
-                            System.out.println("container move_hold scroll to:" + scrollY);//TODO
                             return true;
                         } else if (reachState.reachBottom() && distanceY < -mTouchSlop){
                             /**
                              * 子控件到达底部, 且继续向上拉动
                              */
-                            System.out.println("container move_hold downdown");//TODO
                             //下边越界
                             stateToBottomOverDrag();
                             //模拟取消事件给子控件
@@ -227,22 +257,18 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             }
                             //越界滚动
                             scrollByOffset(distanceY);
-                            System.out.println("container move_hold scroll to:" + scrollY);//TODO
                             return true;
                         } else {
                             /**
                              * 子控件未到达顶部或底部
                              */
-                            System.out.println("container move_hold nono");//TODO
                             //无越界, 直接分发事件给子控件
                             return super.dispatchTouchEvent(ev);
                         }
                     case STATE_TOP_OVER_DRAG:
-                        System.out.println("container move_top_drag");//TODO
                         if (scrollY + distanceY <= 0){
                             //上边越界结束
                             if (reachState.reachBottom()){
-                                System.out.println("container move_top_drag top to bottom");//TODO
                                 //如果滚动子控件同时也到达底部的话, 直接进入下边越界状态
                                 stateToBottomOverDrag();
                                 //越界滚动
@@ -264,10 +290,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                         }
                         //越界滚动
                         scrollByOffset(distanceY);
-                        System.out.println("container move_top_drag scroll to:" + scrollY);//TODO
                         return true;
                     case STATE_BOTTOM_OVER_DRAG:
-                        System.out.println("container move_bottom_drag");//TODO
                         if (scrollY + distanceY >= 0){
                             //下边越界结束
                             if (reachState.reachTop()){
@@ -294,39 +318,39 @@ public class VerticalOverDragContainer extends RelativeLayout {
                         scrollByOffset(distanceY);
                         return true;
                     case STATE_HORIZONTAL_DRAG:
-                        System.out.println("container move_HORIZONTAL_drag");//TODO
                         //横向拖动模式直接分发给子控件
                         return super.dispatchTouchEvent(ev);
                 }
-                System.out.println("container move_other!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");//TODO
                 return true;
             case MotionEvent.ACTION_POINTER_UP:
-                System.out.println("container point_up");//TODO
                 if (this.state == STATE_HOLD || this.state == STATE_HORIZONTAL_DRAG){
                     return super.dispatchTouchEvent(ev);
                 }
                 break;
             case MotionEvent.ACTION_CANCEL:
-                System.out.println("container cancel");//TODO
-                //TODO 被外层拦截事件时, 将各种状态归位
+                //事件被上层拦截
+                isCancel = true;
             case MotionEvent.ACTION_UP:
                 int lastState = this.state;
                 stateToRelease();
-
                 switch (lastState){
                     case STATE_TOP_OVER_DRAG:
-                        if (topParkEnabled && scrollY > overDragThreshold){
-                            if (onParkListener != null){
-                                onParkListener.onTopPark();
+                        if (!isCancel) {
+                            if (topParkEnabled && scrollY > overDragThreshold) {
+                                if (onParkListener != null) {
+                                    onParkListener.onTopPark();
+                                }
                             }
                         }
                         //弹回
                         free();
                         return true;
                     case STATE_BOTTOM_OVER_DRAG:
-                        if (bottomParkEnabled && scrollY < -overDragThreshold){
-                            if (onParkListener != null){
-                                onParkListener.onBottomPark();
+                        if (!isCancel) {
+                            if (bottomParkEnabled && scrollY < -overDragThreshold) {
+                                if (onParkListener != null) {
+                                    onParkListener.onBottomPark();
+                                }
                             }
                         }
                         //弹回
@@ -336,12 +360,48 @@ public class VerticalOverDragContainer extends RelativeLayout {
                     case STATE_HORIZONTAL_DRAG:
                     case STATE_RELEASE:
                     default:
-                        System.out.println("container up hold");//TODO
                         return super.dispatchTouchEvent(ev);
                 }
         }
-        System.out.println("container other!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");//TODO
         return true;
+    }
+
+    @Override
+    public void computeScroll() {
+        //计算scroller
+        if (this.state == STATE_RELEASE && !scroller.isFinished()){
+            scroller.computeScrollOffset();
+            scrollToTarget(scroller.getCurrY());
+        }
+
+        //计算当前位置
+        int _scrollY;
+        if (Math.abs(scrollY) < 1){
+            _scrollY = 0;
+        } else {
+            _scrollY = (int) -scrollY;
+        }
+
+        //滚动控件
+        scrollTo(0, _scrollY);
+
+        //必须实现自刷新
+        if (this.state == STATE_RELEASE && !scroller.isFinished())
+            postInvalidate();
+    }
+
+    /*****************************************************************************88
+     * 状态变化
+     */
+
+    /**
+     * 重置状态
+     */
+    private void resetState() {
+        //停止滚动
+        scroller.abortAnimation();
+        //拖动方向重置
+        dragDirection = DRAG_DIRECTION_UNKNOWN;
     }
 
     private void stateToRelease() {
@@ -375,6 +435,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
         }
     }
 
+    /**********************************************************************
+     * 滚动
+     */
+
     private void scrollByOffset(float offset){
         scrollY += offset;
         postInvalidate();
@@ -393,113 +457,27 @@ public class VerticalOverDragContainer extends RelativeLayout {
         }
     }
 
-    /**
-     * 重置状态
+    /*************************************************************************
+     * public
      */
-    private void resetState() {
-        //停止滚动
-        scroller.abortAnimation();
-        //拖动方向重置
-        dragDirection = DRAG_DIRECTION_UNKNOWN;
-    }
 
-    private void free(){
-        //当前位置
-        int currScrollY = (int) scrollY;
-        //计算弹回目标
-        int target = 0;
-        if (topParkEnabled && currScrollY > overDragThreshold){
-            target = overDragThreshold;
-        }else if (bottomParkEnabled && currScrollY < -overDragThreshold){
-            target = -overDragThreshold;
-        }
-
-        //过滤
-        if (currScrollY == target){
-            return;
-        }
-        //回弹
-        scroller.startScroll(0, currScrollY, 0, target - currScrollY, scrollDuration);
-        //刷新
-        postInvalidate();
-    }
-
+    /**
+     * 回弹
+     */
     public void scrollBack(){
         free();
     }
 
-    private void emulateCancelEvent(MotionEvent ev){
-        touchPoints.setCapacity(ev.getPointerCount());
-        for (int i = 0 ; i < touchPoints.getCapacity() ; i++){
-            touchPoints.setX(i, ev.getX(i));
-            touchPoints.setY(i, ev.getY(i));
-            touchPoints.setId(i, ev.getPointerId(i));
-        }
-        MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_CANCEL, touchPoints, ev.getDownTime());
-        super.dispatchTouchEvent(emuEvent);
-    }
-
-    private void emulateDownEvent(MotionEvent ev){
-        //TODO 简易处理, 后续改成吧多个点变成多个POINTER_DOWN时间, 模拟的更逼真
-        touchPoints.setCapacity(ev.getPointerCount());
-        for (int i = 0 ; i < touchPoints.getCapacity() ; i++){
-            touchPoints.setX(i, ev.getX(i));
-            touchPoints.setY(i, ev.getY(i));
-            touchPoints.setId(i, ev.getPointerId(i));
-        }
-        MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_DOWN, touchPoints, ev.getDownTime());
-        super.dispatchTouchEvent(emuEvent);
-    }
-
-    @Override
-    public void computeScroll() {
-        //计算scroller
-        if (this.state == STATE_RELEASE && !scroller.isFinished()){
-            scroller.computeScrollOffset();
-            scrollToTarget(scroller.getCurrY());
-        }
-
-        //计算当前位置
-        int _scrollY;
-        if (Math.abs(scrollY) < 1){
-            _scrollY = 0;
-        } else {
-            _scrollY = (int) -scrollY;
-        }
-
-        //滚动控件
-        scrollTo(0, _scrollY);
-
-        //必须实现自刷新
-        if (this.state == STATE_RELEASE && !scroller.isFinished())
-            postInvalidate();
-    }
-
-    protected float calculateMoveDistance(MotionEvent event) {
-        //触摸事件结束后, 重置状态
-        if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
-            lastPointId = -1;
-            return 0;
-        }
-        //获得第一个触点的ID
-        int pointId = event.getPointerId(0);
-        if (pointId == lastPointId) {
-            //若第一个触点ID未变, 则计算点位移
-            float distance = event.getY() - lastY;
-            this.lastY = event.getY();
-            return distance;
-        } else {
-            //若第一个触点ID变化, 则记录新的ID, 本次视为没有移动
-            this.lastPointId = pointId;
-            this.lastY = event.getY();
-            return 0;
-        }
-    }
-
+    /**
+     * 获取滚动子控件
+     */
     protected View getScrollChild(){
         return getChildAt(getChildCount() - 1);
     }
 
+    /**
+     * 判断子控件是否达到顶部/底部(增加对View的支持, 可复写此方法实现)
+     */
     protected ReachState checkReachState(View child) {
         boolean reachTop;
         boolean reachBottom;
@@ -524,6 +502,163 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
         return ReachState.HALFWAY;
     }
+
+    /**
+     * @param onStateChangedListener 设置状态变化监听器
+     */
+    public void setOnStateChangedListener(OnStateChangedListener onStateChangedListener) {
+        this.onStateChangedListener = onStateChangedListener;
+    }
+
+    /**
+     * @param onScrollListener 设置滚动位置监听器
+     */
+    public void setOnScrollListener(OnScrollListener onScrollListener) {
+        this.onScrollListener = onScrollListener;
+    }
+
+    /**
+     * @param onParkListener 设置顶部/底部驻留监听器(可用于实现下拉刷新/上拉加载)
+     */
+    public void setOnParkListener(OnParkListener onParkListener) {
+        this.onParkListener = onParkListener;
+    }
+
+    /**
+     * @param disableIfHorizontalDrag true:当发生横向手势, 禁止越界拖动, 常用与嵌套横向滑动的控件, 例如ViewPager
+     */
+    public void setDisableIfHorizontalDrag(boolean disableIfHorizontalDrag) {
+        this.disableIfHorizontalDrag = disableIfHorizontalDrag;
+    }
+
+    /**
+     * @param overDragResistance 0-1, 越界拖动阻尼, 值约小越界拖动越慢
+     */
+    public void setOverDragResistance(float overDragResistance) {
+        if (overDragResistance < 0 || overDragResistance > 1){
+            throw new RuntimeException("overDragResistance must >= 0 and <= 1");
+        }
+        this.overDragResistance = overDragResistance;
+    }
+
+    /**
+     * @param scrollDuration ms, 越界弹回的时间
+     */
+    public void setScrollDuration(int scrollDuration) {
+        if (scrollDuration < 0){
+            throw new RuntimeException("scrollDuration must >= 0");
+        }
+        this.scrollDuration = scrollDuration;
+    }
+
+    /**
+     * @param overDragThreshold >=0, 当越界拖动超过该设定值时, 会发生PARK时间, 滚动位置会停滞在设定值上, 用于实现下拉刷新上拉加载
+     */
+    public void setOverDragThreshold(int overDragThreshold) {
+        if (overDragThreshold < 0){
+            throw new RuntimeException("overDragThreshold must >= 0");
+        }
+        this.overDragThreshold = overDragThreshold;
+    }
+
+    /**
+     * @param topParkEnabled true:允许顶部PARK
+     */
+    public void setTopParkEnabled(boolean topParkEnabled) {
+        this.topParkEnabled = topParkEnabled;
+    }
+
+    /**
+     * @param bottomParkEnabled true:允许底部PARK
+     */
+    public void setBottomParkEnabled(boolean bottomParkEnabled) {
+        this.bottomParkEnabled = bottomParkEnabled;
+    }
+
+    /*************************************************************************
+     * private
+     */
+
+    /**
+     * 回弹
+     */
+    private void free(){
+        //当前位置
+        int currScrollY = (int) scrollY;
+        //计算弹回目标
+        int target = 0;
+        if (topParkEnabled && currScrollY > overDragThreshold){
+            target = overDragThreshold;
+        }else if (bottomParkEnabled && currScrollY < -overDragThreshold){
+            target = -overDragThreshold;
+        }
+
+        //过滤
+        if (currScrollY == target){
+            return;
+        }
+        //回弹
+        scroller.startScroll(0, currScrollY, 0, target - currScrollY, scrollDuration);
+        //刷新
+        postInvalidate();
+    }
+
+    /**
+     * 模拟CANCEL时间分发给子控件
+     */
+    private void emulateCancelEvent(MotionEvent ev){
+        touchPoints.setCapacity(ev.getPointerCount());
+        for (int i = 0 ; i < touchPoints.getCapacity() ; i++){
+            touchPoints.setX(i, ev.getX(i));
+            touchPoints.setY(i, ev.getY(i));
+            touchPoints.setId(i, ev.getPointerId(i));
+        }
+        MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_CANCEL, touchPoints, ev.getDownTime());
+        super.dispatchTouchEvent(emuEvent);
+    }
+
+    /**
+     * 模拟DOWN事件分发给子控件
+     */
+    private void emulateDownEvent(MotionEvent ev){
+        //TODO 简易处理, 后续改成吧多个点变成多个POINTER_DOWN时间, 模拟的更逼真
+        touchPoints.setCapacity(ev.getPointerCount());
+        for (int i = 0 ; i < touchPoints.getCapacity() ; i++){
+            touchPoints.setX(i, ev.getX(i));
+            touchPoints.setY(i, ev.getY(i));
+            touchPoints.setId(i, ev.getPointerId(i));
+        }
+        MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_DOWN, touchPoints, ev.getDownTime());
+        super.dispatchTouchEvent(emuEvent);
+    }
+
+    /**
+     * 计算Y方向上的位移
+     */
+    protected float calculateMoveDistance(MotionEvent event) {
+        //触摸事件结束后, 重置状态
+        if (event.getActionMasked() == MotionEvent.ACTION_UP || event.getActionMasked() == MotionEvent.ACTION_CANCEL) {
+            lastPointId = -1;
+            return 0;
+        }
+        //获得第一个触点的ID
+        int pointId = event.getPointerId(0);
+        if (pointId == lastPointId) {
+            //若第一个触点ID未变, 则计算点位移
+            float distance = event.getY() - lastY;
+            this.lastY = event.getY();
+            return distance;
+        } else {
+            //若第一个触点ID变化, 则记录新的ID, 本次视为没有移动
+            this.lastPointId = pointId;
+            this.lastY = event.getY();
+            return 0;
+        }
+    }
+
+    /*********************************************************************************
+     * interface / enum
+     */
 
     protected enum ReachState {
 
@@ -568,42 +703,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
         void onBottomPark();
 
-    }
-
-    public void setOnStateChangedListener(OnStateChangedListener onStateChangedListener) {
-        this.onStateChangedListener = onStateChangedListener;
-    }
-
-    public void setOnScrollListener(OnScrollListener onScrollListener) {
-        this.onScrollListener = onScrollListener;
-    }
-
-    public void setOnParkListener(OnParkListener onParkListener) {
-        this.onParkListener = onParkListener;
-    }
-
-    public void setDisableIfHorizontalDrag(boolean disableIfHorizontalDrag) {
-        this.disableIfHorizontalDrag = disableIfHorizontalDrag;
-    }
-
-    public void setOverDragResistance(float overDragResistance) {
-        this.overDragResistance = overDragResistance;
-    }
-
-    public void setScrollDuration(int scrollDuration) {
-        this.scrollDuration = scrollDuration;
-    }
-
-    public void setOverDragThreshold(int overDragThreshold) {
-        this.overDragThreshold = overDragThreshold;
-    }
-
-    public void setTopParkEnabled(boolean topParkEnabled) {
-        this.topParkEnabled = topParkEnabled;
-    }
-
-    public void setBottomParkEnabled(boolean bottomParkEnabled) {
-        this.bottomParkEnabled = bottomParkEnabled;
     }
 
 }

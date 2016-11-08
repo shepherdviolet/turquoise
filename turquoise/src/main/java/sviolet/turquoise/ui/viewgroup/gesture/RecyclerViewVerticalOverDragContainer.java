@@ -28,9 +28,37 @@ import android.view.View;
 import sviolet.turquoise.ui.util.RecyclerViewUtils;
 
 /**
- * <p>支持RecyclerView的</p>
+ * <p>垂直方向越界拖动容器(RelativeLayout), 可用于实现下拉刷新上拉加载</p>
  *
- * Created by S.Violet on 2016/11/7.
+ * <p>
+ *     支持的子控件:<br/>
+ *     1.ScrollView<br/>
+ *     2.ListView<br/>
+ *     3.RecyclerView<br/>
+ * </p>
+ *
+ * <p>
+ *     将RecyclerViewVerticalOverDragContainer作为父控件, 将需要越界拖动的RecyclerView/ScrollView/ListView等作为子控件放置在其内部,
+ *     原则上, RecyclerViewVerticalOverDragContainer只能容纳一个子控件, 如果必须要容纳多个控件, 请务必将RecyclerView/ScrollView/ListView等
+ *     自身会滚动的控件放置在最后一个, RecyclerViewVerticalOverDragContainer会根据最后一个子控件是否到达顶部/底部来判断
+ *     是否要发生越界滚动.
+ * </p>
+ *
+ * <pre>{@code
+ *      <sviolet.turquoise.ui.viewgroup.gesture.RecyclerViewVerticalOverDragContainer
+ *          android:layout_width="match_parent"
+ *          android:layout_height="match_parent">
+ *
+ *          ...
+ *
+ *          <android.support.v7.widget.RecyclerView
+ *              android:layout_width="match_parent"
+ *              android:layout_height="match_parent" />
+ *
+ *      </sviolet.turquoise.ui.viewgroup.gesture.RecyclerViewVerticalOverDragContainer>
+ * }</pre>
+ *
+ * Created by S.Violet on 2016/11/3.
  */
 public class RecyclerViewVerticalOverDragContainer extends VerticalOverDragContainer {
 
@@ -46,18 +74,25 @@ public class RecyclerViewVerticalOverDragContainer extends VerticalOverDragConta
         super(context, attrs, defStyleAttr);
     }
 
+    /**
+     * 复写checkReachState实现对RecyclerView的支持
+     */
     @Override
     protected ReachState checkReachState(View child) {
+        /**
+         * RecyclerView的流程
+         */
         if (child instanceof RecyclerView){
             boolean reachTop;
             boolean reachBottom;
 
+            //判断RecyclerView是否到达顶部或底部
             RecyclerView.LayoutManager layoutManager = ((RecyclerView)child).getLayoutManager();
             if (layoutManager instanceof LinearLayoutManager) {
                 reachTop = RecyclerViewUtils.reachTop((LinearLayoutManager) layoutManager);
                 reachBottom = RecyclerViewUtils.reachBottom((LinearLayoutManager) layoutManager);
             } else {
-                throw new RuntimeException("[RecyclerVerticalOverDragContainer]child RecyclerView is not supported, view:" + child + ", layout manager:" + layoutManager);
+                throw new RuntimeException("[RecyclerViewVerticalOverDragContainer]child RecyclerView is not supported, view:" + child + ", layout manager:" + layoutManager);
             }
 
             if (reachTop && reachBottom) {
@@ -69,6 +104,9 @@ public class RecyclerViewVerticalOverDragContainer extends VerticalOverDragConta
             }
             return ReachState.HALFWAY;
         }
+        /**
+         * 其他控件的流程
+         */
         return super.checkReachState(child);
     }
 }
