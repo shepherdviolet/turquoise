@@ -123,6 +123,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
     //上一次触点ID
     private int lastPointId = -1;
 
+    private boolean topParked = false;
+    private boolean bottomParked = false;
+
     private CompatOverScroller scroller;
 
     private MotionEventUtils.TouchPoints touchPoints = new MotionEventUtils.TouchPoints();
@@ -151,13 +154,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private void init() {
         this.mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         this.scroller = new CompatOverScroller(getContext());
-
-//        ViewCommonUtils.setInitListener(this, new ViewCommonUtils.InitListener() {
-//            @Override
-//            public void onInit() {
-//
-//            }
-//        });
     }
 
     @Override
@@ -336,7 +332,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                     case STATE_TOP_OVER_DRAG:
                         if (!isCancel) {
                             if (topParkEnabled && scrollY > overDragThreshold) {
-                                if (onOverDragParkListener != null) {
+                                if (onOverDragParkListener != null && !topParked) {
+                                    topParked = true;
                                     onOverDragParkListener.onTopPark();
                                 }
                             }
@@ -347,7 +344,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                     case STATE_BOTTOM_OVER_DRAG:
                         if (!isCancel) {
                             if (bottomParkEnabled && scrollY < -overDragThreshold) {
-                                if (onOverDragParkListener != null) {
+                                if (onOverDragParkListener != null && !bottomParked) {
+                                    bottomParked = true;
                                     onOverDragParkListener.onBottomPark();
                                 }
                             }
@@ -460,10 +458,13 @@ public class VerticalOverDragContainer extends RelativeLayout {
      * public
      */
 
-    /**
-     * 回弹
-     */
-    public void scrollBack(){
+    public void resetTopPark(){
+        topParked = false;
+        free();
+    }
+
+    public void resetBottomPark(){
+        bottomParked = false;
         free();
     }
 
@@ -686,20 +687,37 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
     public interface OnOverDragStateChangeListener {
 
+        /**
+         * private static final int STATE_RELEASE = 0;
+         * private static final int STATE_HOLD = 1;
+         * private static final int STATE_TOP_OVER_DRAG = 2;
+         * private static final int STATE_BOTTOM_OVER_DRAG = 3;
+         * private static final int STATE_HORIZONTAL_DRAG = 4;
+         */
         void onStateChanged(int state);
 
     }
 
     public interface OnOverDragScrollListener {
 
+        /**
+         * @param state 当前状态
+         * @param scrollY Y方向越界拖动位置, +:顶部越界拖动, -:底部越界拖动
+         */
         void onScroll(int state, float scrollY);
 
     }
 
     public interface OnOverDragParkListener {
 
+        /**
+         * 顶部PARK事件, 事件发生后需要手动重置状态(resetTopPark方法), 在重置状态前, 不会再发生相同事件
+         */
         void onTopPark();
 
+        /**
+         * 底部PARK, 事件发生后需要手动重置状态(resetBottomPark方法), 在重置状态前, 不会再发生相同事件
+         */
         void onBottomPark();
 
     }
