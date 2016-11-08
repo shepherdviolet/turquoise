@@ -574,6 +574,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
         if (refreshViewList == null){
             refreshViewList = new ArrayList<>();
         }
+        refreshView.setContainer(this);
         refreshViewList.add(refreshView);
     }
 
@@ -779,6 +780,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
      * 下拉刷新上拉加载效果控件接口
      */
     public interface RefreshView extends OnOverDragStateChangeListener, OnOverDragScrollListener, OnOverDragParkListener{
+
+        void setContainer(VerticalOverDragContainer container);
 
     }
 
