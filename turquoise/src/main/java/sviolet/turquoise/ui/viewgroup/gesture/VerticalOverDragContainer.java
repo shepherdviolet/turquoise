@@ -629,6 +629,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
         this.bottomParkEnabled = bottomParkEnabled;
     }
 
+    public int getOverDragThreshold(){
+        return overDragThreshold;
+    }
+
     /*************************************************************************
      * private
      */
