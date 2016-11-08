@@ -252,7 +252,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             }
                         }
                         //判断状态
-                        if (reachState.reachTop() && distanceY > mTouchSlop){
+                        if (reachState.reachTop() && distanceY > 0 && currY - downY > mTouchSlop){
                             /**
                              * 子控件到达顶部, 且继续向下拉动
                              */
@@ -267,7 +267,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             //越界滚动
                             scrollByOffset(distanceY);
                             return true;
-                        } else if (reachState.reachBottom() && distanceY < -mTouchSlop){
+                        } else if (reachState.reachBottom() && distanceY < 0 && currY - downY < -mTouchSlop){
                             /**
                              * 子控件到达底部, 且继续向上拉动
                              */
