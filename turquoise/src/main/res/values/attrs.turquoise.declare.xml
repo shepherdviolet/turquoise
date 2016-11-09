@@ -205,4 +205,24 @@
         <attr name="VerticalOverDragContainer_bottomParkEnabled" format="boolean" />
     </declare-styleable>
 
+    <!-- sviolet.turquoise.ui.viewgroup.gesture.SimpleVerticalOverDragRefreshView -->
+    <declare-styleable name="SimpleVerticalOverDragRefreshView">
+        <attr name="SimpleVerticalOverDragRefreshView_type" format="enum"><!-- 类型 -->
+            <enum name="topStatic" value="0"/><!--  -->
+            <enum name="bottomStatic" value="1" /><!--  -->
+            <enum name="inFromTop" value="2"/><!--  -->
+            <enum name="inFromBottom" value="3" /><!--  -->
+        </attr>
+        <!-- 初始状态布局ID -->
+        <attr name="SimpleVerticalOverDragRefreshView_initViewIndex" format="integer" />
+        <!-- 松开状态布局ID -->
+        <attr name="SimpleVerticalOverDragRefreshView_readyViewIndex" format="integer" />
+        <!-- 刷新状态布局ID -->
+        <attr name="SimpleVerticalOverDragRefreshView_refreshingViewIndex" format="integer" />
+        <!-- 成功状态布局ID -->
+        <attr name="SimpleVerticalOverDragRefreshView_succeedViewIndex" format="integer" />
+        <!-- 失败状态布局ID -->
+        <attr name="SimpleVerticalOverDragRefreshView_failedViewIndex" format="integer" />
+    </declare-styleable>
+
 </resources>
