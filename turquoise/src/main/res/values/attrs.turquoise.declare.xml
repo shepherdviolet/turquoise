@@ -213,15 +213,17 @@
             <enum name="inFromTop" value="2"/><!--  -->
             <enum name="inFromBottom" value="3" /><!--  -->
         </attr>
-        <!-- 初始状态布局ID -->
+        <!-- 显示刷新结果(成功/失败)时间, ms -->
+        <attr name="SimpleVerticalOverDragRefreshView_resultDuration" format="integer" />
+        <!-- 初始状态布局序号(在父控件中的序号, 0~childCount) -->
         <attr name="SimpleVerticalOverDragRefreshView_initViewIndex" format="integer" />
-        <!-- 松开状态布局ID -->
+        <!-- 松开状态布局序号(在父控件中的序号, 0~childCount) -->
         <attr name="SimpleVerticalOverDragRefreshView_readyViewIndex" format="integer" />
-        <!-- 刷新状态布局ID -->
+        <!-- 刷新状态布局序号(在父控件中的序号, 0~childCount) -->
         <attr name="SimpleVerticalOverDragRefreshView_refreshingViewIndex" format="integer" />
-        <!-- 成功状态布局ID -->
+        <!-- 成功状态布局序号(在父控件中的序号, 0~childCount) -->
         <attr name="SimpleVerticalOverDragRefreshView_succeedViewIndex" format="integer" />
-        <!-- 失败状态布局ID -->
+        <!-- 失败状态布局序号(在父控件中的序号, 0~childCount) -->
         <attr name="SimpleVerticalOverDragRefreshView_failedViewIndex" format="integer" />
     </declare-styleable>
 

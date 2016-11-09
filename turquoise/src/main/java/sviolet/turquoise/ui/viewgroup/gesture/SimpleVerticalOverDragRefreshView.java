@@ -41,29 +41,29 @@ import sviolet.turquoise.ui.util.ViewCommonUtils;
 
 public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements VerticalOverDragContainer.RefreshView {
 
-    public static final int TYPE_TOP_STATIC = 0;
-    public static final int TYPE_BOTTOM_STATIC = 1;
-    public static final int TYPE_IN_FROM_TOP = 2;
-    public static final int TYPE_IN_FROM_BOTTOM = 3;
+    public static final int TYPE_TOP_STATIC = 0;//顶部固定位置
+    public static final int TYPE_BOTTOM_STATIC = 1;//底部固定位置
+    public static final int TYPE_IN_FROM_TOP = 2;//从顶部滚动出现
+    public static final int TYPE_IN_FROM_BOTTOM = 3;//从底部滚动出现
 
-    private static final int STATE_INIT = 0;
-    private static final int STATE_READY = 1;
-    private static final int STATE_REFRESHING = 2;
-    private static final int STATE_SUCCEED = 3;
-    private static final int STATE_FAILED = 4;
+    private static final int STATE_INIT = 0;//初始状态
+    private static final int STATE_READY = 1;//松开刷新状态
+    private static final int STATE_REFRESHING = 2;//刷新状态
+    private static final int STATE_SUCCEED = 3;//刷新成功
+    private static final int STATE_FAILED = 4;//刷新失败
 
     //////////////////////////////////////////////////////////////////
 
-    private int type = TYPE_TOP_STATIC;
-    private long resultDuration = 500;
+    private int type = TYPE_TOP_STATIC;//类型
+    private long resultDuration = 500;//显示刷新结果(成功/失败)时间, ms
 
-    private int initViewIndex;
-    private int readyViewIndex;
-    private int refreshingViewIndex;
-    private int succeedViewIndex;
-    private int failedViewIndex;
+    private int initViewIndex;//初始状态布局序号(在父控件中的序号, 0~childCount)
+    private int readyViewIndex;//松开刷新状态布局序号(在父控件中的序号, 0~childCount)
+    private int refreshingViewIndex;//刷新状态布局序号(在父控件中的序号, 0~childCount)
+    private int succeedViewIndex;//成功状态布局序号(在父控件中的序号, 0~childCount)
+    private int failedViewIndex;//失败状态布局序号(在父控件中的序号, 0~childCount)
 
-    private RefreshListener refreshListener;
+    private RefreshListener refreshListener;//刷新监听器
 
     //////////////////////////////////////////////////////////////////
 
@@ -99,6 +99,7 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
         ViewCommonUtils.setInitListener(this, new ViewCommonUtils.InitListener() {
             @Override
             public void onInit() {
+                //根据各种效果的序号, 从子控件中获取
                 if (initViewIndex >= 0) {
                     viewInit = getChildAt(initViewIndex);
                     viewInit.setVisibility(View.VISIBLE);
@@ -128,7 +129,8 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
      */
     private void initSetting(final Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SimpleVerticalOverDragRefreshView);
-        type = typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_type, TYPE_TOP_STATIC);
+        setType(typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_type, TYPE_TOP_STATIC));
+        setResultDuration(typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_resultDuration, 500));
         initViewIndex = typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_initViewIndex, -1);
         readyViewIndex = typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_readyViewIndex, -1);
         refreshingViewIndex = typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_refreshingViewIndex, -1);
@@ -143,8 +145,35 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
     }
 
     @Override
+    public void onStateChanged(int state) {
+
+    }
+
+    @Override
+    public void onScroll(int state, int scrollY) {
+        //更新位置
+        this.scrollY = scrollY;
+
+        if(this.state == STATE_INIT){
+            //init状态变ready
+            if(Math.abs(scrollY) >= getOverDragThreshold()){
+                stateToReady();
+            }
+        }else if(this.state == STATE_READY){
+            //ready状态变init
+            if(Math.abs(scrollY) < getOverDragThreshold()){
+                stateToInit();
+            }
+        }
+
+        postInvalidate();
+    }
+
+    @Override
     public void onTopPark() {
+        //顶部固定或顶部进入模式时接受顶部PARK事件
         if (type == TYPE_TOP_STATIC || type == TYPE_IN_FROM_TOP){
+            //init/ready状态才会进入refreshing状态
             if (state == STATE_INIT || state == STATE_READY) {
                 stateToRefreshing();
                 if(refreshListener != null){
@@ -156,7 +185,9 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
 
     @Override
     public void onBottomPark() {
+        //底部固定或底部进入模式时接受底部PARK事件
         if (type == TYPE_BOTTOM_STATIC || type == TYPE_IN_FROM_BOTTOM){
+            //init/ready状态才会进入refreshing状态
             if (state == STATE_INIT || state == STATE_READY) {
                 stateToRefreshing();
                 if(refreshListener != null){
@@ -167,44 +198,25 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
     }
 
     @Override
-    public void onScroll(int state, int scrollY) {
-        this.scrollY = scrollY;
-        System.out.println(scrollY);
-
-        if(this.state == STATE_INIT){
-            if(Math.abs(scrollY) >= getOverDragThreshold()){
-                stateToReady();
-            }
-        }else if(this.state == STATE_READY){
-            if(Math.abs(scrollY) < getOverDragThreshold()){
-                stateToInit();
-            }
-        }
-
-        postInvalidate();
-    }
-
-    @Override
-    public void onStateChanged(int state) {
-
-    }
-
-    @Override
     public void computeScroll() {
         switch (type){
-            case TYPE_IN_FROM_TOP:
+            case TYPE_IN_FROM_TOP://顶部进入模式
                 //手势坐标系与scroll反方向
                 scrollTo(0, - scrollY + getOverDragThreshold());
                 break;
-            case TYPE_IN_FROM_BOTTOM:
+            case TYPE_IN_FROM_BOTTOM://底部进入模式
                 //手势坐标系与scroll反方向
                 scrollTo(0, - scrollY - getOverDragThreshold());
                 break;
-            default:
+            default://固定模式不滚动
                 scrollTo(0, 0);
                 break;
         }
     }
+
+    /*******************************************************************************
+     * state change
+     */
 
     protected void stateToInit(){
         state = STATE_INIT;
@@ -329,6 +341,13 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
         postInvalidate();
     }
 
+    /***********************************************************88
+     * protected
+     */
+
+    /**
+     * @return 获得弱引用持有的VerticalOverDragContainer
+     */
     protected VerticalOverDragContainer getContainer() {
         if (this.container != null) {
             return this.container.get();
@@ -336,17 +355,9 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
         return null;
     }
 
-    public void reset(boolean succeed) {
-        if (state == STATE_REFRESHING){
-            if (succeed){
-                stateToSucceed();
-            }else{
-                stateToFailed();
-            }
-            myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_RESET, resultDuration);
-        }
-    }
-
+    /**
+     * 重置VerticalOverDragContainer的PARK状态
+     */
     protected void resetContainer() {
         VerticalOverDragContainer container = getContainer();
         if (container != null) {
@@ -358,6 +369,9 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
         }
     }
 
+    /**
+     * @return 获得VerticalOverDragContainer的OverDragThreshold
+     */
     protected int getOverDragThreshold() {
         VerticalOverDragContainer container = getContainer();
         if (container != null) {
@@ -366,12 +380,59 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
         return 0;
     }
 
-    public interface RefreshListener{
-        void onRefresh();
+    /***********************************************************************
+     * public
+     */
+
+    /**
+     * 重置刷新状态, 在刷新流程结束后务必调用该方法. 本控件在触发刷新事件后, 会保持刷新中的状态, 直到
+     * 调用该方法返回刷新结果, 并结束刷新状态.
+     * @param succeed true:刷新成功 false:刷新失败
+     */
+    public void reset(boolean succeed) {
+        if (state == STATE_REFRESHING){
+            if (succeed){
+                stateToSucceed();
+            }else{
+                stateToFailed();
+            }
+            myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_RESET, resultDuration);
+        }
     }
 
+    /**
+     * @param type 设置类型
+     */
+    public void setType(int type){
+        if (type < 0 || type > 3){
+            throw new RuntimeException("invalid type:" + type);
+        }
+        this.type = type;
+    }
+
+    /**
+     * @param resultDuration 设置结果状态显示时间
+     */
+    public void setResultDuration(long resultDuration){
+        if (resultDuration < 0){
+            throw new RuntimeException("resultDuration >= 0");
+        }
+        this.resultDuration = resultDuration;
+    }
+
+    /**
+     * @param listener 设置刷新监听器
+     */
     public void setRefreshListener(RefreshListener listener){
         this.refreshListener = listener;
+    }
+
+    /**********************************************************************************
+     * class
+     */
+
+    public interface RefreshListener{
+        void onRefresh();
     }
 
     /***********************************************************************************
