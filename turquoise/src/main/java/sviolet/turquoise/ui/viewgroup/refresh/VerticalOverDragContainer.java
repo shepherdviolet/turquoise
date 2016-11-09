@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.ui.viewgroup.gesture;
+package sviolet.turquoise.ui.viewgroup.refresh;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -48,8 +48,8 @@ import sviolet.turquoise.util.droid.MotionEventUtils;
  * <p>注意!!! 当发生PARK事件后, VerticalOverDragContainer会保持PARK状态, 不会再发生相同的PARK事件,
  * 必须调用resetTopPark/resetBottomPark方法, 重置状态, 才会再次发生PARK事件. 在实际使用中,
  * 接收到PARK事件时, 开始进行数据刷新, 当数据刷新完成后, 调用resetTopPark/resetBottomPark方法重置状态.
- * 当你使用{@link SimpleVerticalOverDragRefreshView}配合实现下拉刷新时, 调用{@link SimpleVerticalOverDragRefreshView}
- * 的{@link SimpleVerticalOverDragRefreshView#reset()}可以起到相同的作用.</p>
+ * 当你使用{@link SimpleVerticalRefreshIndicatorGroup}配合实现下拉刷新时, 调用{@link SimpleVerticalRefreshIndicatorGroup}
+ * 的{@link SimpleVerticalRefreshIndicatorGroup#reset(boolean)}可以起到相同的作用.</p>
  *
  * <p>
  *     支持的子控件:<br/>
@@ -65,7 +65,7 @@ import sviolet.turquoise.util.droid.MotionEventUtils;
  * </p>
  *
  * <pre>{@code
- *      <sviolet.turquoise.ui.viewgroup.gesture.VerticalOverDragContainer
+ *      <sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer
  *          android:layout_width="match_parent"
  *          android:layout_height="match_parent"
  *          sviolet:VerticalOverDragContainer_disableIfHorizontalDrag="false"
@@ -84,7 +84,7 @@ import sviolet.turquoise.util.droid.MotionEventUtils;
  *              ...
  *
  *          </ScrollView>
- *      </sviolet.turquoise.ui.viewgroup.gesture.VerticalOverDragContainer>
+ *      </sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer>
  * }</pre>
  *
  * Created by S.Violet on 2016/11/3.
@@ -122,10 +122,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private boolean bottomParkEnabled = false;
 
     //监听器
-    private OnOverDragStateChangeListener onOverDragStateChangeListener;
-    private OnOverDragScrollListener onOverDragScrollListener;
-    private OnOverDragParkListener onOverDragParkListener;
-    private List<RefreshView> refreshViewList;
+    private List<RefreshIndicator> refreshIndicatorList;
 
     //////////////////////////////////////////////////////
 
@@ -465,12 +462,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
     }
 
     private void callbackStateChanged() {
-        if (onOverDragStateChangeListener != null){
-            onOverDragStateChangeListener.onStateChanged(this.state);
-        }
-        if (refreshViewList != null){
-            for (RefreshView refreshView : refreshViewList){
-                refreshView.onStateChanged(this.state);
+        if (refreshIndicatorList != null){
+            for (RefreshIndicator refreshIndicator : refreshIndicatorList){
+                refreshIndicator.onStateChanged(this.state);
             }
         }
     }
@@ -499,12 +493,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
             currScrollY = (int) scrollY;
         }
 
-        if (onOverDragScrollListener != null){
-            onOverDragScrollListener.onScroll(this.state, currScrollY);
-        }
-        if (refreshViewList != null){
-            for (RefreshView refreshView : refreshViewList){
-                refreshView.onScroll(this.state, currScrollY);
+        if (refreshIndicatorList != null){
+            for (RefreshIndicator refreshIndicator : refreshIndicatorList){
+                refreshIndicator.onScroll(currScrollY);
             }
         }
     }
@@ -514,23 +505,17 @@ public class VerticalOverDragContainer extends RelativeLayout {
      */
 
     private void callbackTopPark() {
-        if (onOverDragParkListener != null) {
-            onOverDragParkListener.onTopPark();
-        }
-        if (refreshViewList != null){
-            for (RefreshView refreshView : refreshViewList){
-                refreshView.onTopPark();
+        if (refreshIndicatorList != null){
+            for (RefreshIndicator refreshIndicator : refreshIndicatorList){
+                refreshIndicator.onTopPark();
             }
         }
     }
 
     private void callbackBottomPark() {
-        if (onOverDragParkListener != null) {
-            onOverDragParkListener.onBottomPark();
-        }
-        if (refreshViewList != null){
-            for (RefreshView refreshView : refreshViewList){
-                refreshView.onBottomPark();
+        if (refreshIndicatorList != null){
+            for (RefreshIndicator refreshIndicator : refreshIndicatorList){
+                refreshIndicator.onBottomPark();
             }
         }
     }
@@ -585,38 +570,19 @@ public class VerticalOverDragContainer extends RelativeLayout {
     }
 
     /**
-     * @param onOverDragStateChangeListener 设置状态变化监听器
+     * 添加刷新效果指示器, 能够监听状态变化/越界滚动/PARK事件.
+     * 用于下拉刷新/上拉加载效果, 先实现RefreshIndicator接口, 然后通过该方法添加监听.
+     * @param refreshIndicator 刷新效果指示器
      */
-    public void setOnOverDragStateChangeListener(OnOverDragStateChangeListener onOverDragStateChangeListener) {
-        this.onOverDragStateChangeListener = onOverDragStateChangeListener;
-    }
-
-    /**
-     * @param onOverDragScrollListener 设置滚动位置监听器
-     */
-    public void setOnOverDragScrollListener(OnOverDragScrollListener onOverDragScrollListener) {
-        this.onOverDragScrollListener = onOverDragScrollListener;
-    }
-
-    /**
-     * @param onOverDragParkListener 设置顶部/底部驻留监听器(可用于实现下拉刷新/上拉加载)
-     */
-    public void setOnOverDragParkListener(OnOverDragParkListener onOverDragParkListener) {
-        this.onOverDragParkListener = onOverDragParkListener;
-    }
-
-    /**
-     * @param refreshView 下拉刷新/上拉加载的效果需要实现RefreshView接口, 并通过该方法添加
-     */
-    public void addRefreshView(RefreshView refreshView){
-        if (refreshView == null){
+    public void addRefreshIndicator(RefreshIndicator refreshIndicator){
+        if (refreshIndicator == null){
             return;
         }
-        if (refreshViewList == null){
-            refreshViewList = new ArrayList<>();
+        if (refreshIndicatorList == null){
+            refreshIndicatorList = new ArrayList<>();
         }
-        refreshView.setContainer(this);
-        refreshViewList.add(refreshView);
+        refreshIndicator.setContainer(this);
+        refreshIndicatorList.add(refreshIndicator);
     }
 
     /**
@@ -784,7 +750,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
     }
 
-    public interface OnOverDragStateChangeListener {
+    /**
+     * 下拉刷新上拉加载效果控件接口
+     */
+    public interface RefreshIndicator {
 
         /**
          * private static final int STATE_RELEASE = 0;
@@ -795,19 +764,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
          */
         void onStateChanged(int state);
 
-    }
-
-    public interface OnOverDragScrollListener {
-
         /**
-         * @param state 当前状态
          * @param scrollY Y方向越界拖动位置, +:顶部越界拖动, -:底部越界拖动
          */
-        void onScroll(int state, int scrollY);
-
-    }
-
-    public interface OnOverDragParkListener {
+        void onScroll(int scrollY);
 
         /**
          * 顶部PARK事件, 事件发生后需要手动重置状态(resetTopPark方法), 在重置状态前, 不会再发生相同事件
@@ -818,13 +778,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
          * 底部PARK, 事件发生后需要手动重置状态(resetBottomPark方法), 在重置状态前, 不会再发生相同事件
          */
         void onBottomPark();
-
-    }
-
-    /**
-     * 下拉刷新上拉加载效果控件接口
-     */
-    public interface RefreshView extends OnOverDragStateChangeListener, OnOverDragScrollListener, OnOverDragParkListener{
 
         void setContainer(VerticalOverDragContainer container);
 

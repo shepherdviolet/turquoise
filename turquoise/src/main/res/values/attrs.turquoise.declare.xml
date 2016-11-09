@@ -189,7 +189,7 @@
         <attr name="android:src" /><!-- 图片资源ID -->
     </declare-styleable>
 
-    <!-- sviolet.turquoise.ui.viewgroup.gesture.VerticalOverDragContainer -->
+    <!-- sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer -->
     <declare-styleable name="VerticalOverDragContainer">
         <!-- 当出现水平方向的手势时, 禁用越界拖动 -->
         <attr name="VerticalOverDragContainer_disableIfHorizontalDrag" format="boolean" />
@@ -205,26 +205,26 @@
         <attr name="VerticalOverDragContainer_bottomParkEnabled" format="boolean" />
     </declare-styleable>
 
-    <!-- sviolet.turquoise.ui.viewgroup.gesture.SimpleVerticalOverDragRefreshView -->
-    <declare-styleable name="SimpleVerticalOverDragRefreshView">
-        <attr name="SimpleVerticalOverDragRefreshView_type" format="enum"><!-- 类型 -->
+    <!-- sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup -->
+    <declare-styleable name="SimpleVerticalRefreshIndicatorGroup">
+        <attr name="SimpleVerticalRefreshIndicatorGroup_type" format="enum"><!-- 类型 -->
             <enum name="topStatic" value="0"/><!--  -->
             <enum name="bottomStatic" value="1" /><!--  -->
             <enum name="inFromTop" value="2"/><!--  -->
             <enum name="inFromBottom" value="3" /><!--  -->
         </attr>
         <!-- 显示刷新结果(成功/失败)时间, ms -->
-        <attr name="SimpleVerticalOverDragRefreshView_resultDuration" format="integer" />
+        <attr name="SimpleVerticalRefreshIndicatorGroup_resultDuration" format="integer" />
         <!-- 初始状态布局序号(在父控件中的序号, 0~childCount) -->
-        <attr name="SimpleVerticalOverDragRefreshView_initViewIndex" format="integer" />
+        <attr name="SimpleVerticalRefreshIndicatorGroup_initViewIndex" format="integer" />
         <!-- 松开状态布局序号(在父控件中的序号, 0~childCount) -->
-        <attr name="SimpleVerticalOverDragRefreshView_readyViewIndex" format="integer" />
+        <attr name="SimpleVerticalRefreshIndicatorGroup_readyViewIndex" format="integer" />
         <!-- 刷新状态布局序号(在父控件中的序号, 0~childCount) -->
-        <attr name="SimpleVerticalOverDragRefreshView_refreshingViewIndex" format="integer" />
+        <attr name="SimpleVerticalRefreshIndicatorGroup_refreshingViewIndex" format="integer" />
         <!-- 成功状态布局序号(在父控件中的序号, 0~childCount) -->
-        <attr name="SimpleVerticalOverDragRefreshView_succeedViewIndex" format="integer" />
+        <attr name="SimpleVerticalRefreshIndicatorGroup_succeedViewIndex" format="integer" />
         <!-- 失败状态布局序号(在父控件中的序号, 0~childCount) -->
-        <attr name="SimpleVerticalOverDragRefreshView_failedViewIndex" format="integer" />
+        <attr name="SimpleVerticalRefreshIndicatorGroup_failedViewIndex" format="integer" />
     </declare-styleable>
 
 </resources>

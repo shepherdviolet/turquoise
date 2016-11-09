@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.ui.viewgroup.gesture;
+package sviolet.turquoise.ui.viewgroup.refresh;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,8 +36,8 @@ import sviolet.turquoise.ui.util.RecyclerViewUtils;
  * <p>注意!!! 当发生PARK事件后, VerticalOverDragContainer会保持PARK状态, 不会再发生相同的PARK事件,
  * 必须调用resetTopPark/resetBottomPark方法, 重置状态, 才会再次发生PARK事件. 在实际使用中,
  * 接收到PARK事件时, 开始进行数据刷新, 当数据刷新完成后, 调用resetTopPark/resetBottomPark方法重置状态.
- * 当你使用{@link SimpleVerticalOverDragRefreshView}配合实现下拉刷新时, 调用{@link SimpleVerticalOverDragRefreshView}
- * 的{@link SimpleVerticalOverDragRefreshView#reset()}可以起到相同的作用.</p>
+ * 当你使用{@link SimpleVerticalRefreshIndicatorGroup}配合实现下拉刷新时, 调用{@link SimpleVerticalRefreshIndicatorGroup}
+ * 的{@link SimpleVerticalRefreshIndicatorGroup#reset(boolean)}可以起到相同的作用.</p>
  *
  * <p>
  *     支持的子控件:<br/>
@@ -54,7 +54,7 @@ import sviolet.turquoise.ui.util.RecyclerViewUtils;
  * </p>
  *
  * <pre>{@code
- *      <sviolet.turquoise.ui.viewgroup.gesture.RecyclerViewVerticalOverDragContainer
+ *      <sviolet.turquoise.ui.viewgroup.refresh.RecyclerViewVerticalOverDragContainer
  *          android:layout_width="match_parent"
  *          android:layout_height="match_parent"
  *          sviolet:VerticalOverDragContainer_disableIfHorizontalDrag="false"
@@ -70,7 +70,7 @@ import sviolet.turquoise.ui.util.RecyclerViewUtils;
  *              android:layout_width="match_parent"
  *              android:layout_height="match_parent" />
  *
- *      </sviolet.turquoise.ui.viewgroup.gesture.RecyclerViewVerticalOverDragContainer>
+ *      </sviolet.turquoise.ui.viewgroup.refresh.RecyclerViewVerticalOverDragContainer>
  * }</pre>
  *
  * Created by S.Violet on 2016/11/3.

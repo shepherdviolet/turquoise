@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.ui.viewgroup.gesture;
+package sviolet.turquoise.ui.viewgroup.refresh;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -39,7 +39,7 @@ import sviolet.turquoise.ui.util.ViewCommonUtils;
  * Created by S.Violet on 2016/11/8.
  */
 
-public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements VerticalOverDragContainer.RefreshView {
+public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implements VerticalOverDragContainer.RefreshIndicator {
 
     public static final int TYPE_TOP_STATIC = 0;//顶部固定位置
     public static final int TYPE_BOTTOM_STATIC = 1;//底部固定位置
@@ -78,18 +78,18 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
 
     private WeakReference<VerticalOverDragContainer> container;
 
-    public SimpleVerticalOverDragRefreshView(Context context) {
+    public SimpleVerticalRefreshIndicatorGroup(Context context) {
         super(context);
         init();
     }
 
-    public SimpleVerticalOverDragRefreshView(Context context, AttributeSet attrs) {
+    public SimpleVerticalRefreshIndicatorGroup(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
         initSetting(context, attrs);
     }
 
-    public SimpleVerticalOverDragRefreshView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SimpleVerticalRefreshIndicatorGroup(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
         initSetting(context, attrs);
@@ -128,14 +128,14 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
      * 初始化配置
      */
     private void initSetting(final Context context, AttributeSet attrs) {
-        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SimpleVerticalOverDragRefreshView);
-        setType(typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_type, TYPE_TOP_STATIC));
-        setResultDuration(typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_resultDuration, 500));
-        initViewIndex = typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_initViewIndex, -1);
-        readyViewIndex = typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_readyViewIndex, -1);
-        refreshingViewIndex = typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_refreshingViewIndex, -1);
-        succeedViewIndex = typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_succeedViewIndex, -1);
-        failedViewIndex = typedArray.getInt(R.styleable.SimpleVerticalOverDragRefreshView_SimpleVerticalOverDragRefreshView_failedViewIndex, -1);
+        TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.SimpleVerticalRefreshIndicatorGroup);
+        setType(typedArray.getInt(R.styleable.SimpleVerticalRefreshIndicatorGroup_SimpleVerticalRefreshIndicatorGroup_type, TYPE_TOP_STATIC));
+        setResultDuration(typedArray.getInt(R.styleable.SimpleVerticalRefreshIndicatorGroup_SimpleVerticalRefreshIndicatorGroup_resultDuration, 500));
+        initViewIndex = typedArray.getInt(R.styleable.SimpleVerticalRefreshIndicatorGroup_SimpleVerticalRefreshIndicatorGroup_initViewIndex, -1);
+        readyViewIndex = typedArray.getInt(R.styleable.SimpleVerticalRefreshIndicatorGroup_SimpleVerticalRefreshIndicatorGroup_readyViewIndex, -1);
+        refreshingViewIndex = typedArray.getInt(R.styleable.SimpleVerticalRefreshIndicatorGroup_SimpleVerticalRefreshIndicatorGroup_refreshingViewIndex, -1);
+        succeedViewIndex = typedArray.getInt(R.styleable.SimpleVerticalRefreshIndicatorGroup_SimpleVerticalRefreshIndicatorGroup_succeedViewIndex, -1);
+        failedViewIndex = typedArray.getInt(R.styleable.SimpleVerticalRefreshIndicatorGroup_SimpleVerticalRefreshIndicatorGroup_failedViewIndex, -1);
         typedArray.recycle();
     }
 
@@ -150,7 +150,7 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
     }
 
     @Override
-    public void onScroll(int state, int scrollY) {
+    public void onScroll(int scrollY) {
         //更新位置
         this.scrollY = scrollY;
 
@@ -441,16 +441,16 @@ public class SimpleVerticalOverDragRefreshView extends RelativeLayout implements
 
     private MyHandler myHandler = new MyHandler(Looper.getMainLooper(), this);
 
-    private static class MyHandler extends WeakHandler<SimpleVerticalOverDragRefreshView>{
+    private static class MyHandler extends WeakHandler<SimpleVerticalRefreshIndicatorGroup>{
 
         private static final int HANDLER_RESET = 0;
 
-        public MyHandler(Looper looper, SimpleVerticalOverDragRefreshView host) {
+        public MyHandler(Looper looper, SimpleVerticalRefreshIndicatorGroup host) {
             super(looper, host);
         }
 
         @Override
-        protected void handleMessageWithHost(Message msg, SimpleVerticalOverDragRefreshView host) {
+        protected void handleMessageWithHost(Message msg, SimpleVerticalRefreshIndicatorGroup host) {
             switch (msg.what){
                 case HANDLER_RESET:
                     host.stateToInit();
