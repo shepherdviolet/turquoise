@@ -173,8 +173,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
      * 初始化
      */
     private void init() {
-//        this.mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
-        this.mTouchSlop = 0;
+        this.mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
         this.scroller = new CompatOverScroller(getContext());
     }
 
@@ -665,10 +664,40 @@ public class VerticalOverDragContainer extends RelativeLayout {
         int currScrollY = (int) scrollY;
         //计算弹回目标
         int target = 0;
-        if (topParkEnabled && currScrollY > overDragThreshold){
-            target = overDragThreshold;
-        }else if (bottomParkEnabled && currScrollY < -overDragThreshold){
-            target = -overDragThreshold;
+        if (topParkEnabled && currScrollY > 0){
+            if (topParked) {
+                //当前是PARK状态
+                if (currScrollY > overDragThreshold){
+                    //弹回
+                    target = overDragThreshold;
+                }else{
+                    //不动
+                    target = currScrollY;
+                }
+            } else {
+                //当前不是PARK状态
+                if (currScrollY > overDragThreshold) {
+                    //当前位置超过设定值
+                    target = overDragThreshold;
+                }
+            }
+        }else if (bottomParkEnabled && currScrollY < 0){
+            if (bottomParked) {
+                //当前是PARK状态
+                if(currScrollY < -overDragThreshold){
+                    //弹回
+                    target = -overDragThreshold;
+                }else{
+                    //不动
+                    target = currScrollY;
+                }
+            } else {
+                //当前不是PARK状态
+                if (currScrollY < -overDragThreshold) {
+                    //当前位置超过设定值
+                    target = -overDragThreshold;
+                }
+            }
         }
 
         //过滤
