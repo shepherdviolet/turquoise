@@ -59,6 +59,11 @@
         <activity android:name=".other.MotionImageOtherActivity"
             android:label="@string/other_motion_image_title"/>
 
+        <activity android:name=".refresh.RefreshActivity"
+            android:label="@string/refresh_title"/>
+        <activity android:name=".refresh.OverDragRefreshActivity"
+            android:label="@string/refresh_overdrag_title"/>
+
         <activity android:name=".TempActivity"
             android:label="@string/temp_main_title"/>
     </application>

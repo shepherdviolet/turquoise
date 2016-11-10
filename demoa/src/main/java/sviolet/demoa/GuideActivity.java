@@ -32,6 +32,7 @@ import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
 import sviolet.demoa.other.OtherActivity;
+import sviolet.demoa.refresh.RefreshActivity;
 import sviolet.demoa.slide.SlideActivity;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
@@ -49,6 +50,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 @DemoList({
         SlideActivity.class,
         OtherActivity.class,
+        RefreshActivity.class,
         TempActivity.class
 })
 

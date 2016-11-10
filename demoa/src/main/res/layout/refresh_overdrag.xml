@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015-2016 S.Violet
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  ~ Project GitHub: https://github.com/shepherdviolet/turquoise
+  ~ Email: shepherdviolet@163.com
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sviolet="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#E0E0E0"
+    android:orientation="vertical">
+
+    <!-- VerticalOverDragContainer作为容器 -->
+    <!-- VerticalOverDragContainer_disableIfHorizontalDrag: true:横向拖动时禁止越界拖动 false:横向拖动时允许越界拖动 -->
+    <!-- VerticalOverDragContainer_overDragThreshold: PARK事件触发距离, 也是PARK停驻位置, 一般和下拉刷新的距离一样 -->
+    <!-- VerticalOverDragContainer_overDragResistance: 越界拖动阻尼, 值越小拖动越慢 -->
+    <!-- VerticalOverDragContainer_scrollDuration: 越界回弹时间ms -->
+    <!-- VerticalOverDragContainer_topParkEnabled: true:允许顶部PARK -->
+    <!-- VerticalOverDragContainer_bottomParkEnabled: true:允许底部PARK -->
+    <sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer
+        android:id="@+id/refresh_overdrag_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        sviolet:VerticalOverDragContainer_disableIfHorizontalDrag="false"
+        sviolet:VerticalOverDragContainer_overDragThreshold="70dp"
+        sviolet:VerticalOverDragContainer_overDragResistance="0.4"
+        sviolet:VerticalOverDragContainer_scrollDuration="300"
+        sviolet:VerticalOverDragContainer_topParkEnabled="true"
+        sviolet:VerticalOverDragContainer_bottomParkEnabled="true">
+
+        <!-- ListView作为子控件 -->
+        <ListView
+            android:id="@+id/refresh_overdrag_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="#FFFFFF"
+            android:divider="#C0C0C0"
+            android:dividerHeight="1px" />
+
+    </sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer>
+
+</RelativeLayout>
