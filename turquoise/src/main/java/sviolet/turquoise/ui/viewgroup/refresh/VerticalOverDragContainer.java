@@ -122,6 +122,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private boolean disableIfHorizontalDrag = false;
     //true:禁止容器自身的滚动(用于实现本身不越界滚动, 刷新指示器滚动的场合)
     private boolean disableContainerScroll = false;
+    //true:精确模拟ACTION_DOWN事件(分发给子控件)
+    private boolean preciseTouchEmulate = true;
 
     //监听器
     private List<RefreshIndicator> refreshIndicatorList;
@@ -740,15 +742,30 @@ public class VerticalOverDragContainer extends RelativeLayout {
      * 模拟DOWN事件分发给子控件
      */
     private void emulateDownEvent(MotionEvent ev){
-        //TODO 简易处理, 后续改成吧多个点变成多个POINTER_DOWN时间, 模拟的更逼真
-        touchPoints.setCapacity(ev.getPointerCount());
-        for (int i = 0 ; i < touchPoints.getCapacity() ; i++){
-            touchPoints.setX(i, ev.getX(i));
-            touchPoints.setY(i, ev.getY(i));
-            touchPoints.setId(i, ev.getPointerId(i));
+        if (preciseTouchEmulate){
+            //精确模拟, 每一个触点分发一次事件
+            for (int i = 0 ; i < ev.getPointerCount() ; i++){
+                touchPoints.setCapacity(i + 1);
+                for (int j = 0; j < touchPoints.getCapacity(); j++) {
+                    touchPoints.setX(j, ev.getX(j));
+                    touchPoints.setY(j, ev.getY(j));
+                    touchPoints.setId(j, ev.getPointerId(j));
+                }
+                int action = i == 0 ? MotionEvent.ACTION_DOWN : MotionEvent.ACTION_POINTER_DOWN;
+                MotionEvent emuEvent = MotionEventUtils.obtain(action, touchPoints, ev.getDownTime());
+                super.dispatchTouchEvent(emuEvent);
+            }
+        }else {
+            //简单模拟, 只分发一次down事件
+            touchPoints.setCapacity(ev.getPointerCount());
+            for (int i = 0; i < touchPoints.getCapacity(); i++) {
+                touchPoints.setX(i, ev.getX(i));
+                touchPoints.setY(i, ev.getY(i));
+                touchPoints.setId(i, ev.getPointerId(i));
+            }
+            MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_DOWN, touchPoints, ev.getDownTime());
+            super.dispatchTouchEvent(emuEvent);
         }
-        MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_DOWN, touchPoints, ev.getDownTime());
-        super.dispatchTouchEvent(emuEvent);
     }
 
     /**
