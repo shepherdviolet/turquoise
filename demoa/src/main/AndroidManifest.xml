@@ -63,6 +63,8 @@
             android:label="@string/refresh_title"/>
         <activity android:name=".refresh.OverDragRefreshActivity"
             android:label="@string/refresh_overdrag_title"/>
+        <activity android:name=".refresh.RefreshIndicatorRefreshActivity"
+            android:label="@string/refresh_refreshindicator_title"/>
 
         <activity android:name=".TempActivity"
             android:label="@string/temp_main_title"/>

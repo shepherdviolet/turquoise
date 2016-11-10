@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015-2016 S.Violet
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  ~ Project GitHub: https://github.comshepherdviolet/turquoise
+  ~ Email: shepherdviolet@163.com
+  -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sviolet="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F0F0"
+    android:orientation="vertical">
+
+    <sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup
+        android:id="@+id/refresh_indicator_refreshindicator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_type="inFromTop"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_initViewIndex="0"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_readyViewIndex="1"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_refreshingViewIndex="2"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_succeedViewIndex="3"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_failedViewIndex="4">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="@string/refresh_refreshindicator_refresh_init"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="@string/refresh_refreshindicator_refresh_ready"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp">
+
+            <TextView
+                android:id="@+id/refresh_refreshindicator_refresh_refreshing_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textSize="15sp"
+                android:text="@string/refresh_refreshindicator_refresh_refreshing"/>
+
+            <ProgressBar
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_toLeftOf="@id/refresh_refreshindicator_refresh_refreshing_text"
+                android:layout_toStartOf="@id/refresh_refreshindicator_refresh_refreshing_text"
+                android:layout_centerVertical="true"
+                style="@style/Widget.AppCompat.ProgressBar"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="@string/refresh_refreshindicator_refresh_succeed"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="@string/refresh_refreshindicator_refresh_failed"/>
+
+    </sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup>
+
+    <sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup
+        android:id="@+id/refresh_indicator_loadindicator"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_type="inFromBottom"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_initViewIndex="0"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_readyViewIndex="1"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_refreshingViewIndex="2"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_succeedViewIndex="3"
+        sviolet:SimpleVerticalRefreshIndicatorGroup_failedViewIndex="4">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="@string/refresh_refreshindicator_load_init"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="@string/refresh_refreshindicator_load_ready"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true">
+
+            <TextView
+                android:id="@+id/refresh_indicator_loadindicator_refreshing_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textSize="15sp"
+                android:text="@string/refresh_refreshindicator_load_refreshing"/>
+
+            <ProgressBar
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_toLeftOf="@id/refresh_indicator_loadindicator_refreshing_text"
+                android:layout_toStartOf="@id/refresh_indicator_loadindicator_refreshing_text"
+                android:layout_centerVertical="true"
+                style="@style/Widget.AppCompat.ProgressBar"/>
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="@string/refresh_refreshindicator_load_succeed"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:textSize="15sp"
+            android:text="@string/refresh_refreshindicator_load_failed"/>
+
+    </sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup>
+
+    <sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer
+        android:id="@+id/refresh_indicator_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        sviolet:VerticalOverDragContainer_disableIfHorizontalDrag="false"
+        sviolet:VerticalOverDragContainer_overDragThreshold="70dp"
+        sviolet:VerticalOverDragContainer_overDragResistance="0.4"
+        sviolet:VerticalOverDragContainer_scrollDuration="300"
+        sviolet:VerticalOverDragContainer_topParkEnabled="true"
+        sviolet:VerticalOverDragContainer_bottomParkEnabled="true">
+
+        <!-- 底部ListView -->
+        <ListView
+            android:id="@+id/refresh_indicator_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:background="#FFFFFF"
+            android:divider="#C0C0C0"
+            android:dividerHeight="1px" />
+
+    </sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer>
+
+</RelativeLayout>

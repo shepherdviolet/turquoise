@@ -22,6 +22,17 @@
 
     <string name="refresh_title">Refresh Demo</string>
     <string name="refresh_overdrag_title">OverDrag Demo</string>
+    <string name="refresh_refreshindicator_title">RefreshIndicator Demo</string>
+    <string name="refresh_refreshindicator_refresh_init">pull to refresh</string>
+    <string name="refresh_refreshindicator_refresh_ready">release to refresh</string>
+    <string name="refresh_refreshindicator_refresh_refreshing">refreshing</string>
+    <string name="refresh_refreshindicator_refresh_succeed">refresh succeed</string>
+    <string name="refresh_refreshindicator_refresh_failed">refresh failed</string>
+    <string name="refresh_refreshindicator_load_init">pull to load</string>
+    <string name="refresh_refreshindicator_load_ready">release to load</string>
+    <string name="refresh_refreshindicator_load_refreshing">loading</string>
+    <string name="refresh_refreshindicator_load_succeed">load succeed</string>
+    <string name="refresh_refreshindicator_load_failed">load failed</string>
 
     <string name="temp_main_title">Temp</string>
 
