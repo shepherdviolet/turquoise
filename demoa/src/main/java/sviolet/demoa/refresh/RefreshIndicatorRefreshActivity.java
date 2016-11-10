@@ -57,11 +57,9 @@ public class RefreshIndicatorRefreshActivity extends TActivity {
     @ResourceId(R.id.refresh_indicator_container)
     private VerticalOverDragContainer container;
     @ResourceId(R.id.refresh_indicator_refreshindicator)
-    private SimpleVerticalRefreshIndicatorGroup refreshIndicator;
+    private SimpleVerticalRefreshIndicatorGroup refreshIndicator;//下拉刷新
     @ResourceId(R.id.refresh_indicator_loadindicator)
-    private SimpleVerticalRefreshIndicatorGroup loadIndicator;
-
-    private TLogger logger = TLogger.get(this, "OverDragDemo");
+    private SimpleVerticalRefreshIndicatorGroup loadIndicator;//上拉加载
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,19 +69,30 @@ public class RefreshIndicatorRefreshActivity extends TActivity {
         listView.setAdapter(new EmulateListAdapter(this, 15,
                 "RefreshIndicator", "10 hours ago", "pull to refresh implement by VerticalOverDragContainer + VerticalRefreshIndicatorGroup"));
 
-        container.addRefreshIndicator(refreshIndicator);
-        container.addRefreshIndicator(loadIndicator);
+        //VerticalOverDragContainer添加刷新指示器(此处为VerticalRefreshIndicatorGroup)
+        container.addRefreshIndicator(refreshIndicator);//下拉刷新
+        container.addRefreshIndicator(loadIndicator);//上拉加载
 
+        //设置刷新监听器
         refreshIndicator.setRefreshListener(new SimpleVerticalRefreshIndicatorGroup.RefreshListener() {
             @Override
             public void onRefresh() {
+                /**
+                 * 模拟刷新流程处理, 等待刷新完成后, 必须调用refreshIndicator.reset(boolean)方法, 重置容器控件的PARK状态, 容器控件会弹回初始状态,
+                 * 在状态重置前, 容器控件将不会再触发TOP PARK事件, 必须在重置状态后才能触发
+                 */
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_REFRESH_RESET, 4000);
             }
         });
 
+        //设置刷新监听器
         loadIndicator.setRefreshListener(new SimpleVerticalRefreshIndicatorGroup.RefreshListener() {
             @Override
             public void onRefresh() {
+                /**
+                 * 模拟加载流程处理, 等待加载完成后, 必须调用loadIndicator.reset(boolean)方法, 重置容器控件的PARK状态, 容器控件会弹回初始状态,
+                 * 在状态重置前, 容器控件将不会再触发TOP PARK事件, 必须在重置状态后才能触发
+                 */
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_LOAD_RESET, 4000);
             }
         });
@@ -106,9 +115,11 @@ public class RefreshIndicatorRefreshActivity extends TActivity {
 
             switch (msg.what){
                 case HANDLER_REFRESH_RESET:
+                    //true:加载成功 false:加载失败
                     host.refreshIndicator.reset(true);
                     break;
                 case HANDLER_LOAD_RESET:
+                    //true:加载成功 false:加载失败
                     host.loadIndicator.reset(true);
                     break;
             }
