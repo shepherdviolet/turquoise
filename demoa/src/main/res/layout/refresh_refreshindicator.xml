@@ -25,180 +25,15 @@
     android:background="#F0F0F0"
     android:orientation="vertical">
 
-    <!-- 下拉刷新指示器 -->
-    <!-- SimpleVerticalRefreshIndicatorGroup_type: -->
-    <!-- inFromTop:用于下拉刷新, 指示器从上面进入 -->
-    <!-- topStatic:用于下拉刷新, 指示器固定 -->
-    <!-- inFromBottom:用于上拉加载, 指示器从下面进入 -->
-    <!-- bottomStatic:用于上拉加载, 指示器固定 -->
-    <!--SimpleVerticalRefreshIndicatorGroup_initViewIndex 初始状态的子控件序号-->
-    <!--SimpleVerticalRefreshIndicatorGroup_readyViewIndex 松开刷新状态的子控件序号-->
-    <!--SimpleVerticalRefreshIndicatorGroup_refreshingViewIndex 刷新中状态的子控件序号-->
-    <!--SimpleVerticalRefreshIndicatorGroup_succeedViewIndex 刷新成功状态的子控件序号-->
-    <!--SimpleVerticalRefreshIndicatorGroup_failedViewIndex 刷新失败状态的子控件序号-->
-    <!--子控件序号: 0对应子控件中第一个TextView, 1对应子控件中第二个TextView, 2对应子控件中第三个RelativeLayout-->
-    <!--程序会根据刷新状态, 显示对应状态的子控件, 其他子控件会隐藏-->
-    <sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup
-        android:id="@+id/refresh_indicator_refreshindicator"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_type="inFromTop"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_initViewIndex="0"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_readyViewIndex="1"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_refreshingViewIndex="2"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_succeedViewIndex="3"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_failedViewIndex="4">
+    <!--下拉刷新指示器-->
+    <include layout="@layout/common_indicator_refresh"/>
 
-        <!--序号0: 初始状态子控件-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:gravity="center"
-            android:textSize="15sp"
-            android:text="@string/refresh_refreshindicator_refresh_init"/>
-
-        <!--序号1: 松开刷新状态子控件-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:gravity="center"
-            android:textSize="15sp"
-            android:text="@string/refresh_refreshindicator_refresh_ready"/>
-
-        <!--序号2: 刷新中状态子控件-->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="70dp">
-
-            <TextView
-                android:id="@+id/refresh_refreshindicator_refresh_refreshing_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:textSize="15sp"
-                android:text="@string/refresh_refreshindicator_refresh_refreshing"/>
-
-            <ProgressBar
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_toLeftOf="@id/refresh_refreshindicator_refresh_refreshing_text"
-                android:layout_toStartOf="@id/refresh_refreshindicator_refresh_refreshing_text"
-                android:layout_centerVertical="true"
-                style="@style/Widget.AppCompat.ProgressBar"/>
-
-        </RelativeLayout>
-
-        <!--序号3: 刷新成功状态子控件-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:gravity="center"
-            android:textSize="15sp"
-            android:text="@string/refresh_refreshindicator_refresh_succeed"/>
-
-        <!--序号4: 刷新失败状态子控件-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:gravity="center"
-            android:textSize="15sp"
-            android:text="@string/refresh_refreshindicator_refresh_failed"/>
-
-    </sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup>
-
-    <!-- 上拉加载指示器 -->
-    <!-- SimpleVerticalRefreshIndicatorGroup_type: -->
-    <!-- inFromTop:用于下拉刷新, 指示器从上面进入 -->
-    <!-- topStatic:用于下拉刷新, 指示器固定 -->
-    <!-- inFromBottom:用于上拉加载, 指示器从下面进入 -->
-    <!-- bottomStatic:用于上拉加载, 指示器固定 -->
-    <!--SimpleVerticalRefreshIndicatorGroup_initViewIndex 初始状态的子控件序号-->
-    <!--SimpleVerticalRefreshIndicatorGroup_readyViewIndex 松开刷新状态的子控件序号-->
-    <!--SimpleVerticalRefreshIndicatorGroup_refreshingViewIndex 刷新中状态的子控件序号-->
-    <!--SimpleVerticalRefreshIndicatorGroup_succeedViewIndex 刷新成功状态的子控件序号-->
-    <!--SimpleVerticalRefreshIndicatorGroup_failedViewIndex 刷新失败状态的子控件序号-->
-    <!--子控件序号: 0对应子控件中第一个TextView, 1对应子控件中第二个TextView, 2对应子控件中第三个RelativeLayout-->
-    <!--程序会根据刷新状态, 显示对应状态的子控件, 其他子控件会隐藏-->
-    <sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup
-        android:id="@+id/refresh_indicator_loadindicator"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_type="inFromBottom"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_initViewIndex="0"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_readyViewIndex="1"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_refreshingViewIndex="2"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_succeedViewIndex="3"
-        sviolet:SimpleVerticalRefreshIndicatorGroup_failedViewIndex="4">
-
-        <!--序号0: 初始状态子控件-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:textSize="15sp"
-            android:text="@string/refresh_refreshindicator_load_init"/>
-
-        <!--序号1: 松开刷新状态子控件-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:textSize="15sp"
-            android:text="@string/refresh_refreshindicator_load_ready"/>
-
-        <!--序号2: 刷新中状态子控件-->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_alignParentBottom="true">
-
-            <TextView
-                android:id="@+id/refresh_indicator_loadindicator_refreshing_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:textSize="15sp"
-                android:text="@string/refresh_refreshindicator_load_refreshing"/>
-
-            <ProgressBar
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_toLeftOf="@id/refresh_indicator_loadindicator_refreshing_text"
-                android:layout_toStartOf="@id/refresh_indicator_loadindicator_refreshing_text"
-                android:layout_centerVertical="true"
-                style="@style/Widget.AppCompat.ProgressBar"/>
-
-        </RelativeLayout>
-
-        <!--序号3: 刷新成功状态子控件-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:textSize="15sp"
-            android:text="@string/refresh_refreshindicator_load_succeed"/>
-
-        <!--序号4: 刷新失败状态子控件-->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:textSize="15sp"
-            android:text="@string/refresh_refreshindicator_load_failed"/>
-
-    </sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup>
+    <!--上拉加载指示器-->
+    <include layout="@layout/common_indicator_load"/>
 
     <!-- 越界拖动容器 -->
     <sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer
-        android:id="@+id/refresh_indicator_container"
+        android:id="@+id/refresh_refreshindicator_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         sviolet:VerticalOverDragContainer_disableIfHorizontalDrag="false"
@@ -210,7 +45,7 @@
 
         <!-- 底部ListView -->
         <ListView
-            android:id="@+id/refresh_indicator_listview"
+            android:id="@+id/refresh_refreshindicator_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingLeft="10dp"

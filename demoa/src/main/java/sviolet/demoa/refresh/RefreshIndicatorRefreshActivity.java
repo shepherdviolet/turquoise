@@ -32,7 +32,6 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup;
 import sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer;
-import sviolet.turquoise.utilx.tlogger.TLogger;
 
 @DemoDescription(
         title = "RefreshIndicator Demo",
@@ -52,13 +51,13 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 )
 public class RefreshIndicatorRefreshActivity extends TActivity {
 
-    @ResourceId(R.id.refresh_indicator_listview)
+    @ResourceId(R.id.refresh_refreshindicator_listview)
     private ListView listView;
-    @ResourceId(R.id.refresh_indicator_container)
+    @ResourceId(R.id.refresh_refreshindicator_container)
     private VerticalOverDragContainer container;
-    @ResourceId(R.id.refresh_indicator_refreshindicator)
+    @ResourceId(R.id.common_indicator_refresh)
     private SimpleVerticalRefreshIndicatorGroup refreshIndicator;//下拉刷新
-    @ResourceId(R.id.refresh_indicator_loadindicator)
+    @ResourceId(R.id.common_indicator_load)
     private SimpleVerticalRefreshIndicatorGroup loadIndicator;//上拉加载
 
     @Override
