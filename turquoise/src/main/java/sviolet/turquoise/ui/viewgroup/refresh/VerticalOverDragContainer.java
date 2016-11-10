@@ -269,8 +269,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
                              */
                             //上边越界
                             stateToTopOverDrag();
-                            //模拟取消事件给子控件
-                            emulateCancelEvent(ev);
                             //越界阻尼
                             if (!topParked && scrollY >= 0 && distanceY > 0){
                                 distanceY = distanceY * overDragResistance;
@@ -279,6 +277,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             }
                             //越界滚动
                             scrollByOffset(distanceY);
+                            //模拟取消事件给子控件
+                            emulateCancelEvent(ev);
                             return true;
                         } else if (reachState.reachBottom() && distanceY < 0 && currY - downY < -mTouchSlop){
                             /**
@@ -286,8 +286,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
                              */
                             //下边越界
                             stateToBottomOverDrag();
-                            //模拟取消事件给子控件
-                            emulateCancelEvent(ev);
                             //越界阻尼
                             if (!bottomParked && scrollY <= 0 && distanceY < 0){
                                 distanceY = distanceY * overDragResistance;
@@ -296,6 +294,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             }
                             //越界滚动
                             scrollByOffset(distanceY);
+                            //模拟取消事件给子控件
+                            emulateCancelEvent(ev);
                             return true;
                         } else {
                             /**
