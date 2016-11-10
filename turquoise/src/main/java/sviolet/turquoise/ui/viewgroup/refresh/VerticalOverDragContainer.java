@@ -68,12 +68,12 @@ import sviolet.turquoise.util.droid.MotionEventUtils;
  *      <sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer
  *          android:layout_width="match_parent"
  *          android:layout_height="match_parent"
- *          sviolet:VerticalOverDragContainer_disableIfHorizontalDrag="false"
  *          sviolet:VerticalOverDragContainer_overDragThreshold="70dp"
  *          sviolet:VerticalOverDragContainer_overDragResistance="0.4"
  *          sviolet:VerticalOverDragContainer_scrollDuration="300"
  *          sviolet:VerticalOverDragContainer_topParkEnabled="true"
- *          sviolet:VerticalOverDragContainer_bottomParkEnabled="false">
+ *          sviolet:VerticalOverDragContainer_bottomParkEnabled="false"
+ *          sviolet:VerticalOverDragContainer_disableIfHorizontalDrag="false">
  *
  *          ...
  *
@@ -105,9 +105,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
     //////////////////////////////////////////////////////
 
-    //true:当出现水平方向的手势时, 禁用越界拖动
-    private boolean disableIfHorizontalDrag = false;
-
     //越界拖动界限, 超过该界限则进入PARK状态(停止在界限上, 用于实现下拉刷新上拉加载)
     private int overDragThreshold = 300;
     //越界拖动阻尼, 0-1, 值越小拖动越慢
@@ -120,6 +117,11 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private boolean topParkEnabled = false;
     //底部PARK允许
     private boolean bottomParkEnabled = false;
+
+    //true:当出现水平方向的手势时, 禁用越界拖动
+    private boolean disableIfHorizontalDrag = false;
+    //true:禁止容器自身的滚动(用于实现本身不越界滚动, 刷新指示器滚动的场合)
+    private boolean disableContainerScroll = false;
 
     //监听器
     private List<RefreshIndicator> refreshIndicatorList;
@@ -182,12 +184,13 @@ public class VerticalOverDragContainer extends RelativeLayout {
      */
     private void initSetting(final Context context, AttributeSet attrs) {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.VerticalOverDragContainer);
-        setDisableIfHorizontalDrag(typedArray.getBoolean(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_disableIfHorizontalDrag, false));
         setOverDragThreshold(typedArray.getDimensionPixelOffset(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_overDragThreshold, MeasureUtils.dp2px(getContext(), 70)));
         setOverDragResistance(typedArray.getFloat(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_overDragResistance, 0.4f));
         setScrollDuration(typedArray.getInteger(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_scrollDuration, 300));
         setTopParkEnabled(typedArray.getBoolean(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_topParkEnabled, false));
         setBottomParkEnabled(typedArray.getBoolean(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_bottomParkEnabled, false));
+        setDisableIfHorizontalDrag(typedArray.getBoolean(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_disableIfHorizontalDrag, false));
+        setDisableContainerScroll(typedArray.getBoolean(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_disableContainerScroll, false));
         typedArray.recycle();
     }
 
@@ -423,7 +426,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
         }
 
         //滚动控件(手势坐标系与scroll反方向)
-        scrollTo(0, -currScrollY);
+        if (!disableContainerScroll) {
+            scrollTo(0, -currScrollY);
+        }
 
         //必须实现自刷新
         if (this.state == STATE_RELEASE && !scroller.isFinished())
@@ -598,6 +603,13 @@ public class VerticalOverDragContainer extends RelativeLayout {
      */
     public void setDisableIfHorizontalDrag(boolean disableIfHorizontalDrag) {
         this.disableIfHorizontalDrag = disableIfHorizontalDrag;
+    }
+
+    /**
+     * @param disableContainerScroll true:禁止容器自身的滚动(用于实现本身不越界滚动, 刷新指示器滚动的场合)
+     */
+    public void setDisableContainerScroll(boolean disableContainerScroll) {
+        this.disableContainerScroll = disableContainerScroll;
     }
 
     /**

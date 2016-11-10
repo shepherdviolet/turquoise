@@ -191,8 +191,6 @@
 
     <!-- sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer -->
     <declare-styleable name="VerticalOverDragContainer">
-        <!-- 当出现水平方向的手势时, 禁用越界拖动 -->
-        <attr name="VerticalOverDragContainer_disableIfHorizontalDrag" format="boolean" />
         <!-- 越界拖动界限, 超过该界限则进入PARK状态 -->
         <attr name="VerticalOverDragContainer_overDragThreshold" format="dimension" />
         <!-- 越界拖动阻尼, 0-1, 值越小拖动越慢 -->
@@ -203,6 +201,10 @@
         <attr name="VerticalOverDragContainer_topParkEnabled" format="boolean" />
         <!-- 底部PARK允许 -->
         <attr name="VerticalOverDragContainer_bottomParkEnabled" format="boolean" />
+        <!-- 当出现水平方向的手势时, 禁用越界拖动 -->
+        <attr name="VerticalOverDragContainer_disableIfHorizontalDrag" format="boolean" />
+        <!-- true:禁止容器自身的滚动(用于实现本身不越界滚动, 刷新指示器滚动的场合) -->
+        <attr name="VerticalOverDragContainer_disableContainerScroll" format="boolean" />
     </declare-styleable>
 
     <!-- sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup -->
