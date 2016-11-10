@@ -173,7 +173,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
      * 初始化
      */
     private void init() {
-        this.mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+//        this.mTouchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+        this.mTouchSlop = 0;
         this.scroller = new CompatOverScroller(getContext());
     }
 
@@ -267,7 +268,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             //模拟取消事件给子控件
                             emulateCancelEvent(ev);
                             //越界阻尼
-                            if (scrollY >= 0 && distanceY > 0){
+                            if (!topParked && scrollY >= 0 && distanceY > 0){
+                                distanceY = distanceY * overDragResistance;
+                            } else if (topParked && scrollY >= overDragThreshold && distanceY > 0){
                                 distanceY = distanceY * overDragResistance;
                             }
                             //越界滚动
@@ -282,7 +285,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             //模拟取消事件给子控件
                             emulateCancelEvent(ev);
                             //越界阻尼
-                            if (scrollY <= 0 && distanceY < 0){
+                            if (!bottomParked && scrollY <= 0 && distanceY < 0){
+                                distanceY = distanceY * overDragResistance;
+                            } else if (bottomParked && scrollY <= -overDragThreshold && distanceY < 0){
                                 distanceY = distanceY * overDragResistance;
                             }
                             //越界滚动
@@ -315,7 +320,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             return super.dispatchTouchEvent(ev);
                         }
                         //越界阻尼
-                        if (scrollY >= 0 && distanceY > 0){
+                        if (!topParked && scrollY >= 0 && distanceY > 0){
+                            distanceY = distanceY * overDragResistance;
+                        } else if (topParked && scrollY >= overDragThreshold && distanceY > 0){
                             distanceY = distanceY * overDragResistance;
                         }
                         //越界滚动
@@ -341,7 +348,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             return super.dispatchTouchEvent(ev);
                         }
                         //越界阻尼
-                        if (scrollY <= 0 && distanceY < 0){
+                        if (!bottomParked && scrollY <= 0 && distanceY < 0){
+                            distanceY = distanceY * overDragResistance;
+                        } else if (bottomParked && scrollY <= -overDragThreshold && distanceY < 0){
                             distanceY = distanceY * overDragResistance;
                         }
                         //越界滚动
