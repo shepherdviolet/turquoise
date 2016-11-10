@@ -640,6 +640,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
         return overDragThreshold;
     }
 
+    public int getScrollDuration(){
+        return scrollDuration;
+    }
+
     /*************************************************************************
      * private
      */

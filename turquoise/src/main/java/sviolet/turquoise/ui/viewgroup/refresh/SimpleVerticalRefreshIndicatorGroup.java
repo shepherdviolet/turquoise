@@ -156,12 +156,12 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
 
         if(this.state == STATE_INIT){
             //init状态变ready
-            if(Math.abs(scrollY) >= getOverDragThreshold()){
+            if(Math.abs(scrollY) >= getContainerOverDragThreshold()){
                 stateToReady();
             }
         }else if(this.state == STATE_READY){
             //ready状态变init
-            if(Math.abs(scrollY) < getOverDragThreshold()){
+            if(Math.abs(scrollY) < getContainerOverDragThreshold()){
                 stateToInit();
             }
         }
@@ -173,8 +173,8 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
     public void onTopPark() {
         //顶部固定或顶部进入模式时接受顶部PARK事件
         if (type == TYPE_TOP_STATIC || type == TYPE_IN_FROM_TOP){
-            //init/ready状态才会进入refreshing状态
-            if (state == STATE_INIT || state == STATE_READY) {
+            //非refreshing状态才能进入refreshing状态
+            if (state != STATE_REFRESHING) {
                 stateToRefreshing();
                 if(refreshListener != null){
                     refreshListener.onRefresh();
@@ -187,8 +187,8 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
     public void onBottomPark() {
         //底部固定或底部进入模式时接受底部PARK事件
         if (type == TYPE_BOTTOM_STATIC || type == TYPE_IN_FROM_BOTTOM){
-            //init/ready状态才会进入refreshing状态
-            if (state == STATE_INIT || state == STATE_READY) {
+            //非refreshing状态才能进入refreshing状态
+            if (state != STATE_REFRESHING) {
                 stateToRefreshing();
                 if(refreshListener != null){
                     refreshListener.onRefresh();
@@ -202,11 +202,11 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
         switch (type){
             case TYPE_IN_FROM_TOP://顶部进入模式
                 //手势坐标系与scroll反方向
-                scrollTo(0, - scrollY + getOverDragThreshold());
+                scrollTo(0, - scrollY + getContainerOverDragThreshold());
                 break;
             case TYPE_IN_FROM_BOTTOM://底部进入模式
                 //手势坐标系与scroll反方向
-                scrollTo(0, - scrollY - getOverDragThreshold());
+                scrollTo(0, - scrollY - getContainerOverDragThreshold());
                 break;
             default://固定模式不滚动
                 scrollTo(0, 0);
@@ -358,7 +358,7 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
     /**
      * 重置VerticalOverDragContainer的PARK状态
      */
-    protected void resetContainer() {
+    protected void resetContainerPark() {
         VerticalOverDragContainer container = getContainer();
         if (container != null) {
             if (type == TYPE_TOP_STATIC || type == TYPE_IN_FROM_TOP){
@@ -372,10 +372,18 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
     /**
      * @return 获得VerticalOverDragContainer的OverDragThreshold
      */
-    protected int getOverDragThreshold() {
+    protected int getContainerOverDragThreshold() {
         VerticalOverDragContainer container = getContainer();
         if (container != null) {
             return container.getOverDragThreshold();
+        }
+        return 0;
+    }
+
+    protected int getContainerScrollDuration(){
+        VerticalOverDragContainer container = getContainer();
+        if (container != null) {
+            return container.getScrollDuration();
         }
         return 0;
     }
@@ -396,7 +404,7 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
             }else{
                 stateToFailed();
             }
-            myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_RESET, resultDuration);
+            myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_RESET_PARK, resultDuration);
         }
     }
 
@@ -445,7 +453,8 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
 
     private static class MyHandler extends WeakHandler<SimpleVerticalRefreshIndicatorGroup>{
 
-        private static final int HANDLER_RESET = 0;
+        private static final int HANDLER_RESET_PARK = 0;
+        private static final int HANDLER_STATE_TO_INIT = 1;
 
         public MyHandler(Looper looper, SimpleVerticalRefreshIndicatorGroup host) {
             super(looper, host);
@@ -454,9 +463,13 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
         @Override
         protected void handleMessageWithHost(Message msg, SimpleVerticalRefreshIndicatorGroup host) {
             switch (msg.what){
-                case HANDLER_RESET:
+                case HANDLER_RESET_PARK:
+                    host.resetContainerPark();
+                    //等弹回后再改为INIT状态
+                    sendEmptyMessageDelayed(HANDLER_STATE_TO_INIT, host.getContainerScrollDuration());
+                    break;
+                case HANDLER_STATE_TO_INIT:
                     host.stateToInit();
-                    host.resetContainer();
                     break;
                 default:
                     break;
