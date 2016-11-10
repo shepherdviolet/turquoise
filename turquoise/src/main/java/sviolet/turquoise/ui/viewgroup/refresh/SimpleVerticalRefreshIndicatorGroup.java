@@ -471,7 +471,10 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
                     sendEmptyMessageDelayed(HANDLER_STATE_TO_INIT, host.getContainerScrollDuration());
                     break;
                 case HANDLER_STATE_TO_INIT:
-                    host.stateToInit();
+                    //只能从成功失败状态变为初始状态
+                    if(host.state == STATE_SUCCEED || host.state == STATE_FAILED) {
+                        host.stateToInit();
+                    }
                     break;
                 default:
                     break;
