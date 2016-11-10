@@ -432,7 +432,9 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
      */
 
     public interface RefreshListener{
+
         void onRefresh();
+
     }
 
     /***********************************************************************************

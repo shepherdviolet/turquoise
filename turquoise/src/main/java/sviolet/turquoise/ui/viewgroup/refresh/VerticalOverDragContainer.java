@@ -72,8 +72,8 @@ import sviolet.turquoise.util.droid.MotionEventUtils;
  *          sviolet:VerticalOverDragContainer_overDragThreshold="70dp"
  *          sviolet:VerticalOverDragContainer_overDragResistance="0.4"
  *          sviolet:VerticalOverDragContainer_scrollDuration="300"
- *          sviolet:VerticalOverDragContainer_topParkEnabled="false"
- *          sviolet:VerticalOverDragContainer_bottomParkEnabled="true">
+ *          sviolet:VerticalOverDragContainer_topParkEnabled="true"
+ *          sviolet:VerticalOverDragContainer_bottomParkEnabled="false">
  *
  *          ...
  *

@@ -61,8 +61,8 @@ import sviolet.turquoise.ui.util.RecyclerViewUtils;
  *          sviolet:VerticalOverDragContainer_overDragThreshold="70dp"
  *          sviolet:VerticalOverDragContainer_overDragResistance="0.4"
  *          sviolet:VerticalOverDragContainer_scrollDuration="300"
- *          sviolet:VerticalOverDragContainer_topParkEnabled="false"
- *          sviolet:VerticalOverDragContainer_bottomParkEnabled="true">
+ *          sviolet:VerticalOverDragContainer_topParkEnabled="tue"
+ *          sviolet:VerticalOverDragContainer_bottomParkEnabled="false">
  *
  *          ...
  *
