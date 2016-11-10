@@ -18,17 +18,35 @@
   ~ Email: shepherdviolet@163.com
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sviolet="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="#FFE0E0E0">
 
-    <ListView
-        android:id="@+id/list_view_main_listview"
+    <!--下拉刷新指示器-->
+    <include layout="@layout/common_indicator_refresh"/>
+
+    <!-- 越界拖动容器 -->
+    <sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer
+        android:id="@+id/list_view_main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFE0E0E0"
-        android:divider="#00000000"
-        android:dividerHeight="0dp" />
+        sviolet:VerticalOverDragContainer_disableIfHorizontalDrag="false"
+        sviolet:VerticalOverDragContainer_overDragThreshold="70dp"
+        sviolet:VerticalOverDragContainer_overDragResistance="0.4"
+        sviolet:VerticalOverDragContainer_scrollDuration="300"
+        sviolet:VerticalOverDragContainer_topParkEnabled="true"
+        sviolet:VerticalOverDragContainer_bottomParkEnabled="false">
 
-</LinearLayout>
+        <ListView
+            android:id="@+id/list_view_main_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFE0E0E0"
+            android:divider="#00000000"
+            android:dividerHeight="0dp" />
+
+    </sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer>
+
+</RelativeLayout>

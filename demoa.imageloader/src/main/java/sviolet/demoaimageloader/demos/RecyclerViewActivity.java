@@ -21,6 +21,7 @@ package sviolet.demoaimageloader.demos;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
@@ -35,6 +36,9 @@ import sviolet.demoaimageloader.demos.extra.RecyclerViewAdapter;
 import sviolet.turquoise.enhance.app.TAppCompatActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup;
+import sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer;
 import sviolet.turquoise.util.common.BitmapUtils;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.drawable.common.CircleLoadingAnimationDrawableFactory;
@@ -62,6 +66,10 @@ public class RecyclerViewActivity extends TAppCompatActivity {
 
     @ResourceId(R.id.recycler_view_main_recyclerView)
     private RecyclerView recyclerView;
+    @ResourceId(R.id.recycler_view_main_container)
+    private VerticalOverDragContainer verticalOverDragContainer;
+    @ResourceId(R.id.common_indicator_refresh)
+    private SimpleVerticalRefreshIndicatorGroup refreshIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +94,15 @@ public class RecyclerViewActivity extends TAppCompatActivity {
 
         //滑动流畅度优化(非必须)
         recyclerView.addOnScrollListener(new PauseOnRecyclerViewScrollListener(TILoader.node(this).newNodeRemoter()));
+
+        //添加下拉刷新效果
+        verticalOverDragContainer.addRefreshIndicator(refreshIndicator);
+        refreshIndicator.setRefreshListener(new SimpleVerticalRefreshIndicatorGroup.RefreshListener() {
+            @Override
+            public void onRefresh() {
+                myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_REFRESH_RESET, 4000);
+            }
+        });
     }
 
     @Override
@@ -148,6 +165,30 @@ public class RecyclerViewActivity extends TAppCompatActivity {
 
         }
 
+    }
+
+    private MyHandler myHandler = new MyHandler(this);
+
+    private static class MyHandler extends WeakHandler<RecyclerViewActivity> {
+
+        private static final int HANDLER_REFRESH_RESET = 0;//模拟刷新流程
+
+        public MyHandler(RecyclerViewActivity host) {
+            super(host);
+        }
+
+        @Override
+        protected void handleMessageWithHost(Message msg, RecyclerViewActivity host) {
+
+            switch (msg.what){
+                case HANDLER_REFRESH_RESET:
+                    //刷新完必须调用reset方法重置状态
+                    //true:加载成功 false:加载失败
+                    host.refreshIndicator.reset(true);
+                    break;
+            }
+
+        }
     }
 
 }

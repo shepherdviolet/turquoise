@@ -20,6 +20,7 @@
 package sviolet.demoaimageloader.demos;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -33,6 +34,9 @@ import sviolet.demoaimageloader.custom.MyNetworkLoadHandler;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup;
+import sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.drawable.common.CommonLoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
@@ -56,6 +60,10 @@ public class ListViewActivity extends TActivity {
 
     @ResourceId(R.id.list_view_main_listview)
     private ListView listView;
+    @ResourceId(R.id.list_view_main_container)
+    private VerticalOverDragContainer verticalOverDragContainer;
+    @ResourceId(R.id.common_indicator_refresh)
+    private SimpleVerticalRefreshIndicatorGroup refreshIndicator;
 
     private ListViewAdapter adapter;
 
@@ -74,6 +82,15 @@ public class ListViewActivity extends TActivity {
         adapter = new ListViewAdapter(this, makeItemList());
         listView.setAdapter(adapter);
         listView.setOnScrollListener(TILoader.node(this).newNodeRemoter().getPauseOnListViewScrollListener());//改善流畅度, 非必须
+
+        //添加下拉刷新效果
+        verticalOverDragContainer.addRefreshIndicator(refreshIndicator);
+        refreshIndicator.setRefreshListener(new SimpleVerticalRefreshIndicatorGroup.RefreshListener() {
+            @Override
+            public void onRefresh() {
+                myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_REFRESH_RESET, 4000);
+            }
+        });
     }
 
     @Override
@@ -107,4 +124,29 @@ public class ListViewActivity extends TActivity {
         item.setContent("This is a demo of how to loading images in list view with turquoise image loader.");
         return item;
     }
+
+    private MyHandler myHandler = new MyHandler(this);
+
+    private static class MyHandler extends WeakHandler<ListViewActivity> {
+
+        private static final int HANDLER_REFRESH_RESET = 0;//模拟刷新流程
+
+        public MyHandler(ListViewActivity host) {
+            super(host);
+        }
+
+        @Override
+        protected void handleMessageWithHost(Message msg, ListViewActivity host) {
+
+            switch (msg.what){
+                case HANDLER_REFRESH_RESET:
+                    //刷新完必须调用reset方法重置状态
+                    //true:加载成功 false:加载失败
+                    host.refreshIndicator.reset(true);
+                    break;
+            }
+
+        }
+    }
+
 }

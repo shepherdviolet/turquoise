@@ -10,4 +10,16 @@
     <string name="list_view_title">ListView Usage</string>
     <string name="rounded_list_title">Rounded ListView</string>
     <string name="recycler_view_title">RecyclerView</string>
+
+    <string name="common_indicator_refresh_init">pull to refresh</string>
+    <string name="common_indicator_refresh_ready">release to refresh</string>
+    <string name="common_indicator_refresh_refreshing">refreshing</string>
+    <string name="common_indicator_refresh_succeed">refresh succeed</string>
+    <string name="common_indicator_refresh_failed">refresh failed</string>
+    <string name="common_indicator_load_init">pull to load</string>
+    <string name="common_indicator_load_ready">release to load</string>
+    <string name="common_indicator_load_refreshing">loading</string>
+    <string name="common_indicator_load_succeed">load succeed</string>
+    <string name="common_indicator_load_failed">load failed</string>
+
 </resources>
