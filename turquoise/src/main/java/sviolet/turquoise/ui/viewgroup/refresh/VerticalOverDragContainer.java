@@ -616,6 +616,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
     }
 
     /**
+     * P.S.这个方法还可以被用来临时冻结容器的越界滚动(设置为0)
      * @param overDragResistance 0-1, 越界拖动阻尼, 值约小越界拖动越慢
      */
     public void setOverDragResistance(float overDragResistance) {
@@ -665,6 +666,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
     public int getScrollDuration(){
         return scrollDuration;
+    }
+
+    public float getOverDragResistance() {
+        return overDragResistance;
     }
 
     /*************************************************************************
