@@ -23,6 +23,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
@@ -177,6 +178,9 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
         private Paint circlePaint;
         private Paint progressPaint;
 
+        //优化性能
+        private RectF arcBounds = new RectF();
+
         public CircleAnimationDrawable(AnimationSettings settings, LoadProgress.Info progressInfo) {
             this.settings = settings;
             this.progressInfo = progressInfo;
@@ -224,7 +228,10 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
 
             this.displayPosition = (this.displayPosition - settings.rotateStep) % 360;
             float progressStrokeWidth = calculateSizeByUnit(settings.progressStrokeWidth, settings.progressStrokeUnit);
-            RectF arcBounds = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
+            arcBounds.left = centerX - radius;
+            arcBounds.top = centerY - radius;
+            arcBounds.right = centerX + radius;
+            arcBounds.bottom = centerY + radius;
 
             progressPaint.setStrokeWidth(progressStrokeWidth);
             canvas.drawArc(arcBounds, displayPosition, settings.sweepAngle, false, progressPaint);
@@ -253,7 +260,10 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
             float radius = calculateSizeByUnit(settings.radius, settings.radiusUnit);
             float circleStrokeWidth = calculateSizeByUnit(settings.circleStrokeWidth, settings.circleStrokeUnit);
             float progressStrokeWidth = calculateSizeByUnit(settings.progressStrokeWidth, settings.progressStrokeUnit);
-            RectF arcBounds = new RectF(centerX - radius, centerY - radius, centerX + radius, centerY + radius);
+            arcBounds.left = centerX - radius;
+            arcBounds.top = centerY - radius;
+            arcBounds.right = centerX + radius;
+            arcBounds.bottom = centerY + radius;
 
             circlePaint.setStrokeWidth(circleStrokeWidth);
             canvas.drawCircle(centerX, centerY, radius, circlePaint);
@@ -288,7 +298,7 @@ public class CircleLoadingAnimationDrawableFactory implements CommonLoadingDrawa
 
         @Override
         public int getOpacity() {
-            return 0;
+            return PixelFormat.UNKNOWN;
         }
     }
 
