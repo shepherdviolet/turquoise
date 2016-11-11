@@ -54,7 +54,7 @@
     <!--刷新指示器-->
     <sviolet.turquoise.ui.viewgroup.refresh.CircleDropRefreshIndicator
         android:id="@+id/refresh_circledrop_indicator"
-        android:layout_width="40dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"/>
 

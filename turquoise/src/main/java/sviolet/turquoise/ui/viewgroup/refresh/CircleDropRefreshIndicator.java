@@ -45,15 +45,19 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
 
     ////////////////////////////////////////////////////////////////////////////
 
+    private int shadowColor = 0x20000000;
+    private int shadowWidth = 10;
+    private boolean shadowEnabled = true;
     private int backgroundColor = 0xFFFFFFFF;
-    private int backgroundRadius = 70;
+    private int backgroundRadius = 60;
     private int outlineColor = 0xFFE0E0E0;
     private int outlineWidth = 1;
+    private int progressBackgroundColor = 0xFFD0D0D0;
+    private int progressBackgroundWidth = 1;
     private int progressColor = 0xFF209090;
-    private int progressBackgroundColor = 0xFFF0F0F0;
-    private int progressRadius = 50;
+    private int progressRadius = 40;
     private int progressWidth = 5;
-    private int progressSweepAngle = 120;
+    private int progressSweepAngle = 70;
     private int progressStepAngle = 9;
 
     private int scrollDuration = 500;
@@ -68,9 +72,11 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     private int rotateAngle = 0;
 
     private float containerOverDragResistance;
+    private int shadowAlpha;
 
     private WeakReference<VerticalOverDragContainer> container;
 
+    private Paint shadowPaint;
     private Paint backgroundPaint;
     private Paint outlinePaint;
     private Paint progressBackgroundPaint;
@@ -99,6 +105,12 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     private void init(){
         scroller = new OverScroller(getContext());
 
+        shadowPaint = new Paint();
+        shadowPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
+        shadowPaint.setStyle(Paint.Style.FILL);
+        shadowPaint.setColor(shadowColor);
+        shadowAlpha = shadowPaint.getAlpha();
+
         backgroundPaint = new Paint();
         backgroundPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         backgroundPaint.setStyle(Paint.Style.FILL);
@@ -114,7 +126,7 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
         progressBackgroundPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
         progressBackgroundPaint.setStyle(Paint.Style.STROKE);
         progressBackgroundPaint.setColor(progressBackgroundColor);
-        progressBackgroundPaint.setStrokeWidth(progressWidth);
+        progressBackgroundPaint.setStrokeWidth(progressBackgroundWidth);
 
         progressPaint = new Paint();
         progressPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -237,6 +249,13 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
         arcRect.right = centerX+ progressRadius;
         arcRect.bottom = centerY + progressRadius;
 
+        //绘制阴影
+        if (shadowEnabled) {
+            shadowPaint.setAlpha(shadowAlpha / shadowWidth);
+            for (int i = 1; i <= shadowWidth; i++) {
+                canvas.drawCircle(centerX, centerY, backgroundRadius + i, shadowPaint);
+            }
+        }
         //绘制背景
         canvas.drawCircle(centerX, centerY, backgroundRadius, backgroundPaint);
         //绘制外线
