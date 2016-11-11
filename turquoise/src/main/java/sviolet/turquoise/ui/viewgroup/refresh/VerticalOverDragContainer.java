@@ -21,6 +21,8 @@ package sviolet.turquoise.ui.viewgroup.refresh;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Looper;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +36,7 @@ import java.util.List;
 
 import sviolet.turquoise.R;
 import sviolet.turquoise.common.compat.CompatOverScroller;
+import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.ui.util.ListViewUtils;
 import sviolet.turquoise.ui.util.ScrollViewUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
@@ -387,7 +390,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             }
                         }
                         //弹回
-                        free();
+                        free(false);
                         return true;
                     case STATE_BOTTOM_OVER_DRAG:
                         if (!isCancel) {
@@ -399,7 +402,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             }
                         }
                         //弹回
-                        free();
+                        free(false);
                         return true;
                     case STATE_HOLD:
                     case STATE_HORIZONTAL_DRAG:
@@ -540,13 +543,11 @@ public class VerticalOverDragContainer extends RelativeLayout {
      */
 
     public void resetTopPark(){
-        topParked = false;
-        free();
+        myHandler.sendEmptyMessage(MyHandler.HANDLER_RESET_TOP_PARK);
     }
 
     public void resetBottomPark(){
-        bottomParked = false;
-        free();
+        myHandler.sendEmptyMessage(MyHandler.HANDLER_RESET_BOTTOM_PARK);
     }
 
     /**
@@ -673,12 +674,14 @@ public class VerticalOverDragContainer extends RelativeLayout {
     /**
      * 回弹
      */
-    private void free(){
+    private void free(boolean forceToZero){
         //当前位置
         int currScrollY = (int) scrollY;
         //计算弹回目标
         int target = 0;
-        if (topParkEnabled && currScrollY > 0){
+        if (forceToZero){
+            //do nothing
+        } else if (topParkEnabled && currScrollY > 0){
             if (topParked) {
                 //当前是PARK状态
                 if (currScrollY > overDragThreshold){
@@ -851,6 +854,39 @@ public class VerticalOverDragContainer extends RelativeLayout {
         void onBottomPark();
 
         void setContainer(VerticalOverDragContainer container);
+
+    }
+
+    /***********************************************************************************
+     * handler
+     */
+
+    private MyHandler myHandler = new MyHandler(Looper.getMainLooper(), this);
+
+    private static class MyHandler extends WeakHandler<VerticalOverDragContainer> {
+
+        private static final int HANDLER_RESET_TOP_PARK = 0;
+        private static final int HANDLER_RESET_BOTTOM_PARK = 1;
+
+        public MyHandler(Looper looper, VerticalOverDragContainer host) {
+            super(looper, host);
+        }
+
+        @Override
+        protected void handleMessageWithHost(Message msg, VerticalOverDragContainer host) {
+            switch (msg.what){
+                case HANDLER_RESET_TOP_PARK://顶部PARK归位
+                    host.topParked = false;
+                    host.free(true);
+                    break;
+                case HANDLER_RESET_BOTTOM_PARK://底部PARK归位
+                    host.bottomParked = false;
+                    host.free(true);
+                    break;
+                default:
+                    break;
+            }
+        }
 
     }
 
