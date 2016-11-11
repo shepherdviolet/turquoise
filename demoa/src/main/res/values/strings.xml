@@ -23,6 +23,7 @@
     <string name="refresh_title">Refresh Demo</string>
     <string name="refresh_overdrag_title">OverDrag Demo</string>
     <string name="refresh_refreshindicator_title">RefreshIndicator Demo</string>
+    <string name="refresh_circledrop_title">CircleDropRefreshIndicator Demo</string>
 
     <string name="common_indicator_refresh_init">pull to refresh</string>
     <string name="common_indicator_refresh_ready">release to refresh</string>

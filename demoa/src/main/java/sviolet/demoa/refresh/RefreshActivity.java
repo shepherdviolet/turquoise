@@ -30,7 +30,8 @@ import sviolet.demoa.common.DemoList;
 // Demo列表
 @DemoList({
         OverDragRefreshActivity.class,
-        RefreshIndicatorRefreshActivity.class
+        RefreshIndicatorRefreshActivity.class,
+        CircleDropIndicatorRefreshActivity.class
 })
 
 /**************************************************************

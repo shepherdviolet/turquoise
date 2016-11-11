@@ -65,6 +65,8 @@
             android:label="@string/refresh_overdrag_title"/>
         <activity android:name=".refresh.RefreshIndicatorRefreshActivity"
             android:label="@string/refresh_refreshindicator_title"/>
+        <activity android:name=".refresh.CircleDropIndicatorRefreshActivity"
+            android:label="@string/refresh_circledrop_title"/>
 
         <activity android:name=".TempActivity"
             android:label="@string/temp_main_title"/>
