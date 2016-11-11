@@ -64,7 +64,7 @@ public class CircleDropIndicatorRefreshActivity extends TActivity {
 
         //listView初始化
         listView.setAdapter(new EmulateListAdapter(this, 15,
-                "CircleDropRefreshIndicator", "10 hours ago", "pull to refresh implement by VerticalOverDragContainer + CircleDropRefreshIndicator"));
+                "CircleDropRefresh", "10 hours ago", "pull to refresh pull to refresh pull to refresh pull to refresh pull to refresh pull to refresh "));
 
         //VerticalOverDragContainer添加刷新指示器(此处为CircleDropRefreshIndicator)
         container.addRefreshIndicator(refreshIndicator);//下拉刷新

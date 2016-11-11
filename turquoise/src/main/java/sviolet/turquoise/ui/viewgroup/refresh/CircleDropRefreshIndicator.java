@@ -50,7 +50,7 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     private boolean shadowEnabled = true;
     private int backgroundColor = 0xFFFFFFFF;
     private int backgroundRadius = 60;
-    private int outlineColor = 0xFFE0E0E0;
+    private int outlineColor = 0xFFD0D0D0;
     private int outlineWidth = 1;
     private int progressBackgroundColor = 0xFFD0D0D0;
     private int progressBackgroundWidth = 1;
