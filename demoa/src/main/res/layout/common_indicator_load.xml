@@ -45,6 +45,7 @@
     sviolet:SimpleVerticalRefreshIndicatorGroup_failedViewIndex="4">
 
     <!--序号0: 初始状态子控件-->
+    <!--对齐父控件底部:layout_alignParentBottom="true"-->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -54,6 +55,7 @@
         android:text="@string/common_indicator_load_init"/>
 
     <!--序号1: 松开刷新状态子控件-->
+    <!--对齐父控件底部:layout_alignParentBottom="true"-->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -63,6 +65,7 @@
         android:text="@string/common_indicator_load_ready"/>
 
     <!--序号2: 刷新中状态子控件-->
+    <!--对齐父控件底部:layout_alignParentBottom="true"-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -89,6 +92,7 @@
     </RelativeLayout>
 
     <!--序号3: 刷新成功状态子控件-->
+    <!--对齐父控件底部:layout_alignParentBottom="true"-->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="70dp"
@@ -98,6 +102,7 @@
         android:text="@string/common_indicator_load_succeed"/>
 
     <!--序号4: 刷新失败状态子控件-->
+    <!--对齐父控件底部:layout_alignParentBottom="true"-->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="70dp"
