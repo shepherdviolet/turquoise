@@ -45,16 +45,16 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
 
     ////////////////////////////////////////////////////////////////////////////
 
-    private int backgroundColor = 0xFFF0F0F0;
-    private int backgroundRadius = 50;
-    private int outlineColor = 0xFF808080;
+    private int backgroundColor = 0xFFFFFFFF;
+    private int backgroundRadius = 70;
+    private int outlineColor = 0xFFE0E0E0;
     private int outlineWidth = 1;
     private int progressColor = 0xFF209090;
-    private int progressBackgroundColor = 0xFFD0D0D0;
-    private int progressRadius = 30;
-    private int progressWidth = 10;
-    private int progressSweepAngle = 60;
-    private int progressStepAngle = 4;
+    private int progressBackgroundColor = 0xFFF0F0F0;
+    private int progressRadius = 50;
+    private int progressWidth = 5;
+    private int progressSweepAngle = 120;
+    private int progressStepAngle = 9;
 
     private int scrollDuration = 500;
 
@@ -65,6 +65,7 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     private int type = TYPE_TOP;
     private int state = STATE_DRAG;
     private int scrollY = 0;
+    private int rotateAngle = 0;
 
     private float containerOverDragResistance;
 
@@ -203,6 +204,8 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             scroller.computeScrollOffset();
             this.scrollY = scroller.getCurrY();
             postInvalidate();
+        } else if (state == STATE_REFRESHING){
+            postInvalidate();
         }
 
         canvas.save();
@@ -214,6 +217,13 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             case TYPE_BOTTOM://底部进入模式
                 canvas.translate(0, scrollY + getContainerOverDragThreshold());
                 break;
+        }
+
+        if(state == STATE_DRAG){
+            int threshold = getContainerOverDragThreshold() != 0 ? getContainerOverDragThreshold() : 100;
+            this.rotateAngle = 360 * (this.scrollY % threshold) / threshold;
+        }else{
+            this.rotateAngle -= progressStepAngle;
         }
 
         //取画布绘制区域矩形
@@ -234,7 +244,7 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
         //绘制进度条背景
         canvas.drawCircle(centerX, centerY, progressRadius, progressBackgroundPaint);
         //绘制进度条
-        canvas.drawArc(arcRect, 0, progressSweepAngle, false, progressPaint);
+        canvas.drawArc(arcRect, this.rotateAngle, progressSweepAngle, false, progressPaint);
 
         canvas.restore();
 
