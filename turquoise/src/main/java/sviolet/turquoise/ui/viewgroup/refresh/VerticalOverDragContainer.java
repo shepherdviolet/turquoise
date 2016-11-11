@@ -542,10 +542,18 @@ public class VerticalOverDragContainer extends RelativeLayout {
      * public
      */
 
+    /**
+     * [重要]重置顶部PARK状态, 并将越界的容器控件弹回初始位置.
+     * 在发生PARK事件后, 进行刷新流程, 刷新结束后, 必须调用该方法, 重置状态, 在重置状态前, 容器将不会再触发PARK事件.
+     */
     public void resetTopPark(){
         myHandler.sendEmptyMessage(MyHandler.HANDLER_RESET_TOP_PARK);
     }
 
+    /**
+     * [重要]重置底部PARK状态, 并将越界的容器控件弹回初始位置.
+     * 在发生PARK事件后, 进行刷新流程, 刷新结束后, 必须调用该方法, 重置状态, 在重置状态前, 容器将不会再触发PARK事件.
+     */
     public void resetBottomPark(){
         myHandler.sendEmptyMessage(MyHandler.HANDLER_RESET_BOTTOM_PARK);
     }
