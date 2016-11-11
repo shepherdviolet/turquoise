@@ -125,6 +125,9 @@ public class PointLoadingAnimationDrawableFactory implements CommonLoadingDrawab
 
         private Paint paint;
 
+        //优化性能
+        private Rect canvasBounds = new Rect();
+
         public PointAnimationDrawable(AnimationSettings settings) {
             this.settings = settings;
             initPaint();
@@ -153,7 +156,6 @@ public class PointLoadingAnimationDrawableFactory implements CommonLoadingDrawab
 
         private void drawCircle(Canvas canvas, int currentPosition) {
             Rect drawBounds = getBounds();
-            Rect canvasBounds = new Rect();
             canvas.getClipBounds(canvasBounds);
 
             final float scale = (float)canvasBounds.width() / (float)canvas.getWidth();//calculate scale of canvas
