@@ -84,7 +84,7 @@ public class OverDragRefreshActivity extends TActivity {
             }
 
             @Override
-            public void onTopPark() {
+            public boolean onTopPark() {
                 //顶部PARK事件
                 Toast.makeText(getApplicationContext(), "TOP PARK", Toast.LENGTH_SHORT).show();
                 /**
@@ -92,10 +92,21 @@ public class OverDragRefreshActivity extends TActivity {
                  * 在状态重置前, 容器控件将不会再触发TOP PARK事件, 必须在重置状态后才能触发
                  */
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_TOP_PARK_RESET, 2000);
+                /**
+                 * (1) 返回true时, 表明接受了该事件, 容器进入顶部PARK状态, 并阻断后续触发的顶部PARK事件(不管怎么
+                 * 拖动都不会再触发顶部PARK事件), 直到调用{@link VerticalOverDragContainer#resetTopPark()}
+                 * 方法解除PARK状态并弹回. 例如:监听器中开始刷新流程, 返回true, 等待刷新流程结束后, 调用
+                 * {@link VerticalOverDragContainer#resetTopPark()}方法, 容器会弹回初始状态, 并开始接受
+                 * 下一个PARK事件.
+                 * (2) 返回false时, 表明监听器不处理该事件, 容器不进入PARK状态, 无需调用
+                 * {@link VerticalOverDragContainer#resetTopPark()}方法重置, 容器会继续响应接下来的顶部
+                 * PARK事件.
+                 */
+                return true;
             }
 
             @Override
-            public void onBottomPark() {
+            public boolean onBottomPark() {
                 //底部PARK事件
                 Toast.makeText(getApplicationContext(), "BOTTOM PARK", Toast.LENGTH_SHORT).show();
                 /**
@@ -103,6 +114,17 @@ public class OverDragRefreshActivity extends TActivity {
                  * 在状态重置前, 容器控件将不会再触发BOTTOM PARK事件, 必须在重置状态后才能触发
                  */
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_BOTTOM_PARK_RESET, 2000);
+                /**
+                 * (1) 返回true时, 表明接受了该事件, 容器进入底部PARK状态, 并阻断后续触发的底部PARK事件(不管怎么
+                 * 拖动都不会再触发底部PARK事件), 直到调用{@link VerticalOverDragContainer#resetBottomPark()}
+                 * 方法解除PARK状态并弹回. 例如:监听器中开始加载流程, 返回true, 等待加载流程结束后, 调用
+                 * {@link VerticalOverDragContainer#resetBottomPark()}方法, 容器会弹回初始状态, 并开始接受
+                 * 下一个PARK事件.
+                 * (2) 返回false时, 表明监听器不处理该事件, 容器不进入PARK状态, 无需调用
+                 * {@link VerticalOverDragContainer#resetBottomPark()}方法重置, 容器会继续响应接下来的底部
+                 * PARK事件.
+                 */
+                return true;
             }
 
             @Override

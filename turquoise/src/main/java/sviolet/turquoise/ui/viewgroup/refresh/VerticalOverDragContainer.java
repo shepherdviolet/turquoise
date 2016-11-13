@@ -48,11 +48,14 @@ import sviolet.turquoise.util.droid.MotionEventUtils;
  * <p>PARK: 即越界拖动超过设定值(overDragThreshold)后, 停止在设定位置, 用于实现下拉刷新/上拉加载,
  * PARK状态即下拉刷新中的状态.</p>
  *
- * <p>注意!!! 当发生PARK事件后, VerticalOverDragContainer会保持PARK状态, 不会再发生相同的PARK事件,
- * 必须调用resetTopPark/resetBottomPark方法, 重置状态, 才会再次发生PARK事件. 在实际使用中,
- * 接收到PARK事件时, 开始进行数据刷新, 当数据刷新完成后, 调用resetTopPark/resetBottomPark方法重置状态.
- * 当你使用{@link SimpleVerticalRefreshIndicatorGroup}配合实现下拉刷新时, 调用{@link SimpleVerticalRefreshIndicatorGroup}
- * 的{@link SimpleVerticalRefreshIndicatorGroup#reset(boolean)}可以起到相同的作用.</p>
+ * <p>注意: 当发生PARK事件后, 若监听器{@link RefreshIndicator#onTopPark()}/{@link RefreshIndicator#onBottomPark()}
+ * 返回true, VerticalOverDragContainer会保持PARK状态, 不会再发生相同的PARK事件,必须调用resetTopPark/resetBottomPark方法,
+ * 重置状态, 才会再次发生PARK事件. 在实际使用中, 接收到PARK事件时, 开始进行数据刷新, 回调方法返回true, 当数据刷新完成后,
+ * 调用{@link VerticalOverDragContainer#resetTopPark()}/{@link VerticalOverDragContainer#resetBottomPark()}方法重置状态.
+ * 当你使用{@link SimpleVerticalRefreshIndicatorGroup}配合实现下拉刷新时, 调用
+ * {@link SimpleVerticalRefreshIndicatorGroup#reset(boolean)}方法可以起到相同的作用.
+ * 当你使用{@link CircleDropRefreshIndicator}实现下拉刷新时, 调用{@link CircleDropRefreshIndicator#reset()}
+ * 方法可以起到相同作用.</p>
  *
  * <p>
  *     支持的子控件:<br/>
@@ -89,6 +92,8 @@ import sviolet.turquoise.util.droid.MotionEventUtils;
  *          </ScrollView>
  *      </sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer>
  * }</pre>
+ *
+ * <p>具体用法参考demoa中的OverDragRefreshActivity.java</p>
  *
  * Created by S.Violet on 2016/11/3.
  */
@@ -384,25 +389,63 @@ public class VerticalOverDragContainer extends RelativeLayout {
                         if (!isCancel) {
                             if (topParkEnabled && scrollY > overDragThreshold) {
                                 if (!topParked) {
+                                    /**
+                                     * (1) 返回true时, 表明接受了该事件, 容器进入顶部PARK状态, 并阻断后续触发的顶部PARK事件(不管怎么
+                                     * 拖动都不会再触发顶部PARK事件), 直到调用{@link VerticalOverDragContainer#resetTopPark()}
+                                     * 方法解除PARK状态并弹回. 例如:监听器中开始刷新流程, 返回true, 等待刷新流程结束后, 调用
+                                     * {@link VerticalOverDragContainer#resetTopPark()}方法, 容器会弹回初始状态, 并开始接受
+                                     * 下一个PARK事件.
+                                     * (2) 返回false时, 表明监听器不处理该事件, 容器不进入PARK状态, 无需调用
+                                     * {@link VerticalOverDragContainer#resetTopPark()}方法重置, 容器会继续响应接下来的顶部
+                                     * PARK事件.
+                                     */
+                                    //先置为PARK状态
                                     topParked = true;
-                                    myHandler.sendEmptyMessage(MyHandler.HANDLER_CALLBACK_TOP_PARK);
+                                    if (callbackTopPark()){
+                                        //弹回PARK位置
+                                        free(false);
+                                        return true;
+                                    } else {
+                                        //若回调返回false, 则解除PARK状态
+                                        //之所以不在回调返回true时, 将PARK置为true, 是防止监听器执行时, 状态被重置为false, 回到这里被重置掉
+                                        topParked = false;
+                                    }
                                 }
                             }
                         }
-                        //弹回
-                        free(false);
+                        //弹回0位置
+                        free(true);
                         return true;
                     case STATE_BOTTOM_OVER_DRAG:
                         if (!isCancel) {
                             if (bottomParkEnabled && scrollY < -overDragThreshold) {
                                 if (!bottomParked) {
+                                    /**
+                                     * (1) 返回true时, 表明接受了该事件, 容器进入底部PARK状态, 并阻断后续触发的底部PARK事件(不管怎么
+                                     * 拖动都不会再触发底部PARK事件), 直到调用{@link VerticalOverDragContainer#resetBottomPark()}
+                                     * 方法解除PARK状态并弹回. 例如:监听器中开始加载流程, 返回true, 等待加载流程结束后, 调用
+                                     * {@link VerticalOverDragContainer#resetBottomPark()}方法, 容器会弹回初始状态, 并开始接受
+                                     * 下一个PARK事件.
+                                     * (2) 返回false时, 表明监听器不处理该事件, 容器不进入PARK状态, 无需调用
+                                     * {@link VerticalOverDragContainer#resetBottomPark()}方法重置, 容器会继续响应接下来的底部
+                                     * PARK事件.
+                                     */
+                                    //先置为PARK状态
                                     bottomParked = true;
-                                    myHandler.sendEmptyMessage(MyHandler.HANDLER_CALLBACK_BOTTOM_PARK);
+                                    if (callbackBottomPark()){
+                                        //弹回PARK位置
+                                        free(false);
+                                        return true;
+                                    } else {
+                                        //若回调返回false, 则解除PARK状态
+                                        //之所以不在回调返回true时, 将PARK置为true, 是防止监听器执行时, 状态被重置为false, 回到这里被重置掉
+                                        bottomParked = false;
+                                    }
                                 }
                             }
                         }
-                        //弹回
-                        free(false);
+                        //弹回0位置
+                        free(true);
                         return true;
                     case STATE_HOLD:
                     case STATE_HORIZONTAL_DRAG:
@@ -522,20 +565,30 @@ public class VerticalOverDragContainer extends RelativeLayout {
      * PARK
      */
 
-    private void callbackTopPark() {
+    private boolean callbackTopPark() {
+        //当其中一个监听器返回true时, 返回true
+        boolean result = false;
         if (refreshIndicatorList != null){
             for (RefreshIndicator refreshIndicator : refreshIndicatorList){
-                refreshIndicator.onTopPark();
+                if (refreshIndicator.onTopPark()){
+                    result = true;
+                }
             }
         }
+        return result;
     }
 
-    private void callbackBottomPark() {
+    private boolean callbackBottomPark() {
+        //当其中一个监听器返回true时, 返回true
+        boolean result = false;
         if (refreshIndicatorList != null){
             for (RefreshIndicator refreshIndicator : refreshIndicatorList){
-                refreshIndicator.onBottomPark();
+                if (refreshIndicator.onBottomPark()){
+                    result = true;
+                }
             }
         }
+        return result;
     }
 
     /*************************************************************************
@@ -857,14 +910,32 @@ public class VerticalOverDragContainer extends RelativeLayout {
         void onScroll(int scrollY);
 
         /**
-         * 顶部PARK事件, 事件发生后需要手动重置状态(resetTopPark方法), 在重置状态前, 不会再发生相同事件
+         * 顶部PARK事件
+         *
+         * @return (1) 返回true时, 表明接受了该事件, 容器进入顶部PARK状态, 并阻断后续触发的顶部PARK事件(不管怎么
+         *          拖动都不会再触发顶部PARK事件), 直到调用{@link VerticalOverDragContainer#resetTopPark()}
+         *          方法解除PARK状态并弹回. 例如:监听器中开始刷新流程, 返回true, 等待刷新流程结束后, 调用
+         *          {@link VerticalOverDragContainer#resetTopPark()}方法, 容器会弹回初始状态, 并开始接受
+         *          下一个PARK事件.
+         *          (2) 返回false时, 表明监听器不处理该事件, 容器不进入PARK状态, 无需调用
+         *          {@link VerticalOverDragContainer#resetTopPark()}方法重置, 容器会继续响应接下来的顶部
+         *          PARK事件.
          */
-        void onTopPark();
+        boolean onTopPark();
 
         /**
-         * 底部PARK, 事件发生后需要手动重置状态(resetBottomPark方法), 在重置状态前, 不会再发生相同事件
+         * 底部PARK事件
+         *
+         * @return (1) 返回true时, 表明接受了该事件, 容器进入底部PARK状态, 并阻断后续触发的底部PARK事件(不管怎么
+         *          拖动都不会再触发底部PARK事件), 直到调用{@link VerticalOverDragContainer#resetBottomPark()}
+         *          方法解除PARK状态并弹回. 例如:监听器中开始加载流程, 返回true, 等待加载流程结束后, 调用
+         *          {@link VerticalOverDragContainer#resetBottomPark()}方法, 容器会弹回初始状态, 并开始接受
+         *          下一个PARK事件.
+         *          (2) 返回false时, 表明监听器不处理该事件, 容器不进入PARK状态, 无需调用
+         *          {@link VerticalOverDragContainer#resetBottomPark()}方法重置, 容器会继续响应接下来的底部
+         *          PARK事件.
          */
-        void onBottomPark();
+        boolean onBottomPark();
 
         void setContainer(VerticalOverDragContainer container);
 
@@ -878,10 +949,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
     private static class MyHandler extends WeakHandler<VerticalOverDragContainer> {
 
-        private static final int HANDLER_CALLBACK_TOP_PARK = 0;
-        private static final int HANDLER_CALLBACK_BOTTOM_PARK = 1;
-        private static final int HANDLER_RESET_TOP_PARK = 2;
-        private static final int HANDLER_RESET_BOTTOM_PARK = 3;
+        private static final int HANDLER_RESET_TOP_PARK = 0;
+        private static final int HANDLER_RESET_BOTTOM_PARK = 1;
 
         public MyHandler(Looper looper, VerticalOverDragContainer host) {
             super(looper, host);
@@ -890,12 +959,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
         @Override
         protected void handleMessageWithHost(Message msg, VerticalOverDragContainer host) {
             switch (msg.what){
-                case HANDLER_CALLBACK_TOP_PARK:
-                    host.callbackTopPark();
-                    break;
-                case HANDLER_CALLBACK_BOTTOM_PARK:
-                    host.callbackBottomPark();
-                    break;
                 case HANDLER_RESET_TOP_PARK://顶部PARK归位
                     host.topParked = false;
                     host.free(true);
