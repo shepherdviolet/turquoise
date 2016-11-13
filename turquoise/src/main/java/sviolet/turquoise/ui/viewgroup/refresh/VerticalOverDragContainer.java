@@ -385,7 +385,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             if (topParkEnabled && scrollY > overDragThreshold) {
                                 if (!topParked) {
                                     topParked = true;
-                                    callbackTopPark();
+                                    myHandler.sendEmptyMessage(MyHandler.HANDLER_CALLBACK_TOP_PARK);
                                 }
                             }
                         }
@@ -397,7 +397,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             if (bottomParkEnabled && scrollY < -overDragThreshold) {
                                 if (!bottomParked) {
                                     bottomParked = true;
-                                    callbackBottomPark();
+                                    myHandler.sendEmptyMessage(MyHandler.HANDLER_CALLBACK_BOTTOM_PARK);
                                 }
                             }
                         }
@@ -878,8 +878,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
     private static class MyHandler extends WeakHandler<VerticalOverDragContainer> {
 
-        private static final int HANDLER_RESET_TOP_PARK = 0;
-        private static final int HANDLER_RESET_BOTTOM_PARK = 1;
+        private static final int HANDLER_CALLBACK_TOP_PARK = 0;
+        private static final int HANDLER_CALLBACK_BOTTOM_PARK = 1;
+        private static final int HANDLER_RESET_TOP_PARK = 2;
+        private static final int HANDLER_RESET_BOTTOM_PARK = 3;
 
         public MyHandler(Looper looper, VerticalOverDragContainer host) {
             super(looper, host);
@@ -888,6 +890,12 @@ public class VerticalOverDragContainer extends RelativeLayout {
         @Override
         protected void handleMessageWithHost(Message msg, VerticalOverDragContainer host) {
             switch (msg.what){
+                case HANDLER_CALLBACK_TOP_PARK:
+                    host.callbackTopPark();
+                    break;
+                case HANDLER_CALLBACK_BOTTOM_PARK:
+                    host.callbackBottomPark();
+                    break;
                 case HANDLER_RESET_TOP_PARK://顶部PARK归位
                     host.topParked = false;
                     host.free(true);
