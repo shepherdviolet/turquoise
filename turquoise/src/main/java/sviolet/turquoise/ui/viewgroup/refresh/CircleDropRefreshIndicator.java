@@ -155,7 +155,7 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     }
 
     @Override
-    public void onTopPark() {
+    public boolean onTopPark() {
 
         if (type == TYPE_TOP && state != STATE_REFRESHING){
             state = STATE_REFRESHING;
@@ -172,12 +172,16 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
                 refreshListener.onRefresh();
             }
             postInvalidate();
+            //有效地处理了PARK事件时, 返回true, 使得容器进入PARK状态
+            return true;
         }
 
+        //未能有效处理PARK事件时, 返回false, 防止容器意外进入PARK状态
+        return false;
     }
 
     @Override
-    public void onBottomPark() {
+    public boolean onBottomPark() {
 
         if (type == TYPE_BOTTOM && state != STATE_REFRESHING){
             state = STATE_REFRESHING;
@@ -194,8 +198,12 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
                 refreshListener.onRefresh();
             }
             postInvalidate();
+            //有效地处理了PARK事件时, 返回true, 使得容器进入PARK状态
+            return true;
         }
 
+        //未能有效处理PARK事件时, 返回false, 防止容器意外进入PARK状态
+        return false;
     }
 
     @Override
