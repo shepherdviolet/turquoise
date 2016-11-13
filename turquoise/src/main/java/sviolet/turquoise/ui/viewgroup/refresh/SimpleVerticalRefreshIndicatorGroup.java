@@ -172,7 +172,7 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
     }
 
     @Override
-    public void onTopPark() {
+    public boolean onTopPark() {
         //顶部固定或顶部进入模式时接受顶部PARK事件
         if (type == TYPE_TOP_STATIC || type == TYPE_IN_FROM_TOP){
             //非refreshing状态才能进入refreshing状态
@@ -181,12 +181,16 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
                 if(refreshListener != null){
                     refreshListener.onRefresh();
                 }
+                //有效地处理了PARK事件时, 返回true, 使得容器进入PARK状态
+                return true;
             }
         }
+        //未能有效处理PARK事件时, 返回false, 防止容器意外进入PARK状态
+        return false;
     }
 
     @Override
-    public void onBottomPark() {
+    public boolean onBottomPark() {
         //底部固定或底部进入模式时接受底部PARK事件
         if (type == TYPE_BOTTOM_STATIC || type == TYPE_IN_FROM_BOTTOM){
             //非refreshing状态才能进入refreshing状态
@@ -195,8 +199,12 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
                 if(refreshListener != null){
                     refreshListener.onRefresh();
                 }
+                //有效地处理了PARK事件时, 返回true, 使得容器进入PARK状态
+                return true;
             }
         }
+        //未能有效处理PARK事件时, 返回false, 防止容器意外进入PARK状态
+        return false;
     }
 
     @Override
