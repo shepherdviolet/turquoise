@@ -26,9 +26,6 @@
 	
 <!--+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
 
-	<!--下拉刷新指示器-->
-	<include layout="@layout/common_indicator_refresh"/>
-
 	<!-- 越界拖动容器 -->
 	<sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer
 		android:id="@+id/rounded_list_main_container"
@@ -51,5 +48,8 @@
 	        android:dividerHeight="0dp"/>
 
 	</sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer>
-    
+
+	<!--下拉刷新指示器-->
+	<include layout="@layout/common_circledrop_indicator_refresh"/>
+
 </RelativeLayout>

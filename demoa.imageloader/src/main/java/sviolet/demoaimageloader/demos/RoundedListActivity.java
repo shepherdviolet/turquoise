@@ -36,7 +36,7 @@ import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup;
+import sviolet.turquoise.ui.viewgroup.refresh.CircleDropRefreshIndicator;
 import sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer;
 import sviolet.turquoise.util.common.BitmapUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
@@ -67,8 +67,8 @@ public class RoundedListActivity extends TActivity {
     private ListView listView;
     @ResourceId(R.id.rounded_list_main_container)
     private VerticalOverDragContainer verticalOverDragContainer;
-    @ResourceId(R.id.common_indicator_refresh)
-    private SimpleVerticalRefreshIndicatorGroup refreshIndicator;
+    @ResourceId(R.id.common_circledrop_indicator_refresh)
+    private CircleDropRefreshIndicator refreshIndicator;
 
     private RoundedListAdapter adapter;
 
@@ -98,7 +98,7 @@ public class RoundedListActivity extends TActivity {
 
         //添加下拉刷新效果
         verticalOverDragContainer.addRefreshIndicator(refreshIndicator);
-        refreshIndicator.setRefreshListener(new SimpleVerticalRefreshIndicatorGroup.RefreshListener() {
+        refreshIndicator.setRefreshListener(new CircleDropRefreshIndicator.RefreshListener() {
             @Override
             public void onRefresh() {
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_REFRESH_RESET, 4000);
@@ -154,8 +154,7 @@ public class RoundedListActivity extends TActivity {
             switch (msg.what){
                 case HANDLER_REFRESH_RESET:
                     //刷新完必须调用reset方法重置状态
-                    //true:加载成功 false:加载失败
-                    host.refreshIndicator.reset(true);
+                    host.refreshIndicator.reset();
                     break;
             }
 

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015-2016 S.Violet
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  ~ Project GitHub: https://github.com/shepherdviolet/turquoise
+  ~ Email: shepherdviolet@163.com
+  -->
+
+<!--刷新指示器-->
+<!--layout_width/layout_height和VeriticalOverDragContainer一样即可, 一般就match_parent-->
+<sviolet.turquoise.ui.viewgroup.refresh.CircleDropRefreshIndicator
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sviolet="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/common_circledrop_indicator_refresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    sviolet:CircleDropRefreshIndicator_type="top"
+    sviolet:CircleDropRefreshIndicator_position="middle"
+    sviolet:CircleDropRefreshIndicator_shadowColor="#20000000"
+    sviolet:CircleDropRefreshIndicator_shadowWidth="3dp"
+    sviolet:CircleDropRefreshIndicator_shadowEnabled="true"
+    sviolet:CircleDropRefreshIndicator_backgroundColor="#FFFFFFFF"
+    sviolet:CircleDropRefreshIndicator_backgroundRadius="16dp"
+    sviolet:CircleDropRefreshIndicator_outlineColor="#FFD0D0D0"
+    sviolet:CircleDropRefreshIndicator_outlineWidth="1px"
+    sviolet:CircleDropRefreshIndicator_progressBackgroundColor="#FFD0D0D0"
+    sviolet:CircleDropRefreshIndicator_progressBackgroundWidth="1px"
+    sviolet:CircleDropRefreshIndicator_progressColor="#FF209090"
+    sviolet:CircleDropRefreshIndicator_progressRadius="11dp"
+    sviolet:CircleDropRefreshIndicator_progressWidth="1dp"
+    sviolet:CircleDropRefreshIndicator_progressSweepAngle="70"
+    sviolet:CircleDropRefreshIndicator_progressStepAngle="9"
+    sviolet:CircleDropRefreshIndicator_scrollDuration="500"/>

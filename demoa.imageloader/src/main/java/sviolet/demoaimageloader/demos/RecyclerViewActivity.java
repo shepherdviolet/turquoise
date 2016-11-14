@@ -37,7 +37,7 @@ import sviolet.turquoise.enhance.app.TAppCompatActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup;
+import sviolet.turquoise.ui.viewgroup.refresh.CircleDropRefreshIndicator;
 import sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer;
 import sviolet.turquoise.util.common.BitmapUtils;
 import sviolet.turquoise.x.imageloader.TILoader;
@@ -68,8 +68,8 @@ public class RecyclerViewActivity extends TAppCompatActivity {
     private RecyclerView recyclerView;
     @ResourceId(R.id.recycler_view_main_container)
     private VerticalOverDragContainer verticalOverDragContainer;
-    @ResourceId(R.id.common_indicator_refresh)
-    private SimpleVerticalRefreshIndicatorGroup refreshIndicator;
+    @ResourceId(R.id.common_circledrop_indicator_refresh)
+    private CircleDropRefreshIndicator refreshIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +97,7 @@ public class RecyclerViewActivity extends TAppCompatActivity {
 
         //添加下拉刷新效果
         verticalOverDragContainer.addRefreshIndicator(refreshIndicator);
-        refreshIndicator.setRefreshListener(new SimpleVerticalRefreshIndicatorGroup.RefreshListener() {
+        refreshIndicator.setRefreshListener(new CircleDropRefreshIndicator.RefreshListener() {
             @Override
             public void onRefresh() {
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_REFRESH_RESET, 4000);
@@ -183,8 +183,7 @@ public class RecyclerViewActivity extends TAppCompatActivity {
             switch (msg.what){
                 case HANDLER_REFRESH_RESET:
                     //刷新完必须调用reset方法重置状态
-                    //true:加载成功 false:加载失败
-                    host.refreshIndicator.reset(true);
+                    host.refreshIndicator.reset();
                     break;
             }
 

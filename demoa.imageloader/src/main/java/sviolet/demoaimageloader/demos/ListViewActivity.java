@@ -35,7 +35,7 @@ import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup;
+import sviolet.turquoise.ui.viewgroup.refresh.CircleDropRefreshIndicator;
 import sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.drawable.common.CommonLoadingDrawableFactory;
@@ -62,8 +62,8 @@ public class ListViewActivity extends TActivity {
     private ListView listView;
     @ResourceId(R.id.list_view_main_container)
     private VerticalOverDragContainer verticalOverDragContainer;
-    @ResourceId(R.id.common_indicator_refresh)
-    private SimpleVerticalRefreshIndicatorGroup refreshIndicator;
+    @ResourceId(R.id.common_circledrop_indicator_refresh)
+    private CircleDropRefreshIndicator refreshIndicator;
 
     private ListViewAdapter adapter;
 
@@ -85,7 +85,7 @@ public class ListViewActivity extends TActivity {
 
         //添加下拉刷新效果
         verticalOverDragContainer.addRefreshIndicator(refreshIndicator);
-        refreshIndicator.setRefreshListener(new SimpleVerticalRefreshIndicatorGroup.RefreshListener() {
+        refreshIndicator.setRefreshListener(new CircleDropRefreshIndicator.RefreshListener() {
             @Override
             public void onRefresh() {
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_REFRESH_RESET, 4000);
@@ -141,8 +141,7 @@ public class ListViewActivity extends TActivity {
             switch (msg.what){
                 case HANDLER_REFRESH_RESET:
                     //刷新完必须调用reset方法重置状态
-                    //true:加载成功 false:加载失败
-                    host.refreshIndicator.reset(true);
+                    host.refreshIndicator.reset();
                     break;
             }
 
