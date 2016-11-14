@@ -115,11 +115,11 @@ public class RefreshIndicatorRefreshActivity extends TActivity {
             switch (msg.what){
                 case HANDLER_REFRESH_RESET:
                     //true:加载成功 false:加载失败
-                    host.refreshIndicator.reset(true);
+                    host.refreshIndicator.reset(true);//必须调用该方法重置
                     break;
                 case HANDLER_LOAD_RESET:
                     //true:加载成功 false:加载失败
-                    host.loadIndicator.reset(true);
+                    host.loadIndicator.reset(true);//必须调用该方法重置
                     break;
             }
 

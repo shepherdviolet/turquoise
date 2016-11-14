@@ -281,6 +281,9 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             postInvalidate();
         }
 
+        //取画布绘制区域矩形
+        canvas.getClipBounds(canvasRect);
+
         //保存画布状态
         canvas.save();
         //滚动画布
@@ -300,9 +303,6 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             this.rotateAngle -= progressStepAngle;
         }
 
-        //取画布绘制区域矩形
-        canvas.getClipBounds(canvasRect);
-
         //计算中点
         float centerX;
         switch (position){
@@ -317,10 +317,21 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
                 centerX = (float)(canvasRect.left + canvasRect.right) / 2f;
                 break;
         }
-        float centerY = (float)getContainerOverDragThreshold() / 2f;
+        float centerY;
+        switch (type){
+            case TYPE_TOP:
+                centerY = canvasRect.top + (float)getContainerOverDragThreshold() / 2f;
+                break;
+            case TYPE_BOTTOM:
+                centerY = canvasRect.bottom - (float)getContainerOverDragThreshold() / 2f;
+                break;
+            default:
+                centerY = (float)(canvasRect.top + canvasRect.bottom) / 2f;
+                break;
+        }
         arcRect.left = centerX - progressRadius;
         arcRect.top = centerY - progressRadius;
-        arcRect.right = centerX+ progressRadius;
+        arcRect.right = centerX + progressRadius;
         arcRect.bottom = centerY + progressRadius;
 
         //绘制阴影

@@ -55,8 +55,10 @@ public class CircleDropIndicatorRefreshActivity extends TActivity {
     private ListView listView;
     @ResourceId(R.id.refresh_circledrop_container)
     private VerticalOverDragContainer container;
-    @ResourceId(R.id.refresh_circledrop_indicator)
+    @ResourceId(R.id.common_circledrop_indicator_refresh)
     private CircleDropRefreshIndicator refreshIndicator;//下拉刷新
+    @ResourceId(R.id.common_circledrop_indicator_load)
+    private CircleDropRefreshIndicator loadIndicator;//下拉刷新
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +70,29 @@ public class CircleDropIndicatorRefreshActivity extends TActivity {
 
         //VerticalOverDragContainer添加刷新指示器(此处为CircleDropRefreshIndicator)
         container.addRefreshIndicator(refreshIndicator);//下拉刷新
+        container.addRefreshIndicator(loadIndicator);//上拉加载
 
         //设置刷新监听器
         refreshIndicator.setRefreshListener(new CircleDropRefreshIndicator.RefreshListener() {
             @Override
             public void onRefresh() {
+                /**
+                 * 模拟刷新流程处理, 等待刷新完成后, 必须调用refreshIndicator.reset()方法, 重置容器控件的PARK状态, 容器控件会弹回初始状态,
+                 * 在状态重置前, 容器控件将不会再触发TOP PARK事件, 必须在重置状态后才能触发
+                 */
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_REFRESH_RESET, 4000);
+            }
+        });
+
+        //设置刷新监听器
+        loadIndicator.setRefreshListener(new CircleDropRefreshIndicator.RefreshListener() {
+            @Override
+            public void onRefresh() {
+                /**
+                 * 模拟加载流程处理, 等待加载完成后, 必须调用loadIndicator.reset()方法, 重置容器控件的PARK状态, 容器控件会弹回初始状态,
+                 * 在状态重置前, 容器控件将不会再触发TOP PARK事件, 必须在重置状态后才能触发
+                 */
+                myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_LOAD_RESET, 4000);
             }
         });
 
@@ -84,6 +103,7 @@ public class CircleDropIndicatorRefreshActivity extends TActivity {
     private static class MyHandler extends WeakHandler<CircleDropIndicatorRefreshActivity> {
 
         private static final int HANDLER_REFRESH_RESET = 0;
+        private static final int HANDLER_LOAD_RESET = 1;
 
         public MyHandler(CircleDropIndicatorRefreshActivity host) {
             super(host);
@@ -94,7 +114,11 @@ public class CircleDropIndicatorRefreshActivity extends TActivity {
             switch (msg.what){
                 case HANDLER_REFRESH_RESET:
                     //true:加载成功 false:加载失败
-                    host.refreshIndicator.reset();
+                    host.refreshIndicator.reset();//必须调用该方法重置
+                    break;
+                case HANDLER_LOAD_RESET:
+                    //true:加载成功 false:加载失败
+                    host.loadIndicator.reset();//必须调用该方法重置
                     break;
             }
 
