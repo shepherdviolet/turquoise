@@ -422,7 +422,7 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
      * @param type 设置类型
      */
     public void setType(int type){
-        if (type < 0 || type > 3){
+        if (type < TYPE_TOP_STATIC || type > TYPE_IN_FROM_BOTTOM){
             throw new RuntimeException("invalid type:" + type);
         }
         this.type = type;
