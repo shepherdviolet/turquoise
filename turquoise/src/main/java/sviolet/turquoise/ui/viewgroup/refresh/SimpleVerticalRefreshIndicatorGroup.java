@@ -36,7 +36,7 @@ import sviolet.turquoise.ui.util.ViewCommonUtils;
 /**
  * <p>配合{@link VerticalOverDragContainer}实现下拉刷新/上拉加载</p>
  *
- * <p>使用方法参考demoa/refresh/RefreshIndicatorRefreshActivity的示例</p>
+ * <p>具体用法参考demoa中的RefreshIndicatorRefreshActivity.java</p>
  *
  * Created by S.Violet on 2016/11/8.
  */

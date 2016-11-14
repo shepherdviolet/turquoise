@@ -210,10 +210,10 @@
     <!-- sviolet.turquoise.ui.viewgroup.refresh.SimpleVerticalRefreshIndicatorGroup -->
     <declare-styleable name="SimpleVerticalRefreshIndicatorGroup">
         <attr name="SimpleVerticalRefreshIndicatorGroup_type" format="enum"><!-- 类型 -->
-            <enum name="topStatic" value="0"/><!--  -->
-            <enum name="bottomStatic" value="1" /><!--  -->
-            <enum name="inFromTop" value="2"/><!--  -->
-            <enum name="inFromBottom" value="3" /><!--  -->
+            <enum name="topStatic" value="0"/><!-- 顶部固定位置 -->
+            <enum name="bottomStatic" value="1" /><!-- 底部固定位置 -->
+            <enum name="inFromTop" value="2"/><!-- 从顶部滚动出现 -->
+            <enum name="inFromBottom" value="3" /><!-- 从底部滚动出现 -->
         </attr>
         <!-- 显示刷新结果(成功/失败)时间, ms -->
         <attr name="SimpleVerticalRefreshIndicatorGroup_resultDuration" format="integer" />
@@ -227,6 +227,50 @@
         <attr name="SimpleVerticalRefreshIndicatorGroup_succeedViewIndex" format="integer" />
         <!-- 失败状态布局序号(在父控件中的序号, 0~childCount) -->
         <attr name="SimpleVerticalRefreshIndicatorGroup_failedViewIndex" format="integer" />
+    </declare-styleable>
+
+    <!-- sviolet.turquoise.ui.viewgroup.refresh.CircleDropRefreshIndicator -->
+    <declare-styleable name="CircleDropRefreshIndicator">
+        <attr name="CircleDropRefreshIndicator_type" format="enum"><!-- 类型 -->
+            <enum name="top" value="0"/><!-- 顶部进入 -->
+            <enum name="bottom" value="1" /><!-- 底部进入 -->
+        </attr>
+        <!-- 水平方向位置 -->
+        <attr name="CircleDropRefreshIndicator_position" format="enum">
+            <enum name="left" value="0"/><!-- 左边 -->
+            <enum name="middle" value="1" /><!-- 中间 -->
+            <enum name="right" value="2"/><!-- 右边 -->
+        </attr>
+        <!-- 阴影颜色 -->
+        <attr name="CircleDropRefreshIndicator_shadowColor" format="color" />
+        <!-- 阴影宽度 -->
+        <attr name="CircleDropRefreshIndicator_shadowWidth" format="dimension" />
+        <!-- true:开启阴影 -->
+        <attr name="CircleDropRefreshIndicator_shadowEnabled" format="boolean" />
+        <!-- 背景颜色 -->
+        <attr name="CircleDropRefreshIndicator_backgroundColor" format="color" />
+        <!-- 背景半径 -->
+        <attr name="CircleDropRefreshIndicator_backgroundRadius" format="dimension" />
+        <!-- 背景边线颜色 -->
+        <attr name="CircleDropRefreshIndicator_outlineColor" format="color" />
+        <!-- 背景边线宽度 -->
+        <attr name="CircleDropRefreshIndicator_outlineWidth" format="dimension" />
+        <!-- 进度条背景颜色 -->
+        <attr name="CircleDropRefreshIndicator_progressBackgroundColor" format="color" />
+        <!-- 进度条背景宽度 -->
+        <attr name="CircleDropRefreshIndicator_progressBackgroundWidth" format="dimension" />
+        <!-- 进度条颜色 -->
+        <attr name="CircleDropRefreshIndicator_progressColor" format="color" />
+        <!-- 进度条半径 -->
+        <attr name="CircleDropRefreshIndicator_progressRadius" format="dimension" />
+        <!-- 进度条宽度 -->
+        <attr name="CircleDropRefreshIndicator_progressWidth" format="dimension" />
+        <!-- 进度条延伸角度 -->
+        <attr name="CircleDropRefreshIndicator_progressSweepAngle" format="integer" />
+        <!-- 刷新状态时, 进度条滚动速度(每一帧转动的角度) -->
+        <attr name="CircleDropRefreshIndicator_progressStepAngle" format="integer" />
+        <!-- 进度条弹回时间 -->
+        <attr name="CircleDropRefreshIndicator_scrollDuration" format="integer" />
     </declare-styleable>
 
 </resources>
