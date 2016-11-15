@@ -1,4 +1,4 @@
-# Turquoise 3.4.161027
+# Turquoise 3.4.161115
 * A comprehensive Android library for private use.
 * https://github.com/shepherdviolet/turquoise
 
@@ -22,7 +22,7 @@
 * ViewGestureController: easy to build gesture-driven view
 * SlideEngine: help to build sliding view, and provides some ready-made Views
 * TViewHolder: easy to build Adapter of View
-* shadow/gif/ripple/rotate/scrape/......
+* refresh/shadow/gif/ripple/rotate/scrape/......
 
 ### enhanced android component ┃ sviolet.turquoise.enhance
 * InjectUtils: inject Views by annotation way
