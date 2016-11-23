@@ -20,6 +20,7 @@
 package sviolet.turquoise.util.crypto;
 
 import java.math.BigInteger;
+import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -81,6 +82,16 @@ public class RSAKeyGenerator {
             throw new RuntimeException(e);
         }
         return (RSAPublicKey) factory.generatePublic(keySpec);
+    }
+
+    /**
+     * <p>将秘钥转为bytes, 具体编码根据Key的编码类型决定</p>
+     */
+    public static byte[] parseKeyToBytes(Key key){
+        if (key == null){
+            return null;
+        }
+        return key.getEncoded();
     }
 
     /**
