@@ -8,7 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import sviolet.demoa.R;
-import sviolet.turquoise.ui.util.TViewHolder;
+import sviolet.turquoise.ui.adapter.TViewHolder;
 
 /**
  * Created by S.Violet on 2016/3/9.

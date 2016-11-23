@@ -30,7 +30,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import sviolet.demoaimageloader.R;
-import sviolet.turquoise.ui.util.TViewHolder;
+import sviolet.turquoise.ui.adapter.TViewHolder;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.stub.Stub;

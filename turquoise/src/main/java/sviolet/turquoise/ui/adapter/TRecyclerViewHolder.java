@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.ui.util;
+package sviolet.turquoise.ui.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

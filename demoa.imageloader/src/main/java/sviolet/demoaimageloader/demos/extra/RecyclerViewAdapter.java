@@ -25,8 +25,8 @@ import android.content.Context;
 import java.util.List;
 
 import sviolet.demoaimageloader.R;
-import sviolet.turquoise.ui.util.TRecyclerViewAdapter;
-import sviolet.turquoise.ui.util.TRecyclerViewHolder;
+import sviolet.turquoise.ui.adapter.TRecyclerViewAdapter;
+import sviolet.turquoise.ui.adapter.TRecyclerViewHolder;
 import sviolet.turquoise.x.imageloader.TILoader;
 
 /**

@@ -27,7 +27,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import sviolet.demoaimageloader.R;
-import sviolet.turquoise.ui.util.TViewHolder;
+import sviolet.turquoise.ui.adapter.TViewHolder;
 
 /**
  * Demo列表适配器
