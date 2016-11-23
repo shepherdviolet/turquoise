@@ -47,7 +47,6 @@ public class RSACipher {
 
     public static final String CRYPTO_TRANSFORMATION_RSA_ECB_PKCS1 = "RSA/ECB/PKCS1Padding";
     public static final String CRYPTO_TRANSFORMATION_RSA_ECB_NOPADDING = "RSA/ECB/NoPadding";
-    public static final String CRYPTO_TRANSFORMATION_RSA_NONE_PKCS1PADDING = "RSA/None/PKCS1Padding";
     public static final String CRYPTO_TRANSFORMATION_RSA_NONE_NOPADDING = "RSA/None/NoPadding";
     public static final String CRYPTO_TRANSFORMATION_RSA = "RSA";
 	  
