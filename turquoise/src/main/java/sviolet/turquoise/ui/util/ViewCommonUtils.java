@@ -34,6 +34,27 @@ import java.lang.ref.WeakReference;
 public class ViewCommonUtils {
 
     /**
+     * 判断点是否落在View上
+     * @param view view
+     * @param rawX 屏幕坐标系的X, motionEvent.getRawX()
+     * @param rawY 屏幕坐标系的Y, motionEvent.getRawY()
+     * @return true:在View上 false:不在View上
+     */
+    public static boolean isPointOnView(View view, float rawX, float rawY){
+        if(view == null){
+            return false;
+        }
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+        if (rawX > location[0] && rawX < location[0] + view.getWidth()){
+            if (rawY > location[1] && rawY < location[1] + view.getHeight()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * <p>利用view.getViewTreeObserver().addOnPreDrawListener(...)方法捕获View第一次绘制前的事件,
      * 常用于View的初始化操作. 因为View在实例化后, layout之前, 是获取不到控件长宽的, 在InitListener.onInit()
      * 被回调时, View的长宽已经计算完成, 因此可以利用这个方法获取控件长宽, 并完成控件初始化.</p>
