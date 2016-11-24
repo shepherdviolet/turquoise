@@ -32,7 +32,8 @@ import sviolet.demoa.common.DemoList;
         ShadowOtherActivity.class,
         GradualTitleOtherActivity.class,
         RuntimePermissionOtherActivity.class,
-        MotionImageOtherActivity.class
+        MotionImageOtherActivity.class,
+        MultiItemViewPagerOtherActivity.class
 })
 
 /**************************************************************

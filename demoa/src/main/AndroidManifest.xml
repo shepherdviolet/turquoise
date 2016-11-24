@@ -58,6 +58,8 @@
             android:label="@string/other_runtime_permission_title"/>
         <activity android:name=".other.MotionImageOtherActivity"
             android:label="@string/other_motion_image_title"/>
+        <activity android:name=".other.MultiItemViewPagerOtherActivity"
+            android:label="@string/other_multiitem_viewpager_title"/>
 
         <activity android:name=".refresh.RefreshActivity"
             android:label="@string/refresh_title"/>
