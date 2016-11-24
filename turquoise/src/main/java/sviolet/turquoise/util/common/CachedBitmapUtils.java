@@ -274,8 +274,11 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param resId 资源文件ID
      */
     public Bitmap decodeFromResource(String key, Resources res, int resId) {
-        Bitmap bitmap = BitmapUtils.decodeFromResource(res, resId);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromResource(res, resId);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
     }
 
@@ -292,8 +295,11 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param reqHeight 需求高度 px
      */
     public Bitmap decodeFromResource(String key, Resources res, int resId, int reqWidth, int reqHeight) {
-        Bitmap bitmap = BitmapUtils.decodeFromResource(res, resId, reqWidth, reqHeight);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromResource(res, resId, reqWidth, reqHeight);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
     }
 
@@ -304,8 +310,11 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param path 文件路径
      */
     public Bitmap decodeFromFile(String key, String path) {
-        Bitmap bitmap = BitmapUtils.decodeFromFile(path);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromFile(path);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
     }
 
@@ -321,8 +330,11 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param reqHeight 需求高度 px
      */
     public Bitmap decodeFromFile(String key, String path, int reqWidth, int reqHeight) {
-        Bitmap bitmap = BitmapUtils.decodeFromFile(path, reqWidth, reqHeight);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromFile(path, reqWidth, reqHeight);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
     }
 
@@ -333,8 +345,11 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param data 二进制数据
      */
     public Bitmap decodeFromByteArray(String key, byte[] data) {
-        Bitmap bitmap = BitmapUtils.decodeFromByteArray(data);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromByteArray(data);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
     }
 
@@ -350,8 +365,11 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param reqHeight 需求高度 px
      */
     public Bitmap decodeFromByteArray(String key, byte[] data, int reqWidth, int reqHeight) {
-        Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
     }
 
@@ -362,8 +380,11 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param base64 Base64数据
      */
     public Bitmap decodeFromBase64(String key, byte[] base64) {
-        Bitmap bitmap = BitmapUtils.decodeFromBase64(base64);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromBase64(base64);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
     }
 
@@ -379,8 +400,11 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param reqHeight 需求高度 px
      */
     public Bitmap decodeFromBase64(String key, byte[] base64, int reqWidth, int reqHeight) {
-        Bitmap bitmap = BitmapUtils.decodeFromBase64(base64, reqWidth, reqHeight);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromBase64(base64, reqWidth, reqHeight);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
     }
 
@@ -391,8 +415,11 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param base64 Base64数据
      */
     public Bitmap decodeFromBase64(String key, String base64) {
-        Bitmap bitmap = BitmapUtils.decodeFromBase64(base64);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromBase64(base64);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
     }
 
@@ -408,8 +435,11 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param reqHeight 需求高度 px
      */
     public Bitmap decodeFromBase64(String key, String base64, int reqWidth, int reqHeight) {
-        Bitmap bitmap = BitmapUtils.decodeFromBase64(base64, reqWidth, reqHeight);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromBase64(base64, reqWidth, reqHeight);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
     }
 
@@ -420,8 +450,11 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param inputStream 输入流
      */
     public Bitmap decodeFromStream(String key, InputStream inputStream) {
-        Bitmap bitmap = BitmapUtils.decodeFromStream(inputStream);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromStream(inputStream);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
     }
 
@@ -439,116 +472,12 @@ public class CachedBitmapUtils implements LifeCycle {
      * @param inSampleSize 缩放因子 (1:原大小 2:缩小一倍 ...)
      */
     public Bitmap decodeFromStream(String key, InputStream inputStream, int inSampleSize) {
-        Bitmap bitmap = BitmapUtils.decodeFromStream(inputStream, inSampleSize);
-        cacheBitmap(key, bitmap);
+        Bitmap bitmap = getBitmap(key);
+        if (bitmap == null || bitmap.isRecycled()) {
+            bitmap = BitmapUtils.decodeFromStream(inputStream, inSampleSize);
+            cacheBitmap(key, bitmap);
+        }
         return bitmap;
-    }
-
-    /*********************************************
-     * 				转换/编辑
-     *********************************************/
-
-    /**
-     * 按比例缩放图片[回收源Bitmap]
-     *
-     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
-     * @param bitmap
-     * @param scale   缩放比例
-     */
-    public Bitmap scale(String key, Bitmap bitmap, float scale) {
-        Bitmap result = BitmapUtils.scale(bitmap, scale, true);
-        cacheBitmap(key, result);
-        return result;
-    }
-
-    /**
-     * 按比例缩放图片[回收源Bitmap]
-     *
-     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
-     * @param bitmap
-     * @param scaleX  x缩放比例
-     * @param scaleY  y缩放比例
-     */
-    public Bitmap scale(String key, Bitmap bitmap, float scaleX, float scaleY) {
-        Bitmap result = BitmapUtils.scale(bitmap, scaleX, scaleY, true);
-        cacheBitmap(key, result);
-        return result;
-    }
-
-    /**
-     * 将图片缩放至指定宽高[回收源Bitmap]<p/>
-     *
-     * <pre>{@code
-     * width>0 & height>0   : 宽高分别缩放到指定值<br/>
-     * width>0 & height<=0  : 宽缩放到指定值,高同比例缩放,保持宽高比<br/>
-     * width<=0 & height>0  : 高缩放到指定值,宽同比例缩放,保持宽高比<br/>
-     * width<=0 & height<=0 : 返回原图<br/>
-     * }</pre>
-     *
-     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
-     * @param bitmap
-     * @param width   指定宽
-     * @param height  指定高
-     */
-    public Bitmap scaleTo(String key, Bitmap bitmap, int width, int height) {
-        Bitmap result = BitmapUtils.scaleTo(bitmap, width, height, true);
-        cacheBitmap(key, result);
-        return result;
-    }
-
-    /**
-     * 图片圆角处理[回收源Bitmap]
-     *
-     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
-     * @param bitmap 原图(会被回收)
-     * @param radius 圆角半径
-     * @param type BitmapUtils.RoundedCornerType 指定哪些角需要圆角处理
-     */
-    public Bitmap toRoundedCorner(String key, Bitmap bitmap, float radius, BitmapUtils.RoundedCornerType type) {
-        Bitmap result = BitmapUtils.toRoundedCorner(bitmap, radius, type, true);
-        cacheBitmap(key, result);
-        return result;
-    }
-
-
-    /**
-     * (自动cache)从资源文件中解码图片,并绘制文字(根据宽高需求"整数倍"缩放图片,节省内存)
-     * <Br/>
-     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
-     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
-     *
-     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
-     * @param res       getResource()
-     * @param resId     资源ID
-     * @param reqWidth  需求宽度 px
-     * @param reqHeight 需求高度 px
-     * @param text      需要绘制的文字
-     * @param x         文字在X方向的位移
-     * @param y         文字在Y方向的位移
-     * @param textSize  字体大小
-     * @param textColor 字体颜色
-     */
-    public Bitmap drawTextOnResource(String key, Resources res, int resId, int reqWidth, int reqHeight, String text, float x, float y, float textSize, int textColor) {
-        Bitmap result = BitmapUtils.drawTextOnResource(res, resId, reqWidth, reqHeight, text, x, y, textSize, textColor);
-        cacheBitmap(key, result);
-        return result;
-    }
-
-    /**
-     * 在Bitmap上绘制文字[回收源Bitmap]<br/>
-     *
-     * @param key 唯一标识,若送空(null),会自动分配一个不重复的key
-     * @param bitmap 原图
-     * @param text      绘制的文本
-     * @param x         位置
-     * @param y         位置
-     * @param textSize  字体大小
-     * @param textColor 字体颜色
-     */
-    public Bitmap drawText(String key, Bitmap bitmap, String text, float x, float y, float textSize, int textColor) {
-        Bitmap result = BitmapUtils.drawText(bitmap, text, x, y, textSize, textColor, true);
-        cacheBitmap(key, result);
-        return result;
     }
 
     /***************************************************************
