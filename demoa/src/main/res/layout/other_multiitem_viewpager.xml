@@ -18,10 +18,16 @@
   ~ Email: shepherdviolet@163.com
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/other_multiitem_viewpager_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null" />
 
     <!--
     ~ 说明:
@@ -35,20 +41,21 @@
     <LinearLayout
         android:id="@+id/other_multiitem_viewpager_container"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="130dp"
+        android:layout_alignParentBottom="true"
         android:orientation="vertical"
-        android:layout_gravity="center"
         android:gravity="center"
-        android:clipChildren="false">
+        android:clipChildren="false"
+        android:background="#50000000">
 
         <!--ViewPager的尺寸实际是中间Item的尺寸,设置android:clipChildren="false".-->
         <android.support.v4.view.ViewPager
             android:id="@+id/other_multiitem_viewpager_viewpager"
-            android:layout_width="70dp"
+            android:layout_width="75dp"
             android:layout_height="100dp"
             android:gravity="center"
             android:clipChildren="false"/>
 
     </LinearLayout>
 
-</LinearLayout>
+</RelativeLayout>

@@ -19,12 +19,14 @@
 
 package sviolet.demoa.other;
 
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -36,8 +38,10 @@ import sviolet.demoa.other.utils.MultiItemViewPagerAdapter;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.ui.drawable.SafeBitmapDrawable;
 import sviolet.turquoise.ui.util.ClickDetector;
 import sviolet.turquoise.ui.util.ViewCommonUtils;
+import sviolet.turquoise.util.common.CachedBitmapUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 
@@ -59,22 +63,33 @@ import sviolet.turquoise.util.droid.MeasureUtils;
 )
 public class MultiItemViewPagerOtherActivity extends TActivity {
 
+    @ResourceId(R.id.other_multiitem_viewpager_background)
+    private ImageView background;
     @ResourceId(R.id.other_multiitem_viewpager_container)
     private View container;//容器布局
     @ResourceId(R.id.other_multiitem_viewpager_viewpager)
     private ViewPager viewPager;//ViewPager
 
+    private List<Integer> imageResIdList;
+
+    private CachedBitmapUtils cachedBitmapUtils;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        viewPager.setOffscreenPageLimit(5);//设置缓存页面数(重要), 根据画廊一页能显示的Item数来设置
+        cachedBitmapUtils = new CachedBitmapUtils(getApplicationContext(), 0.1f, 0f);
+
+        viewPager.setOffscreenPageLimit(10);//设置缓存页面数(重要), 根据画廊一页能显示的Item数来设置, 设置约两页的Item数效果比较好, 但是相对占内存
         viewPager.setPageMargin(MeasureUtils.dp2px(getApplicationContext(), 6));//每一页之间的间距(重要)
         viewPager.setPageTransformer(true, new ScalePageTransformer());//设置动画
         viewPager.setOverScrollMode(View.OVER_SCROLL_NEVER);//隐藏越界滚动效果
 
+        //模拟图片数据
+        imageResIdList = createImageResIdList();
+
         //设置适配器
-        viewPager.setAdapter(new MultiItemViewPagerAdapter(this, createImageResIdList()));
+        viewPager.setAdapter(new MultiItemViewPagerAdapter(this, imageResIdList, cachedBitmapUtils));
         //设置触摸监听器(重要)
         container.setOnTouchListener(initTouchListener());
 
@@ -83,7 +98,11 @@ public class MultiItemViewPagerOtherActivity extends TActivity {
             @Override
             public void onPageSelected(int position) {
                 //此处处理翻页事件, 比如显示对应页面的信息等
-                Toast.makeText(getApplicationContext(), "scroll:" + position, Toast.LENGTH_SHORT).show();
+                Bitmap bitmap = cachedBitmapUtils.decodeFromResource(
+                        String.valueOf(imageResIdList.get(position)),
+                        getResources(),
+                        imageResIdList.get(position));
+                background.setImageDrawable(new SafeBitmapDrawable(getResources(), bitmap));
             }
 
             @Override
@@ -115,6 +134,19 @@ public class MultiItemViewPagerOtherActivity extends TActivity {
             }
         });
 
+        Bitmap bitmap = cachedBitmapUtils.decodeFromResource(
+                String.valueOf(imageResIdList.get(0)),
+                getResources(),
+                imageResIdList.get(0));
+        background.setImageDrawable(new SafeBitmapDrawable(getResources(), bitmap));
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        //销毁图片
+        cachedBitmapUtils.onDestroy();
     }
 
     /**

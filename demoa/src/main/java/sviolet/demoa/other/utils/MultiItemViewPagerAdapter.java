@@ -20,6 +20,7 @@
 package sviolet.demoa.other.utils;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -29,6 +30,8 @@ import java.util.List;
 import sviolet.demoa.R;
 import sviolet.turquoise.ui.adapter.RecyclingPagerAdapter;
 import sviolet.turquoise.ui.adapter.TViewHolder;
+import sviolet.turquoise.ui.drawable.SafeBitmapDrawable;
+import sviolet.turquoise.util.common.CachedBitmapUtils;
 
 /**
  * ViewPager同时显示多个Item, 实现画廊效果
@@ -39,10 +42,12 @@ public class MultiItemViewPagerAdapter extends RecyclingPagerAdapter {
 
     private Activity context;
     private List<Integer> imageResIds;
+    private CachedBitmapUtils cachedBitmapUtils;
 
-    public MultiItemViewPagerAdapter(Activity context, List<Integer> imageResIds) {
+    public MultiItemViewPagerAdapter(Activity context, List<Integer> imageResIds, CachedBitmapUtils cachedBitmapUtils) {
         this.context = context;
         this.imageResIds = imageResIds;
+        this.cachedBitmapUtils = cachedBitmapUtils;
     }
 
     @Override
@@ -57,7 +62,11 @@ public class MultiItemViewPagerAdapter extends RecyclingPagerAdapter {
         TViewHolder holder = TViewHolder.create(context, convertView, container, R.layout.other_multiitem_viewpager_item);
 
         //设置图片
-        ((ImageView)holder.get(R.id.other_multiitem_viewpager_viewpager_item_imageview)).setImageResource(imageResIds.get(position));
+        Bitmap bitmap = cachedBitmapUtils.decodeFromResource(
+                String.valueOf(imageResIds.get(position)),
+                context.getResources(),
+                imageResIds.get(position));
+        ((ImageView)holder.get(R.id.other_multiitem_viewpager_viewpager_item_imageview)).setImageDrawable(new SafeBitmapDrawable(context.getResources(), bitmap));
         //view记录当前position
         holder.getConvertView().setTag(position);
 
