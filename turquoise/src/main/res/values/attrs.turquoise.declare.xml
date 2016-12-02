@@ -273,4 +273,14 @@
         <attr name="CircleDropRefreshIndicator_scrollDuration" format="integer" />
     </declare-styleable>
 
+    <!-- sviolet.turquoise.ui.viewgroup.tab.LineIndicatorTabView -->
+    <declare-styleable name="LineIndicatorTabView">
+        <!-- 指示器颜色 -->
+        <attr name="LineIndicatorTabView_indicatorColor" format="color" />
+        <!-- 指示器线宽 -->
+        <attr name="LineIndicatorTabView_indicatorWidth" format="dimension" />
+        <!-- 指示器距离底部边距 -->
+        <attr name="LineIndicatorTabView_indicatorBottomPadding" format="dimension" />
+    </declare-styleable>
+
 </resources>
