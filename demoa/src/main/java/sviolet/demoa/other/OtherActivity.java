@@ -33,7 +33,8 @@ import sviolet.demoa.common.DemoList;
         GradualTitleOtherActivity.class,
         RuntimePermissionOtherActivity.class,
         MotionImageOtherActivity.class,
-        MultiItemViewPagerOtherActivity.class
+        MultiItemViewPagerOtherActivity.class,
+        TabViewOtherActivity.class
 })
 
 /**************************************************************

@@ -20,6 +20,7 @@
     <string name="other_runtime_permission_title">Runtime Permission Demo</string>
     <string name="other_motion_image_title">Gesture Ctrl Demo</string>
     <string name="other_multiitem_viewpager_title">Multi item in ViewPager Demo</string>
+    <string name="other_tab_view_title">TabView Demo</string>
 
     <string name="refresh_title">Refresh Demo</string>
     <string name="refresh_overdrag_title">OverDrag Demo</string>

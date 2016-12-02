@@ -60,6 +60,8 @@
             android:label="@string/other_motion_image_title"/>
         <activity android:name=".other.MultiItemViewPagerOtherActivity"
             android:label="@string/other_multiitem_viewpager_title"/>
+        <activity android:name=".other.TabViewOtherActivity"
+            android:label="@string/other_tab_view_title"/>
 
         <activity android:name=".refresh.RefreshActivity"
             android:label="@string/refresh_title"/>
