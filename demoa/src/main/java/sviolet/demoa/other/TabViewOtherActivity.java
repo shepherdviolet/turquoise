@@ -20,6 +20,7 @@
 package sviolet.demoa.other;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -65,30 +66,60 @@ public class TabViewOtherActivity extends TFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Bundle bundle = new Bundle();
-        bundle.putInt("color", 0xFFFF00FF);
-        List<Fragment> fragments = new ArrayList<>();
-        TabViewPageFragment page = new TabViewPageFragment();
-        page.setArguments(bundle);
-        fragments.add(page);
-        bundle = new Bundle();
-        bundle.putInt("color", 0xFFFFFF00);
-        page = new TabViewPageFragment();
-        page.setArguments(bundle);
-        fragments.add(page);
-
+        //ViewPager填充数据
+        List<Fragment> fragments = createFragments();
         TabViewPageFragmentAdapter adapter = new TabViewPageFragmentAdapter(getSupportFragmentManager(), fragments);
         viewPager.setAdapter(adapter);
 
-        View view = LayoutInflater.from(this).inflate(R.layout.other_tab_view_tabitem, null);
-        ((TextView)view.findViewById(R.id.other_tab_view_tabitem_text)).setText("111");
-        tabView.addView(view);
+        //tabView填充数据
+        createTabView(tabView);
 
-        view = LayoutInflater.from(this).inflate(R.layout.other_tab_view_tabitem, null);
-        ((TextView)view.findViewById(R.id.other_tab_view_tabitem_text)).setText("222");
-        tabView.addView(view);
-
+        //绑定
         tabView.bindViewPager(viewPager, false);
 
     }
+
+    private void createTabView(LineIndicatorTabViewForViewPager tabView){
+        tabView.addView(createTabItem("新闻1"));
+        tabView.addView(createTabItem("新闻2"));
+        tabView.addView(createTabItem("新闻3"));
+        tabView.addView(createTabItem("新闻4"));
+        tabView.addView(createTabItem("新闻5"));
+        tabView.addView(createTabItem("新闻6"));
+        tabView.addView(createTabItem("新闻7"));
+        tabView.addView(createTabItem("新闻8"));
+        tabView.addView(createTabItem("新闻9"));
+        tabView.addView(createTabItem("新闻10"));
+    }
+
+    private View createTabItem(String title){
+        View view = LayoutInflater.from(this).inflate(R.layout.other_tab_view_tabitem, null);
+        ((TextView)view.findViewById(R.id.other_tab_view_tabitem_text)).setText(title);
+        return view;
+    }
+
+    private List<Fragment> createFragments() {
+        List<Fragment> fragments = new ArrayList<>();
+        fragments.add(createFragment(0xFF10A0F0, "1"));
+        fragments.add(createFragment(0xFF2090D0, "2"));
+        fragments.add(createFragment(0xFF3080B0, "3"));
+        fragments.add(createFragment(0xFF407090, "4"));
+        fragments.add(createFragment(0xFF506070, "5"));
+        fragments.add(createFragment(0xFF605050, "6"));
+        fragments.add(createFragment(0xFF704030, "7"));
+        fragments.add(createFragment(0xFF803010, "8"));
+        fragments.add(createFragment(0xFF9020F0, "9"));
+        fragments.add(createFragment(0xFFA010D0, "10"));
+        return fragments;
+    }
+
+    private Fragment createFragment(int color, String text){
+        TabViewPageFragment fragment = new TabViewPageFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("color", color);
+        bundle.putString("text", text);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
 }

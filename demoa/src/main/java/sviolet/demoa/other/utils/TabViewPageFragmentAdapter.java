@@ -26,6 +26,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import java.util.List;
 
 /**
+ * TabView demo的fragment adapter
+ *
  * Created by S.Violet on 2016/12/2.
  */
 

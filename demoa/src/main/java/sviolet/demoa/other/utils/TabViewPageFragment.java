@@ -21,12 +21,15 @@ package sviolet.demoa.other.utils;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.enhance.app.TFragmentV4;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 
 /**
+ * TabView的ViewPagerFragment
+ *
  * Created by S.Violet on 2016/12/2.
  */
 @ResourceId(R.layout.other_tab_view_page)
@@ -34,12 +37,18 @@ public class TabViewPageFragment extends TFragmentV4 {
 
     @ResourceId(R.id.other_tab_view_page_background)
     private View background;
+    @ResourceId(R.id.other_tab_view_page_text)
+    private TextView textView;
 
     @Override
     protected void afterCreateView(View fragmentView, Bundle savedInstanceState) {
         super.afterCreateView(fragmentView, savedInstanceState);
 
         Bundle bundle = getArguments();
-        background.setBackgroundColor(bundle.getInt("color"));
+        int color = bundle.getInt("color");
+        String text = bundle.getString("text");
+
+        background.setBackgroundColor(color);
+        textView.setText(text);
     }
 }
