@@ -27,11 +27,11 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.OverScroller;
 
 import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.R;
+import sviolet.turquoise.common.compat.CompatOverScroller;
 import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**
@@ -94,7 +94,7 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     private Paint progressBackgroundPaint;
     private Paint progressPaint;
 
-    private OverScroller scroller;
+    private CompatOverScroller scroller;
 
     //性能优化
     private Rect canvasRect = new Rect();
@@ -140,7 +140,7 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     }
 
     private void init(){
-        scroller = new OverScroller(getContext());
+        scroller = new CompatOverScroller(getContext());
 
         shadowPaint = new Paint();
         shadowPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
