@@ -120,12 +120,13 @@ public class MultiItemViewPagerOtherActivity extends TActivity {
         viewPager.setOnTouchListener(new View.OnTouchListener() {
 
             private ClickDetector clickDetector = new ClickDetector(getApplicationContext());
+            private int[] viewLocationCache = new int[2];//复用
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (clickDetector.detect(event)){
                     //判断点击坐标在ViewPager上
-                    if (ViewCommonUtils.isPointOnView(viewPager, event.getRawX(), event.getRawY())){
+                    if (ViewCommonUtils.isPointOnView(viewPager, event.getRawX(), event.getRawY(), viewLocationCache)){
                         //此处处理选中页面点击事件
                         Toast.makeText(getApplicationContext(), "click:" + viewPager.getCurrentItem(), Toast.LENGTH_SHORT).show();
                     }
@@ -189,6 +190,7 @@ public class MultiItemViewPagerOtherActivity extends TActivity {
         return new View.OnTouchListener() {
 
             private ClickDetector clickDetector = new ClickDetector(getApplicationContext());
+            private int[] viewLocationCache = new int[2];//复用
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -199,7 +201,7 @@ public class MultiItemViewPagerOtherActivity extends TActivity {
                     //遍历子View, 判断点击到的是哪个, 并跳转到该页面
                     for (int i = 0; i < viewPager.getChildCount(); i++) {
                         View view = viewPager.getChildAt(i);
-                        if (ViewCommonUtils.isPointOnView(view, event.getRawX(), event.getRawY())) {
+                        if (ViewCommonUtils.isPointOnView(view, event.getRawX(), event.getRawY(), viewLocationCache)) {
                             viewPager.setCurrentItem((Integer) view.getTag());
                             break;
                         }

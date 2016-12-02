@@ -38,16 +38,19 @@ public class ViewCommonUtils {
      * @param view view
      * @param rawX 屏幕坐标系的X, motionEvent.getRawX()
      * @param rawY 屏幕坐标系的Y, motionEvent.getRawY()
+     * @param locationCache 必须是一个长度为2的int[], 用于临时储存View的坐标, 之所以需要作为参数传入, 是为了优化绘图性能, 减少对象创建
      * @return true:在View上 false:不在View上
      */
-    public static boolean isPointOnView(View view, float rawX, float rawY){
+    public static boolean isPointOnView(View view, float rawX, float rawY, int[] locationCache){
         if(view == null){
             return false;
         }
-        int[] location = new int[2];
-        view.getLocationOnScreen(location);
-        if (rawX > location[0] && rawX < location[0] + view.getWidth()){
-            if (rawY > location[1] && rawY < location[1] + view.getHeight()){
+        if (locationCache == null || locationCache.length != 2){
+            throw new RuntimeException("locationCache can not be null, and the length must be 2");
+        }
+        view.getLocationOnScreen(locationCache);
+        if (rawX > locationCache[0] && rawX < locationCache[0] + view.getWidth()){
+            if (rawY > locationCache[1] && rawY < locationCache[1] + view.getHeight()){
                 return true;
             }
         }
