@@ -21,7 +21,10 @@ package sviolet.turquoise.enhance.app.utils;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.lang.reflect.Field;
 
@@ -61,6 +64,30 @@ public class InjectUtils {
     }
 
     /**
+     * 1.根据"类"的@ResourceId注释注入对应的Fragment布局文件<br/>
+     * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
+     */
+    public static View inject(Fragment fragment, LayoutInflater inflater, ViewGroup container){
+        View fragmentContainer = InjectUtils.injectClassAnnotation(fragment, inflater, container);// 注入类的注释
+        if (fragmentContainer != null) {
+            InjectUtils.injectFieldAnnotation(fragment, fragmentContainer);// 注入成员变量的注释
+        }
+        return fragmentContainer;
+    }
+
+    /**
+     * 1.根据"类"的@ResourceId注释注入对应的Fragment布局文件<br/>
+     * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
+     */
+    public static View inject(android.support.v4.app.Fragment fragment, LayoutInflater inflater, ViewGroup container){
+        View fragmentContainer = InjectUtils.injectClassAnnotation(fragment, inflater, container);// 注入类的注释
+        if (fragmentContainer != null) {
+            InjectUtils.injectFieldAnnotation(fragment, fragmentContainer);// 注入成员变量的注释
+        }
+        return fragmentContainer;
+    }
+
+    /**
      * 根据"类"的注释注入<Br/>
      * 1.根据"类"的@ResourceId注释注入对应的Activity布局文件<br/>
      */
@@ -97,6 +124,44 @@ public class InjectUtils {
     }
 
     /**
+     * 根据"类"的注释注入<Br/>
+     * 1.根据"类"的@ResourceId注释注入对应的Fragment布局文件<br/>
+     */
+    public static View injectClassAnnotation(Fragment fragment, LayoutInflater inflater, ViewGroup container) {
+        if (fragment == null || inflater == null || container == null){
+            return null;
+        }
+        if (fragment.getClass().isAnnotationPresent(ResourceId.class)) {
+            try {
+                int layoutId = fragment.getClass().getAnnotation(ResourceId.class).value();
+                return inflater.inflate(layoutId, container, false);
+            } catch (Exception e) {
+                throw new InjectException("[InjectUtils]inject ContentView failed", e);
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 根据"类"的注释注入<Br/>
+     * 1.根据"类"的@ResourceId注释注入对应的Fragment布局文件<br/>
+     */
+    public static View injectClassAnnotation(android.support.v4.app.Fragment fragment, LayoutInflater inflater, ViewGroup container) {
+        if (fragment == null || inflater == null || container == null){
+            return null;
+        }
+        if (fragment.getClass().isAnnotationPresent(ResourceId.class)) {
+            try {
+                int layoutId = fragment.getClass().getAnnotation(ResourceId.class).value();
+                return inflater.inflate(layoutId, container, false);
+            } catch (Exception e) {
+                throw new InjectException("[InjectUtils]inject ContentView failed", e);
+            }
+        }
+        return null;
+    }
+
+    /**
      * 根据成员变量的注释注入<br/>
      * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
      */
@@ -104,7 +169,7 @@ public class InjectUtils {
         if (activity == null){
             return;
         }
-        injectFieldAnnotation(activity, activity.getClass(), activityInjectCallback);
+        injectFieldAnnotation(activity, activity.getClass(), null, activityInjectCallback);
     }
 
     /**
@@ -115,10 +180,32 @@ public class InjectUtils {
         if (dialog == null){
             return;
         }
-        injectFieldAnnotation(dialog, dialog.getClass(), dialogInjectCallback);
+        injectFieldAnnotation(dialog, dialog.getClass(), null, dialogInjectCallback);
     }
 
-    private static void injectFieldAnnotation(Object object, Class<?> clazz, InjectCallback callback) {
+    /**
+     * 根据成员变量的注释注入<br/>
+     * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
+     */
+    public static void injectFieldAnnotation(Fragment fragment, View fragmentView){
+        if (fragment == null || fragmentView == null){
+            return;
+        }
+        injectFieldAnnotation(fragment, fragment.getClass(), fragmentView, fragmentInjectCallback);
+    }
+
+    /**
+     * 根据成员变量的注释注入<br/>
+     * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
+     */
+    public static void injectFieldAnnotation(android.support.v4.app.Fragment fragment, View fragmentView){
+        if (fragment == null || fragmentView == null){
+            return;
+        }
+        injectFieldAnnotation(fragment, fragment.getClass(), fragmentView, fragmentV4InjectCallback);
+    }
+
+    private static void injectFieldAnnotation(Object object, Class<?> clazz, View container, InjectCallback callback) {
         Field[] fields = ReflectCache.getDeclaredFields(clazz);
         int resourceId;
         View view;
@@ -126,7 +213,7 @@ public class InjectUtils {
             if (field.isAnnotationPresent(ResourceId.class)) {
                 try {
                     resourceId = field.getAnnotation(ResourceId.class).value();
-                    view = callback.findViewById(object, resourceId);
+                    view = callback.findViewById(object, container, resourceId);
                     if (view == null)
                         throw new InjectException("[InjectUtils]inject view [" + field.getName() + "] failed, can't find resource");
                     field.setAccessible(true);
@@ -138,13 +225,13 @@ public class InjectUtils {
         }
         Class superClazz = clazz.getSuperclass();
         if (callback.continueInjectSuper(superClazz)) {
-            injectFieldAnnotation(object, superClazz, callback);
+            injectFieldAnnotation(object, superClazz, container, callback);
         }
     }
 
     private interface InjectCallback{
 
-        View findViewById(Object object, int resId);
+        View findViewById(Object object, View container, int resId);
 
         boolean continueInjectSuper(Class superClazz);
 
@@ -152,7 +239,7 @@ public class InjectUtils {
 
     private static final InjectCallback activityInjectCallback = new InjectCallback() {
         @Override
-        public View findViewById(Object object, int resId) {
+        public View findViewById(Object object, View container, int resId) {
             return ((Activity)object).findViewById(resId);
         }
 
@@ -164,13 +251,37 @@ public class InjectUtils {
 
     private static final InjectCallback dialogInjectCallback = new InjectCallback() {
         @Override
-        public View findViewById(Object object, int resId) {
+        public View findViewById(Object object, View container, int resId) {
             return ((Dialog)object).findViewById(resId);
         }
 
         @Override
         public boolean continueInjectSuper(Class superClazz) {
             return !Dialog.class.equals(superClazz);
+        }
+    };
+
+    private static final InjectCallback fragmentInjectCallback = new InjectCallback() {
+        @Override
+        public View findViewById(Object object, View container, int resId) {
+            return container.findViewById(resId);
+        }
+
+        @Override
+        public boolean continueInjectSuper(Class superClazz) {
+            return !Fragment.class.equals(superClazz);
+        }
+    };
+
+    private static final InjectCallback fragmentV4InjectCallback = new InjectCallback() {
+        @Override
+        public View findViewById(Object object, View container, int resId) {
+            return container.findViewById(resId);
+        }
+
+        @Override
+        public boolean continueInjectSuper(Class superClazz) {
+            return !android.support.v4.app.Fragment.class.equals(superClazz);
         }
     };
 
