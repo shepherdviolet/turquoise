@@ -246,9 +246,18 @@ public class LineIndicatorTabView extends HorizontalScrollView {
 
         //滚动Items
         int pageInt = (int) Math.floor(this.currPage);
-        View targetView = container.getChildAt(pageInt);
-        if (targetView != null) {
-            scrollBy(targetView.getLeft() - getScrollX() - getIndicatorLeftPadding(targetView) + (int)((this.currPage - pageInt) * targetView.getWidth()), 0);
+        View currentView = container.getChildAt(pageInt);
+        View nextView = container.getChildAt(pageInt + 1);//右边一个Item
+
+        if (currentView == null){
+            return;
+        }
+        if (nextView == null){
+            nextView = currentView;
+        }
+
+        if (currentView != null) {
+            scrollBy(currentView.getLeft() - getScrollX() - getIndicatorLeftPadding(currentView, nextView) + (int)((this.currPage - pageInt) * currentView.getWidth()), 0);
         }
 
         postInvalidate();
@@ -284,9 +293,15 @@ public class LineIndicatorTabView extends HorizontalScrollView {
      */
     private void scrollToPageInner(int page, boolean byClick) {
         //滚动Items
-        View targetView = container.getChildAt(page);
-        if (targetView != null) {
-            smoothScrollBy(targetView.getLeft() - getScrollX() - getIndicatorLeftPadding(targetView), 0);
+        View currentView = container.getChildAt(page);
+        View nextView = container.getChildAt(page + 1);//右边一个Item
+
+        if (nextView == null){
+            nextView = currentView;
+        }
+
+        if (currentView != null) {
+            smoothScrollBy(currentView.getLeft() - getScrollX() - getIndicatorLeftPadding(currentView, nextView), 0);
         }
 
         //滚动指示器
@@ -351,7 +366,7 @@ public class LineIndicatorTabView extends HorizontalScrollView {
         }
 
         //根据标记的左右位置绘制
-        drawIndicatorLine(canvas, indicatorPosition, indicatorRightPosition, getIndicatorTopPadding(canvas, leftView));
+        drawIndicatorLine(canvas, indicatorPosition, indicatorRightPosition, getIndicatorTopPadding(canvas, leftView, rightView));
 
     }
 
@@ -385,19 +400,22 @@ public class LineIndicatorTabView extends HorizontalScrollView {
 
     /**
      * 指示器的左边距
-     * @param targetView 当前ITEM
+     * @param currentView 当前ITEM
+     * @param nextView 下一个Item
      */
-    protected int getIndicatorLeftPadding(View targetView) {
+    protected int getIndicatorLeftPadding(View currentView, View nextView) {
         //默认指示器居中
-        return (getWidth() - targetView.getWidth()) / 2;
+        float pageOffset = this.currPage - (float)Math.floor(this.currPage);//当前Item偏移量
+        return (int) ((getWidth() - (currentView.getWidth() * (1 - pageOffset) + nextView.getWidth() * pageOffset)) / 2);
     }
 
     /**
      * 指示器的下边距
      * @param canvas 当前画布
-     * @param targetView 目标Item
+     * @param currentView 当前Item
+     * @param nextView 下一个Item
      */
-    protected int getIndicatorTopPadding(Canvas canvas, View targetView){
+    protected int getIndicatorTopPadding(Canvas canvas, View currentView, View nextView){
         return getHeight() - indicatorBottomPadding - indicatorWidth / 2;
     }
 

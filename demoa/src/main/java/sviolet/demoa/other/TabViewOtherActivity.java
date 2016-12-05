@@ -113,9 +113,9 @@ public class TabViewOtherActivity extends TFragmentActivity {
         createTabItem(tabView, "FirstTab1");
         createTabItem(tabView, "Tab2");
         createTabItem(tabView, "Tab3");
-        createTabItem(tabView, "Tab4");
+        createTabItem(tabView, "Tab4特别长啊");
         createTabItem(tabView, "Tab5");
-        createTabItem(tabView, "Tab6");
+        createTabItem(tabView, "Tab6特别长啊");
         createTabItem(tabView, "Tab7");
         createTabItem(tabView, "Tab8");
         createTabItem(tabView, "Tab9");
