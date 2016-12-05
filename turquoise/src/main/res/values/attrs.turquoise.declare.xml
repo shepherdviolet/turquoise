@@ -280,7 +280,11 @@
         <!-- 指示器线宽 -->
         <attr name="LineIndicatorTabView_indicatorWidth" format="dimension" />
         <!-- 指示器距离底部边距 -->
-        <attr name="LineIndicatorTabView_indicatorBottomPadding" format="dimension" />
+        <attr name="LineIndicatorTabView_indicatorBottomMargin" format="dimension" />
+        <!-- 指示器距离左边的边距 -->
+        <attr name="LineIndicatorTabView_indicatorLeftMargin" format="dimension" />
+        <!-- 指示器距离右边的边距 -->
+        <attr name="LineIndicatorTabView_indicatorRightMargin" format="dimension" />
     </declare-styleable>
 
 </resources>

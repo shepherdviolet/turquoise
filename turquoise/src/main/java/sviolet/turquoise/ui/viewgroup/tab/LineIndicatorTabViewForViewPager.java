@@ -41,7 +41,9 @@ import android.view.View;
  *          android:layout_height="40dp"
  *          sviolet:LineIndicatorTabView_indicatorColor="#209090"
  *          sviolet:LineIndicatorTabView_indicatorWidth="3dp"
- *          sviolet:LineIndicatorTabView_indicatorBottomPadding="0dp"/>
+ *          sviolet:LineIndicatorTabView_indicatorBottomPadding="0dp"
+ *          sviolet:LineIndicatorTabView_indicatorLeftPadding="10dp"
+ *          sviolet:LineIndicatorTabView_indicatorRightPadding="10dp"/>
  *
  *     <android.support.v4.view.ViewPager
  *          android:id="@+id/other_tab_view_viewpager"

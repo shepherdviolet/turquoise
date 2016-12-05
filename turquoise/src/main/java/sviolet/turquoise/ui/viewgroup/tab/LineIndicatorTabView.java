@@ -54,7 +54,9 @@ import sviolet.turquoise.util.droid.MeasureUtils;
  *          android:layout_height="40dp"
  *          sviolet:LineIndicatorTabView_indicatorColor="#209090"
  *          sviolet:LineIndicatorTabView_indicatorWidth="3dp"
- *          sviolet:LineIndicatorTabView_indicatorBottomPadding="0dp"/>
+ *          sviolet:LineIndicatorTabView_indicatorBottomMargin="0dp"
+ *          sviolet:LineIndicatorTabView_indicatorLeftMargin="10dp"
+ *          sviolet:LineIndicatorTabView_indicatorRightMargin="10dp"/>
  *
  * }</pre>
  *
@@ -73,7 +75,9 @@ public class LineIndicatorTabView extends HorizontalScrollView {
 
     private int indicatorColor = 0xFF209090;
     private int indicatorWidth = 7;
-    private int indicatorBottomPadding = 0;
+    private int indicatorBottomMargin = 0;
+    private int indicatorLeftMargin = 0;
+    private int indicatorRightMargin = 0;
 
     private List<OnPageChangedListener> onPageChangedListeners;//页面切换监听器
 
@@ -107,7 +111,9 @@ public class LineIndicatorTabView extends HorizontalScrollView {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LineIndicatorTabView);
         setIndicatorColor(typedArray.getColor(R.styleable.LineIndicatorTabView_LineIndicatorTabView_indicatorColor, 0xFF209090));
         setIndicatorWidth((int) typedArray.getDimension(R.styleable.LineIndicatorTabView_LineIndicatorTabView_indicatorWidth, MeasureUtils.dp2px(getContext(), 3)));
-        setIndicatorBottomPadding((int) typedArray.getDimension(R.styleable.LineIndicatorTabView_LineIndicatorTabView_indicatorBottomPadding, 0));
+        setIndicatorBottomMargin((int) typedArray.getDimension(R.styleable.LineIndicatorTabView_LineIndicatorTabView_indicatorBottomMargin, 0));
+        setIndicatorLeftMargin((int) typedArray.getDimension(R.styleable.LineIndicatorTabView_LineIndicatorTabView_indicatorLeftMargin, 0));
+        setIndicatorRightMargin((int) typedArray.getDimension(R.styleable.LineIndicatorTabView_LineIndicatorTabView_indicatorRightMargin, 0));
         typedArray.recycle();
     }
 
@@ -347,6 +353,10 @@ public class LineIndicatorTabView extends HorizontalScrollView {
         //计算指示器右边位置
         float indicatorRightPosition = indicatorPosition + indicatorWidth;
 
+        //调整指示器的长度
+        indicatorPosition += indicatorLeftMargin;
+        indicatorRightPosition -= indicatorRightMargin;
+
         int parentScrollX = getScrollX();
 
         //超出屏幕的部分不绘制
@@ -363,7 +373,7 @@ public class LineIndicatorTabView extends HorizontalScrollView {
         }
 
         //根据标记的左右位置绘制
-        drawIndicatorLine(canvas, indicatorPosition, indicatorRightPosition, getIndicatorTopPadding(canvas, leftView, rightView));
+        drawIndicatorLine(canvas, indicatorPosition, indicatorRightPosition, getIndicatorTopMargin(canvas, leftView, rightView));
 
     }
 
@@ -412,8 +422,8 @@ public class LineIndicatorTabView extends HorizontalScrollView {
      * @param currentView 当前Item
      * @param nextView 下一个Item
      */
-    protected int getIndicatorTopPadding(Canvas canvas, View currentView, View nextView){
-        return getHeight() - indicatorBottomPadding - indicatorWidth / 2;
+    protected int getIndicatorTopMargin(Canvas canvas, View currentView, View nextView){
+        return getHeight() - indicatorBottomMargin - indicatorWidth / 2;
     }
 
     /******************************************************************************
@@ -431,11 +441,25 @@ public class LineIndicatorTabView extends HorizontalScrollView {
         this.indicatorWidth = indicatorWidth;
     }
 
-    public void setIndicatorBottomPadding(int indicatorBottomPadding) {
-        if (indicatorBottomPadding < 0){
-            throw new RuntimeException("indicatorBottomPadding must >= 0");
+    public void setIndicatorBottomMargin(int indicatorBottomMargin) {
+        if (indicatorBottomMargin < 0){
+            throw new RuntimeException("indicatorBottomMargin must >= 0");
         }
-        this.indicatorBottomPadding = indicatorBottomPadding;
+        this.indicatorBottomMargin = indicatorBottomMargin;
+    }
+
+    public void setIndicatorLeftMargin(int indicatorLeftMargin) {
+        if (indicatorLeftMargin < 0){
+            throw new RuntimeException("indicatorLeftMargin must >= 0");
+        }
+        this.indicatorLeftMargin = indicatorLeftMargin;
+    }
+
+    public void setIndicatorRightMargin(int indicatorRightMargin) {
+        if (indicatorRightMargin < 0){
+            throw new RuntimeException("indicatorRightMargin must >= 0");
+        }
+        this.indicatorRightMargin = indicatorRightMargin;
     }
 
     public void addOnPageChangedListener(OnPageChangedListener listener){
