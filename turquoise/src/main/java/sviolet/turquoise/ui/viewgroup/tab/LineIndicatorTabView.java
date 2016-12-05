@@ -43,6 +43,9 @@ import sviolet.turquoise.util.droid.MeasureUtils;
  *
  * <p>线条样式的TabView</p>
  *
+ * <p>注意: LineIndicatorTabView内部有一个容器(LinearLayout), 所有的TabItem实际是由这个容器持有的,
+ * 因此如果要获取TabItem, 请用{@link LineIndicatorTabView#getTabItemAt(int)}方法</p>
+ *
  * <pre>{@code
  *
  *     <sviolet.turquoise.ui.viewgroup.tab.LineIndicatorTabViewForViewPager
@@ -77,6 +80,7 @@ public class LineIndicatorTabView extends HorizontalScrollView {
     //VAR///////////////////////////////////////
 
     private float currPage = 0f;//当前指示器页码
+    private boolean init = true;//初始状态
 
     //性能优化////////////////////////////////////
 
@@ -158,6 +162,7 @@ public class LineIndicatorTabView extends HorizontalScrollView {
 
     @Override
     public void removeView(View view) {
+        super.removeView(view);
         //由容器代为接收
         container.removeView(view);
     }
@@ -172,10 +177,36 @@ public class LineIndicatorTabView extends HorizontalScrollView {
     public void removeAllViews() {
         //由容器代为接收
         container.removeAllViews();
+        super.removeAllViews();
+    }
+
+    /**
+     * 获得TabView的Item容器
+     */
+    public LinearLayout getTabItemContainer(){
+        return container;
+    }
+
+    /**
+     * 获得TabView的ItemView, 用来代替getChildAt方法
+     * @param index 位置
+     */
+    public View getTabItemAt(int index) {
+        //由容器代为接收
+        if (container == null){
+            return null;
+        }
+        return container.getChildAt(index);
     }
 
     @Override
     public void draw(Canvas canvas) {
+        //第一次绘制
+        if (init){
+            init = false;
+            callbackPageChanged((int) Math.floor(currPage), false);
+        }
+
         //计算scroller
         if (!scroller.isFinished()){
             scroller.computeScrollOffset();
@@ -231,8 +262,9 @@ public class LineIndicatorTabView extends HorizontalScrollView {
     protected void callbackPageChanged(int page, boolean byClick){
         //回调
         if (onPageChangedListeners != null){
+            View child = getTabItemAt(page);
             for (OnPageChangedListener listener : onPageChangedListeners) {
-                listener.onPageChanged(page, byClick);
+                listener.onPageChanged(page, child, byClick);
             }
         }
     }
@@ -406,9 +438,10 @@ public class LineIndicatorTabView extends HorizontalScrollView {
 
         /**
          * @param page 页码数
+         * @param child 当前页的TabItem(可能为空)
          * @param byClick true:此次事件是由在Tab上点击产生的
          */
-        void onPageChanged(int page, boolean byClick);
+        void onPageChanged(int page, View child, boolean byClick);
 
     }
 

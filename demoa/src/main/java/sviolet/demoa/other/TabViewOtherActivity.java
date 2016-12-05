@@ -24,10 +24,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +38,8 @@ import sviolet.demoa.other.utils.TabViewPageFragmentAdapter;
 import sviolet.turquoise.enhance.app.TFragmentActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.ui.viewgroup.tab.LineIndicatorTabView;
 import sviolet.turquoise.ui.viewgroup.tab.LineIndicatorTabViewForViewPager;
-import sviolet.turquoise.util.droid.MeasureUtils;
 
 @DemoDescription(
         title = "TabView Demo",
@@ -78,6 +78,34 @@ public class TabViewOtherActivity extends TFragmentActivity {
 
         //绑定
         tabView.bindViewPager(viewPager, false);
+
+        //自定义:翻页时, TabItem的颜色变化
+        tabView.addOnPageChangedListener(new LineIndicatorTabView.OnPageChangedListener() {
+
+            private WeakReference<TextView> lastTextView;//持有上一个变色的Item
+
+            @Override
+            public void onPageChanged(int page, View child, boolean byClick) {
+                //前提是知道TabItem外层是LinearLayout
+                if (child instanceof LinearLayout){
+                    //获取TextView, 前提是知道LinearLayout中第一个是TextView
+                    View textView = ((LinearLayout) child).getChildAt(0);
+                    if (textView instanceof TextView){
+                        //将前一个Item颜色置为黑色
+                        if (lastTextView != null){
+                            TextView lastTextViewInstance = lastTextView.get();
+                            if (lastTextViewInstance != null){
+                                lastTextViewInstance.setTextColor(0xFF808080);
+                            }
+                        }
+                        //设置当前Item的颜色
+                        ((TextView) textView).setTextColor(0xFF209090);
+                        //记录当前Item
+                        this.lastTextView = new WeakReference<>((TextView) textView);
+                    }
+                }
+            }
+        });
 
     }
 

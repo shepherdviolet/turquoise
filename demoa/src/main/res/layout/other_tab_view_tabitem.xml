@@ -31,6 +31,6 @@
         android:paddingRight="15dp"
         android:gravity="center"
         android:textSize="14sp"
-        android:textColor="#209090"/>
+        android:textColor="#808080"/>
 
 </LinearLayout>

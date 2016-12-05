@@ -22,9 +22,13 @@ package sviolet.turquoise.ui.viewgroup.tab;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.view.View;
 
 /**
  * <p>[ViewPager专用]线条样式的TabView</p>
+ *
+ * <p>注意: LineIndicatorTabView内部有一个容器(LinearLayout), 所有的TabItem实际是由这个容器持有的,
+ * 因此如果要获取TabItem, 请用{@link LineIndicatorTabView#getTabItemAt(int)}方法</p>
  *
  * <pre>{@code
  *
@@ -99,7 +103,7 @@ public class LineIndicatorTabViewForViewPager extends LineIndicatorTabView imple
         //将TabView的点击事件, 同步给ViewPager
         addOnPageChangedListener(new OnPageChangedListener() {
             @Override
-            public void onPageChanged(int page, boolean byClick) {
+            public void onPageChanged(int page, View child, boolean byClick) {
                 if (byClick){
                     viewPager.setCurrentItem(page, smoothScroll);
                 }
