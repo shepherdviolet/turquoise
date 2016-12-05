@@ -249,9 +249,6 @@ public class LineIndicatorTabView extends HorizontalScrollView {
         View currentView = container.getChildAt(pageInt);
         View nextView = container.getChildAt(pageInt + 1);//右边一个Item
 
-        if (currentView == null){
-            return;
-        }
         if (nextView == null){
             nextView = currentView;
         }
