@@ -27,6 +27,7 @@
     <ListView
         android:id="@+id/other_tab_view_page_listview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:dividerHeight="1px"/>
 
 </LinearLayout>
