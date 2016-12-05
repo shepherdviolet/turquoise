@@ -30,6 +30,9 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import sviolet.turquoise.R;
 import sviolet.turquoise.common.compat.CompatOverScroller;
 import sviolet.turquoise.ui.util.ClickDetector;
@@ -69,7 +72,7 @@ public class LineIndicatorTabView extends HorizontalScrollView {
     private int indicatorWidth = 7;
     private int indicatorBottomPadding = 0;
 
-    private OnPageChangedListener onPageChangedListener;//页面切换监听器
+    private List<OnPageChangedListener> onPageChangedListeners;//页面切换监听器
 
     //VAR///////////////////////////////////////
 
@@ -221,6 +224,20 @@ public class LineIndicatorTabView extends HorizontalScrollView {
     }
 
     /**
+     * ViewPager等通过此方法设定当前页面, 会回调onPageChangedListener监听器
+     * @param page 页码数
+     * @param byClick true:TabView上的点击事件引起的滚动
+     */
+    protected void callbackPageChanged(int page, boolean byClick){
+        //回调
+        if (onPageChangedListeners != null){
+            for (OnPageChangedListener listener : onPageChangedListeners) {
+                listener.onPageChanged(page, byClick);
+            }
+        }
+    }
+
+    /**
      * 直接滚动到指定页
      * @param page 指定页码
      */
@@ -247,9 +264,7 @@ public class LineIndicatorTabView extends HorizontalScrollView {
         postInvalidate();
 
         //回调
-        if (onPageChangedListener != null){
-            onPageChangedListener.onPageChanged(page, byClick);
-        }
+        callbackPageChanged(page, byClick);
     }
 
     /**
@@ -376,8 +391,11 @@ public class LineIndicatorTabView extends HorizontalScrollView {
         this.indicatorBottomPadding = indicatorBottomPadding;
     }
 
-    public void setOnPageChangedListener(OnPageChangedListener listener){
-        this.onPageChangedListener = listener;
+    public void addOnPageChangedListener(OnPageChangedListener listener){
+        if (this.onPageChangedListeners == null){
+            this.onPageChangedListeners = new ArrayList<>();
+        }
+        this.onPageChangedListeners.add(listener);
     }
 
     /******************************************************************************

@@ -71,7 +71,8 @@ public class LineIndicatorTabViewForViewPager extends LineIndicatorTabView imple
 
     @Override
     public void onPageSelected(int position) {
-
+        //ViewPager翻页成功时, 也可以通知到onPageChangedListener监听器
+        callbackPageChanged(position, false);
     }
 
     @Override
@@ -96,7 +97,7 @@ public class LineIndicatorTabViewForViewPager extends LineIndicatorTabView imple
         //将ViewPager的位置同步给TabView
         viewPager.addOnPageChangeListener(this);
         //将TabView的点击事件, 同步给ViewPager
-        setOnPageChangedListener(new OnPageChangedListener() {
+        addOnPageChangedListener(new OnPageChangedListener() {
             @Override
             public void onPageChanged(int page, boolean byClick) {
                 if (byClick){
