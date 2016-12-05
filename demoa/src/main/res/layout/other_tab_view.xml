@@ -32,6 +32,11 @@
         sviolet:LineIndicatorTabView_indicatorWidth="3dp"
         sviolet:LineIndicatorTabView_indicatorBottomPadding="0dp"/>
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#C0C0C0"/>
+
     <android.support.v4.view.ViewPager
         android:id="@+id/other_tab_view_viewpager"
         android:layout_width="match_parent"

@@ -24,6 +24,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -37,6 +39,7 @@ import sviolet.turquoise.enhance.app.TFragmentActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.ui.viewgroup.tab.LineIndicatorTabViewForViewPager;
+import sviolet.turquoise.util.droid.MeasureUtils;
 
 @DemoDescription(
         title = "TabView Demo",
@@ -79,36 +82,36 @@ public class TabViewOtherActivity extends TFragmentActivity {
     }
 
     private void createTabView(LineIndicatorTabViewForViewPager tabView){
-        tabView.addView(createTabItem("新闻1"));
-        tabView.addView(createTabItem("新闻2"));
-        tabView.addView(createTabItem("新闻3"));
-        tabView.addView(createTabItem("新闻4"));
-        tabView.addView(createTabItem("新闻5"));
-        tabView.addView(createTabItem("新闻6"));
-        tabView.addView(createTabItem("新闻7"));
-        tabView.addView(createTabItem("新闻8"));
-        tabView.addView(createTabItem("新闻9"));
-        tabView.addView(createTabItem("新闻10"));
+        createTabItem(tabView, "FirstTab1");
+        createTabItem(tabView, "Tab2");
+        createTabItem(tabView, "Tab3");
+        createTabItem(tabView, "Tab4");
+        createTabItem(tabView, "Tab5");
+        createTabItem(tabView, "Tab6");
+        createTabItem(tabView, "Tab7");
+        createTabItem(tabView, "Tab8");
+        createTabItem(tabView, "Tab9");
+        createTabItem(tabView, "Tab10");
     }
 
-    private View createTabItem(String title){
+    private void createTabItem(LineIndicatorTabViewForViewPager tabView, String title){
         View view = LayoutInflater.from(this).inflate(R.layout.other_tab_view_tabitem, null);
         ((TextView)view.findViewById(R.id.other_tab_view_tabitem_text)).setText(title);
-        return view;
+        tabView.addView(view);
     }
 
     private List<Fragment> createFragments() {
         List<Fragment> fragments = new ArrayList<>();
-        fragments.add(createFragment(0xFF10A0F0, "1"));
-        fragments.add(createFragment(0xFF2090D0, "2"));
-        fragments.add(createFragment(0xFF3080B0, "3"));
-        fragments.add(createFragment(0xFF407090, "4"));
-        fragments.add(createFragment(0xFF506070, "5"));
-        fragments.add(createFragment(0xFF605050, "6"));
-        fragments.add(createFragment(0xFF704030, "7"));
-        fragments.add(createFragment(0xFF803010, "8"));
-        fragments.add(createFragment(0xFF9020F0, "9"));
-        fragments.add(createFragment(0xFFA010D0, "10"));
+        fragments.add(createFragment(0xFF10A0F0, "Page 1 Title-"));
+        fragments.add(createFragment(0xFF2090D0, "Page 2 Title-"));
+        fragments.add(createFragment(0xFF3080B0, "Page 3 Title-"));
+        fragments.add(createFragment(0xFF407090, "Page 4 Title-"));
+        fragments.add(createFragment(0xFF506070, "Page 5 Title-"));
+        fragments.add(createFragment(0xFF605050, "Page 6 Title-"));
+        fragments.add(createFragment(0xFF704030, "Page 7 Title-"));
+        fragments.add(createFragment(0xFF803010, "Page 8 Title-"));
+        fragments.add(createFragment(0xFF9020F0, "Page 9 Title-"));
+        fragments.add(createFragment(0xFFA010D0, "Page 10 Title-"));
         return fragments;
     }
 

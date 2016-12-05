@@ -21,9 +21,10 @@ package sviolet.demoa.other.utils;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ListView;
 
 import sviolet.demoa.R;
+import sviolet.demoa.common.EmulateListAdapter;
 import sviolet.turquoise.enhance.app.TFragmentV4;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 
@@ -35,20 +36,16 @@ import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 @ResourceId(R.layout.other_tab_view_page)
 public class TabViewPageFragment extends TFragmentV4 {
 
-    @ResourceId(R.id.other_tab_view_page_background)
-    private View background;
-    @ResourceId(R.id.other_tab_view_page_text)
-    private TextView textView;
+    @ResourceId(R.id.other_tab_view_page_listview)
+    private ListView listView;
 
     @Override
     protected void afterCreateView(View fragmentView, Bundle savedInstanceState) {
         super.afterCreateView(fragmentView, savedInstanceState);
 
         Bundle bundle = getArguments();
-        int color = bundle.getInt("color");
         String text = bundle.getString("text");
 
-        background.setBackgroundColor(color);
-        textView.setText(text);
+        listView.setAdapter(new EmulateListAdapter(getContext(), 100, text, "12 hours ago", "content content content content content content content"));
     }
 }
