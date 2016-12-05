@@ -55,6 +55,8 @@ import android.view.View;
 
 public class LineIndicatorTabViewForViewPager extends LineIndicatorTabView implements ViewPager.OnPageChangeListener {
 
+    private boolean scrolling = false;
+
     public LineIndicatorTabViewForViewPager(Context context) {
         super(context);
     }
@@ -70,7 +72,10 @@ public class LineIndicatorTabViewForViewPager extends LineIndicatorTabView imple
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
         //将ViewPager的位置同步给TabView
-        moveToPage(position + positionOffset);
+        if (scrolling) {
+            //通过这样来判断是点击TabView滚动的, 还是直接在ViewPager上手势滑动的
+            moveToPage(position + positionOffset);
+        }
     }
 
     @Override
@@ -81,7 +86,13 @@ public class LineIndicatorTabViewForViewPager extends LineIndicatorTabView imple
 
     @Override
     public void onPageScrollStateChanged(int state) {
-
+        if (state > 0){
+            //滚动中
+            scrolling = true;
+        } else {
+            //非滚动中
+            scrolling = false;
+        }
     }
 
     /*************************************************************************
