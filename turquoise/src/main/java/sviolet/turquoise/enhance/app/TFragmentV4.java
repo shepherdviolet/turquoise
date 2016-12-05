@@ -37,18 +37,62 @@ import sviolet.turquoise.enhance.app.utils.InjectUtils;
  *
  * @author S.Violet
  */
-public class TFragmentV4 extends Fragment {
+public abstract class TFragmentV4 extends Fragment {
+
+    private View fragmentViewCache;
 
     @Nullable
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = InjectUtils.inject(this, inflater, container);
-        afterCreateView(view, savedInstanceState);
-        return view;
+
+        //get cache
+        View fragmentView = fragmentViewCacheEnabled() ? this.fragmentViewCache : null;
+
+        //create
+        if(fragmentView == null){
+            fragmentView = InjectUtils.inject(this, inflater, container);
+            afterCreateView(fragmentView, savedInstanceState);
+            if (fragmentViewCacheEnabled()){
+                this.fragmentViewCache = fragmentView;
+            }
+        }
+
+        //clear parent
+        ViewGroup parent = (ViewGroup) fragmentView.getParent();
+        if (parent != null) {
+            parent.removeView(fragmentView);
+        }
+
+        //refresh
+        onRefreshView(fragmentView, savedInstanceState);
+
+        return fragmentView;
     }
 
+    /**
+     * 复写该方法实现View的创建, View复用模式下只会调用一次
+     */
     protected void afterCreateView(View fragmentView, Bundle savedInstanceState){
 
+    }
+
+    /**
+     * 复写该方法实现View的刷新, 每次(onCreateView)都会调用
+     */
+    protected void onRefreshView(View fragmentView, Bundle savedInstanceState){
+
+    }
+
+    /**
+     * <p>true:Fragment复用同一个view, onCreateView方法只会创建一次View, 流畅, 但是费内存</p>
+     * <p>false:Fragment默认的机制, 每次attach都会执行onCreateView并创建新的View, 省内存, 但是卡顿</p>
+     */
+    protected abstract boolean fragmentViewCacheEnabled();
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        this.fragmentViewCache = null;//解除持有
     }
 
 }
