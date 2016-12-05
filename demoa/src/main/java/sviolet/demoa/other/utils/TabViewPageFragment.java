@@ -21,6 +21,7 @@ package sviolet.demoa.other.utils;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import sviolet.demoa.R;
@@ -39,13 +40,35 @@ public class TabViewPageFragment extends TFragmentV4 {
     @ResourceId(R.id.other_tab_view_page_listview)
     private ListView listView;
 
+    //适配器(数据)
+    private BaseAdapter adapter;
+
     @Override
     protected void afterCreateView(View fragmentView, Bundle savedInstanceState) {
         super.afterCreateView(fragmentView, savedInstanceState);
 
+        //获取传入参数
         Bundle bundle = getArguments();
         String text = bundle.getString("text");
 
-        listView.setAdapter(new EmulateListAdapter(getContext(), 100, text, "12 hours ago", "content content content content content content content"));
+        //创建适配器
+        adapter = new EmulateListAdapter(getContext(), 100, text, "12 hours ago", "content content content content content content content");
+        //设置适配器
+        listView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onRefreshView(View fragmentView, Bundle savedInstanceState) {
+        super.onRefreshView(fragmentView, savedInstanceState);
+
+        //可以在这里填充数据/刷新数据
+
+        //刷新数据
+        adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected boolean fragmentViewCacheEnabled() {
+        return true;//开启View复用模式
     }
 }
