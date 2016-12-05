@@ -26,6 +26,26 @@ import android.util.AttributeSet;
 /**
  * <p>[ViewPager专用]线条样式的TabView</p>
  *
+ * <pre>{@code
+ *
+ *      //LineIndicatorTabView绑定ViewPager
+ *      tabView.bindViewPager(viewPager, false);
+ *
+ *     <sviolet.turquoise.ui.viewgroup.tab.LineIndicatorTabViewForViewPager
+ *          android:id="@+id/other_tab_view_tabview"
+ *          android:layout_width="match_parent"
+ *          android:layout_height="40dp"
+ *          sviolet:LineIndicatorTabView_indicatorColor="#209090"
+ *          sviolet:LineIndicatorTabView_indicatorWidth="3dp"
+ *          sviolet:LineIndicatorTabView_indicatorBottomPadding="0dp"/>
+ *
+ *     <android.support.v4.view.ViewPager
+ *          android:id="@+id/other_tab_view_viewpager"
+ *          android:layout_width="match_parent"
+ *          android:layout_height="match_parent"/>
+ *
+ * }</pre>
+ *
  * Created by S.Violet on 2016/12/2.
  */
 

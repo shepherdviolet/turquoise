@@ -40,6 +40,18 @@ import sviolet.turquoise.util.droid.MeasureUtils;
  *
  * <p>线条样式的TabView</p>
  *
+ * <pre>{@code
+ *
+ *     <sviolet.turquoise.ui.viewgroup.tab.LineIndicatorTabViewForViewPager
+ *          android:id="@+id/other_tab_view_tabview"
+ *          android:layout_width="match_parent"
+ *          android:layout_height="40dp"
+ *          sviolet:LineIndicatorTabView_indicatorColor="#209090"
+ *          sviolet:LineIndicatorTabView_indicatorWidth="3dp"
+ *          sviolet:LineIndicatorTabView_indicatorBottomPadding="0dp"/>
+ *
+ * }</pre>
+ *
  * Created by S.Violet on 2016/11/15.
  */
 
