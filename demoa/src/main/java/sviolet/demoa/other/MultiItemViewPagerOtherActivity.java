@@ -79,6 +79,7 @@ public class MultiItemViewPagerOtherActivity extends TActivity {
         super.onCreate(savedInstanceState);
 
         cachedBitmapUtils = new CachedBitmapUtils(getApplicationContext(), 0.1f, 0f);
+        attachLifeCycle(cachedBitmapUtils);//绑定生命周期
 
         viewPager.setOffscreenPageLimit(10);//设置缓存页面数(重要), 根据画廊一页能显示的Item数来设置, 设置约两页的Item数效果比较好, 但是相对占内存
         viewPager.setPageMargin(MeasureUtils.dp2px(getApplicationContext(), 6));//每一页之间的间距(重要)
@@ -141,13 +142,6 @@ public class MultiItemViewPagerOtherActivity extends TActivity {
                 imageResIdList.get(0));
         background.setImageDrawable(new SafeBitmapDrawable(getResources(), bitmap));
 
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        //销毁图片
-        cachedBitmapUtils.onDestroy();
     }
 
     /**
