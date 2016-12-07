@@ -48,6 +48,15 @@
             android:label="@string/slide_activity_title"
             android:theme="@style/AppTheme_Translucent"/>
 
+        <activity android:name=".refresh.RefreshActivity"
+            android:label="@string/refresh_title"/>
+        <activity android:name=".refresh.OverDragRefreshActivity"
+            android:label="@string/refresh_overdrag_title"/>
+        <activity android:name=".refresh.RefreshIndicatorRefreshActivity"
+            android:label="@string/refresh_refreshindicator_title"/>
+        <activity android:name=".refresh.CircleDropIndicatorRefreshActivity"
+            android:label="@string/refresh_circledrop_title"/>
+
         <activity android:name=".other.OtherActivity"
             android:label="@string/other_title"/>
         <activity android:name=".other.ShadowOtherActivity"
@@ -62,15 +71,8 @@
             android:label="@string/other_multiitem_viewpager_title"/>
         <activity android:name=".other.TabViewOtherActivity"
             android:label="@string/other_tab_view_title"/>
-
-        <activity android:name=".refresh.RefreshActivity"
-            android:label="@string/refresh_title"/>
-        <activity android:name=".refresh.OverDragRefreshActivity"
-            android:label="@string/refresh_overdrag_title"/>
-        <activity android:name=".refresh.RefreshIndicatorRefreshActivity"
-            android:label="@string/refresh_refreshindicator_title"/>
-        <activity android:name=".refresh.CircleDropIndicatorRefreshActivity"
-            android:label="@string/refresh_circledrop_title"/>
+        <activity android:name=".other.TabViewHelperOtherActivity"
+            android:label="@string/other_tab_view_helper_title"/>
 
         <activity android:name=".TempActivity"
             android:label="@string/temp_main_title"/>

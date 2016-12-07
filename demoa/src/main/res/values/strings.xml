@@ -14,6 +14,11 @@
     <string name="slide_list_background_button">OK</string>
     <string name="slide_activity_title">SlideActivity</string>
 
+    <string name="refresh_title">Refresh Demo</string>
+    <string name="refresh_overdrag_title">OverDrag Demo</string>
+    <string name="refresh_refreshindicator_title">RefreshIndicator Demo</string>
+    <string name="refresh_circledrop_title">CircleDropRefreshIndicator Demo</string>
+
     <string name="other_title">Other Demo</string>
     <string name="other_shadow_title">Shadow Demo</string>
     <string name="other_gradualtitle_title">Gradual Title Demo</string>
@@ -21,11 +26,7 @@
     <string name="other_motion_image_title">Gesture Ctrl Demo</string>
     <string name="other_multiitem_viewpager_title">Multi item in ViewPager Demo</string>
     <string name="other_tab_view_title">TabView Demo</string>
-
-    <string name="refresh_title">Refresh Demo</string>
-    <string name="refresh_overdrag_title">OverDrag Demo</string>
-    <string name="refresh_refreshindicator_title">RefreshIndicator Demo</string>
-    <string name="refresh_circledrop_title">CircleDropRefreshIndicator Demo</string>
+    <string name="other_tab_view_helper_title">TabViewHelper Demo</string>
 
     <string name="common_indicator_refresh_init">pull to refresh</string>
     <string name="common_indicator_refresh_ready">release to refresh</string>

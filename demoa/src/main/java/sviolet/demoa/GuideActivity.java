@@ -49,8 +49,8 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 // Demo列表
 @DemoList({
         SlideActivity.class,
-        OtherActivity.class,
         RefreshActivity.class,
+        OtherActivity.class,
         TempActivity.class
 })
 

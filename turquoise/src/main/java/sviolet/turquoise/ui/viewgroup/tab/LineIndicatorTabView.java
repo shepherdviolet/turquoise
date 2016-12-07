@@ -205,6 +205,11 @@ public class LineIndicatorTabView extends HorizontalScrollView {
         return container.getChildAt(index);
     }
 
+    public void removeAllTabItems(){
+        //由容器代为接收
+        container.removeAllViews();
+    }
+
     @Override
     public void draw(Canvas canvas) {
         //第一次绘制
@@ -240,6 +245,13 @@ public class LineIndicatorTabView extends HorizontalScrollView {
             }
         }
         return super.dispatchTouchEvent(ev);
+    }
+
+    /**
+     * 直接设置到指定页码(无动画, 无回调)
+     */
+    public void setToPage(int page){
+        moveToPage(page);
     }
 
     /**
