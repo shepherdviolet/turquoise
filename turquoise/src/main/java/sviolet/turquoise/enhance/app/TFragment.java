@@ -92,10 +92,4 @@ public abstract class TFragment extends Fragment {
      */
     protected abstract boolean fragmentViewCacheEnabled();
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        this.fragmentViewCache = null;//解除持有
-    }
-
 }
