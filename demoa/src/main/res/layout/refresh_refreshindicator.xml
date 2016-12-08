@@ -18,6 +18,7 @@
   ~ Email: shepherdviolet@163.com
   -->
 
+<!--外层必须是RelativeLayout, 使得容器和指示器重叠显示-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:sviolet="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
