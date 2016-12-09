@@ -21,27 +21,14 @@ package sviolet.turquoise.enhance.app;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.Window;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
-import sviolet.turquoise.util.droid.StatusBarUtils;
-import sviolet.turquoise.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.ApplicationUtils;
-import sviolet.turquoise.util.droid.MeasureUtils;
+import sviolet.turquoise.util.droid.StatusBarUtils;
 
 /**
  * [组件扩展]Activity<br>
@@ -95,19 +82,30 @@ public class TActivityProvider {
             activity.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         }
 
-        //5.0效果
-        //透明状态栏/底部按钮, 最大化Activity
-        if (getActivitySettings(activity).translucentStatus() || getActivitySettings(activity).translucentNavigation()) {
-            StatusBarUtils.setTranslucent(activity, getActivitySettings(activity).translucentStatus(), getActivitySettings(activity).translucentNavigation());
+        //状态栏效果
+        StatusBarUtils statusBarUtils = new StatusBarUtils();
+        //状态栏透明
+        if (getActivitySettings(activity).translucentStatus()) {
+            statusBarUtils.setStatusBarTranslucent();
+        }
+        //底部按钮透明
+        if (getActivitySettings(activity).translucentNavigation()){
+            statusBarUtils.setNavigationBarTranslucent();
+        }
+        //状态栏ICON深色
+        if (getActivitySettings(activity).lightStatusIcon()){
+            statusBarUtils.setStatusBarIconLight();
         }
         //状态栏颜色
         if (getActivitySettings(activity).statusBarColor() != ActivitySettings.DEF_STATUS_BAR_COLOR) {
-            StatusBarUtils.setStatusBarColor(activity, getActivitySettings(activity).statusBarColor());
+            statusBarUtils.setStatusBarColor(getActivitySettings(activity).statusBarColor());
         }
         //底部按钮颜色
         if (getActivitySettings(activity).navigationBarColor() != ActivitySettings.DEF_NAVIGATION_BAR_COLOR) {
-            StatusBarUtils.setNavigationBarColor(activity, getActivitySettings(activity).navigationBarColor());
+            statusBarUtils.setNavigationBarColor(getActivitySettings(activity).navigationBarColor());
         }
+        //应用
+        statusBarUtils.apply(activity);
     }
 
     void onCreate(Activity activity){

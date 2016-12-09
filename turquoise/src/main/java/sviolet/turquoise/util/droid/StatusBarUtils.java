@@ -32,74 +32,101 @@ import android.view.WindowManager;
  */
 public class StatusBarUtils {
 
+    private boolean statusBarTranslucent = false;
+    private boolean navigationBarTranslucent = false;
+    private boolean statusBarIconLight = false;
+    private boolean isCustomStatusBarColor = false;
+    private int statusBarColor;
+    private boolean isCustomNavigationBarColor = false;
+    private int navigationBarColor;
+
     /**
-     * [API21]透明状态栏/底部按钮, 最大化Activity
-     * @param activity activity
-     * @param translucentStatus 状态栏透明
-     * @param translucentNavigation 底部按钮透明
-     * @return true:设置成功
+     * 设置状态栏透明, API21
      */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static boolean setTranslucent(Activity activity, boolean translucentStatus, boolean translucentNavigation){
+    public StatusBarUtils setStatusBarTranslucent(){
+        statusBarTranslucent = true;
+        return this;
+    }
+
+    /**
+     * 设置导航栏透明, API21
+     */
+    public StatusBarUtils setNavigationBarTranslucent(){
+        navigationBarTranslucent = true;
+        return this;
+    }
+
+    /**
+     * 设置状态栏ICON深色, API23
+     */
+    public StatusBarUtils setStatusBarIconLight(){
+        statusBarIconLight = true;
+        return this;
+    }
+
+    /**
+     * 设置状态栏颜色, API21
+     */
+    public StatusBarUtils setStatusBarColor(int color){
+        isCustomStatusBarColor = true;
+        statusBarColor = color;
+        return this;
+    }
+
+    /**
+     * 设置导航栏颜色, API21
+     */
+    public StatusBarUtils setNavigationBarColor(int color){
+        isCustomNavigationBarColor = true;
+        navigationBarColor = color;
+        return this;
+    }
+
+    /**
+     * 生效
+     * @param activity activity
+     */
+    @TargetApi(Build.VERSION_CODES.M)
+    public void apply(Activity activity){
         if (activity == null){
-            return false;
+            return;
         }
         if (DeviceUtils.getVersionSDK() >= Build.VERSION_CODES.LOLLIPOP) {
-            int flag = View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-            if (translucentStatus){
+            int flag = 0x00000000;
+            //状态栏透明
+            if (statusBarTranslucent){
+                flag |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
                 flag |= View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
             }
-            if (translucentNavigation){
+            //导航栏透明
+            if (navigationBarTranslucent){
+                flag |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
                 flag |= View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
             }
+            //状态栏Icon深色
+            if (statusBarIconLight && DeviceUtils.getVersionSDK() >= Build.VERSION_CODES.M){
+                flag |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            }
             activity.getWindow().getDecorView().setSystemUiVisibility(flag);
-            return true;
-        }
-        return false;
-    }
 
-    /**
-     * [API21]设置状态栏颜色, 若需要透明, 请先调用{@link StatusBarUtils#setTranslucent}
-     * @param activity activity
-     * @param color 颜色
-     * @return true:设置成功
-     */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static boolean setStatusBarColor(Activity activity, int color){
-        if (activity == null){
-            return false;
-        }
-        if (DeviceUtils.getVersionSDK() >= Build.VERSION_CODES.LOLLIPOP) {
-            //必须清除标志
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            //必须设置标志
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            activity.getWindow().setStatusBarColor(color);
-            return true;
-        }
-        return false;
-    }
+            //设置状态栏颜色
+            if (isCustomStatusBarColor){
+                //必须清除标志
+                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                //必须设置标志
+                activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                activity.getWindow().setStatusBarColor(statusBarColor);
+            }
 
-    /**
-     * [API21]设置底部按钮颜色, 若需要透明, 请先调用{@link StatusBarUtils#setTranslucent}
-     * @param activity activity
-     * @param color 颜色
-     * @return true:设置成功
-     */
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static boolean setNavigationBarColor(Activity activity, int color){
-        if (activity == null){
-            return false;
+            //设置导航栏颜色
+            if (isCustomNavigationBarColor){
+                //必须清除标志
+                activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+                //必须设置标志
+                activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                activity.getWindow().setNavigationBarColor(navigationBarColor);
+            }
         }
-        if (DeviceUtils.getVersionSDK() >= Build.VERSION_CODES.LOLLIPOP) {
-            //必须清除标志
-            activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-            //必须设置标志
-            activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            activity.getWindow().setNavigationBarColor(color);
-            return true;
-        }
-        return false;
     }
 
 }

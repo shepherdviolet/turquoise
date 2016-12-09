@@ -87,6 +87,12 @@ public @interface ActivitySettings {
     boolean translucentNavigation() default false;
 
     /**
+     * 6.0
+     * 状态栏ICON深色
+     */
+    boolean lightStatusIcon() default false;
+
+    /**
      * 5.0
      * 状态栏颜色
      */
