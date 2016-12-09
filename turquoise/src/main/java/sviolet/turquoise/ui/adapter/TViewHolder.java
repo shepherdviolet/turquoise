@@ -177,6 +177,13 @@ public class TViewHolder {
         return createTimes;
     }
 
+    /**
+     * @return true:convertView为新实例, 可以进行初始化操作, 如:绑定监听器等
+     */
+    public boolean isFirstCreate(){
+        return createTimes() == 1;
+    }
+
     private void incrementCreateTimes(){
         createTimes++;
     }
