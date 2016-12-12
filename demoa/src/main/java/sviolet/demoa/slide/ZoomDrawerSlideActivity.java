@@ -33,6 +33,7 @@ import sviolet.demoa.slide.view.ZoomRelativeLayoutDrawer;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
+import sviolet.turquoise.uix.slideengine.listener.OnSlideStopListener;
 import sviolet.turquoise.util.droid.MeasureUtils;
 
 @DemoDescription(
@@ -58,8 +59,10 @@ public class ZoomDrawerSlideActivity extends TActivity {
     private ListView drawerListview;
     @ResourceId(R.id.slide_zoomdrawer_drawer_myslideview)
     private MySlideView drawerMyslideview;
-    @ResourceId(R.id.slide_zoomdrawer_background)
+    @ResourceId(R.id.slide_zoomdrawer_background_list)
     private ListView backgroundListView;
+    @ResourceId(R.id.slide_zoomdrawer_background)
+    private View backgroundView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +74,24 @@ public class ZoomDrawerSlideActivity extends TActivity {
                 .setSlideScrollDuration(700)//设置惯性滑动时间
                 .setSlideDrawerWidth(MeasureUtils.getScreenWidthDp(getApplicationContext()) - 90)//设置抽屉宽度
                 .setSlideInitStage(ZoomRelativeLayoutDrawer.STAGE_PULL_OUT)//设置默认状态:拉出
+                .setOnGestureHoldListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //拉抽屉时显示背景
+                        backgroundView.setVisibility(View.VISIBLE);
+                        backgroundListView.setVisibility(View.VISIBLE);
+                    }
+                })
+                .setOnSlideStopListener(new OnSlideStopListener() {
+                    @Override
+                    public void onStop() {
+                        if (drawer.getCurrentStage() == drawer.getPullOutStage()){
+                            //抽屉完全拉出时, 隐藏背景, 防止过度绘制
+                            backgroundView.setVisibility(View.INVISIBLE);
+                            backgroundListView.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                })
                 .applySlideSetting();//应用设置
 
         //抽屉中的ListView

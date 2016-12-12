@@ -3,14 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#30A0A0"
     tools:context="sviolet.demoa.slide.ZoomDrawerSlideActivity">
 
+    <!--侧滑栏菜单-->
     <ListView
-        android:id="@+id/slide_zoomdrawer_background"
+        android:id="@+id/slide_zoomdrawer_background_list"
         android:layout_width="150dp"
         android:layout_height="match_parent"
         android:background="#30A0A0"/>
+
+    <!--背景-->
+    <View
+        android:id="@+id/slide_zoomdrawer_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#209090"
+        android:layout_toRightOf="@id/slide_zoomdrawer_background_list"
+        android:layout_toEndOf="@id/slide_zoomdrawer_background_list"/>
 
     <!-- 自定义缩放型抽屉控件 -->
     <!-- scrollX/scrollY设置一个很大的值, 让子控件消失, 由engine的初始位置决定控件初始位置 -->
