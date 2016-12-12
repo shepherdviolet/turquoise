@@ -60,6 +60,8 @@ public abstract class TAppCompatActivity extends AppCompatActivity  implements A
         provider.onCreate(this);
         if (savedInstanceState == null) {
             onInitFragments();
+        } else {
+            onRelaunchFragments(savedInstanceState);
         }
         onInitViews(savedInstanceState);
     }
@@ -68,6 +70,13 @@ public abstract class TAppCompatActivity extends AppCompatActivity  implements A
      * 初始化Fragment, 该方法只在Activity初次创建时调用, 重建(屏幕旋转/长时间后重开)时不会调用该方法
      */
     protected void onInitFragments(){
+
+    }
+
+    /**
+     * 重建Fragment, 该方法只在Activity重建(屏幕旋转/长时间后重开)时调用, Activity初次创建时不调用该方法
+     */
+    protected void onRelaunchFragments(Bundle savedInstanceState){
 
     }
 
