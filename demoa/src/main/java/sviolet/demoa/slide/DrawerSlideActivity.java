@@ -81,7 +81,7 @@ public class DrawerSlideActivity extends TActivity {
                     @Override
                     public void onStop() {
                         //当抽屉收起时隐藏阴影
-                        if (leftdrawer.getSlideEngine().getCurrentStage() == 1){
+                        if (leftdrawer.getCurrentStage() == leftdrawer.getPushInStage()){
                             leftdrawerRightshadow.setVisibility(View.INVISIBLE);
                         }
                     }
