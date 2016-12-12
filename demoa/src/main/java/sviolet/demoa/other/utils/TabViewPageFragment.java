@@ -45,8 +45,6 @@ public class TabViewPageFragment extends TFragmentV4 {
 
     @Override
     protected void onInitView(View fragmentView, Bundle savedInstanceState) {
-        super.afterCreateView(fragmentView, savedInstanceState);
-
         //获取传入参数
         Bundle bundle = getArguments();
         String text = bundle.getString("text");
@@ -59,8 +57,6 @@ public class TabViewPageFragment extends TFragmentV4 {
 
     @Override
     protected void onRefreshView(View fragmentView, Bundle savedInstanceState) {
-        super.onRefreshView(fragmentView, savedInstanceState);
-
         //可以在这里填充数据/刷新数据
 
         //刷新数据
