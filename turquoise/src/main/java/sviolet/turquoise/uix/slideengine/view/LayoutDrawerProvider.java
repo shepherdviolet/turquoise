@@ -19,16 +19,17 @@
 
 package sviolet.turquoise.uix.slideengine.view;
 
-import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.ui.listener.OnInitCompleteListener;
-import sviolet.turquoise.ui.listener.OnSlideStopListener;
+import android.content.Context;
+import android.view.View;
+import android.view.View.OnClickListener;
+
 import sviolet.turquoise.uix.slideengine.abs.SlideException;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;
 import sviolet.turquoise.uix.slideengine.impl.LinearGestureDriver;
 import sviolet.turquoise.uix.slideengine.impl.LinearScrollEngine;
-import android.content.Context;
-import android.view.View;
-import android.view.View.OnClickListener;
+import sviolet.turquoise.uix.slideengine.listener.OnInitCompleteListener;
+import sviolet.turquoise.uix.slideengine.listener.OnSlideStopListener;
+import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**
  * LayoutDrawer控件逻辑实现

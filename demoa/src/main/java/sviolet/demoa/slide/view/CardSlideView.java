@@ -28,8 +28,8 @@ import android.widget.LinearLayout;
 
 import java.util.List;
 
+import sviolet.turquoise.uix.slideengine.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.ui.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.uix.slideengine.abs.SlideEngine;
 import sviolet.turquoise.uix.slideengine.abs.SlideEngineGroup;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;

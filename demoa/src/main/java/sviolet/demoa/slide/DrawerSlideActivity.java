@@ -29,8 +29,8 @@ import sviolet.demoa.common.EmulateListAdapter;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
-import sviolet.turquoise.ui.listener.OnSlideStopListener;
 import sviolet.turquoise.ui.view.shadow.LinearShadowView;
+import sviolet.turquoise.uix.slideengine.listener.OnSlideStopListener;
 import sviolet.turquoise.uix.slideengine.view.RelativeLayoutDrawer;
 
 @DemoDescription(

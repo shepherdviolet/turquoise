@@ -19,11 +19,6 @@
 
 package sviolet.turquoise.uix.slideengine.impl;
 
-import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.turquoise.ui.listener.OnSlideStopListener;
-import sviolet.turquoise.uix.slideengine.abs.GestureDriver;
-import sviolet.turquoise.uix.slideengine.abs.SlideEngine;
-import sviolet.turquoise.uix.slideengine.abs.SlideView;
 import android.content.Context;
 import android.os.Looper;
 import android.os.Message;
@@ -31,6 +26,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 
 import java.lang.ref.WeakReference;
+
+import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.uix.slideengine.abs.GestureDriver;
+import sviolet.turquoise.uix.slideengine.abs.SlideEngine;
+import sviolet.turquoise.uix.slideengine.abs.SlideView;
+import sviolet.turquoise.uix.slideengine.listener.OnSlideStopListener;
 
 /**
  * 

@@ -19,8 +19,8 @@
 
 package sviolet.demoa.slide.view;
 
+import sviolet.turquoise.uix.slideengine.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.ui.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;
 import sviolet.turquoise.uix.slideengine.impl.LinearFlingEngine;
 import sviolet.turquoise.uix.slideengine.impl.LinearGestureDriver;
