@@ -52,7 +52,6 @@ public class ListSlideActivity extends TActivity{
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
         mSlideListView.setAdapter(new MySlideListAdapter(this, 30, "title", "type", "info.............."));
 

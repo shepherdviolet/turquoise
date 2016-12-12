@@ -69,8 +69,6 @@ public class ListViewActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         TILoader.node(this).setting(new NodeSettings.Builder()
                 .setNetworkLoadHandler(new MyNetworkLoadHandler())
                 .setLoadingDrawableFactory(new CommonLoadingDrawableFactory().setAnimationEnabled(true).setBackgroundColor(0xFFF0F0F0))

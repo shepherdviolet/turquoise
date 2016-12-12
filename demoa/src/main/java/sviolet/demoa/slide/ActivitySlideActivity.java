@@ -56,8 +56,6 @@ public class ActivitySlideActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         listView.setAdapter(new EmulateListAdapter(this, 30, "title", "type", "content.............................................."));
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

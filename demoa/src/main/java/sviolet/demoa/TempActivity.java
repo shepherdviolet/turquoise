@@ -45,7 +45,6 @@ public class TempActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
 
     }
 

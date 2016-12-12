@@ -50,8 +50,6 @@ public class RuntimePermissionOtherActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         executePermissionTask(Manifest.permission.WRITE_EXTERNAL_STORAGE, "Storage permission", "We need to write external storage, if you want to xxxx you should allow this permission", new RuntimePermissionManager.RequestPermissionTask() {
             @Override
             public void onResult(String[] permissions, int[] grantResults, boolean allGranted) {

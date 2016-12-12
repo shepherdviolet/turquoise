@@ -74,8 +74,6 @@ public class RoundedListActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         Bitmap loadingBitmap = BitmapUtils.decodeFromResource(getResources(), R.mipmap.rounded_list_loading);
         loadingBitmap = BitmapUtils.toRoundedCorner(loadingBitmap, MeasureUtils.dp2px(this, 2), BitmapUtils.RoundedCornerType.TopLeft_And_TopRight, true);
 

@@ -73,8 +73,6 @@ public class RecyclerViewActivity extends TAppCompatActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         Bitmap loadingBitmap = BitmapUtils.decodeFromResource(getResources(), R.mipmap.rounded_list_loading);
 
         TILoader.node(this).setting(new NodeSettings.Builder()

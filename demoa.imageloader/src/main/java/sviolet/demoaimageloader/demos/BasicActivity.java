@@ -52,8 +52,6 @@ public class BasicActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         //必须在加载之前设置节点,否则无效
         initNode();
         loadImage();

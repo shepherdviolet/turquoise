@@ -56,8 +56,6 @@ public class GifActivity extends TAppCompatActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         loadGIF();
     }
 

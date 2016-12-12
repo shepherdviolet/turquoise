@@ -51,6 +51,6 @@ public class FlingSlideActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+
     }
 }

@@ -76,8 +76,6 @@ public class MultiItemViewPagerOtherActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         cachedBitmapUtils = new CachedBitmapUtils(getApplicationContext(), 0.1f, 0f);
         attachLifeCycle(cachedBitmapUtils);//绑定生命周期
 

@@ -62,8 +62,6 @@ public class RefreshIndicatorRefreshActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         //listView初始化
         listView.setAdapter(new EmulateListAdapter(this, 15,
                 "RefreshIndicator", "10 hours ago", "pull to refresh implement by VerticalOverDragContainer + VerticalRefreshIndicatorGroup"));

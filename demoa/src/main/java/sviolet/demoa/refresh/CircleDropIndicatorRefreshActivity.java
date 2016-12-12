@@ -62,8 +62,6 @@ public class CircleDropIndicatorRefreshActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         //listView初始化
         listView.setAdapter(new EmulateListAdapter(this, 15,
                 "CircleDropRefresh", "10 hours ago", "pull to refresh pull to refresh pull to refresh pull to refresh pull to refresh pull to refresh "));

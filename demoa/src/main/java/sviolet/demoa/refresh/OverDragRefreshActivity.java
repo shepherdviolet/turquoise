@@ -61,8 +61,6 @@ public class OverDragRefreshActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         //listView初始化
         listView.setAdapter(new EmulateListAdapter(this, 15,
                 "OverDrag", "10 hours ago", "common usage of VerticalOverDragContainer"));

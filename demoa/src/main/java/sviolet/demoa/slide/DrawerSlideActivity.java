@@ -61,8 +61,6 @@ public class DrawerSlideActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         backgroundListView.setAdapter(new EmulateListAdapter(this, 30,
                 "DrawerBackgroundList", "10 hours ago", "this is a Drawer demo made by turquoise.view.slide"));
         leftdrawerListview.setAdapter(new EmulateListAdapter(this, 5, "Title", null, null));

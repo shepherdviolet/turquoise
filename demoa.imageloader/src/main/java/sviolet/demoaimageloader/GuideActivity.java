@@ -79,8 +79,6 @@ public class GuideActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         injectDemoListView();
         injectDefaultDemo();
     }

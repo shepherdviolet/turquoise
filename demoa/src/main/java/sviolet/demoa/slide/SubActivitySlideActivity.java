@@ -48,8 +48,6 @@ public class SubActivitySlideActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         //设置抽屉控件
         drawer.setSlideScrollDirection(RelativeLayoutDrawer.DIRECTION_RIGHT)
                 .setSlideScrollDuration(500)

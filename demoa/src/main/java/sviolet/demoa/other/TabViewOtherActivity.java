@@ -66,8 +66,6 @@ public class TabViewOtherActivity extends TFragmentActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         //ViewPager填充数据
         List<Fragment> fragments = createFragments();
         TabViewPageFragmentAdapter adapter = new TabViewPageFragmentAdapter(getSupportFragmentManager(), fragments);

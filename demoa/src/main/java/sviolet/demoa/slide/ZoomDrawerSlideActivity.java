@@ -66,8 +66,6 @@ public class ZoomDrawerSlideActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         //缩放抽屉配置
         drawer
                 .setSlideScrollDirection(ZoomRelativeLayoutDrawer.DIRECTION_RIGHT)//设置抽屉方向
