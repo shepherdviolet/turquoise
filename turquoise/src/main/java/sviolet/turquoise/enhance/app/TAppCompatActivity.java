@@ -67,14 +67,41 @@ public abstract class TAppCompatActivity extends AppCompatActivity  implements A
     }
 
     /**
-     * 初始化Fragment, 该方法只在Activity初次创建时调用, 重建(屏幕旋转/长时间后重开)时不会调用该方法
+     * <p>初始化Fragment, 该方法只在Activity初次创建时调用, 重建(屏幕旋转/长时间后重开)时不会调用该方法</p>
+     *
+     * <p>用于一般的Fragment用法, 防止Fragment在旋转屏幕时不停的创建实例并重叠显示,
+     * ViewPager+FragmentPagerAdapter的场合不需要这样处理, FragmentPagerAdapter会管理好Fragment.</p>
+     *
+     * <pre>{@code
+     *      protected void onInitFragments(){
+     *          //实例化Fragment
+     *          this.aFragment = new AFragment();
+     *          this.bFragment = new BFragment();
+     *          //添加Fragment
+     *          FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+     *          transaction.add(R.id.aaa, aFragment, A_FRAGMENT_TAG);
+     *          transaction.add(R.id.bbb, bFragment, B_FRAGMENT_TAG);
+     *          transaction.commit();
+     *      }
+     * }</pre>
      */
     protected void onInitFragments(){
 
     }
 
     /**
-     * 重建Fragment, 该方法只在Activity重建(屏幕旋转/长时间后重开)时调用, Activity初次创建时不调用该方法
+     * <p>重建Fragment, 该方法只在Activity重建(屏幕旋转/长时间后重开)时调用, Activity初次创建时不调用该方法</p>
+     *
+     * <p>用于一般的Fragment用法, 防止Fragment在旋转屏幕时不停的创建实例并重叠显示,
+     * ViewPager+FragmentPagerAdapter的场合不需要这样处理, FragmentPagerAdapter会管理好Fragment.</p>
+     *
+     * <pre>{@code
+     *      protected void onRelaunchFragments(Bundle savedInstanceState) {
+     *          //根据TAG取回Fragment(这些Fragment是由系统自动重建的)
+     *          this.aFragment = getSupportFragmentManager().findFragmentByTag(A_FRAGMENT_TAG);
+     *          this.bFragment = getSupportFragmentManager().findFragmentByTag(B_FRAGMENT_TAG);
+     *      }
+     * }</pre>
      */
     protected void onRelaunchFragments(Bundle savedInstanceState){
 
