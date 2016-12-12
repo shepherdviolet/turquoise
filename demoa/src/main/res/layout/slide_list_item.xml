@@ -10,8 +10,7 @@ LinearLayoutDrawer必须设置背景颜色
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="#209090">
+        android:layout_height="100dp">
 
         <sviolet.turquoise.ui.view.shadow.LinearShadowView
             android:layout_width="match_parent"
