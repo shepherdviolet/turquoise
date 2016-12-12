@@ -44,7 +44,7 @@ public class TabViewPageFragment extends TFragmentV4 {
     private BaseAdapter adapter;
 
     @Override
-    protected void afterCreateView(View fragmentView, Bundle savedInstanceState) {
+    protected void onInitView(View fragmentView, Bundle savedInstanceState) {
         super.afterCreateView(fragmentView, savedInstanceState);
 
         //获取传入参数

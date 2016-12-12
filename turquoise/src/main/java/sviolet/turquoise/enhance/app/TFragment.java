@@ -54,7 +54,7 @@ public abstract class TFragment extends Fragment {
         //create
         if(fragmentView == null){
             fragmentView = InjectUtils.inject(this, inflater, container);
-            afterCreateView(fragmentView, savedInstanceState);
+            onInitView(fragmentView, savedInstanceState);
             if (fragmentViewCacheEnabled()){
                 this.fragmentViewCache = fragmentView;
             }
@@ -73,18 +73,14 @@ public abstract class TFragment extends Fragment {
     }
 
     /**
-     * 复写该方法实现View的创建, View复用模式下只会调用一次
+     * 复写该方法实现View的创建, View复用模式下只会调用一次, 非复用模式下, 每次都会调用
      */
-    protected void afterCreateView(View fragmentView, Bundle savedInstanceState){
-
-    }
+    protected abstract void onInitView(View fragmentView, Bundle savedInstanceState);
 
     /**
-     * 复写该方法实现View的刷新, 每次(onCreateView)都会调用
+     * 复写该方法实现View的刷新, 每次都会调用
      */
-    protected void onRefreshView(View fragmentView, Bundle savedInstanceState){
-
-    }
+    protected abstract void onRefreshView(View fragmentView, Bundle savedInstanceState);
 
     /**
      * <p>true:Fragment复用同一个view, onCreateView方法只会创建一次View, 流畅, 但是费内存</p>
