@@ -54,7 +54,7 @@ public abstract class TAppCompatActivity extends AppCompatActivity  implements A
     private int contentId;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected final void onCreate(Bundle savedInstanceState) {
         provider.windowSetting(this);//窗口设置
         super.onCreate(savedInstanceState);
         provider.onCreate(this);
