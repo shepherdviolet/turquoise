@@ -51,7 +51,7 @@ public class GradualTitleOtherActivity extends TActivity {
     private int titleColor = 0;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //初始化标题颜色

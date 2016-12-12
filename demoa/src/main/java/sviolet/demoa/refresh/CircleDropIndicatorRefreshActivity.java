@@ -61,7 +61,7 @@ public class CircleDropIndicatorRefreshActivity extends TActivity {
     private CircleDropRefreshIndicator loadIndicator;//下拉刷新
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //listView初始化

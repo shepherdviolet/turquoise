@@ -19,6 +19,8 @@
 
 package sviolet.demoa.other;
 
+import android.os.Bundle;
+
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
@@ -42,5 +44,10 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
         navigationBarColor = 0xFF209090
 )
 public class MotionImageOtherActivity extends TActivity {
+
+    @Override
+    protected void onInitViews(Bundle savedInstanceState) {
+
+    }
 
 }

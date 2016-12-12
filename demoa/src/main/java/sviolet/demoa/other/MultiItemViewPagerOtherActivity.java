@@ -75,7 +75,7 @@ public class MultiItemViewPagerOtherActivity extends TActivity {
     private CachedBitmapUtils cachedBitmapUtils;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         cachedBitmapUtils = new CachedBitmapUtils(getApplicationContext(), 0.1f, 0f);

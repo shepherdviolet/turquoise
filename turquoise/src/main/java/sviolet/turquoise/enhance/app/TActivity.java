@@ -44,7 +44,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  * @author S.Violet
  */
 
-public class TActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public abstract class TActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private final TActivityProvider provider = new TActivityProvider();
     private RuntimePermissionManager runtimePermissionManager = new RuntimePermissionManager(this);
@@ -52,11 +52,27 @@ public class TActivity extends Activity implements ActivityCompat.OnRequestPermi
     private int contentId;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         provider.windowSetting(this);//窗口设置
         provider.onCreate(this);
+        if (savedInstanceState == null) {
+            onInitFragments();
+        }
+        onInitViews(savedInstanceState);
     }
+
+    /**
+     * 初始化Fragment, 该方法只在Activity初次创建时调用, 重建(屏幕旋转/长时间后重开)时不会调用该方法
+     */
+    protected void onInitFragments(){
+
+    }
+
+    /**
+     * 初始化View, 该方法在Activity初次创建时, 和重建(屏幕旋转/长时间后重开)时, 都会调用
+     */
+    protected abstract void onInitViews(Bundle savedInstanceState);
 
     /**
      * 根据Activity的@OptionsMenuId标签, 注入OptionsMenu菜单布局文件<br>
@@ -68,10 +84,18 @@ public class TActivity extends Activity implements ActivityCompat.OnRequestPermi
     }
 
     @Override
-    protected void onDestroy() {
+    protected final void onDestroy() {
         super.onDestroy();
         provider.onDestroy(this);
         runtimePermissionManager.onDestroy();
+        afterDestroy();
+    }
+
+    /**
+     * 等同于onDestroy方法, 监听销毁的生命周期事件
+     */
+    protected void afterDestroy(){
+
     }
 
     /**

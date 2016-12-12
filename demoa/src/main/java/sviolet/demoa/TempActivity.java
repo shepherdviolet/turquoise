@@ -44,14 +44,14 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 public class TempActivity extends TActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void afterDestroy() {
+
     }
 
     @Override

@@ -51,7 +51,7 @@ public class BasicActivity extends TActivity {
     private ImageView imageView4;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //必须在加载之前设置节点,否则无效

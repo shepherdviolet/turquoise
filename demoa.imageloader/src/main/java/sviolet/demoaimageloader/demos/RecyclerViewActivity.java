@@ -72,7 +72,7 @@ public class RecyclerViewActivity extends TAppCompatActivity {
     private CircleDropRefreshIndicator refreshIndicator;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Bitmap loadingBitmap = BitmapUtils.decodeFromResource(getResources(), R.mipmap.rounded_list_loading);
@@ -111,8 +111,8 @@ public class RecyclerViewActivity extends TAppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void afterDestroy() {
+
     }
 
     /****************************************************

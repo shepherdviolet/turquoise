@@ -60,7 +60,7 @@ public class OverDragRefreshActivity extends TActivity {
     private TLogger logger = TLogger.get(this, "OverDragDemo");
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //listView初始化

@@ -47,7 +47,7 @@ public class SubActivitySlideActivity extends TActivity {
     private RelativeLayoutDrawer drawer;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //设置抽屉控件
@@ -82,8 +82,7 @@ public class SubActivitySlideActivity extends TActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void afterDestroy() {
         Toast.makeText(getApplicationContext(), "finish", Toast.LENGTH_SHORT).show();
     }
 

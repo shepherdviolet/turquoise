@@ -65,7 +65,7 @@ public class ZoomDrawerSlideActivity extends TActivity {
     private View backgroundView;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //缩放抽屉配置

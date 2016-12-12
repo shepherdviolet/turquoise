@@ -67,7 +67,7 @@ public class TabViewHelperOtherActivity extends TFragmentActivity {
     private LineIndicatorTabViewHelper lineIndicatorTabViewHelper;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //ViewPager填充数据

@@ -61,7 +61,7 @@ public class RefreshIndicatorRefreshActivity extends TActivity {
     private SimpleVerticalRefreshIndicatorGroup loadIndicator;//上拉加载
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         //listView初始化

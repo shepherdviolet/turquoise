@@ -73,7 +73,7 @@ public class RoundedListActivity extends TActivity {
     private RoundedListAdapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         Bitmap loadingBitmap = BitmapUtils.decodeFromResource(getResources(), R.mipmap.rounded_list_loading);
@@ -112,8 +112,8 @@ public class RoundedListActivity extends TActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void afterDestroy() {
+
     }
 
     /****************************************************

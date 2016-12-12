@@ -60,7 +60,7 @@ public class DrawerSlideActivity extends TActivity {
     private LinearShadowView leftdrawerRightshadow;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         backgroundListView.setAdapter(new EmulateListAdapter(this, 30,

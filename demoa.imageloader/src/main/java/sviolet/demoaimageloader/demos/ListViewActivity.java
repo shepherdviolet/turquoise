@@ -68,7 +68,7 @@ public class ListViewActivity extends TActivity {
     private ListViewAdapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onInitViews(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         TILoader.node(this).setting(new NodeSettings.Builder()
@@ -99,8 +99,8 @@ public class ListViewActivity extends TActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void afterDestroy() {
+
     }
 
     /****************************************************

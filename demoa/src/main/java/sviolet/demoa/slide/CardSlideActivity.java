@@ -62,7 +62,7 @@ public class CardSlideActivity extends TActivity{
         private ListView listView;
 
         @Override
-        protected void onCreate(Bundle savedInstanceState) {
+        protected void onInitViews(Bundle savedInstanceState) {
                 super.onCreate(savedInstanceState);
 
                 cardListView.setAdapter(new EmulateListAdapter(this, 30, "卡片内容", "no.","The card content"));
