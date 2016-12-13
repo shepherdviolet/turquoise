@@ -58,6 +58,7 @@ public class MotionEventUtils {
     private static MotionEvent.PointerProperties[] gSharedTempPointerProperties;
     private static int[] ids;
     private static TouchPoints gSharedTempTouchPoints;
+    private static int[] locationCache = new int[2];
 
     static{
         gSharedTempPointerCoords = new MotionEvent.PointerCoords[TEMP_SIZE];
@@ -177,6 +178,26 @@ public class MotionEventUtils {
     }
 
     /**
+     * 根据指定的View, 将MotionEvent的坐标修正(offsetLocation)到符合该View的坐标, 无论原来被修正与否
+     * @param motionEvent motionEvent
+     * @param view 指定View
+     */
+    public static void offsetLocationByView(MotionEvent motionEvent, View view){
+        if (Looper.myLooper() != Looper.getMainLooper()){
+            //必须主线程调用, 避免线程同步问题(因为共用gSharedTempPointerCoords和gSharedTempPointerProperties)
+            throw new RuntimeException("[MotionEventUtils]you must call offsetLocationByView method in ui thread");
+        }
+        if (motionEvent == null || view == null){
+            return;
+        }
+        //获得View在屏幕上的坐标
+        view.getLocationOnScreen(locationCache);
+        //修正坐标
+        motionEvent.offsetLocation(motionEvent.getRawX() - motionEvent.getX() - locationCache[0],
+                motionEvent.getRawY() - motionEvent.getY() - locationCache[1]);
+    }
+
+    /**
      * [UI线程限定]获得共享的TouchPoints
      */
     public static TouchPoints getSharedTouchPoints(){
@@ -190,7 +211,7 @@ public class MotionEventUtils {
     /**
      * [UI线程限定]把原始的事件模拟成CANCEL事件分发给子控件
      * @param ev 原事件
-     * @param executor 在这个接口中实现将事件分发给子控件
+     * @param executor 在这个接口中实现将事件分发给子控件, 注意MotionEvent未修正过坐标
      */
     public static void emulateCancelEvent(MotionEvent ev, EmulateMotionEventExecutor executor){
         if (Looper.myLooper() != Looper.getMainLooper()){
@@ -214,7 +235,7 @@ public class MotionEventUtils {
      * [UI线程限定]把原始的事件模拟成DOWN事件分发给子控件
      * @param ev 原事件
      * @param precise true:精确模拟, 每一个触点分发一次事件, 模拟所有手指依次按下
-     * @param executor 在这个接口中实现将事件分发给子控件
+     * @param executor 在这个接口中实现将事件分发给子控件, 注意MotionEvent未修正过坐标
      */
     public static void emulateDownEvent(MotionEvent ev, boolean precise, EmulateMotionEventExecutor executor){
         if (Looper.myLooper() != Looper.getMainLooper()){
@@ -252,9 +273,9 @@ public class MotionEventUtils {
 
 
     /**
-     * [UI线程限定]把原始的事件模拟成CANCEL事件分发给子控件
+     * [UI线程限定]把原始的事件模拟成CANCEL事件分发给子控件, 会自动修正坐标
      * @param ev 原事件
-     * @param view 在这个接口中实现将事件分发给子控件
+     * @param view 目标子控件
      */
     public static void emulateCancelEvent(MotionEvent ev, View view){
         if (Looper.myLooper() != Looper.getMainLooper()){
@@ -271,14 +292,15 @@ public class MotionEventUtils {
             gSharedTempTouchPoints.setId(i, ev.getPointerId(i));
         }
         MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_CANCEL, gSharedTempTouchPoints, ev.getDownTime());
+        offsetLocationByView(emuEvent, view);
         view.dispatchTouchEvent(emuEvent);
     }
 
     /**
-     * [UI线程限定]把原始的事件模拟成DOWN事件分发给子控件
+     * [UI线程限定]把原始的事件模拟成DOWN事件分发给子控件, 会自动修正坐标
      * @param ev 原事件
      * @param precise true:精确模拟, 每一个触点分发一次事件, 模拟所有手指依次按下
-     * @param view 在这个接口中实现将事件分发给子控件
+     * @param view 目标子控件
      */
     public static void emulateDownEvent(MotionEvent ev, boolean precise, View view){
         if (Looper.myLooper() != Looper.getMainLooper()){
@@ -299,6 +321,7 @@ public class MotionEventUtils {
                 }
                 int action = i == 0 ? MotionEvent.ACTION_DOWN : MotionEvent.ACTION_POINTER_DOWN;
                 MotionEvent emuEvent = MotionEventUtils.obtain(action, gSharedTempTouchPoints, ev.getDownTime());
+                offsetLocationByView(emuEvent, view);
                 view.dispatchTouchEvent(emuEvent);
             }
         }else {
@@ -310,6 +333,7 @@ public class MotionEventUtils {
                 gSharedTempTouchPoints.setId(i, ev.getPointerId(i));
             }
             MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_DOWN, gSharedTempTouchPoints, ev.getDownTime());
+            offsetLocationByView(emuEvent, view);
             view.dispatchTouchEvent(emuEvent);
         }
     }
@@ -406,6 +430,9 @@ public class MotionEventUtils {
      */
     public interface EmulateMotionEventExecutor{
 
+        /**
+         * @param emulateMotionEvent emulateMotionEvent未修正过坐标
+         */
         void dispatchTouchEvent(MotionEvent emulateMotionEvent);
 
     }
