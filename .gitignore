@@ -1,8 +1,10 @@
 .gradle
-/local.properties
 /.idea/workspace.xml
 /.idea/libraries
-.DS_Store
+/.idea/statistic.xml
 /build
 /captures
 /demoa/buildlog
+/demoa.imageloader/buildlog
+/local.properties
+.DS_Store
