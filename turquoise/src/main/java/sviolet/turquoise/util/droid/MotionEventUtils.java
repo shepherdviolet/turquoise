@@ -22,6 +22,7 @@ package sviolet.turquoise.util.droid;
 import android.annotation.TargetApi;
 import android.os.Looper;
 import android.view.MotionEvent;
+import android.view.View;
 
 import sviolet.turquoise.util.common.DateTimeUtils;
 
@@ -246,6 +247,70 @@ public class MotionEventUtils {
             }
             MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_DOWN, gSharedTempTouchPoints, ev.getDownTime());
             executor.dispatchTouchEvent(emuEvent);
+        }
+    }
+
+
+    /**
+     * [UI线程限定]把原始的事件模拟成CANCEL事件分发给子控件
+     * @param ev 原事件
+     * @param view 在这个接口中实现将事件分发给子控件
+     */
+    public static void emulateCancelEvent(MotionEvent ev, View view){
+        if (Looper.myLooper() != Looper.getMainLooper()){
+            //必须主线程调用, 避免线程同步问题(因为共用gSharedTempPointerCoords和gSharedTempPointerProperties)
+            throw new RuntimeException("[MotionEventUtils]you must call emulateCancelEvent method in ui thread");
+        }
+        if (ev == null || view == null){
+            return;
+        }
+        gSharedTempTouchPoints.setCapacity(ev.getPointerCount());
+        for (int i = 0 ; i < gSharedTempTouchPoints.getCapacity() ; i++){
+            gSharedTempTouchPoints.setX(i, ev.getX(i));
+            gSharedTempTouchPoints.setY(i, ev.getY(i));
+            gSharedTempTouchPoints.setId(i, ev.getPointerId(i));
+        }
+        MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_CANCEL, gSharedTempTouchPoints, ev.getDownTime());
+        view.dispatchTouchEvent(emuEvent);
+    }
+
+    /**
+     * [UI线程限定]把原始的事件模拟成DOWN事件分发给子控件
+     * @param ev 原事件
+     * @param precise true:精确模拟, 每一个触点分发一次事件, 模拟所有手指依次按下
+     * @param view 在这个接口中实现将事件分发给子控件
+     */
+    public static void emulateDownEvent(MotionEvent ev, boolean precise, View view){
+        if (Looper.myLooper() != Looper.getMainLooper()){
+            //必须主线程调用, 避免线程同步问题(因为共用gSharedTempPointerCoords和gSharedTempPointerProperties)
+            throw new RuntimeException("[MotionEventUtils]you must call emulateDownEvent method in ui thread");
+        }
+        if (ev == null || view == null){
+            return;
+        }
+        if (precise){
+            //精确模拟, 每一个触点分发一次事件
+            for (int i = 0 ; i < ev.getPointerCount() ; i++){
+                gSharedTempTouchPoints.setCapacity(i + 1);
+                for (int j = 0; j < gSharedTempTouchPoints.getCapacity(); j++) {
+                    gSharedTempTouchPoints.setX(j, ev.getX(j));
+                    gSharedTempTouchPoints.setY(j, ev.getY(j));
+                    gSharedTempTouchPoints.setId(j, ev.getPointerId(j));
+                }
+                int action = i == 0 ? MotionEvent.ACTION_DOWN : MotionEvent.ACTION_POINTER_DOWN;
+                MotionEvent emuEvent = MotionEventUtils.obtain(action, gSharedTempTouchPoints, ev.getDownTime());
+                view.dispatchTouchEvent(emuEvent);
+            }
+        }else {
+            //简单模拟, 只分发一次down事件
+            gSharedTempTouchPoints.setCapacity(ev.getPointerCount());
+            for (int i = 0; i < gSharedTempTouchPoints.getCapacity(); i++) {
+                gSharedTempTouchPoints.setX(i, ev.getX(i));
+                gSharedTempTouchPoints.setY(i, ev.getY(i));
+                gSharedTempTouchPoints.setId(i, ev.getPointerId(i));
+            }
+            MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_DOWN, gSharedTempTouchPoints, ev.getDownTime());
+            view.dispatchTouchEvent(emuEvent);
         }
     }
 
