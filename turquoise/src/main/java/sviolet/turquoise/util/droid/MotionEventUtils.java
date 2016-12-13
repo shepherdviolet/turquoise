@@ -211,7 +211,7 @@ public class MotionEventUtils {
     /**
      * [UI线程限定]把原始的事件模拟成CANCEL事件分发给子控件
      * @param ev 原事件
-     * @param executor 在这个接口中实现将事件分发给子控件, 注意MotionEvent未修正过坐标
+     * @param executor 在这个接口中实现将事件分发给子控件, 注意MotionEvent未修正过坐标, 请自行用offsetLocationByView修正
      */
     public static void emulateCancelEvent(MotionEvent ev, EmulateMotionEventExecutor executor){
         if (Looper.myLooper() != Looper.getMainLooper()){
@@ -221,10 +221,12 @@ public class MotionEventUtils {
         if (ev == null || executor == null){
             return;
         }
+        float xOffset = ev.getRawX() - ev.getX();
+        float yOffset = ev.getRawY() - ev.getY();
         gSharedTempTouchPoints.setCapacity(ev.getPointerCount());
         for (int i = 0 ; i < gSharedTempTouchPoints.getCapacity() ; i++){
-            gSharedTempTouchPoints.setX(i, ev.getX(i));
-            gSharedTempTouchPoints.setY(i, ev.getY(i));
+            gSharedTempTouchPoints.setX(i, ev.getX(i) + xOffset);
+            gSharedTempTouchPoints.setY(i, ev.getY(i) + yOffset);
             gSharedTempTouchPoints.setId(i, ev.getPointerId(i));
         }
         MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_CANCEL, gSharedTempTouchPoints, ev.getDownTime());
@@ -235,7 +237,7 @@ public class MotionEventUtils {
      * [UI线程限定]把原始的事件模拟成DOWN事件分发给子控件
      * @param ev 原事件
      * @param precise true:精确模拟, 每一个触点分发一次事件, 模拟所有手指依次按下
-     * @param executor 在这个接口中实现将事件分发给子控件, 注意MotionEvent未修正过坐标
+     * @param executor 在这个接口中实现将事件分发给子控件, 注意MotionEvent未修正过坐标, 请自行用offsetLocationByView修正
      */
     public static void emulateDownEvent(MotionEvent ev, boolean precise, EmulateMotionEventExecutor executor){
         if (Looper.myLooper() != Looper.getMainLooper()){
@@ -245,13 +247,15 @@ public class MotionEventUtils {
         if (ev == null || executor == null){
             return;
         }
+        float xOffset = ev.getRawX() - ev.getX();
+        float yOffset = ev.getRawY() - ev.getY();
         if (precise){
             //精确模拟, 每一个触点分发一次事件
             for (int i = 0 ; i < ev.getPointerCount() ; i++){
                 gSharedTempTouchPoints.setCapacity(i + 1);
                 for (int j = 0; j < gSharedTempTouchPoints.getCapacity(); j++) {
-                    gSharedTempTouchPoints.setX(j, ev.getX(j));
-                    gSharedTempTouchPoints.setY(j, ev.getY(j));
+                    gSharedTempTouchPoints.setX(j, ev.getX(j) + xOffset);
+                    gSharedTempTouchPoints.setY(j, ev.getY(j) + yOffset);
                     gSharedTempTouchPoints.setId(j, ev.getPointerId(j));
                 }
                 int action = i == 0 ? MotionEvent.ACTION_DOWN : MotionEvent.ACTION_POINTER_DOWN;
@@ -262,8 +266,8 @@ public class MotionEventUtils {
             //简单模拟, 只分发一次down事件
             gSharedTempTouchPoints.setCapacity(ev.getPointerCount());
             for (int i = 0; i < gSharedTempTouchPoints.getCapacity(); i++) {
-                gSharedTempTouchPoints.setX(i, ev.getX(i));
-                gSharedTempTouchPoints.setY(i, ev.getY(i));
+                gSharedTempTouchPoints.setX(i, ev.getX(i) + xOffset);
+                gSharedTempTouchPoints.setY(i, ev.getY(i) + yOffset);
                 gSharedTempTouchPoints.setId(i, ev.getPointerId(i));
             }
             MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_DOWN, gSharedTempTouchPoints, ev.getDownTime());
@@ -285,10 +289,12 @@ public class MotionEventUtils {
         if (ev == null || view == null){
             return;
         }
+        float xOffset = ev.getRawX() - ev.getX();
+        float yOffset = ev.getRawY() - ev.getY();
         gSharedTempTouchPoints.setCapacity(ev.getPointerCount());
         for (int i = 0 ; i < gSharedTempTouchPoints.getCapacity() ; i++){
-            gSharedTempTouchPoints.setX(i, ev.getX(i));
-            gSharedTempTouchPoints.setY(i, ev.getY(i));
+            gSharedTempTouchPoints.setX(i, ev.getX(i) + xOffset);
+            gSharedTempTouchPoints.setY(i, ev.getY(i) + yOffset);
             gSharedTempTouchPoints.setId(i, ev.getPointerId(i));
         }
         MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_CANCEL, gSharedTempTouchPoints, ev.getDownTime());
@@ -310,13 +316,15 @@ public class MotionEventUtils {
         if (ev == null || view == null){
             return;
         }
+        float xOffset = ev.getRawX() - ev.getX();
+        float yOffset = ev.getRawY() - ev.getY();
         if (precise){
             //精确模拟, 每一个触点分发一次事件
             for (int i = 0 ; i < ev.getPointerCount() ; i++){
                 gSharedTempTouchPoints.setCapacity(i + 1);
                 for (int j = 0; j < gSharedTempTouchPoints.getCapacity(); j++) {
-                    gSharedTempTouchPoints.setX(j, ev.getX(j));
-                    gSharedTempTouchPoints.setY(j, ev.getY(j));
+                    gSharedTempTouchPoints.setX(j, ev.getX(j) + xOffset);
+                    gSharedTempTouchPoints.setY(j, ev.getY(j) + yOffset);
                     gSharedTempTouchPoints.setId(j, ev.getPointerId(j));
                 }
                 int action = i == 0 ? MotionEvent.ACTION_DOWN : MotionEvent.ACTION_POINTER_DOWN;
@@ -328,8 +336,8 @@ public class MotionEventUtils {
             //简单模拟, 只分发一次down事件
             gSharedTempTouchPoints.setCapacity(ev.getPointerCount());
             for (int i = 0; i < gSharedTempTouchPoints.getCapacity(); i++) {
-                gSharedTempTouchPoints.setX(i, ev.getX(i));
-                gSharedTempTouchPoints.setY(i, ev.getY(i));
+                gSharedTempTouchPoints.setX(i, ev.getX(i) + xOffset);
+                gSharedTempTouchPoints.setY(i, ev.getY(i) + yOffset);
                 gSharedTempTouchPoints.setId(i, ev.getPointerId(i));
             }
             MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_DOWN, gSharedTempTouchPoints, ev.getDownTime());
@@ -431,7 +439,7 @@ public class MotionEventUtils {
     public interface EmulateMotionEventExecutor{
 
         /**
-         * @param emulateMotionEvent emulateMotionEvent未修正过坐标
+         * @param emulateMotionEvent emulateMotionEvent未修正过坐标, 请自行用offsetLocationByView修正
          */
         void dispatchTouchEvent(MotionEvent emulateMotionEvent);
 
