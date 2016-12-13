@@ -56,6 +56,7 @@ public class MotionEventUtils {
     private static MotionEvent.PointerCoords[] gSharedTempPointerCoords;
     private static MotionEvent.PointerProperties[] gSharedTempPointerProperties;
     private static int[] ids;
+    private static TouchPoints gSharedTempTouchPoints;
 
     static{
         gSharedTempPointerCoords = new MotionEvent.PointerCoords[TEMP_SIZE];
@@ -70,10 +71,11 @@ public class MotionEventUtils {
         }else{
             ids = new int[TEMP_SIZE];
         }
+        gSharedTempTouchPoints = new TouchPoints();
     }
 
     /**
-     * 生成一个MotionEvent
+     * [UI线程限定]生成一个MotionEvent
      * @param action MotionEvent.ACTION_DOWN...
      * @param points 触点id/坐标信息, 建议用单例
      */
@@ -82,7 +84,7 @@ public class MotionEventUtils {
     }
 
     /**
-     * 生成一个MotionEvent
+     * [UI线程限定]生成一个MotionEvent
      * @param action MotionEvent.ACTION_DOWN...
      * @param points 触点id/坐标信息, 建议用单例
      * @param downTime 按下事件的时间, 设置-1则自动分配当前时间, 必须用SystemClock.uptimeMillis()的时间!
@@ -173,6 +175,80 @@ public class MotionEventUtils {
         }
     }
 
+    /**
+     * [UI线程限定]获得共享的TouchPoints
+     */
+    public static TouchPoints getSharedTouchPoints(){
+        if (Looper.myLooper() != Looper.getMainLooper()){
+            //必须主线程调用, 避免线程同步问题(因为共用gSharedTempPointerCoords和gSharedTempPointerProperties)
+            throw new RuntimeException("[MotionEventUtils]you must call getSharedTouchPoints method in ui thread");
+        }
+        return gSharedTempTouchPoints;
+    }
+
+    /**
+     * [UI线程限定]把原始的事件模拟成CANCEL事件分发给子控件
+     * @param ev 原事件
+     * @param executor 在这个接口中实现将事件分发给子控件
+     */
+    public static void emulateCancelEvent(MotionEvent ev, EmulateMotionEventExecutor executor){
+        if (Looper.myLooper() != Looper.getMainLooper()){
+            //必须主线程调用, 避免线程同步问题(因为共用gSharedTempPointerCoords和gSharedTempPointerProperties)
+            throw new RuntimeException("[MotionEventUtils]you must call emulateCancelEvent method in ui thread");
+        }
+        if (ev == null || executor == null){
+            return;
+        }
+        gSharedTempTouchPoints.setCapacity(ev.getPointerCount());
+        for (int i = 0 ; i < gSharedTempTouchPoints.getCapacity() ; i++){
+            gSharedTempTouchPoints.setX(i, ev.getX(i));
+            gSharedTempTouchPoints.setY(i, ev.getY(i));
+            gSharedTempTouchPoints.setId(i, ev.getPointerId(i));
+        }
+        MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_CANCEL, gSharedTempTouchPoints, ev.getDownTime());
+        executor.dispatchTouchEvent(emuEvent);
+    }
+
+    /**
+     * [UI线程限定]把原始的事件模拟成DOWN事件分发给子控件
+     * @param ev 原事件
+     * @param precise true:精确模拟, 每一个触点分发一次事件, 模拟所有手指依次按下
+     * @param executor 在这个接口中实现将事件分发给子控件
+     */
+    public static void emulateDownEvent(MotionEvent ev, boolean precise, EmulateMotionEventExecutor executor){
+        if (Looper.myLooper() != Looper.getMainLooper()){
+            //必须主线程调用, 避免线程同步问题(因为共用gSharedTempPointerCoords和gSharedTempPointerProperties)
+            throw new RuntimeException("[MotionEventUtils]you must call emulateDownEvent method in ui thread");
+        }
+        if (ev == null || executor == null){
+            return;
+        }
+        if (precise){
+            //精确模拟, 每一个触点分发一次事件
+            for (int i = 0 ; i < ev.getPointerCount() ; i++){
+                gSharedTempTouchPoints.setCapacity(i + 1);
+                for (int j = 0; j < gSharedTempTouchPoints.getCapacity(); j++) {
+                    gSharedTempTouchPoints.setX(j, ev.getX(j));
+                    gSharedTempTouchPoints.setY(j, ev.getY(j));
+                    gSharedTempTouchPoints.setId(j, ev.getPointerId(j));
+                }
+                int action = i == 0 ? MotionEvent.ACTION_DOWN : MotionEvent.ACTION_POINTER_DOWN;
+                MotionEvent emuEvent = MotionEventUtils.obtain(action, gSharedTempTouchPoints, ev.getDownTime());
+                executor.dispatchTouchEvent(emuEvent);
+            }
+        }else {
+            //简单模拟, 只分发一次down事件
+            gSharedTempTouchPoints.setCapacity(ev.getPointerCount());
+            for (int i = 0; i < gSharedTempTouchPoints.getCapacity(); i++) {
+                gSharedTempTouchPoints.setX(i, ev.getX(i));
+                gSharedTempTouchPoints.setY(i, ev.getY(i));
+                gSharedTempTouchPoints.setId(i, ev.getPointerId(i));
+            }
+            MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_DOWN, gSharedTempTouchPoints, ev.getDownTime());
+            executor.dispatchTouchEvent(emuEvent);
+        }
+    }
+
     public static final class TouchPoints {
 
         private int capacity = 0;
@@ -257,6 +333,15 @@ public class MotionEventUtils {
             }
             return ys[position];
         }
+
+    }
+
+    /**
+     * 在这个接口中实现: 将模拟出来的MotionEvent分发给View的过程
+     */
+    public interface EmulateMotionEventExecutor{
+
+        void dispatchTouchEvent(MotionEvent emulateMotionEvent);
 
     }
 

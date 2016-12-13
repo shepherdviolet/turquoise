@@ -286,7 +286,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             //越界滚动
                             scrollByOffset(distanceY);
                             //模拟取消事件给子控件
-                            emulateCancelEvent(ev);
+                            MotionEventUtils.emulateCancelEvent(ev, emulateMotionEventExecutor);
                             return true;
                         } else if (reachState.reachBottom() && distanceY < 0 && currY - downY < -mTouchSlop){
                             /**
@@ -303,7 +303,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             //越界滚动
                             scrollByOffset(distanceY);
                             //模拟取消事件给子控件
-                            emulateCancelEvent(ev);
+                            MotionEventUtils.emulateCancelEvent(ev, emulateMotionEventExecutor);
                             return true;
                         } else {
                             /**
@@ -327,7 +327,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             //HOLD模式
                             stateToHold();
                             //模拟DOWN事件给子控件
-                            emulateDownEvent(ev);
+                            MotionEventUtils.emulateDownEvent(ev, preciseTouchEmulate, emulateMotionEventExecutor);
                             //分发事件给子控件
                             return super.dispatchTouchEvent(ev);
                         }
@@ -355,7 +355,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             //HOLD模式
                             stateToHold();
                             //模拟DOWN事件给子控件
-                            emulateDownEvent(ev);
+                            MotionEventUtils.emulateDownEvent(ev, preciseTouchEmulate, emulateMotionEventExecutor);
                             //分发事件给子控件
                             return super.dispatchTouchEvent(ev);
                         }
@@ -794,50 +794,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
     }
 
     /**
-     * 模拟CANCEL时间分发给子控件
-     */
-    private void emulateCancelEvent(MotionEvent ev){
-        touchPoints.setCapacity(ev.getPointerCount());
-        for (int i = 0 ; i < touchPoints.getCapacity() ; i++){
-            touchPoints.setX(i, ev.getX(i));
-            touchPoints.setY(i, ev.getY(i));
-            touchPoints.setId(i, ev.getPointerId(i));
-        }
-        MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_CANCEL, touchPoints, ev.getDownTime());
-        super.dispatchTouchEvent(emuEvent);
-    }
-
-    /**
-     * 模拟DOWN事件分发给子控件
-     */
-    private void emulateDownEvent(MotionEvent ev){
-        if (preciseTouchEmulate){
-            //精确模拟, 每一个触点分发一次事件
-            for (int i = 0 ; i < ev.getPointerCount() ; i++){
-                touchPoints.setCapacity(i + 1);
-                for (int j = 0; j < touchPoints.getCapacity(); j++) {
-                    touchPoints.setX(j, ev.getX(j));
-                    touchPoints.setY(j, ev.getY(j));
-                    touchPoints.setId(j, ev.getPointerId(j));
-                }
-                int action = i == 0 ? MotionEvent.ACTION_DOWN : MotionEvent.ACTION_POINTER_DOWN;
-                MotionEvent emuEvent = MotionEventUtils.obtain(action, touchPoints, ev.getDownTime());
-                super.dispatchTouchEvent(emuEvent);
-            }
-        }else {
-            //简单模拟, 只分发一次down事件
-            touchPoints.setCapacity(ev.getPointerCount());
-            for (int i = 0; i < touchPoints.getCapacity(); i++) {
-                touchPoints.setX(i, ev.getX(i));
-                touchPoints.setY(i, ev.getY(i));
-                touchPoints.setId(i, ev.getPointerId(i));
-            }
-            MotionEvent emuEvent = MotionEventUtils.obtain(MotionEvent.ACTION_DOWN, touchPoints, ev.getDownTime());
-            super.dispatchTouchEvent(emuEvent);
-        }
-    }
-
-    /**
      * 计算Y方向上的位移
      */
     protected float calculateMoveDistance(MotionEvent event) {
@@ -973,5 +929,16 @@ public class VerticalOverDragContainer extends RelativeLayout {
         }
 
     }
+
+    /*****************************************************************************
+     * Emulate motion event executor
+     */
+
+    private MotionEventUtils.EmulateMotionEventExecutor emulateMotionEventExecutor = new MotionEventUtils.EmulateMotionEventExecutor() {
+        @Override
+        public void dispatchTouchEvent(MotionEvent emulateMotionEvent) {
+            VerticalOverDragContainer.super.dispatchTouchEvent(emulateMotionEvent);
+        }
+    };
 
 }
