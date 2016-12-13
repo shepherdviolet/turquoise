@@ -63,8 +63,12 @@ public class LoadNode extends Node {
     public void load(String url, Params params, View view) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Stub stub = manager.getServerSettings().getStubFactory().newLoadStub(url, params, view);
-        stub.initialize(controller);
+        try {
+            Stub stub = manager.getServerSettings().getStubFactory().newLoadStub(url, params, view);
+            stub.initialize(controller);
+        } catch (Exception e){
+            getManager().getLogger().e("[LoadNode]error while creating or initializing LoadStub, url:" + url, e);
+        }
     }
 
     @Override
@@ -76,8 +80,12 @@ public class LoadNode extends Node {
     public void loadBackground(String url, Params params, View view) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
-        Stub stub = manager.getServerSettings().getStubFactory().newLoadBackgroundStub(url, params, view);
-        stub.initialize(controller);
+        try {
+            Stub stub = manager.getServerSettings().getStubFactory().newLoadBackgroundStub(url, params, view);
+            stub.initialize(controller);
+        } catch (Exception e){
+            getManager().getLogger().e("[LoadNode]error while creating or initializing LoadStub, url:" + url, e);
+        }
     }
 
     /********************************************

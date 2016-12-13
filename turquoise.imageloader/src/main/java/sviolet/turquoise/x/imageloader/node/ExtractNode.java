@@ -51,9 +51,14 @@ public class ExtractNode extends LoadNode {
     public StubRemoter extract(String url, Params params, OnLoadedListener listener) {
         getManager().waitingForInitialized();
         getController().waitingForInitialized();
-        Stub stub = getManager().getServerSettings().getStubFactory().newExtractStub(url, params, listener);
-        stub.initialize(getController());
-        return stub.getStubRemoter();
+        try{
+            Stub stub = getManager().getServerSettings().getStubFactory().newExtractStub(url, params, listener);
+            stub.initialize(getController());
+            return stub.getStubRemoter();
+        } catch (Exception e){
+            getManager().getLogger().e("[ExtractNode]error while creating or initializing ExtractStub, url:" + url, e);
+        }
+        return StubRemoter.NULL_STUB_REMOTER;
     }
 
     @Override
