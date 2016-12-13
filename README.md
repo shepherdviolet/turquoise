@@ -1,4 +1,4 @@
-# Turquoise 3.4.161115
+# Turquoise 3.4.161213
 * A comprehensive Android library for private use.
 * https://github.com/shepherdviolet/turquoise
 
@@ -16,17 +16,20 @@
 ### Utils/Models ┃ sviolet.turquoise.util/utilx/model/modelx
 * LifeCycleUtils: monitor LifeCycle of Activity/Fragment
 * TLogger: extensible log utils
-* cache/queue/conversion/crypt/sort/android system utils/......
+* MotionEventUtils: easy to emulate motion event
+* cache/bitmap/queue/conversion/crypt/sort/system utils/......
 
 ### Views ┃ sviolet.turquoise.ui/uix
 * ViewGestureController: easy to build gesture-driven view
 * SlideEngine: help to build sliding view, and provides some ready-made Views
-* TViewHolder: easy to build Adapter of View
-* refresh/shadow/gif/ripple/rotate/scrape/......
+* TViewHolder and adapters: easy to build Adapter of View
+* VerticalOverDragContainer and indicators: easy to build pull to refresh list view
+* LinearIndicatorTabView: easy to build TabView
+* shadow/image/gif/ripple/rotate/scrape......
 
 ### enhanced android component ┃ sviolet.turquoise.enhance
 * InjectUtils: inject Views by annotation way
-* TApplication/TActivity: enhanced Component
+* TApplication/TActivity/TFragment: enhanced Component
 * TActivity.executePermissionTask: easy to use Runtime Permission
 * WeakHandler: help Handler to avoid Memory Leak(design specifications)
 

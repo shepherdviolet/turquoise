@@ -31,6 +31,14 @@ import sviolet.turquoise.ui.util.UnidirectionalMoveDetector;
 import sviolet.turquoise.util.droid.MotionEventUtils;
 
 /**
+ * <p>触摸事件传递容器</p>
+ *
+ * <p>用于将垂直方向或水平方向的触摸事件, 直接传递给其他控件处理.
+ * 例如: 实现ListView + 顶部控件伸缩悬停效果, 给顶部控件套上这个容器, 然后设置
+ * motionEventTransferContainer.setYReceiver(listView), 这样即使顶部控件包含
+ * ViewPager/HorizontalScrollView等横向滑动的控件, 在顶部控件上垂直滑动, 一样
+ * 可以将事件分发到listView做上下滚动, 同时不影响顶部控件的横向滑动.</p>
+ *
  * Created by S.Violet on 2016/12/13.
  */
 
