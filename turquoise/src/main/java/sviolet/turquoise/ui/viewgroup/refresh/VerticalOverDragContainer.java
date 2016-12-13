@@ -938,7 +938,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
         @Override
         public void dispatchTouchEvent(MotionEvent emulateMotionEvent) {
             //模拟出来的事件是屏幕坐标系的, 需要根据当前ViewGroup修正坐标
-            MotionEventUtils.offsetLocationByView(emulateMotionEvent, VerticalOverDragContainer.this);
+            MotionEventUtils.offsetLocation(emulateMotionEvent, VerticalOverDragContainer.this);
             //分发事件
             VerticalOverDragContainer.super.dispatchTouchEvent(emulateMotionEvent);
         }
