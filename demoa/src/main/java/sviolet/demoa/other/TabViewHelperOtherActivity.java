@@ -78,45 +78,18 @@ public class TabViewHelperOtherActivity extends TFragmentActivity {
 
         //绑定
         lineIndicatorTabViewForViewPager.bindViewPager(viewPager, false);
-
-        //自定义:翻页时, TabItem的颜色变化
-        lineIndicatorTabViewForViewPager.addOnPageChangedListener(new LineIndicatorTabView.OnPageChangedListener() {
-
-            private WeakReference<TextView> lastTextView;//持有上一个变色的Item
-
-            @Override
-            public void onPageChanged(int page, View child, boolean byClick) {
-                //前提是知道TabItem外层是LinearLayout
-                if (child instanceof LinearLayout){
-                    //获取TextView, 前提是知道LinearLayout中第一个是TextView
-                    View textView = ((LinearLayout) child).getChildAt(0);
-                    if (textView instanceof TextView){
-                        //将前一个Item颜色置为黑色
-                        if (lastTextView != null){
-                            TextView lastTextViewInstance = lastTextView.get();
-                            if (lastTextViewInstance != null){
-                                lastTextViewInstance.setTextColor(0xFF808080);
-                            }
-                        }
-                        //设置当前Item的颜色
-                        ((TextView) textView).setTextColor(0xFF209090);
-                        //记录当前Item
-                        this.lastTextView = new WeakReference<>((TextView) textView);
-                    }
-                }
-            }
-        });
-
     }
 
     private void initTabView(LineIndicatorTabViewForViewPager tabView){
 
-        //帮助类实例化, 指定lineIndicatorTabView, Item布局的Id, 和布局中TextView的Id
+        //帮助类实例化
         lineIndicatorTabViewHelper = new LineIndicatorTabViewHelper(
                 getApplicationContext(),
                 lineIndicatorTabViewForViewPager,
-                R.layout.other_tab_view_tabitem,
-                R.id.other_tab_view_tabitem_text);
+                R.layout.other_tab_view_tabitem,//Item布局的Id
+                R.id.other_tab_view_tabitem_text,//布局中TextView的Id
+                0xFF808080,//未选中时字体颜色
+                0xFF209090);//选中时字体颜色
 
         //数据
         List<String> tagStringList = new ArrayList<>();

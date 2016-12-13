@@ -53,6 +53,48 @@ public class LineIndicatorTabViewHelper {
 
     private List<View> viewCache = new ArrayList<>(4);
 
+    /**
+     * @param context context
+     * @param lineIndicatorTabView tabView实例
+     * @param layoutId Item布局的layoutId
+     * @param textId 布局中TextView的Id
+     * @param textColorNormal 未选中时字体颜色
+     * @param textColorSelected 选中时字体颜色
+     */
+    public LineIndicatorTabViewHelper(Context context, LineIndicatorTabView lineIndicatorTabView, int layoutId, int textId, final int textColorNormal, final int textColorSelected){
+        this(context, lineIndicatorTabView, layoutId, textId);
+
+        //实现文字颜色变化效果
+        lineIndicatorTabView.addOnPageChangedListener(new LineIndicatorTabView.OnPageChangedListener() {
+
+            private WeakReference<TextView> lastTextView;//持有上一个变色的Item
+
+            @Override
+            public void onPageChanged(int page, View child, boolean byClick) {
+                //将前一个Item置为未选中颜色
+                if (lastTextView != null) {
+                    TextView lastTextViewInstance = lastTextView.get();
+                    if (lastTextViewInstance != null) {
+                        lastTextViewInstance.setTextColor(textColorNormal);
+                    }
+                }
+                Object tag = child.getTag();
+                if (tag instanceof TextView) {
+                    //设置当前Item的颜色
+                    ((TextView) tag).setTextColor(textColorSelected);
+                    //记录当前Item
+                    this.lastTextView = new WeakReference<>((TextView) tag);
+                }
+            }
+        });
+    }
+
+    /**
+     * @param context context
+     * @param lineIndicatorTabView tabView实例
+     * @param layoutId Item布局的layoutId
+     * @param textId 布局中TextView的Id
+     */
     public LineIndicatorTabViewHelper(Context context, LineIndicatorTabView lineIndicatorTabView, int layoutId, int textId) {
         if (context == null){
             throw new IllegalArgumentException("context is null");
@@ -73,6 +115,11 @@ public class LineIndicatorTabViewHelper {
         this.textId = textId;
     }
 
+    /**
+     * 设置数据并刷新
+     * @param textList 数据
+     * @param initPage 起始页
+     */
     public void setData(List<String> textList, int initPage){
         if (Looper.getMainLooper() != Looper.myLooper()){
             throw new RuntimeException("LineIndicatorTabViewHelper.setData method must call in ui thread");
