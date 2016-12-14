@@ -19,6 +19,8 @@
 
 package sviolet.turquoise.x.imageloader.entity;
 
+import android.util.SparseArray;
+
 import sviolet.turquoise.common.entity.Destroyable;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
@@ -54,6 +56,10 @@ public class NodeSettings implements Destroyable {
         private LoadingDrawableFactory loadingDrawableFactory;
         private FailedDrawableFactory failedDrawableFactory;
         private BackgroundDrawableFactory backgroundDrawableFactory;
+
+        private SparseArray<LoadingDrawableFactory> extensionLoadingDrawableFactoryList;
+        private SparseArray<FailedDrawableFactory> extensionFailedDrawableFactoryList;
+        private SparseArray<BackgroundDrawableFactory> extensionBackgroundDrawableFactoryList;
     }
 
     public static class Builder{
@@ -243,6 +249,96 @@ public class NodeSettings implements Destroyable {
             return this;
         }
 
+        /**
+         * Set extension LoadingDrawableFactory to display different effects in the same Node.
+         * You can set {@link Params.Builder#useExtensionLoadingDrawableFactory(int)} to specify
+         * the extensionIndex, and the loading drawable will create by the factory set up here.
+         * @param extensionIndex extensionIndex relating to {@link Params.Builder#useExtensionLoadingDrawableFactory(int)}
+         * @param factory LoadingDrawableFactory
+         */
+        public Builder setExtensionLoadingDrawableFactory(int extensionIndex, LoadingDrawableFactory factory){
+            if (extensionIndex < 0){
+                throw new RuntimeException("[ServerSettings]extensionIndex must >= 0");
+            }
+            if (factory == null){
+                throw new RuntimeException("[ServerSettings]factory is null");
+            }
+            if (values.extensionLoadingDrawableFactoryList == null){
+                values.extensionLoadingDrawableFactoryList = new SparseArray<>(1);
+            }
+            values.extensionLoadingDrawableFactoryList.put(extensionIndex, factory);
+            return this;
+        }
+
+        /**
+         * Set extension FailedDrawableFactory to display different effects in the same Node.
+         * You can set {@link Params.Builder#useExtensionFailedDrawableFactory(int)} to specify
+         * the extensionIndex, and the failed drawable will create by the factory set up here.
+         * @param extensionIndex extensionIndex relating to {@link Params.Builder#useExtensionFailedDrawableFactory(int)}
+         * @param factory FailedDrawableFactory
+         */
+        public Builder setExtensionFailedDrawableFactory(int extensionIndex, FailedDrawableFactory factory){
+            if (extensionIndex < 0){
+                throw new RuntimeException("[ServerSettings]extensionIndex must >= 0");
+            }
+            if (factory == null){
+                throw new RuntimeException("[ServerSettings]factory is null");
+            }
+            if (values.extensionFailedDrawableFactoryList == null){
+                values.extensionFailedDrawableFactoryList = new SparseArray<>(1);
+            }
+            values.extensionFailedDrawableFactoryList.put(extensionIndex, factory);
+            return this;
+        }
+
+        /**
+         * Set extension Background ImageResId to display different effects in the same Node.
+         * You can set {@link Params.Builder#useExtensionBackgroundDrawableFactory(int)} to specify
+         * the extensionIndex, and the background image will create by the factory set up here.
+         * @param extensionIndex extensionIndex relating to {@link Params.Builder#useExtensionBackgroundDrawableFactory(int)}
+         * @param backgroundImageResId background image resource id
+         */
+        public Builder setExtensionBackgroundImageResId(int extensionIndex, int backgroundImageResId){
+            if (extensionIndex < 0){
+                throw new RuntimeException("[ServerSettings]extensionIndex must >= 0");
+            }
+            if (values.extensionBackgroundDrawableFactoryList == null){
+                values.extensionBackgroundDrawableFactoryList = new SparseArray<>(1);
+
+            }
+            BackgroundDrawableFactory backgroundDrawableFactory = values.extensionBackgroundDrawableFactoryList.get(extensionIndex);
+            if (backgroundDrawableFactory == null){
+                backgroundDrawableFactory = new CommonBackgroundDrawableFactory();
+                values.extensionBackgroundDrawableFactoryList.put(extensionIndex, backgroundDrawableFactory);
+            }
+            backgroundDrawableFactory.setBackgroundImageResId(backgroundImageResId);
+            return this;
+        }
+
+        /**
+         * Set extension Background color to display different effects in the same Node.
+         * You can set {@link Params.Builder#useExtensionBackgroundDrawableFactory(int)} to specify
+         * the extensionIndex, and the background color will create by the factory set up here.
+         * @param extensionIndex extensionIndex relating to {@link Params.Builder#useExtensionBackgroundDrawableFactory(int)}
+         * @param backgroundColor background color
+         */
+        public Builder setExtensionBackgroundColor(int extensionIndex, int backgroundColor){
+            if (extensionIndex < 0){
+                throw new RuntimeException("[ServerSettings]extensionIndex must >= 0");
+            }
+            if (values.extensionBackgroundDrawableFactoryList == null){
+                values.extensionBackgroundDrawableFactoryList = new SparseArray<>(1);
+
+            }
+            BackgroundDrawableFactory backgroundDrawableFactory = values.extensionBackgroundDrawableFactoryList.get(extensionIndex);
+            if (backgroundDrawableFactory == null){
+                backgroundDrawableFactory = new CommonBackgroundDrawableFactory();
+                values.extensionBackgroundDrawableFactoryList.put(extensionIndex, backgroundDrawableFactory);
+            }
+            backgroundDrawableFactory.setBackgroundColor(backgroundColor);
+            return this;
+        }
+
     }
 
     //DEFAULT/////////////////////////////////////////////////////////////////////////////
@@ -271,6 +367,30 @@ public class NodeSettings implements Destroyable {
         }
         if (values.backgroundDrawableFactory != null){
             values.backgroundDrawableFactory.onDestroy();
+        }
+        if (values.extensionLoadingDrawableFactoryList != null){
+            for (int i = 0 ; i < values.extensionLoadingDrawableFactoryList.size() ; i++){
+                LoadingDrawableFactory loadingDrawableFactory = values.extensionLoadingDrawableFactoryList.valueAt(i);
+                if (loadingDrawableFactory != null){
+                    loadingDrawableFactory.onDestroy();
+                }
+            }
+        }
+        if (values.extensionFailedDrawableFactoryList != null){
+            for (int i = 0 ; i < values.extensionFailedDrawableFactoryList.size() ; i++){
+                FailedDrawableFactory failedDrawableFactory = values.extensionFailedDrawableFactoryList.valueAt(i);
+                if (failedDrawableFactory != null){
+                    failedDrawableFactory.onDestroy();
+                }
+            }
+        }
+        if (values.extensionBackgroundDrawableFactoryList != null){
+            for (int i = 0 ; i < values.extensionBackgroundDrawableFactoryList.size() ; i++){
+                BackgroundDrawableFactory backgroundDrawableFactory = values.extensionBackgroundDrawableFactoryList.valueAt(i);
+                if (backgroundDrawableFactory != null){
+                    backgroundDrawableFactory.onDestroy();
+                }
+            }
         }
     }
 
@@ -318,16 +438,25 @@ public class NodeSettings implements Destroyable {
 
     //configurable factory////////////////////////////////////////////////////////////////////////////
 
-    public LoadingDrawableFactory getLoadingDrawableFactory(){
-        return values.loadingDrawableFactory;
+    public LoadingDrawableFactory getLoadingDrawableFactory(int extensionIndex){
+        if (extensionIndex < 0 || values.extensionLoadingDrawableFactoryList == null || extensionIndex >= values.extensionLoadingDrawableFactoryList.size()) {
+            return values.loadingDrawableFactory;
+        }
+        return values.extensionLoadingDrawableFactoryList.get(extensionIndex);
     }
 
-    public FailedDrawableFactory getFailedDrawableFactory(){
-        return values.failedDrawableFactory;
+    public FailedDrawableFactory getFailedDrawableFactory(int extensionIndex){
+        if (extensionIndex < 0 || values.extensionFailedDrawableFactoryList == null || extensionIndex >= values.extensionFailedDrawableFactoryList.size()) {
+            return values.failedDrawableFactory;
+        }
+        return values.extensionFailedDrawableFactoryList.get(extensionIndex);
     }
 
-    public BackgroundDrawableFactory getBackgroundDrawableFactory(){
-        return values.backgroundDrawableFactory;
+    public BackgroundDrawableFactory getBackgroundDrawableFactory(int extensionIndex){
+        if (extensionIndex < 0 || values.extensionBackgroundDrawableFactoryList == null || extensionIndex >= values.extensionBackgroundDrawableFactoryList.size()) {
+            return values.backgroundDrawableFactory;
+        }
+        return values.extensionBackgroundDrawableFactoryList.get(extensionIndex);
     }
 
 }

@@ -25,6 +25,8 @@ import android.view.View;
 import java.util.Map;
 
 import sviolet.turquoise.util.bitmap.BitmapUtils;
+import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.LoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 
 /**
@@ -47,6 +49,13 @@ public class Params {
 
         private boolean indispensable = false;
         private boolean skipSameUrlInSameView = false;
+
+        private int extensionLoadingDrawableFactoryIndex = -1;
+        private int extensionFailedDrawableFactoryIndex = -1;
+        private int extensionBackgroundDrawableFactoryIndex = -1;
+
+        private int imageAppearDuration = -1;
+
         private Map<String, Object> extras;
 
         /**
@@ -66,6 +75,14 @@ public class Params {
 
             newValues.indispensable = indispensable;
             newValues.skipSameUrlInSameView = skipSameUrlInSameView;
+
+            newValues.extensionLoadingDrawableFactoryIndex = extensionLoadingDrawableFactoryIndex;
+            newValues.extensionFailedDrawableFactoryIndex = extensionFailedDrawableFactoryIndex;
+            newValues.extensionBackgroundDrawableFactoryIndex = extensionBackgroundDrawableFactoryIndex;
+
+            newValues.imageAppearDuration = imageAppearDuration;
+
+            //reference copy
             newValues.extras = extras;
             return newValues;
         }
@@ -244,6 +261,61 @@ public class Params {
             return this;
         }
 
+        /**
+         * Specify extension LoadingDrawableFactory to display different effects in the same Node.
+         * First, you should set {@link NodeSettings.Builder#setExtensionLoadingDrawableFactory(int, LoadingDrawableFactory)},
+         * than you can set {@link Params.Builder#useExtensionLoadingDrawableFactory(int)} to specify
+         * the extensionIndex, and the loading drawable will create by the extension factory.
+         * @param extensionIndex extensionIndex relating to {@link NodeSettings.Builder#setExtensionLoadingDrawableFactory(int, LoadingDrawableFactory)}
+         */
+        public Builder useExtensionLoadingDrawableFactory(int extensionIndex){
+            if (extensionIndex < 0){
+                throw new RuntimeException("[Params]extensionIndex must >= 0");
+            }
+            values.extensionLoadingDrawableFactoryIndex = extensionIndex;
+            return this;
+        }
+
+        /**
+         * Specify extension FailedDrawableFactory to display different effects in the same Node.
+         * First, you should set {@link NodeSettings.Builder#setExtensionFailedDrawableFactory(int, FailedDrawableFactory)},
+         * than you can set {@link Params.Builder#useExtensionFailedDrawableFactory(int)} to specify
+         * the extensionIndex, and the failed drawable will create by the extension factory.
+         * @param extensionIndex extensionIndex relating to {@link NodeSettings.Builder#setExtensionFailedDrawableFactory(int, FailedDrawableFactory)}
+         */
+        public Builder useExtensionFailedDrawableFactory(int extensionIndex){
+            if (extensionIndex < 0){
+                throw new RuntimeException("[Params]extensionIndex must >= 0");
+            }
+            values.extensionFailedDrawableFactoryIndex = extensionIndex;
+            return this;
+        }
+
+        /**
+         * Specify extension BackgroundDrawableFactory to display different effects in the same Node.
+         * First, you should set {@link NodeSettings.Builder#setExtensionBackgroundImageResId(int, int)}
+         * or {@link NodeSettings.Builder#setExtensionBackgroundColor(int, int)},
+         * than you can set {@link Params.Builder#useExtensionBackgroundDrawableFactory(int)} to specify
+         * the extensionIndex, and the background will create by the extension factory.
+         * @param extensionIndex extensionIndex relating to {@link NodeSettings.Builder#setExtensionBackgroundImageResId(int, int)}
+         * or {@link NodeSettings.Builder#setExtensionBackgroundColor(int, int)}
+         */
+        public Builder useExtensionBackgroundDrawableFactory(int extensionIndex){
+            if (extensionIndex < 0){
+                throw new RuntimeException("[Params]extensionIndex must >= 0");
+            }
+            values.extensionBackgroundDrawableFactoryIndex = extensionIndex;
+            return this;
+        }
+
+        /**
+         * @param imageAppearDuration duration of image appear animation, {@value NodeSettings#DEFAULT_IMAGE_APPEAR_DURATION} by default
+         */
+        public Builder setImageAppearDuration(int imageAppearDuration){
+            values.imageAppearDuration = imageAppearDuration;
+            return this;
+        }
+
         public Builder setExtras(Map<String, Object> extras){
             values.extras = extras;
             return this;
@@ -307,6 +379,22 @@ public class Params {
 
     public boolean isSkipSameUrlInSameView(){
         return values.skipSameUrlInSameView;
+    }
+
+    public int getExtensionLoadingDrawableFactoryIndex(){
+        return values.extensionLoadingDrawableFactoryIndex;
+    }
+
+    public int getExtensionFailedDrawableFactoryIndex(){
+        return values.extensionFailedDrawableFactoryIndex;
+    }
+
+    public int getExtensionBackgroundDrawableFactoryIndex(){
+        return values.extensionBackgroundDrawableFactoryIndex;
+    }
+
+    public int getImageAppearDuration(){
+        return values.imageAppearDuration;
     }
 
     public Map<String, Object> getExtras(){

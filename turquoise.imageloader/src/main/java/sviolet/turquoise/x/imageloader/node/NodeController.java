@@ -130,17 +130,17 @@ public abstract class NodeController implements LifeCycle {
     /**
      * @return get LoadingDrawableFactory from Node, if it's null, get from ServerSettings
      */
-    public abstract LoadingDrawableFactory getLoadingDrawableFactory();
+    public abstract LoadingDrawableFactory getLoadingDrawableFactory(int extensionIndex);
 
     /**
      * @return get FailedDrawableFactory from Node, if it's null, get from ServerSettings
      */
-    public abstract FailedDrawableFactory getFailedDrawableFactory();
+    public abstract FailedDrawableFactory getFailedDrawableFactory(int extensionIndex);
 
     /**
      * @return get BackgroundDrawableFactory from Node, if it's null, get from ServerSettings
      */
-    public abstract BackgroundDrawableFactory getBackgroundDrawableFactory();
+    public abstract BackgroundDrawableFactory getBackgroundDrawableFactory(int extensionIndex);
 
     public abstract int getReloadTimes();
 

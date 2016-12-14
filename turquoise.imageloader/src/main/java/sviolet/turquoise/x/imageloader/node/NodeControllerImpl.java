@@ -393,8 +393,8 @@ public class NodeControllerImpl extends NodeController {
     }
 
     @Override
-    public LoadingDrawableFactory getLoadingDrawableFactory() {
-        LoadingDrawableFactory factory = getNodeSettings().getLoadingDrawableFactory();
+    public LoadingDrawableFactory getLoadingDrawableFactory(int extensionIndex) {
+        LoadingDrawableFactory factory = getNodeSettings().getLoadingDrawableFactory(extensionIndex);
         if (factory == null){
             factory = getServerSettings().getLoadingDrawableFactory();
         }
@@ -402,8 +402,8 @@ public class NodeControllerImpl extends NodeController {
     }
 
     @Override
-    public FailedDrawableFactory getFailedDrawableFactory() {
-        FailedDrawableFactory factory = getNodeSettings().getFailedDrawableFactory();
+    public FailedDrawableFactory getFailedDrawableFactory(int extensionIndex) {
+        FailedDrawableFactory factory = getNodeSettings().getFailedDrawableFactory(extensionIndex);
         if (factory == null){
             factory = getServerSettings().getFailedDrawableFactory();
         }
@@ -411,8 +411,8 @@ public class NodeControllerImpl extends NodeController {
     }
 
     @Override
-    public BackgroundDrawableFactory getBackgroundDrawableFactory() {
-        BackgroundDrawableFactory factory = getNodeSettings().getBackgroundDrawableFactory();
+    public BackgroundDrawableFactory getBackgroundDrawableFactory(int extensionIndex) {
+        BackgroundDrawableFactory factory = getNodeSettings().getBackgroundDrawableFactory(extensionIndex);
         if (factory == null){
             factory = getServerSettings().getBackgroundDrawableFactory();
         }

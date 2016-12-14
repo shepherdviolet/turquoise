@@ -141,7 +141,8 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             return false;
         }
         //create and set drawable
-        Drawable drawable = controller.getLoadingDrawableFactory().create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLoadProgress().getInfo(), getLogger());
+        Drawable drawable = controller.getLoadingDrawableFactory(getParams().getExtensionLoadingDrawableFactoryIndex())
+                .create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLoadProgress().getInfo(), getLogger());
         if (drawable == null){
             throw new RuntimeException("[LoadStub]LoadingDrawableFactory create a null drawable");
         }
@@ -166,7 +167,8 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             return false;
         }
         //create and set drawable
-        Drawable drawable = controller.getBackgroundDrawableFactory().create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLogger());
+        Drawable drawable = controller.getBackgroundDrawableFactory(getParams().getExtensionBackgroundDrawableFactoryIndex())
+                .create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLogger());
         if (drawable == null){
             throw new RuntimeException("[LoadStub]BackgroundDrawableFactory create a null drawable");
         }
@@ -181,7 +183,8 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         ContainerDrawable containerDrawable = new ContainerDrawable(drawable, imageDrawable).relaunchEnable().bindStub(this);
         setDrawableToView(containerDrawable, view);
         //start animation
-        containerDrawable.startTransition(controller.getNodeSettings().getImageAppearDuration());
+        int customImageAppearDuration = getParams().getImageAppearDuration();
+        containerDrawable.startTransition(customImageAppearDuration < 0 ? controller.getNodeSettings().getImageAppearDuration() : customImageAppearDuration);
         return true;
     }
 
@@ -199,7 +202,8 @@ public abstract class LoadStub<V extends View> extends AbsStub {
             return false;
         }
         //create and set drawable
-        Drawable drawable = controller.getFailedDrawableFactory().create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLogger());
+        Drawable drawable = controller.getFailedDrawableFactory(getParams().getExtensionFailedDrawableFactoryIndex())
+                .create(controller.getApplicationContextImage(), controller.getContextImage(), getParams(), getLogger());
         if (drawable == null){
             throw new RuntimeException("[LoadStub]FailedDrawableFactory create a null drawable");
         }
