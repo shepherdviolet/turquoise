@@ -23,6 +23,7 @@ import android.content.Context;
 
 import java.io.File;
 
+import sviolet.turquoise.util.common.DateTimeUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
@@ -93,12 +94,14 @@ public abstract class DecodeHandler {
     private ImageResource intercept(Context applicationContext, Context context, Task task, TLogger logger, ImageResource imageResource) {
         //interceptor
         if (task.getParams().getDecodeInterceptor() != null && TILoaderUtils.isImageResourceValid(imageResource)){
+            long startTime = DateTimeUtils.getUptimeMillis();
             ImageResource imageResource2 = task.getParams().getDecodeInterceptor().intercept(applicationContext, context, task.getTaskInfo(), imageResource, logger);
             //recycle previous ImageResource
             if (!TILoaderUtils.isImageResourceEqual(imageResource, imageResource2)){
                 TILoaderUtils.recycleImageResource(imageResource);
             }
             imageResource = imageResource2;
+            logger.d("[DecodeHandler]decode interceptor elapse:" + (DateTimeUtils.getUptimeMillis() - startTime) + ", task:" + task);
         }
         return imageResource;
     }
