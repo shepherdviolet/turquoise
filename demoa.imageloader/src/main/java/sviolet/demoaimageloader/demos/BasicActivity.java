@@ -18,7 +18,9 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.drawable.common.CircleLoadingAnimationDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.common.CommonFailedDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.common.CommonLoadingDrawableFactory;
+import sviolet.turquoise.x.imageloader.drawable.common.PointLoadingAnimationDrawableFactory;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
@@ -46,6 +48,8 @@ import sviolet.turquoise.x.imageloader.stub.StubRemoter;
 )
 public class BasicActivity extends TActivity {
 
+    private static final int IMAGE_VIEW_6_EXTENSION_INDEX = 0;
+
     @ResourceId(R.id.basic_main_imageview1)
     private ImageView imageView1;
     @ResourceId(R.id.basic_main_imageview2)
@@ -56,6 +60,8 @@ public class BasicActivity extends TActivity {
     private ImageView imageView4;
     @ResourceId(R.id.basic_main_imageview5)
     private ImageView imageView5;
+    @ResourceId(R.id.basic_main_imageview6)
+    private ImageView imageView6;
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -102,6 +108,12 @@ public class BasicActivity extends TActivity {
 //                .setFailedDrawableFactory(new CommonFailedDrawableFactory()//方式2:配置通用失败图
 //                        .setColor(0xFFB0B0B0)//失败图背景色
 //                        .setImageResId(R.mipmap.async_image_loading))//设置失败图
+                .setExtensionBackgroundColor(IMAGE_VIEW_6_EXTENSION_INDEX, 0xFF80FF80)//特殊背景色
+                .setExtensionLoadingDrawableFactory(IMAGE_VIEW_6_EXTENSION_INDEX, new CommonLoadingDrawableFactory()//特殊加载图
+                        .setBackgroundColor(0xFF80FF80)//加载背景色
+                        .setAnimationDrawableFactory(new PointLoadingAnimationDrawableFactory()))//点样式的动画
+                .setExtensionFailedDrawableFactory(IMAGE_VIEW_6_EXTENSION_INDEX, new CommonFailedDrawableFactory()//特殊失败图
+                        .setColor(0xFFFF8080))//失败图颜色
                 .build());
     }
 
@@ -217,6 +229,25 @@ public class BasicActivity extends TActivity {
             }
         });
 
+        /*
+         * 配置不同的加载图/背景图/失败图, 可配置无数种
+         */
+        String url6 = url1;
+        Params params6 = new Params.Builder()
+                .useExtensionLoadingDrawableFactory(IMAGE_VIEW_6_EXTENSION_INDEX)//使用特殊的加载图
+                .useExtensionFailedDrawableFactory(IMAGE_VIEW_6_EXTENSION_INDEX)//使用特殊的失败图
+                .useExtensionBackgroundDrawableFactory(IMAGE_VIEW_6_EXTENSION_INDEX)//使用特殊的背景图
+                .setImageAppearDuration(0)//设置图片出现的时间
+                .build();
+        TILoader.node(this).load(url6, params6, imageView6);
+
+        imageView6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
     }
 
     /**

@@ -58,6 +58,12 @@
                     android:background="#D0D0D0"
                     android:scaleType="fitXY" />
 
+                <ImageView
+                    android:id="@+id/basic_main_imageview6"
+                    android:layout_width="120dp"
+                    android:layout_height="90dp"
+                    android:scaleType="center" />
+
             </LinearLayout>
 
         </LinearLayout>
