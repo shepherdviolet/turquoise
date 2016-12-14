@@ -156,7 +156,7 @@ public class BasicActivity extends TActivity {
          * 图片会被解码成接近指定尺寸的大小, 图片显示尺寸等于指定尺寸, 加载图和失败图尺寸等于指定尺寸.
          */
         String url2 = "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/turquoise.jpg";
-        int image2Width = MeasureUtils.getScreenWidth(this) / 2;//指定图片宽度
+        int image2Width = MeasureUtils.getScreenWidth(this) / 3;//指定图片宽度
         int image2Height = image2Width * 3 / 4;//指定图片高度
         Params params = new Params.Builder()
                 .setReqSize(image2Width, image2Height)//指定尺寸
@@ -193,7 +193,7 @@ public class BasicActivity extends TActivity {
          * 增加解码拦截器, 实现高斯模糊
          */
         String url5 = url2;
-        int image5Width = MeasureUtils.getScreenWidth(this) / 2;//指定图片宽度
+        int image5Width = MeasureUtils.getScreenWidth(this) / 3;//指定图片宽度
         int image5Height = image5Width * 3 / 4;//指定图片高度
         Params params5 = new Params.Builder()
                 .setReqSize(image5Width, image5Height)//指定尺寸
