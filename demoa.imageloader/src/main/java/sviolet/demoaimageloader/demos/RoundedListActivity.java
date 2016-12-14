@@ -38,7 +38,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.ui.viewgroup.refresh.CircleDropRefreshIndicator;
 import sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer;
-import sviolet.turquoise.util.common.BitmapUtils;
+import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.drawable.common.CircleLoadingAnimationDrawableFactory;

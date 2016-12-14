@@ -24,7 +24,7 @@ import android.graphics.Bitmap;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.util.common.BitmapUtils;
+import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**

@@ -25,7 +25,7 @@ import android.support.annotation.NonNull;
 import java.io.File;
 import java.io.IOException;
 
-import sviolet.turquoise.util.common.BitmapUtils;
+import sviolet.turquoise.util.bitmap.BitmapUtils;
 
 /**
  * <p>EnhancedGifDrawable</p>

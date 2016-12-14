@@ -41,7 +41,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.ui.drawable.SafeBitmapDrawable;
 import sviolet.turquoise.ui.util.ClickDetector;
 import sviolet.turquoise.ui.util.ViewCommonUtils;
-import sviolet.turquoise.util.common.CachedBitmapUtils;
+import sviolet.turquoise.util.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 

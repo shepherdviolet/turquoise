@@ -33,7 +33,7 @@ import java.util.List;
 
 import sviolet.demoaimageloader.R;
 import sviolet.turquoise.ui.adapter.TViewHolder;
-import sviolet.turquoise.util.common.BitmapUtils;
+import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;

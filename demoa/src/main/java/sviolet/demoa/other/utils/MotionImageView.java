@@ -36,7 +36,7 @@ import sviolet.demoa.R;
 import sviolet.turquoise.ui.util.ViewCommonUtils;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureControllerImpl;
 import sviolet.turquoise.uix.viewgesturectrl.output.SimpleRectangleOutput;
-import sviolet.turquoise.util.common.BitmapUtils;
+import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**

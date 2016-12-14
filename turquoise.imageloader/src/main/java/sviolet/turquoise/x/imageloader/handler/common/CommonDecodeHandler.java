@@ -24,7 +24,7 @@ import android.graphics.Bitmap;
 
 import java.io.File;
 
-import sviolet.turquoise.util.common.BitmapUtils;
+import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;

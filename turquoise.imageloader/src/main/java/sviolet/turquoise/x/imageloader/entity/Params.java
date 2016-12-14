@@ -24,7 +24,7 @@ import android.view.View;
 
 import java.util.Map;
 
-import sviolet.turquoise.util.common.BitmapUtils;
+import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 
 /**

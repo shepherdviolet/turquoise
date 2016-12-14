@@ -25,7 +25,6 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
-import sviolet.turquoise.util.common.BitmapUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;

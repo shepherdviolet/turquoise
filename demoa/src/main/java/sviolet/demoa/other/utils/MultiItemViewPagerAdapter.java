@@ -31,7 +31,7 @@ import sviolet.demoa.R;
 import sviolet.turquoise.ui.adapter.RecyclingPagerAdapter;
 import sviolet.turquoise.ui.adapter.TViewHolder;
 import sviolet.turquoise.ui.drawable.SafeBitmapDrawable;
-import sviolet.turquoise.util.common.CachedBitmapUtils;
+import sviolet.turquoise.util.bitmap.CachedBitmapUtils;
 
 /**
  * ViewPager同时显示多个Item, 实现画廊效果

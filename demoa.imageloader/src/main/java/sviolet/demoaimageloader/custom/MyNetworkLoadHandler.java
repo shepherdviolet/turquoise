@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import sviolet.demoaimageloader.R;
-import sviolet.turquoise.util.common.BitmapUtils;
+import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
