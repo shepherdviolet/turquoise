@@ -38,6 +38,12 @@
                 android:scaleType="fitXY"
                 android:background="#D0D0D0"/>
 
+            <ImageView
+                android:id="@+id/basic_main_imageview5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="center"/>
+
         </LinearLayout>
 
     </ScrollView>

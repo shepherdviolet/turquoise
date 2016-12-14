@@ -1,5 +1,7 @@
 package sviolet.demoaimageloader.demos;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -10,6 +12,7 @@ import sviolet.demoaimageloader.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.util.bitmap.BlurUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
@@ -20,6 +23,8 @@ import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.NodeSettings;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
+import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
+import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.stub.StubRemoter;
 
 /**
@@ -49,6 +54,8 @@ public class BasicActivity extends TActivity {
     private ImageView imageView3;
     @ResourceId(R.id.basic_main_imageview4)
     private ImageView imageView4;
+    @ResourceId(R.id.basic_main_imageview5)
+    private ImageView imageView5;
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -175,6 +182,34 @@ public class BasicActivity extends TActivity {
         TILoader.node(this).load(url3, imageView3);
 
         imageView3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
+
+        /*
+         * 增加解码拦截器, 实现高斯模糊
+         */
+        String url5 = url2;
+        int image5Width = MeasureUtils.getScreenWidth(this) / 2;//指定图片宽度
+        int image5Height = image5Width * 3 / 4;//指定图片高度
+        Params params5 = new Params.Builder()
+                .setReqSize(image5Width, image5Height)//指定尺寸
+                .setDecodeInterceptor(new DecodeHandler.Interceptor() {
+                    @Override
+                    public ImageResource intercept(Context applicationContext, Context context, Task.Info taskInfo, ImageResource imageResource, TLogger logger) {
+                        if (imageResource.getType() == ImageResource.Type.BITMAP && imageResource.getResource() instanceof Bitmap){
+                            return new ImageResource(ImageResource.Type.BITMAP, BlurUtils.blurByJava((Bitmap) imageResource.getResource(), 10, true));
+                        }
+                        return imageResource;
+                    }
+                })
+                .build();
+        TILoader.node(this).load(url5, params5, imageView5);
+
+        imageView5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //失败重载
