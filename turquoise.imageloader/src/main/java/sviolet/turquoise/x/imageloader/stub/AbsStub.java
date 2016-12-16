@@ -194,7 +194,7 @@ public abstract class AbsStub implements Stub {
             reloadTimes = 0;
             controller.execute(this);
             if (!getLogger().isNullLogger()) {
-                getLogger().d("[AbsStub]load: key:" + getKey());
+                getLogger().d("[AbsStub]load: key:" + getKey() + " url:" + getUrl());
             }
             return true;
         }

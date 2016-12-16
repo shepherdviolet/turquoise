@@ -41,12 +41,31 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public class NetEngine extends Engine {
 
+    private static final int HISTORY_CAPACITY = 30;
+
     private Map<String, TaskGroup> taskGroups = new ConcurrentHashMap<>();
+    private History history = new History(HISTORY_CAPACITY);
     private ReentrantLock lock = new ReentrantLock();
 
     @Override
     protected void executeNewTask(Task task) {
 
+        //return if resource has loaded recently
+        if (history.contains(task.getResourceKey())){
+            if (!task.hasReturnedFromNetEngine()){
+                getComponentManager().getLogger().d("[NetEngine]task return to DiskEngine phase, the resource has loaded recently, task:" + task);
+                task.setServerType(Server.Type.DISK_ENGINE);
+                task.setState(Task.State.STAND_BY);
+                task.setHasReturnedFromNetEngine(true);
+                response(task);
+                return;
+            }else{
+                //task can only return to DiskEngine once
+                getComponentManager().getLogger().d("[NetEngine]task has returned to DiskEngine phase once, loading by NetEngine this time, task:" + task);
+            }
+        }
+
+        //merge if tasks have same resource key
         boolean executable = false;
         String resourceKey = task.getResourceKey();
         TaskGroup group;
@@ -200,6 +219,9 @@ public class NetEngine extends Engine {
      */
 
     private void handleImageData(Task task, byte[] bytes, File file){
+        //add resource key to history if loaded succeed
+        history.put(task.getResourceKey());
+        //get group
         TaskGroup group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;

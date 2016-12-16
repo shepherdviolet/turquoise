@@ -103,6 +103,14 @@ public class Task {
         values.nodeSettings = nodeSettings;
     }
 
+    public boolean hasReturnedFromNetEngine(){
+        return values.hasReturnedFromNetEngine();
+    }
+
+    public void setHasReturnedFromNetEngine(boolean value){
+        this.values.hasReturnedFromNetEngine = value;
+    }
+
     public Info getTaskInfo(){
         return values;
     }
@@ -122,6 +130,7 @@ public class Task {
         private volatile State state = State.STAND_BY;
         private LoadProgress loadProgress;
         private IndispensableState indispensableState;
+        private boolean hasReturnedFromNetEngine = false;
 
         //node//////////////////////////
         private String nodeId;
@@ -211,6 +220,10 @@ public class Task {
 
         public boolean isIndispensable(){
             return indispensableState.isIndispensable();
+        }
+
+        public boolean hasReturnedFromNetEngine(){
+            return hasReturnedFromNetEngine;
         }
     }
 
