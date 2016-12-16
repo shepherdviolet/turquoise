@@ -169,4 +169,17 @@ public interface ExceptionHandler {
      */
     void onDecodeException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
 
+    /*************************************************************
+     * memory
+     */
+
+    /**
+     * exception while memory cache execute..., for unimportance exception, print log generally
+     * @param applicationContext application context
+     * @param context activity context, maybe null
+     * @param throwable throwable
+     * @param logger logger
+     */
+    void onMemoryCacheCommonException(Context applicationContext, Context context, Throwable throwable, TLogger logger);
+
 }

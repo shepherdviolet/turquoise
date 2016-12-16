@@ -64,7 +64,12 @@ public class NetEngine extends Engine {
         group.add(task);
 
         if (executable) {
-            loadByHandler(task, group.getIndispensableState());
+            try {
+                loadByHandler(task, group.getIndispensableState());
+            } catch (Exception e) {
+                getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
+                handleFailed(task);
+            }
         }
     }
 

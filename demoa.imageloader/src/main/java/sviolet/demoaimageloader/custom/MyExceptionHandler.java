@@ -78,4 +78,9 @@ public class MyExceptionHandler implements ExceptionHandler {
     public void onDecodeException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
         Log.e("MyExceptionHandler", "onDecodeException", throwable);
     }
+
+    @Override
+    public void onMemoryCacheCommonException(Context applicationContext, Context context, Throwable throwable, TLogger logger) {
+        Log.e("MyExceptionHandler", "onMemoryCacheCommonException", throwable);
+    }
 }

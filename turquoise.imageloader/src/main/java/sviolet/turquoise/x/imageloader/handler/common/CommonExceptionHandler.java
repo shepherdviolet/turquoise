@@ -159,6 +159,11 @@ public class CommonExceptionHandler implements ExceptionHandler {
         logger.e("DecodeException:" + taskInfo, throwable);
     }
 
+    @Override
+    public void onMemoryCacheCommonException(Context applicationContext, Context context, Throwable throwable, TLogger logger) {
+        logger.w("MemoryCacheCommonException", throwable);
+    }
+
     /*******************************************************************************
      * protected
      */
