@@ -24,6 +24,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -72,9 +73,9 @@ public class CommonSimpleDialog extends Dialog {
         LinearLayout.LayoutParams params;
         final int screenWidth = MeasureUtils.getScreenWidth(getContext()) > MeasureUtils.dp2px(getContext(), 400) ?
                 MeasureUtils.dp2px(getContext(), 400) : MeasureUtils.getScreenWidth(getContext());
-        final int dp15 = MeasureUtils.dp2px(getContext(), 15);
         final int dp20 = MeasureUtils.dp2px(getContext(), 20);
         final int dp50 = MeasureUtils.dp2px(getContext(), 50);
+        final int dp60 = MeasureUtils.dp2px(getContext(), 60);
 
         //实例化控件
         TextView titleView = new TextView(getContext());
@@ -93,14 +94,16 @@ public class CommonSimpleDialog extends Dialog {
         addContentView(container, params);
 
         //标题
-        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp50);
-        titleView.setTextColor(0xFF707070);
+        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp60);
+        titleView.setTextColor(0xFF909090);
         titleView.setTextSize(20f);
-        titleView.setPadding(dp15, 0, dp15, 0);
+        titleView.setPadding(dp20, 0, dp20, 0);
         titleView.setGravity(Gravity.CENTER_VERTICAL);
         titleView.setMaxLines(1);
         titleView.setEllipsize(TextUtils.TruncateAt.END);
         titleView.setText(info.title);
+        TextPaint textPaint = titleView.getPaint();
+        textPaint.setFakeBoldText(true);
         container.addView(titleView, params);
 
         //内容
@@ -112,7 +115,7 @@ public class CommonSimpleDialog extends Dialog {
         params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         contentView.setTextColor(0xFF505050);
         contentView.setTextSize(17f);
-        contentView.setPadding(dp15, 0, dp15, 0);
+        contentView.setPadding(dp20, 0, dp20, 0);
         contentView.setText(info.content);
         contentScrollView.addView(contentView, params);
 
@@ -131,7 +134,7 @@ public class CommonSimpleDialog extends Dialog {
             leftButton.setGravity(Gravity.CENTER);
             leftButton.setMaxLines(1);
             leftButton.setEllipsize(TextUtils.TruncateAt.END);
-            leftButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x20000000)));
+            leftButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x08000000)));
             leftButton.setClickable(true);
             leftButton.setText(info.leftButtonStr);
             leftButton.setOnClickListener(new View.OnClickListener() {
@@ -159,7 +162,7 @@ public class CommonSimpleDialog extends Dialog {
             middleButton.setGravity(Gravity.CENTER);
             middleButton.setMaxLines(1);
             middleButton.setEllipsize(TextUtils.TruncateAt.END);
-            middleButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x20000000)));
+            middleButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x08000000)));
             middleButton.setClickable(true);
             middleButton.setText(info.middleButtonStr);
             middleButton.setOnClickListener(new View.OnClickListener() {
@@ -183,7 +186,7 @@ public class CommonSimpleDialog extends Dialog {
             rightButton.setGravity(Gravity.CENTER);
             rightButton.setMaxLines(1);
             rightButton.setEllipsize(TextUtils.TruncateAt.END);
-            rightButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x20000000)));
+            rightButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x08000000)));
             rightButton.setClickable(true);
             rightButton.setText(info.rightButtonStr);
             rightButton.setOnClickListener(new View.OnClickListener() {
