@@ -77,6 +77,7 @@ public class CommonSimpleDialog extends Dialog {
         final int dp20 = MeasureUtils.dp2px(getContext(), 20);
         final int dp50 = MeasureUtils.dp2px(getContext(), 50);
         final int dp60 = MeasureUtils.dp2px(getContext(), 60);
+        final int dp100 = MeasureUtils.dp2px(getContext(), 100);
 
         //实例化控件
         TextView titleView = new TextView(getContext());
@@ -115,7 +116,7 @@ public class CommonSimpleDialog extends Dialog {
         //内容
 
         params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        contentScrollView.setMinimumHeight(dp50);
+        contentScrollView.setMinimumHeight(info.title != null ? dp60 : dp100);
         container.addView(contentScrollView, params);
 
         params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
