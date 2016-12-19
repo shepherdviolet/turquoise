@@ -287,4 +287,10 @@
         <attr name="LineIndicatorTabView_indicatorRightMargin" format="dimension" />
     </declare-styleable>
 
+    <!-- sviolet.turquoise.ui.viewgroup.other.MaxHeightScrollView -->
+    <declare-styleable name="MaxHeightScrollView">
+        <!-- 最大高度:超过该高度就滚动 -->
+        <attr name="MaxHeightScrollView_maxHeight" format="dimension"/>
+    </declare-styleable>
+
 </resources>
