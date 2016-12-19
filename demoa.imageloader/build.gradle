@@ -48,6 +48,12 @@ android {
     }
     productFlavors {
     }
+    sourceSets {
+        main {
+            //指定JNI的so库路径
+            jniLibs.srcDirs = ['libs']
+        }
+    }
 }
 
 dependencies {
