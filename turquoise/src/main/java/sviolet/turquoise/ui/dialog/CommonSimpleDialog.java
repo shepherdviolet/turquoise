@@ -73,6 +73,7 @@ public class CommonSimpleDialog extends Dialog {
         LinearLayout.LayoutParams params;
         final int screenWidth = MeasureUtils.getScreenWidth(getContext()) > MeasureUtils.dp2px(getContext(), 400) ?
                 MeasureUtils.dp2px(getContext(), 400) : MeasureUtils.getScreenWidth(getContext());
+        final int dp10 = MeasureUtils.dp2px(getContext(), 10);
         final int dp20 = MeasureUtils.dp2px(getContext(), 20);
         final int dp50 = MeasureUtils.dp2px(getContext(), 50);
         final int dp60 = MeasureUtils.dp2px(getContext(), 60);
@@ -84,27 +85,32 @@ public class CommonSimpleDialog extends Dialog {
         TextView middleButton = new TextView(getContext());
         TextView rightButton = new TextView(getContext());
         LinearLayout container = new LinearLayout(getContext());
-        ScrollView contentScrollView = new MaxHeightScrollView(getContext(), (int) (screenWidth * 0.6f));
+        ScrollView contentScrollView = new MaxHeightScrollView(getContext(), (int) (screenWidth * 0.5f));
         LinearLayout buttonLinearLayout = new LinearLayout(getContext());
 
         //容器
-        params = new LinearLayout.LayoutParams((int) (screenWidth * 0.8f), LinearLayout.LayoutParams.WRAP_CONTENT);
+        params = new LinearLayout.LayoutParams((int) (screenWidth * 0.85f), LinearLayout.LayoutParams.WRAP_CONTENT);
         container.setOrientation(LinearLayout.VERTICAL);
         container.setBackgroundColor(0xFFFFFFFF);
         addContentView(container, params);
 
         //标题
-        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp60);
-        titleView.setTextColor(0xFF909090);
-        titleView.setTextSize(20f);
-        titleView.setPadding(dp20, 0, dp20, 0);
-        titleView.setGravity(Gravity.CENTER_VERTICAL);
-        titleView.setMaxLines(1);
-        titleView.setEllipsize(TextUtils.TruncateAt.END);
-        titleView.setText(info.title);
-        TextPaint textPaint = titleView.getPaint();
-        textPaint.setFakeBoldText(true);
-        container.addView(titleView, params);
+        if (info.title != null) {
+            params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp60);
+            titleView.setTextColor(0xFF909090);
+            titleView.setTextSize(20f);
+            titleView.setPadding(dp20, dp10, dp20, 0);
+            titleView.setGravity(Gravity.CENTER_VERTICAL);
+            titleView.setMaxLines(1);
+            titleView.setEllipsize(TextUtils.TruncateAt.END);
+            titleView.setText(info.title);
+            TextPaint textPaint = titleView.getPaint();
+            textPaint.setFakeBoldText(true);
+            container.addView(titleView, params);
+        } else {
+            params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp20);
+            container.addView(new View(getContext()), params);
+        }
 
         //内容
 
@@ -128,7 +134,7 @@ public class CommonSimpleDialog extends Dialog {
         if (info.leftButtonStr != null) {
             params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
             final SimpleDialogBuilder.Callback leftButtonCallback = info.leftButtonCallback;
-            leftButton.setTextColor(0xFF808080);
+            leftButton.setTextColor(0xFF209090);
             leftButton.setTextSize(16f);
             leftButton.setPadding(dp20, 0, dp20, 0);
             leftButton.setGravity(Gravity.CENTER);
@@ -156,7 +162,7 @@ public class CommonSimpleDialog extends Dialog {
         if (info.middleButtonStr != null) {
             params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
             final SimpleDialogBuilder.Callback middleButtonCallback = info.middleButtonCallback;
-            middleButton.setTextColor(0xFF808080);
+            middleButton.setTextColor(0xFF209090);
             middleButton.setTextSize(16f);
             middleButton.setPadding(dp20, 0, dp20, 0);
             middleButton.setGravity(Gravity.CENTER);
