@@ -20,23 +20,18 @@
 package sviolet.turquoise.enhance.app.utils;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.SparseArray;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.common.entity.Destroyable;
+import sviolet.turquoise.ui.dialog.CommonSimpleDialog;
+import sviolet.turquoise.ui.dialog.SimpleDialogBuilder;
 import sviolet.turquoise.util.common.CheckUtils;
-import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**
  * <p>运行时权限管理器, 兼容低版本, 占用Activity的requestCode 201-250</p>
@@ -81,7 +76,7 @@ import sviolet.turquoise.util.droid.MeasureUtils;
  */
 public class RuntimePermissionManager implements Destroyable {
 
-    private RationaleDialogFactory dialogFactory;
+    private RationaleDialogBuilderFactory dialogFactory;
     private WeakReference<Activity> activity;
     //权限请求请求码
     private AtomicInteger mPermissionRequestCode = new AtomicInteger(0);
@@ -92,7 +87,7 @@ public class RuntimePermissionManager implements Destroyable {
         this(activity, null);
     }
 
-    public RuntimePermissionManager(Activity activity, RationaleDialogFactory dialogFactory){
+    public RuntimePermissionManager(Activity activity, RationaleDialogBuilderFactory dialogFactory){
         if (activity == null){
             throw new RuntimeException("[RuntimePermissionManager]activity is null");
         }
@@ -176,13 +171,17 @@ public class RuntimePermissionManager implements Destroyable {
 
             if ((!CheckUtils.isEmpty(rationaleTitle) || !CheckUtils.isEmpty(rationaleContent)) && shouldShowRationale) {
                 //显示权限提示
-                dialogFactory.create(activity, rationaleTitle, rationaleContent, new DialogInterface.OnCancelListener(){
+                SimpleDialogBuilder builder = dialogFactory.create();
+                builder.setTitle(rationaleTitle);
+                builder.setContent(rationaleContent);
+                builder.setCancelCallback(true, new SimpleDialogBuilder.Callback() {
                     @Override
-                    public void onCancel(DialogInterface dialog) {
+                    public void callback() {
                         //请求权限
                         requestPermissions(activity, permissions, task);
                     }
-                }).show();
+                });
+                builder.build(activity).show();
             }else{
                 //请求权限
                 requestPermissions(activity, permissions, task);
@@ -235,89 +234,24 @@ public class RuntimePermissionManager implements Destroyable {
     }
 
     /**
-     * 权限说明对话框工厂
+     * 权限说明对话框构造器工厂
      */
-    public interface RationaleDialogFactory{
+    public interface RationaleDialogBuilderFactory {
 
-        RationaleDialog create(Context context, String rationaleTitle, String rationaleContent, DialogInterface.OnCancelListener listener);
+        SimpleDialogBuilder create();
 
     }
 
     /**
-     * 权限说明对话框
+     * 通用权限说明对话框构造器工厂
      */
-    public static abstract class RationaleDialog extends Dialog{
-
-        private String rationaleTitle;
-        private String rationaleContent;
-
-        public RationaleDialog(Context context, String rationaleTitle, String rationaleContent, OnCancelListener listener) {
-            super(context, true, listener);
-            this.rationaleTitle = rationaleTitle;
-            this.rationaleContent  = rationaleContent;
-        }
-
-        public String getRationaleTitle() {
-            return rationaleTitle;
-        }
-
-        public String getRationaleContent() {
-            return rationaleContent;
-        }
-    }
-
-    /**
-     * 通用权限说明对话框工厂
-     */
-    private static final class CommonRationaleDialogFactory implements RationaleDialogFactory{
+    private static final class CommonRationaleDialogFactory implements RationaleDialogBuilderFactory {
 
         @Override
-        public RationaleDialog create(Context context, String rationaleTitle, String rationaleContent, DialogInterface.OnCancelListener listener) {
-            return new CommonRationaleDialog(context, rationaleTitle, rationaleContent, listener);
+        public SimpleDialogBuilder create(){
+            return new CommonSimpleDialog.Builder();
         }
 
-    }
-
-    /**
-     * 通用权限说明对话框
-     */
-    private static final class CommonRationaleDialog extends RationaleDialog {
-
-        protected CommonRationaleDialog(Context context, String rationaleTitle, String rationaleContent, OnCancelListener listener) {
-            super(context, rationaleTitle, rationaleContent, listener);
-        }
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-
-//            requestWindowFeature(Window.FEATURE_NO_TITLE);//无标题
-//            setContentView();//设置布局
-//            setCancelable(false);//禁止取消
-//            setCanceledOnTouchOutside(false);//禁止点外部取消
-
-//            WindowManager.LayoutParams layoutParams = getWindow().getAttributes();//设置窗体尺寸
-//            layoutParams.width = MeasureUtils.getScreenWidth(getContext());
-//            layoutParams.height = MeasureUtils.getScreenWidth(getContext());
-//            getWindow().setAttributes(layoutParams);
-//            getWindow().setGravity(Gravity.CENTER);
-
-            if(!CheckUtils.isEmpty(getRationaleTitle())) {
-                setTitle(getRationaleTitle());
-            }
-
-            TextView textView = new TextView(getContext());
-            if (!CheckUtils.isEmpty(getRationaleContent())) {
-                textView.setText(getRationaleContent());
-                textView.setTextColor(0xFF606060);
-                textView.setTextSize(16f);
-            }
-            final int dp15 = MeasureUtils.dp2px(getContext(), 15);
-            final int dp10 = MeasureUtils.dp2px(getContext(), 10);
-            textView.setPadding(dp15, dp15, dp10, dp10);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            addContentView(textView, params);
-        }
     }
 
 }

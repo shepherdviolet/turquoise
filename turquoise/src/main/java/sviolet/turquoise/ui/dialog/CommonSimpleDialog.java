@@ -128,84 +128,99 @@ public class CommonSimpleDialog extends Dialog {
 
         //按钮
 
-        params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp50);
-        buttonLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
-        container.addView(buttonLinearLayout, params);
+        if(info.leftButtonStr != null || info.middleButtonStr != null || info.rightButtonStr != null) {
 
-        if (info.leftButtonStr != null) {
-            params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            final SimpleDialogBuilder.Callback leftButtonCallback = info.leftButtonCallback;
-            leftButton.setTextColor(0xFF209090);
-            leftButton.setTextSize(16f);
-            leftButton.setPadding(dp20, 0, dp20, 0);
-            leftButton.setGravity(Gravity.CENTER);
-            leftButton.setMaxLines(1);
-            leftButton.setEllipsize(TextUtils.TruncateAt.END);
-            leftButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x08000000)));
-            leftButton.setClickable(true);
-            leftButton.setText(info.leftButtonStr);
-            leftButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                    if(leftButtonCallback != null){
-                        leftButtonCallback.callback();
+            //按钮容器
+            params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp50);
+            buttonLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+            container.addView(buttonLinearLayout, params);
+
+            //左按钮
+            if (info.leftButtonStr != null) {
+                params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                final SimpleDialogBuilder.Callback leftButtonCallback = info.leftButtonCallback;
+                leftButton.setTextColor(0xFF209090);
+                leftButton.setTextSize(16f);
+                leftButton.setPadding(dp20, 0, dp20, 0);
+                leftButton.setGravity(Gravity.CENTER);
+                leftButton.setMaxLines(1);
+                leftButton.setEllipsize(TextUtils.TruncateAt.END);
+                leftButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x08000000)));
+                leftButton.setClickable(true);
+                leftButton.setText(info.leftButtonStr);
+                leftButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dismiss();
+                        if(leftButtonCallback != null){
+                            leftButtonCallback.callback();
+                        }
                     }
-                }
-            });
-            buttonLinearLayout.addView(leftButton, params);
-        }
+                });
+                buttonLinearLayout.addView(leftButton, params);
+            }
 
-        params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
-        params.weight = 1;
-        buttonLinearLayout.addView(new View(getContext()), params);
+            //间隔
+            params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT);
+            params.weight = 1;
+            buttonLinearLayout.addView(new View(getContext()), params);
 
-        if (info.middleButtonStr != null) {
-            params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            final SimpleDialogBuilder.Callback middleButtonCallback = info.middleButtonCallback;
-            middleButton.setTextColor(0xFF209090);
-            middleButton.setTextSize(16f);
-            middleButton.setPadding(dp20, 0, dp20, 0);
-            middleButton.setGravity(Gravity.CENTER);
-            middleButton.setMaxLines(1);
-            middleButton.setEllipsize(TextUtils.TruncateAt.END);
-            middleButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x08000000)));
-            middleButton.setClickable(true);
-            middleButton.setText(info.middleButtonStr);
-            middleButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                    if(middleButtonCallback != null){
-                        middleButtonCallback.callback();
+            //中按钮
+            if (info.middleButtonStr != null) {
+                params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                final SimpleDialogBuilder.Callback middleButtonCallback = info.middleButtonCallback;
+                middleButton.setTextColor(0xFF209090);
+                middleButton.setTextSize(16f);
+                middleButton.setPadding(dp20, 0, dp20, 0);
+                middleButton.setGravity(Gravity.CENTER);
+                middleButton.setMaxLines(1);
+                middleButton.setEllipsize(TextUtils.TruncateAt.END);
+                middleButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x08000000)));
+                middleButton.setClickable(true);
+                middleButton.setText(info.middleButtonStr);
+                middleButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dismiss();
+                        if(middleButtonCallback != null){
+                            middleButtonCallback.callback();
+                        }
                     }
-                }
-            });
-            buttonLinearLayout.addView(middleButton, params);
-        }
+                });
+                buttonLinearLayout.addView(middleButton, params);
+            }
 
-        if (info.rightButtonStr != null) {
-            params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-            final SimpleDialogBuilder.Callback rightButtonCallback = info.rightButtonCallback;
-            rightButton.setTextColor(0xFF209090);
-            rightButton.setTextSize(16f);
-            rightButton.setPadding(dp20, 0, dp20, 0);
-            rightButton.setGravity(Gravity.CENTER);
-            rightButton.setMaxLines(1);
-            rightButton.setEllipsize(TextUtils.TruncateAt.END);
-            rightButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x08000000)));
-            rightButton.setClickable(true);
-            rightButton.setText(info.rightButtonStr);
-            rightButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dismiss();
-                    if(rightButtonCallback != null){
-                        rightButtonCallback.callback();
+            //右按钮
+            if (info.rightButtonStr != null) {
+                params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                final SimpleDialogBuilder.Callback rightButtonCallback = info.rightButtonCallback;
+                rightButton.setTextColor(0xFF209090);
+                rightButton.setTextSize(16f);
+                rightButton.setPadding(dp20, 0, dp20, 0);
+                rightButton.setGravity(Gravity.CENTER);
+                rightButton.setMaxLines(1);
+                rightButton.setEllipsize(TextUtils.TruncateAt.END);
+                rightButton.setBackgroundDrawable(StateListDrawableUtils.createPressSelector(new ColorDrawable(0x00000000), new ColorDrawable(0x08000000)));
+                rightButton.setClickable(true);
+                rightButton.setText(info.rightButtonStr);
+                rightButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dismiss();
+                        if(rightButtonCallback != null){
+                            rightButtonCallback.callback();
+                        }
                     }
-                }
-            });
-            buttonLinearLayout.addView(rightButton, params);
+                });
+                buttonLinearLayout.addView(rightButton, params);
+            }
+
+        } else {
+
+            //空位
+            params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp20);
+            container.addView(new View(getContext()), params);
+
         }
 
         //取消
