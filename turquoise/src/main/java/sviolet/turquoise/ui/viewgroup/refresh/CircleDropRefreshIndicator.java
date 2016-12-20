@@ -23,8 +23,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.RadialGradient;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
 
@@ -84,7 +86,6 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     private int rotateAngle = 0;//进度条旋转角度
 
     private float containerOverDragResistance;//暂存容器越界阻尼
-    private int shadowAlpha;//暂存阴影透明度
 
     private WeakReference<VerticalOverDragContainer> container;//暂存容器
 
@@ -142,11 +143,15 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     private void init(){
         scroller = new CompatOverScroller(getContext());
 
-        shadowPaint = new Paint();
-        shadowPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
-        shadowPaint.setStyle(Paint.Style.FILL);
-        shadowPaint.setColor(shadowColor);
-        shadowAlpha = shadowPaint.getAlpha();
+        //阴影效果
+        RadialGradient shadowRadialGradient = new RadialGradient(
+                0, 0,
+                backgroundRadius + shadowWidth,
+                new int[]{shadowColor, 0x00000000}, new float[]{(float)backgroundRadius / (float)(backgroundRadius + shadowWidth), 1.0f},
+                Shader.TileMode.CLAMP);
+
+        shadowPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        shadowPaint.setShader(shadowRadialGradient);
 
         backgroundPaint = new Paint();
         backgroundPaint.setFlags(Paint.ANTI_ALIAS_FLAG);
@@ -336,10 +341,10 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
 
         //绘制阴影
         if (shadowEnabled) {
-            shadowPaint.setAlpha(shadowAlpha / shadowWidth);
-            for (int i = 1; i <= shadowWidth; i++) {
-                canvas.drawCircle(centerX, centerY, backgroundRadius + i, shadowPaint);
-            }
+            canvas.save();
+            canvas.translate(centerX, centerY);
+            canvas.drawCircle(0, 0, backgroundRadius + shadowWidth, shadowPaint);
+            canvas.restore();
         }
         //绘制背景
         canvas.drawCircle(centerX, centerY, backgroundRadius, backgroundPaint);
