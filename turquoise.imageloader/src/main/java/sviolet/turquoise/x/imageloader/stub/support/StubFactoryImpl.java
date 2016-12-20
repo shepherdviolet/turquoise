@@ -17,13 +17,15 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.stub;
+package sviolet.turquoise.x.imageloader.stub.support;
 
 import android.view.View;
 import android.widget.ImageView;
 
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
+import sviolet.turquoise.x.imageloader.stub.Stub;
+import sviolet.turquoise.x.imageloader.stub.StubFactory;
 
 /**
  * <p>Stub factory</p>

@@ -17,12 +17,13 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.stub;
+package sviolet.turquoise.x.imageloader.stub.support;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.NodeController;
+import sviolet.turquoise.x.imageloader.stub.AbsStub;
 
 /**
  * <p>Extract Stub</p>

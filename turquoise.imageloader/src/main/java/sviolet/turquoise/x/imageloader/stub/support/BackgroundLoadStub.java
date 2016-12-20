@@ -17,27 +17,36 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.stub;
+package sviolet.turquoise.x.imageloader.stub.support;
 
+import android.annotation.TargetApi;
 import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
+import android.os.Build;
+import android.view.View;
 
+import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.x.imageloader.entity.Params;
+import sviolet.turquoise.x.imageloader.stub.LoadStub;
 
 /**
- * <p>loading image to ImageView</p>
+ * <p>loading image to View's background</p>
  *
  * Created by S.Violet on 2016/2/25.
  */
-class ImageViewLoadStub extends LoadStub<ImageView> {
+class BackgroundLoadStub extends LoadStub<View> {
 
-    ImageViewLoadStub(String url, Params params, ImageView view){
+    BackgroundLoadStub(String url, Params params, View view){
         super(url, params, view);
     }
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     @Override
-    protected void setDrawableToView(Drawable drawable, ImageView view) {
-        view.setImageDrawable(drawable);
+    protected void setDrawableToView(Drawable drawable, View view) {
+        if (DeviceUtils.getVersionSDK() >= 16) {
+            view.setBackground(drawable);
+        }else{
+            view.setBackgroundDrawable(drawable);
+        }
     }
 
 }

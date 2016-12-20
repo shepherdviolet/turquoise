@@ -45,7 +45,7 @@ import sviolet.turquoise.x.imageloader.node.TaskFactory;
 import sviolet.turquoise.x.imageloader.node.TaskFactoryImpl;
 import sviolet.turquoise.x.imageloader.server.MemoryCacheServer;
 import sviolet.turquoise.x.imageloader.stub.StubFactory;
-import sviolet.turquoise.x.imageloader.stub.StubFactoryImpl;
+import sviolet.turquoise.x.imageloader.stub.support.StubFactoryImpl;
 
 /**
  * <p>TILoader global settings</p>
