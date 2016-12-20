@@ -181,6 +181,13 @@ public class RuntimePermissionManager implements Destroyable {
                         requestPermissions(activity, permissions, task);
                     }
                 });
+                builder.setRightButton("OK", new SimpleDialogBuilder.Callback() {
+                    @Override
+                    public void callback() {
+                        //请求权限
+                        requestPermissions(activity, permissions, task);
+                    }
+                });
                 builder.build(activity).show();
             }else{
                 //请求权限
