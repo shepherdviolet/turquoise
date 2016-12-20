@@ -44,7 +44,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  * @author S.Violet
  */
 
-public abstract class TActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public abstract class TActivity extends Activity implements EnhancedContext, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private final TActivityProvider provider = new TActivityProvider();
     private RuntimePermissionManager runtimePermissionManager = new RuntimePermissionManager(this);
@@ -178,6 +178,7 @@ public abstract class TActivity extends Activity implements ActivityCompat.OnReq
      *
      * @param lifeCycle 生命周期监听器
      */
+    @Override
     public void attachLifeCycle(LifeCycle lifeCycle){
         LifeCycleUtils.attach(this, lifeCycle);
     }
@@ -196,6 +197,7 @@ public abstract class TActivity extends Activity implements ActivityCompat.OnReq
      * @param permission 所需权限 android.Manifest.permission....
      * @param task 需要权限的任务
      */
+    @Override
     public void executePermissionTask(String permission, RuntimePermissionManager.RequestPermissionTask task){
         runtimePermissionManager.executePermissionTask(new String[]{permission}, null, null, task);
     }
@@ -208,6 +210,7 @@ public abstract class TActivity extends Activity implements ActivityCompat.OnReq
      * @param permissions 所需权限 android.Manifest.permission....
      * @param task 需要权限的任务
      */
+    @Override
     public void executePermissionTask(String[] permissions, RuntimePermissionManager.RequestPermissionTask task){
         runtimePermissionManager.executePermissionTask(permissions, null, null, task);
     }
@@ -222,6 +225,7 @@ public abstract class TActivity extends Activity implements ActivityCompat.OnReq
      * @param rationaleContent 权限说明内容(标题和内容都送空, 则不提示)
      * @param task 需要权限的任务
      */
+    @Override
     public void executePermissionTask(String permission, String rationaleTitle, String rationaleContent, RuntimePermissionManager.RequestPermissionTask task){
         runtimePermissionManager.executePermissionTask(new String[]{permission}, rationaleTitle, rationaleContent, task);
     }
@@ -238,6 +242,7 @@ public abstract class TActivity extends Activity implements ActivityCompat.OnReq
      * @param rationaleContent 权限说明内容(标题和内容都送空, 则不提示)
      * @param task 需要权限的任务
      */
+    @Override
     public void executePermissionTask(String[] permissions, String rationaleTitle, String rationaleContent, RuntimePermissionManager.RequestPermissionTask task){
         runtimePermissionManager.executePermissionTask(permissions, rationaleTitle, rationaleContent, task);
     }
