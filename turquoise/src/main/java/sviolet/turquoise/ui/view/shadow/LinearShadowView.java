@@ -175,7 +175,7 @@ public class LinearShadowView extends View {
 	}
 	
 	/**
-	 * 待Mesture完成后初始化
+	 * 待Measure完成后初始化
 	 */
 	private void postInit(){
 		//View获取自身宽高等参数方法
@@ -312,6 +312,6 @@ public class LinearShadowView extends View {
 			return value;
 		}
 		
-	};
+	}
     
 }
