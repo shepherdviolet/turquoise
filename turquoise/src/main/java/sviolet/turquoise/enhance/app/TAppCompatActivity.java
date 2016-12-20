@@ -56,6 +56,7 @@ public abstract class TAppCompatActivity extends AppCompatActivity  implements A
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         provider.windowSetting(this);//窗口设置
+        beforeCreate();
         super.onCreate(savedInstanceState);
         provider.onCreate(this);
         if (savedInstanceState == null) {
@@ -64,6 +65,10 @@ public abstract class TAppCompatActivity extends AppCompatActivity  implements A
             onRelaunchFragments(savedInstanceState);
         }
         onInitViews(savedInstanceState);
+    }
+
+    protected void beforeCreate(){
+
     }
 
     /**
@@ -123,10 +128,15 @@ public abstract class TAppCompatActivity extends AppCompatActivity  implements A
 
     @Override
     protected final void onDestroy() {
+        beforeDestroy();
         super.onDestroy();
         provider.onDestroy(this);
         runtimePermissionManager.onDestroy();
         afterDestroy();
+    }
+
+    protected void beforeDestroy(){
+
     }
 
     /**

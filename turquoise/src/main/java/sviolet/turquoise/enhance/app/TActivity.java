@@ -53,8 +53,9 @@ public abstract class TActivity extends Activity implements ActivityCompat.OnReq
 
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         provider.windowSetting(this);//窗口设置
+        beforeCreate();
+        super.onCreate(savedInstanceState);
         provider.onCreate(this);
         if (savedInstanceState == null) {
             onInitFragments();
@@ -62,6 +63,10 @@ public abstract class TActivity extends Activity implements ActivityCompat.OnReq
             onRelaunchFragments(savedInstanceState);
         }
         onInitViews(savedInstanceState);
+    }
+
+    protected void beforeCreate(){
+
     }
 
     /**
@@ -121,10 +126,15 @@ public abstract class TActivity extends Activity implements ActivityCompat.OnReq
 
     @Override
     protected final void onDestroy() {
+        beforeDestroy();
         super.onDestroy();
         provider.onDestroy(this);
         runtimePermissionManager.onDestroy();
         afterDestroy();
+    }
+
+    protected void beforeDestroy(){
+
     }
 
     /**

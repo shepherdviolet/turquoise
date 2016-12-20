@@ -54,6 +54,7 @@ public abstract class TFragmentActivity extends FragmentActivity implements Acti
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
         provider.windowSetting(this);//窗口设置
+        beforeCreate();
         super.onCreate(savedInstanceState);
         provider.onCreate(this);
         if (savedInstanceState == null) {
@@ -62,6 +63,10 @@ public abstract class TFragmentActivity extends FragmentActivity implements Acti
             onRelaunchFragments(savedInstanceState);
         }
         onInitViews(savedInstanceState);
+    }
+
+    protected void beforeCreate(){
+
     }
 
     /**
@@ -121,10 +126,15 @@ public abstract class TFragmentActivity extends FragmentActivity implements Acti
 
     @Override
     protected final void onDestroy() {
+        beforeDestroy();
         super.onDestroy();
         provider.onDestroy(this);
         runtimePermissionManager.onDestroy();
         afterDestroy();
+    }
+
+    protected void beforeDestroy(){
+
     }
 
     /**
