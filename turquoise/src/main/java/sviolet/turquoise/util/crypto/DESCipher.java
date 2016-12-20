@@ -19,18 +19,14 @@
 
 package sviolet.turquoise.util.crypto;
 
-import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -40,58 +36,77 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class DESCipher {
 
-    public static final String CRYPTO_TRANSFORMATION_DES = "DES";
-    public static final String CRYPTO_TRANSFORMATION_DES_EDE_ECB_NOPADDING = "DESede/ECB/NoPadding";
-    public static final String CRYPTO_TRANSFORMATION_DES_EDE_ECB_PKCS5 = "DESede/ECB/PKCS5Padding";
+    private static final String CRYPTO_TRANSFORMATION_DES = "DES";
+    private static final String CRYPTO_TRANSFORMATION_DES_EDE = "DESede";
+    private static final String CRYPTO_TRANSFORMATION_DES_EDE_ECB_NO_PADDING = "DESede/ECB/NoPadding";
+    private static final String CRYPTO_TRANSFORMATION_DES_EDE_ECB_PKCS5 = "DESede/ECB/PKCS5Padding";
+
+    /**
+     * @param data 数据
+     * @param keyData 秘钥数据 8bytes
+     */
+    public static byte[] encryptDes(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        return encrypt(data, keyData, CRYPTO_TRANSFORMATION_DES, CRYPTO_TRANSFORMATION_DES);
+    }
 
     /**
      * @param data 数据
      * @param keyData 秘钥数据
-     * @param algorithm 算法
      */
-    public static byte[] encrypt(byte[] data, byte[] keyData, String algorithm) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        SecretKey keyInstance = new SecretKeySpec(keyData, algorithm);
-        Cipher cipher = Cipher.getInstance(algorithm);
+    public static byte[] encryptDesEdeEcbNoPadding(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        return encrypt(data, keyData, CRYPTO_TRANSFORMATION_DES_EDE, CRYPTO_TRANSFORMATION_DES_EDE_ECB_NO_PADDING);
+    }
+
+    /**
+     * @param data 数据
+     * @param keyData 秘钥数据
+     */
+    public static byte[] encryptDesEdeEcbPKCS5(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        return encrypt(data, keyData, CRYPTO_TRANSFORMATION_DES_EDE, CRYPTO_TRANSFORMATION_DES_EDE_ECB_PKCS5);
+    }
+
+    /**
+     * @param data 数据
+     * @param keyData 秘钥数据
+     */
+    private static byte[] encrypt(byte[] data, byte[] keyData, String keyAlgorithm, String cryptoAlgorithm) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        SecretKey keyInstance = new SecretKeySpec(keyData, keyAlgorithm);
+        Cipher cipher = Cipher.getInstance(cryptoAlgorithm);
         cipher.init(Cipher.ENCRYPT_MODE, keyInstance);
         return cipher.doFinal(data);
     }
 
     /**
      * @param data 数据
+     * @param keyData 秘钥数据 8bytes
+     */
+    public static byte[] decryptDes(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        return decrypt(data, keyData, CRYPTO_TRANSFORMATION_DES, CRYPTO_TRANSFORMATION_DES);
+    }
+
+    /**
+     * @param data 数据
      * @param keyData 秘钥数据
-     * @param algorithm 算法
      */
-    public static byte[] decrypt(byte[] data, byte[] keyData, String algorithm) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
-        SecretKey keyInstance = new SecretKeySpec(keyData, algorithm);
-        Cipher cipher = Cipher.getInstance(algorithm);
-        cipher.init(Cipher.DECRYPT_MODE, keyInstance);
-        return cipher.doFinal(data);
+    public static byte[] decryptDesEdeEcbNoPadding(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        return decrypt(data, keyData, CRYPTO_TRANSFORMATION_DES_EDE, CRYPTO_TRANSFORMATION_DES_EDE_ECB_NO_PADDING);
     }
 
     /**
      * @param data 数据
-     * @param desedeKey 秘钥数据, hexString
-     * @param algorithm 算法, 这里只能用DESede
+     * @param keyData 秘钥数据
      */
-    public static byte[] encryptByDesedeKey(byte[] data, String desedeKey, String algorithm) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException, UnsupportedEncodingException {
-        DESedeKeySpec desedeKeySpec = new DESedeKeySpec(desedeKey.getBytes("UTF-8"));
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DESede");
-        SecretKey keyInstance = keyFactory.generateSecret(desedeKeySpec);
-        Cipher cipher = Cipher.getInstance(algorithm);
-        cipher.init(Cipher.ENCRYPT_MODE, keyInstance);
-        return cipher.doFinal(data);
+    public static byte[] decryptDesEdeEcbPKCS5(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+        return decrypt(data, keyData, CRYPTO_TRANSFORMATION_DES_EDE, CRYPTO_TRANSFORMATION_DES_EDE_ECB_PKCS5);
     }
 
     /**
      * @param data 数据
-     * @param desedeKey 秘钥数据, hexString
-     * @param algorithm 算法, 这里只能用DESede
+     * @param keyData 秘钥数据
      */
-    public static byte[] decryptByDesedeKey(byte[] data, String desedeKey, String algorithm) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException, UnsupportedEncodingException {
-        DESedeKeySpec desedeKeySpec = new DESedeKeySpec(desedeKey.getBytes("UTF-8"));
-        SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DESede");
-        SecretKey keyInstance = keyFactory.generateSecret(desedeKeySpec);
-        Cipher cipher = Cipher.getInstance(algorithm);
+    private static byte[] decrypt(byte[] data, byte[] keyData, String keyAlgorithm, String cryptoAlgorithm) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+        SecretKey keyInstance = new SecretKeySpec(keyData, keyAlgorithm);
+        Cipher cipher = Cipher.getInstance(cryptoAlgorithm);
         cipher.init(Cipher.DECRYPT_MODE, keyInstance);
         return cipher.doFinal(data);
     }
