@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion '24.0.3'
+    compileSdkVersion 25
+    buildToolsVersion '25.0.2'
 
     defaultConfig {
         applicationId "sviolet.demoaimageloader"
         minSdkVersion 11
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 3
         versionName "3.4.161213"
 
@@ -61,7 +61,7 @@ dependencies {
     compile project(':turquoise')
     compile project(':turquoise.imageloader')
     compile project(':turquoise.imageloader.plugin')
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:recyclerview-v7:24.2.1'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:recyclerview-v7:25.1.0'
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
 }
