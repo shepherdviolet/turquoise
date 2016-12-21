@@ -22,6 +22,7 @@ package sviolet.turquoise.x.imageloader.handler.common;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.util.bitmap.BitmapUtils;
@@ -36,6 +37,8 @@ import sviolet.turquoise.x.imageloader.server.EngineCallback;
  * Created by S.Violet on 2016/3/22.
  */
 public class EmulateNetworkLoadHandler extends CommonNetworkLoadHandler {
+
+    public static final String EMULATE_URL_PREFIX = "emulate_res_index://";
 
     private int[] resIds;
     private long delay;
@@ -61,18 +64,36 @@ public class EmulateNetworkLoadHandler extends CommonNetworkLoadHandler {
     public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
 
         try {
+            String url = taskInfo.getUrl();
+            if (url != null && url.startsWith(EMULATE_URL_PREFIX)){
+                //specified by url
+                int index = -1;
+                try {
+                    index = Integer.valueOf(url.substring(EMULATE_URL_PREFIX.length()));
+                } catch (Exception ignore){
+                }
+                if (index >= 0 && index < resIds.length){
+                    fetchImage(applicationContext, index, callback);
+                    return;
+                }
+            }
+            //default way
             int currIndex = index.getAndAdd(1) % resIds.length;
-            //emulate delay
-            Thread.sleep(delay);
-            //emulate load
-            Bitmap bitmap = BitmapUtils.decodeFromResource(applicationContext.getResources(), resIds[currIndex], MeasureUtils.getScreenWidth(applicationContext), MeasureUtils.getScreenHeight(applicationContext));
-            byte[] data = BitmapUtils.bitmapToByteArray(bitmap, Bitmap.CompressFormat.JPEG, 70, true);
-            //callback
-            callback.setResultSucceed(new Result(data));
+            fetchImage(applicationContext, currIndex, callback);
         } catch (Exception e) {
             //callback
             callback.setResultFailed(e);
         }
 
+    }
+
+    private void fetchImage(Context context, int index, EngineCallback<Result> callback) throws InterruptedException, IOException {
+        //emulate delay
+        Thread.sleep(delay);
+        //emulate load
+        Bitmap bitmap = BitmapUtils.decodeFromResource(context.getResources(), resIds[index], MeasureUtils.getScreenWidth(context), MeasureUtils.getScreenHeight(context));
+        byte[] data = BitmapUtils.bitmapToByteArray(bitmap, Bitmap.CompressFormat.JPEG, 70, true);
+        //callback
+        callback.setResultSucceed(new Result(data));
     }
 }
