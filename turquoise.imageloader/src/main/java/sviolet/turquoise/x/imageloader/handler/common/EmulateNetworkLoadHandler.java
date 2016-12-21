@@ -23,6 +23,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.util.bitmap.BitmapUtils;
@@ -40,24 +42,49 @@ public class EmulateNetworkLoadHandler extends CommonNetworkLoadHandler {
 
     public static final String EMULATE_URL_PREFIX = "emulate_res_index://";
 
-    private int[] resIds;
     private long delay;
+    private Map<String, Integer> urls;
+    private int[] resIds;
     private AtomicInteger index = new AtomicInteger(0);
 
     /**
-     * @param resIds picture resource id
+     * set url "emulate_res_index://1" to specify the index of image
+     *
      * @param delay load delay, >=100ms
+     * @param resIds picture resource id
      */
-    public EmulateNetworkLoadHandler(int[] resIds, long delay) {
+    public EmulateNetworkLoadHandler(long delay, int[] resIds) {
+        this(delay, null, resIds);
+    }
+
+    /**
+     * urls and resIds are corresponding one by one
+     *
+     * @param delay load delay, >=100ms
+     * @param urls url of images
+     * @param resIds picture resource id
+     */
+    public EmulateNetworkLoadHandler(long delay, String[] urls, int[] resIds) {
+        if (delay < 100){
+            throw new RuntimeException("[EmulateNetworkLoadHandler]delay must >= 100ms");
+        }
         if (resIds == null || resIds.length <= 0){
             throw new RuntimeException("[EmulateNetworkLoadHandler]resIds is null or empty");
         }
-        if (delay < 100){
-            throw new RuntimeException("[EmulateNetworkLoadHandler]delay must >= 100ms");
+        if (urls != null && urls.length != resIds.length){
+            throw new RuntimeException("[EmulateNetworkLoadHandler]length of urls must equals resIds's");
         }
 
         this.resIds = resIds;
         this.delay = delay;
+
+        if (urls != null){
+            this.urls = new HashMap<>(urls.length);
+            int index = 0;
+            for (String url : urls){
+                this.urls.put(url, index++);
+            }
+        }
     }
 
     @Override
@@ -65,8 +92,16 @@ public class EmulateNetworkLoadHandler extends CommonNetworkLoadHandler {
 
         try {
             String url = taskInfo.getUrl();
-            if (url != null && url.startsWith(EMULATE_URL_PREFIX)){
-                //specified by url
+            if (this.urls != null) {
+                //url link resId mode
+                Integer index = this.urls.get(url);
+                if (index != null && index >= 0 && index < resIds.length){
+                    fetchImage(applicationContext, index, callback);
+                    logger.d("[EmulateNetworkLoadHandler]fetched image by url:" + url + " to index:" + index + ", task:" + taskInfo);
+                    return;
+                }
+            } else if (url != null && url.startsWith(EMULATE_URL_PREFIX)){
+                //index specified by url mode
                 int index = -1;
                 try {
                     index = Integer.valueOf(url.substring(EMULATE_URL_PREFIX.length()));
@@ -74,15 +109,18 @@ public class EmulateNetworkLoadHandler extends CommonNetworkLoadHandler {
                 }
                 if (index >= 0 && index < resIds.length){
                     fetchImage(applicationContext, index, callback);
+                    logger.d("[EmulateNetworkLoadHandler]fetched image by index:" + index + ", task:" + taskInfo);
                     return;
                 }
             }
             //default way
             int currIndex = index.getAndAdd(1) % resIds.length;
             fetchImage(applicationContext, currIndex, callback);
+            logger.d("[EmulateNetworkLoadHandler]fetched image randomly" + ", task:" + taskInfo);
         } catch (Exception e) {
             //callback
             callback.setResultFailed(e);
+            logger.d("[EmulateNetworkLoadHandler]fetched image failed" + ", task:" + taskInfo);
         }
 
     }
