@@ -237,21 +237,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
                 this.downX = currX;
                 this.downY = currY;
                 this.lastY = currY;
-
-                if (scrollY == 0) {
-                    //没有越界, 普通持有模式
-                    stateToHold();
-                    //事件分发给子控件处理
-                    return super.dispatchTouchEvent(ev);
-                } else if (scrollY > 0){
-                    //上方越界
-                    stateToTopOverDrag();
-                    return true;
-                } else {
-                    //下方越界
-                    stateToBottomOverDrag();
-                    return true;
-                }
+                //持有状态
+                stateToHold();
+                //事件分发给子控件处理
+                return super.dispatchTouchEvent(ev);
             case MotionEvent.ACTION_POINTER_DOWN:
                 if (this.state == STATE_HOLD || this.state == STATE_HORIZONTAL_DRAG){
                     return super.dispatchTouchEvent(ev);
@@ -273,7 +262,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             }
                         }
                         //判断状态
-                        if (reachState.reachTop() && distanceY > 0 && currY - downY > mTouchSlop){
+                        if (currY - downY > mTouchSlop && distanceY > 0
+                                && (reachState.reachTop() || scrollY < 0)){
                             /**
                              * 子控件到达顶部, 且继续向下拉动
                              */
@@ -290,7 +280,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             //模拟取消事件给子控件
                             MotionEventUtils.emulateCancelEvent(ev, emulateMotionEventExecutor);
                             return true;
-                        } else if (reachState.reachBottom() && distanceY < 0 && currY - downY < -mTouchSlop){
+                        } else if (currY - downY < -mTouchSlop && distanceY < 0
+                                && (reachState.reachBottom() || scrollY > 0 )){
                             /**
                              * 子控件到达底部, 且继续向上拉动
                              */
@@ -389,7 +380,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                 switch (lastState){
                     case STATE_TOP_OVER_DRAG:
                         if (!isCancel) {
-                            if (topParkEnabled && scrollY > overDragThreshold) {
+                            if (topParkEnabled && scrollY >= overDragThreshold) {
                                 if (!topParked) {
                                     /**
                                      * (1) 返回true时, 表明接受了该事件, 容器进入顶部PARK状态, 并阻断后续触发的顶部PARK事件(不管怎么
@@ -422,7 +413,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                         return true;
                     case STATE_BOTTOM_OVER_DRAG:
                         if (!isCancel) {
-                            if (bottomParkEnabled && scrollY < -overDragThreshold) {
+                            if (bottomParkEnabled && scrollY <= -overDragThreshold) {
                                 if (!bottomParked) {
                                     /**
                                      * (1) 返回true时, 表明接受了该事件, 容器进入底部PARK状态, 并阻断后续触发的底部PARK事件(不管怎么
@@ -457,6 +448,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
                     case STATE_HORIZONTAL_DRAG:
                     case STATE_RELEASE:
                     default:
+                        if (scrollY != 0){
+                            //弹回PARK位置
+                            free(false);
+                        }
                         return super.dispatchTouchEvent(ev);
                 }
         }
@@ -541,7 +536,13 @@ public class VerticalOverDragContainer extends RelativeLayout {
      */
 
     private void scrollByOffset(float offset){
-        scrollY += offset;
+        float result = scrollY + offset;
+        if ((result > 0 && scrollY < 0) || (result < 0 && scrollY > 0)){
+            //正反方向变换时, 必须先变为0
+            scrollY = 0;
+        }else{
+            scrollY = result;
+        }
         postInvalidate();
         callbackScroll();
     }
