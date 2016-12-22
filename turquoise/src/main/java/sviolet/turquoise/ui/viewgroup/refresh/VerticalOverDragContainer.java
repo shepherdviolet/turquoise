@@ -262,8 +262,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             }
                         }
                         //判断状态
-                        if (currY - downY > mTouchSlop && distanceY > 0
-                                && (reachState.reachTop() || scrollY < 0)){
+                        if ((currY - downY > mTouchSlop && distanceY > 0 && reachState.reachTop())
+                                || (currY - downY < -mTouchSlop && distanceY < 0 && scrollY > 0)){
                             /**
                              * 子控件到达顶部, 且继续向下拉动
                              */
@@ -280,8 +280,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             //模拟取消事件给子控件
                             MotionEventUtils.emulateCancelEvent(ev, emulateMotionEventExecutor);
                             return true;
-                        } else if (currY - downY < -mTouchSlop && distanceY < 0
-                                && (reachState.reachBottom() || scrollY > 0 )){
+                        } else if ((currY - downY < -mTouchSlop && distanceY < 0 && reachState.reachBottom())
+                                || (currY - downY > mTouchSlop && distanceY > 0 && scrollY < 0)){
                             /**
                              * 子控件到达底部, 且继续向上拉动
                              */
