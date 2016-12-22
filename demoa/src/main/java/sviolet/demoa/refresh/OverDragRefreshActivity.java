@@ -129,6 +129,16 @@ public class OverDragRefreshActivity extends TActivity {
             public void setContainer(VerticalOverDragContainer container) {
                 //一般用于实现下拉刷新/上拉加载指示器, 容器控件会将自己通过该方法传递给指示器控件, 便于回调
             }
+
+            @Override
+            public void onTopParkAutoReset() {
+                //长时间没重置状态, 容器会自动重置, 通过该方法通知指示器
+            }
+
+            @Override
+            public void onBottomParkAutoReset() {
+                //长时间没重置状态, 容器会自动重置, 通过该方法通知指示器
+            }
         });
     }
 

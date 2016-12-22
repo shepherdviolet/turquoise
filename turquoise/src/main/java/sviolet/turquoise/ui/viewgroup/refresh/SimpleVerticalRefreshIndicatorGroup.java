@@ -147,6 +147,22 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
     }
 
     @Override
+    public void onTopParkAutoReset() {
+        if (type == TYPE_TOP_STATIC || type == TYPE_IN_FROM_TOP){
+            //容器自动重置时, 重置指示器状态
+            reset(false);
+        }
+    }
+
+    @Override
+    public void onBottomParkAutoReset() {
+        if (type == TYPE_BOTTOM_STATIC || type == TYPE_IN_FROM_BOTTOM){
+            //容器自动重置时, 重置指示器状态
+            reset(false);
+        }
+    }
+
+    @Override
     public void onStateChanged(int state) {
 
     }

@@ -213,8 +213,6 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             if (container != null) {
                 //在刷新状态时, 将容器的越界拖动阻尼置为0, 容器将无法越界拖动, 相当于冻结了容器
                 container.setOverDragResistance(0);
-                //直接重置容器的PARK状态, 但因为无法拖动, 也就不会再触发PARK事件了
-                container.resetTopPark();
             }
             //回调监听
             if (refreshListener != null){
@@ -245,8 +243,6 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             if (container != null) {
                 //在刷新状态时, 将容器的越界拖动阻尼置为0, 容器将无法越界拖动, 相当于冻结了容器
                 container.setOverDragResistance(0);
-                //直接重置容器的PARK状态, 但因为无法拖动, 也就不会再触发PARK事件了
-                container.resetBottomPark();
             }
             //回调监听
             if (refreshListener != null){
@@ -270,6 +266,22 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             containerOverDragResistance = container.getOverDragResistance();
             //禁用容器的自身滚动
             container.setDisableContainerScroll(true);
+        }
+    }
+
+    @Override
+    public void onTopParkAutoReset() {
+        if (type == TYPE_TOP){
+            //容器自动重置时, 重置指示器状态
+            reset();
+        }
+    }
+
+    @Override
+    public void onBottomParkAutoReset() {
+        if (type == TYPE_BOTTOM){
+            //容器自动重置时, 重置指示器状态
+            reset();
         }
     }
 
@@ -381,6 +393,11 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             scroller.startScroll(0, scrollY, 0, -scrollY, scrollDuration);
             VerticalOverDragContainer container = getContainer();
             if (container != null) {
+                if (type == TYPE_TOP){
+                    container.resetTopPark();
+                } else {
+                    container.resetBottomPark();
+                }
                 //恢复越界阻尼
                 container.setOverDragResistance(containerOverDragResistance);
             }

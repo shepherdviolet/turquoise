@@ -133,6 +133,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
     //true:精确模拟ACTION_DOWN事件(分发给子控件)
     private boolean preciseTouchEmulate = true;
 
+    private long autoResetDelay = 120000;//当长时间没有归位时, 自动归位
+
     //监听器
     private List<RefreshIndicator> refreshIndicatorList;
 
@@ -404,6 +406,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                                     if (callbackTopPark()){
                                         //弹回PARK位置
                                         free(false);
+                                        //长时间没归位时, 自动归位
+                                        myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_RESET_TOP_PARK_AUTO, autoResetDelay);
                                         return true;
                                     } else {
                                         //若回调返回false, 则解除PARK状态
@@ -413,8 +417,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                                 }
                             }
                         }
-                        //弹回0位置
-                        free(true);
+                        //弹回PARK位置
+                        free(false);
                         return true;
                     case STATE_BOTTOM_OVER_DRAG:
                         if (!isCancel) {
@@ -435,6 +439,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                                     if (callbackBottomPark()){
                                         //弹回PARK位置
                                         free(false);
+                                        //长时间没归位时, 自动归位
+                                        myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_RESET_BOTTOM_PARK_AUTO, autoResetDelay);
                                         return true;
                                     } else {
                                         //若回调返回false, 则解除PARK状态
@@ -444,8 +450,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
                                 }
                             }
                         }
-                        //弹回0位置
-                        free(true);
+                        //弹回PARK位置
+                        free(false);
                         return true;
                     case STATE_HOLD:
                     case STATE_HORIZONTAL_DRAG:
@@ -591,6 +597,22 @@ public class VerticalOverDragContainer extends RelativeLayout {
         return result;
     }
 
+    private void callbackTopParkAutoReset() {
+        if (refreshIndicatorList != null){
+            for (RefreshIndicator refreshIndicator : refreshIndicatorList){
+                refreshIndicator.onTopParkAutoReset();
+            }
+        }
+    }
+
+    private void callbackBottomParkAutoReset() {
+        if (refreshIndicatorList != null){
+            for (RefreshIndicator refreshIndicator : refreshIndicatorList){
+                refreshIndicator.onBottomParkAutoReset();
+            }
+        }
+    }
+
     /*************************************************************************
      * public
      */
@@ -600,6 +622,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
      * 在发生PARK事件后, 进行刷新流程, 刷新结束后, 必须调用该方法, 重置状态, 在重置状态前, 容器将不会再触发PARK事件.
      */
     public void resetTopPark(){
+        //清除自动归位消息
+        myHandler.removeMessages(MyHandler.HANDLER_RESET_TOP_PARK_AUTO);
+        //归位
         myHandler.sendEmptyMessage(MyHandler.HANDLER_RESET_TOP_PARK);
     }
 
@@ -608,6 +633,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
      * 在发生PARK事件后, 进行刷新流程, 刷新结束后, 必须调用该方法, 重置状态, 在重置状态前, 容器将不会再触发PARK事件.
      */
     public void resetBottomPark(){
+        //清除自动归位消息
+        myHandler.removeMessages(MyHandler.HANDLER_RESET_BOTTOM_PARK_AUTO);
+        //归位
         myHandler.sendEmptyMessage(MyHandler.HANDLER_RESET_BOTTOM_PARK);
     }
 
@@ -731,6 +759,13 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
     public float getOverDragResistance() {
         return overDragResistance;
+    }
+
+    public void setAutoResetDelay(long delay){
+        if (delay <= 0){
+            throw new RuntimeException("auto reset delay must > 0");
+        }
+        this.autoResetDelay = delay;
     }
 
     /*************************************************************************
@@ -895,6 +930,16 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
         void setContainer(VerticalOverDragContainer container);
 
+        /**
+         * 若触发顶部PARK事件后, 长时间没有重置状态, 容器会自动重置, 并回调指示器的这个方法通知
+         */
+        void onTopParkAutoReset();
+
+        /**
+         * 若触发底部PARK事件后, 长时间没有重置状态, 容器会自动重置, 并回调指示器的这个方法通知
+         */
+        void onBottomParkAutoReset();
+
     }
 
     /***********************************************************************************
@@ -907,6 +952,8 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
         private static final int HANDLER_RESET_TOP_PARK = 0;
         private static final int HANDLER_RESET_BOTTOM_PARK = 1;
+        private static final int HANDLER_RESET_TOP_PARK_AUTO = 2;
+        private static final int HANDLER_RESET_BOTTOM_PARK_AUTO = 3;
 
         public MyHandler(Looper looper, VerticalOverDragContainer host) {
             super(looper, host);
@@ -915,10 +962,14 @@ public class VerticalOverDragContainer extends RelativeLayout {
         @Override
         protected void handleMessageWithHost(Message msg, VerticalOverDragContainer host) {
             switch (msg.what){
+                case HANDLER_RESET_TOP_PARK_AUTO://顶部长时间未归位, 自动归位
+                    host.callbackTopParkAutoReset();
                 case HANDLER_RESET_TOP_PARK://顶部PARK归位
                     host.topParked = false;
                     host.free(true);
                     break;
+                case HANDLER_RESET_BOTTOM_PARK_AUTO://底部长时间未归位, 自动归位
+                    host.callbackBottomParkAutoReset();
                 case HANDLER_RESET_BOTTOM_PARK://底部PARK归位
                     host.bottomParked = false;
                     host.free(true);
