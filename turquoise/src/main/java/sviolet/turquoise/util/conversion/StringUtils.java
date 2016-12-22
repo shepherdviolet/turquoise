@@ -78,6 +78,8 @@ public class StringUtils {
      * @return 全角字符串
      */
     public static String toSBCCase(String src) {
+        if (src == null)
+            return null;
         char[] charArray = src.toCharArray();
         for (int i = 0; i< charArray.length; i++) {
             if (charArray[i] == 12288) {
@@ -93,6 +95,9 @@ public class StringUtils {
      * 把异常转为String信息
      */
     public static String throwableToString(Throwable throwable) {
+        if (throwable == null){
+            return null;
+        }
         Writer writer = new StringWriter();
         PrintWriter printWriter = new PrintWriter(writer);
         throwable.printStackTrace(printWriter);
@@ -106,6 +111,9 @@ public class StringUtils {
      * @return Spanned
      */
     public static Spanned toHtmlSpanned(String stringWithHtmlTags){
+        if (stringWithHtmlTags == null){
+            return null;
+        }
         return Html.fromHtml(stringWithHtmlTags);
     }
 
@@ -115,6 +123,9 @@ public class StringUtils {
      * @return String
      */
     public static String trimHtmlTags(String stringWithHtmlTags){
+        if (stringWithHtmlTags == null){
+            return null;
+        }
         return Html.fromHtml(stringWithHtmlTags).toString();
     }
 
@@ -124,6 +135,9 @@ public class StringUtils {
      * <p>例如:"马特&#8226;达蒙"转为"马特•达蒙"</p>
      */
     public static String decodeDecUnicode(String string){
+        if (string == null){
+            return null;
+        }
         Matcher matcher = Pattern.compile(DECODE_DEC_UNICODE_REGEXP).matcher(string);
         StringBuffer stringBuffer = new StringBuffer();
         while (matcher.find()) {
