@@ -19,15 +19,22 @@
 
 package sviolet.turquoise.util.conversion;
 
+import android.text.Html;
+import android.text.Spanned;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 字符串工具
  * Created by S.Violet on 2015/12/22.
  */
 public class StringUtils {
+
+    private static final String DECODE_DEC_UNICODE_REGEXP = "&#\\d*;";
 
     /**
      * 将字符串指定位置变为大写(字母)
@@ -91,6 +98,42 @@ public class StringUtils {
         throwable.printStackTrace(printWriter);
         printWriter.close();
         return writer.toString();
+    }
+
+    /**
+     * 将包含HTML标签的String, 转为Spanned对象, 使得TextView可以显示HTML格式的文字
+     * @param stringWithHtmlTags 包含HTML标签的String
+     * @return Spanned
+     */
+    public static Spanned toHtmlSpanned(String stringWithHtmlTags){
+        return Html.fromHtml(stringWithHtmlTags);
+    }
+
+    /**
+     * 去除String中的HTML标签
+     * @param stringWithHtmlTags 包含HTML标签的String
+     * @return String
+     */
+    public static String trimHtmlTags(String stringWithHtmlTags){
+        return Html.fromHtml(stringWithHtmlTags).toString();
+    }
+
+    /**
+     * <p>将包含十进制Unicode编码的String, 转为普通编码的String</p>
+     *
+     * <p>例如:"马特&#8226;达蒙"转为"马特•达蒙"</p>
+     */
+    public static String decodeDecUnicode(String string){
+        Matcher matcher = Pattern.compile(DECODE_DEC_UNICODE_REGEXP).matcher(string);
+        StringBuffer stringBuffer = new StringBuffer();
+        while (matcher.find()) {
+            String s = matcher.group(0);
+            s = s.replaceAll("(&#)|;", "");
+            char c = (char) Integer.parseInt(s);
+            matcher.appendReplacement(stringBuffer, Character.toString(c));
+        }
+        matcher.appendTail(stringBuffer);
+        return stringBuffer.toString();
     }
 
 }
