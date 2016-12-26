@@ -46,6 +46,11 @@ public class SpecialResourceId {
          */
         public static final int TILoaderStub = 0xfff77f02;
 
+        /**
+         * 用于RecyclingPagerAdatper在View上记录
+         */
+        public static final int RecyclingPagerAdatperPosition = 0xfff77f03;
+
     }
 
 }

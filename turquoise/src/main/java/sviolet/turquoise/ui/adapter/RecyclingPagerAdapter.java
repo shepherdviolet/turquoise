@@ -5,6 +5,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import sviolet.turquoise.common.statics.SpecialResourceId;
+
 /**
  * <p>A {@link PagerAdapter} which behaves like an {@link android.widget.Adapter} with view types and
  * view recycling.</p>
@@ -18,6 +23,9 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
     protected static final int IGNORE_ITEM_VIEW_TYPE = AdapterView.ITEM_VIEW_TYPE_IGNORE;
 
     private final RecycleBin recycleBin;
+
+    private Set<Integer> activePositionSet = new HashSet<>();//当前有效的Item集合
+    private Set<Integer> refreshPositionSet = new HashSet<>();//需要刷新的Item集合
 
     public RecyclingPagerAdapter() {
         this(new RecycleBin());
@@ -34,6 +42,23 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
         super.notifyDataSetChanged();
     }
 
+    /**
+     * PagerAdapter通常用notifyDataSetChanged是不会刷新的, 需要用该方法实现刷新
+     * @param page 指定刷新的页码
+     */
+    public void refresh(int page){
+        refreshPositionSet.add(page);
+        notifyDataSetChanged();
+    }
+
+    /**
+     * PagerAdapter通常用notifyDataSetChanged是不会刷新的, 需要用该方法实现刷新(全部刷新)
+     */
+    public void refreshAll(){
+        refreshPositionSet.addAll(activePositionSet);
+        notifyDataSetChanged();
+    }
+
     @Override
     public final Object instantiateItem(ViewGroup container, int position) {
         //view type
@@ -45,6 +70,8 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
         }
         view = getView(position, view, container);
         container.addView(view);
+        view.setTag(SpecialResourceId.ViewTag.RecyclingPagerAdatperPosition, position);//记录position
+        activePositionSet.add(position);//塞入有效Item集合
         return view;
     }
 
@@ -58,6 +85,7 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
         if (viewType != IGNORE_ITEM_VIEW_TYPE) {
             recycleBin.addScrapView(view, position, viewType);
         }
+        activePositionSet.remove(position);//从有效Item集合中移除
     }
 
     @Override
@@ -121,4 +149,19 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
      * @return A View corresponding to the data at the specified position.
      */
     public abstract View getView(int position, View convertView, ViewGroup container);
+
+    @Override
+    public int getItemPosition(Object object) {
+        if (object instanceof View) {
+            Object tag = ((View) object).getTag(SpecialResourceId.ViewTag.RecyclingPagerAdatperPosition);
+            if (tag instanceof Integer) {
+                //在刷新集合中的Item, 需要重建
+                if (refreshPositionSet.remove(tag)){
+                    return POSITION_NONE;
+                }
+            }
+        }
+        //其他Item不需要重建
+        return super.getItemPosition(object);
+    }
 }
