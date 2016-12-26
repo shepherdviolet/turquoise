@@ -71,6 +71,9 @@ public class LineIndicatorTabViewHelper {
 
             @Override
             public void onPageChanged(int page, View child, boolean byClick) {
+                if (child == null){
+                    return;
+                }
                 //将前一个Item置为未选中颜色
                 if (lastTextView != null) {
                     TextView lastTextViewInstance = lastTextView.get();
