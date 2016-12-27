@@ -51,6 +51,8 @@ public class LineIndicatorTabViewHelper {
     private int layoutId;
     private int textId;
 
+    private OnPageChangedListener mOnPageChangedListener;
+
     private List<View> viewCache = new ArrayList<>(4);
 
     /**
@@ -87,6 +89,10 @@ public class LineIndicatorTabViewHelper {
                     ((TextView) tag).setTextColor(textColorSelected);
                     //记录当前Item
                     this.lastTextView = new WeakReference<>((TextView) tag);
+                }
+
+                if (mOnPageChangedListener != null){
+                    mOnPageChangedListener.onPageChanged(page);
                 }
             }
         });
@@ -172,6 +178,19 @@ public class LineIndicatorTabViewHelper {
         } catch (Exception e) {
             throw new RuntimeException("[LineIndicatorTabViewHelper]error while inflate item view", e);
         }
+
+    }
+
+    /**
+     * 设置翻页监听
+     */
+    public void setOnPageChangedListener(OnPageChangedListener mOnPageChangedListener) {
+        this.mOnPageChangedListener = mOnPageChangedListener;
+    }
+
+    public interface OnPageChangedListener{
+
+        void onPageChanged(int page);
 
     }
 
