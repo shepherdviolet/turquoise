@@ -270,9 +270,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             //上边越界
                             stateToTopOverDrag();
                             //越界阻尼
-                            if (!topParked && scrollY >= 0 && distanceY > 0){
-                                distanceY = distanceY * overDragResistance;
-                            } else if (topParked && scrollY >= overDragThreshold && distanceY > 0){
+                            if (scrollY >= 0 && distanceY > 0){
                                 distanceY = distanceY * overDragResistance;
                             }
                             //越界滚动
@@ -288,9 +286,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             //下边越界
                             stateToBottomOverDrag();
                             //越界阻尼
-                            if (!bottomParked && scrollY <= 0 && distanceY < 0){
-                                distanceY = distanceY * overDragResistance;
-                            } else if (bottomParked && scrollY <= -overDragThreshold && distanceY < 0){
+                            if (scrollY <= 0 && distanceY < 0){
                                 distanceY = distanceY * overDragResistance;
                             }
                             //越界滚动
