@@ -43,7 +43,21 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
     }
 
     /**
-     * PagerAdapter通常用notifyDataSetChanged是不会刷新的, 需要用该方法实现刷新
+     * <p>刷新指定页面, PagerAdapter通常用notifyDataSetChanged是不会刷新的, 需要用该方法实现</p>
+     *
+     * <p>NOTE:如果ViewPager设置了PageTransformer, 刷新时View是从RecycleBin中获取的, View会保持
+     * 缩放等状态, 导致刷新后动画状态错乱, 而PageTransformer只有在滚动时才会执行计算.
+     * 强制让ViewPager滚动即可解决该问题, 方法如下:</p>
+     *
+     * <pre>{@code
+     *      //刷新显示
+     *      viewPagerAdapter.refreshAll();
+     *      //先设置当前Item为第一个或最后一个
+     *      viewPager.setCurrentItem(position > 0 ? 0 : Integer.MAX_VALUE, false);
+     *      //滚动到指定Item
+     *      viewPager.setCurrentItem(position, true);
+     * }</pre>
+     *
      * @param page 指定刷新的页码
      */
     public void refresh(int page){
@@ -52,11 +66,43 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
     }
 
     /**
-     * PagerAdapter通常用notifyDataSetChanged是不会刷新的, 需要用该方法实现刷新(全部刷新)
+     * <p>刷新全部页面, PagerAdapter通常用notifyDataSetChanged是不会刷新的, 需要用该方法实现</p>
+     *
+     * <p>NOTE:如果ViewPager设置了PageTransformer, 刷新时View是从RecycleBin中获取的, View会保持
+     * 缩放等状态, 导致刷新后动画状态错乱, 而PageTransformer只有在滚动时才会执行计算.
+     * 强制让ViewPager滚动即可解决该问题, 方法如下:</p>
+     *
+     * <pre>{@code
+     *      //刷新显示
+     *      viewPagerAdapter.refreshAll();
+     *      //先设置当前Item为第一个或最后一个
+     *      viewPager.setCurrentItem(position > 0 ? 0 : Integer.MAX_VALUE, false);
+     *      //滚动到指定Item
+     *      viewPager.setCurrentItem(position, true);
+     * }</pre>
+     *
      */
     public void refreshAll(){
         refreshPositionSet.addAll(activePositionSet);
         notifyDataSetChanged();
+    }
+
+    /**
+     * 实现了刷新指定Item
+     */
+    @Override
+    public int getItemPosition(Object object) {
+        if (object instanceof View) {
+            Object tag = ((View) object).getTag(SpecialResourceId.ViewTag.RecyclingPagerAdatperPosition);
+            if (tag instanceof Integer) {
+                //在刷新集合中的Item, 需要重建
+                if (refreshPositionSet.remove(tag)){
+                    return POSITION_NONE;
+                }
+            }
+        }
+        //其他Item不需要重建
+        return super.getItemPosition(object);
     }
 
     @Override
@@ -150,18 +196,4 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
      */
     public abstract View getView(int position, View convertView, ViewGroup container);
 
-    @Override
-    public int getItemPosition(Object object) {
-        if (object instanceof View) {
-            Object tag = ((View) object).getTag(SpecialResourceId.ViewTag.RecyclingPagerAdatperPosition);
-            if (tag instanceof Integer) {
-                //在刷新集合中的Item, 需要重建
-                if (refreshPositionSet.remove(tag)){
-                    return POSITION_NONE;
-                }
-            }
-        }
-        //其他Item不需要重建
-        return super.getItemPosition(object);
-    }
 }
