@@ -791,7 +791,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
         int currScrollY = (int) scrollY;
         //计算弹回目标
         int target = 0;
-        if (forceToZero){
+        if (forceToZero || disableContainerScroll){
             //do nothing
         } else if (topParkEnabled && currScrollY > 0){
             if (topParked) {
