@@ -48,10 +48,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * Bitmap工具<br/>
- * <Br/>
- * Bitmap解码/编辑/转换工具, 不含回收缓存功能, 需要回收功能使用:<br/>
- * {@link CachedBitmapUtils}
+ * <p>Bitmap工具</p>
+ *
+ * <p>Bitmap解码/编辑/转换工具, 不含回收缓存功能, 需要回收功能使用:{@link CachedBitmapUtils}</p>
+ *
+ * <p>加载超大图且局部显示请使用BitmapRegionDecoder</p>
  *
  * @author S.Violet
  */
