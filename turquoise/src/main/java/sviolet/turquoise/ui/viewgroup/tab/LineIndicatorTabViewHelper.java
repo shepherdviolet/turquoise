@@ -154,7 +154,7 @@ public class LineIndicatorTabViewHelper {
         }
 
         //显示指定页
-        lineIndicatorTabView.setToPage(initPage);
+        lineIndicatorTabView.setToPageWithCallback(initPage);
 
     }
 

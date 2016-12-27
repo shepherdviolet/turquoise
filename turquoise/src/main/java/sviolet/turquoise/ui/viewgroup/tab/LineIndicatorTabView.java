@@ -255,6 +255,16 @@ public class LineIndicatorTabView extends HorizontalScrollView {
     }
 
     /**
+     * 直接设置到指定页码(无动画, 有回调)
+     * @param page
+     */
+    public void setToPageWithCallback(int page){
+        moveToPage(page);
+        //回调
+        callbackPageChanged((int) this.currPage, false);
+    }
+
+    /**
      * ViewPager等通过此方法来控制TabView滚动
      * @param page 当前页码数
      */
@@ -307,6 +317,8 @@ public class LineIndicatorTabView extends HorizontalScrollView {
      * @param byClick true:TabView上的点击事件引起的滚动
      */
     private void scrollToPageInner(int page, boolean byClick) {
+        page = (int) limitPage(page);
+
         //滚动Items
         View currentView = container.getChildAt(page);
         View nextView = container.getChildAt(page + 1);//右边一个Item
