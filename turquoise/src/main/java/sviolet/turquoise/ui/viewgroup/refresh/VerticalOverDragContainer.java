@@ -641,6 +641,16 @@ public class VerticalOverDragContainer extends RelativeLayout {
     }
 
     /**
+     * 越界拖动归位(不重置PARK状态)
+     * @param forceToZero true:强制回到初始位置
+     */
+    void resetScrollOnly(boolean forceToZero){
+        Message message = myHandler.obtainMessage(MyHandler.HANDLER_RESET_SCROLL_ONLY);
+        message.obj = forceToZero;
+        myHandler.sendMessage(message);
+    }
+
+    /**
      * 获取滚动子控件
      */
     protected View getScrollChild(){
@@ -955,6 +965,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
         private static final int HANDLER_RESET_BOTTOM_PARK = 1;
         private static final int HANDLER_RESET_TOP_PARK_AUTO = 2;
         private static final int HANDLER_RESET_BOTTOM_PARK_AUTO = 3;
+        private static final int HANDLER_RESET_SCROLL_ONLY = 4;
 
         public MyHandler(Looper looper, VerticalOverDragContainer host) {
             super(looper, host);
@@ -974,6 +985,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
                 case HANDLER_RESET_BOTTOM_PARK://底部PARK归位
                     host.bottomParked = false;
                     host.free(true);
+                    break;
+                case HANDLER_RESET_SCROLL_ONLY:
+                    host.free(msg.obj == (Boolean)true);
                     break;
                 default:
                     break;
