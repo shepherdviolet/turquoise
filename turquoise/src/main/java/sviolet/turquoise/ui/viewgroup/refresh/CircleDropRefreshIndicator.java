@@ -85,8 +85,6 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     private int scrollY = 0;//Y方向滚动位置
     private int rotateAngle = 0;//进度条旋转角度
 
-    private float containerOverDragResistance;//暂存容器越界阻尼
-
     private WeakReference<VerticalOverDragContainer> container;//暂存容器
 
     private Paint shadowPaint;
@@ -209,11 +207,6 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             scroller.abortAnimation();
             //滚动到刷新位置
             scroller.startScroll(0, scrollY, 0, getContainerOverDragThreshold() - scrollY, scrollDuration);
-            VerticalOverDragContainer container = getContainer();
-            if (container != null) {
-                //在刷新状态时, 将容器的越界拖动阻尼置为0, 容器将无法越界拖动, 相当于冻结了容器
-                container.setOverDragResistance(0);
-            }
             //回调监听
             if (refreshListener != null){
                 refreshListener.onRefresh();
@@ -239,11 +232,6 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             scroller.abortAnimation();
             //滚动到刷新位置
             scroller.startScroll(0, scrollY, 0, -getContainerOverDragThreshold() - scrollY, scrollDuration);
-            VerticalOverDragContainer container = getContainer();
-            if (container != null) {
-                //在刷新状态时, 将容器的越界拖动阻尼置为0, 容器将无法越界拖动, 相当于冻结了容器
-                container.setOverDragResistance(0);
-            }
             //回调监听
             if (refreshListener != null){
                 refreshListener.onRefresh();
@@ -261,12 +249,6 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     @Override
     public void setContainer(VerticalOverDragContainer container) {
         this.container = new WeakReference<>(container);
-        if (container != null){
-            //记录容器的越界拖动阻尼
-            containerOverDragResistance = container.getOverDragResistance();
-            //禁用容器的自身滚动
-            container.setDisableContainerScroll(true);
-        }
     }
 
     @Override
@@ -398,8 +380,6 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
                 } else {
                     container.resetBottomPark();
                 }
-                //恢复越界阻尼
-                container.setOverDragResistance(containerOverDragResistance);
             }
             postInvalidate();
         }
