@@ -42,6 +42,13 @@ public class AsyncWaiter <T> implements Destroyable {
     private final Condition condition = lock.newCondition();
 
     /**
+     * 无限等待
+     */
+    public AsyncWaiter() {
+        this(0);
+    }
+
+    /**
      * @param timeout 超时时间(ms), 该参数<=0时无限等待
      */
     public AsyncWaiter(long timeout) {
