@@ -77,7 +77,7 @@ import sviolet.turquoise.util.droid.MotionEventUtils;
  *          android:layout_height="match_parent"
  *          sviolet:VerticalOverDragContainer_overDragThreshold="70dp"
  *          sviolet:VerticalOverDragContainer_overDragResistance="0.4"
- *          sviolet:VerticalOverDragContainer_scrollDuration="300"
+ *          sviolet:VerticalOverDragContainer_scrollDuration="700"
  *          sviolet:VerticalOverDragContainer_topParkEnabled="true"
  *          sviolet:VerticalOverDragContainer_bottomParkEnabled="false"
  *          sviolet:VerticalOverDragContainer_disableIfHorizontalDrag="false">
@@ -120,7 +120,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private float overDragResistance = 0.4f;
 
     //scroller的回弹时间
-    private int scrollDuration = 300;
+    private int scrollDuration = 700;
 
     //顶部PARK允许
     private boolean topParkEnabled = false;
@@ -204,7 +204,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.VerticalOverDragContainer);
         setOverDragThreshold(typedArray.getDimensionPixelOffset(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_overDragThreshold, MeasureUtils.dp2px(getContext(), 70)));
         setOverDragResistance(typedArray.getFloat(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_overDragResistance, 0.4f));
-        setScrollDuration(typedArray.getInteger(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_scrollDuration, 300));
+        setScrollDuration(typedArray.getInteger(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_scrollDuration, 700));
         setTopParkEnabled(typedArray.getBoolean(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_topParkEnabled, false));
         setBottomParkEnabled(typedArray.getBoolean(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_bottomParkEnabled, false));
         setDisableIfHorizontalDrag(typedArray.getBoolean(R.styleable.VerticalOverDragContainer_VerticalOverDragContainer_disableIfHorizontalDrag, false));
