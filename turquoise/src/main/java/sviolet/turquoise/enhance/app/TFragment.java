@@ -111,7 +111,7 @@ public abstract class TFragment extends Fragment {
         if (!hidden){
             visibility = true;
             //lazy load if call onHiddenChanged with false params
-            if (!lazyLoaded) {
+            if (!lazyLoaded && viewInitialized) {
                 lazyLoad();
             }
         } else {
