@@ -42,4 +42,5 @@
     sviolet:CircleDropRefreshIndicator_progressWidth="1dp"
     sviolet:CircleDropRefreshIndicator_progressSweepAngle="70"
     sviolet:CircleDropRefreshIndicator_progressStepAngle="9"
-    sviolet:CircleDropRefreshIndicator_scrollDuration="700"/>
+    sviolet:CircleDropRefreshIndicator_scrollDuration="700"
+    sviolet:CircleDropRefreshIndicator_fadeEnabled="true"/>

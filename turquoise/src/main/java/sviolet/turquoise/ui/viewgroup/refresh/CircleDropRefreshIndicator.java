@@ -74,8 +74,9 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     private int progressWidth = 5;//进度条宽度
     private int progressSweepAngle = 70;//进度条延伸角度
     private int progressStepAngle = 9;//刷新状态时, 进度条滚动速度(每一帧转动的角度)
+    private boolean fadeEnabled = true;//渐入渐出
 
-    private int scrollDuration = 500;//进度条弹回时间
+    private int scrollDuration = 700;//进度条弹回时间
 
     private RefreshListener refreshListener;//刷新监听器
 
@@ -134,7 +135,8 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
         setProgressWidth((int) typedArray.getDimension(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_progressWidth, MeasureUtils.dp2px(getContext(), 1)));
         setProgressSweepAngle(typedArray.getInt(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_progressSweepAngle, 70));
         setProgressStepAngle(typedArray.getInt(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_progressStepAngle, 9));
-        setScrollDuration(typedArray.getInt(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_scrollDuration, 500));
+        setScrollDuration(typedArray.getInt(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_scrollDuration, 700));
+        setFadeEnabled(typedArray.getBoolean(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_fadeEnabled, true));
         typedArray.recycle();
     }
 
@@ -287,6 +289,10 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
 
     @Override
     protected void onDraw(Canvas canvas) {
+        VerticalOverDragContainer container = getContainer();
+        if (container == null){
+            return;
+        }
 
         if (!scroller.isFinished()){
             //滚动状态
@@ -311,6 +317,21 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             case TYPE_BOTTOM://底部进入模式
                 canvas.translate(0, scrollY + getContainerOverDragThreshold());
                 break;
+        }
+
+        if (fadeEnabled){
+            int distance = container.getOverDragThreshold() / 3;
+            int alpha = 255 * (Math.abs(scrollY) - distance)  / (distance * 2);
+            if (alpha < 0){
+                alpha = 0;
+            } else if (alpha > 255){
+                alpha = 255;
+            }
+            shadowPaint.setAlpha(alpha);
+            backgroundPaint.setAlpha(alpha);
+            outlinePaint.setAlpha(alpha);
+            progressBackgroundPaint.setAlpha(alpha);
+            progressPaint.setAlpha(alpha);
         }
 
         if(state == STATE_DRAG){
@@ -554,6 +575,13 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
             throw new RuntimeException("scrollDuration must >= 0");
         }
         this.scrollDuration = scrollDuration;
+    }
+
+    /**
+     * @param fadeEnabled true:渐入渐出, 默认true
+     */
+    public void setFadeEnabled(boolean fadeEnabled){
+        this.fadeEnabled = fadeEnabled;
     }
 
     /****************************************************************

@@ -271,6 +271,8 @@
         <attr name="CircleDropRefreshIndicator_progressStepAngle" format="integer" />
         <!-- 进度条弹回时间 -->
         <attr name="CircleDropRefreshIndicator_scrollDuration" format="integer" />
+        <!-- 渐入渐出效果 -->
+        <attr name="CircleDropRefreshIndicator_fadeEnabled" format="boolean" />
     </declare-styleable>
 
     <!-- sviolet.turquoise.ui.viewgroup.tab.LineIndicatorTabView -->
