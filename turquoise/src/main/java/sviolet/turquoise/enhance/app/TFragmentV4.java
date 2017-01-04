@@ -41,6 +41,9 @@ public abstract class TFragmentV4 extends Fragment {
 
     private View fragmentViewCache;
 
+    private boolean lazyLoaded = false;
+    private boolean visibility = true;
+
     @Nullable
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,6 +72,16 @@ public abstract class TFragmentV4 extends Fragment {
         return fragmentView;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        //reset lazy flag, if cache not enabled
+        if (!fragmentViewCacheEnabled()){
+            lazyLoaded = false;
+            visibility = true;
+        }
+    }
+
     /**
      * 复写该方法实现View的创建, View复用模式下只会调用一次, 非复用模式下, 每次都会调用
      */
@@ -84,5 +97,54 @@ public abstract class TFragmentV4 extends Fragment {
      * <p>false:Fragment默认的机制, 每次attach都会执行onCreateView并创建新的View, 省内存, 但是卡顿</p>
      */
     protected abstract boolean fragmentViewCacheEnabled();
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //lazy load if still visible while onStart
+        if (!lazyLoaded && visibility){
+            lazyLoad();
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (!hidden){
+            visibility = true;
+            //lazy load if call onHiddenChanged with false params
+            if (!lazyLoaded) {
+                lazyLoad();
+            }
+        } else {
+            visibility = false;
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser){
+            visibility = true;
+            //lazy load if call setUserVisibleHint with true params
+            if (!lazyLoaded) {
+                lazyLoad();
+            }
+        } else {
+            visibility = false;
+        }
+    }
+
+    private void lazyLoad(){
+        lazyLoaded = true;
+        onLazyLoad();
+    }
+
+    /**
+     * callback when lazy load
+     */
+    protected void onLazyLoad(){
+
+    }
 
 }
