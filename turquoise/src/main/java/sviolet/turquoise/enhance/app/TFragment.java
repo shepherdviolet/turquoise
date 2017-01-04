@@ -45,6 +45,7 @@ public abstract class TFragment extends Fragment {
     private View fragmentViewCache;
 
     private boolean lazyLoaded = false;
+    private boolean viewInitialized = false;
     private boolean visibility = true;
 
     @Nullable
@@ -58,6 +59,7 @@ public abstract class TFragment extends Fragment {
         if(fragmentView == null){
             fragmentView = InjectUtils.inject(this, inflater, container);
             onInitView(fragmentView, savedInstanceState);
+            viewInitialized = true;
             if (fragmentViewCacheEnabled()){
                 this.fragmentViewCache = fragmentView;
             }
@@ -81,6 +83,7 @@ public abstract class TFragment extends Fragment {
         //reset lazy flag, if cache not enabled
         if (!fragmentViewCacheEnabled()){
             lazyLoaded = false;
+            viewInitialized = false;
             visibility = true;
         }
     }
@@ -130,7 +133,7 @@ public abstract class TFragment extends Fragment {
         if (isVisibleToUser){
             visibility = true;
             //lazy load if call setUserVisibleHint with true params
-            if (!lazyLoaded) {
+            if (!lazyLoaded && viewInitialized) {
                 lazyLoad();
             }
         } else {
