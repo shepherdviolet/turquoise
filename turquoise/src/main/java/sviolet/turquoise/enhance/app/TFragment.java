@@ -42,8 +42,10 @@ import sviolet.turquoise.enhance.app.utils.InjectUtils;
 @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
 public abstract class TFragment extends Fragment {
 
+    //View复用
     private View fragmentViewCache;
 
+    //Lazy Load
     private boolean lazyLoaded = false;
     private boolean viewInitialized = false;
     private boolean visibility = true;
@@ -80,12 +82,62 @@ public abstract class TFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        //Lazy Load
         //reset lazy flag, if cache not enabled
         if (!fragmentViewCacheEnabled()){
             lazyLoaded = false;
             viewInitialized = false;
             visibility = true;
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        //Lazy Load
+        //lazy load if still visible while onStart
+        if (!lazyLoaded && visibility){
+            lazyLoad();
+        }
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        //Lazy Load
+        if (!hidden){
+            visibility = true;
+            //lazy load if call onHiddenChanged with false params
+            if (!lazyLoaded) {
+                lazyLoad();
+            }
+        } else {
+            visibility = false;
+        }
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        //Lazy Load
+        if (isVisibleToUser){
+            visibility = true;
+            //lazy load if call setUserVisibleHint with true params
+            if (!lazyLoaded && viewInitialized) {
+                lazyLoad();
+            }
+        } else {
+            visibility = false;
+        }
+    }
+
+    private void lazyLoad(){
+        lazyLoaded = true;
+        onLazyLoad();
     }
 
     /**
@@ -104,50 +156,8 @@ public abstract class TFragment extends Fragment {
      */
     protected abstract boolean fragmentViewCacheEnabled();
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        //lazy load if still visible while onStart
-        if (!lazyLoaded && visibility){
-            lazyLoad();
-        }
-    }
-
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        super.onHiddenChanged(hidden);
-        if (!hidden){
-            visibility = true;
-            //lazy load if call onHiddenChanged with false params
-            if (!lazyLoaded) {
-                lazyLoad();
-            }
-        } else {
-            visibility = false;
-        }
-    }
-
-    @Override
-    public void setUserVisibleHint(boolean isVisibleToUser) {
-        super.setUserVisibleHint(isVisibleToUser);
-        if (isVisibleToUser){
-            visibility = true;
-            //lazy load if call setUserVisibleHint with true params
-            if (!lazyLoaded && viewInitialized) {
-                lazyLoad();
-            }
-        } else {
-            visibility = false;
-        }
-    }
-
-    private void lazyLoad(){
-        lazyLoaded = true;
-        onLazyLoad();
-    }
-
     /**
-     * callback when lazy load
+     * 复写该方法实现懒加载
      */
     protected void onLazyLoad(){
 
