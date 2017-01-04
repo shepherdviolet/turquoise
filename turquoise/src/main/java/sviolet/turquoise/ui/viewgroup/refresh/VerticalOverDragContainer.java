@@ -39,6 +39,7 @@ import sviolet.turquoise.common.compat.CompatOverScroller;
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.ui.util.ListViewUtils;
 import sviolet.turquoise.ui.util.ScrollViewUtils;
+import sviolet.turquoise.util.common.DateTimeUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.util.droid.MotionEventUtils;
 
@@ -134,6 +135,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
     private boolean preciseTouchEmulate = true;
 
     private long autoResetDelay = 120000;//当长时间没有归位时, 自动归位
+    private long parkInterval = 0;//最小PARK间隔
 
     //监听器
     private List<RefreshIndicator> refreshIndicatorList;
@@ -158,6 +160,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
 
     private boolean topParked = false;
     private boolean bottomParked = false;
+
+    //记录上次PARK的时间
+    private long lastTopParkTime;
+    private long lastBottomParkTime;
 
     private CompatOverScroller scroller;
 
@@ -378,6 +384,13 @@ public class VerticalOverDragContainer extends RelativeLayout {
                         if (!isCancel) {
                             if (topParkEnabled && scrollY >= overDragThreshold) {
                                 if (!topParked) {
+                                    //过滤频繁的PARK
+                                    if (DateTimeUtils.getCurrentTimeMillis() - lastTopParkTime < parkInterval){
+                                        callbackTopParkIgnore();
+                                        //弹回原始位置
+                                        free(true);
+                                        return true;
+                                    }
                                     /**
                                      * (1) 返回true时, 表明接受了该事件, 容器进入顶部PARK状态, 并阻断后续触发的顶部PARK事件(不管怎么
                                      * 拖动都不会再触发顶部PARK事件), 直到调用{@link VerticalOverDragContainer#resetTopPark()}
@@ -391,11 +404,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
                                     //先置为PARK状态
                                     topParked = true;
                                     if (callbackTopPark()){
-                                        //弹回PARK位置
-                                        free(false);
+                                        //记录当前时间
+                                        lastTopParkTime = DateTimeUtils.getCurrentTimeMillis();
                                         //长时间没归位时, 自动归位
                                         myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_RESET_TOP_PARK_AUTO, autoResetDelay);
-                                        return true;
                                     } else {
                                         //若回调返回false, 则解除PARK状态
                                         //之所以不在回调返回true时, 将PARK置为true, 是防止监听器执行时, 状态被重置为false, 回到这里被重置掉
@@ -411,6 +423,13 @@ public class VerticalOverDragContainer extends RelativeLayout {
                         if (!isCancel) {
                             if (bottomParkEnabled && scrollY <= -overDragThreshold) {
                                 if (!bottomParked) {
+                                    //过滤频繁的PARK
+                                    if (DateTimeUtils.getCurrentTimeMillis() - lastBottomParkTime < parkInterval){
+                                        callbackBottomParkIgnore();
+                                        //弹回原始位置
+                                        free(true);
+                                        return true;
+                                    }
                                     /**
                                      * (1) 返回true时, 表明接受了该事件, 容器进入底部PARK状态, 并阻断后续触发的底部PARK事件(不管怎么
                                      * 拖动都不会再触发底部PARK事件), 直到调用{@link VerticalOverDragContainer#resetBottomPark()}
@@ -424,11 +443,10 @@ public class VerticalOverDragContainer extends RelativeLayout {
                                     //先置为PARK状态
                                     bottomParked = true;
                                     if (callbackBottomPark()){
-                                        //弹回PARK位置
-                                        free(false);
+                                        //记录当前时间
+                                        lastBottomParkTime = DateTimeUtils.getCurrentTimeMillis();
                                         //长时间没归位时, 自动归位
                                         myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_RESET_BOTTOM_PARK_AUTO, autoResetDelay);
-                                        return true;
                                     } else {
                                         //若回调返回false, 则解除PARK状态
                                         //之所以不在回调返回true时, 将PARK置为true, 是防止监听器执行时, 状态被重置为false, 回到这里被重置掉
@@ -610,6 +628,22 @@ public class VerticalOverDragContainer extends RelativeLayout {
         }
     }
 
+    private void callbackTopParkIgnore() {
+        if (refreshIndicatorList != null){
+            for (RefreshIndicator refreshIndicator : refreshIndicatorList){
+                refreshIndicator.onTopParkIgnore();
+            }
+        }
+    }
+
+    private void callbackBottomParkIgnore() {
+        if (refreshIndicatorList != null){
+            for (RefreshIndicator refreshIndicator : refreshIndicatorList){
+                refreshIndicator.onBottomParkIgnore();
+            }
+        }
+    }
+
     /*************************************************************************
      * public
      */
@@ -775,6 +809,13 @@ public class VerticalOverDragContainer extends RelativeLayout {
         this.autoResetDelay = delay;
     }
 
+    /**
+     * @param interval 刷新最短间隔, 小于间隔时间触发多次PARK会被视为过于频繁, 会回调RefreshIndicator.onParkIgnore方法
+     */
+    public void setParkInterval(long interval){
+        this.parkInterval = interval;
+    }
+
     /*************************************************************************
      * private
      */
@@ -935,8 +976,6 @@ public class VerticalOverDragContainer extends RelativeLayout {
          */
         boolean onBottomPark();
 
-        void setContainer(VerticalOverDragContainer container);
-
         /**
          * 若触发顶部PARK事件后, 长时间没有重置状态, 容器会自动重置, 并回调指示器的这个方法通知
          */
@@ -946,6 +985,18 @@ public class VerticalOverDragContainer extends RelativeLayout {
          * 若触发底部PARK事件后, 长时间没有重置状态, 容器会自动重置, 并回调指示器的这个方法通知
          */
         void onBottomParkAutoReset();
+
+        /**
+         * 在设定的最小间隔时间内, 触发多次顶部PARK时, 会回调此方法
+         */
+        void onTopParkIgnore();
+
+        /**
+         * 在设定的最小间隔时间内, 触发多次底部PARK时, 会回调此方法
+         */
+        void onBottomParkIgnore();
+
+        void setContainer(VerticalOverDragContainer container);
 
     }
 

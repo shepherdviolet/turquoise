@@ -100,6 +100,11 @@ public class RecyclerViewActivity extends TAppCompatActivity {
             public void onRefresh() {
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_REFRESH_RESET, 4000);
             }
+
+            @Override
+            public void onIgnore() {
+
+            }
         });
     }
 

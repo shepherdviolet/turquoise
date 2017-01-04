@@ -139,6 +139,16 @@ public class OverDragRefreshActivity extends TActivity {
             public void onBottomParkAutoReset() {
                 //长时间没重置状态, 容器会自动重置, 通过该方法通知指示器
             }
+
+            @Override
+            public void onTopParkIgnore() {
+                //过于频繁刷新
+            }
+
+            @Override
+            public void onBottomParkIgnore() {
+                //过于频繁加载
+            }
         });
     }
 

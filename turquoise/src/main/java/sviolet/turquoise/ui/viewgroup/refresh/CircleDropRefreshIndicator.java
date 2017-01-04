@@ -268,6 +268,24 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     }
 
     @Override
+    public void onTopParkIgnore() {
+        if (type == TYPE_TOP){
+            if (refreshListener != null){
+                refreshListener.onIgnore();
+            }
+        }
+    }
+
+    @Override
+    public void onBottomParkIgnore() {
+        if (type == TYPE_BOTTOM){
+            if (refreshListener != null){
+                refreshListener.onIgnore();
+            }
+        }
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
 
         if (!scroller.isFinished()){
@@ -581,6 +599,11 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     public interface RefreshListener{
 
         void onRefresh();
+
+        /**
+         * 刷新过于频繁
+         */
+        void onIgnore();
 
     }
 

@@ -22,6 +22,7 @@ package sviolet.demoa.refresh;
 import android.os.Bundle;
 import android.os.Message;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
@@ -69,6 +70,7 @@ public class RefreshIndicatorRefreshActivity extends TActivity {
         //VerticalOverDragContainer添加刷新指示器(此处为VerticalRefreshIndicatorGroup)
         container.addRefreshIndicator(refreshIndicator);//下拉刷新
         container.addRefreshIndicator(loadIndicator);//上拉加载
+        container.setParkInterval(10000);//最短刷新间隔
 
         //设置刷新监听器
         refreshIndicator.setRefreshListener(new SimpleVerticalRefreshIndicatorGroup.RefreshListener() {
@@ -79,6 +81,11 @@ public class RefreshIndicatorRefreshActivity extends TActivity {
                  * 在状态重置前, 容器控件将不会再触发TOP PARK事件, 必须在重置状态后才能触发
                  */
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_REFRESH_RESET, 4000);
+            }
+
+            @Override
+            public void onIgnore() {
+                Toast.makeText(RefreshIndicatorRefreshActivity.this, "刷新太频繁啦", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -91,6 +98,11 @@ public class RefreshIndicatorRefreshActivity extends TActivity {
                  * 在状态重置前, 容器控件将不会再触发TOP PARK事件, 必须在重置状态后才能触发
                  */
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_LOAD_RESET, 4000);
+            }
+
+            @Override
+            public void onIgnore() {
+                Toast.makeText(RefreshIndicatorRefreshActivity.this, "刷新太频繁啦", Toast.LENGTH_SHORT).show();
             }
         });
 

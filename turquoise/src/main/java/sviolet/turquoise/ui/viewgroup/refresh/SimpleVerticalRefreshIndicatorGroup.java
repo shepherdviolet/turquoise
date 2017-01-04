@@ -163,6 +163,24 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
     }
 
     @Override
+    public void onTopParkIgnore() {
+        if (type == TYPE_TOP_STATIC || type == TYPE_IN_FROM_TOP){
+            if(refreshListener != null){
+                refreshListener.onIgnore();
+            }
+        }
+    }
+
+    @Override
+    public void onBottomParkIgnore() {
+        if (type == TYPE_BOTTOM_STATIC || type == TYPE_IN_FROM_BOTTOM){
+            if(refreshListener != null){
+                refreshListener.onIgnore();
+            }
+        }
+    }
+
+    @Override
     public void onStateChanged(int state) {
 
     }
@@ -468,6 +486,11 @@ public class SimpleVerticalRefreshIndicatorGroup extends RelativeLayout implemen
     public interface RefreshListener{
 
         void onRefresh();
+
+        /**
+         * 刷新过于频繁
+         */
+        void onIgnore();
 
     }
 

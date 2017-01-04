@@ -101,6 +101,11 @@ public class RoundedListActivity extends TActivity {
             public void onRefresh() {
                 myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_REFRESH_RESET, 4000);
             }
+
+            @Override
+            public void onIgnore() {
+
+            }
         });
     }
 
