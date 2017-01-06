@@ -194,6 +194,10 @@ public class ProcessorUtils {
         for (long time : time2){
             totalTime2 += time;
         }
+        //防止分母为0
+        if (totalTime2 - totalTime1 == 0){
+            return 0;
+        }
         return (int) (100 * (totalTime2 - totalTime1 - time2[3] + time1[3]) / (totalTime2 - totalTime1));
     }
 
