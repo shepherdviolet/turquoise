@@ -73,6 +73,8 @@
             android:label="@string/other_tab_view_title"/>
         <activity android:name=".other.TabViewHelperOtherActivity"
             android:label="@string/other_tab_view_helper_title"/>
+        <activity android:name=".other.WebViewOtherActivity"
+            android:label="@string/other_webview_title"/>
 
         <activity android:name=".TempActivity"
             android:label="@string/temp_main_title"/>

@@ -27,6 +27,7 @@
     <string name="other_multiitem_viewpager_title">Multi item in ViewPager Demo</string>
     <string name="other_tab_view_title">TabView Demo</string>
     <string name="other_tab_view_helper_title">TabViewHelper Demo</string>
+    <string name="other_webview_title">WebView Demo</string>
 
     <string name="common_indicator_refresh_init">pull to refresh</string>
     <string name="common_indicator_refresh_ready">release to refresh</string>
