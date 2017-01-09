@@ -53,8 +53,6 @@ public class WebViewOtherActivity extends TActivity {
 
     @Override
     protected void afterDestroy() {
-        super.onDestroy();
-
         //清除Cookies
 //		CookieSyncManager.createInstance(this);
 //		CookieManager cookieManager = CookieManager.getInstance();
