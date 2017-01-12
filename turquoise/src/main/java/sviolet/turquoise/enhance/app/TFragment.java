@@ -22,6 +22,8 @@ package sviolet.turquoise.enhance.app;
 import android.app.Fragment;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.view.LayoutInflater;
@@ -29,6 +31,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
+import sviolet.turquoise.enhance.common.WeakHandler;
 
 /**
  * [组件扩展]Fragment<br>
@@ -49,6 +52,7 @@ public abstract class TFragment extends Fragment {
     private boolean lazyLoaded = false;
     private boolean viewInitialized = false;
     private boolean visibility = true;
+    private boolean activityStarted = false;
 
     @Nullable
     @Override
@@ -93,14 +97,25 @@ public abstract class TFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
+    public final void onStart() {
         super.onStart();
+        activityStarted = true;
 
         //Lazy Load
         //lazy load if still visible while onStart
         if (!lazyLoaded && visibility){
             lazyLoad();
         }
+
+        afterStart();
+    }
+
+    @Override
+    public final void onStop() {
+        super.onStop();
+        activityStarted = false;
+
+        afterStop();
     }
 
     @Override
@@ -140,6 +155,21 @@ public abstract class TFragment extends Fragment {
         onLazyLoad();
     }
 
+    private void resetLazyLoadInner(){
+        if (!lazyLoaded){
+            return;
+        }
+        if (!visibility){
+            lazyLoaded = false;
+            return;
+        }
+        if (activityStarted){
+            lazyLoad();
+            return;
+        }
+        lazyLoaded = false;
+    }
+
     /**
      * 复写该方法实现View的创建, View复用模式下只会调用一次, 非复用模式下, 每次都会调用
      */
@@ -157,10 +187,57 @@ public abstract class TFragment extends Fragment {
     protected abstract boolean fragmentViewCacheEnabled();
 
     /**
+     * 等同于onStart
+     */
+    protected void afterStart(){
+
+    }
+
+    /**
+     * 等同于onStop
+     */
+    protected void afterStop(){
+
+    }
+
+    /**
      * 复写该方法实现懒加载
      */
     protected void onLazyLoad(){
 
+    }
+
+    /**
+     * 重置LazyLoad状态, 使得数据重新加载一次
+     */
+    public void resetLazyLoad(){
+        myHandler.sendEmptyMessage(MyHandler.HANDLER_RESET_LAZY_LOAD);
+    }
+
+    /***********************************************************************************
+     * handler
+     */
+
+    private final MyHandler myHandler = new MyHandler(this);
+
+    private static class MyHandler extends WeakHandler<TFragment>{
+
+        private static final int HANDLER_RESET_LAZY_LOAD = 1;
+
+        public MyHandler(TFragment host) {
+            super(Looper.getMainLooper(), host);
+        }
+
+        @Override
+        protected void handleMessageWithHost(Message msg, TFragment host) {
+            switch (msg.what){
+                case HANDLER_RESET_LAZY_LOAD:
+                    host.resetLazyLoadInner();
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
 }
