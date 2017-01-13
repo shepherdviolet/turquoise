@@ -21,7 +21,7 @@ package sviolet.turquoise.util.sort;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -33,56 +33,23 @@ import java.util.List;
  *
  */
 public class ChineseSortUtils {
-	
-	/**
-	 * array排序
-	 * 
-	 * @param list
-	 * @return
-	 */
-	public static String[] sort(String[] list){
-		Comparator<Object> comparator = java.text.Collator.getInstance(java.util.Locale.CHINA);
-		Arrays.sort(list,comparator);
-		return list;
+
+	public static void sort(String[] list){
+		Arrays.sort(list, java.text.Collator.getInstance(java.util.Locale.CHINA));
+	}
+
+	public static void sort(List<String> list){
+		Collections.sort(list, java.text.Collator.getInstance(java.util.Locale.CHINA));
 	}
 	
 	/**
-	 * List<String>排序
-	 * 
-	 * @param list
-	 * @return
-	 */
-	public static List<String> sort(List<String> list){
-		//List<String>转为String[]
-		String[] array = new String[list.size()];
-		list.toArray(array);
-		
-		//排序
-		array = sort(array);
-		
-		//String[]转为List<String>
-		List<String> result = new ArrayList<String>();
-		for(int i = 0 ; i < array.length ; i++){
-			result.add(array[i]);
-		}
-		return result;
-	}
-	
-	/**
-	 * List<?> 根据对象的一个String变量(关键字)给对象排序
-	 * 
-	 		List<Item> list = ...
-	  		list = ChineseSortUtils.keySort(list, new KeyGetter<Item>(){
-				@Override
-				//根据Item对象的getName()方法得到关键字
-				public String getKey(Item obj) {
-					return obj.getName();
-				}
-			});
-	 * 
-	 * @param list
-	 * @param keyGetter
-	 * @return
+	 *	List<Item> list = ...
+	 *	list = ChineseSortUtils.keySort(list, new KeyGetter<Item>(){
+	 *		//根据Item对象的getName()方法得到关键字
+	 *		public String getKey(Item obj) {
+	 *			return obj.getName();
+	 *		}
+	 *	});
 	 */
 	public static <T> List<T> keySort(List<T> list, KeyGetter<T> keyGetter){
 		//取得对象们的关键字
@@ -90,12 +57,12 @@ public class ChineseSortUtils {
 		for(int i = 0 ; i < list.size() ; i++){
 			keyArray[i] = keyGetter.getKey(list.get(i));
 		}
-		
+
 		//关键字排序
-		keyArray = sort(keyArray);
-		
+		sort(keyArray);
+
 		//根据关键字顺序对对象进行排序
-		List<T> result = new ArrayList<T>();
+		List<T> result = new ArrayList<>();
 		for(int i = 0 ; i < keyArray.length ; i++){
 			for(int j = 0 ; j < list.size() ; j++){
 				if(keyGetter.getKey(list.get(j)).equals(keyArray[i])){
@@ -107,4 +74,9 @@ public class ChineseSortUtils {
 		}
 		return result;
 	}
+
+	public interface KeyGetter<T>{
+		String getKey(T obj);
+	}
+
 }

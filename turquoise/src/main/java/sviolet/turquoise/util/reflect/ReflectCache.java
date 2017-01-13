@@ -35,12 +35,12 @@ public class ReflectCache {
 
     private static final int DEFAULT_MAX_SIZE = 50;
 
-    private static CompatLruCache<String, Field[]> declaredFields = new CompatLruCache<>(DEFAULT_MAX_SIZE);
-    private static CompatLruCache<String, Field[]> publicFields = new CompatLruCache<>(DEFAULT_MAX_SIZE);
-    private static CompatLruCache<String, Method[]> declaredMethods = new CompatLruCache<>(DEFAULT_MAX_SIZE);
-    private static CompatLruCache<String, Method[]> publicMethods = new CompatLruCache<>(DEFAULT_MAX_SIZE);
-    private static CompatLruCache<String, Constructor[]> declaredConstructors = new CompatLruCache<>(DEFAULT_MAX_SIZE);
-    private static CompatLruCache<String, Constructor[]> publicConstructors = new CompatLruCache<>(DEFAULT_MAX_SIZE);
+    private static CompatLruCache<Class, Field[]> declaredFields = new CompatLruCache<>(DEFAULT_MAX_SIZE);
+    private static CompatLruCache<Class, Field[]> publicFields = new CompatLruCache<>(DEFAULT_MAX_SIZE);
+    private static CompatLruCache<Class, Method[]> declaredMethods = new CompatLruCache<>(DEFAULT_MAX_SIZE);
+    private static CompatLruCache<Class, Method[]> publicMethods = new CompatLruCache<>(DEFAULT_MAX_SIZE);
+    private static CompatLruCache<Class, Constructor[]> declaredConstructors = new CompatLruCache<>(DEFAULT_MAX_SIZE);
+    private static CompatLruCache<Class, Constructor[]> publicConstructors = new CompatLruCache<>(DEFAULT_MAX_SIZE);
 
     /**
      * 设置缓存大小
@@ -68,16 +68,15 @@ public class ReflectCache {
             throw new NullPointerException("[ReflectCache]class is null");
         }
 
-        final CompatLruCache<String, Field[]> cache = declaredFields;
+        final CompatLruCache<Class, Field[]> cache = declaredFields;
         if (cache == null){
             return clazz.getDeclaredFields();
         }
 
-        final String name = clazz.getName();
-        Field[] fields = cache.get(name);
+        Field[] fields = cache.get(clazz);
         if (fields == null){
             fields = clazz.getDeclaredFields();
-            cache.put(name, fields);
+            cache.put(clazz, fields);
         }
         return fields;
     }
@@ -87,16 +86,15 @@ public class ReflectCache {
             throw new NullPointerException("[ReflectCache]class is null");
         }
 
-        final CompatLruCache<String, Field[]> cache = publicFields;
+        final CompatLruCache<Class, Field[]> cache = publicFields;
         if (cache == null){
             return clazz.getFields();
         }
 
-        final String name = clazz.getName();
-        Field[] fields = cache.get(name);
+        Field[] fields = cache.get(clazz);
         if (fields == null){
             fields = clazz.getFields();
-            cache.put(name, fields);
+            cache.put(clazz, fields);
         }
         return fields;
     }
@@ -106,16 +104,15 @@ public class ReflectCache {
             throw new NullPointerException("[ReflectCache]class is null");
         }
 
-        final CompatLruCache<String, Method[]> cache = declaredMethods;
+        final CompatLruCache<Class, Method[]> cache = declaredMethods;
         if (cache == null){
             return clazz.getDeclaredMethods();
         }
 
-        final String name = clazz.getName();
-        Method[] methods = cache.get(name);
+        Method[] methods = cache.get(clazz);
         if (methods == null){
             methods = clazz.getDeclaredMethods();
-            cache.put(name, methods);
+            cache.put(clazz, methods);
         }
         return methods;
     }
@@ -125,16 +122,15 @@ public class ReflectCache {
             throw new NullPointerException("[ReflectCache]class is null");
         }
 
-        final CompatLruCache<String, Method[]> cache = publicMethods;
+        final CompatLruCache<Class, Method[]> cache = publicMethods;
         if (cache == null){
             return clazz.getMethods();
         }
 
-        final String name = clazz.getName();
-        Method[] methods = cache.get(name);
+        Method[] methods = cache.get(clazz);
         if (methods == null){
             methods = clazz.getMethods();
-            cache.put(name, methods);
+            cache.put(clazz, methods);
         }
         return methods;
     }
@@ -144,16 +140,15 @@ public class ReflectCache {
             throw new NullPointerException("[ReflectCache]class is null");
         }
 
-        final CompatLruCache<String, Constructor[]> cache = declaredConstructors;
+        final CompatLruCache<Class, Constructor[]> cache = declaredConstructors;
         if (cache == null){
             return clazz.getDeclaredConstructors();
         }
 
-        final String name = clazz.getName();
-        Constructor[] constructors = cache.get(name);
+        Constructor[] constructors = cache.get(clazz);
         if (constructors == null){
             constructors = clazz.getDeclaredConstructors();
-            cache.put(name, constructors);
+            cache.put(clazz, constructors);
         }
         return constructors;
     }
@@ -163,16 +158,15 @@ public class ReflectCache {
             throw new NullPointerException("[ReflectCache]class is null");
         }
 
-        final CompatLruCache<String, Constructor[]> cache = publicConstructors;
+        final CompatLruCache<Class, Constructor[]> cache = publicConstructors;
         if (cache == null){
             return clazz.getConstructors();
         }
 
-        final String name = clazz.getName();
-        Constructor[] constructors = cache.get(name);
+        Constructor[] constructors = cache.get(clazz);
         if (constructors == null){
             constructors = clazz.getConstructors();
-            cache.put(name, constructors);
+            cache.put(clazz, constructors);
         }
         return constructors;
     }
