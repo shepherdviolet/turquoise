@@ -82,6 +82,13 @@ public class MathUtils {
      */
 
 	/**
+	 * 角度转为弧度(rad)
+     */
+	public static double rad(double degrees) {
+		return degrees * Math.PI / 180.0;
+	}
+
+	/**
 	 * 角度标准化, 将任意不在0-360范围内的角度转换为0-360范围内的角度, 例如:-90 -> 270
 	 * @param angle 角度
 	 * @return 0-360范围的角度
