@@ -39,7 +39,7 @@ public class ListViewUtils {
             return true;
         }
         //显示的第一个Item为第一个, 且该Item到达顶端的距离为0
-        if(listView.getFirstVisiblePosition() == 0 && listView.getChildAt(0).getTop() == 0){
+        if(listView.getFirstVisiblePosition() == 0 && listView.getChildAt(0).getTop() >= 0){
             return true;
         }
         return false;
@@ -56,7 +56,7 @@ public class ListViewUtils {
         }
         //显示的最后一个Item为最后一个, 且该Item到达底部的距离为0
         if(listView.getLastVisiblePosition() == (listView.getCount() - 1) &&
-                listView.getChildAt(listView.getChildCount() - 1).getBottom() == listView.getHeight()){
+                listView.getChildAt(listView.getChildCount() - 1).getBottom() <= listView.getHeight()){
             return true;
         }
         return false;
