@@ -22,6 +22,8 @@ package sviolet.turquoise.utilx.lifecycle;
 import android.app.Activity;
 import android.app.Fragment;
 
+import java.util.concurrent.locks.ReentrantLock;
+
 import sviolet.turquoise.util.common.ParasiticVars;
 import sviolet.turquoise.util.droid.DeviceUtils;
 
@@ -444,22 +446,34 @@ public class LifeCycleUtils {
      * inner
      */
 
+    private static final ReentrantLock lock = new ReentrantLock();
+
     private static LifeCycleManager getLifeCycleManager(Activity activity){
         //ParasiticVars中获取Activity的生命周期管理器
         Object manager = ParasiticVars.get(activity, LifeCycleManager.MANAGER_TAG);
 
-        //生命周期管理器不存在则新建
-        if (manager == null || !(manager instanceof LifeCycleManager)){
-            manager = new LifeCycleManagerImpl();//新建管理器
-            android.app.Fragment oldFragment = activity.getFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
-            android.app.Fragment fragment = new LifeCycleFragment(activity, (LifeCycleManager) manager);//新生命周期监听Fragment
-            android.app.FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
-            if (oldFragment != null) {
-                transaction.remove(oldFragment);//移除原有Fragment
+        if (!(manager instanceof LifeCycleManager)) {
+            try {
+                lock.lock();
+                //ParasiticVars中获取Activity的生命周期管理器
+                manager = ParasiticVars.get(activity, LifeCycleManager.MANAGER_TAG);
+                //生命周期管理器不存在则新建
+                if (!(manager instanceof LifeCycleManager)) {
+                    manager = new LifeCycleManagerImpl();//新建管理器
+                    android.app.Fragment oldFragment = activity.getFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
+                    android.app.Fragment fragment = new LifeCycleFragment(activity, (LifeCycleManager) manager);//新生命周期监听Fragment
+                    android.app.FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
+                    if (oldFragment != null) {
+                        transaction.remove(oldFragment);//移除原有Fragment
+                    }
+                    transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
+                    transaction.commit();
+                }
+            } finally {
+                lock.unlock();
             }
-            transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
-            transaction.commit();
         }
+
         return (LifeCycleManager) manager;
     }
 
@@ -467,18 +481,28 @@ public class LifeCycleUtils {
         //ParasiticVars中获取FragmentActivity的生命周期管理器
         Object manager = ParasiticVars.get(fragmentActivity, LifeCycleManager.MANAGER_TAG);
 
-        //生命周期管理器不存在则新建
-        if (manager == null || !(manager instanceof LifeCycleManager)){
-            manager = new LifeCycleManagerImpl();//新建管理器
-            android.support.v4.app.Fragment oldFragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
-            android.support.v4.app.Fragment fragment = new LifeCycleFragmentV4(fragmentActivity, (LifeCycleManager) manager);//新生命周期监听Fragment
-            android.support.v4.app.FragmentTransaction transaction = fragmentActivity.getSupportFragmentManager().beginTransaction();
-            if (oldFragment != null) {
-                transaction.remove(oldFragment);//移除原有Fragment
+        if (!(manager instanceof LifeCycleManager)) {
+            try {
+                lock.lock();
+                //ParasiticVars中获取FragmentActivity的生命周期管理器
+                manager = ParasiticVars.get(fragmentActivity, LifeCycleManager.MANAGER_TAG);
+                //生命周期管理器不存在则新建
+                if (!(manager instanceof LifeCycleManager)){
+                    manager = new LifeCycleManagerImpl();//新建管理器
+                    android.support.v4.app.Fragment oldFragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
+                    android.support.v4.app.Fragment fragment = new LifeCycleFragmentV4(fragmentActivity, (LifeCycleManager) manager);//新生命周期监听Fragment
+                    android.support.v4.app.FragmentTransaction transaction = fragmentActivity.getSupportFragmentManager().beginTransaction();
+                    if (oldFragment != null) {
+                        transaction.remove(oldFragment);//移除原有Fragment
+                    }
+                    transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
+                    transaction.commit();
+                }
+            } finally {
+                lock.unlock();
             }
-            transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
-            transaction.commit();
         }
+
         return (LifeCycleManager) manager;
     }
 

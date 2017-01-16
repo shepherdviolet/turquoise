@@ -20,10 +20,10 @@
 package sviolet.turquoise.utilx.lifecycle;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import sviolet.turquoise.util.common.ConcurrentUtils;
 
@@ -36,7 +36,7 @@ import sviolet.turquoise.util.common.ConcurrentUtils;
  */
 class LifeCycleManagerImpl implements LifeCycleManager {
 
-    private final Map<String, LifeCycle> components = new HashMap<>();//生命周期监听器
+    private final Map<String, LifeCycle> components = new ConcurrentHashMap<>();//生命周期监听器
     private final Set<LifeCycle> weakListeners = Collections.newSetFromMap(new WeakHashMap<LifeCycle, Boolean>());//生命周期监听器(弱引用)
 
     LifeCycleManagerImpl() {
