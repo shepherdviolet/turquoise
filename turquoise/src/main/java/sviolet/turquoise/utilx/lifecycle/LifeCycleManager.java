@@ -32,20 +32,29 @@ interface LifeCycleManager {
     public static final String MANAGER_TAG = "TURQUOISE_LIFE_CYCLE_MANAGER";
 
     /**
+     * 添加组件
      * @param componentName 组件名
-     * @param listener 添加生命周期监听器
+     * @param component 组件
      */
-    void addListener(String componentName, LifeCycle listener);
+    void addComponent(String componentName, LifeCycle component);
 
     /**
-     * @param componentName 移除生命周期监听器的组件名
+     * 获取组件
+     * @param componentName 组件名
      */
-    void removeListener(String componentName);
+    void getComponent(String componentName);
 
     /**
-     * @param listener 移除生命周期监听器
+     * 删除组件
+     * @param componentName 组件名
      */
-    void removeListener(LifeCycle listener);
+    void removeComponent(String componentName);
+
+    /**
+     * 删除组件
+     * @param component 组件
+     */
+    void removeComponent(LifeCycle component);
 
     /**
      * @param listener 添加生命周期监听器

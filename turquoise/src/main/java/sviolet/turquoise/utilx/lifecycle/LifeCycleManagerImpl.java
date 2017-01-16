@@ -28,7 +28,7 @@ import java.util.WeakHashMap;
 import sviolet.turquoise.util.common.ConcurrentUtils;
 
 /**
- * 声明周期管理器实现<p/>
+ * 生命周期管理器实现<p/>
  *
  * use{@link LifeCycleUtils}<p/>
  *
@@ -36,25 +36,30 @@ import sviolet.turquoise.util.common.ConcurrentUtils;
  */
 class LifeCycleManagerImpl implements LifeCycleManager {
 
-    private final Map<String, LifeCycle> listeners = new HashMap<>();//生命周期监听器
+    private final Map<String, LifeCycle> components = new HashMap<>();//生命周期监听器
     private final Set<LifeCycle> weakListeners = Collections.newSetFromMap(new WeakHashMap<LifeCycle, Boolean>());//生命周期监听器(弱引用)
 
     LifeCycleManagerImpl() {
     }
 
     @Override
-    public void addListener(String componentName, LifeCycle listener) {
-        listeners.put(componentName, listener);
+    public void addComponent(String componentName, LifeCycle component) {
+        components.put(componentName, component);
     }
 
     @Override
-    public void removeListener(String componentName) {
-        listeners.remove(componentName);
+    public void getComponent(String componentName) {
+        components.get(componentName);
     }
 
     @Override
-    public void removeListener(LifeCycle listener){
-        listeners.values().remove(listener);
+    public void removeComponent(String componentName) {
+        components.remove(componentName);
+    }
+
+    @Override
+    public void removeComponent(LifeCycle component){
+        components.values().remove(component);
     }
 
     @Override
@@ -69,7 +74,7 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
     @Override
     public void onCreate() {
-        for (LifeCycle listener : ConcurrentUtils.getSnapShot(listeners.values())){
+        for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onCreate();
         }
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
@@ -79,7 +84,7 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
     @Override
     public void onStart() {
-        for (LifeCycle listener : ConcurrentUtils.getSnapShot(listeners.values())){
+        for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onStart();
         }
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
@@ -89,7 +94,7 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
     @Override
     public void onResume() {
-        for (LifeCycle listener : ConcurrentUtils.getSnapShot(listeners.values())){
+        for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onResume();
         }
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
@@ -99,7 +104,7 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
     @Override
     public void onPause() {
-        for (LifeCycle listener : ConcurrentUtils.getSnapShot(listeners.values())){
+        for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onPause();
         }
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
@@ -109,7 +114,7 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
     @Override
     public void onStop() {
-        for (LifeCycle listener : ConcurrentUtils.getSnapShot(listeners.values())){
+        for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onStop();
         }
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
@@ -119,14 +124,14 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
     @Override
     public void onDestroy() {
-        for (LifeCycle listener : ConcurrentUtils.getSnapShot(listeners.values())){
+        for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onDestroy();
         }
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
             listener.onDestroy();
         }
         //销毁时移除所有监听器
-        listeners.clear();
+        components.clear();
         weakListeners.clear();
     }
 
