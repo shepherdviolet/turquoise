@@ -20,10 +20,11 @@
 package sviolet.turquoise.utilx.lifecycle;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.util.common.ParasiticVars;
 
 /**
  * 生命周期监听Fragment<p/>
@@ -49,11 +50,13 @@ class LifeCycleFragment extends Fragment {
         useless = true;
     }
 
-    LifeCycleFragment(LifeCycleManager manager){
+    LifeCycleFragment(Activity activity, LifeCycleManager manager){
         if (manager == null){
             throw new IllegalArgumentException("[LifeCycleFragment]LifeCycleManager is null");
         }
         this.manager = manager;
+        //管理器放入寄生变量
+        ParasiticVars.set(activity, LifeCycleManager.MANAGER_TAG, manager);
     }
 
     @Override
@@ -99,6 +102,8 @@ class LifeCycleFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        //寄生变量中移除管理器
+        ParasiticVars.remove(getActivity(), LifeCycleManager.MANAGER_TAG);
         if (invalidateSelf())
             return;
         manager.onDestroy();

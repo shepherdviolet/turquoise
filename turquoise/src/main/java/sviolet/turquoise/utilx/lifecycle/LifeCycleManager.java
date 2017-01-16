@@ -29,6 +29,7 @@ package sviolet.turquoise.utilx.lifecycle;
 interface LifeCycleManager {
 
     public static final String FRAGMENT_TAG = "TURQUOISE_LIFE_CYCLE_FRAGMENT";
+    public static final String MANAGER_TAG = "TURQUOISE_LIFE_CYCLE_MANAGER";
 
     /**
      * @param componentName 组件名
