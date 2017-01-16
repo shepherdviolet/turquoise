@@ -26,7 +26,7 @@ import android.graphics.Bitmap;
 import java.io.InputStream;
 
 import sviolet.turquoise.model.cache.BitmapCache;
-import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
+import sviolet.turquoise.utilx.lifecycle.LifeCycle;
 
 /**
  * 

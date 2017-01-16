@@ -20,7 +20,6 @@
 package sviolet.turquoise.enhance.app;
 
 import sviolet.turquoise.enhance.app.utils.RuntimePermissionManager;
-import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
 
 /**
  * 所有强化的Activity都实现该接口
@@ -28,19 +27,6 @@ import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
  * Created by S.Violet on 2016/12/20.
  */
 public interface EnhancedContext {
-    
-    /**********************************************
-     * public
-     */
-
-    /**
-     * 将生命周期监听器绑定在该Activity上<p/>
-     *
-     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
-     *
-     * @param lifeCycle 生命周期监听器
-     */
-    void attachLifeCycle(LifeCycle lifeCycle);
 
     /**********************************************
      * Public

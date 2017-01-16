@@ -19,39 +19,23 @@
 
 package sviolet.turquoise.utilx.lifecycle;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.Build;
 
-import sviolet.turquoise.util.common.ParasiticVars;
-import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
-import sviolet.turquoise.utilx.lifecycle.manager.LifeCycleFragment;
-import sviolet.turquoise.utilx.lifecycle.manager.LifeCycleFragmentV4;
-import sviolet.turquoise.utilx.lifecycle.manager.LifeCycleManager;
-import sviolet.turquoise.utilx.lifecycle.manager.LifeCycleManagerImpl;
 import sviolet.turquoise.util.droid.DeviceUtils;
 
 /**
- * Android生命周期监听工具<p/>
- *
- * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
+ * Context生命周期监听工具<p/>
  *
  * Created by S.Violet on 2015/11/24.
  */
 public class LifeCycleUtils {
 
     /**
-     * 监听Activity的生命周期<p/>
-     *
-     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
-     *
-     * 注意:<br/>
-     * API < 11 时, 不建议使用该方法, 只能利用{@link ParasiticVars}捕获onDestroy()事件, 建议改用
-     * {@link android.support.v4.app.FragmentActivity} 或 {@link android.support.v4.app.Fragment}<p/>
+     * 监听Activity的生命周期, 弱引用持有LifeCycle实例<p/>
      *
      * @param activity 被监听的Activity
-     * @param lifeCycle 监听器
+     * @param lifeCycle 监听器(被弱引用持有)
      */
     public static void attach(Activity activity, LifeCycle lifeCycle){
         if (activity == null)
@@ -59,64 +43,22 @@ public class LifeCycleUtils {
         if (lifeCycle == null)
             return;
 
-        //API < 11 使用GlobalVars做简易监听
-        if (DeviceUtils.getVersionSDK() >= 11){
-            addListener(activity, lifeCycle);
-        }else{
-            ParasiticVars.set(activity, LifeCycleManager.MANAGER_TAG + "#" + lifeCycle.getClass().getSimpleName() + "#" + lifeCycle.hashCode(), lifeCycle);
+        if (DeviceUtils.getVersionSDK() < 11){
+            throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
         }
+
+        LifeCycleManager manager = getLifeCycleManager(activity);
+        manager.addWeakListener(lifeCycle);
     }
 
     /**
-     * 监听FragmentActivity的生命周期<p/>
-     *
-     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
-     *
-     * @param fragmentActivity 被监听的FragmentActivity
-     * @param lifeCycle 监听器
-     */
-    public static void attach(android.support.v4.app.FragmentActivity fragmentActivity, LifeCycle lifeCycle){
-        if (fragmentActivity == null)
-            throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
-        if (lifeCycle == null)
-            return;
-
-        addListener(fragmentActivity, lifeCycle);
-    }
-
-    /**
-     * 监听Fragment的生命周期<p/>
+     * 监听Fragment的生命周期, 弱引用持有LifeCycle实例<p/>
      *
      * 实际上是监听其对应的Activity<p/>
      *
-     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
-     *
      * @param fragment 被监听的Fragment
-     * @param lifeCycle 监听器
+     * @param lifeCycle 监听器(被弱引用持有)
      */
-    public static void attach(android.support.v4.app.Fragment fragment, LifeCycle lifeCycle){
-        if (fragment == null)
-            throw new NullPointerException("[LifeCycleUtils] fragment == null");
-        if (lifeCycle == null)
-            return;
-
-        android.support.v4.app.FragmentActivity activity = fragment.getActivity();
-        if (activity == null)
-            throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
-        addListener(activity, lifeCycle);
-    }
-
-    /**
-     * 监听Fragment的生命周期<p/>
-     *
-     * 实际上是监听其对应的Activity<p/>
-     *
-     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
-     *
-     * @param fragment 被监听的Fragment
-     * @param lifeCycle 监听器
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static void attach(Fragment fragment, LifeCycle lifeCycle){
         if (fragment == null)
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
@@ -130,20 +72,316 @@ public class LifeCycleUtils {
         Activity activity = fragment.getActivity();
         if (activity == null)
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
-        addListener(activity, lifeCycle);
+
+        LifeCycleManager manager = getLifeCycleManager(activity);
+        manager.addWeakListener(lifeCycle);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    private static void addListener(Activity activity, LifeCycle lifeCycle) {
+    /**
+     * 监听FragmentActivity的生命周期, 弱引用持有LifeCycle实例<p/>
+     *
+     * @param fragmentActivity 被监听的FragmentActivity
+     * @param lifeCycle 监听器(被弱引用持有)
+     */
+    public static void attach(android.support.v4.app.FragmentActivity fragmentActivity, LifeCycle lifeCycle){
+        if (fragmentActivity == null)
+            throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
+        if (lifeCycle == null)
+            return;
 
-        //ParasiticVars中获取Activity的生命周期管理器
-        Object manager = ParasiticVars.get(activity, LifeCycleManager.MANAGER_TAG);
+        LifeCycleManager manager = getLifeCycleManagerV4(fragmentActivity);
+        manager.addWeakListener(lifeCycle);
+    }
+
+    /**
+     * 监听Fragment的生命周期, 弱引用持有LifeCycle实例<p/>
+     *
+     * 实际上是监听其对应的Activity<p/>
+     *
+     * @param fragment 被监听的Fragment
+     * @param lifeCycle 监听器(被弱引用持有)
+     */
+    public static void attach(android.support.v4.app.Fragment fragment, LifeCycle lifeCycle){
+        if (fragment == null)
+            throw new NullPointerException("[LifeCycleUtils] fragment == null");
+        if (lifeCycle == null)
+            return;
+
+        android.support.v4.app.FragmentActivity activity = fragment.getActivity();
+        if (activity == null)
+            throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+
+        LifeCycleManager manager = getLifeCycleManagerV4(activity);
+        manager.addWeakListener(lifeCycle);
+    }
+
+    /*************************************************************************************
+     * component
+     */
+
+    /**
+     * 添加生命周期监听组件, 强引用持有LifeCycle实例<p/>
+     *
+     * @param activity 被监听的Activity
+     * @param componentName 组件名(若和其他的组件名冲突, 之前的组件会被替换掉)
+     * @param lifeCycle 监听器(被强引用持有)
+     */
+    public static void addComponent(Activity activity, String componentName, LifeCycle lifeCycle){
+        if (activity == null)
+            throw new NullPointerException("[LifeCycleUtils] activity == null");
+        if (lifeCycle == null)
+            return;
+
+        if (DeviceUtils.getVersionSDK() < 11){
+            throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
+        }
+
+        LifeCycleManager manager = getLifeCycleManager(activity);
+        manager.addListener(componentName, lifeCycle);
+    }
+
+    /**
+     * 添加生命周期监听组件, 强引用持有LifeCycle实例<p/>
+     *
+     * 实际上是监听其对应的Activity<p/>
+     *
+     * @param fragment 被监听的Fragment
+     * @param componentName 组件名(若和其他的组件名冲突, 之前的组件会被替换掉)
+     * @param lifeCycle 监听器(被强引用持有)
+     */
+    public static void addComponent(Fragment fragment, String componentName, LifeCycle lifeCycle){
+        if (fragment == null)
+            throw new NullPointerException("[LifeCycleUtils] fragment == null");
+        if (lifeCycle == null)
+            return;
+
+        if (DeviceUtils.getVersionSDK() < 11){
+            throw new RuntimeException("[LifeCycleUtils]can't use android.app.Fragment before api 11");
+        }
+
+        Activity activity = fragment.getActivity();
+        if (activity == null)
+            throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+
+        LifeCycleManager manager = getLifeCycleManager(activity);
+        manager.addListener(componentName, lifeCycle);
+    }
+
+    /**
+     * 添加生命周期监听组件, 强引用持有LifeCycle实例<p/>
+     *
+     * @param fragmentActivity 被监听的FragmentActivity
+     * @param componentName 组件名(若和其他的组件名冲突, 之前的组件会被替换掉)
+     * @param lifeCycle 监听器(被强引用持有)
+     */
+    public static void addComponent(android.support.v4.app.FragmentActivity fragmentActivity, String componentName, LifeCycle lifeCycle){
+        if (fragmentActivity == null)
+            throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
+        if (lifeCycle == null)
+            return;
+
+        LifeCycleManager manager = getLifeCycleManagerV4(fragmentActivity);
+        manager.addListener(componentName, lifeCycle);
+    }
+
+    /**
+     * 添加生命周期监听组件, 强引用持有LifeCycle实例<p/>
+     *
+     * 实际上是监听其对应的Activity<p/>
+     *
+     * @param fragment 被监听的Fragment
+     * @param componentName 组件名(若和其他的组件名冲突, 之前的组件会被替换掉)
+     * @param lifeCycle 监听器(被强引用持有)
+     */
+    public static void addComponent(android.support.v4.app.Fragment fragment, String componentName, LifeCycle lifeCycle){
+        if (fragment == null)
+            throw new NullPointerException("[LifeCycleUtils] fragment == null");
+        if (lifeCycle == null)
+            return;
+
+        android.support.v4.app.FragmentActivity activity = fragment.getActivity();
+        if (activity == null)
+            throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+
+        LifeCycleManager manager = getLifeCycleManagerV4(activity);
+        manager.addListener(componentName, lifeCycle);
+    }
+
+    /*************************************************************************************
+     * remove
+     */
+
+    /**
+     * 移除生命周期监听组件<p/>
+     *
+     * @param activity 被监听的Activity
+     * @param componentName 组件名
+     */
+    public static void removeComponent(Activity activity, String componentName){
+        if (activity == null)
+            throw new NullPointerException("[LifeCycleUtils] activity == null");
+
+        if (DeviceUtils.getVersionSDK() < 11){
+            throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
+        }
+
+        LifeCycleManager manager = getLifeCycleManager(activity);
+        manager.removeListener(componentName);
+    }
+
+    /**
+     * 移除生命周期监听组件<p/>
+     *
+     * @param fragment 被监听的Fragment
+     * @param componentName 组件名
+     */
+    public static void removeComponent(Fragment fragment, String componentName){
+        if (fragment == null)
+            throw new NullPointerException("[LifeCycleUtils] fragment == null");
+
+        if (DeviceUtils.getVersionSDK() < 11){
+            throw new RuntimeException("[LifeCycleUtils]can't use android.app.Fragment before api 11");
+        }
+
+        Activity activity = fragment.getActivity();
+        if (activity == null)
+            throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+
+        LifeCycleManager manager = getLifeCycleManager(activity);
+        manager.removeListener(componentName);
+    }
+
+    /**
+     * 移除生命周期监听组件<p/>
+     *
+     * @param fragmentActivity 被监听的FragmentActivity
+     * @param componentName 组件名
+     */
+    public static void removeComponent(android.support.v4.app.FragmentActivity fragmentActivity, String componentName){
+        if (fragmentActivity == null)
+            throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
+
+        LifeCycleManager manager = getLifeCycleManagerV4(fragmentActivity);
+        manager.removeListener(componentName);
+    }
+
+    /**
+     * 移除生命周期监听组件<p/>
+     *
+     * @param fragment 被监听的Fragment
+     * @param componentName 组件名
+     */
+    public static void removeComponent(android.support.v4.app.Fragment fragment, String componentName){
+        if (fragment == null)
+            throw new NullPointerException("[LifeCycleUtils] fragment == null");
+
+        android.support.v4.app.FragmentActivity activity = fragment.getActivity();
+        if (activity == null)
+            throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+
+        LifeCycleManager manager = getLifeCycleManagerV4(activity);
+        manager.removeListener(componentName);
+    }
+
+    /**
+     * 移除生命周期监听组件<p/>
+     *
+     * @param activity 被监听的Activity
+     * @param lifeCycle 监听器
+     */
+    public static void removeComponent(Activity activity, LifeCycle lifeCycle){
+        if (activity == null)
+            throw new NullPointerException("[LifeCycleUtils] activity == null");
+        if (lifeCycle == null)
+            return;
+
+        if (DeviceUtils.getVersionSDK() < 11){
+            throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
+        }
+
+        LifeCycleManager manager = getLifeCycleManager(activity);
+        manager.removeListener(lifeCycle);
+    }
+
+    /**
+     * 移除生命周期监听组件<p/>
+     *
+     * @param fragment 被监听的Fragment
+     * @param lifeCycle 监听器
+     */
+    public static void removeComponent(Fragment fragment, LifeCycle lifeCycle){
+        if (fragment == null)
+            throw new NullPointerException("[LifeCycleUtils] fragment == null");
+        if (lifeCycle == null)
+            return;
+
+        if (DeviceUtils.getVersionSDK() < 11){
+            throw new RuntimeException("[LifeCycleUtils]can't use android.app.Fragment before api 11");
+        }
+
+        Activity activity = fragment.getActivity();
+        if (activity == null)
+            throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+
+        LifeCycleManager manager = getLifeCycleManager(activity);
+        manager.removeListener(lifeCycle);
+    }
+
+    /**
+     * 移除生命周期监听组件<p/>
+     *
+     * @param fragmentActivity 被监听的FragmentActivity
+     * @param lifeCycle 监听器
+     */
+    public static void removeComponent(android.support.v4.app.FragmentActivity fragmentActivity, LifeCycle lifeCycle){
+        if (fragmentActivity == null)
+            throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
+        if (lifeCycle == null)
+            return;
+
+        LifeCycleManager manager = getLifeCycleManagerV4(fragmentActivity);
+        manager.removeListener(lifeCycle);
+    }
+
+    /**
+     * 移除生命周期监听组件<p/>
+     *
+     * @param fragment 被监听的Fragment
+     * @param lifeCycle 监听器
+     */
+    public static void removeComponent(android.support.v4.app.Fragment fragment, LifeCycle lifeCycle){
+        if (fragment == null)
+            throw new NullPointerException("[LifeCycleUtils] fragment == null");
+        if (lifeCycle == null)
+            return;
+
+        android.support.v4.app.FragmentActivity activity = fragment.getActivity();
+        if (activity == null)
+            throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+
+        LifeCycleManager manager = getLifeCycleManagerV4(activity);
+        manager.removeListener(lifeCycle);
+    }
+
+    /*************************************************************************************
+     * inner
+     */
+
+    private static LifeCycleManager getLifeCycleManager(Activity activity){
+        //生命周期Fragment
+        android.app.Fragment oldFragment = activity.getFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);
+        //生命周期管理器
+        LifeCycleManager manager = null;
+
+        //获取生命周期管理器
+        if (oldFragment instanceof LifeCycleFragment){
+            manager = ((LifeCycleFragment) oldFragment).getLifeCycleManager();
+        }
 
         //生命周期管理器不存在则新建
-        if (manager == null || !(manager instanceof LifeCycleManager)){
+        if (manager == null){
             manager = new LifeCycleManagerImpl();//新建管理器
-            android.app.Fragment oldFragment = activity.getFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
-            android.app.Fragment fragment = new LifeCycleFragment(activity, (LifeCycleManager) manager);//新生命周期监听Fragment
+            android.app.Fragment fragment = new LifeCycleFragment(manager);//新生命周期监听Fragment
             android.app.FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
             if (oldFragment != null) {
                 transaction.remove(oldFragment);//移除原有Fragment
@@ -151,21 +389,24 @@ public class LifeCycleUtils {
             transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
             transaction.commit();
         }
-
-        //加入监听器
-        ((LifeCycleManager)manager).addListener(lifeCycle);
+        return manager;
     }
 
-    private static void addListener(android.support.v4.app.FragmentActivity fragmentActivity, LifeCycle lifeCycle) {
+    private static LifeCycleManager getLifeCycleManagerV4(android.support.v4.app.FragmentActivity fragmentActivity){
+        //生命周期Fragment
+        android.support.v4.app.Fragment oldFragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);
+        //生命周期管理器
+        LifeCycleManager manager = null;
 
-        //ParasiticVars中获取FragmentActivity的生命周期管理器
-        Object manager = ParasiticVars.get(fragmentActivity, LifeCycleManager.MANAGER_TAG);
+        //获取生命周期管理器
+        if (oldFragment instanceof LifeCycleFragmentV4){
+            manager = ((LifeCycleFragmentV4) oldFragment).getLifeCycleManager();
+        }
 
         //生命周期管理器不存在则新建
-        if (manager == null || !(manager instanceof LifeCycleManager)){
+        if (manager == null){
             manager = new LifeCycleManagerImpl();//新建管理器
-            android.support.v4.app.Fragment oldFragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
-            android.support.v4.app.Fragment fragment = new LifeCycleFragmentV4(fragmentActivity, (LifeCycleManager) manager);//新生命周期监听Fragment
+            android.support.v4.app.Fragment fragment = new LifeCycleFragmentV4(manager);//新生命周期监听Fragment
             android.support.v4.app.FragmentTransaction transaction = fragmentActivity.getSupportFragmentManager().beginTransaction();
             if (oldFragment != null) {
                 transaction.remove(oldFragment);//移除原有Fragment
@@ -173,9 +414,7 @@ public class LifeCycleUtils {
             transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
             transaction.commit();
         }
-
-        //加入监听器
-        ((LifeCycleManager)manager).addListener(lifeCycle);
+        return manager;
     }
 
 }

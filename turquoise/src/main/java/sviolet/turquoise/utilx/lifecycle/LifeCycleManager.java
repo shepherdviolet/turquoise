@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 S.Violet
+ * Copyright (C) 2015-2017 S.Violet
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utilx.lifecycle.manager;
-
-import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
-import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
+package sviolet.turquoise.utilx.lifecycle;
 
 /**
  * 生命周期管理器<p/>
@@ -29,21 +26,35 @@ import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
  *
  * Created by S.Violet on 2015/11/24.
  */
-public interface LifeCycleManager {
+interface LifeCycleManager {
 
     public static final String FRAGMENT_TAG = "TURQUOISE_LIFE_CYCLE_FRAGMENT";
 
-    public static final String MANAGER_TAG = "TURQUOISE_LIFE_CYCLE_MANAGER";
-
     /**
+     * @param componentName 组件名
      * @param listener 添加生命周期监听器
      */
-    void addListener(LifeCycle listener);
+    void addListener(String componentName, LifeCycle listener);
+
+    /**
+     * @param componentName 移除生命周期监听器的组件名
+     */
+    void removeListener(String componentName);
 
     /**
      * @param listener 移除生命周期监听器
      */
     void removeListener(LifeCycle listener);
+
+    /**
+     * @param listener 添加生命周期监听器
+     */
+    void addWeakListener(LifeCycle listener);
+
+    /**
+     * @param listener 移除生命周期监听器
+     */
+    void removeWeakListener(LifeCycle listener);
 
     void onCreate();
 

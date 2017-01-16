@@ -27,8 +27,6 @@ import android.view.Menu;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
 import sviolet.turquoise.enhance.app.utils.RuntimePermissionManager;
-import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
-import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
@@ -165,22 +163,6 @@ public abstract class TFragmentActivity extends FragmentActivity implements Enha
         }else{
             TLogger.get(this).e("[TFragmentActivity]please use annotation \"@ResourceId()\" instead of setContentView()");
         }
-    }
-
-    /**********************************************
-     * public
-     */
-
-    /**
-     * 将生命周期监听器绑定在该Activity上<p/>
-     *
-     * LifeCycleUtils不会强引用监听器, 需自行持有对象.<p/>
-     *
-     * @param lifeCycle 生命周期监听器
-     */
-    @Override
-    public void attachLifeCycle(LifeCycle lifeCycle){
-        LifeCycleUtils.attach(this, lifeCycle);
     }
 
     /**********************************************

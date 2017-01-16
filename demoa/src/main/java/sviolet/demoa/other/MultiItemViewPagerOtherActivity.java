@@ -44,6 +44,7 @@ import sviolet.turquoise.ui.util.ViewCommonUtils;
 import sviolet.turquoise.util.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
+import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 
 @DemoDescription(
         title = "Multi item in ViewPager Demo",
@@ -77,7 +78,7 @@ public class MultiItemViewPagerOtherActivity extends TActivity {
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
         cachedBitmapUtils = new CachedBitmapUtils(getApplicationContext(), 0.1f, 0f);
-        attachLifeCycle(cachedBitmapUtils);//绑定生命周期
+        LifeCycleUtils.attach(this, cachedBitmapUtils);
 
         viewPager.setOffscreenPageLimit(10);//设置缓存页面数(重要), 根据画廊一页能显示的Item数来设置, 设置约两页的Item数效果比较好, 但是相对占内存
         viewPager.setPageMargin(MeasureUtils.dp2px(getApplicationContext(), 6));//每一页之间的间距(重要)

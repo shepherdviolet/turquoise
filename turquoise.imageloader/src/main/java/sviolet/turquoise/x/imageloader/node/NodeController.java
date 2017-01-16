@@ -23,7 +23,7 @@ import android.content.Context;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import sviolet.turquoise.utilx.lifecycle.listener.LifeCycle;
+import sviolet.turquoise.utilx.lifecycle.LifeCycle;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;
 import sviolet.turquoise.x.imageloader.drawable.FailedDrawableFactory;
