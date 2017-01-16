@@ -218,7 +218,7 @@ public class LifeCycleUtils {
      * @param activity 被监听的Activity
      * @param componentName 组件名
      */
-    public static void getComponent(Activity activity, String componentName){
+    public static LifeCycle getComponent(Activity activity, String componentName){
         if (activity == null)
             throw new NullPointerException("[LifeCycleUtils] activity == null");
 
@@ -227,7 +227,7 @@ public class LifeCycleUtils {
         }
 
         LifeCycleManager manager = getLifeCycleManager(activity);
-        manager.getComponent(componentName);
+        return manager.getComponent(componentName);
     }
 
     /**
@@ -236,7 +236,7 @@ public class LifeCycleUtils {
      * @param fragment 被监听的Fragment
      * @param componentName 组件名
      */
-    public static void getComponent(Fragment fragment, String componentName){
+    public static LifeCycle getComponent(Fragment fragment, String componentName){
         if (fragment == null)
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
 
@@ -249,7 +249,7 @@ public class LifeCycleUtils {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
 
         LifeCycleManager manager = getLifeCycleManager(activity);
-        manager.getComponent(componentName);
+        return manager.getComponent(componentName);
     }
 
     /**
@@ -258,12 +258,12 @@ public class LifeCycleUtils {
      * @param fragmentActivity 被监听的FragmentActivity
      * @param componentName 组件名
      */
-    public static void getComponent(android.support.v4.app.FragmentActivity fragmentActivity, String componentName){
+    public static LifeCycle getComponent(android.support.v4.app.FragmentActivity fragmentActivity, String componentName){
         if (fragmentActivity == null)
             throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
 
         LifeCycleManager manager = getLifeCycleManagerV4(fragmentActivity);
-        manager.getComponent(componentName);
+        return manager.getComponent(componentName);
     }
 
     /**
@@ -272,7 +272,7 @@ public class LifeCycleUtils {
      * @param fragment 被监听的Fragment
      * @param componentName 组件名
      */
-    public static void getComponent(android.support.v4.app.Fragment fragment, String componentName){
+    public static LifeCycle getComponent(android.support.v4.app.Fragment fragment, String componentName){
         if (fragment == null)
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
 
@@ -281,7 +281,7 @@ public class LifeCycleUtils {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
 
         LifeCycleManager manager = getLifeCycleManagerV4(activity);
-        manager.getComponent(componentName);
+        return manager.getComponent(componentName);
     }
 
     /*************************************************************************************

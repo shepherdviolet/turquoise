@@ -42,7 +42,7 @@ interface LifeCycleManager {
      * 获取组件
      * @param componentName 组件名
      */
-    void getComponent(String componentName);
+    LifeCycle getComponent(String componentName);
 
     /**
      * 删除组件

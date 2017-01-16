@@ -48,8 +48,8 @@ class LifeCycleManagerImpl implements LifeCycleManager {
     }
 
     @Override
-    public void getComponent(String componentName) {
-        components.get(componentName);
+    public LifeCycle getComponent(String componentName) {
+        return components.get(componentName);
     }
 
     @Override
