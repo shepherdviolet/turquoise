@@ -8,7 +8,7 @@
 <br/>
 
 # Module turquoise
-![API](https://img.shields.io/badge/API-10%2B-6a5acd.svg?style=flat)
+![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
 
 ###### The basic library module, as detailed below:
