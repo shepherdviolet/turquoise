@@ -24,7 +24,7 @@ package sviolet.turquoise.utilx.eventbus;
  *
  * Created by S.Violet on 2017/1/16.
  */
-public abstract class EvReceiver <MessageType extends EvBean> {
+public abstract class EvReceiver <MessageType extends EvMessage> {
 
     private EvBus.Type type;
 

@@ -24,7 +24,7 @@ package sviolet.turquoise.utilx.eventbus;
  *
  * Created by S.Violet on 2017/1/17.
  */
-public interface EvBean {
+public interface EvMessage {
 
 
 }
