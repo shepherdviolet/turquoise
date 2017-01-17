@@ -156,7 +156,9 @@ class EvCenter {
         //遍历所有station拉取消息
         for (EvStation station : ConcurrentUtils.getSnapShot(stations)){
             EvStation.StoredMessage message = station.withdraw(messageType);
-            map.put(message.time, message.message);
+            if (message != null) {
+                map.put(message.time, message.message);
+            }
         }
 
         return new ArrayList<>(map.values());
