@@ -21,7 +21,6 @@ package sviolet.turquoise.utilx.eventbus;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.Looper;
 
 import java.util.Collections;
 import java.util.Set;
@@ -30,6 +29,7 @@ import java.util.WeakHashMap;
 import sviolet.turquoise.util.common.ConcurrentUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
 import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * 事件处理中心
@@ -42,15 +42,23 @@ class EvCenter {
 
     static final EvCenter INSTANCE = new EvCenter();
 
+    private TLogger logger = TLogger.get(this);
+
     private final Set<EvStation> stations = Collections.newSetFromMap(new WeakHashMap<EvStation, Boolean>());
 
-    void post(String id, Object message){
+    void post(Object message){
+        boolean result = false;
         for (EvStation station : ConcurrentUtils.getSnapShot(stations)){
-            station.post(id, message);
+            if (station.post(message)){
+                result = true;
+            }
+        }
+        if (!result){
+            logger.d("no receiver handle this message, messageClass:" + message.getClass() + ", message:" + message);
         }
     }
 
-    void register(Activity activity, String id, EvBus.Type type, EvReceiver receiver){
+    void register(Activity activity, EvBus.Type type, EvReceiver receiver){
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             component = new EvStation(activity);
@@ -58,10 +66,10 @@ class EvCenter {
             stations.add((EvStation) component);
         }
         EvStation station = (EvStation) component;
-        station.register(id, type, receiver);
+        station.register(type, receiver);
     }
 
-    void register(Fragment fragment, String id, EvBus.Type type, EvReceiver receiver){
+    void register(Fragment fragment, EvBus.Type type, EvReceiver receiver){
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             component = new EvStation(fragment.getActivity());
@@ -69,10 +77,10 @@ class EvCenter {
             stations.add((EvStation) component);
         }
         EvStation station = (EvStation) component;
-        station.register(id, type, receiver);
+        station.register(type, receiver);
     }
 
-    void register(android.support.v4.app.FragmentActivity activity, String id, EvBus.Type type, EvReceiver receiver){
+    void register(android.support.v4.app.FragmentActivity activity, EvBus.Type type, EvReceiver receiver){
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             component = new EvStation(activity);
@@ -80,10 +88,10 @@ class EvCenter {
             stations.add((EvStation) component);
         }
         EvStation station = (EvStation) component;
-        station.register(id, type, receiver);
+        station.register(type, receiver);
     }
 
-    void register(android.support.v4.app.Fragment fragment, String id, EvBus.Type type, EvReceiver receiver){
+    void register(android.support.v4.app.Fragment fragment, EvBus.Type type, EvReceiver receiver){
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             component = new EvStation(fragment.getActivity());
@@ -91,7 +99,7 @@ class EvCenter {
             stations.add((EvStation) component);
         }
         EvStation station = (EvStation) component;
-        station.register(id, type, receiver);
+        station.register(type, receiver);
     }
 
 }

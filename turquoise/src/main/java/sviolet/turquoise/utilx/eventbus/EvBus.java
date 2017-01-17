@@ -32,115 +32,101 @@ public class EvBus {
 
     /**
      * 推送消息
-     * @param id 消息ID
      * @param message 消息
      */
-    public static void post(String id, Object message){
-        EvCenter.INSTANCE.post(id, message);
+    public static void post(Object message){
+        if (message == null){
+            throw new IllegalArgumentException("[EvBus]message == null");
+        }
+        EvCenter.INSTANCE.post(message);
     }
 
     /**
      * [UI线程调用]注册消息
      * @param activity Activity
-     * @param id 消息ID
      * @param type 接收方式
      * @param receiver 接收器
      */
-    public static void register(Activity activity, String id, Type type, EvReceiver receiver){
+    public static void register(Activity activity, Type type, EvReceiver receiver){
         if (Looper.getMainLooper() != Looper.myLooper()){
             throw new RuntimeException("[EvBus]you must call register method in ui thread");
         }
         if (activity == null){
             throw new IllegalArgumentException("[EvBus]activity == null");
         }
-        if (id == null){
-            throw new IllegalArgumentException("[EvBus]id == null");
-        }
         if (type == null){
             throw new IllegalArgumentException("[EvBus]type == null");
         }
         if (receiver == null){
-            return;
+            throw new IllegalArgumentException("[EvBus]receiver == null");
         }
-        EvCenter.INSTANCE.register(activity, id, type, receiver);
+        EvCenter.INSTANCE.register(activity, type, receiver);
     }
 
     /**
      * [UI线程调用]注册消息
      * @param fragment fragment
-     * @param id 消息ID
      * @param type 接收方式
      * @param receiver 接收器
      */
-    public static void register(Fragment fragment, String id, Type type, EvReceiver receiver){
+    public static void register(Fragment fragment, Type type, EvReceiver receiver){
         if (Looper.getMainLooper() != Looper.myLooper()){
             throw new RuntimeException("[EvBus]you must call register method in ui thread");
         }
         if (fragment == null){
             throw new IllegalArgumentException("[EvBus]fragment == null");
         }
-        if (id == null){
-            throw new IllegalArgumentException("[EvBus]id == null");
-        }
         if (type == null){
             throw new IllegalArgumentException("[EvBus]type == null");
         }
         if (receiver == null){
-            return;
+            throw new IllegalArgumentException("[EvBus]receiver == null");
         }
-        EvCenter.INSTANCE.register(fragment, id, type, receiver);
+        EvCenter.INSTANCE.register(fragment, type, receiver);
     }
 
     /**
      * [UI线程调用]注册消息
      * @param activity Activity
-     * @param id 消息ID
      * @param type 接收方式
      * @param receiver 接收器
      */
-    public static void register(android.support.v4.app.FragmentActivity activity, String id, Type type, EvReceiver receiver){
+    public static void register(android.support.v4.app.FragmentActivity activity, Type type, EvReceiver receiver){
         if (Looper.getMainLooper() != Looper.myLooper()){
             throw new RuntimeException("[EvBus]you must call register method in ui thread");
         }
         if (activity == null){
             throw new IllegalArgumentException("[EvBus]activity == null");
         }
-        if (id == null){
-            throw new IllegalArgumentException("[EvBus]id == null");
-        }
         if (type == null){
             throw new IllegalArgumentException("[EvBus]type == null");
         }
         if (receiver == null){
-            return;
+            throw new IllegalArgumentException("[EvBus]receiver == null");
         }
-        EvCenter.INSTANCE.register(activity, id, type, receiver);
+        EvCenter.INSTANCE.register(activity, type, receiver);
     }
 
     /**
      * [UI线程调用]注册消息
      * @param fragment fragment
-     * @param id 消息ID
      * @param type 接收方式
      * @param receiver 接收器
      */
-    public static void register(android.support.v4.app.Fragment fragment, String id, Type type, EvReceiver receiver){
+    public static void register(android.support.v4.app.Fragment fragment, Type type, EvReceiver receiver){
         if (Looper.getMainLooper() != Looper.myLooper()){
             throw new RuntimeException("[EvBus]you must call register method in ui thread");
         }
         if (fragment == null){
             throw new IllegalArgumentException("[EvBus]fragment == null");
         }
-        if (id == null){
-            throw new IllegalArgumentException("[EvBus]id == null");
-        }
         if (type == null){
             throw new IllegalArgumentException("[EvBus]type == null");
         }
         if (receiver == null){
-            return;
+            throw new IllegalArgumentException("[EvBus]receiver == null");
         }
-        EvCenter.INSTANCE.register(fragment, id, type, receiver);
+        EvCenter.INSTANCE.register(fragment, type, receiver);
     }
 
     public enum Type{

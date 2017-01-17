@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.util.common.ConcurrentUtils;
+import sviolet.turquoise.util.reflect.ReflectUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
@@ -46,74 +47,86 @@ class EvStation implements LifeCycle {
 
     private WeakReference<Activity> activityWeakReference;
 
-    private Map<String, EvReceiver> receivers = new ConcurrentHashMap<>();
-    private List<MessageWrapper> onStartMessages = Collections.synchronizedList(new ArrayList<MessageWrapper>());
-    private List<MessageWrapper> onResumeMessages = Collections.synchronizedList(new ArrayList<MessageWrapper>());
-    private List<MessageWrapper> onPauseMessages = Collections.synchronizedList(new ArrayList<MessageWrapper>());
-    private List<MessageWrapper> onStopMessages = Collections.synchronizedList(new ArrayList<MessageWrapper>());
-    private List<MessageWrapper> onDestroyMessages = Collections.synchronizedList(new ArrayList<MessageWrapper>());
+    private Map<Class, EvReceiver> receivers = new ConcurrentHashMap<>();
+    private List<Object> onStartMessages = Collections.synchronizedList(new ArrayList<>());
+    private List<Object> onResumeMessages = Collections.synchronizedList(new ArrayList<>());
+    private List<Object> onPauseMessages = Collections.synchronizedList(new ArrayList<>());
+    private List<Object> onStopMessages = Collections.synchronizedList(new ArrayList<>());
+    private List<Object> onDestroyMessages = Collections.synchronizedList(new ArrayList<>());
 
     EvStation(Activity activity) {
         activityWeakReference = new WeakReference<>(activity);
     }
 
-    void post(String id, Object message){
-        EvReceiver receiver = receivers.get(id);
+    boolean post(Object message){
+        if (getActivity() == null){
+            return false;
+        }
+        EvReceiver receiver = receivers.get(message.getClass());
         if (receiver == null){
-            return;
+            return false;
         }
         switch (receiver.getType()){
             case CURR_THREAD:
-                callReceiver(id, message, receiver);
+                callReceiver(message, receiver);
                 break;
             case UI_THREAD:
                 if (Looper.getMainLooper() == Looper.myLooper()){
-                    callReceiver(id, message, receiver);
+                    callReceiver(message, receiver);
                 } else {
                     Message msg = myHandler.obtainMessage();
-                    msg.obj = new MessageWrapper(id, message);
+                    msg.obj = message;
                     myHandler.sendMessage(msg);
                 }
                 break;
             case ON_START:
-                onStartMessages.add(new MessageWrapper(id, message));
+                onStartMessages.add(message);
                 break;
             case ON_RESUME:
-                onResumeMessages.add(new MessageWrapper(id, message));
+                onResumeMessages.add(message);
                 break;
             case ON_PAUSE:
-                onPauseMessages.add(new MessageWrapper(id, message));
+                onPauseMessages.add(message);
                 break;
             case ON_STOP:
-                onStopMessages.add(new MessageWrapper(id, message));
+                onStopMessages.add(message);
                 break;
             case ON_DESTROY:
-                onDestroyMessages.add(new MessageWrapper(id, message));
+                onDestroyMessages.add(message);
                 break;
             default:
-                break;
+                return false;
         }
+        return true;
     }
 
-    private void callReceiver(String id, Object message, EvReceiver receiver) {
+    private void callReceiver(Object message, EvReceiver receiver) {
         try {
             receiver.onReceive(message);
         } catch (ClassCastException e){
-            logger.e("exception while receiver casting message, id:" + id + ", activity:" + getActivity() + ", message:" + message, e);
+            logger.e("exception while receiver casting message, activity:" + getActivity() + ", messageClass:" + message.getClass() + ", message:" + message, e);
         }
     }
 
-    private void callReceiver(MessageWrapper messageWrapper){
-        EvReceiver receiver = receivers.get(messageWrapper.id);
+    private void callReceiver(Object message){
+        EvReceiver receiver = receivers.get(message.getClass());
         if (receiver == null){
             return;
         }
-        callReceiver(messageWrapper.id, messageWrapper.message, receiver);
+        callReceiver(message, receiver);
     }
 
-    void register(String id, EvBus.Type type, EvReceiver receiver){
+    void register(EvBus.Type type, EvReceiver receiver){
+        if (getActivity() == null){
+            return;
+        }
+        List<Class> actualTypes = ReflectUtils.getActualTypes(receiver.getClass());
+        if(actualTypes.size() != 1){
+            logger.e("generic type's size of EvReceiver is not 1");
+            return;
+        }
         receiver.setType(type);
-        receivers.put(id, receiver);
+        receivers.put(actualTypes.get(0), receiver);
     }
 
     @Override
@@ -123,56 +136,56 @@ class EvStation implements LifeCycle {
 
     @Override
     public void onStart() {
-        List<MessageWrapper> snap = ConcurrentUtils.getSnapShot(onStartMessages);
-        for (MessageWrapper messageWrapper : snap){
-            onStartMessages.remove(messageWrapper);
+        List<Object> snap = ConcurrentUtils.getSnapShot(onStartMessages);
+        for (Object obj : snap){
+            onStartMessages.remove(obj);
         }
-        for (MessageWrapper messageWrapper : snap){
-            callReceiver(messageWrapper);
+        for (Object obj : snap){
+            callReceiver(obj);
         }
     }
 
     @Override
     public void onResume() {
-        List<MessageWrapper> snap = ConcurrentUtils.getSnapShot(onResumeMessages);
-        for (MessageWrapper messageWrapper : snap){
-            onResumeMessages.remove(messageWrapper);
+        List<Object> snap = ConcurrentUtils.getSnapShot(onResumeMessages);
+        for (Object obj : snap){
+            onResumeMessages.remove(obj);
         }
-        for (MessageWrapper messageWrapper : snap){
-            callReceiver(messageWrapper);
+        for (Object obj : snap){
+            callReceiver(obj);
         }
     }
 
     @Override
     public void onPause() {
-        List<MessageWrapper> snap = ConcurrentUtils.getSnapShot(onPauseMessages);
-        for (MessageWrapper messageWrapper : snap){
-            onPauseMessages.remove(messageWrapper);
+        List<Object> snap = ConcurrentUtils.getSnapShot(onPauseMessages);
+        for (Object obj : snap){
+            onPauseMessages.remove(obj);
         }
-        for (MessageWrapper messageWrapper : snap){
-            callReceiver(messageWrapper);
+        for (Object obj : snap){
+            callReceiver(obj);
         }
     }
 
     @Override
     public void onStop() {
-        List<MessageWrapper> snap = ConcurrentUtils.getSnapShot(onStopMessages);
-        for (MessageWrapper messageWrapper : snap){
-            onStopMessages.remove(messageWrapper);
+        List<Object> snap = ConcurrentUtils.getSnapShot(onStopMessages);
+        for (Object obj : snap){
+            onStopMessages.remove(obj);
         }
-        for (MessageWrapper messageWrapper : snap){
-            callReceiver(messageWrapper);
+        for (Object obj : snap){
+            callReceiver(obj);
         }
     }
 
     @Override
     public void onDestroy() {
-        List<MessageWrapper> snap = ConcurrentUtils.getSnapShot(onDestroyMessages);
-        for (MessageWrapper messageWrapper : snap){
-            onDestroyMessages.remove(messageWrapper);
+        List<Object> snap = ConcurrentUtils.getSnapShot(onDestroyMessages);
+        for (Object obj : snap){
+            onDestroyMessages.remove(obj);
         }
-        for (MessageWrapper messageWrapper : snap){
-            callReceiver(messageWrapper);
+        for (Object obj : snap){
+            callReceiver(obj);
         }
 
         //清空数据
@@ -205,20 +218,7 @@ class EvStation implements LifeCycle {
 
         @Override
         protected void handleMessageWithHost(Message msg, EvStation host) {
-            if (msg.obj instanceof MessageWrapper){
-                host.callReceiver((MessageWrapper) msg.obj);
-            }
-        }
-    }
-
-    private static class MessageWrapper{
-
-        private String id;
-        private Object message;
-
-        private MessageWrapper(String id, Object message) {
-            this.id = id;
-            this.message = message;
+            host.callReceiver(msg.obj);
         }
     }
 
