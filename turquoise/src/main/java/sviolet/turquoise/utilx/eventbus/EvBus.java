@@ -21,7 +21,8 @@ package sviolet.turquoise.utilx.eventbus;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.os.Looper;
+
+import java.util.List;
 
 /**
  * 事件总线
@@ -36,21 +37,18 @@ public class EvBus {
      */
     public static void post(Object message){
         if (message == null){
-            throw new IllegalArgumentException("[EvBus]message == null");
+            return;
         }
         EvCenter.INSTANCE.post(message);
     }
 
     /**
-     * [UI线程调用]注册消息
+     * 注册消息
      * @param activity Activity
      * @param type 接收方式
      * @param receiver 接收器
      */
     public static void register(Activity activity, Type type, EvReceiver receiver){
-        if (Looper.getMainLooper() != Looper.myLooper()){
-            throw new RuntimeException("[EvBus]you must call register method in ui thread");
-        }
         if (activity == null){
             throw new IllegalArgumentException("[EvBus]activity == null");
         }
@@ -64,15 +62,12 @@ public class EvBus {
     }
 
     /**
-     * [UI线程调用]注册消息
+     * 注册消息
      * @param fragment fragment
      * @param type 接收方式
      * @param receiver 接收器
      */
     public static void register(Fragment fragment, Type type, EvReceiver receiver){
-        if (Looper.getMainLooper() != Looper.myLooper()){
-            throw new RuntimeException("[EvBus]you must call register method in ui thread");
-        }
         if (fragment == null){
             throw new IllegalArgumentException("[EvBus]fragment == null");
         }
@@ -86,15 +81,12 @@ public class EvBus {
     }
 
     /**
-     * [UI线程调用]注册消息
+     * 注册消息
      * @param activity Activity
      * @param type 接收方式
      * @param receiver 接收器
      */
     public static void register(android.support.v4.app.FragmentActivity activity, Type type, EvReceiver receiver){
-        if (Looper.getMainLooper() != Looper.myLooper()){
-            throw new RuntimeException("[EvBus]you must call register method in ui thread");
-        }
         if (activity == null){
             throw new IllegalArgumentException("[EvBus]activity == null");
         }
@@ -108,15 +100,12 @@ public class EvBus {
     }
 
     /**
-     * [UI线程调用]注册消息
+     * 注册消息
      * @param fragment fragment
      * @param type 接收方式
      * @param receiver 接收器
      */
     public static void register(android.support.v4.app.Fragment fragment, Type type, EvReceiver receiver){
-        if (Looper.getMainLooper() != Looper.myLooper()){
-            throw new RuntimeException("[EvBus]you must call register method in ui thread");
-        }
         if (fragment == null){
             throw new IllegalArgumentException("[EvBus]fragment == null");
         }
@@ -140,5 +129,74 @@ public class EvBus {
         ON_DESTROY
 
     }
+
+    /******************************************************************************
+     *
+     */
+
+    public static <T> List<T> withdraw(Class<T> messageType){
+        if (messageType == null){
+            throw new IllegalArgumentException("[EvBus]messageType == null");
+        }
+
+        return (List<T>) EvCenter.INSTANCE.withdraw(messageType);
+    }
+
+    public static <T> T withdrawLastOne(Class<T> messageType){
+        if (messageType == null){
+            throw new IllegalArgumentException("[EvBus]messageType == null");
+        }
+
+        List<T> list = withdraw(messageType);
+        if(list.size() <= 0){
+            return null;
+        }
+        return list.get(0);
+    }
+
+    public static void store(Activity activity, Object message){
+        if (activity == null){
+            throw new IllegalArgumentException("[EvBus]activity == null");
+        }
+        if (message == null){
+            return;
+        }
+
+        EvCenter.INSTANCE.store(activity, message);
+    }
+
+    public static void store(Fragment fragment, Object message){
+        if (fragment == null){
+            throw new IllegalArgumentException("[EvBus]fragment == null");
+        }
+        if (message == null){
+            return;
+        }
+
+        EvCenter.INSTANCE.store(fragment, message);
+    }
+
+    public static void store(android.support.v4.app.FragmentActivity activity, Object message){
+        if (activity == null){
+            throw new IllegalArgumentException("[EvBus]activity == null");
+        }
+        if (message == null){
+            return;
+        }
+
+        EvCenter.INSTANCE.store(activity, message);
+    }
+
+    public static void store(android.support.v4.app.Fragment fragment, Object message){
+        if (fragment == null){
+            throw new IllegalArgumentException("[EvBus]fragment == null");
+        }
+        if (message == null){
+            return;
+        }
+
+        EvCenter.INSTANCE.store(fragment, message);
+    }
+
 
 }

@@ -32,6 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.util.common.ConcurrentUtils;
+import sviolet.turquoise.util.common.DateTimeUtils;
 import sviolet.turquoise.util.reflect.ReflectUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
 import sviolet.turquoise.utilx.tlogger.TLogger;
@@ -53,6 +54,8 @@ class EvStation implements LifeCycle {
     private List<Object> onPauseMessages = Collections.synchronizedList(new ArrayList<>());
     private List<Object> onStopMessages = Collections.synchronizedList(new ArrayList<>());
     private List<Object> onDestroyMessages = Collections.synchronizedList(new ArrayList<>());
+
+    private Map<Class, StoredMessage> storedMessages = new ConcurrentHashMap<>();
 
     EvStation(Activity activity) {
         activityWeakReference = new WeakReference<>(activity);
@@ -195,6 +198,15 @@ class EvStation implements LifeCycle {
         onPauseMessages.clear();
         onStopMessages.clear();
         onDestroyMessages.clear();
+        storedMessages.clear();
+    }
+
+    void store(Object message){
+        storedMessages.put(message.getClass(), new StoredMessage(DateTimeUtils.getCurrentTimeMillis(), message));
+    }
+
+    StoredMessage withdraw(Class messageType){
+        return storedMessages.remove(messageType);
     }
 
     private Activity getActivity(){
@@ -220,6 +232,21 @@ class EvStation implements LifeCycle {
         protected void handleMessageWithHost(Message msg, EvStation host) {
             host.callReceiver(msg.obj);
         }
+    }
+
+    class StoredMessage{
+
+        long time;
+        Object message;
+
+        private StoredMessage() {
+        }
+
+        private StoredMessage(long time, Object message) {
+            this.time = time;
+            this.message = message;
+        }
+
     }
 
 }

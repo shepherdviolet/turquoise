@@ -22,9 +22,14 @@ package sviolet.turquoise.utilx.eventbus;
 import android.app.Activity;
 import android.app.Fragment;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.WeakHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.util.common.ConcurrentUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
@@ -43,6 +48,7 @@ class EvCenter {
     static final EvCenter INSTANCE = new EvCenter();
 
     private TLogger logger = TLogger.get(this);
+    private ReentrantLock lock = new ReentrantLock();
 
     private final Set<EvStation> stations = Collections.newSetFromMap(new WeakHashMap<EvStation, Boolean>());
 
@@ -61,45 +67,168 @@ class EvCenter {
     void register(Activity activity, EvBus.Type type, EvReceiver receiver){
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
         if (!(component instanceof EvStation)){
-            component = new EvStation(activity);
-            LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
-            stations.add((EvStation) component);
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    component = new EvStation(activity);
+                    LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        EvStation station = (EvStation) component;
-        station.register(type, receiver);
+        ((EvStation)component).register(type, receiver);
     }
 
     void register(Fragment fragment, EvBus.Type type, EvReceiver receiver){
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
         if (!(component instanceof EvStation)){
-            component = new EvStation(fragment.getActivity());
-            LifeCycleUtils.addComponent(fragment.getActivity(), COMPONENT_ID, component);
-            stations.add((EvStation) component);
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    component = new EvStation(fragment.getActivity());
+                    LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        EvStation station = (EvStation) component;
-        station.register(type, receiver);
+        ((EvStation)component).register(type, receiver);
     }
 
     void register(android.support.v4.app.FragmentActivity activity, EvBus.Type type, EvReceiver receiver){
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
         if (!(component instanceof EvStation)){
-            component = new EvStation(activity);
-            LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
-            stations.add((EvStation) component);
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    component = new EvStation(activity);
+                    LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        EvStation station = (EvStation) component;
-        station.register(type, receiver);
+        ((EvStation)component).register(type, receiver);
     }
 
     void register(android.support.v4.app.Fragment fragment, EvBus.Type type, EvReceiver receiver){
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
         if (!(component instanceof EvStation)){
-            component = new EvStation(fragment.getActivity());
-            LifeCycleUtils.addComponent(fragment.getActivity(), COMPONENT_ID, component);
-            stations.add((EvStation) component);
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    component = new EvStation(fragment.getActivity());
+                    LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
         }
-        EvStation station = (EvStation) component;
-        station.register(type, receiver);
+        ((EvStation)component).register(type, receiver);
     }
+
+    /********************************************************************************
+     *
+     */
+
+    List<Object> withdraw(Class messageType){
+
+        //根据时间倒叙排列， 第一个为最新的消息
+        TreeMap<Long, Object> map = new TreeMap<>(comparator);
+        for (EvStation station : ConcurrentUtils.getSnapShot(stations)){
+            EvStation.StoredMessage message = station.withdraw(messageType);
+            map.put(message.time, message.message);
+        }
+
+        return new ArrayList<>(map.values());
+    }
+
+    void store(Activity activity, Object message){
+        LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
+        if (!(component instanceof EvStation)){
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    component = new EvStation(activity);
+                    LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        ((EvStation)component).store(message);
+    }
+
+    void store(Fragment fragment, Object message){
+        LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
+        if (!(component instanceof EvStation)){
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    component = new EvStation(fragment.getActivity());
+                    LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        ((EvStation)component).store(message);
+    }
+
+    void store(android.support.v4.app.FragmentActivity activity, Object message){
+        LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
+        if (!(component instanceof EvStation)){
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    component = new EvStation(activity);
+                    LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        ((EvStation)component).store(message);
+    }
+
+    void store(android.support.v4.app.Fragment fragment, Object message){
+        LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
+        if (!(component instanceof EvStation)){
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    component = new EvStation(fragment.getActivity());
+                    LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        ((EvStation)component).store(message);
+    }
+
+    private Comparator<Long> comparator = new Comparator<Long>() {
+        @Override
+        public int compare(Long o1, Long o2) {
+            return o2.compareTo(o1);
+        }
+    };
 
 }
