@@ -54,6 +54,7 @@ class EvCenter {
 
     void post(Object message){
         boolean result = false;
+        //遍历所有station并推送消息
         for (EvStation station : ConcurrentUtils.getSnapShot(stations)){
             if (station.post(message)){
                 result = true;
@@ -65,12 +66,14 @@ class EvCenter {
     }
 
     void register(Activity activity, EvBus.Type type, EvReceiver receiver){
+        //获得station
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             try{
                 lock.lock();
                 component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
                 if (!(component instanceof EvStation)){
+                    //新建station
                     component = new EvStation(activity);
                     LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
                     stations.add((EvStation) component);
@@ -83,12 +86,14 @@ class EvCenter {
     }
 
     void register(Fragment fragment, EvBus.Type type, EvReceiver receiver){
+        //获得station
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             try{
                 lock.lock();
                 component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
                 if (!(component instanceof EvStation)){
+                    //新建station
                     component = new EvStation(fragment.getActivity());
                     LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
                     stations.add((EvStation) component);
@@ -101,12 +106,14 @@ class EvCenter {
     }
 
     void register(android.support.v4.app.FragmentActivity activity, EvBus.Type type, EvReceiver receiver){
+        //获得station
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             try{
                 lock.lock();
                 component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
                 if (!(component instanceof EvStation)){
+                    //新建station
                     component = new EvStation(activity);
                     LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
                     stations.add((EvStation) component);
@@ -119,12 +126,14 @@ class EvCenter {
     }
 
     void register(android.support.v4.app.Fragment fragment, EvBus.Type type, EvReceiver receiver){
+        //获得station
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             try{
                 lock.lock();
                 component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
                 if (!(component instanceof EvStation)){
+                    //新建station
                     component = new EvStation(fragment.getActivity());
                     LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
                     stations.add((EvStation) component);
@@ -144,6 +153,7 @@ class EvCenter {
 
         //根据时间倒叙排列， 第一个为最新的消息
         TreeMap<Long, Object> map = new TreeMap<>(comparator);
+        //遍历所有station拉取消息
         for (EvStation station : ConcurrentUtils.getSnapShot(stations)){
             EvStation.StoredMessage message = station.withdraw(messageType);
             map.put(message.time, message.message);
@@ -153,12 +163,14 @@ class EvCenter {
     }
 
     void store(Activity activity, Object message){
+        //获得station
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             try{
                 lock.lock();
                 component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
                 if (!(component instanceof EvStation)){
+                    //新建station
                     component = new EvStation(activity);
                     LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
                     stations.add((EvStation) component);
@@ -171,12 +183,14 @@ class EvCenter {
     }
 
     void store(Fragment fragment, Object message){
+        //获得station
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             try{
                 lock.lock();
                 component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
                 if (!(component instanceof EvStation)){
+                    //新建station
                     component = new EvStation(fragment.getActivity());
                     LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
                     stations.add((EvStation) component);
@@ -189,12 +203,14 @@ class EvCenter {
     }
 
     void store(android.support.v4.app.FragmentActivity activity, Object message){
+        //获得station
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             try{
                 lock.lock();
                 component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
                 if (!(component instanceof EvStation)){
+                    //新建station
                     component = new EvStation(activity);
                     LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
                     stations.add((EvStation) component);
@@ -207,12 +223,14 @@ class EvCenter {
     }
 
     void store(android.support.v4.app.Fragment fragment, Object message){
+        //获得station
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
         if (!(component instanceof EvStation)){
             try{
                 lock.lock();
                 component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
                 if (!(component instanceof EvStation)){
+                    //新建station
                     component = new EvStation(fragment.getActivity());
                     LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
                     stations.add((EvStation) component);

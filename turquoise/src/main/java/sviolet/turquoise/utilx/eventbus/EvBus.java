@@ -25,15 +25,65 @@ import android.app.Fragment;
 import java.util.List;
 
 /**
- * 事件总线
+ * <p>超轻量级事件总线</p>
+ *
+ * <p>用法1+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+ *
+ * <p>先在一个Activity或Fragment中注册一个接收器, EvBus.Type指定处理方式, EvReceiver的泛型指定接受消息类
+ * 型(JavaBean).</p>
+ *
+ * <pre>{@code
+ *      //注册接收器, 接受GuideActivity.Bean类型的消息, 收到消息后在onStart之后处理
+ *      EvBus.register(this, EvBus.Type.ON_START, new EvReceiver<GuideActivity.Bean>(){
+ *          protected void onReceive(GuideActivity.Bean message) {
+ *              Toast.makeText(GuideActivity.this, message.value, Toast.LENGTH_SHORT).show();
+ *          }
+ *      });
+ * }</pre>
+ *
+ * <p>确保接收器已经注册好. 实例化JavaBean, 调用EvBus.post()方法发送消息, 所有注册了该JavaBean类型的接收
+ * 器都会收到消息, 具体的调用时机根据EvBus.Type指定.</p>
+ *
+ * <pre>{@code
+ *      //实例化JavaBean, 类型与EvReceiver的泛型相符
+ *      GuideActivity.Bean bean = new GuideActivity.Bean();
+ *      bean.value = "hello world";
+ *      //发送消息
+ *      EvBus.post(bean);
+ * }</pre>
+ *
+ * <p>注意:这种方式必须先注册接收器, 再发送消息, 否则将不会收到消息. EvReceiver接收器的泛型必须指定, 且与
+ * 发送的消息类型相符.</p>
+ *
+ * <p>用法2+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+ *
+ * <p>先实例化一个JavaBean, 调用EvBus.store()方法储存一个消息.</p>
+ *
+ * <pre>{@code
+ *      //实例化JavaBean
+ *      Bean bean = new Bean();
+ *      bean.value = "stored message";
+ *      //储存消息
+ *      EvBus.store(this, bean);
+ * }</pre>
+ *
+ * <p>调用EvBus.withdrawLastOne()方法, 参数指定要提取的消息类型, 程序会提取所有用EvBus.store()方法存入的
+ * 指定JavaBean类型的消息, 并返回最新的一个(最后存入的消息), 其余的消息会被废弃. 你也可以使用EvBus.withdraw()
+ * 方法提取指定JavaBean类型的所有消息, 结果将返回一个List. 无论哪种方法, 指定类型的消息都会被一次性消费掉,
+ * 再次提取将返回空值.</p>
+ *
+ * <pre>{@code
+ *      //指定JavaBean类型, 提取最新一个消息
+ *      GuideActivity.Bean receivedBean = EvBus.withdrawLastOne(GuideActivity.Bean.class);
+ * }</pre>
  *
  * Created by S.Violet on 2017/1/16.
  */
 public class EvBus {
 
     /**
-     * 推送消息
-     * @param message 消息
+     * 发送消息, 在发送前注册(register)的接收器都会收到这个消息
+     * @param message 消息, 类型必须匹配接收器指定的类型
      */
     public static void post(Object message){
         if (message == null){
@@ -43,10 +93,10 @@ public class EvBus {
     }
 
     /**
-     * 注册消息
+     * 注册消息接收器
      * @param activity Activity
      * @param type 接收方式
-     * @param receiver 接收器
+     * @param receiver 接收器, 必须用泛型指定接受的消息类型
      */
     public static void register(Activity activity, Type type, EvReceiver receiver){
         if (activity == null){
@@ -62,10 +112,10 @@ public class EvBus {
     }
 
     /**
-     * 注册消息
+     * 注册消息接收器
      * @param fragment fragment
      * @param type 接收方式
-     * @param receiver 接收器
+     * @param receiver 接收器, 必须用泛型指定接受的消息类型
      */
     public static void register(Fragment fragment, Type type, EvReceiver receiver){
         if (fragment == null){
@@ -81,10 +131,10 @@ public class EvBus {
     }
 
     /**
-     * 注册消息
+     * 注册消息接收器
      * @param activity Activity
      * @param type 接收方式
-     * @param receiver 接收器
+     * @param receiver 接收器, 必须用泛型指定接受的消息类型
      */
     public static void register(android.support.v4.app.FragmentActivity activity, Type type, EvReceiver receiver){
         if (activity == null){
@@ -100,10 +150,10 @@ public class EvBus {
     }
 
     /**
-     * 注册消息
+     * 注册消息接收器
      * @param fragment fragment
      * @param type 接收方式
-     * @param receiver 接收器
+     * @param receiver 接收器, 必须用泛型指定接受的消息类型
      */
     public static void register(android.support.v4.app.Fragment fragment, Type type, EvReceiver receiver){
         if (fragment == null){
@@ -118,15 +168,18 @@ public class EvBus {
         EvCenter.INSTANCE.register(fragment, type, receiver);
     }
 
+    /**
+     * 接收器处理方式
+     */
     public enum Type{
 
-        CURR_THREAD,
-        UI_THREAD,
-        ON_START,
-        ON_RESUME,
-        ON_PAUSE,
-        ON_STOP,
-        ON_DESTROY
+        CURR_THREAD,//当前线程处理消息(调用EvBus.post的线程)
+        UI_THREAD,//UI线程处理消息
+        ON_START,//onStart之后处理消息
+        ON_RESUME,//onResume之后处理消息
+        ON_PAUSE,//onPause之后处理消息
+        ON_STOP,//onStop之后处理消息
+        ON_DESTROY//onDestroy之后处理消息
 
     }
 
@@ -134,6 +187,11 @@ public class EvBus {
      *
      */
 
+    /**
+     * 提取消息, 只能提取之前储存(store)的消息
+     * @param messageType 指定提取的消息类型
+     * @return 之前储存的所有指定类型的消息
+     */
     public static <T> List<T> withdraw(Class<T> messageType){
         if (messageType == null){
             throw new IllegalArgumentException("[EvBus]messageType == null");
@@ -142,6 +200,11 @@ public class EvBus {
         return (List<T>) EvCenter.INSTANCE.withdraw(messageType);
     }
 
+    /**
+     * 提取最新一个消息, 只能提取之前储存(store)的消息, 方法实际上会提取全部指定类型的消息, 其余消息会被废弃
+     * @param messageType 指定提取的消息类型
+     * @return 最新储存的一个消息
+     */
     public static <T> T withdrawLastOne(Class<T> messageType){
         if (messageType == null){
             throw new IllegalArgumentException("[EvBus]messageType == null");
@@ -154,6 +217,11 @@ public class EvBus {
         return list.get(0);
     }
 
+    /**
+     * 储存消息, 储存的消息只能被提取一次, 提取时会从消息池删除
+     * @param activity activity
+     * @param message 消息
+     */
     public static void store(Activity activity, Object message){
         if (activity == null){
             throw new IllegalArgumentException("[EvBus]activity == null");
@@ -165,6 +233,11 @@ public class EvBus {
         EvCenter.INSTANCE.store(activity, message);
     }
 
+    /**
+     * 储存消息, 储存的消息只能被提取一次, 提取时会从消息池删除
+     * @param fragment fragment
+     * @param message 消息
+     */
     public static void store(Fragment fragment, Object message){
         if (fragment == null){
             throw new IllegalArgumentException("[EvBus]fragment == null");
@@ -176,6 +249,11 @@ public class EvBus {
         EvCenter.INSTANCE.store(fragment, message);
     }
 
+    /**
+     * 储存消息, 储存的消息只能被提取一次, 提取时会从消息池删除
+     * @param activity activity
+     * @param message 消息
+     */
     public static void store(android.support.v4.app.FragmentActivity activity, Object message){
         if (activity == null){
             throw new IllegalArgumentException("[EvBus]activity == null");
@@ -187,6 +265,11 @@ public class EvBus {
         EvCenter.INSTANCE.store(activity, message);
     }
 
+    /**
+     * 储存消息, 储存的消息只能被提取一次, 提取时会从消息池删除
+     * @param fragment fragment
+     * @param message 消息
+     */
     public static void store(android.support.v4.app.Fragment fragment, Object message){
         if (fragment == null){
             throw new IllegalArgumentException("[EvBus]fragment == null");

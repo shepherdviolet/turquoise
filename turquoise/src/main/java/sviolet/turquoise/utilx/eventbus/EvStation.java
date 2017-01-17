@@ -65,36 +65,45 @@ class EvStation implements LifeCycle {
         if (getActivity() == null){
             return false;
         }
+        //根据消息类型获取接收器
         EvReceiver receiver = receivers.get(message.getClass());
         if (receiver == null){
             return false;
         }
         switch (receiver.getType()){
             case CURR_THREAD:
+                //直接回调接收器
                 callReceiver(message, receiver);
                 break;
             case UI_THREAD:
                 if (Looper.getMainLooper() == Looper.myLooper()){
+                    //直接回调接收器
                     callReceiver(message, receiver);
                 } else {
+                    //handler中回调接收器
                     Message msg = myHandler.obtainMessage();
                     msg.obj = message;
                     myHandler.sendMessage(msg);
                 }
                 break;
             case ON_START:
+                //放入消息池
                 onStartMessages.add(message);
                 break;
             case ON_RESUME:
+                //放入消息池
                 onResumeMessages.add(message);
                 break;
             case ON_PAUSE:
+                //放入消息池
                 onPauseMessages.add(message);
                 break;
             case ON_STOP:
+                //放入消息池
                 onStopMessages.add(message);
                 break;
             case ON_DESTROY:
+                //放入消息池
                 onDestroyMessages.add(message);
                 break;
             default:
@@ -123,6 +132,7 @@ class EvStation implements LifeCycle {
         if (getActivity() == null){
             return;
         }
+        //获得接收器的泛型,根据接收器的泛型来接受指定的消息
         List<Class> actualTypes = ReflectUtils.getActualTypes(receiver.getClass());
         if(actualTypes.size() != 1){
             logger.e("generic type's size of EvReceiver is not 1");
@@ -202,10 +212,12 @@ class EvStation implements LifeCycle {
     }
 
     void store(Object message){
+        //根据消息的类型来指定接收器
         storedMessages.put(message.getClass(), new StoredMessage(DateTimeUtils.getCurrentTimeMillis(), message));
     }
 
     StoredMessage withdraw(Class messageType){
+        //根据类型来获取消息
         return storedMessages.remove(messageType);
     }
 

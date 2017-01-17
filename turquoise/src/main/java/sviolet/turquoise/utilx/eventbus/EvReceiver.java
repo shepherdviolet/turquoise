@@ -20,6 +20,7 @@
 package sviolet.turquoise.utilx.eventbus;
 
 /**
+ * 事件接收器, 接收的事件类型由泛型MessageType决定
  *
  * Created by S.Violet on 2017/1/16.
  */
@@ -27,6 +28,10 @@ public abstract class EvReceiver <MessageType> {
 
     private EvBus.Type type;
 
+    /**
+     * 实现该方法接收消息
+     * @param message 消息
+     */
     protected abstract void onReceive(MessageType message);
 
     void setType(EvBus.Type type){
