@@ -48,20 +48,20 @@ class EvStation implements LifeCycle {
 
     private WeakReference<Activity> activityWeakReference;
 
-    private Map<Class, EvReceiver> receivers = new ConcurrentHashMap<>();
-    private List<Object> onStartMessages = Collections.synchronizedList(new ArrayList<>());
-    private List<Object> onResumeMessages = Collections.synchronizedList(new ArrayList<>());
-    private List<Object> onPauseMessages = Collections.synchronizedList(new ArrayList<>());
-    private List<Object> onStopMessages = Collections.synchronizedList(new ArrayList<>());
-    private List<Object> onDestroyMessages = Collections.synchronizedList(new ArrayList<>());
+    private Map<Class<? extends EvBean>, EvReceiver> receivers = new ConcurrentHashMap<>();
+    private List<EvBean> onStartMessages = Collections.synchronizedList(new ArrayList<EvBean>());
+    private List<EvBean> onResumeMessages = Collections.synchronizedList(new ArrayList<EvBean>());
+    private List<EvBean> onPauseMessages = Collections.synchronizedList(new ArrayList<EvBean>());
+    private List<EvBean> onStopMessages = Collections.synchronizedList(new ArrayList<EvBean>());
+    private List<EvBean> onDestroyMessages = Collections.synchronizedList(new ArrayList<EvBean>());
 
-    private Map<Class, StoredMessage> storedMessages = new ConcurrentHashMap<>();
+    private Map<Class<? extends EvBean>, StoredMessage> storedMessages = new ConcurrentHashMap<>();
 
     EvStation(Activity activity) {
         activityWeakReference = new WeakReference<>(activity);
     }
 
-    boolean post(Object message){
+    boolean post(EvBean message){
         if (getActivity() == null){
             return false;
         }
@@ -112,7 +112,7 @@ class EvStation implements LifeCycle {
         return true;
     }
 
-    private void callReceiver(Object message, EvReceiver receiver) {
+    private void callReceiver(EvBean message, EvReceiver receiver) {
         try {
             receiver.onReceive(message);
         } catch (ClassCastException e){
@@ -120,7 +120,7 @@ class EvStation implements LifeCycle {
         }
     }
 
-    private void callReceiver(Object message){
+    private void callReceiver(EvBean message){
         EvReceiver receiver = receivers.get(message.getClass());
         if (receiver == null){
             return;
@@ -149,55 +149,55 @@ class EvStation implements LifeCycle {
 
     @Override
     public void onStart() {
-        List<Object> snap = ConcurrentUtils.getSnapShot(onStartMessages);
-        for (Object obj : snap){
+        List<EvBean> snap = ConcurrentUtils.getSnapShot(onStartMessages);
+        for (EvBean obj : snap){
             onStartMessages.remove(obj);
         }
-        for (Object obj : snap){
+        for (EvBean obj : snap){
             callReceiver(obj);
         }
     }
 
     @Override
     public void onResume() {
-        List<Object> snap = ConcurrentUtils.getSnapShot(onResumeMessages);
-        for (Object obj : snap){
+        List<EvBean> snap = ConcurrentUtils.getSnapShot(onResumeMessages);
+        for (EvBean obj : snap){
             onResumeMessages.remove(obj);
         }
-        for (Object obj : snap){
+        for (EvBean obj : snap){
             callReceiver(obj);
         }
     }
 
     @Override
     public void onPause() {
-        List<Object> snap = ConcurrentUtils.getSnapShot(onPauseMessages);
-        for (Object obj : snap){
+        List<EvBean> snap = ConcurrentUtils.getSnapShot(onPauseMessages);
+        for (EvBean obj : snap){
             onPauseMessages.remove(obj);
         }
-        for (Object obj : snap){
+        for (EvBean obj : snap){
             callReceiver(obj);
         }
     }
 
     @Override
     public void onStop() {
-        List<Object> snap = ConcurrentUtils.getSnapShot(onStopMessages);
-        for (Object obj : snap){
+        List<EvBean> snap = ConcurrentUtils.getSnapShot(onStopMessages);
+        for (EvBean obj : snap){
             onStopMessages.remove(obj);
         }
-        for (Object obj : snap){
+        for (EvBean obj : snap){
             callReceiver(obj);
         }
     }
 
     @Override
     public void onDestroy() {
-        List<Object> snap = ConcurrentUtils.getSnapShot(onDestroyMessages);
-        for (Object obj : snap){
+        List<EvBean> snap = ConcurrentUtils.getSnapShot(onDestroyMessages);
+        for (EvBean obj : snap){
             onDestroyMessages.remove(obj);
         }
-        for (Object obj : snap){
+        for (EvBean obj : snap){
             callReceiver(obj);
         }
 
@@ -211,12 +211,12 @@ class EvStation implements LifeCycle {
         storedMessages.clear();
     }
 
-    void store(Object message){
+    void store(EvBean message){
         //根据消息的类型来指定接收器
         storedMessages.put(message.getClass(), new StoredMessage(DateTimeUtils.getCurrentTimeMillis(), message));
     }
 
-    StoredMessage withdraw(Class messageType){
+    StoredMessage withdraw(Class<? extends EvBean> messageType){
         //根据类型来获取消息
         return storedMessages.remove(messageType);
     }
@@ -242,19 +242,19 @@ class EvStation implements LifeCycle {
 
         @Override
         protected void handleMessageWithHost(Message msg, EvStation host) {
-            host.callReceiver(msg.obj);
+            host.callReceiver((EvBean) msg.obj);
         }
     }
 
     class StoredMessage{
 
         long time;
-        Object message;
+        EvBean message;
 
         private StoredMessage() {
         }
 
-        private StoredMessage(long time, Object message) {
+        private StoredMessage(long time, EvBean message) {
             this.time = time;
             this.message = message;
         }

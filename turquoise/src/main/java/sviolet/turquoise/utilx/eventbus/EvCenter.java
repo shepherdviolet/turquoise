@@ -52,7 +52,7 @@ class EvCenter {
 
     private final Set<EvStation> stations = Collections.newSetFromMap(new WeakHashMap<EvStation, Boolean>());
 
-    void post(Object message){
+    void post(EvBean message){
         boolean result = false;
         //遍历所有station并推送消息
         for (EvStation station : ConcurrentUtils.getSnapShot(stations)){
@@ -149,10 +149,10 @@ class EvCenter {
      *
      */
 
-    List<Object> withdraw(Class messageType){
+    List<EvBean> withdraw(Class<? extends EvBean> messageType){
 
         //根据时间倒叙排列， 第一个为最新的消息
-        TreeMap<Long, Object> map = new TreeMap<>(comparator);
+        TreeMap<Long, EvBean> map = new TreeMap<>(comparator);
         //遍历所有station拉取消息
         for (EvStation station : ConcurrentUtils.getSnapShot(stations)){
             EvStation.StoredMessage message = station.withdraw(messageType);
@@ -164,7 +164,7 @@ class EvCenter {
         return new ArrayList<>(map.values());
     }
 
-    void store(Activity activity, Object message){
+    void store(Activity activity, EvBean message){
         //获得station
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
         if (!(component instanceof EvStation)){
@@ -184,7 +184,7 @@ class EvCenter {
         ((EvStation)component).store(message);
     }
 
-    void store(Fragment fragment, Object message){
+    void store(Fragment fragment, EvBean message){
         //获得station
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
         if (!(component instanceof EvStation)){
@@ -204,7 +204,7 @@ class EvCenter {
         ((EvStation)component).store(message);
     }
 
-    void store(android.support.v4.app.FragmentActivity activity, Object message){
+    void store(android.support.v4.app.FragmentActivity activity, EvBean message){
         //获得station
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
         if (!(component instanceof EvStation)){
@@ -224,7 +224,7 @@ class EvCenter {
         ((EvStation)component).store(message);
     }
 
-    void store(android.support.v4.app.Fragment fragment, Object message){
+    void store(android.support.v4.app.Fragment fragment, EvBean message){
         //获得station
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
         if (!(component instanceof EvStation)){

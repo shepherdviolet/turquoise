@@ -27,6 +27,21 @@ import java.util.List;
 /**
  * <p>超轻量级事件总线</p>
  *
+ * <p>在事件总线中, 我们用消息的类型(Class)来标识消息, 相同类型(Class)的消息, 视为相同的消息.</p>
+ *
+ * <pre>{@code
+ *      //消息实际上是一个JavaBean, 这里要求消息必须实现EvBean接口
+ *      public static class Bean implements EvBean{
+ *          private String value;
+ *          public String getValue() {
+ *              return value;
+ *          }
+ *          public void setValue(String value) {
+ *              this.value = value;
+ *          }
+ *      }
+ * }</pre>
+ *
  * <p>用法1+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
  *
  * <p>先在一个Activity或Fragment中注册一个接收器, EvBus.Type指定处理方式, EvReceiver的泛型指定接受消息类
@@ -85,7 +100,7 @@ public class EvBus {
      * 发送消息, 在发送前注册(register)的接收器都会收到这个消息
      * @param message 消息, 类型必须匹配接收器指定的类型
      */
-    public static void post(Object message){
+    public static void post(EvBean message){
         if (message == null){
             return;
         }
@@ -192,7 +207,7 @@ public class EvBus {
      * @param messageType 指定提取的消息类型
      * @return 之前储存的所有指定类型的消息
      */
-    public static <T> List<T> withdraw(Class<T> messageType){
+    public static <T extends EvBean> List<T> withdraw(Class<T> messageType){
         if (messageType == null){
             throw new IllegalArgumentException("[EvBus]messageType == null");
         }
@@ -205,7 +220,7 @@ public class EvBus {
      * @param messageType 指定提取的消息类型
      * @return 最新储存的一个消息
      */
-    public static <T> T withdrawLastOne(Class<T> messageType){
+    public static <T extends EvBean> T withdrawLastOne(Class<T> messageType){
         if (messageType == null){
             throw new IllegalArgumentException("[EvBus]messageType == null");
         }
@@ -222,7 +237,7 @@ public class EvBus {
      * @param activity activity
      * @param message 消息
      */
-    public static void store(Activity activity, Object message){
+    public static void store(Activity activity, EvBean message){
         if (activity == null){
             throw new IllegalArgumentException("[EvBus]activity == null");
         }
@@ -238,7 +253,7 @@ public class EvBus {
      * @param fragment fragment
      * @param message 消息
      */
-    public static void store(Fragment fragment, Object message){
+    public static void store(Fragment fragment, EvBean message){
         if (fragment == null){
             throw new IllegalArgumentException("[EvBus]fragment == null");
         }
@@ -254,7 +269,7 @@ public class EvBus {
      * @param activity activity
      * @param message 消息
      */
-    public static void store(android.support.v4.app.FragmentActivity activity, Object message){
+    public static void store(android.support.v4.app.FragmentActivity activity, EvBean message){
         if (activity == null){
             throw new IllegalArgumentException("[EvBus]activity == null");
         }
@@ -270,7 +285,7 @@ public class EvBus {
      * @param fragment fragment
      * @param message 消息
      */
-    public static void store(android.support.v4.app.Fragment fragment, Object message){
+    public static void store(android.support.v4.app.Fragment fragment, EvBean message){
         if (fragment == null){
             throw new IllegalArgumentException("[EvBus]fragment == null");
         }
