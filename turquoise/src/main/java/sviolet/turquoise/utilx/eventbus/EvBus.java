@@ -51,7 +51,7 @@ import java.util.List;
  *      //注册接收器, 接受GuideActivity.Bean类型的消息, 收到消息后在onStart之后处理
  *      EvBus.register(this, EvBus.Type.ON_START, new EvReceiver<GuideActivity.Bean>(){
  *          protected void onReceive(GuideActivity.Bean message) {
- *              Toast.makeText(GuideActivity.this, message.value, Toast.LENGTH_SHORT).show();
+ *              Toast.makeText(GuideActivity.this, message.getValue(), Toast.LENGTH_SHORT).show();
  *          }
  *      });
  * }</pre>
@@ -62,7 +62,7 @@ import java.util.List;
  * <pre>{@code
  *      //实例化JavaBean, 类型与EvReceiver的泛型相符
  *      GuideActivity.Bean bean = new GuideActivity.Bean();
- *      bean.value = "hello world";
+ *      bean.setValue("hello world");
  *      //发送消息
  *      EvBus.post(bean);
  * }</pre>
@@ -76,8 +76,8 @@ import java.util.List;
  *
  * <pre>{@code
  *      //实例化JavaBean
- *      Bean bean = new Bean();
- *      bean.value = "stored message";
+ *      GuideActivity.Bean bean = new GuideActivity.Bean();
+ *      bean.setValue("stored message");
  *      //储存消息
  *      EvBus.store(this, bean);
  * }</pre>
