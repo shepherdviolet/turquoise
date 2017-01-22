@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015-2017 S.Violet
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  ~ Project GitHub: https://github.com/shepherdviolet/turquoise
+  ~ Email: shepherdviolet@163.com
+  -->
+
+<rotate xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fromDegrees="0"
+    android:toDegrees="360"
+    android:pivotX="50%"
+    android:pivotY="50%"
+    android:interpolator="@android:anim/linear_interpolator">
+
+    <!-- shape 几何图形 shape = ring/rectangle/oval/line -->
+    <!-- innerRadius 内环半径(会覆盖innerRadiusRatio) -->
+    <!-- innerRadiusRatio 内环半径比率 内环半径 = 环宽度 / innerRadiusRatio -->
+    <!-- thickness 环的厚度(会覆盖thicknessRatio) -->
+    <!-- thicknessRatio 环的厚度比率 环厚度 = 环宽度 / thicknessRatio -->
+    <!-- useLevel true:表示可以当做LevelListDrawable使用 一般false -->
+    <shape
+        android:innerRadiusRatio="3"
+        android:thicknessRatio="30"
+        android:shape="ring"
+        android:useLevel="false" >
+
+        <!-- gradient 指定渐变色 type = linear线性渐变/radial环形渐变/sweep渐变 -->
+        <gradient
+            android:startColor="#10A0A0A0"
+            android:centerColor="#10A0A0A0"
+            android:endColor="#FFA0A0A0"
+            android:type="sweep"
+            android:useLevel="false" />
+        
+    </shape>
+
+</rotate>
