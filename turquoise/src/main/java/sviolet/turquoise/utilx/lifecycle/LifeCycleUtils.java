@@ -467,7 +467,7 @@ public class LifeCycleUtils {
                         transaction.remove(oldFragment);//移除原有Fragment
                     }
                     transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
-                    transaction.commit();
+                    transaction.commitAllowingStateLoss();
                 }
             } finally {
                 lock.unlock();
@@ -496,7 +496,7 @@ public class LifeCycleUtils {
                         transaction.remove(oldFragment);//移除原有Fragment
                     }
                     transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
-                    transaction.commit();
+                    transaction.commitAllowingStateLoss();
                 }
             } finally {
                 lock.unlock();
