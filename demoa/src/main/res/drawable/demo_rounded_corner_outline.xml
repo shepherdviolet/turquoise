@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--圆角的边线-->
+<!--shape实际上是GradientDrawable, 可以获取到drawable改变参数, 也可以在代码中用GradientDrawable构建一个图形-->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <corners android:radius="5dp" />
