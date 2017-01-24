@@ -37,7 +37,7 @@
     sviolet:CircleDropRefreshIndicator_outlineWidth="1px"
     sviolet:CircleDropRefreshIndicator_progressBackgroundColor="#FFD0D0D0"
     sviolet:CircleDropRefreshIndicator_progressBackgroundWidth="1px"
-    sviolet:CircleDropRefreshIndicator_progressColor="#FF209090"
+    sviolet:CircleDropRefreshIndicator_progressColor="#FF30C0C0"
     sviolet:CircleDropRefreshIndicator_progressRadius="11dp"
     sviolet:CircleDropRefreshIndicator_progressWidth="1dp"
     sviolet:CircleDropRefreshIndicator_progressSweepAngle="70"

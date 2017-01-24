@@ -47,8 +47,8 @@ import sviolet.turquoise.uix.slideengine.view.AdaptListView;
 
 @ResourceId(R.layout.slide_card)
 @ActivitySettings(
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
+        statusBarColor = 0xFF30C0C0,
+        navigationBarColor = 0xFF30C0C0
 )
 public class CardSlideActivity extends TActivity{
 

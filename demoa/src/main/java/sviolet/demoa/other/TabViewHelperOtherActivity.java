@@ -54,8 +54,8 @@ import sviolet.turquoise.ui.viewgroup.tab.LineIndicatorTabViewHelper;
  */
 @ResourceId(R.layout.other_tab_view)
 @ActivitySettings(
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
+        statusBarColor = 0xFF30C0C0,
+        navigationBarColor = 0xFF30C0C0
 )
 public class TabViewHelperOtherActivity extends TFragmentActivity {
 
@@ -89,7 +89,7 @@ public class TabViewHelperOtherActivity extends TFragmentActivity {
                 R.layout.other_tab_view_tabitem,//Item布局的Id
                 R.id.other_tab_view_tabitem_text,//布局中TextView的Id
                 0xFF808080,//未选中时字体颜色
-                0xFF209090);//选中时字体颜色
+                0xFF30C0C0);//选中时字体颜色
 
         //数据
         List<String> tagStringList = new ArrayList<>();

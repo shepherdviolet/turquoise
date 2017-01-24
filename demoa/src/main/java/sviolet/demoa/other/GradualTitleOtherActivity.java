@@ -34,7 +34,7 @@ import sviolet.turquoise.util.droid.MeasureUtils;
         noTitle = true,
         translucentStatus = true,
         statusBarColor = 0x40000000,
-        navigationBarColor = 0xFF209090
+        navigationBarColor = 0xFF30C0C0
 )
 public class GradualTitleOtherActivity extends TActivity {
 

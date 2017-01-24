@@ -17,7 +17,7 @@
         android:id="@+id/slide_zoomdrawer_background"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#209090"
+        android:background="#30C0C0"
         android:layout_toRightOf="@id/slide_zoomdrawer_background_list"
         android:layout_toEndOf="@id/slide_zoomdrawer_background_list"/>
 

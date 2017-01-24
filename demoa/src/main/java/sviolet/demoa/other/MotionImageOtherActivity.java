@@ -40,8 +40,8 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
  */
 @ResourceId(R.layout.other_motion_image)
 @ActivitySettings(
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
+        statusBarColor = 0xFF30C0C0,
+        navigationBarColor = 0xFF30C0C0
 )
 public class MotionImageOtherActivity extends TActivity {
 

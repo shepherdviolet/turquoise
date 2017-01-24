@@ -80,7 +80,7 @@ import android.widget.RelativeLayout;
  *		    android:layout_width="300dp"
  *		    android:layout_height="match_parent"
  *		    android:layout_alignParentRight="true"
- *			android:background="#209090"/>
+ *			android:background="#30C0C0"/>
  *
  *    </sviolet.turquoise.view.slide.view.RelativeLayoutDrawer>
  * }</pre>

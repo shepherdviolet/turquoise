@@ -139,7 +139,7 @@ public class CommonSimpleDialog extends Dialog {
             if (info.leftButtonStr != null) {
                 params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 final SimpleDialogBuilder.Callback leftButtonCallback = info.leftButtonCallback;
-                leftButton.setTextColor(0xFF209090);
+                leftButton.setTextColor(0xFF30C0C0);
                 leftButton.setTextSize(16f);
                 leftButton.setPadding(dp20, 0, dp20, 0);
                 leftButton.setGravity(Gravity.CENTER);
@@ -169,7 +169,7 @@ public class CommonSimpleDialog extends Dialog {
             if (info.middleButtonStr != null) {
                 params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 final SimpleDialogBuilder.Callback middleButtonCallback = info.middleButtonCallback;
-                middleButton.setTextColor(0xFF209090);
+                middleButton.setTextColor(0xFF30C0C0);
                 middleButton.setTextSize(16f);
                 middleButton.setPadding(dp20, 0, dp20, 0);
                 middleButton.setGravity(Gravity.CENTER);
@@ -194,7 +194,7 @@ public class CommonSimpleDialog extends Dialog {
             if (info.rightButtonStr != null) {
                 params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
                 final SimpleDialogBuilder.Callback rightButtonCallback = info.rightButtonCallback;
-                rightButton.setTextColor(0xFF209090);
+                rightButton.setTextColor(0xFF30C0C0);
                 rightButton.setTextSize(16f);
                 rightButton.setPadding(dp20, 0, dp20, 0);
                 rightButton.setGravity(Gravity.CENTER);

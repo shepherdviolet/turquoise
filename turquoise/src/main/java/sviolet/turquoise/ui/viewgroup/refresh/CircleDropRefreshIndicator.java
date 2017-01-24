@@ -69,7 +69,7 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
     private int outlineWidth = 1;//背景边线宽度
     private int progressBackgroundColor = 0xFFD0D0D0;//进度条背景颜色
     private int progressBackgroundWidth = 1;//进度条背景宽度
-    private int progressColor = 0xFF209090;//进度条颜色
+    private int progressColor = 0xFF30C0C0;//进度条颜色
     private int progressRadius = 40;//进度条半径
     private int progressWidth = 5;//进度条宽度
     private int progressSweepAngle = 70;//进度条延伸角度
@@ -130,7 +130,7 @@ public class CircleDropRefreshIndicator extends View implements VerticalOverDrag
         setOutlineWidth((int) typedArray.getDimension(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_outlineWidth, 1));
         setProgressBackgroundColor(typedArray.getColor(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_progressBackgroundColor, 0xFFD0D0D0));
         setProgressBackgroundWidth((int) typedArray.getDimension(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_progressBackgroundWidth, 1));
-        setProgressColor(typedArray.getColor(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_progressColor, 0xFF209090));
+        setProgressColor(typedArray.getColor(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_progressColor, 0xFF30C0C0));
         setProgressRadius((int) typedArray.getDimension(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_progressRadius, MeasureUtils.dp2px(getContext(), 11)));
         setProgressWidth((int) typedArray.getDimension(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_progressWidth, MeasureUtils.dp2px(getContext(), 1)));
         setProgressSweepAngle(typedArray.getInt(R.styleable.CircleDropRefreshIndicator_CircleDropRefreshIndicator_progressSweepAngle, 70));

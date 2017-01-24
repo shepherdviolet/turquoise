@@ -43,8 +43,8 @@ import sviolet.turquoise.enhance.app.utils.RuntimePermissionManager;
  */
 @ResourceId(R.layout.other_runtime_permission)
 @ActivitySettings(
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
+        statusBarColor = 0xFF30C0C0,
+        navigationBarColor = 0xFF30C0C0
 )
 public class RuntimePermissionOtherActivity extends TActivity {
 

@@ -59,8 +59,8 @@ import sviolet.turquoise.x.imageloader.node.NodeRemoter;
  */
 @ResourceId(R.layout.recycler_view_main)
 @ActivitySettings(
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
+        statusBarColor = 0xFF30C0C0,
+        navigationBarColor = 0xFF30C0C0
 )
 public class RecyclerViewActivity extends TAppCompatActivity {
 

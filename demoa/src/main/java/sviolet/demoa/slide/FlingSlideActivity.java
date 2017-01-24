@@ -41,8 +41,8 @@ import sviolet.turquoise.enhance.app.TActivity;
 
 @ResourceId(R.layout.slide_fling)
 @ActivitySettings(
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
+        statusBarColor = 0xFF30C0C0,
+        navigationBarColor = 0xFF30C0C0
 )
 public class FlingSlideActivity extends TActivity {
 

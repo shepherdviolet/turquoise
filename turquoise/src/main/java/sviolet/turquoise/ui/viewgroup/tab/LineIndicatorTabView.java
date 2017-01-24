@@ -52,7 +52,7 @@ import sviolet.turquoise.util.droid.MeasureUtils;
  *          android:id="@+id/other_tab_view_tabview"
  *          android:layout_width="match_parent"
  *          android:layout_height="40dp"
- *          sviolet:LineIndicatorTabView_indicatorColor="#209090"
+ *          sviolet:LineIndicatorTabView_indicatorColor="#30C0C0"
  *          sviolet:LineIndicatorTabView_indicatorWidth="3dp"
  *          sviolet:LineIndicatorTabView_indicatorBottomMargin="0dp"
  *          sviolet:LineIndicatorTabView_indicatorLeftMargin="10dp"
@@ -73,7 +73,7 @@ public class LineIndicatorTabView extends HorizontalScrollView {
 
     //setting///////////////////////////////////
 
-    private int indicatorColor = 0xFF209090;
+    private int indicatorColor = 0xFF30C0C0;
     private int indicatorWidth = 7;
     private int indicatorBottomMargin = 0;
     private int indicatorLeftMargin = 0;
@@ -109,7 +109,7 @@ public class LineIndicatorTabView extends HorizontalScrollView {
 
     private void initData(Context context, AttributeSet attrs){
         TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.LineIndicatorTabView);
-        setIndicatorColor(typedArray.getColor(R.styleable.LineIndicatorTabView_LineIndicatorTabView_indicatorColor, 0xFF209090));
+        setIndicatorColor(typedArray.getColor(R.styleable.LineIndicatorTabView_LineIndicatorTabView_indicatorColor, 0xFF30C0C0));
         setIndicatorWidth((int) typedArray.getDimension(R.styleable.LineIndicatorTabView_LineIndicatorTabView_indicatorWidth, MeasureUtils.dp2px(getContext(), 3)));
         setIndicatorBottomMargin((int) typedArray.getDimension(R.styleable.LineIndicatorTabView_LineIndicatorTabView_indicatorBottomMargin, 0));
         setIndicatorLeftMargin((int) typedArray.getDimension(R.styleable.LineIndicatorTabView_LineIndicatorTabView_indicatorLeftMargin, 0));

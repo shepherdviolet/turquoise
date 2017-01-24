@@ -219,7 +219,7 @@ package sviolet.turquoise.uix.slideengine.abs;
  *          android:id="@+id/listview"
  *          android:layout_width="match_parent"
  *          android:layout_height="match_parent"
- *          android:background="#209090"/>
+ *          android:background="#30C0C0"/>
  *  </x.x.MySlideView>
  *
  *  <x.x.MyView
@@ -232,7 +232,7 @@ package sviolet.turquoise.uix.slideengine.abs;
  *          android:id="@+id/textView"
  *          android:layout_width="match_parent"
  *          android:layout_height="match_parent"
- *          android:background="#209090"
+ *          android:background="#30C0C0"
  *          android:clickable="true"/><!-- 若子View无法截获事件, 会导致无法滑动, 可以设置android:clickable="true"解决 -->
  *
  *  </x.x.MyView>

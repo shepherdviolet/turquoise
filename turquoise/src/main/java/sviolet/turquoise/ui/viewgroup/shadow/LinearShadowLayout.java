@@ -38,7 +38,7 @@ import android.widget.LinearLayout;
  *  <sviolet.turquoise.ui.viewgroup.shadow.LinearShadowLayout
  *      android:layout_width="match_parent"
  *      android:layout_height="match_parent"
- *      android:background="#209090"
+ *      android:background="#30C0C0"
  *      sviolet:padding="6dp"
  *      sviolet:backgroundColor="#FFF0F0F0"
  *      sviolet:color="#FF000000"

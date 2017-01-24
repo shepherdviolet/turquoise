@@ -54,8 +54,8 @@ import sviolet.turquoise.ui.viewgroup.tab.LineIndicatorTabViewForViewPager;
  */
 @ResourceId(R.layout.other_tab_view)
 @ActivitySettings(
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
+        statusBarColor = 0xFF30C0C0,
+        navigationBarColor = 0xFF30C0C0
 )
 public class TabViewOtherActivity extends TFragmentActivity {
 
@@ -97,7 +97,7 @@ public class TabViewOtherActivity extends TFragmentActivity {
                             }
                         }
                         //设置当前Item的颜色
-                        ((TextView) textView).setTextColor(0xFF209090);
+                        ((TextView) textView).setTextColor(0xFF30C0C0);
                         //记录当前Item
                         this.lastTextView = new WeakReference<>((TextView) textView);
                     }

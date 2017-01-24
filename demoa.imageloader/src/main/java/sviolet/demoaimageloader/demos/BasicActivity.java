@@ -43,8 +43,8 @@ import sviolet.turquoise.x.imageloader.stub.StubRemoter;
 
 @ResourceId(R.layout.basic_main)
 @ActivitySettings(
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
+        statusBarColor = 0xFF30C0C0,
+        navigationBarColor = 0xFF30C0C0
 )
 public class BasicActivity extends TActivity {
 

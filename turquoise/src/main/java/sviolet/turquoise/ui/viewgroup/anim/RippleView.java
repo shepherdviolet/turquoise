@@ -57,7 +57,7 @@ import sviolet.turquoise.enhance.common.WeakHandler;
  *  <sviolet.turquoise.ui.viewgroup.anim.RippleView
  *      android:layout_width="300dp"
  *      android:layout_height="50dp"
- *      android:background="#209090">
+ *      android:background="#30C0C0">
  *      <!-- 内部只能含一个View, RippleView的event会传递给该子View -->
  *      <TextView
  *          android:layout_width="wrap_content"

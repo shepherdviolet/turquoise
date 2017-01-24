@@ -47,8 +47,8 @@ import sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer;
  */
 @ResourceId(R.layout.refresh_circledrop)
 @ActivitySettings(
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
+        statusBarColor = 0xFF30C0C0,
+        navigationBarColor = 0xFF30C0C0
 )
 public class CircleDropIndicatorRefreshActivity extends TActivity {
 

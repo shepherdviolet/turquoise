@@ -53,8 +53,8 @@ import sviolet.turquoise.x.imageloader.entity.NodeSettings;
  */
 @ResourceId(R.layout.list_view_main)
 @ActivitySettings(
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
+        statusBarColor = 0xFF30C0C0,
+        navigationBarColor = 0xFF30C0C0
 )
 public class ListViewActivity extends TActivity {
 

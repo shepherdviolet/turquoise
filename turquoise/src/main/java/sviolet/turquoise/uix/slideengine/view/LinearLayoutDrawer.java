@@ -76,7 +76,7 @@ import android.widget.LinearLayout;
  *		    android:id="@+id/listview"
  *		    android:layout_width="match_parent"
  *		    android:layout_height="match_parent"
- *			android:background="#209090"/>
+ *			android:background="#30C0C0"/>
  *
  *    </sviolet.turquoise.view.slide.view.LinearLayoutDrawer>
  * }</pre>

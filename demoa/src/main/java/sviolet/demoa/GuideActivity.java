@@ -62,8 +62,8 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 @ActivitySettings(
         optionsMenuId = R.menu.menu_guide,
         noTitle = false,
-        statusBarColor = 0xFF209090,
-        navigationBarColor = 0xFF209090
+        statusBarColor = 0xFF30C0C0,
+        navigationBarColor = 0xFF30C0C0
 )
 public class GuideActivity extends TActivity {
 
