@@ -37,6 +37,7 @@ import sviolet.demoa.slide.SlideActivity;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.ui.util.motion.MultiClickFilter;
 
 /**************************************************************
  * Demo配置
@@ -70,6 +71,8 @@ public class GuideActivity extends TActivity {
     @ResourceId(R.id.guide_main_listview)
     private ListView demoListView;
     private DemoListAdapter demoListAdapter;
+
+    private MultiClickFilter multiClickFilter = new MultiClickFilter();
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -137,8 +140,12 @@ public class GuideActivity extends TActivity {
             demoListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (view != null)
+                    if (view != null) {
+                        if (!multiClickFilter.tryHandle()){
+                            return;
+                        }
                         go((Class<? extends Activity>) demoListAdapter.getItem(position));
+                    }
                 }
             });
         }
