@@ -27,7 +27,7 @@ import android.widget.FrameLayout;
 
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.ui.util.UnidirectionalMoveDetector;
+import sviolet.turquoise.ui.util.motion.UnidirectionalMoveDetector;
 import sviolet.turquoise.util.droid.MotionEventUtils;
 
 /**

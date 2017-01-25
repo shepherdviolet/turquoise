@@ -35,7 +35,7 @@ import java.util.List;
 
 import sviolet.turquoise.R;
 import sviolet.turquoise.common.compat.CompatOverScroller;
-import sviolet.turquoise.ui.util.ClickDetector;
+import sviolet.turquoise.ui.util.motion.ClickDetector;
 import sviolet.turquoise.ui.util.ViewCommonUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 
