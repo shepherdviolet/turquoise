@@ -326,4 +326,39 @@ public class CommonSimpleDialog extends Dialog {
 
     }
 
+    /****************************************************************8
+     * NOTE
+     */
+
+    /**
+     * Dialog全屏, 在setContentView后执行
+     */
+//    private void fullScreen() {
+//        if (getWindow() == null){
+//            return;
+//        }
+//        getWindow().getDecorView().setPadding(0, 0, 0, 0);
+//        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+//        layoutParams.width = WindowManager.LayoutParams.MATCH_PARENT;
+//        layoutParams.height = WindowManager.LayoutParams.MATCH_PARENT;
+//        getWindow().setAttributes(layoutParams);
+//    }
+
+    /**
+     * 设置显示动画示例
+     *
+     * <pre>{@code
+     *  <style name="DialogAnimationStyle" mce_bogus="1" parent="android:Animation">
+     *      <item name="android:windowEnterAnimation">@anim/fade_in</item>
+     *      <item name="android:windowExitAnimation">@anim/fade_out</item>
+     *  </style>
+     * }</pre>
+     */
+//    private void setAnimation(){
+//        if (getWindow() == null){
+//            return;
+//        }
+//        getWindow().setWindowAnimations(R.style.xxx);
+//    }
+
 }
