@@ -142,11 +142,11 @@ public class ScreenInfoActivity extends TActivity {
                 float diagonalPixels = (float) Math.sqrt(screenWidthPixels * screenWidthPixels + screenHeightPixels * screenHeightPixels);
                 float realDpi = diagonalPixels / screenDimensionFloat;
                 stringBuilder.append("\nreal dpi: ");
-                stringBuilder.append(realDpi);
-                stringBuilder.append("dot/inch");
+                stringBuilder.append((int) (realDpi + 0.5f));
+                stringBuilder.append(" dot/inch");
                 stringBuilder.append("\nreal dpcm: ");
-                stringBuilder.append(realDpi / 2.54f);
-                stringBuilder.append("dot/cm");
+                stringBuilder.append((int)(realDpi / 2.54f + 0.5f));
+                stringBuilder.append(" dot/cm");
                 stringBuilder.append("\nscale: ");
                 stringBuilder.append(MeasureUtils.getDensityDpi(this) / realDpi);
             } catch (Exception e){
