@@ -31,6 +31,7 @@ import android.widget.Toast;
 import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
+import sviolet.demoa.info.InfoActivity;
 import sviolet.demoa.other.OtherActivity;
 import sviolet.demoa.refresh.RefreshActivity;
 import sviolet.demoa.slide.SlideActivity;
@@ -52,6 +53,7 @@ import sviolet.turquoise.ui.util.motion.MultiClickFilter;
         SlideActivity.class,
         RefreshActivity.class,
         OtherActivity.class,
+        InfoActivity.class,
         TempActivity.class
 })
 

@@ -40,6 +40,10 @@
     <string name="common_indicator_load_succeed">load succeed</string>
     <string name="common_indicator_load_failed">load failed</string>
 
+    <string name="info_main_title">Device Info</string>
+    <string name="screen_info_main_title">Screen Info</string>
+    <string name="screen_info_main_screen_dimension_hint">input screen size (inch)</string>
+
     <string name="temp_main_title">Temp</string>
 
 </resources>

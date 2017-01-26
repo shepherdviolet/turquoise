@@ -31,9 +31,9 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
  */
 
 @DemoDescription(
-        title = "TempActivity",
+        title = "Temp",
         type = "Temp",
-        info = "the activity for test"
+        info = "The activity for test"
 )
 
 @ResourceId(R.layout.temp_main)

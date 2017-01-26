@@ -76,6 +76,11 @@
         <activity android:name=".other.WebViewOtherActivity"
             android:label="@string/other_webview_title"/>
 
+        <activity android:name=".info.InfoActivity"
+            android:label="@string/info_main_title"/>
+        <activity android:name=".info.ScreenInfoActivity"
+            android:label="@string/screen_info_main_title"/>
+
         <activity android:name=".TempActivity"
             android:label="@string/temp_main_title"/>
     </application>
