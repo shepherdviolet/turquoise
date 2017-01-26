@@ -99,18 +99,42 @@ public class ScreenInfoActivity extends TActivity {
      * 输出显示信息
      */
     private void printScreen(StringBuilder stringBuilder){
-        int screenWidthPixels = MeasureUtils.getScreenWidth(this);
-        int screenHeightPixels = MeasureUtils.getScreenHeight(this);
+        int screenWidthPixels = MeasureUtils.getScreenRealWidth(this);
+        int screenHeightPixels = MeasureUtils.getScreenRealHeight(this);
 
-        stringBuilder.append("width(px): ");
+        stringBuilder.append("real width: ");
         stringBuilder.append(screenWidthPixels);
-        stringBuilder.append("\nheight(px): ");
+        stringBuilder.append("px");
+        stringBuilder.append("\nreal height: ");
         stringBuilder.append(screenHeightPixels);
+        stringBuilder.append("px");
+        stringBuilder.append("\n");
+        stringBuilder.append("\ndisplay width: ");
+        stringBuilder.append(MeasureUtils.getScreenWidth(this));
+        stringBuilder.append("px");
+        stringBuilder.append("\ndisplay height: ");
+        stringBuilder.append(MeasureUtils.getScreenHeight(this));
+        stringBuilder.append("px");
+        stringBuilder.append("\nstatus height: ");
+        stringBuilder.append(MeasureUtils.getStatusBarHeight(this));
+        stringBuilder.append("px");
+        stringBuilder.append("\nnavigation height: ");
+        stringBuilder.append(MeasureUtils.getNavigationBarHeight(this));
+        stringBuilder.append("px");
+        stringBuilder.append("\n");
+        stringBuilder.append("\ndisplay width: ");
+        stringBuilder.append(MeasureUtils.getScreenWidthDp(this));
+        stringBuilder.append("dp");
+        stringBuilder.append("\ndisplay height: ");
+        stringBuilder.append(MeasureUtils.getScreenHeightDp(this));
+        stringBuilder.append("dp");
+        stringBuilder.append("\n");
         stringBuilder.append("\ndensity: ");
-        stringBuilder.append(MeasureUtils.getScreenDensity(this));
+        stringBuilder.append(MeasureUtils.getDensity(this));
         stringBuilder.append("\ndpi: ");
-        stringBuilder.append(MeasureUtils.getScreenDensityDpi(this));
+        stringBuilder.append(MeasureUtils.getDensityDpi(this));
 
+        stringBuilder.append("\n");
         String screenDimension = screenDimensionEditText.getText().toString();
         if (!CheckUtils.isEmpty(screenDimension)){
             try {
@@ -119,12 +143,17 @@ public class ScreenInfoActivity extends TActivity {
                 float realDpi = diagonalPixels / screenDimensionFloat;
                 stringBuilder.append("\nreal dpi: ");
                 stringBuilder.append(realDpi);
-                stringBuilder.append("\nreal dpc: ");
+                stringBuilder.append("dot/inch");
+                stringBuilder.append("\nreal dpcm: ");
                 stringBuilder.append(realDpi / 2.54f);
+                stringBuilder.append("dot/cm");
+                stringBuilder.append("\nscale: ");
+                stringBuilder.append(MeasureUtils.getDensityDpi(this) / realDpi);
             } catch (Exception e){
                 TLogger.get(this).e("error while parsing screen dimension", e);
                 stringBuilder.append("\nreal dpi: error");
-                stringBuilder.append("\nreal dpc: error");
+                stringBuilder.append("\nreal dpcm: error");
+                stringBuilder.append("\nscale: error");
             }
         }
     }
