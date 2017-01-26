@@ -21,25 +21,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/screen_info_main_screen_dimension"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:textSize="12sp"
-        android:textColor="#2cacac"
-        android:inputType="numberDecimal"
-        android:hint="@string/screen_info_main_screen_dimension_hint"/>
-
-    <TextView
-        android:id="@+id/screen_info_main_text"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:lineSpacingMultiplier="1.2"
-        android:padding="10dp"
-        android:textSize="12sp"
-        android:textColor="#808080"/>
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/screen_info_main_screen_dimension"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textSize="12sp"
+            android:textColor="#2cacac"
+            android:inputType="numberDecimal"
+            android:hint="@string/screen_info_main_screen_dimension_hint"/>
+
+        <TextView
+            android:id="@+id/screen_info_main_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:lineSpacingMultiplier="1.2"
+            android:padding="10dp"
+            android:textSize="12sp"
+            android:textColor="#808080"/>
+
+    </LinearLayout>
+
+    <sviolet.demoa.info.view.RulerView
+        android:id="@+id/screen_info_main_ruler"
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"/>
 
 </LinearLayout>

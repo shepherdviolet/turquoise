@@ -30,6 +30,7 @@ import android.widget.TextView;
 import sviolet.demoa.MyApplication;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
+import sviolet.demoa.info.view.RulerView;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
@@ -59,6 +60,10 @@ public class ScreenInfoActivity extends TActivity {
     private EditText screenDimensionEditText;
     @ResourceId(R.id.screen_info_main_text)
     private TextView textView;
+    @ResourceId(R.id.screen_info_main_ruler)
+    private RulerView rulerView;
+
+    private int centimeterPixels = 0;
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -100,6 +105,7 @@ public class ScreenInfoActivity extends TActivity {
         StringBuilder stringBuilder = new StringBuilder();
         printScreen(stringBuilder);
         textView.setText(stringBuilder.toString());
+        rulerView.setCentimeterPixels(centimeterPixels);
     }
 
     private String loadState(){
@@ -165,7 +171,8 @@ public class ScreenInfoActivity extends TActivity {
                 stringBuilder.append((int) (realDpi + 0.5f));
                 stringBuilder.append(" dot/inch");
                 stringBuilder.append("\nreal dpcm: ");
-                stringBuilder.append((int)(realDpi / 2.54f + 0.5f));
+                centimeterPixels = (int)(realDpi / 2.54f + 0.5f);
+                stringBuilder.append(centimeterPixels);
                 stringBuilder.append(" dot/cm");
                 stringBuilder.append("\nscale: ");
                 stringBuilder.append(MeasureUtils.getDensityDpi(this) / realDpi);
@@ -177,7 +184,10 @@ public class ScreenInfoActivity extends TActivity {
                 stringBuilder.append("\nreal dpi: error");
                 stringBuilder.append("\nreal dpcm: error");
                 stringBuilder.append("\nscale: error");
+                centimeterPixels = 0;
             }
+        }else{
+            centimeterPixels = 0;
         }
     }
 
