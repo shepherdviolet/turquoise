@@ -33,7 +33,7 @@ import android.view.View;
  */
 public class RulerView extends View {
 
-    private int centimeterPixels = 0;
+    private float centimeterPixels = 0;
 
     private Paint markPaint;
 
@@ -83,7 +83,7 @@ public class RulerView extends View {
 
     }
 
-    public void setCentimeterPixels(int centimeterPixels){
+    public void setCentimeterPixels(float centimeterPixels){
         this.centimeterPixels = centimeterPixels;
         postInvalidate();
     }

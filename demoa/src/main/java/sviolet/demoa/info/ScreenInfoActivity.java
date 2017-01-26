@@ -19,24 +19,16 @@
 
 package sviolet.demoa.info;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.widget.EditText;
 import android.widget.TextView;
 
-import sviolet.demoa.MyApplication;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.info.view.RulerView;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-import sviolet.turquoise.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * 显示信息
@@ -54,10 +46,6 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 )
 public class ScreenInfoActivity extends TActivity {
 
-    private static final String SCREEN_DIMENSION = "screenDimension";
-
-    @ResourceId(R.id.screen_info_main_screen_dimension)
-    private EditText screenDimensionEditText;
     @ResourceId(R.id.screen_info_main_text)
     private TextView textView;
     @ResourceId(R.id.screen_info_main_ruler)
@@ -67,7 +55,6 @@ public class ScreenInfoActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        initEditText();
         refresh();
     }
 
@@ -81,23 +68,6 @@ public class ScreenInfoActivity extends TActivity {
         super.onResume();
     }
 
-    private void initEditText(){
-        screenDimensionEditText.setText(loadState());
-        screenDimensionEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-                refresh();
-                saveState();
-            }
-        });
-    }
-
     /**
      * 刷新
      */
@@ -108,25 +78,13 @@ public class ScreenInfoActivity extends TActivity {
         rulerView.setCentimeterPixels(centimeterPixels);
     }
 
-    private String loadState(){
-        SharedPreferences sharedPreferences = getSharedPreferences(MyApplication.SHARED_PREF_COMMON_CONFIG, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(SCREEN_DIMENSION, "");
-    }
-
-    private void saveState(){
-        String screenDimension = screenDimensionEditText.getText().toString();
-        SharedPreferences sharedPreferences = getSharedPreferences(MyApplication.SHARED_PREF_COMMON_CONFIG, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(SCREEN_DIMENSION, screenDimension);
-        editor.apply();
-    }
-
     /**
      * 输出显示信息
      */
     private void printScreen(StringBuilder stringBuilder){
         int screenWidthPixels = MeasureUtils.getRealScreenWidth(this);
         int screenHeightPixels = MeasureUtils.getRealScreenHeight(this);
+        float screenPhysicalSize = MeasureUtils.getPhysicalScreenSize(this);
 
         stringBuilder.append("real width: ");
         stringBuilder.append(screenWidthPixels);
@@ -159,39 +117,26 @@ public class ScreenInfoActivity extends TActivity {
         stringBuilder.append(MeasureUtils.getDensity(this));
         stringBuilder.append("\ndpi: ");
         stringBuilder.append(MeasureUtils.getDensityDpi(this));
+
+        float diagonalPixels = (float) Math.sqrt(screenWidthPixels * screenWidthPixels + screenHeightPixels * screenHeightPixels);
+        float realDpi = diagonalPixels / screenPhysicalSize;
         stringBuilder.append("\n");
         stringBuilder.append("\nphysical size: ");
-        stringBuilder.append(MeasureUtils.getPhysicalScreenSize(this));
+        stringBuilder.append(screenPhysicalSize);
+        stringBuilder.append(" inch");
+        stringBuilder.append("\nphysical dpi: ");
+        stringBuilder.append((int) (realDpi + 0.5f));
+        stringBuilder.append(" dot/inch");
+        stringBuilder.append("\nphysical dpcm: ");
+        centimeterPixels = (int) (realDpi / 2.54f + 0.5f);
+        stringBuilder.append(centimeterPixels);
+        stringBuilder.append(" dot/cm");
+        stringBuilder.append("\nscale: ");
+        stringBuilder.append(MeasureUtils.getDensityDpi(this) / realDpi);
+        stringBuilder.append("\n1cm: ");
+        stringBuilder.append((int) (realDpi / MeasureUtils.getDensity(this) / 2.54f + 0.5f));
+        stringBuilder.append("dp");
 
-        stringBuilder.append("\n");
-        String screenDimension = screenDimensionEditText.getText().toString();
-        if (!CheckUtils.isEmpty(screenDimension)){
-            try {
-                float screenDimensionFloat = Float.parseFloat(screenDimension);
-                float diagonalPixels = (float) Math.sqrt(screenWidthPixels * screenWidthPixels + screenHeightPixels * screenHeightPixels);
-                float realDpi = diagonalPixels / screenDimensionFloat;
-                stringBuilder.append("\nreal dpi: ");
-                stringBuilder.append((int) (realDpi + 0.5f));
-                stringBuilder.append(" dot/inch");
-                stringBuilder.append("\nreal dpcm: ");
-                centimeterPixels = (int)(realDpi / 2.54f + 0.5f);
-                stringBuilder.append(centimeterPixels);
-                stringBuilder.append(" dot/cm");
-                stringBuilder.append("\nscale: ");
-                stringBuilder.append(MeasureUtils.getDensityDpi(this) / realDpi);
-                stringBuilder.append("\n1cm: ");
-                stringBuilder.append((int)(realDpi / MeasureUtils.getDensity(this) / 2.54f + 0.5f));
-                stringBuilder.append("dp");
-            } catch (Exception e){
-                TLogger.get(this).e("error while parsing screen dimension", e);
-                stringBuilder.append("\nreal dpi: error");
-                stringBuilder.append("\nreal dpcm: error");
-                stringBuilder.append("\nscale: error");
-                centimeterPixels = 0;
-            }
-        }else{
-            centimeterPixels = 0;
-        }
     }
 
 }
