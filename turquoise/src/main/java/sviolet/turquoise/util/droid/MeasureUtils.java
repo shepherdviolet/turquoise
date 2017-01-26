@@ -2,13 +2,12 @@ package sviolet.turquoise.util.droid;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
+import android.os.Build;
 import android.util.DisplayMetrics;
-import android.view.Window;
+import android.view.Display;
 
-import java.lang.reflect.Field;
-
-import sviolet.turquoise.common.statics.StringConstants;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import java.lang.reflect.Method;
 
 /**
  * 尺寸度量工具<br>
@@ -28,55 +27,76 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 public class MeasureUtils {
 
 	/**
-	 * 获取DisplayMetrics
-	 * @param context
-	 * @return
+	 * 获取DisplayMetrics, 不含底部导航栏
 	 */
 	public static DisplayMetrics getDisplayMetrics(Context context) {
 		return context.getResources().getDisplayMetrics();
 	}
 
 	/**
-	 * 获取设备屏幕densityDpi( dpi )
-	 * @param context
-	 * @return
+	 * 获取真实的DisplayMetrics, 包含底部导航栏, API17以上有效, API17以下不含底部导航栏
+     */
+	public static DisplayMetrics getRealDisplayMetrics(Activity activity) {
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
+			return getDisplayMetrics(activity);
+		}
+		Display display = activity.getWindowManager().getDefaultDisplay();
+		DisplayMetrics realDisplayMetrics = new DisplayMetrics();
+		display.getRealMetrics(realDisplayMetrics);
+		return realDisplayMetrics;
+	}
+
+	/**
+	 * 获取屏幕densityDpi(dpi)
 	 */
-	public static float getScreenDensityDpi(Context context) {
+	public static float getDensityDpi(Context context) {
 		return getDisplayMetrics(context).densityDpi;
 	}
 
 	/**
-	 * 获取设备屏幕density( dpi / 160)
-	 * @param context
-	 * @return
+	 * 获取屏幕density(dpi/160)
 	 */
-	public static float getScreenDensity(Context context) {
+	public static float getDensity(Context context) {
 		return getDisplayMetrics(context).density;
 	}
 
 	/**
-	 * 获取设备屏幕高度(pixel像素)
+	 * 获取屏幕高度(pixel像素), 不含底部导航栏
 	 */
 	public static int getScreenHeight(Context context) {
 		return getDisplayMetrics(context).heightPixels;
 	}
 
 	/**
-	 * 获取手机屏幕宽度(pixel像素)
+	 * 获取屏幕宽度(pixel像素), 不含底部导航栏
 	 */
 	public static int getScreenWidth(Context context) {
 		return getDisplayMetrics(context).widthPixels;
 	}
+
+    /**
+     * 获取屏幕高度(pixel像素), 包含底部导航栏, API17以上有效, API17以下不含底部导航栏
+     */
+    public static int getScreenRealHeight(Activity activity) {
+        return getRealDisplayMetrics(activity).heightPixels;
+    }
+
+    /**
+     * 获取屏幕宽度(pixel像素), 包含底部导航栏, API17以上有效, API17以下不含底部导航栏
+     */
+    public static int getScreenRealWidth(Activity activity) {
+        return getRealDisplayMetrics(activity).widthPixels;
+    }
 	
 	/**
-	 * 获取设备屏幕高度(dp)
+	 * 获取屏幕高度(dp), 不含底部导航栏
 	 */
 	public static int getScreenHeightDp(Context context) {
 		return px2dp(context, getDisplayMetrics(context).heightPixels);
 	}
 
 	/**
-	 * 获取手机屏幕宽度(dp)
+	 * 获取屏幕宽度(dp), 不含底部导航栏
 	 */
 	public static int getScreenWidthDp(Context context) {
 		return px2dp(context, getDisplayMetrics(context).widthPixels);
@@ -85,26 +105,64 @@ public class MeasureUtils {
 	/**
 	 * 获取通知栏/状态栏高度(pixel 像素)
 	 */
-	public static int getStatusBarHeight(Activity activity) {
-		if (activity == null){
-			return 0;
-		}
-		//普通方式获取
-		int height = activity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
-		//获取不到采用反射
-		if (height <= 0) {
-			try {
-				Class<?> clazz = Class.forName("com.android.internal.R$dimen");
-				Object obj = clazz.newInstance();
-				Field field = clazz.getField("status_bar_height");
-				int heightResId = Integer.parseInt(String.valueOf(field.get(obj)));
-				height = activity.getResources().getDimensionPixelSize(heightResId);
-			} catch (Exception e) {
-				TLogger.get(MeasureUtils.class, StringConstants.LIBRARY_TAG).e("get status bar height failed by reflect way", e);
-			}
-		}
-		return height;
+	public static int getStatusBarHeight(Context context) {
+        int resourceId = context.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            return context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return 0;
 	}
+
+    /**
+     * 获取底部导航栏高度(pixel 像素)
+     */
+    public static int getNavigationBarHeight(Context context) {
+        int resourceId = context.getResources().getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0 && checkNavigationBar(context)) {
+            return context.getResources().getDimensionPixelSize(resourceId);
+        }
+        return 0;
+    }
+
+    /**
+     * 检查是否有底部导航栏
+     * @return true:存在底部导航栏 false:不存在底部导航栏
+     */
+    public static boolean checkNavigationBar(Context context){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1 && context instanceof Activity) {
+            return checkNavigationBarBySize((Activity) context);
+        }
+        return checkNavigationBarByConfig(context);
+    }
+
+    private static boolean checkNavigationBarBySize(Activity activity) {
+        DisplayMetrics realDisplayMetrics = getRealDisplayMetrics(activity);
+        DisplayMetrics displayMetrics = getDisplayMetrics(activity);
+        return realDisplayMetrics.widthPixels > displayMetrics.widthPixels || realDisplayMetrics.heightPixels > displayMetrics.heightPixels;
+    }
+
+    private static boolean checkNavigationBarByConfig(Context context) {
+        boolean hasNavigationBar = false;
+        Resources resources = context.getResources();
+        //先判断config_showNavigationBar配置
+        int resourceId = resources.getIdentifier("config_showNavigationBar", "bool", "android");
+        if (resourceId > 0) {
+            hasNavigationBar = resources.getBoolean(resourceId);
+        }
+        //若存在qemu.hw.mainkeys配置, 则采用qemu.hw.mainkeys配置覆盖结果
+        try {
+            Class<?> systemPropertiesClass = Class.forName("android.os.SystemProperties");
+            Method getMethod = systemPropertiesClass.getMethod("get", String.class);
+            String navBarOverride = (String) getMethod.invoke(systemPropertiesClass, "qemu.hw.mainkeys");
+            if ("1".equals(navBarOverride)) {
+                hasNavigationBar = false;
+            } else if ("0".equals(navBarOverride)) {
+                hasNavigationBar = true;
+            }
+        } catch (Exception ignored) {
+        }
+        return hasNavigationBar;
+    }
 
 	/**
 	 * dp转px
@@ -112,7 +170,7 @@ public class MeasureUtils {
 	public static int dp2px(Context context, float dp) {
 		if(dp == 0)
 			return 0;
-		return (int) (dp * getScreenDensity(context) + 0.5f);
+		return (int) (dp * getDensity(context) + 0.5f);
 	}
 
 	/**
@@ -121,7 +179,7 @@ public class MeasureUtils {
 	public static int px2dp(Context context, float px) {
 		if(px == 0)
 			return 0;
-		return (int) (px / getScreenDensity(context) + 0.5f);
+		return (int) (px / getDensity(context) + 0.5f);
 	}
 
 }
