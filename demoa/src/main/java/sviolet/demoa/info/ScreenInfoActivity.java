@@ -19,12 +19,15 @@
 
 package sviolet.demoa.info;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import sviolet.demoa.MyApplication;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
@@ -50,6 +53,8 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 )
 public class ScreenInfoActivity extends TActivity {
 
+    private static final String SCREEN_DIMENSION = "screenDimension";
+
     @ResourceId(R.id.screen_info_main_screen_dimension)
     private EditText screenDimensionEditText;
     @ResourceId(R.id.screen_info_main_text)
@@ -72,6 +77,7 @@ public class ScreenInfoActivity extends TActivity {
     }
 
     private void initEditText(){
+        screenDimensionEditText.setText(loadState());
         screenDimensionEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -82,6 +88,7 @@ public class ScreenInfoActivity extends TActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 refresh();
+                saveState();
             }
         });
     }
@@ -93,6 +100,19 @@ public class ScreenInfoActivity extends TActivity {
         StringBuilder stringBuilder = new StringBuilder();
         printScreen(stringBuilder);
         textView.setText(stringBuilder.toString());
+    }
+
+    private String loadState(){
+        SharedPreferences sharedPreferences = getSharedPreferences(MyApplication.SHARED_PREF_COMMON_CONFIG, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(SCREEN_DIMENSION, "");
+    }
+
+    private void saveState(){
+        String screenDimension = screenDimensionEditText.getText().toString();
+        SharedPreferences sharedPreferences = getSharedPreferences(MyApplication.SHARED_PREF_COMMON_CONFIG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(SCREEN_DIMENSION, screenDimension);
+        editor.apply();
     }
 
     /**

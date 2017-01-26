@@ -47,6 +47,8 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 )
 public class MyApplication extends TApplication {
 
+    public static final String SHARED_PREF_COMMON_CONFIG = "common_config";
+
     @Override
     public void onUncaughtException(Throwable ex, boolean isCrashRestart) {
         //异常处理
