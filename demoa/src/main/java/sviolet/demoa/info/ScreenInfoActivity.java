@@ -149,6 +149,9 @@ public class ScreenInfoActivity extends TActivity {
                 stringBuilder.append(" dot/cm");
                 stringBuilder.append("\nscale: ");
                 stringBuilder.append(MeasureUtils.getDensityDpi(this) / realDpi);
+                stringBuilder.append("\n1cm: ");
+                stringBuilder.append((int)(realDpi / MeasureUtils.getDensity(this) / 2.54f + 0.5f));
+                stringBuilder.append("dp");
             } catch (Exception e){
                 TLogger.get(this).e("error while parsing screen dimension", e);
                 stringBuilder.append("\nreal dpi: error");
