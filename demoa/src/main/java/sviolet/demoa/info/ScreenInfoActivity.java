@@ -125,8 +125,8 @@ public class ScreenInfoActivity extends TActivity {
      * 输出显示信息
      */
     private void printScreen(StringBuilder stringBuilder){
-        int screenWidthPixels = MeasureUtils.getScreenRealWidth(this);
-        int screenHeightPixels = MeasureUtils.getScreenRealHeight(this);
+        int screenWidthPixels = MeasureUtils.getRealScreenWidth(this);
+        int screenHeightPixels = MeasureUtils.getRealScreenHeight(this);
 
         stringBuilder.append("real width: ");
         stringBuilder.append(screenWidthPixels);
@@ -159,6 +159,9 @@ public class ScreenInfoActivity extends TActivity {
         stringBuilder.append(MeasureUtils.getDensity(this));
         stringBuilder.append("\ndpi: ");
         stringBuilder.append(MeasureUtils.getDensityDpi(this));
+        stringBuilder.append("\n");
+        stringBuilder.append("\nphysical size: ");
+        stringBuilder.append(MeasureUtils.getPhysicalScreenSize(this));
 
         stringBuilder.append("\n");
         String screenDimension = screenDimensionEditText.getText().toString();

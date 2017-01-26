@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 
 /**
  * 尺寸度量工具<br>
@@ -77,14 +78,14 @@ public class MeasureUtils {
     /**
      * 获取屏幕高度(pixel像素), 包含底部导航栏, API17以上有效, API17以下不含底部导航栏
      */
-    public static int getScreenRealHeight(Activity activity) {
+    public static int getRealScreenHeight(Activity activity) {
         return getRealDisplayMetrics(activity).heightPixels;
     }
 
     /**
      * 获取屏幕宽度(pixel像素), 包含底部导航栏, API17以上有效, API17以下不含底部导航栏
      */
-    public static int getScreenRealWidth(Activity activity) {
+    public static int getRealScreenWidth(Activity activity) {
         return getRealDisplayMetrics(activity).widthPixels;
     }
 	
@@ -163,6 +164,19 @@ public class MeasureUtils {
         }
         return hasNavigationBar;
     }
+
+    /**
+     * 获得物理屏幕对角线尺寸(即几英寸屏)
+     * @return 英寸
+     */
+	public static float getPhysicalScreenSize(Activity activity){
+        DisplayMetrics displayMetrics = getRealDisplayMetrics(activity);
+        //屏幕宽度(英寸) = 宽度(像素) / xdpi, xdpi是屏幕真实的物理dpi, 与densityDpi不同
+        float widthInch = (float)displayMetrics.widthPixels / displayMetrics.xdpi;
+        //屏幕高度(英寸) = 高度(像素) / ydpi, ydpi是屏幕真实的物理dpi, 与densityDpi不同
+        float heightInch = (float)displayMetrics.heightPixels / displayMetrics.ydpi;
+        return new BigDecimal(Math.sqrt(widthInch * widthInch + heightInch * heightInch)).setScale(1, BigDecimal.ROUND_HALF_UP).floatValue();
+	}
 
 	/**
 	 * dp转px
