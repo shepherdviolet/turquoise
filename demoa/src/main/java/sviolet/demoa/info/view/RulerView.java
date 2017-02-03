@@ -69,16 +69,22 @@ public class RulerView extends View {
 
         canvas.getClipBounds(canvasClipBounds);
 
+        float x;
         float y = canvasClipBounds.top + 1;
-        while(y < canvasClipBounds.bottom) {
-            canvas.drawLine(canvasClipBounds.left, y, canvasClipBounds.right, y, markPaint);
-            y += centimeterPixels;
-        }
+        float step = centimeterPixels / 10f;
+        int count = 0;
 
-        y = canvasClipBounds.top + 1;
         while(y < canvasClipBounds.bottom) {
-            canvas.drawLine((canvasClipBounds.left + canvasClipBounds.right) / 2, y, canvasClipBounds.right, y, markPaint);
-            y += centimeterPixels / 10f;
+            if (count % 10 == 0){
+                x = canvasClipBounds.left;
+            } else if (count % 5 == 0){
+                x = (canvasClipBounds.left + canvasClipBounds.right) / 3;
+            } else {
+                x = (canvasClipBounds.left + canvasClipBounds.right) / 2;
+            }
+            canvas.drawLine(x, y, canvasClipBounds.right, y, markPaint);
+            y += step;
+            count++;
         }
 
     }
