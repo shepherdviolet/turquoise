@@ -7,8 +7,8 @@ android {
         applicationId "sviolet.demoa"
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode 3
-        versionName "3.4.161221"
+        versionCode 4
+        versionName "4.0.170203"
 
         //true:多dex允许,突破类65535的限制
         multiDexEnabled false
