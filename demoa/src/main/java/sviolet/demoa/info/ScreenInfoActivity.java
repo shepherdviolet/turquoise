@@ -19,9 +19,15 @@
 
 package sviolet.demoa.info;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import sviolet.demoa.MyApplication;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.info.view.RulerView;
@@ -29,6 +35,7 @@ import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.util.droid.MeasureUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * 显示信息
@@ -46,16 +53,49 @@ import sviolet.turquoise.util.droid.MeasureUtils;
 )
 public class ScreenInfoActivity extends TActivity {
 
+    private static final String SCREEN_DIMENSION = "screenDimension";
+
+    @ResourceId(R.id.screen_info_main_edittext)
+    private EditText screenDimensionEditText;
     @ResourceId(R.id.screen_info_main_text)
     private TextView textView;
     @ResourceId(R.id.screen_info_main_ruler)
     private RulerView rulerView;
 
+    private float screenSize;
     private int centimeterPixels = 0;
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
+        initEditText();
         refresh();
+    }
+
+    private void initEditText() {
+        screenSize = loadState();
+        screenDimensionEditText.setText(screenSize > 0 ? String.valueOf(screenSize) : "");
+        screenDimensionEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                float size = -1;
+                try {
+                    size = Float.valueOf(s.toString());
+                    saveState(size);
+                } catch (Exception e){
+                    TLogger.get(this).e("error while parsing screen size which input by edit text", e);
+                }
+                screenSize = size;
+                refresh();
+            }
+        });
     }
 
     @Override
@@ -66,6 +106,26 @@ public class ScreenInfoActivity extends TActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    private float loadState(){
+        SharedPreferences sharedPreferences = getSharedPreferences(MyApplication.SHARED_PREF_COMMON_CONFIG, Context.MODE_PRIVATE);
+        String size = sharedPreferences.getString(SCREEN_DIMENSION, String.valueOf(MeasureUtils.getPhysicalScreenSize(this)));
+        float screenSize = -1;
+        try {
+            screenSize = Float.valueOf(size);
+        } catch (Exception e){
+            TLogger.get(this).e("error while parsing screen size which input by SharedPreferences", e);
+        }
+        return screenSize;
+    }
+
+    private void saveState(float size){
+        String screenDimension = String.valueOf(size);
+        SharedPreferences sharedPreferences = getSharedPreferences(MyApplication.SHARED_PREF_COMMON_CONFIG, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(SCREEN_DIMENSION, screenDimension);
+        editor.apply();
     }
 
     /**
@@ -84,7 +144,7 @@ public class ScreenInfoActivity extends TActivity {
     private void printScreen(StringBuilder stringBuilder){
         int screenWidthPixels = MeasureUtils.getRealScreenWidth(this);
         int screenHeightPixels = MeasureUtils.getRealScreenHeight(this);
-        float screenPhysicalSize = MeasureUtils.getPhysicalScreenSize(this);
+        float screenSizeByCalculate = MeasureUtils.getPhysicalScreenSize(this);
 
         stringBuilder.append("real width: ");
         stringBuilder.append(screenWidthPixels);
@@ -117,12 +177,20 @@ public class ScreenInfoActivity extends TActivity {
         stringBuilder.append(MeasureUtils.getDensity(this));
         stringBuilder.append("\ndpi: ");
         stringBuilder.append(MeasureUtils.getDensityDpi(this));
+        stringBuilder.append("\n");
+        stringBuilder.append("\ntheory screen size: ");
+        stringBuilder.append(screenSizeByCalculate);
+        stringBuilder.append(" inch");
+
+        if (screenSize <= 0){
+            stringBuilder.append("\nillegal screen size which input by edit text!");
+            return;
+        }
 
         float diagonalPixels = (float) Math.sqrt(screenWidthPixels * screenWidthPixels + screenHeightPixels * screenHeightPixels);
-        float realDpi = diagonalPixels / screenPhysicalSize;
-        stringBuilder.append("\n");
-        stringBuilder.append("\nphysical size: ");
-        stringBuilder.append(screenPhysicalSize);
+        float realDpi = diagonalPixels / screenSize;
+        stringBuilder.append("\nusing  screen size: ");
+        stringBuilder.append(screenSize);
         stringBuilder.append(" inch");
         stringBuilder.append("\nphysical dpi: ");
         stringBuilder.append((int) (realDpi + 0.5f));

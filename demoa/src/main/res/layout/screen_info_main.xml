@@ -22,15 +22,30 @@
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/screen_info_main_text"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:lineSpacingMultiplier="1.2"
-        android:padding="10dp"
-        android:textColor="#808080"
-        android:textSize="12sp" />
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/screen_info_main_edittext"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:textSize="12sp"
+            android:hint="@string/screen_info_edit_text_hint"/>
+
+        <TextView
+            android:id="@+id/screen_info_main_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:lineSpacingMultiplier="1.2"
+            android:padding="10dp"
+            android:textColor="#808080"
+            android:textSize="12sp" />
+
+    </LinearLayout>
 
     <sviolet.demoa.info.view.RulerView
         android:id="@+id/screen_info_main_ruler"

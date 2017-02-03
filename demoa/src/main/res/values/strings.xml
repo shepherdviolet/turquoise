@@ -42,6 +42,7 @@
 
     <string name="info_main_title">Device Info</string>
     <string name="screen_info_main_title">Screen Info</string>
+    <string name="screen_info_edit_text_hint">input screen size (inch)</string>
 
     <string name="temp_main_title">Temp</string>
 
