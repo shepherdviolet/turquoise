@@ -26,7 +26,7 @@ import android.view.View;
 import java.io.File;
 import java.io.IOException;
 
-import sviolet.turquoise.common.statics.SpecialResourceId;
+import sviolet.turquoise.common.statics.PublicConstants;
 import sviolet.turquoise.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
@@ -66,7 +66,7 @@ public class TILoaderUtils {
         ComponentManager.getInstance().waitingForInitialized();
         synchronized (view) {
             //get Stub from View Tag
-            Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
+            Object tag = view.getTag(PublicConstants.ViewTag.TILoaderStub);
             if (tag instanceof Stub) {
                 //get remoter
                 return ((Stub) tag).getStubRemoter();

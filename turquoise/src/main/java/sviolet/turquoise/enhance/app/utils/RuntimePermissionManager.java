@@ -29,12 +29,13 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.common.entity.Destroyable;
+import sviolet.turquoise.common.statics.PublicConstants;
 import sviolet.turquoise.ui.dialog.CommonSimpleDialog;
 import sviolet.turquoise.ui.dialog.SimpleDialogBuilder;
 import sviolet.turquoise.util.common.CheckUtils;
 
 /**
- * <p>运行时权限管理器, 兼容低版本, 占用Activity的requestCode 201-250</p>
+ * <p>运行时权限管理器, 兼容低版本, 占用Activity的requestCode(见PublicConstants.ActivityRequestCode)</p>
  *
  * <pre>{@code
  *
@@ -197,8 +198,9 @@ public class RuntimePermissionManager implements Destroyable {
     }
 
     private void requestPermissions(Activity activity, final String[] permissions, RequestPermissionTask task) {
-        //递减的请求号201-250
-        final int requestCode = mPermissionRequestCode.getAndIncrement() % 50 + 201;
+        //递减的请求号
+        final int requestCode = mPermissionRequestCode.getAndIncrement() % PublicConstants.ActivityRequestCode.RuntimePermissionTaskMax
+                + PublicConstants.ActivityRequestCode.RuntimePermissionTaskStart;
         //任务加入任务池
         mPermissionRequestTaskPool.put(requestCode, task);
         //请求权限

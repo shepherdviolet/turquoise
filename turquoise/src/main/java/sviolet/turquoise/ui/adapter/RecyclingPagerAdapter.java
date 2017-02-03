@@ -8,7 +8,7 @@ import android.widget.AdapterView;
 import java.util.HashSet;
 import java.util.Set;
 
-import sviolet.turquoise.common.statics.SpecialResourceId;
+import sviolet.turquoise.common.statics.PublicConstants;
 
 /**
  * <p>A {@link PagerAdapter} which behaves like an {@link android.widget.Adapter} with view types and
@@ -93,7 +93,7 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
     @Override
     public int getItemPosition(Object object) {
         if (object instanceof View) {
-            Object tag = ((View) object).getTag(SpecialResourceId.ViewTag.RecyclingPagerAdatperPosition);
+            Object tag = ((View) object).getTag(PublicConstants.ViewTag.RecyclingPagerAdapterPosition);
             if (tag instanceof Integer) {
                 //在刷新集合中的Item, 需要重建
                 if (refreshPositionSet.remove(tag)){
@@ -116,7 +116,7 @@ public abstract class RecyclingPagerAdapter extends PagerAdapter {
         }
         view = getView(position, view, container);
         container.addView(view);
-        view.setTag(SpecialResourceId.ViewTag.RecyclingPagerAdatperPosition, position);//记录position
+        view.setTag(PublicConstants.ViewTag.RecyclingPagerAdapterPosition, position);//记录position
         activePositionSet.add(position);//塞入有效Item集合
         return view;
     }

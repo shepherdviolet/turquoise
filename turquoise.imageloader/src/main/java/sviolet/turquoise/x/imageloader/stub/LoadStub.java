@@ -24,7 +24,7 @@ import android.view.View;
 
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.common.statics.SpecialResourceId;
+import sviolet.turquoise.common.statics.PublicConstants;
 import sviolet.turquoise.x.imageloader.drawable.ContainerDrawable;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.Params;
@@ -258,7 +258,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
         }
         synchronized (view) {
             //get Stub from View Tag
-            Object tag = view.getTag(SpecialResourceId.ViewTag.TILoaderStub);
+            Object tag = view.getTag(PublicConstants.ViewTag.TILoaderStub);
             //if old stub exists
             if (tag instanceof Stub) {
                 Stub oldStub = (Stub) tag;
@@ -271,7 +271,7 @@ public abstract class LoadStub<V extends View> extends AbsStub {
                 }
             }
             //bind Stub on View
-            view.setTag(SpecialResourceId.ViewTag.TILoaderStub, this);
+            view.setTag(PublicConstants.ViewTag.TILoaderStub, this);
         }
         return true;
     }

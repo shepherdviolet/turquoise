@@ -25,7 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import sviolet.turquoise.common.statics.SpecialResourceId;
+import sviolet.turquoise.common.statics.PublicConstants;
 
 /**
  * ViewHolder工具, 用于Adapter<br/>
@@ -111,7 +111,7 @@ public class TViewHolder {
                 throw new RuntimeException("[TViewHolder]create: error when inflating View", e);
             }
         }else{
-            Object holder = convertView.getTag(SpecialResourceId.ViewTag.ViewHolder);
+            Object holder = convertView.getTag(PublicConstants.ViewTag.ViewHolder);
             if (holder instanceof TViewHolder){
                 TViewHolder TViewHolder = (TViewHolder) holder;
                 TViewHolder.incrementCreateTimes();
@@ -119,7 +119,7 @@ public class TViewHolder {
             }
         }
         TViewHolder holder = new TViewHolder(convertView);
-        convertView.setTag(SpecialResourceId.ViewTag.ViewHolder, holder);
+        convertView.setTag(PublicConstants.ViewTag.ViewHolder, holder);
         holder.incrementCreateTimes();
         return holder;
     }
