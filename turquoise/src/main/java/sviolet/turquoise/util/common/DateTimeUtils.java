@@ -22,7 +22,6 @@ public class DateTimeUtils {
 
 	/**
 	 * 获得当前日期
-	 * @return
 	 */
 	public static String getDate(){
 		return SimpleDateFormat.getDateInstance().format(new Date());
@@ -30,7 +29,6 @@ public class DateTimeUtils {
 	
 	/**
 	 * 获得当前时间
-	 * @return
 	 */
 	public static String getTime(){
 		return SimpleDateFormat.getTimeInstance().format(new Date());
@@ -38,7 +36,6 @@ public class DateTimeUtils {
 	
 	/**
 	 * 获得当前日期和时间
-	 * @return
 	 */
 	public static String getDateTime(){
 		return SimpleDateFormat.getDateTimeInstance().format(new Date());
@@ -46,17 +43,15 @@ public class DateTimeUtils {
 	
 	/**
 	 * 获得指定格式的时间
-	 * @param template
-	 * @return
+	 * @param template 格式
 	 */
 	public static String getDateTime(String template){
-		SimpleDateFormat formater = new SimpleDateFormat(template, Locale.SIMPLIFIED_CHINESE);
-		return formater.format(new Date());
+		SimpleDateFormat format = new SimpleDateFormat(template, Locale.SIMPLIFIED_CHINESE);
+		return format.format(new Date());
 	}
 	
 	/**
 	 * 得到当前毫秒值
-	 * @return
 	 */
 	public static long getCurrentTimeMillis(){
 		return System.currentTimeMillis();
@@ -64,7 +59,6 @@ public class DateTimeUtils {
 
 	/**
 	 * [Android]获得系统启动至今经过的毫秒数, 深睡眠时不计时
-	 * @return
 	 */
 	public static long getUptimeMillis(){
 		return SystemClock.uptimeMillis();
@@ -72,7 +66,6 @@ public class DateTimeUtils {
 
 	/**
 	 * 获得当前纳秒时间, 该时间仅用于计算程序经过时间, 不保证精确
-	 * @return
      */
 	public static long getNanoTime(){
 		return System.nanoTime();
@@ -84,7 +77,6 @@ public class DateTimeUtils {
 	
 	/**
 	 * 根据timeMillis获得日期
-	 * @return
 	 */
 	public static String getDate(long timeMillis){
 		return SimpleDateFormat.getDateInstance().format(new Date(timeMillis));
@@ -92,7 +84,6 @@ public class DateTimeUtils {
 	
 	/**
 	 * 根据timeMillis获得时间
-	 * @return
 	 */
 	public static String getTime(long timeMillis){
 		return SimpleDateFormat.getTimeInstance().format(new Date(timeMillis));
@@ -100,7 +91,6 @@ public class DateTimeUtils {
 	
 	/**
 	 * 根据timeMillis获得日期和时间
-	 * @return
 	 */
 	public static String getDateTime(long timeMillis){
 		return SimpleDateFormat.getDateTimeInstance().format(new Date(timeMillis));
@@ -108,17 +98,15 @@ public class DateTimeUtils {
 	
 	/**
 	 * 根据timeMillis获得指定格式的时间
-	 * @param template
-	 * @return
+	 * @param template 格式
 	 */
 	public static String getDateTime(String template, long timeMillis){
-		SimpleDateFormat formater = new SimpleDateFormat(template, Locale.SIMPLIFIED_CHINESE);
-		return formater.format(new Date(timeMillis));
+		SimpleDateFormat format = new SimpleDateFormat(template, Locale.SIMPLIFIED_CHINESE);
+		return format.format(new Date(timeMillis));
 	}
 
     /**
      * 根据Date获得日期
-     * @return
      */
     public static String getDate(Date date){
         return SimpleDateFormat.getDateInstance().format(date);
@@ -126,7 +114,6 @@ public class DateTimeUtils {
 
     /**
      * 根据Date获得时间
-     * @return
      */
     public static String getTime(Date date){
         return SimpleDateFormat.getTimeInstance().format(date);
@@ -134,7 +121,6 @@ public class DateTimeUtils {
 
     /**
      * 根据Date获得日期和时间
-     * @return
      */
     public static String getDateTime(Date date){
         return SimpleDateFormat.getDateTimeInstance().format(date);
@@ -142,12 +128,11 @@ public class DateTimeUtils {
 
     /**
      * 根据Date获得指定格式的时间
-     * @param template
-     * @return
+     * @param template 格式
      */
     public static String getDateTime(String template, Date date){
-        SimpleDateFormat formater = new SimpleDateFormat(template, Locale.SIMPLIFIED_CHINESE);
-        return formater.format(date);
+        SimpleDateFormat format = new SimpleDateFormat(template, Locale.SIMPLIFIED_CHINESE);
+        return format.format(date);
     }
 
 	/*******************************************
@@ -161,8 +146,23 @@ public class DateTimeUtils {
 	 * @throws ParseException
 	 */
 	public static Date parseDate(String dateStr, String pattern) throws ParseException {
-		SimpleDateFormat formater = new SimpleDateFormat(pattern, Locale.SIMPLIFIED_CHINESE);
-		return formater.parse(dateStr);
+		SimpleDateFormat format = new SimpleDateFormat(pattern, Locale.SIMPLIFIED_CHINESE);
+		return format.parse(dateStr);
+	}
+
+	/**
+	 * 将字符串按格式转换为Date, 若转换异常则返回fallback值
+	 * @param dateStr 日期字符串
+	 * @param pattern 格式, 例如yyyy-MM-dd HH-mm-ss
+	 * @param fallback 若转换异常则返回该值
+	 */
+	public static Date parseDate(String dateStr, String pattern, Date fallback) {
+		SimpleDateFormat format = new SimpleDateFormat(pattern, Locale.SIMPLIFIED_CHINESE);
+		try {
+			return format.parse(dateStr);
+		} catch (ParseException e) {
+			return fallback;
+		}
 	}
 
     /********************************************
