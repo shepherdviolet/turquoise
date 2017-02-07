@@ -73,11 +73,10 @@ public class CommonSimpleDialog extends Dialog {
         LinearLayout.LayoutParams params;
         final int screenWidth = MeasureUtils.getScreenWidth(getContext()) > MeasureUtils.dp2px(getContext(), 400) ?
                 MeasureUtils.dp2px(getContext(), 400) : MeasureUtils.getScreenWidth(getContext());
-        final int dp10 = MeasureUtils.dp2px(getContext(), 10);
+        final int dp5 = MeasureUtils.dp2px(getContext(), 5);
         final int dp20 = MeasureUtils.dp2px(getContext(), 20);
-        final int dp50 = MeasureUtils.dp2px(getContext(), 50);
         final int dp60 = MeasureUtils.dp2px(getContext(), 60);
-        final int dp100 = MeasureUtils.dp2px(getContext(), 100);
+        final int dp80 = MeasureUtils.dp2px(getContext(), 80);
 
         //实例化控件
         TextView titleView = new TextView(getContext());
@@ -99,14 +98,12 @@ public class CommonSimpleDialog extends Dialog {
         if (info.title != null) {
             params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp60);
             titleView.setTextColor(0xFF909090);
-            titleView.setTextSize(20f);
-            titleView.setPadding(dp20, dp10, dp20, 0);
+            titleView.setTextSize(18f);
+            titleView.setPadding(dp20, dp5, dp20, 0);
             titleView.setGravity(Gravity.CENTER_VERTICAL);
             titleView.setMaxLines(1);
             titleView.setEllipsize(TextUtils.TruncateAt.END);
             titleView.setText(info.title);
-            TextPaint textPaint = titleView.getPaint();
-            textPaint.setFakeBoldText(true);
             container.addView(titleView, params);
         } else {
             params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp20);
@@ -116,7 +113,8 @@ public class CommonSimpleDialog extends Dialog {
         //内容
 
         params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        contentScrollView.setMinimumHeight(info.title != null ? dp60 : dp100);
+        contentScrollView.setMinimumHeight(info.title != null ? dp60 : dp80);
+        contentScrollView.setScrollbarFadingEnabled(false);
         container.addView(contentScrollView, params);
 
         params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -131,7 +129,7 @@ public class CommonSimpleDialog extends Dialog {
         if(info.leftButtonStr != null || info.middleButtonStr != null || info.rightButtonStr != null) {
 
             //按钮容器
-            params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp50);
+            params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp60);
             buttonLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
             container.addView(buttonLinearLayout, params);
 
