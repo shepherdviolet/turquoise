@@ -1,4 +1,4 @@
-# Turquoise 4.1.170206
+# Turquoise 4.2.170209
 * A comprehensive Android library for private use.
 * https://github.com/shepherdviolet/turquoise
 
