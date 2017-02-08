@@ -34,7 +34,7 @@ import sviolet.turquoise.util.common.ParasiticVars;
  * Created by S.Violet on 2015/11/24.
  */
 @SuppressLint("ValidFragment")
-class LifeCycleFragment extends Fragment {
+public class LifeCycleFragment extends Fragment {
 
     private LifeCycleManager manager;
 
