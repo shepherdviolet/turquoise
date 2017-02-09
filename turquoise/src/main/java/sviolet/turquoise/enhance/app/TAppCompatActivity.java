@@ -20,7 +20,6 @@
 package sviolet.turquoise.enhance.app;
 
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 
@@ -43,7 +42,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  *
  * @author S.Violet
  */
-public abstract class TAppCompatActivity extends AppCompatActivity  implements EnhancedContext, ActivityCompat.OnRequestPermissionsResultCallback {
+public abstract class TAppCompatActivity extends AppCompatActivity  implements EnhancedContext, RuntimePermissionManager.OnRequestPermissionsResultCallback {
 
     private final TActivityProvider provider = new TActivityProvider();
     private RuntimePermissionManager runtimePermissionManager = new RuntimePermissionManager(this);

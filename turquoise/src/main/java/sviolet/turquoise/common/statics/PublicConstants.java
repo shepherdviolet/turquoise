@@ -64,7 +64,7 @@ public class PublicConstants {
         /**
          * request code of runtime permission task, for {@link sviolet.turquoise.enhance.app.utils.RuntimePermissionManager}
          */
-        public static final int RuntimePermissionTaskStart = 17000;//start code
+        public static final int RuntimePermissionTaskStart = 17000;//start code, must < 65535
         public static final int RuntimePermissionTaskMax = 100;//quantity
 
     }

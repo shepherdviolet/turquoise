@@ -21,7 +21,6 @@ package sviolet.turquoise.enhance.app;
 
 import android.app.Activity;
 import android.os.*;
-import android.support.v4.app.ActivityCompat;
 import android.view.Menu;
 
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
@@ -42,7 +41,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  * @author S.Violet
  */
 
-public abstract class TActivity extends Activity implements EnhancedContext, ActivityCompat.OnRequestPermissionsResultCallback {
+public abstract class TActivity extends Activity implements EnhancedContext, RuntimePermissionManager.OnRequestPermissionsResultCallback {
 
     private final TActivityProvider provider = new TActivityProvider();
     private RuntimePermissionManager runtimePermissionManager = new RuntimePermissionManager(this);

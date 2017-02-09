@@ -20,9 +20,12 @@
 package sviolet.turquoise.enhance.app.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Process;
 import android.util.SparseArray;
 
 import java.lang.ref.WeakReference;
@@ -39,7 +42,7 @@ import sviolet.turquoise.util.common.CheckUtils;
  *
  * <pre>{@code
  *
- *      public class MyActivity extends Activity implements ActivityCompat.OnRequestPermissionsResultCallback {
+ *      public class MyActivity extends Activity implements RuntimePermissionManager.OnRequestPermissionsResultCallback {
  *
  *          private RuntimePermissionManager runtimePermissionManager = new RuntimePermissionManager(this);
  *
@@ -145,7 +148,7 @@ public class RuntimePermissionManager implements Destroyable {
         //判断权限是否已开启
         boolean allGranted = true;
         for (String permission : permissions){
-            if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED){
+            if (checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED){
                 allGranted = false;
                 break;
             }
@@ -164,7 +167,7 @@ public class RuntimePermissionManager implements Destroyable {
             //判断是否需要显示提示
             boolean shouldShowRationale = false;
             for (String permission : permissions){
-                if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)){
+                if (shouldShowRequestPermissionRationale(activity, permission)){
                     shouldShowRationale = true;
                     break;
                 }
@@ -204,7 +207,7 @@ public class RuntimePermissionManager implements Destroyable {
         //任务加入任务池
         mPermissionRequestTaskPool.put(requestCode, task);
         //请求权限
-        ActivityCompat.requestPermissions(activity, permissions, requestCode);
+        requestPermissions(activity, permissions, requestCode);
     }
 
     /**
@@ -241,6 +244,62 @@ public class RuntimePermissionManager implements Destroyable {
         }
         return false;
     }
+
+    /********************************************************************************************
+     * compat, 代替ActivityCompat和ContextCompat, 兼容低版本support包
+     */
+
+    /**
+     * This interface is the contract for receiving the results for permission requests.
+     */
+    public interface OnRequestPermissionsResultCallback {
+        void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults);
+    }
+
+    private boolean shouldShowRequestPermissionRationale(Activity activity, String permission) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            return activity.shouldShowRequestPermissionRationale(permission);
+        }
+        return false;
+    }
+
+    private void requestPermissions(final Activity activity, final String[] permissions, final int requestCode) {
+        if (Build.VERSION.SDK_INT >= 23) {
+            activity.requestPermissions(permissions, requestCode);
+        } else if (activity instanceof RuntimePermissionManager.OnRequestPermissionsResultCallback) {
+            Handler handler = new Handler(Looper.getMainLooper());
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    final int[] grantResults = new int[permissions.length];
+
+                    PackageManager packageManager = activity.getPackageManager();
+                    String packageName = activity.getPackageName();
+
+                    final int permissionCount = permissions.length;
+                    for (int i = 0; i < permissionCount; i++) {
+                        grantResults[i] = packageManager.checkPermission(
+                                permissions[i], packageName);
+                    }
+
+                    ((RuntimePermissionManager.OnRequestPermissionsResultCallback) activity).onRequestPermissionsResult(
+                            requestCode, permissions, grantResults);
+                }
+            });
+        }
+    }
+
+    private int checkSelfPermission(Context context, String permission) {
+        if (permission == null) {
+            throw new IllegalArgumentException("permission is null");
+        }
+
+        return context.checkPermission(permission, android.os.Process.myPid(), Process.myUid());
+    }
+
+    /********************************************************************************************
+     * dialog
+     */
 
     /**
      * 权限说明对话框构造器工厂
