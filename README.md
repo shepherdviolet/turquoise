@@ -141,6 +141,7 @@
 
 # Package Releases (aar/source)
 https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
+https://git.oschina.net/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
 <br/>
 <br/>
 <br/>
