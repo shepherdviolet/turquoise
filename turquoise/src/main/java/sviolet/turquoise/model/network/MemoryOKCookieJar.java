@@ -49,6 +49,7 @@ public class MemoryOKCookieJar implements CookieJar {
 
     protected Map<String, List<Cookie>> cookieDataMap = new HashMap<>();
     private CookieFilter cookieFilter;
+    private boolean logVerbose = false;
 
     @Override
     public final void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
@@ -59,6 +60,12 @@ public class MemoryOKCookieJar implements CookieJar {
             //保存
             cookieDataMap.put(url.host(), cookies);
             afterNewCookieSaved();
+            //打印cookie内容
+            if (logVerbose){
+                for (Cookie cookie : cookies){
+                    logger.d("[MemoryOKCookieJar]received cookies:" + cookie.toString());
+                }
+            }
         }
     }
 
@@ -71,18 +78,23 @@ public class MemoryOKCookieJar implements CookieJar {
             return new ArrayList<>();
         }
         logger.d("[MemoryOKCookieJar]send cookie from cookieJar, url:" + url.host());
-        //没有过滤器直接返回
-        if (cookieFilter == null){
-            return cookies;
-        }
         //过滤器过滤
-        List<Cookie> result = new ArrayList<>();
-        for (Cookie cookie : cookies){
-            if (cookieFilter.filter(cookie.name())){
-                result.add(cookie);
+        if (cookieFilter != null){
+            List<Cookie> result = new ArrayList<>();
+            for (Cookie cookie : cookies){
+                if (cookieFilter.filter(cookie.name())){
+                    result.add(cookie);
+                }
+            }
+            cookies = result;
+        }
+        //打印cookie内容
+        if (logVerbose){
+            for (Cookie cookie : cookies){
+                logger.d("[MemoryOKCookieJar]send cookies:" + cookie.toString());
             }
         }
-        return result;
+        return cookies;
     }
 
     /**
@@ -97,6 +109,13 @@ public class MemoryOKCookieJar implements CookieJar {
      */
     protected void afterNewCookieSaved(){
 
+    }
+
+    /**
+     * @param verbose true:日志打印cookie内容
+     */
+    public void setLogVerbose(boolean verbose){
+        this.logVerbose = verbose;
     }
 
     /**
