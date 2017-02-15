@@ -24,6 +24,7 @@ import android.content.Context;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
 
+import sviolet.turquoise.common.statics.StringConstants;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.NodeFactory;
@@ -104,7 +105,7 @@ public class ComponentManager {
      * Extras
      **********************************************************************************************/
 
-    private final TLogger logger = TLogger.get(TILoader.class, TILoader.TAG);
+    private final TLogger logger = TLogger.get(TILoader.class, StringConstants.TILOADER_TAG);
     private WeakReference<Context> contextImage;
     private WeakReference<Context> applicationContextImage;
 

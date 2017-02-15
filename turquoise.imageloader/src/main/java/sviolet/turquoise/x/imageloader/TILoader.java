@@ -40,8 +40,6 @@ import sviolet.turquoise.x.imageloader.stub.StubRemoter;
  */
 public class TILoader {
 
-    public static final String TAG = "TILoader";
-
     /**
      * fetch node to load image
      * @param context context

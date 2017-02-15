@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 import sviolet.turquoise.common.statics.PublicConstants;
+import sviolet.turquoise.common.statics.StringConstants;
 import sviolet.turquoise.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
@@ -207,7 +208,7 @@ public class TILoaderUtils {
         TLoggerModule module = TLogger.getModule();
         //valid in SimpleTLoggerModule
         if (module instanceof SimpleTLoggerModule){
-            ((SimpleTLoggerModule) module).addRule(TILoader.TAG, new SimpleTLoggerModule.Rule(level));
+            ((SimpleTLoggerModule) module).addRule(StringConstants.TILOADER_TAG, new SimpleTLoggerModule.Rule(level));
             return true;
         }
         return false;

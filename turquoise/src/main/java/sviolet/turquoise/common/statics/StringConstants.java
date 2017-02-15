@@ -20,10 +20,18 @@
 package sviolet.turquoise.common.statics;
 
 /**
+ * String常量
+ *
  * Created by S.Violet on 2016/3/4.
  */
 public class StringConstants {
 
+    /*******************************************************************************8
+     * Logger TAG
+     */
+
     public static final String LIBRARY_TAG = "Turquoise";
+    public static final String TILOADER_TAG = "Turquoise#TILoader";
+    public static final String OK_HTTP_TAG = "Turquoise#OKHttp";
 
 }
