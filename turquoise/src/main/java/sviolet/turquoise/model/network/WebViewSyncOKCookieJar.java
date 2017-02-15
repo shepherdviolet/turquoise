@@ -95,7 +95,7 @@ public class WebViewSyncOKCookieJar extends MemoryOKCookieJar {
         }
     }
 
-    private List<Cookie> parseCookieFromWebView(HttpUrl httpUrl, String webViewCookieString){
+    protected List<Cookie> parseCookieFromWebView(HttpUrl httpUrl, String webViewCookieString){
         if (webViewCookieString == null || webViewCookieString.length() <= 0){
             return null;
         }
