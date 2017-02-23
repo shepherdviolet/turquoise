@@ -16,6 +16,7 @@ public class DeviceUtils {
 
     /**
      * 获取设备IMEI号
+     * <uses-permission android:name="android.permission.READ_PHONE_STATE" />
      */
     public static String getIMEI(Context context) {
         final TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
