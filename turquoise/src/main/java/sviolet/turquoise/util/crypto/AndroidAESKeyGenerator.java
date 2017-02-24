@@ -74,20 +74,23 @@ public class AndroidAESKeyGenerator {
 	}
 
 	/**
-	 * 利用SHA1摘要算法计算128位固定密钥, 安全性低, 但保证全平台一致
+	 * 利用SHA256摘要算法计算128位固定密钥, 安全性低, 但保证全平台一致
 	 *
 	 * @param seed 密码种子
 	 */
-	public static byte[] generateShaKey(byte[] seed){
-		byte[] sha = DigestCipher.digest(seed, DigestCipher.TYPE_SHA1);
+	public static byte[] generateShaKey128(byte[] seed){
+		byte[] sha = DigestCipher.digest(seed, DigestCipher.TYPE_SHA256);
 		byte[] password = new byte[16];
-		int offset = 0;
-		for(int i = 0 ; i < sha.length ; i++){
-			if((i + 1) % 5 != 0){
-				password[offset] = sha[i];
-				offset++;
-			}
-		}
+		System.arraycopy(sha, 0, password, 0, 16);
 		return password;
+	}
+
+	/**
+	 * 利用SHA256摘要算法计算256位固定密钥, 安全性低, 但保证全平台一致
+	 *
+	 * @param seed 密码种子
+	 */
+	public static byte[] generateShaKey256(byte[] seed){
+		return DigestCipher.digest(seed, DigestCipher.TYPE_SHA256);
 	}
 }
