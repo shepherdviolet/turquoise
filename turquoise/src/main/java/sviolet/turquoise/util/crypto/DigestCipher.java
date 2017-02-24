@@ -38,7 +38,9 @@ public class DigestCipher {
 	
 	public static final String TYPE_MD5 = "MD5";
 	public static final String TYPE_SHA1 = "SHA1";
-	
+    public static final String TYPE_SHA256 = "SHA-256";
+    public static final String TYPE_SHA512 = "SHA-512";
+
 	private static final String DEFAULT_ENCODING = "utf-8";
 	
 	/**
@@ -161,7 +163,7 @@ public class DigestCipher {
             inputStream = new FileInputStream(file);
             MessageDigest cipher = MessageDigest.getInstance(type);
             byte[] buff = new byte[1024];
-            int size = -1;
+            int size;
             while((size = inputStream.read(buff)) != -1){
                 cipher.update(buff, 0, size);
             }
