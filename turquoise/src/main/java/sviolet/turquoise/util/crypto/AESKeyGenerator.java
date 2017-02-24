@@ -47,7 +47,7 @@ public class AESKeyGenerator {
 	 * <p>生成128位AES密钥(不同系统平台相同seed生成结果可能不同), Android使用该方法, 相同seed仍会产生随机秘钥</p>
 	 *
 	 * @param seed 秘钥种子
-	 * @param bits 秘钥位数(默认128)
+	 * @param bits 秘钥位数(128/192/256)
 	 * @return 秘钥
 	 */
 	public static byte[] generate(byte[] seed, int bits) throws NoSuchProviderException{

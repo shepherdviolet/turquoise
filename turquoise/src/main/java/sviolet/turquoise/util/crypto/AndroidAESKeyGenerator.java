@@ -50,7 +50,7 @@ public class AndroidAESKeyGenerator {
 	 * <p>android专用, 相同seed产生相同秘钥</p>
 	 *
 	 * @param seed 秘钥种子
-	 * @param bits 秘钥位数(默认128)
+	 * @param bits 秘钥位数(128/192/256)
 	 */
 	@SuppressLint("TrulyRandom")
 	public static byte[] generate(byte[] seed, int bits) throws NoSuchProviderException{

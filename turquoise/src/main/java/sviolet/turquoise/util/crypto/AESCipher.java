@@ -46,7 +46,7 @@ public class AESCipher{
 	 * 加密
 	 * 
 	 * @param data 数据
-	 * @param key 秘钥
+	 * @param key 秘钥(通常只支持128)
 	 * @param cryptoTransformation 加密算法/填充算法
 	 *
 	 * @throws NoSuchAlgorithmException 加密算法无效
@@ -67,7 +67,7 @@ public class AESCipher{
 	 * 解密
 	 *
 	 * @param data 数据
-	 * @param key 秘钥
+	 * @param key 秘钥(通常只支持128)
 	 * @param cryptoTransformation 加密算法/填充算法
 	 *
 	 * @throws NoSuchAlgorithmException 加密算法无效
