@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.support.annotation.RequiresPermission;
 import android.telephony.TelephonyManager;
 
 import java.util.Locale;
@@ -18,6 +19,7 @@ public class DeviceUtils {
      * 获取设备IMEI号
      * <uses-permission android:name="android.permission.READ_PHONE_STATE" />
      */
+    @RequiresPermission("android.permission.READ_PHONE_STATE")
     public static String getIMEI(Context context) {
         final TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String imei = manager.getDeviceId();
@@ -30,6 +32,7 @@ public class DeviceUtils {
      * 获取设备MAC地址<br>
      * <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
      */
+    @RequiresPermission("android.permission.ACCESS_WIFI_STATE")
     public static String getMacAddress(Context context) {
         final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifiManager.getConnectionInfo();
