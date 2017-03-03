@@ -60,6 +60,9 @@ public class RegexUtils {
      * @return true:符合
      */
     public static boolean match(String regex, String string){
+        if (string == null){
+            return false;
+        }
         Pattern p = Pattern.compile(regex);
         Matcher m = p.matcher(string);
         return m.matches();
