@@ -78,7 +78,7 @@ import sviolet.turquoise.util.droid.DeviceUtils;
  */
 public class BitmapCache extends CompatLruCache<String, Bitmap> {
 
-    private static final float DEFAULT_CACHE_MEMORY_PERCENT = 0.125f;
+    private static final float DEFAULT_CACHE_MEMORY_PERCENT = 0.1f;
 
     //回收站 : 存放被清理出缓存但未被标记为unused的Bitmap
     private HashMap<String, Bitmap> recyclerMap;

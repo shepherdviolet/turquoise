@@ -488,9 +488,6 @@ public class ServerSettings implements ComponentManager.Component{
     private static final long DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT = -1;
     private static final long MIN_MEMORY_BUFFER_LENGTH_LIMIT = 512 * 1024;
     private static final float DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT = 0.02f;
-    private static final long DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_WINDOW_PERIOD = 30 * 1000;//ms
-    private static final long DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_DEADLINE = 120 * 1000;//ms
-    private static final int DEFAULT_ABORT_ON_LOW_NETWORK_SPEED_BOUNDARY_SPEED = 5 * 1024;//bytes/s
 
     public static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
     public static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
