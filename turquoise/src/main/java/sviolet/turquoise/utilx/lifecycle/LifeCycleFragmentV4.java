@@ -61,7 +61,10 @@ public class LifeCycleFragmentV4 extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
+        try {
+            super.onActivityCreated(savedInstanceState);
+        } catch (Exception ignore) {
+        }
         if (invalidateSelf())
             return;
         manager.onCreate();
@@ -69,7 +72,10 @@ public class LifeCycleFragmentV4 extends Fragment {
 
     @Override
     public void onStart() {
-        super.onStart();
+        try {
+            super.onStart();
+        } catch (Exception ignore) {
+        }
         if (invalidateSelf())
             return;
         manager.onStart();
@@ -77,7 +83,10 @@ public class LifeCycleFragmentV4 extends Fragment {
 
     @Override
     public void onResume() {
-        super.onResume();
+        try {
+            super.onResume();
+        } catch (Exception ignore) {
+        }
         if (invalidateSelf())
             return;
         manager.onResume();
@@ -85,7 +94,10 @@ public class LifeCycleFragmentV4 extends Fragment {
 
     @Override
     public void onPause() {
-        super.onPause();
+        try {
+            super.onPause();
+        } catch (Exception ignore) {
+        }
         if (invalidateSelf())
             return;
         manager.onPause();
@@ -93,7 +105,10 @@ public class LifeCycleFragmentV4 extends Fragment {
 
     @Override
     public void onStop() {
-        super.onStop();
+        try {
+            super.onStop();
+        } catch (Exception ignore) {
+        }
         if (invalidateSelf())
             return;
         manager.onStop();
@@ -101,7 +116,10 @@ public class LifeCycleFragmentV4 extends Fragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        try {
+            super.onDestroy();
+        } catch (Exception ignore) {
+        }
         //寄生变量中移除管理器
         ParasiticVars.remove(getActivity(), LifeCycleManager.MANAGER_TAG);
         if (invalidateSelf())
