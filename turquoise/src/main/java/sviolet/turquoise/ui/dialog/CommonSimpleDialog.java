@@ -24,7 +24,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.text.TextPaint;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
@@ -34,6 +33,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import sviolet.turquoise.ui.util.StateListDrawableUtils;
+import sviolet.turquoise.util.conversion.StringUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**
@@ -121,7 +121,7 @@ public class CommonSimpleDialog extends Dialog {
         contentView.setTextColor(0xFF505050);
         contentView.setTextSize(17f);
         contentView.setPadding(dp20, 0, dp20, 0);
-        contentView.setText(info.content);
+        contentView.setText(info.htmlEnabled ? StringUtils.toHtmlSpanned(info.content) : info.content);
         contentView.setLineSpacing(0, 1.1f);
         contentScrollView.addView(contentView, params);
 
@@ -272,6 +272,7 @@ public class CommonSimpleDialog extends Dialog {
         private String middleButtonStr;
         private String rightButtonStr;
         private boolean cancelable = true;
+        private boolean htmlEnabled = false;
 
         private SimpleDialogBuilder.Callback leftButtonCallback;
         private SimpleDialogBuilder.Callback middleButtonCallback;
@@ -283,6 +284,17 @@ public class CommonSimpleDialog extends Dialog {
     public static class Builder implements SimpleDialogBuilder{
 
         private Info info = new Info();
+
+        public Builder() {
+            this(false);
+        }
+
+        /**
+         * @param htmlEnabled true:content应用HTMLSpanned, false:content显示普通文本
+         */
+        public Builder(boolean htmlEnabled){
+            this.info.htmlEnabled = htmlEnabled;
+        }
 
         @Override
         public void setTitle(String title) {
