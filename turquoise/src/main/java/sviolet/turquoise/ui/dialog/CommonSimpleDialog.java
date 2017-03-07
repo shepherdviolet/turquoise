@@ -122,6 +122,7 @@ public class CommonSimpleDialog extends Dialog {
         contentView.setTextSize(17f);
         contentView.setPadding(dp20, 0, dp20, 0);
         contentView.setText(info.content);
+        contentView.setLineSpacing(0, 1.1f);
         contentScrollView.addView(contentView, params);
 
         //按钮
