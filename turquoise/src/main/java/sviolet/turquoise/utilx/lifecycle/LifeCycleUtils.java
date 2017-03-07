@@ -467,7 +467,12 @@ public class LifeCycleUtils {
                         transaction.remove(oldFragment);//移除原有Fragment
                     }
                     transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
-                    transaction.commitAllowingStateLoss();
+                    try {
+                        transaction.commitAllowingStateLoss();
+                    } catch (Exception e){
+                        //通常在Activity.onDestroy后提交会抛出异常
+                        fragment.onDestroy();//销毁Fragment, 同时会销毁Manager
+                    }
                 }
             } finally {
                 lock.unlock();
@@ -496,7 +501,12 @@ public class LifeCycleUtils {
                         transaction.remove(oldFragment);//移除原有Fragment
                     }
                     transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
-                    transaction.commitAllowingStateLoss();
+                    try {
+                        transaction.commitAllowingStateLoss();
+                    } catch (Exception e){
+                        //通常在Activity.onDestroy后提交会抛出异常
+                        fragment.onDestroy();//销毁Fragment, 同时会销毁Manager
+                    }
                 }
             } finally {
                 lock.unlock();

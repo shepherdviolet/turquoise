@@ -39,41 +39,73 @@ class LifeCycleManagerImpl implements LifeCycleManager {
     private final Map<String, LifeCycle> components = new ConcurrentHashMap<>();//生命周期监听器
     private final Set<LifeCycle> weakListeners = Collections.newSetFromMap(new WeakHashMap<LifeCycle, Boolean>());//生命周期监听器(弱引用)
 
+    private boolean destroyed = false;
+
     LifeCycleManagerImpl() {
     }
 
     @Override
     public void addComponent(String componentName, LifeCycle component) {
+        if (destroyed){
+            component.onDestroy();
+            return;
+        }
+
         components.put(componentName, component);
     }
 
     @Override
     public LifeCycle getComponent(String componentName) {
+        if (destroyed){
+            return null;
+        }
+
         return components.get(componentName);
     }
 
     @Override
     public void removeComponent(String componentName) {
+        if (destroyed){
+            return;
+        }
+
         components.remove(componentName);
     }
 
     @Override
     public void removeComponent(LifeCycle component){
+        if (destroyed){
+            return;
+        }
+
         components.values().remove(component);
     }
 
     @Override
     public void addWeakListener(LifeCycle listener) {
+        if (destroyed){
+            listener.onDestroy();
+            return;
+        }
+
         weakListeners.add(listener);
     }
 
     @Override
     public void removeWeakListener(LifeCycle listener) {
+        if (destroyed){
+            return;
+        }
+
         weakListeners.remove(listener);
     }
 
     @Override
     public void onCreate() {
+        if (destroyed){
+            return;
+        }
+
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onCreate();
         }
@@ -84,6 +116,10 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
     @Override
     public void onStart() {
+        if (destroyed){
+            return;
+        }
+
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onStart();
         }
@@ -94,6 +130,10 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
     @Override
     public void onResume() {
+        if (destroyed){
+            return;
+        }
+
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onResume();
         }
@@ -104,6 +144,10 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
     @Override
     public void onPause() {
+        if (destroyed){
+            return;
+        }
+
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onPause();
         }
@@ -114,6 +158,10 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
     @Override
     public void onStop() {
+        if (destroyed){
+            return;
+        }
+
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onStop();
         }
@@ -124,6 +172,8 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
     @Override
     public void onDestroy() {
+        this.destroyed = true;
+
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onDestroy();
         }
