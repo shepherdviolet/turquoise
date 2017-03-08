@@ -37,76 +37,80 @@ public class ClassPrinter {
     private static final String NULL_CLASS = "============================ClassPrinter============================\nClass:null";
     private static final String NULL_OBJECT = "============================ClassPrinter============================\nObject:null";
 
+    /**
+     * 打印class
+     * @param clazz class
+     * @param traversals true:遍历父类
+     */
     public static String print(Class<?> clazz, boolean traversals) throws IllegalAccessException {
+        return print(clazz, traversals, true, true, true);
+    }
+
+    /**
+     * 打印class
+     * @param clazz class
+     * @param traversals true:遍历父类
+     * @param printFields 输出fields
+     * @param printConstructors 输出构造器
+     * @param printMethods 输出方法
+     */
+    public static String print(Class<?> clazz, boolean traversals, boolean printFields, boolean printConstructors, boolean printMethods) throws IllegalAccessException {
         if (clazz == null){
             return NULL_CLASS;
         }
         Class<?> current = clazz;
         StringBuilder stringBuilder = new StringBuilder(PRINTER_TITLE);
-        print(current, null, stringBuilder);
+        print(current, null, stringBuilder, printFields, printConstructors, printMethods);
         while(traversals && (current = current.getSuperclass()) != null){
-            print(current, null, stringBuilder);
+            print(current, null, stringBuilder, printFields, printConstructors, printMethods);
         }
         return stringBuilder.toString();
     }
 
+    /**
+     * 打印对象
+     * @param obj 对象
+     * @param traversals true:遍历父类
+     */
     public static String print(Object obj, boolean traversals) throws IllegalAccessException {
+        return print(obj, traversals, true, true, true);
+    }
+
+    /**
+     * 打印对象
+     * @param obj 对象
+     * @param traversals true:遍历父类
+     * @param printFields 输出fields
+     * @param printConstructors 输出构造器
+     * @param printMethods 输出方法
+     */
+    public static String print(Object obj, boolean traversals, boolean printFields, boolean printConstructors, boolean printMethods) throws IllegalAccessException {
         if (obj == null){
             return NULL_OBJECT;
         }
         Class<?> current = obj.getClass();
         StringBuilder stringBuilder = new StringBuilder(PRINTER_TITLE);
-        print(current, obj, stringBuilder);
+        print(current, obj, stringBuilder, printFields, printConstructors, printMethods);
         while(traversals && (current = current.getSuperclass()) != null){
-            print(current, obj, stringBuilder);
+            print(current, obj, stringBuilder, printFields, printConstructors, printMethods);
         }
         return stringBuilder.toString();
     }
 
-    private static void print(Class<?> clazz, Object obj, StringBuilder stringBuilder) throws IllegalAccessException {
-        stringBuilder.append("\n++++++++++++++++++++++++Class++++++++++++++++++++++++\n");
-        printModifiers(clazz.getModifiers(), stringBuilder);
-        stringBuilder.append(clazz.getName());
-
-        stringBuilder.append("\n--------------Fields--------------");
-        Field[] fields = ReflectCache.getDeclaredFields(clazz);
-        for (Field field : fields) {
-            int modifiers = field.getModifiers();
-            String name = field.getName();
-            if (name.contains("$")){
-                continue;
-            }
-            field.setAccessible(true);
-            stringBuilder.append("\n");
-            printModifiers(modifiers, stringBuilder);
-            stringBuilder.append(field.getType().getName());
-            stringBuilder.append(" ");
-            stringBuilder.append(name);
-            if (obj != null || CheckUtils.isFlagMatch(modifiers, Modifier.STATIC)) {
-                stringBuilder.append(" = ");
-                stringBuilder.append(field.get(obj));
-            }
+    private static void print(Class<?> clazz, Object obj, StringBuilder stringBuilder, boolean printFields, boolean printConstructors, boolean printMethods) throws IllegalAccessException {
+        printClassInfo(clazz, stringBuilder);
+        if (printFields) {
+            printClassFields(clazz, obj, stringBuilder);
         }
-
-        stringBuilder.append("\n--------------Constructors--------------");
-        Constructor<?>[] constructors = ReflectCache.getDeclaredConstructors(clazz);
-        for (Constructor<?> constructor : constructors) {
-            stringBuilder.append("\n");
-            printModifiers(constructor.getModifiers(), stringBuilder);
-            stringBuilder.append(clazz.getSimpleName());
-            stringBuilder.append("(");
-            Class<?>[] paramTypes = constructor.getParameterTypes();
-            if (paramTypes != null) {
-                for (int j = 0 ; j < paramTypes.length ; j++){
-                    if (j != 0){
-                        stringBuilder.append(", ");
-                    }
-                    stringBuilder.append(paramTypes[j].getName());
-                }
-            }
-            stringBuilder.append(")");
+        if (printConstructors) {
+            printClassConstructors(clazz, stringBuilder);
         }
+        if (printMethods) {
+            printClassMethods(clazz, stringBuilder);
+        }
+    }
 
+    private static void printClassMethods(Class<?> clazz, StringBuilder stringBuilder) {
         stringBuilder.append("\n--------------Methods--------------");
         Method[] methods = ReflectCache.getDeclaredMethods(clazz);
         for (Method method : methods) {
@@ -131,6 +135,55 @@ public class ClassPrinter {
             }
             stringBuilder.append(")");
         }
+    }
+
+    private static void printClassConstructors(Class<?> clazz, StringBuilder stringBuilder) {
+        stringBuilder.append("\n--------------Constructors--------------");
+        Constructor<?>[] constructors = ReflectCache.getDeclaredConstructors(clazz);
+        for (Constructor<?> constructor : constructors) {
+            stringBuilder.append("\n");
+            printModifiers(constructor.getModifiers(), stringBuilder);
+            stringBuilder.append(clazz.getSimpleName());
+            stringBuilder.append("(");
+            Class<?>[] paramTypes = constructor.getParameterTypes();
+            if (paramTypes != null) {
+                for (int j = 0 ; j < paramTypes.length ; j++){
+                    if (j != 0){
+                        stringBuilder.append(", ");
+                    }
+                    stringBuilder.append(paramTypes[j].getName());
+                }
+            }
+            stringBuilder.append(")");
+        }
+    }
+
+    private static void printClassFields(Class<?> clazz, Object obj, StringBuilder stringBuilder) throws IllegalAccessException {
+        stringBuilder.append("\n--------------Fields--------------");
+        Field[] fields = ReflectCache.getDeclaredFields(clazz);
+        for (Field field : fields) {
+            int modifiers = field.getModifiers();
+            String name = field.getName();
+            if (name.contains("$")){
+                continue;
+            }
+            field.setAccessible(true);
+            stringBuilder.append("\n");
+            printModifiers(modifiers, stringBuilder);
+            stringBuilder.append(field.getType().getName());
+            stringBuilder.append(" ");
+            stringBuilder.append(name);
+            if (obj != null || CheckUtils.isFlagMatch(modifiers, Modifier.STATIC)) {
+                stringBuilder.append(" = ");
+                stringBuilder.append(field.get(obj));
+            }
+        }
+    }
+
+    private static void printClassInfo(Class<?> clazz, StringBuilder stringBuilder) {
+        stringBuilder.append("\n++++++++++++++++++++++++Class++++++++++++++++++++++++\n");
+        printModifiers(clazz.getModifiers(), stringBuilder);
+        stringBuilder.append(clazz.getName());
     }
 
     private static void printModifiers(int modifiers, StringBuilder stringBuilder){
