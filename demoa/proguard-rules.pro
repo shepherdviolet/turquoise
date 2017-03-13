@@ -30,8 +30,6 @@
 -verbose
 #混淆时所采用的算法
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
-#保护注解
--keepattributes *Annotation*
 #保持哪些类不被混淆
 -keep public class * extends android.app.Fragment
 -keep public class * extends android.app.Activity
