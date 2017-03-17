@@ -20,7 +20,10 @@
 package sviolet.turquoise.utilx.eventbus;
 
 import android.app.Activity;
+import android.app.Application;
 import android.app.Fragment;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 
 import java.util.Collections;
 import java.util.Set;
@@ -28,6 +31,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.util.common.ConcurrentUtils;
+import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
 import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
@@ -117,7 +121,7 @@ public class EvBus {
      */
     public static void register(Activity activity, Type type, EvReceiver receiver){
         check(activity, type, receiver);
-        getStation(activity).register(type, receiver);
+        getStation(activity, true).register(type, receiver);
     }
 
     /**
@@ -128,7 +132,7 @@ public class EvBus {
      */
     public static void register(Fragment fragment, Type type, EvReceiver receiver){
         check(fragment, type, receiver);
-        getStation(fragment).register(type, receiver);
+        getStation(fragment, true).register(type, receiver);
     }
 
     /**
@@ -139,7 +143,7 @@ public class EvBus {
      */
     public static void register(android.support.v4.app.FragmentActivity activity, Type type, EvReceiver receiver){
         check(activity, type, receiver);
-        getStation(activity).register(type, receiver);
+        getStation(activity, true).register(type, receiver);
     }
 
     /**
@@ -150,7 +154,47 @@ public class EvBus {
      */
     public static void register(android.support.v4.app.Fragment fragment, Type type, EvReceiver receiver){
         check(fragment, type, receiver);
-        getStation(fragment).register(type, receiver);
+        getStation(fragment, true).register(type, receiver);
+    }
+
+    /**
+     * 反注册消息接收器
+     * @param activity activity
+     * @param messageClass 消息类型
+     */
+    public static void unregister(Activity activity, Class<? extends EvMessage> messageClass) {
+        check(activity, messageClass);
+        getStation(activity, true).unregister(messageClass);
+    }
+
+    /**
+     * 反注册消息接收器
+     * @param fragment fragment
+     * @param messageClass 消息类型
+     */
+    public static void unregister(Fragment fragment, Class<? extends EvMessage> messageClass) {
+        check(fragment, messageClass);
+        getStation(fragment, true).unregister(messageClass);
+    }
+
+    /**
+     * 反注册消息接收器
+     * @param activity activity
+     * @param messageClass 消息类型
+     */
+    public static void unregister(android.support.v4.app.FragmentActivity activity, Class<? extends EvMessage> messageClass) {
+        check(activity, messageClass);
+        getStation(activity, true).unregister(messageClass);
+    }
+
+    /**
+     * 反注册消息接收器
+     * @param fragment fragment
+     * @param messageClass 消息类型
+     */
+    public static void unregister(android.support.v4.app.Fragment fragment, Class<? extends EvMessage> messageClass) {
+        check(fragment, messageClass);
+        getStation(fragment, true).unregister(messageClass);
     }
 
     /**
@@ -166,6 +210,249 @@ public class EvBus {
         ON_STOP,//onStop之后处理消息
         ON_DESTROY//onDestroy之后处理消息
 
+    }
+
+    /******************************************************************************************
+     * transmit mode
+     */
+
+    private static EvTransmitPipeline transmitPipeline;
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static void transmitPush(Activity activity, EvMessage message){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitPush can only call in API14+");
+        }
+        if (activity == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (message == null){
+            return;
+        }
+        getStation(activity, true).pushTransmitMessage(message);
+    }
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static void transmitPush(Fragment fragment, EvMessage message){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitPush can only call in API14+");
+        }
+        if (fragment == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (message == null){
+            return;
+        }
+        getStation(fragment, true).pushTransmitMessage(message);
+    }
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static void transmitPush(android.support.v4.app.FragmentActivity activity, EvMessage message){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitPush can only call in API14+");
+        }
+        if (activity == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (message == null){
+            return;
+        }
+        getStation(activity, true).pushTransmitMessage(message);
+    }
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static void transmitPush(android.support.v4.app.Fragment fragment, EvMessage message){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitPush can only call in API14+");
+        }
+        if (fragment == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (message == null){
+            return;
+        }
+        getStation(fragment, true).pushTransmitMessage(message);
+    }
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitPop(Activity activity, Class<T> messageClass){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitPop can only call in API14+");
+        }
+        if (activity == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (messageClass == null){
+            return null;
+        }
+        return getStation(activity, true).popTransmitMessage(messageClass);
+    }
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitPop(Fragment fragment, Class<T> messageClass){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitRemove can only call in API14+");
+        }
+        if (fragment == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (messageClass == null){
+            return null;
+        }
+        return getStation(fragment, true).popTransmitMessage(messageClass);
+    }
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitPop(android.support.v4.app.FragmentActivity activity, Class<T> messageClass){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitRemove can only call in API14+");
+        }
+        if (activity == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (messageClass == null){
+            return null;
+        }
+        return getStation(activity, true).popTransmitMessage(messageClass);
+    }
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitPop(android.support.v4.app.Fragment fragment, Class<T> messageClass){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitRemove can only call in API14+");
+        }
+        if (fragment == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (messageClass == null){
+            return null;
+        }
+        return getStation(fragment, true).popTransmitMessage(messageClass);
+    }
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitRemove(Activity activity, Class<T> messageClass){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitRemove can only call in API14+");
+        }
+        if (activity == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (messageClass == null){
+            return null;
+        }
+        return getStation(activity, true).removeTransmitMessage(messageClass);
+    }
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitRemove(Fragment fragment, Class<T> messageClass){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitRemove can only call in API14+");
+        }
+        if (fragment == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (messageClass == null){
+            return null;
+        }
+        return getStation(fragment, true).removeTransmitMessage(messageClass);
+    }
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitRemove(android.support.v4.app.FragmentActivity activity, Class<T> messageClass){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitRemove can only call in API14+");
+        }
+        if (activity == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (messageClass == null){
+            return null;
+        }
+        return getStation(activity, true).removeTransmitMessage(messageClass);
+    }
+
+    /**
+     * [API14+]
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitRemove(android.support.v4.app.Fragment fragment, Class<T> messageClass){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]transmitRemove can only call in API14+");
+        }
+        if (fragment == null){
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (messageClass == null){
+            return null;
+        }
+        return getStation(fragment, true).removeTransmitMessage(messageClass);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @Deprecated
+    public static void installTransmitPipeline(Application application){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]installTransmitPipeline can only call in API14+");
+        }
+        if (application == null){
+            throw new NullPointerException("[EvBus]can not install TransmitPipeline on null Application");
+        }
+        if (transmitPipeline != null){
+            throw new IllegalStateException("[EvBus]you can only install TransmitPipeline once");
+        }
+        transmitPipeline = new EvTransmitPipeline();
+        application.registerActivityLifecycleCallbacks(transmitPipeline);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @Deprecated
+    public static void uninstallTransmitPipeline(Application application){
+        if (DeviceUtils.getVersionSDK() < 14){
+            throw new IllegalStateException("[EvBus]uninstallTransmitPipeline can only call in API14+");
+        }
+        if (application == null){
+            throw new NullPointerException("[EvBus]can not uninstall TransmitPipeline on null Application");
+        }
+        if (transmitPipeline == null){
+            throw new IllegalStateException("[EvBus]no EvTransmitPipeline to uninstall");
+        }
+        application.registerActivityLifecycleCallbacks(transmitPipeline);
+        transmitPipeline.onDestroy();
+        transmitPipeline = null;
     }
 
     /********************************************************************************************
@@ -184,10 +471,22 @@ public class EvBus {
         }
     }
 
-    private static EvStation getStation(Activity activity){
+    private static void check(Object context, Class<? extends EvMessage> messageClass){
+        if (context == null) {
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (messageClass == null){
+            throw new IllegalArgumentException("[EvBus]messageClass == null");
+        }
+    }
+
+    static EvStation getStation(Activity activity, boolean create){
         //获得station
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
         if (!(component instanceof EvStation)){
+            if (!create){
+                return null;
+            }
             try{
                 lock.lock();
                 component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
@@ -204,10 +503,13 @@ public class EvBus {
         return (EvStation) component;
     }
 
-    private static EvStation getStation(Fragment fragment){
+    static EvStation getStation(Fragment fragment, boolean create){
         //获得station
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
         if (!(component instanceof EvStation)){
+            if (!create){
+                return null;
+            }
             try{
                 lock.lock();
                 component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
@@ -224,9 +526,12 @@ public class EvBus {
         return (EvStation)component;
     }
 
-    private static EvStation getStation(android.support.v4.app.FragmentActivity activity){
+    static EvStation getStation(android.support.v4.app.FragmentActivity activity, boolean create){
         //获得station
         LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
+        if (!create){
+            return null;
+        }
         if (!(component instanceof EvStation)){
             try{
                 lock.lock();
@@ -244,9 +549,12 @@ public class EvBus {
         return (EvStation)component;
     }
 
-    private static EvStation getStation(android.support.v4.app.Fragment fragment){
+    static EvStation getStation(android.support.v4.app.Fragment fragment, boolean create){
         //获得station
         LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
+        if (!create){
+            return null;
+        }
         if (!(component instanceof EvStation)){
             try{
                 lock.lock();

@@ -20,6 +20,7 @@
 package sviolet.turquoise.enhance.app;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Application;
@@ -27,6 +28,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.widget.Toast;
@@ -39,6 +41,8 @@ import sviolet.turquoise.common.statics.StringConstants;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
+import sviolet.turquoise.util.droid.DeviceUtils;
+import sviolet.turquoise.utilx.eventbus.EvBus;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.utilx.tlogger.TLoggerModule;
 import sviolet.turquoise.util.droid.ApplicationUtils;
@@ -92,11 +96,25 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
         //APP基础Context接收入口
     }
 
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @Override
     public void onCreate() {
         injectSettings();
         super.onCreate();
         mApplication = this;
         Thread.setDefaultUncaughtExceptionHandler(this);
+        if (DeviceUtils.getVersionSDK() >= 14){
+            EvBus.installTransmitPipeline(this);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        if (DeviceUtils.getVersionSDK() >= 14){
+            EvBus.uninstallTransmitPipeline(this);
+        }
     }
 
     /**

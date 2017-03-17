@@ -56,6 +56,8 @@ class EvStation implements LifeCycle {
     private List<EvMessage> onStopMessages = Collections.synchronizedList(new ArrayList<EvMessage>());
     private List<EvMessage> onDestroyMessages = Collections.synchronizedList(new ArrayList<EvMessage>());
 
+    private Map<Class<? extends EvMessage>, EvMessage> transmitMessages = new ConcurrentHashMap<>();
+
     EvStation(Activity activity) {
         activityWeakReference = new WeakReference<>(activity);
     }
@@ -147,6 +149,69 @@ class EvStation implements LifeCycle {
         receivers.put(actualTypes.get(0), receiver);
     }
 
+    void unregister(Class<? extends EvMessage> messageClass) {
+        if (destroyed){
+            return;
+        }
+        if (getActivity() == null){
+            return;
+        }
+        receivers.remove(messageClass);
+    }
+
+    void pushTransmitMessage(EvMessage message){
+        if (destroyed){
+            return;
+        }
+        if (getActivity() == null){
+            return;
+        }
+        if (message == null){
+            return;
+        }
+        transmitMessages.put(message.getClass(), message);
+    }
+
+    <T extends EvMessage> T popTransmitMessage(Class<T> messageClass){
+        if (destroyed){
+            return null;
+        }
+        if (getActivity() == null){
+            return null;
+        }
+        if (messageClass == null){
+            return null;
+        }
+        T message = (T) transmitMessages.get(messageClass);
+        if (message instanceof EvResidentMessage){
+            return message;
+        }
+        return (T) transmitMessages.remove(messageClass);
+    }
+
+    <T extends EvMessage> T removeTransmitMessage(Class<T> messageClass){
+        if (destroyed){
+            return null;
+        }
+        if (getActivity() == null){
+            return null;
+        }
+        if (messageClass == null){
+            return null;
+        }
+        return (T) transmitMessages.remove(messageClass);
+    }
+
+    List<EvMessage> popTransmitMessages(){
+        List<EvMessage> snap = ConcurrentUtils.getSnapShot(transmitMessages.values());
+        for (EvMessage obj : snap){
+            if (!(obj instanceof EvResidentMessage)) {
+                transmitMessages.remove(obj.getClass());
+            }
+        }
+        return snap;
+    }
+
     @Override
     public void onCreate() {
 
@@ -215,6 +280,7 @@ class EvStation implements LifeCycle {
         onPauseMessages.clear();
         onStopMessages.clear();
         onDestroyMessages.clear();
+        transmitMessages.clear();
     }
 
     private Activity getActivity(){
