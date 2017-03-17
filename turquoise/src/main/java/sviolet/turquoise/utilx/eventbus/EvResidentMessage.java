@@ -20,7 +20,10 @@
 package sviolet.turquoise.utilx.eventbus;
 
 /**
- * 消息JavaBean接口, 标识接口
+ * 常驻消息: 消息JavaBean接口, 标识接口.
+ * 1.register/post模式中, 两种消息无差别.
+ * 2.transmit模式中, 常驻消息在被移除(transmitRemove)前, 可以被重复读取, 且常驻消息会像病毒一样传递给所有
+ * 新页面.
  *
  * Created by S.Violet on 2017/1/17.
  */

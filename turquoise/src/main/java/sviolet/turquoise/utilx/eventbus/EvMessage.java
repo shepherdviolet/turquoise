@@ -20,7 +20,9 @@
 package sviolet.turquoise.utilx.eventbus;
 
 /**
- * 消息JavaBean接口, 标识接口
+ * 普通消息: 消息JavaBean接口, 标识接口.
+ * 1.register/post模式中, 两种消息无差别.
+ * 2.transmit模式中, 普通消息仅可读一次.
  *
  * Created by S.Violet on 2017/1/17.
  */

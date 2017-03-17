@@ -31,7 +31,7 @@ import java.util.List;
 import sviolet.turquoise.common.entity.Destroyable;
 
 /**
- * [API14+]消息传输总线(transmit模式用)
+ * [API14+]传输消息管道(transmit模式专用), 实现新页面onCreate时, 从前一个页面的传输专用消息池中读取消息.
  *
  * Created by S.Violet on 2017/3/17.
  */

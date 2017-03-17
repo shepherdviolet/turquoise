@@ -39,7 +39,15 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 /**
  * <p>超轻量级事件总线</p>
  *
- * <p>在事件总线中, 我们用消息的类型(Class)来标识消息, 相同类型(Class)的消息, 视为相同的消息.</p>
+ * <p>
+ *     1.在事件总线中, 我们用消息的类型(Class)来标识消息, 相同类型(Class)的消息, 视为相同的消息.<br/>
+ *     2.事件总线传递的是消息的引用, 不会进行深度拷贝.<br/>
+ *     3.有两种消息传递模式, register/post模式和transmit模式, 两种模式传递的消息互不干扰, 即使类型一致.<br/>
+ * </p>
+ *
+ * <p>消息类型+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+ *
+ * <p>普通消息: 在transmit模式中, 一条普通消息只能被消费一次(transmitPop)</p>
  *
  * <pre>{@code
  *      //消息实际上是一个JavaBean, 这里要求消息必须实现EvMessage接口
@@ -54,7 +62,27 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  *      }
  * }</pre>
  *
+ * <p>常驻消息: 在transmit模式中, 常驻消息能被多次消费, 且在被移除(transmitRemove)前, 会一直被Context传递下去.</p>
+ *
+ * <pre>{@code
+ *      //常驻消息
+ *      public static class Bean implements EvResidentMessage{
+ *          private String value;
+ *          public String getValue() {
+ *              return value;
+ *          }
+ *          public void setValue(String value) {
+ *              this.value = value;
+ *          }
+ *      }
+ * }</pre>
+ *
  * <p>用法1+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+ *
+ * <p>register/post模式: 这种模式用于新的页面向之前已存在的页面(Context)发送消息. 或在几个存在的页面间
+ * 发送消息. 这个模式下, 常驻消息(EvResidentMessage)与普通消息(EvMessage)没有差别, 消息只在发送时有效.
+ * 一条消息可以同时被复数个注册了的接收器接收并处理. 当你发送(post)时, 消息会被塞入所有注册了接收该类型
+ * 消息的普通消息池中, 并寻找合适的时机处理消息. 普通消息池与transmit模式的传输专用消息池完全独立, 互不干扰.</p>
  *
  * <p>先在一个Activity或Fragment中注册一个接收器, EvBus.Type指定处理方式, EvReceiver的泛型指定接受消息类
  * 型(JavaBean).</p>
@@ -82,6 +110,32 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  * <p>注意:这种方式必须先注册接收器, 再发送消息, 否则将不会收到消息. EvReceiver接收器的泛型必须指定, 且与
  * 发送的消息类型相符.</p>
  *
+ * <p>用法2+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+ *
+ * <p>transmit模式: 这种模式用于当前页面(Context)向即将启动的新页面发送消息, 或向未来的复数个新页面发送
+ * 消息. 塞入消息(transmitPush)时, 消息会先进入当前页面的传输专用消息池. 在新的页面启动时, 会从当前页面
+ * 的传输专用消息池收取所有消息, 加入新页面的传输专用消息池. 前一个页面的消息池中, 普通消息会随之删除,
+ * 但常驻消息(EvResidentMessage)会继续保存. 也就是说, 普通消息在任意新页面打开时, 会剪切到新页面消息池,
+ * 而常驻消息则是复制到新页面消息池. 一个常驻消息如果不经删除(transmitRemove), 将像病毒一样传递到之后的
+ * 所有新页面中. 普通消息建议在启动页面前再塞入消息池, 以免被其他页面收取.</p>
+ *
+ * <pre>{@code
+ *      //前一个页面中, 新建GuideActivity.Bean类型的消息, 并放入消息池
+ *      GuideActivity.Bean message = new GuideActivity.Bean();
+ *      message.setValue("hello world");
+ *      EvBus.transmitPush(this, message);
+ *      //启动新页面
+ *      startActivity(...);
+ * }</pre>
+ *
+ * <pre>{@code
+ *      //注意: 必须在新页面super.onCreate()后收取消息!!!
+ *      //新页面中, 收取消息, transmitPop会从消息池删除普通消息, 但常驻消息会保留在消息池中允许多次收取
+ *      GuideActivity.Bean message = EvBus.transmitPop(this, GuideActivity.Bean.class);
+ *      //transmitRemove会从消息池删除消息, 即使是常驻消息
+ *      GuideActivity.Bean message = EvBus.transmitRemove(this, GuideActivity.Bean.class);
+ * }</pre>
+ *
  * Created by S.Violet on 2017/1/16.
  */
 public class EvBus {
@@ -93,8 +147,12 @@ public class EvBus {
 
     private static final Set<EvStation> stations = Collections.newSetFromMap(new WeakHashMap<EvStation, Boolean>());
 
+    /*******************************************************************************************
+     * register/post模式
+     */
+
     /**
-     * 发送消息, 在发送前注册(register)的接收器都会收到这个消息
+     * [register/post模式]发送消息, 在发送前注册(register)的接收器都会收到这个消息
      * @param message 消息, 类型必须匹配接收器指定的类型
      */
     public static void post(EvMessage message){
@@ -114,7 +172,7 @@ public class EvBus {
     }
 
     /**
-     * 注册消息接收器
+     * [register/post模式]注册消息接收器
      * @param activity Activity
      * @param type 接收方式
      * @param receiver 接收器, 必须用泛型指定接受的消息类型
@@ -125,7 +183,7 @@ public class EvBus {
     }
 
     /**
-     * 注册消息接收器
+     * [register/post模式]注册消息接收器
      * @param fragment fragment
      * @param type 接收方式
      * @param receiver 接收器, 必须用泛型指定接受的消息类型
@@ -136,7 +194,7 @@ public class EvBus {
     }
 
     /**
-     * 注册消息接收器
+     * [register/post模式]注册消息接收器
      * @param activity Activity
      * @param type 接收方式
      * @param receiver 接收器, 必须用泛型指定接受的消息类型
@@ -147,7 +205,7 @@ public class EvBus {
     }
 
     /**
-     * 注册消息接收器
+     * [register/post模式]注册消息接收器
      * @param fragment fragment
      * @param type 接收方式
      * @param receiver 接收器, 必须用泛型指定接受的消息类型
@@ -158,7 +216,7 @@ public class EvBus {
     }
 
     /**
-     * 反注册消息接收器
+     * [register/post模式]反注册消息接收器
      * @param activity activity
      * @param messageClass 消息类型
      */
@@ -168,7 +226,7 @@ public class EvBus {
     }
 
     /**
-     * 反注册消息接收器
+     * [register/post模式]反注册消息接收器
      * @param fragment fragment
      * @param messageClass 消息类型
      */
@@ -178,7 +236,7 @@ public class EvBus {
     }
 
     /**
-     * 反注册消息接收器
+     * [register/post模式]反注册消息接收器
      * @param activity activity
      * @param messageClass 消息类型
      */
@@ -188,7 +246,7 @@ public class EvBus {
     }
 
     /**
-     * 反注册消息接收器
+     * [register/post模式]反注册消息接收器
      * @param fragment fragment
      * @param messageClass 消息类型
      */
@@ -213,13 +271,15 @@ public class EvBus {
     }
 
     /******************************************************************************************
-     * transmit mode
+     * transmit模式
      */
 
     private static EvTransmitPipeline transmitPipeline;
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 在传输专用消息池中放入消息, 等待新页面从中收走消息
+     * @param activity activity
+     * @param message 消息
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static void transmitPush(Activity activity, EvMessage message){
@@ -236,7 +296,9 @@ public class EvBus {
     }
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 在传输专用消息池中放入消息, 等待新页面从中收走消息
+     * @param fragment fragment
+     * @param message 消息
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static void transmitPush(Fragment fragment, EvMessage message){
@@ -253,7 +315,9 @@ public class EvBus {
     }
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 在传输专用消息池中放入消息, 等待新页面从中收走消息
+     * @param activity activity
+     * @param message 消息
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static void transmitPush(android.support.v4.app.FragmentActivity activity, EvMessage message){
@@ -270,7 +334,9 @@ public class EvBus {
     }
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 在传输专用消息池中放入消息, 等待新页面从中收走消息
+     * @param fragment fragment
+     * @param message 消息
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static void transmitPush(android.support.v4.app.Fragment fragment, EvMessage message){
@@ -287,7 +353,9 @@ public class EvBus {
     }
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 从传输专用消息池中获取消息, 普通消息会从消息池中删除, 常驻消息(EvResidentMessage)允许复数次获取
+     * @param activity activity
+     * @param messageClass 消息 类型
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static <T extends EvMessage> T transmitPop(Activity activity, Class<T> messageClass){
@@ -304,7 +372,9 @@ public class EvBus {
     }
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 从传输专用消息池中获取消息, 普通消息会从消息池中删除, 常驻消息(EvResidentMessage)允许复数次获取
+     * @param fragment fragment
+     * @param messageClass 消息 类型
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static <T extends EvMessage> T transmitPop(Fragment fragment, Class<T> messageClass){
@@ -321,7 +391,9 @@ public class EvBus {
     }
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 从传输专用消息池中获取消息, 普通消息会从消息池中删除, 常驻消息(EvResidentMessage)允许复数次获取
+     * @param activity activity
+     * @param messageClass 消息 类型
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static <T extends EvMessage> T transmitPop(android.support.v4.app.FragmentActivity activity, Class<T> messageClass){
@@ -338,7 +410,9 @@ public class EvBus {
     }
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 从传输专用消息池中获取消息, 普通消息会从消息池中删除, 常驻消息(EvResidentMessage)允许复数次获取
+     * @param fragment fragment
+     * @param messageClass 消息 类型
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static <T extends EvMessage> T transmitPop(android.support.v4.app.Fragment fragment, Class<T> messageClass){
@@ -355,7 +429,9 @@ public class EvBus {
     }
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 从传输专用消息池中移除消息, 包括常驻消息(EvResidentMessage)也会被移除
+     * @param activity activity
+     * @param messageClass 消息 类型
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static <T extends EvMessage> T transmitRemove(Activity activity, Class<T> messageClass){
@@ -372,7 +448,9 @@ public class EvBus {
     }
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 从传输专用消息池中移除消息, 包括常驻消息(EvResidentMessage)也会被移除
+     * @param fragment fragment
+     * @param messageClass 消息 类型
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static <T extends EvMessage> T transmitRemove(Fragment fragment, Class<T> messageClass){
@@ -389,7 +467,9 @@ public class EvBus {
     }
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 从传输专用消息池中移除消息, 包括常驻消息(EvResidentMessage)也会被移除
+     * @param activity activity
+     * @param messageClass 消息 类型
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static <T extends EvMessage> T transmitRemove(android.support.v4.app.FragmentActivity activity, Class<T> messageClass){
@@ -406,7 +486,9 @@ public class EvBus {
     }
 
     /**
-     * [API14+]
+     * [API14+][transmit模式] 从传输专用消息池中移除消息, 包括常驻消息(EvResidentMessage)也会被移除
+     * @param fragment fragment
+     * @param messageClass 消息 类型
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static <T extends EvMessage> T transmitRemove(android.support.v4.app.Fragment fragment, Class<T> messageClass){
@@ -422,6 +504,11 @@ public class EvBus {
         return getStation(fragment, true).removeTransmitMessage(messageClass);
     }
 
+    /**
+     * [API14+][transmit模式] 使用transmit模式前必须安装传输管道, 在Application.onCreate中安装即可.
+     * 注意::使用TApplication时, 无需调用此方法安装传输管道
+     * @param application application
+     */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Deprecated
     public static void installTransmitPipeline(Application application){
@@ -438,6 +525,11 @@ public class EvBus {
         application.registerActivityLifecycleCallbacks(transmitPipeline);
     }
 
+    /**
+     * [API14+][transmit模式] 使用transmit模式后必须卸载传输管道, 在Application.onTerminate中卸载即可.
+     * 注意::使用TApplication时, 无需调用此方法卸载传输管道
+     * @param application application
+     */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Deprecated
     public static void uninstallTransmitPipeline(Application application){
