@@ -214,7 +214,6 @@ public class MultiItemViewPagerOtherActivity extends TActivity {
         private static final float MIN_SCALE = 0.7f;
         private static final float SLOPE = MAX_SCALE - MIN_SCALE;
 
-        @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
         @Override
         public void transformPage(View page, float position) {
             //API10不支持scale

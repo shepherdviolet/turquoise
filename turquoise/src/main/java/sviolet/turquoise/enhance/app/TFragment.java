@@ -42,7 +42,6 @@ import sviolet.turquoise.enhance.common.WeakHandler;
  *
  * @author S.Violet
  */
-@RequiresApi(api = Build.VERSION_CODES.HONEYCOMB)
 public abstract class TFragment extends Fragment {
 
     //View复用
