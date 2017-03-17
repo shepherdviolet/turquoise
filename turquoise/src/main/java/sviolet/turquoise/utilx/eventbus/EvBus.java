@@ -22,7 +22,15 @@ package sviolet.turquoise.utilx.eventbus;
 import android.app.Activity;
 import android.app.Fragment;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.locks.ReentrantLock;
+
+import sviolet.turquoise.util.common.ConcurrentUtils;
+import sviolet.turquoise.utilx.lifecycle.LifeCycle;
+import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * <p>超轻量级事件总线</p>
@@ -74,6 +82,13 @@ import java.util.List;
  */
 public class EvBus {
 
+    private static final String COMPONENT_ID = "TURQUOISE_EV_BUS_STATION_COMPONENT";
+
+    private static final TLogger logger = TLogger.get(EvBus.class);
+    private static final ReentrantLock lock = new ReentrantLock();
+
+    private static final Set<EvStation> stations = Collections.newSetFromMap(new WeakHashMap<EvStation, Boolean>());
+
     /**
      * 发送消息, 在发送前注册(register)的接收器都会收到这个消息
      * @param message 消息, 类型必须匹配接收器指定的类型
@@ -82,7 +97,16 @@ public class EvBus {
         if (message == null){
             return;
         }
-        EvCenter.INSTANCE.post(message);
+        boolean result = false;
+        //遍历所有station并推送消息
+        for (EvStation station : ConcurrentUtils.getSnapShot(stations)){
+            if (station.post(message)){
+                result = true;
+            }
+        }
+        if (!result){
+            logger.d("no receiver handle this message, messageClass:" + message.getClass() + ", message:" + message);
+        }
     }
 
     /**
@@ -92,16 +116,8 @@ public class EvBus {
      * @param receiver 接收器, 必须用泛型指定接受的消息类型
      */
     public static void register(Activity activity, Type type, EvReceiver receiver){
-        if (activity == null){
-            throw new IllegalArgumentException("[EvBus]activity == null");
-        }
-        if (type == null){
-            throw new IllegalArgumentException("[EvBus]type == null");
-        }
-        if (receiver == null){
-            throw new IllegalArgumentException("[EvBus]receiver == null");
-        }
-        EvCenter.INSTANCE.register(activity, type, receiver);
+        check(activity, type, receiver);
+        getStation(activity).register(type, receiver);
     }
 
     /**
@@ -111,16 +127,8 @@ public class EvBus {
      * @param receiver 接收器, 必须用泛型指定接受的消息类型
      */
     public static void register(Fragment fragment, Type type, EvReceiver receiver){
-        if (fragment == null){
-            throw new IllegalArgumentException("[EvBus]fragment == null");
-        }
-        if (type == null){
-            throw new IllegalArgumentException("[EvBus]type == null");
-        }
-        if (receiver == null){
-            throw new IllegalArgumentException("[EvBus]receiver == null");
-        }
-        EvCenter.INSTANCE.register(fragment, type, receiver);
+        check(fragment, type, receiver);
+        getStation(fragment).register(type, receiver);
     }
 
     /**
@@ -130,16 +138,8 @@ public class EvBus {
      * @param receiver 接收器, 必须用泛型指定接受的消息类型
      */
     public static void register(android.support.v4.app.FragmentActivity activity, Type type, EvReceiver receiver){
-        if (activity == null){
-            throw new IllegalArgumentException("[EvBus]activity == null");
-        }
-        if (type == null){
-            throw new IllegalArgumentException("[EvBus]type == null");
-        }
-        if (receiver == null){
-            throw new IllegalArgumentException("[EvBus]receiver == null");
-        }
-        EvCenter.INSTANCE.register(activity, type, receiver);
+        check(activity, type, receiver);
+        getStation(activity).register(type, receiver);
     }
 
     /**
@@ -149,16 +149,8 @@ public class EvBus {
      * @param receiver 接收器, 必须用泛型指定接受的消息类型
      */
     public static void register(android.support.v4.app.Fragment fragment, Type type, EvReceiver receiver){
-        if (fragment == null){
-            throw new IllegalArgumentException("[EvBus]fragment == null");
-        }
-        if (type == null){
-            throw new IllegalArgumentException("[EvBus]type == null");
-        }
-        if (receiver == null){
-            throw new IllegalArgumentException("[EvBus]receiver == null");
-        }
-        EvCenter.INSTANCE.register(fragment, type, receiver);
+        check(fragment, type, receiver);
+        getStation(fragment).register(type, receiver);
     }
 
     /**
@@ -174,6 +166,102 @@ public class EvBus {
         ON_STOP,//onStop之后处理消息
         ON_DESTROY//onDestroy之后处理消息
 
+    }
+
+    /********************************************************************************************
+     * private
+     */
+
+    private static void check(Object context, Type type, EvReceiver receiver) {
+        if (context == null) {
+            throw new IllegalArgumentException("[EvBus]context == null");
+        }
+        if (type == null) {
+            throw new IllegalArgumentException("[EvBus]type == null");
+        }
+        if (receiver == null) {
+            throw new IllegalArgumentException("[EvBus]receiver == null");
+        }
+    }
+
+    private static EvStation getStation(Activity activity){
+        //获得station
+        LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
+        if (!(component instanceof EvStation)){
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    //新建station
+                    component = new EvStation(activity);
+                    LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        return (EvStation) component;
+    }
+
+    private static EvStation getStation(Fragment fragment){
+        //获得station
+        LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
+        if (!(component instanceof EvStation)){
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    //新建station
+                    component = new EvStation(fragment.getActivity());
+                    LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        return (EvStation)component;
+    }
+
+    private static EvStation getStation(android.support.v4.app.FragmentActivity activity){
+        //获得station
+        LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
+        if (!(component instanceof EvStation)){
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    //新建station
+                    component = new EvStation(activity);
+                    LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        return (EvStation)component;
+    }
+
+    private static EvStation getStation(android.support.v4.app.Fragment fragment){
+        //获得station
+        LifeCycle component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
+        if (!(component instanceof EvStation)){
+            try{
+                lock.lock();
+                component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
+                if (!(component instanceof EvStation)){
+                    //新建station
+                    component = new EvStation(fragment.getActivity());
+                    LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
+                    stations.add((EvStation) component);
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+        return (EvStation) component;
     }
 
 }
