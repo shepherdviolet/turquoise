@@ -21,6 +21,7 @@ package sviolet.turquoise.utilx.lifecycle;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -50,7 +51,7 @@ public class LifeCycleUtils {
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
         }
 
-        LifeCycleManager manager = getLifeCycleManager(activity);
+        LifeCycleManager manager = activity instanceof FragmentActivity ? getLifeCycleManagerV4((FragmentActivity) activity) : getLifeCycleManager(activity);
         manager.addWeakListener(lifeCycle);
     }
 
@@ -139,7 +140,7 @@ public class LifeCycleUtils {
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
         }
 
-        LifeCycleManager manager = getLifeCycleManager(activity);
+        LifeCycleManager manager = activity instanceof FragmentActivity ? getLifeCycleManagerV4((FragmentActivity) activity) : getLifeCycleManager(activity);
         manager.addComponent(componentName, lifeCycle);
     }
 
@@ -228,7 +229,7 @@ public class LifeCycleUtils {
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
         }
 
-        LifeCycleManager manager = getLifeCycleManager(activity);
+        LifeCycleManager manager = activity instanceof FragmentActivity ? getLifeCycleManagerV4((FragmentActivity) activity) : getLifeCycleManager(activity);
         return manager.getComponent(componentName);
     }
 
@@ -304,7 +305,7 @@ public class LifeCycleUtils {
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
         }
 
-        LifeCycleManager manager = getLifeCycleManager(activity);
+        LifeCycleManager manager = activity instanceof FragmentActivity ? getLifeCycleManagerV4((FragmentActivity) activity) : getLifeCycleManager(activity);
         manager.removeComponent(componentName);
     }
 
@@ -378,7 +379,7 @@ public class LifeCycleUtils {
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
         }
 
-        LifeCycleManager manager = getLifeCycleManager(activity);
+        LifeCycleManager manager = activity instanceof FragmentActivity ? getLifeCycleManagerV4((FragmentActivity) activity) : getLifeCycleManager(activity);
         manager.removeComponent(lifeCycle);
     }
 
