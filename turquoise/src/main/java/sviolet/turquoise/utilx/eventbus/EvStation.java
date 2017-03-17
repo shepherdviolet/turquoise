@@ -47,6 +47,7 @@ class EvStation implements LifeCycle {
     private TLogger logger = TLogger.get(this);
 
     private WeakReference<Activity> activityWeakReference;
+    private boolean destroyed = false;
 
     private Map<Class<? extends EvMessage>, EvReceiver> receivers = new ConcurrentHashMap<>();
     private List<EvMessage> onStartMessages = Collections.synchronizedList(new ArrayList<EvMessage>());
@@ -55,13 +56,14 @@ class EvStation implements LifeCycle {
     private List<EvMessage> onStopMessages = Collections.synchronizedList(new ArrayList<EvMessage>());
     private List<EvMessage> onDestroyMessages = Collections.synchronizedList(new ArrayList<EvMessage>());
 
-    private Map<Class<? extends EvMessage>, StoredMessage> storedMessages = new ConcurrentHashMap<>();
-
     EvStation(Activity activity) {
         activityWeakReference = new WeakReference<>(activity);
     }
 
     boolean post(EvMessage message){
+        if (destroyed){
+            return false;
+        }
         if (getActivity() == null){
             return false;
         }
@@ -129,6 +131,9 @@ class EvStation implements LifeCycle {
     }
 
     void register(EvBus.Type type, EvReceiver receiver){
+        if (destroyed){
+            return;
+        }
         if (getActivity() == null){
             return;
         }
@@ -193,6 +198,8 @@ class EvStation implements LifeCycle {
 
     @Override
     public void onDestroy() {
+        destroyed = true;
+
         List<EvMessage> snap = ConcurrentUtils.getSnapShot(onDestroyMessages);
         for (EvMessage obj : snap){
             onDestroyMessages.remove(obj);
@@ -208,17 +215,6 @@ class EvStation implements LifeCycle {
         onPauseMessages.clear();
         onStopMessages.clear();
         onDestroyMessages.clear();
-        storedMessages.clear();
-    }
-
-    void store(EvMessage message){
-        //根据消息的类型来指定接收器
-        storedMessages.put(message.getClass(), new StoredMessage(DateTimeUtils.getCurrentTimeMillis(), message));
-    }
-
-    StoredMessage withdraw(Class<? extends EvMessage> messageType){
-        //根据类型来获取消息
-        return storedMessages.remove(messageType);
     }
 
     private Activity getActivity(){
@@ -244,21 +240,6 @@ class EvStation implements LifeCycle {
         protected void handleMessageWithHost(Message msg, EvStation host) {
             host.callReceiver((EvMessage) msg.obj);
         }
-    }
-
-    class StoredMessage{
-
-        long time;
-        EvMessage message;
-
-        private StoredMessage() {
-        }
-
-        private StoredMessage(long time, EvMessage message) {
-            this.time = time;
-            this.message = message;
-        }
-
     }
 
 }
