@@ -86,6 +86,12 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
         }
     }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        //APP基础Context接收入口
+    }
+
     public void onCreate() {
         injectSettings();
         super.onCreate();
