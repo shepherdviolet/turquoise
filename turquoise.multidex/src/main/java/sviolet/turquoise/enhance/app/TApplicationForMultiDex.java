@@ -40,8 +40,111 @@ import sviolet.turquoise.util.conversion.StringUtils;
 import sviolet.turquoise.util.droid.ApplicationUtils;
 
 /**
- * [组件扩展]开启MultiDex的Application<br>
- * <p>
+ * <p>[组件扩展]开启MultiDex的Application</p>
+ *
+ * <p>本解决方案兼容低版本安卓系统, 采用独立进程的dex加载界面(API21以下时显示, 仅在APP安装或升级时显示一次)</p>
+ *
+ * <p>使用说明:</p>
+ *
+ * <p>*********************************************************************************</p>
+ *
+ * <pre>{@code
+ *  //配置module的build.gradle
+ *  //开启multiDexEnabled
+ *  //增加dexOptions, 指定每个dex的方法数为40000
+ *  android {
+ *      ...
+ *      defaultConfig {
+ *          ...
+ *          multiDexEnabled true
+ *      }
+ *      dexOptions {
+ *          javaMaxHeapSize "4g"
+ *          preDexLibraries = false
+ *          additionalParameters = ['--multi-dex', '--set-max-idx-number=40000']
+ *      }
+ *  }
+ *  dependencies {
+ *      ...
+ *      compile project(':turquoise')
+ *      compile project(':turquoise.multidex')
+ *  }
+ * }</pre>
+ *
+ * <p>*********************************************************************************</p>
+ *
+ * <pre>{@code
+ *  //编写一个加载界面, 该界面用于API21以下的系统, 在APP安装或更新后的第一次打开显示
+ *  //继承MultiDexLoadingActivity
+ *  public class MyMultiDexLoadingActivity extends MultiDexLoadingActivity {
+ *      @Override
+ *      protected int getLayoutId() {
+ *          //指定页面布局
+ *          return R.layout.multi_dex_loading;
+ *      }
+ *  }
+ * }</pre>
+ *
+ * <p>*********************************************************************************</p>
+ *
+ * <pre>{@code
+ *  //继承TApplicationForMultiDex实现Application
+ *  //配置
+ *  @ApplicationSettings(
+ *      DEBUG = BuildConfig._DEBUG //Debug模式, 装载DebugSetting配置
+ *  )
+ *  //发布配置
+ *  @ReleaseSettings(
+ *      enableStrictMode = false,
+ *      enableCrashRestart = true,
+ *      enableCrashHandle = true,
+ *      logDefaultTag = Constants.TAG,
+ *      logGlobalLevel = TLogger.ERROR | TLogger.INFO | TLogger.WARNING | TLogger.DEBUG
+ *  )
+ *  //调试配置
+ *  @DebugSettings(
+ *      enableStrictMode = true,
+ *      enableCrashRestart = false,
+ *      enableCrashHandle = true,
+ *      logDefaultTag = Constants.TAG,
+ *      logGlobalLevel = TLogger.ERROR
+ *  )
+ *  public class MyApplication extends TApplicationForMultiDex {
+ *
+ *      @Override
+ *      public void onUncaughtException(Throwable ex, boolean isCrashRestart) {
+ *          //异常处理
+ *      }
+ *
+ *      @Override
+ *      protected Class<? extends Activity> getMultiDexLoadingActivityClass() {
+ *          //指定加载页面的类
+ *          return MyMultiDexLoadingActivity.class;
+ *      }
+ *
+ *  }
+ *
+ * }</pre>
+ *
+ * <p>*********************************************************************************</p>
+ *
+ * <pre>{@code
+ *  //AndroidManifest.xml中配置自定义Application
+ *  //配置加载界面, 注意是:mini进程, singleTask启动模式
+ *  <application
+ *      android:name=".MyApplication"
+ *      ...
+ *      <activity
+ *          android:name=".MyMultiDexLoadingActivity"
+ *          android:process=":mini"
+ *          android:launchMode="singleTask"
+ *          android:alwaysRetainTaskState="false"
+ *          android:excludeFromRecents="true"
+ *          android:screenOrientation="portrait" />
+ * }</pre>
+ *
+ * <p>*********************************************************************************</p>
+ *
  * Created by S.Violet on 2015/6/12.
  */
 public abstract class TApplicationForMultiDex extends TApplication {

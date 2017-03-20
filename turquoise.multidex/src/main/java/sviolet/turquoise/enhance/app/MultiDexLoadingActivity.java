@@ -32,7 +32,9 @@ import sviolet.turquoise.common.statics.StringConstants;
 import sviolet.turquoise.util.droid.ApplicationUtils;
 
 /**
- * [组件扩展]MultiDex加载专用Activity
+ * <p>[组件扩展]MultiDex加载专用Activity</p>
+ *
+ * <p>使用说明见{@link TApplicationForMultiDex}</p>
  *
  * Created by S.Violet on 2017/3/20.
  */
