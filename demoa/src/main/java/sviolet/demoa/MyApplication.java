@@ -19,11 +19,13 @@
 
 package sviolet.demoa;
 
+import android.app.Activity;
+
 import sviolet.demoa.common.Constants;
+import sviolet.turquoise.enhance.app.TApplicationForMultiDex;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
-import sviolet.turquoise.enhance.app.TApplication;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 @ApplicationSettings(
@@ -45,13 +47,19 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
         logDefaultTag = Constants.TAG,
         logGlobalLevel = TLogger.ERROR | TLogger.INFO | TLogger.WARNING | TLogger.DEBUG
 )
-public class MyApplication extends TApplication {
+public class MyApplication extends TApplicationForMultiDex {
 
     public static final String SHARED_PREF_COMMON_CONFIG = "common_config";
 
     @Override
     public void onUncaughtException(Throwable ex, boolean isCrashRestart) {
         //异常处理
+    }
+
+    @Override
+    protected Class<? extends Activity> getMultiDexLoadingActivityClass() {
+        //指定MultiDex加载界面
+        return MyMultiDexLoadingActivity.class;
     }
 
 }

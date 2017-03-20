@@ -11,7 +11,7 @@ android {
         versionName "4.4.170307"
 
         //true:多dex允许,突破类65535的限制
-        multiDexEnabled false
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -53,9 +53,17 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+    dexOptions {
+        javaMaxHeapSize "4g"
+        preDexLibraries = false
+        //设置单Dex最大方法数, 一般情况下设置40000, 此处为了测试, 设置了10000
+        additionalParameters = ['--multi-dex',
+                                '--set-max-idx-number=10000']
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':turquoise')
+    compile project(':turquoise.multidex')
 }
