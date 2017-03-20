@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/turquoise/turquoise.iml" filepath="$PROJECT_DIR$/turquoise/turquoise.iml" />
       <module fileurl="file://$PROJECT_DIR$/turquoise.imageloader/turquoise.imageloader.iml" filepath="$PROJECT_DIR$/turquoise.imageloader/turquoise.imageloader.iml" />
       <module fileurl="file://$PROJECT_DIR$/turquoise.imageloader.plugin/turquoise.imageloader.plugin.iml" filepath="$PROJECT_DIR$/turquoise.imageloader.plugin/turquoise.imageloader.plugin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/turquoise.multidex/turquoise.multidex.iml" filepath="$PROJECT_DIR$/turquoise.multidex/turquoise.multidex.iml" />
     </modules>
   </component>
 </project>

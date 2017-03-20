@@ -26,12 +26,21 @@ package sviolet.turquoise.common.statics;
  */
 public class StringConstants {
 
-    /*******************************************************************************8
+    /*******************************************************************************
      * Logger TAG
      */
 
     public static final String LIBRARY_TAG = "Turquoise";
     public static final String TILOADER_TAG = "Turquoise#TILoader";
     public static final String OK_HTTP_TAG = "Turquoise#OKHttp";
+
+    /*******************************************************************************
+     * Shared Preferences
+     */
+
+    //MultiDex
+    public static final String MULTI_DEX_PREF_NAME = "turquoise_multi_dex";
+    public static final String MULTI_DEX_PREF_SHA1_KEY = "second_dex_sha1";
+    public static final String MULTI_DEX_PREF_VERSION_KEY = "version";
 
 }
