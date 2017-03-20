@@ -150,4 +150,17 @@ public class StringUtils {
         return stringBuffer.toString();
     }
 
+    /**
+     * 检查string中是否包含keywords
+     * @param string string
+     * @param keywords keywords
+     * @return true:包含
+     */
+    public static boolean contains(String string, String keywords){
+        if (string == null){
+            return false;
+        }
+        return string.contains(keywords);
+    }
+
 }
