@@ -133,6 +133,12 @@
 
 ```
 
+### Preview:
+![](https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/tiloader/tiloader_demo_gif.gif)<br/>
+<br/>
+<br/>
+<br/>
+
 # Module turquoise.multidex
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
@@ -149,9 +155,6 @@
     compile project(':turquoise.multidex')
 
 ```
-
-### Preview:
-![](https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/tiloader/tiloader_demo_gif.gif)<br/>
 <br/>
 <br/>
 <br/>
