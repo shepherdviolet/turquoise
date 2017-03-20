@@ -54,8 +54,8 @@ import sviolet.turquoise.x.imageloader.handler.common.OkHttpNetworkLoadHandler;
 public class MyApplication extends TApplication {
 
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public void afterCreate() {
+        super.afterCreate();
         initTILoader();
     }
 
