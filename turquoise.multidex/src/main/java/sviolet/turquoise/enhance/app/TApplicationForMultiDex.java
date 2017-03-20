@@ -60,11 +60,13 @@ public abstract class TApplicationForMultiDex extends TApplication {
             if (needLoadingLayer(base)) {
                 Log.i("TurquoiseMultiDex", "launch loading activity to dex opt");
                 waitForDexopt(base);
+            } else {
+                Log.i("TurquoiseMultiDex", "dex has already opted");
             }
             //加载MultiDex
-            Log.i("TurquoiseMultiDex", "load multi dex");
+            Log.i("TurquoiseMultiDex", "load odex");
             MultiDex.install(this);
-            Log.i("TurquoiseMultiDex", "load multi dex finished");
+            Log.i("TurquoiseMultiDex", "load odex finished");
         } else {
             Log.i("TurquoiseMultiDex", "current is API21+, skip install");
         }
