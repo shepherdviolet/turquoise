@@ -67,6 +67,8 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
 
     private TLogger logger = TLogger.get(this, StringConstants.LIBRARY_TAG);//日志打印器
 
+    private boolean isMultiDexLoadingProcess = false;//true:当前进程为MultiDex加载用进程, 不加载其他东西
+
     protected void addActivity(Activity activity) {
         //存入Activity
         synchronized (this) {
@@ -91,30 +93,69 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
     }
 
     @Override
-    protected void attachBaseContext(Context base) {
+    protected final void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        //APP基础Context接收入口
+        isMultiDexLoadingProcess = handleMultiDexLoading(base);//处理MultiDex加载
+        if (isMultiDexLoadingProcess){
+            //跳过后续流程
+            return;
+        }
+        injectSettings();//注入配置
+        afterAttachBaseContext(base);
+    }
+
+    /**
+     * 该方法被MultiDexLoadingActivity复写, 一般情况下请勿自行复写.
+     * 一般情况下返回false, 只有MultiDex加载进程返回true, 这种情况下,
+     * Application不加载其他东西, 因为只用于调起加载界面.
+     */
+    protected boolean handleMultiDexLoading(Context base){
+        //普通进程返回false, MultiDex加载进程返回true
+        return false;
+    }
+
+    protected void afterAttachBaseContext(Context base){
+
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
-    public void onCreate() {
-        injectSettings();
+    public final void onCreate() {
         super.onCreate();
         mApplication = this;
+        if (isMultiDexLoadingProcess){
+            //跳过后续流程
+            return;
+        }
+
         Thread.setDefaultUncaughtExceptionHandler(this);
         if (DeviceUtils.getVersionSDK() >= 14){
             EvBus.installTransmitPipeline(this);
         }
+        afterCreate();
+    }
+
+    protected void afterCreate(){
+
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Override
-    public void onTerminate() {
+    public final void onTerminate() {
         super.onTerminate();
+        if (isMultiDexLoadingProcess){
+            //跳过后续流程
+            return;
+        }
+
         if (DeviceUtils.getVersionSDK() >= 14){
             EvBus.uninstallTransmitPipeline(this);
         }
+        afterTerminate();
+    }
+
+    protected void afterTerminate(){
+
     }
 
     /**
