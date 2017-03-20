@@ -51,7 +51,7 @@ import sviolet.turquoise.util.droid.ApplicationUtils;
  * <pre>{@code
  *  //配置module的build.gradle
  *  //开启multiDexEnabled
- *  //增加dexOptions, 指定每个dex的方法数为40000
+ *  //增加dexOptions, 配置dex编译最大内存(2g/4g), 指定每个dex的方法数为40000
  *  android {
  *      ...
  *      defaultConfig {
@@ -59,7 +59,7 @@ import sviolet.turquoise.util.droid.ApplicationUtils;
  *          multiDexEnabled true
  *      }
  *      dexOptions {
- *          javaMaxHeapSize "4g"
+ *          javaMaxHeapSize "2g"
  *          preDexLibraries = false
  *          additionalParameters = ['--multi-dex', '--set-max-idx-number=40000']
  *      }
