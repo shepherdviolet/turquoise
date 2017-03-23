@@ -2,6 +2,7 @@
 /.idea/workspace.xml
 /.idea/libraries
 /.idea/statistic.xml
+/.idea/gradle_extensions.xml
 /build
 /captures
 /demoa/buildlog

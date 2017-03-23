@@ -23,7 +23,7 @@
       </configuration>
     </facet>
   </component>
-  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7" inherit-compiler-output="false">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_7">
     <output url="file://$MODULE_DIR$/build/intermediates/classes/debug" />
     <output-test url="file://$MODULE_DIR$/build/intermediates/classes/test/debug" />
     <exclude-output />
@@ -110,9 +110,5 @@
     <orderEntry type="library" exported="" name="recyclerview-v7-25.1.0" level="project" />
     <orderEntry type="library" exported="" name="support-core-utils-25.1.0" level="project" />
     <orderEntry type="module" module-name="turquoise" exported="" />
-    <orderEntry type="library" exported="" name="support-annotations-25.1.0" level="project" />
-    <orderEntry type="library" exported="" name="okio-1.8.0" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-3.3.1" level="project" />
-    <orderEntry type="library" exported="" name="bcprov-jdk16-1.46" level="project" />
   </component>
 </module>
