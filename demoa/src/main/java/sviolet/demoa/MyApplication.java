@@ -29,7 +29,8 @@ import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 @ApplicationSettings(
-        DEBUG = BuildConfig._DEBUG //Debug模式, 装载DebugSetting配置
+        DEBUG = BuildConfig._DEBUG,//Debug模式, 装载DebugSetting配置
+        transmitPipeLine = true//启用EvBus:Transmit模式
 )
 //发布配置
 @ReleaseSettings(

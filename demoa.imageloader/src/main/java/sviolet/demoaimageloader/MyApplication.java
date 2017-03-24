@@ -33,7 +33,8 @@ import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.handler.common.OkHttpNetworkLoadHandler;
 
 @ApplicationSettings(
-        DEBUG = BuildConfig._DEBUG //Debug模式, 装载DebugSetting配置
+        DEBUG = BuildConfig._DEBUG,//Debug模式, 装载DebugSetting配置
+        transmitPipeLine = true//启用EvBus:Transmit模式
 )
 //发布配置
 @ReleaseSettings(

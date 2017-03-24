@@ -42,4 +42,9 @@ public @interface ApplicationSettings {
      */
     boolean DEBUG() default false;
 
+    /**
+     * [API14+]EvBus:Transmit模式开关: true开启, false关闭
+     */
+    boolean transmitPipeLine() default true;
+
 }

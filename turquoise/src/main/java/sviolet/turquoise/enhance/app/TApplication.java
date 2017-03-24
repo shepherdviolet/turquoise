@@ -46,6 +46,7 @@ import sviolet.turquoise.utilx.eventbus.EvBus;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.utilx.tlogger.TLoggerModule;
 import sviolet.turquoise.util.droid.ApplicationUtils;
+import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
 
 /**
  * [组件扩展]Application<br>
@@ -54,43 +55,15 @@ import sviolet.turquoise.util.droid.ApplicationUtils;
  */
 public abstract class TApplication extends Application  implements Thread.UncaughtExceptionHandler {
 
-    private ApplicationSettings mApplicationSettings;
-    private ReleaseSettings mReleaseSettings;
-    private DebugSettings mDebugSettings;
+    private TLogger logger = TLogger.get(this, StringConstants.LIBRARY_TAG);//日志打印器
 
     private static TApplication mApplication;//实例
-
     private final Set<Activity> mActivities = Collections.newSetFromMap(new WeakHashMap<Activity, Boolean>());
 
     private boolean crashHandleToken = true;//崩溃处理令牌
     private boolean crashHandleTokenInner = false;//崩溃处理令牌(内部)
 
-    private TLogger logger = TLogger.get(this, StringConstants.LIBRARY_TAG);//日志打印器
-
     private boolean isMultiDexLoadingProcess = false;//true:当前进程为MultiDex加载用进程, 不加载其他东西
-
-    protected void addActivity(Activity activity) {
-        //存入Activity
-        synchronized (this) {
-            mActivities.add(activity);
-        }
-
-        //第一个Activity提示当前Debug模式
-        if (mActivities.size() == 1){
-            if (isDebugMode()){
-                logger.i("DebugMode");
-                Toast.makeText(getApplicationContext(), "Debug Mode", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-    }
-
-    protected void removeActivity(Activity activity){
-        //移除Activity
-        synchronized (this) {
-            mActivities.remove(activity);
-        }
-    }
 
     @Override
     protected final void attachBaseContext(Context base) {
@@ -129,7 +102,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
         }
 
         Thread.setDefaultUncaughtExceptionHandler(this);
-        if (DeviceUtils.getVersionSDK() >= 14){
+        if (transmitPipeLineEnabled && DeviceUtils.getVersionSDK() >= 14){
             EvBus.installTransmitPipeline(this);
         }
         afterCreate();
@@ -148,7 +121,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
             return;
         }
 
-        if (DeviceUtils.getVersionSDK() >= 14){
+        if (transmitPipeLineEnabled && DeviceUtils.getVersionSDK() >= 14){
             EvBus.uninstallTransmitPipeline(this);
         }
         afterTerminate();
@@ -157,6 +130,10 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
     protected void afterTerminate(){
 
     }
+
+    /***************************************************
+     * uncaught exception
+     */
 
     /**
      *  实现此方法进行未捕获异常处理(已为新线程, 并加入Looper消息队列)<br />
@@ -167,58 +144,6 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
      *  应用不会结束进程. 所有异常处理务必在十秒内完成, 超时将强制结束.
      */
     public abstract void onUncaughtException(Throwable ex, boolean isCrashRestart);
-
-    /**
-     * 加载设置: ApplicationSettings/ReleaseSettings/DebugSettings
-     */
-    private void injectSettings(){
-        //配置不存在的情况
-        if (isDebugMode()){
-            if (getDebugSettings() == null){
-                return;
-            }
-        }else{
-            if (getReleaseSettings() == null){
-                return;
-            }
-        }
-
-        //应用配置参数
-        if (isDebugMode()){
-            //策略检测
-            if (getDebugSettings().enableStrictMode()){
-                ApplicationUtils.enableStrictMode();
-            }
-            //日志打印器配置
-            installTLogger(getDebugSettings().logModule(), getDebugSettings().logDefaultTag(), getDebugSettings().logGlobalLevel());
-        }else {
-            //策略检测
-            if (getReleaseSettings().enableStrictMode()) {
-                ApplicationUtils.enableStrictMode();
-            }
-            //日志打印器配置
-            installTLogger(getReleaseSettings().logModule(), getReleaseSettings().logDefaultTag(), getReleaseSettings().logGlobalLevel());
-        }
-    }
-
-    private void installTLogger(Class<?> moduleClass, String tag, int level){
-        if (moduleClass != null){
-            if (TLoggerModule.class.isAssignableFrom(moduleClass)){
-                try {
-                    TLogger.install((TLoggerModule)moduleClass.newInstance());
-                } catch (Exception e) {
-                    throw new RuntimeException("[TApplication]TLogger install error", e);
-                }
-            }else{
-                /**
-                 * ReleaseSettings/DebugSettings中配置的logModule参数, 必须为实现TLoggerModule接口的类
-                 */
-                throw new RuntimeException("[TApplication]\"logModule\" is not assignable from TLoggerModule.class which setting in ReleaseSettings/DebugSettings");
-            }
-        }
-        TLogger.setDefaultTag(tag);
-        TLogger.setGlobalLevel(level);
-    }
 
     /**
      * 崩溃处理<br/>
@@ -247,20 +172,11 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
         boolean isCrashRestart = isCrashRestart();
 
         //判断是否处理异常
-        if (isDebugMode()){
-            if (getDebugSettings().enableCrashHandle()){
-                handleUncaughtException(ex, isCrashRestart);
-            }else{
-                crashHandleToken = true;
-                crashHandleTokenInner = true;
-            }
-        }else{
-            if (getReleaseSettings().enableCrashHandle()){
-                handleUncaughtException(ex, isCrashRestart);
-            }else{
-                crashHandleToken = true;
-                crashHandleTokenInner = true;
-            }
+        if (enableCrashHandle) {
+            handleUncaughtException(ex, isCrashRestart);
+        } else {
+            crashHandleToken = true;
+            crashHandleTokenInner = true;
         }
 
         //等待异常处理完成
@@ -274,71 +190,122 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
 
         //重启
         if (isCrashRestart){
-            restartApp(1000);
+            restartApp();
         }
 
         killApp();
     }
 
     /**************************************
+     * annotation settings
+     */
+
+    //ApplicationSettings
+
+    private boolean isDebugMode = false;
+    private boolean transmitPipeLineEnabled = true;
+
+    //ReleaseSettings/DebugSettings
+
+    private boolean enableStrictMode = false;
+    private boolean enableCrashRestart = false;
+    private boolean enableCrashHandle = false;
+    private String logDefaultTag = "Undefined";
+    private int logGlobalLevel = TLogger.ERROR | TLogger.INFO;
+    private Class logModule = SimpleTLoggerModule.class;
+
+    /**
+     * 加载设置: ApplicationSettings/ReleaseSettings/DebugSettings
+     */
+    private void injectSettings(){
+
+        //ApplicationSettings//////////////////////////////////////////////////////////
+
+        if (!this.getClass().isAnnotationPresent(ApplicationSettings.class)) {
+            return;
+        }
+        ApplicationSettings mApplicationSettings = this.getClass().getAnnotation(ApplicationSettings.class);
+        isDebugMode = mApplicationSettings.DEBUG();
+        transmitPipeLineEnabled = mApplicationSettings.transmitPipeLine();
+
+        //ReleaseSettings/DebugSettings//////////////////////////////////////////////////////////
+
+        //配置不存在的情况
+        if (isDebugMode){
+            if (!this.getClass().isAnnotationPresent(DebugSettings.class)) {
+                return;
+            }
+            DebugSettings settings = this.getClass().getAnnotation(DebugSettings.class);
+            enableStrictMode = settings.enableStrictMode();
+            enableCrashRestart = settings.enableCrashRestart();
+            enableCrashHandle = settings.enableCrashHandle();
+            logDefaultTag = settings.logDefaultTag();
+            logGlobalLevel = settings.logGlobalLevel();
+            logModule = settings.logModule();
+        }else{
+            if (!this.getClass().isAnnotationPresent(ReleaseSettings.class)) {
+                return;
+            }
+            ReleaseSettings settings = this.getClass().getAnnotation(ReleaseSettings.class);
+            enableStrictMode = settings.enableStrictMode();
+            enableCrashRestart = settings.enableCrashRestart();
+            enableCrashHandle = settings.enableCrashHandle();
+            logDefaultTag = settings.logDefaultTag();
+            logGlobalLevel = settings.logGlobalLevel();
+            logModule = settings.logModule();
+        }
+
+        //应用配置参数//////////////////////////////////////////////////////////
+
+        //策略检测
+        if (enableStrictMode) {
+            ApplicationUtils.enableStrictMode();
+        }
+
+        //日志打印器配置
+        installTLogger(logModule, logDefaultTag, logGlobalLevel);
+    }
+
+    private void installTLogger(Class<?> moduleClass, String tag, int level){
+        if (moduleClass != null){
+            if (TLoggerModule.class.isAssignableFrom(moduleClass)){
+                try {
+                    TLogger.install((TLoggerModule)moduleClass.newInstance());
+                } catch (Exception e) {
+                    throw new RuntimeException("[TApplication]TLogger install error", e);
+                }
+            }else{
+                //ReleaseSettings/DebugSettings中配置的logModule参数, 必须为实现TLoggerModule接口的类
+                throw new RuntimeException("[TApplication]\"logModule\" is not assignable from TLoggerModule.class which setting in ReleaseSettings/DebugSettings");
+            }
+        }
+        TLogger.setDefaultTag(tag);
+        TLogger.setGlobalLevel(level);
+    }
+
+    /**************************************
      * private
      */
 
-    private ApplicationSettings getApplicationSettings() {
-        if (mApplicationSettings == null) {
-            if (this.getClass().isAnnotationPresent(ApplicationSettings.class)) {
-                mApplicationSettings = this.getClass().getAnnotation(ApplicationSettings.class);
-            }
-        }
-        return mApplicationSettings;
-    }
-
-    private ReleaseSettings getReleaseSettings() {
-        if (mReleaseSettings == null) {
-            if (this.getClass().isAnnotationPresent(ReleaseSettings.class)) {
-                mReleaseSettings = this.getClass().getAnnotation(ReleaseSettings.class);
-            }
-        }
-        return mReleaseSettings;
-    }
-
-    private DebugSettings getDebugSettings() {
-        if (mDebugSettings == null) {
-            if (this.getClass().isAnnotationPresent(DebugSettings.class)) {
-                mDebugSettings = this.getClass().getAnnotation(DebugSettings.class);
-            }
-        }
-        return mDebugSettings;
-    }
-
     /**
      * 重启应用程序
-     *
-     * @param delay 时延
-     *
      */
-    private void restartApp(long delay){
+    private void restartApp(){
         Intent intent = getPackageManager().getLaunchIntentForPackage(getPackageName());
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
         AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + delay, pendingIntent);
+        alarmManager.set(AlarmManager.RTC, System.currentTimeMillis() + (long) 1000, pendingIntent);
     }
 
     /**
      * 判断是否允许崩溃重启
      */
-    @SuppressLint("CommitPrefEdits")
+    @SuppressLint({"CommitPrefEdits", "ApplySharedPref"})
     private boolean isCrashRestart(){
         //判断是否允许崩溃重启
-        if (isDebugMode()){
-            if (!getDebugSettings().enableCrashRestart()) {
-                return false;
-            }
-        }else {
-            if (!getReleaseSettings().enableCrashRestart()) {
-                return false;
-            }
+        if (!enableCrashRestart){
+            return false;
         }
         //防止循环重启
         SharedPreferences preferences = getSharedPreferences("TApplication", Activity.MODE_PRIVATE);
@@ -355,6 +322,29 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
     /************************************
      * public
      */
+
+    protected void addActivity(Activity activity) {
+        //存入Activity
+        synchronized (this) {
+            mActivities.add(activity);
+        }
+
+        //第一个Activity提示当前Debug模式
+        if (mActivities.size() == 1){
+            if (isDebugMode()){
+                logger.i("DebugMode");
+                Toast.makeText(getApplicationContext(), "Debug Mode", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+
+    protected void removeActivity(Activity activity){
+        //移除Activity
+        synchronized (this) {
+            mActivities.remove(activity);
+        }
+    }
 
     /**
      * 持有异常处理令牌, 十秒内程序不会结束/重启
@@ -381,10 +371,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
      * 判断是否为调试模式(由TApplication的@ApplicationSettings注释决定)
      */
     public boolean isDebugMode(){
-        if (getApplicationSettings() != null && getApplicationSettings().DEBUG()){
-            return true;
-        }
-        return false;
+        return isDebugMode;
     }
 
     /**
