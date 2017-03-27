@@ -58,9 +58,9 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':turquoise')
-    compile project(':turquoise.imageloader')
-    compile project(':turquoise.imageloader.plugin')
+    compile project(':turquoise') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
+    compile project(':turquoise.imageloader') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
+    compile project(':turquoise.imageloader.plugin') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
     compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.android.support:recyclerview-v7:25.3.0'
     compile 'com.squareup.okhttp3:okhttp:3.3.1'

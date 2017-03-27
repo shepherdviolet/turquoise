@@ -22,7 +22,7 @@ android {
 dependencies {
     //required
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':turquoise')
+    compile project(':turquoise') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
 }
 
 //upload//////////////////////////////////////////////////////////////////////////////////////
@@ -49,8 +49,8 @@ uploadArchives{
         repository(url:'file:C:/m2repository/repository')
         pom.project {
             groupId 'sviolet'
-            artifactId 'turquoise-imageloader'
-            name 'turquoise-imageloader'
+            artifactId 'turquoise.imageloader'
+            name 'turquoise.imageloader'
             version 'snapshot'
             packaging 'aar'
             licenses {

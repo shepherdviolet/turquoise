@@ -22,7 +22,7 @@ android {
 dependencies {
     //required
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':turquoise.imageloader')
+    compile project(':turquoise.imageloader') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
 }
 
@@ -50,8 +50,8 @@ uploadArchives{
         repository(url:'file:C:/m2repository/repository')
         pom.project {
             groupId 'sviolet'
-            artifactId 'turquoise-imageloader-plugin'
-            name 'turquoise-imageloader-plugin'
+            artifactId 'turquoise.imageloader.plugin'
+            name 'turquoise.imageloader.plugin'
             version 'snapshot'
             packaging 'aar'
             licenses {

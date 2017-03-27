@@ -24,7 +24,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':turquoise')
+    compile project(':turquoise') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
 }
 
 //upload//////////////////////////////////////////////////////////////////////////////////////
@@ -51,8 +51,8 @@ uploadArchives{
         repository(url:'file:C:/m2repository/repository')
         pom.project {
             groupId 'sviolet'
-            artifactId 'turquoise-multidex'
-            name 'turquoise-multidex'
+            artifactId 'turquoise.multidex'
+            name 'turquoise.multidex'
             version 'snapshot'
             packaging 'aar'
             licenses {
