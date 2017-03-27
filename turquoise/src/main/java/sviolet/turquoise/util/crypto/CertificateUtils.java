@@ -19,18 +19,11 @@
 
 package sviolet.turquoise.util.crypto;
 
-import org.bouncycastle.asn1.ASN1InputStream;
-import org.bouncycastle.asn1.ASN1Sequence;
-import org.bouncycastle.asn1.x509.X509CertificateStructure;
-
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-
-import sviolet.turquoise.util.conversion.Base64Utils;
 
 /**
  * <p>证书工具</p>
@@ -39,6 +32,23 @@ import sviolet.turquoise.util.conversion.Base64Utils;
  */
 
 public class CertificateUtils {
+
+    /**
+     * <p>解析X509格式的证书, 返回Certificate对象, 可用来获取证书公钥实例等</p>
+     * @param certData X509格式证书数据
+     */
+    public static Certificate parseX509ToCertificate(byte[] certData) throws CertificateException {
+        return parseX509ToCertificate(new ByteArrayInputStream(certData));
+    }
+
+    /**
+     * <p>解析X509格式的证书, 返回Certificate对象, 可用来获取证书公钥实例等</p>
+     * @param inputStream X509格式证书数据流
+     */
+    public static Certificate parseX509ToCertificate(InputStream inputStream) throws CertificateException {
+        CertificateFactory factory = CertificateFactory.getInstance("X.509");
+        return factory.generateCertificate(inputStream);
+    }
 
     /**
      *  <p><pre>
@@ -78,9 +88,9 @@ public class CertificateUtils {
      *
      * @param certBase64 X509证书数据, ASN.1编码, Base64编码
      */
-    public static X509CertificateStructure parseX509ToStructure (String certBase64) throws IOException {
-        return parseX509ToStructure(Base64Utils.decode(certBase64));
-    }
+//    public static X509CertificateStructure parseX509ToStructure (String certBase64) throws IOException {
+//        return parseX509ToStructure(Base64Utils.decode(certBase64));
+//    }
 
     /**
      * <p><pre>
@@ -120,30 +130,11 @@ public class CertificateUtils {
      *
      * @param certData X509证书数据, ASN.1编码, 非Base64编码
      */
-    public static X509CertificateStructure parseX509ToStructure (byte[] certData) throws IOException {
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(certData);
-        ASN1InputStream asn1InputStream = new ASN1InputStream(byteArrayInputStream);
-        ASN1Sequence seq = (ASN1Sequence) asn1InputStream.readObject();
-        return new X509CertificateStructure(seq);
-    }
-
-    /**
-     * <p>解析X509格式的证书, 返回Certificate对象, 可用来获取证书公钥实例等</p>
-     * @param certData X509格式证书数据
-     * @throws CertificateException
-     */
-    public static Certificate parseX509ToCertificate(byte[] certData) throws CertificateException {
-        return parseX509ToCertificate(new ByteArrayInputStream(certData));
-    }
-
-    /**
-     * <p>解析X509格式的证书, 返回Certificate对象, 可用来获取证书公钥实例等</p>
-     * @param inputStream X509格式证书数据流
-     * @throws CertificateException
-     */
-    public static Certificate parseX509ToCertificate(InputStream inputStream) throws CertificateException {
-        CertificateFactory factory = CertificateFactory.getInstance("X.509");
-        return factory.generateCertificate(inputStream);
-    }
+//    public static X509CertificateStructure parseX509ToStructure (byte[] certData) throws IOException {
+//        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(certData);
+//        ASN1InputStream asn1InputStream = new ASN1InputStream(byteArrayInputStream);
+//        ASN1Sequence seq = (ASN1Sequence) asn1InputStream.readObject();
+//        return new X509CertificateStructure(seq);
+//    }
 
 }

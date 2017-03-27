@@ -43,7 +43,6 @@
     //optional
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:recyclerview-v7:25.1.0'
-    compile 'org.bouncycastle:bcprov-jdk16:1.46'
     compile 'com.squareup.okhttp3:okhttp:3.3.1'
 
 ```
