@@ -27,10 +27,10 @@ dependencies {
 }
 
 //upload//////////////////////////////////////////////////////////////////////////////////////
-//1.配置本地仓库路径: repository(url:'file:C:/m2repository/repository')
+//1.配置本地仓库路径: gradle.properties -> local_repo_path=file:C:/m2repository/repository
 //2.Gradle执行: uploadArchives
 //3.添加仓库: maven{ url 'file:C:/m2repository/repository'}
-//4.添加依赖: compile 'sviolet:turquoise-imageloader-plugin:snapshot'
+//4.添加依赖: compile 'sviolet:turquoise.imageloader.plugin:snapshot'
 
 //编译时产生源代码jar
 task generateSourcesJar(type: Jar) {
@@ -47,7 +47,7 @@ artifacts {
 uploadArchives{
     repositories.mavenDeployer{
         //暂时使用绝对路径指定本地仓库
-        repository(url:'file:C:/m2repository/repository')
+        repository(url:local_repo_path)
         pom.project {
             groupId 'sviolet'
             artifactId 'turquoise.imageloader.plugin'
