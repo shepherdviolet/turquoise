@@ -7,8 +7,8 @@ android {
         applicationId "sviolet.demoa"
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode 4
-        versionName "4.4.170320"
+        versionCode ((Integer)library_version_code)
+        versionName library_version_name
 
         //true:多dex允许,突破类65535的限制
         multiDexEnabled true
@@ -65,6 +65,6 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':turquoise') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
-    compile project(':turquoise-multidex') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
+    compile project(':turquoise') { group 'sviolet'; version mvn_version }//指定groupId和version, artifactId为project名
+    compile project(':turquoise-multidex') { group 'sviolet'; version mvn_version }//指定groupId和version, artifactId为project名
 }

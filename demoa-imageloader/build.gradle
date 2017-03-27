@@ -8,8 +8,8 @@ android {
         applicationId "sviolet.demoaimageloader"
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode 4
-        versionName "4.4.170320"
+        versionCode ((Integer)library_version_code)
+        versionName library_version_name
 
         //true:多dex允许,突破类65535的限制
         multiDexEnabled false
@@ -58,9 +58,9 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':turquoise') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
-    compile project(':turquoise-imageloader') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
-    compile project(':turquoise-imageloader-plugin') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
+    compile project(':turquoise') { group 'sviolet'; version mvn_version }//指定groupId和version, artifactId为project名
+    compile project(':turquoise-imageloader') { group 'sviolet'; version mvn_version }//指定groupId和version, artifactId为project名
+    compile project(':turquoise-imageloader-plugin') { group 'sviolet'; version mvn_version }//指定groupId和version, artifactId为project名
     compile 'com.android.support:appcompat-v7:25.3.0'
     compile 'com.android.support:recyclerview-v7:25.3.0'
     compile 'com.squareup.okhttp3:okhttp:3.3.1'

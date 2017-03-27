@@ -24,7 +24,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':turquoise') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
+    compile project(':turquoise') { group 'sviolet'; version mvn_version }//指定groupId和version, artifactId为project名
 }
 
 //upload//////////////////////////////////////////////////////////////////////////////////////
