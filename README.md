@@ -52,7 +52,7 @@
 <br/>
 <br/>
 
-# Module turquoise.imageloader
+# Module turquoise-imageloader
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 
@@ -92,7 +92,7 @@
 ```java
 
     compile project(':turquoise')
-    compile project(':turquoise.imageloader')
+    compile project(':turquoise-imageloader')
     //required
     compile 'com.android.support:support-v4:25.1.0'
     //optional
@@ -108,12 +108,12 @@
 <br/>
 <br/>
 
-# Module turquoise.imageloader.plugin
+# Module turquoise-imageloader-plugin
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise.imageloader-2ed8a8.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise%2Dimageloader-2ed8a8.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
 
-###### Expansion Module of `turquoise.imageloader`. Optional.
+###### Expansion Module of `turquoise-imageloader`. Optional.
 
 * Add support for GIF loading, dependent on `pl.droidsonroids.gif:android-gif-drawable:1.1.15`.
 * TILoader will load this plugin automatically, as long as your project dependent on this plugin module. Don't need to do anything else.
@@ -123,8 +123,8 @@
 ```java
 
     compile project(':turquoise')
-    compile project(':turquoise.imageloader')
-    compile project(':turquoise.imageloader.plugin')
+    compile project(':turquoise-imageloader')
+    compile project(':turquoise-imageloader-plugin')
     //required
     compile 'com.android.support:support-v4:25.1.0'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
@@ -139,7 +139,7 @@
 <br/>
 <br/>
 
-# Module turquoise.multidex
+# Module turquoise-multidex
 ![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 
@@ -152,7 +152,7 @@
 ```java
 
     compile project(':turquoise')
-    compile project(':turquoise.multidex')
+    compile project(':turquoise-multidex')
 
 ```
 <br/>
