@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
 
 android {
     compileSdkVersion 25
@@ -22,4 +23,49 @@ dependencies {
     //required
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':turquoise')
+}
+
+//upload//////////////////////////////////////////////////////////////////////////////////////
+//1.配置本地仓库路径: repository(url:'file:C:/m2repository/repository')
+//2.Gradle执行: uploadArchives
+//3.添加仓库: maven{ url 'file:C:/m2repository/repository'}
+//4.添加依赖: compile 'sviolet:turquoise-imageloader:snapshot'
+
+//编译时产生源代码jar
+task generateSourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier'sources'
+}
+
+//将源代码jar加入artifacts
+artifacts {
+    archives generateSourcesJar
+}
+
+//上传artifacts
+uploadArchives{
+    repositories.mavenDeployer{
+        //暂时使用绝对路径指定本地仓库
+        repository(url:'file:C:/m2repository/repository')
+        pom.project {
+            groupId 'sviolet'
+            artifactId 'turquoise-imageloader'
+            name 'turquoise-imageloader'
+            version 'snapshot'
+            packaging 'aar'
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    distribution 'repo'
+                }
+            }
+            developers {
+                developer {
+                    id 'shepherdviolet'
+                    name 'Shepherd Violet'
+                }
+            }
+        }
+    }
 }

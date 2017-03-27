@@ -1,9 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+//编译脚本依赖配置
 buildscript {
     repositories {
-        jcenter()
-//        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}
+        jcenter()//jcenter
+//        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}//阿里云仓库
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.4.0-alpha3'
@@ -13,8 +14,12 @@ buildscript {
     }
 }
 
+//module依赖配置
 allprojects {
     repositories {
-        jcenter()
+//        mavenLocal()//本地仓库
+//        maven{ url 'file:C:/m2repository/repository'}//本地仓库:指定路径
+        jcenter()//jcenter
+//        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}//阿里云仓库
     }
 }
