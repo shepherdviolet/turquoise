@@ -11,9 +11,9 @@
             <option value="$PROJECT_DIR$/demoa" />
             <option value="$PROJECT_DIR$/demoa.imageloader" />
             <option value="$PROJECT_DIR$/turquoise" />
-            <option value="$PROJECT_DIR$/turquoise.imageloader" />
-            <option value="$PROJECT_DIR$/turquoise.imageloader.plugin" />
-            <option value="$PROJECT_DIR$/turquoise.multidex" />
+            <option value="$PROJECT_DIR$/turquoise-imageloader" />
+            <option value="$PROJECT_DIR$/turquoise-imageloader-plugin" />
+            <option value="$PROJECT_DIR$/turquoise-multidex" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

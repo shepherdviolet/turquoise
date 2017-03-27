@@ -66,5 +66,5 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':turquoise') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
-    compile project(':turquoise.multidex') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
+    compile project(':turquoise-multidex') { group 'sviolet'; version 'snapshot' }//指定groupId和version, artifactId为project名
 }

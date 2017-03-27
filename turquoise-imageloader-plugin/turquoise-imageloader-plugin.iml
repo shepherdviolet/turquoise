@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module external.linked.project.id=":turquoise.imageloader.plugin" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" external.system.module.group="sviolet.turquoise" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
+<module external.linked.project.id=":turquoise-imageloader-plugin" external.linked.project.path="$MODULE_DIR$" external.root.project.path="$MODULE_DIR$/.." external.system.id="GRADLE" external.system.module.group="sviolet.turquoise" external.system.module.version="unspecified" type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="android-gradle" name="Android-Gradle">
       <configuration>
-        <option name="GRADLE_PROJECT_PATH" value=":turquoise.imageloader.plugin" />
+        <option name="GRADLE_PROJECT_PATH" value=":turquoise-imageloader-plugin" />
       </configuration>
     </facet>
     <facet type="android" name="Android">
@@ -91,23 +91,26 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/shaders" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
+      <excludeFolder url="file://$MODULE_DIR$/build/ivy.xml" />
+      <excludeFolder url="file://$MODULE_DIR$/build/libs" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
+      <excludeFolder url="file://$MODULE_DIR$/build/poms" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
     </content>
     <orderEntry type="jdk" jdkName="Android API 25 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="support-compat-25.1.0" level="project" />
-    <orderEntry type="library" exported="" name="support-fragment-25.1.0" level="project" />
-    <orderEntry type="library" exported="" name="animated-vector-drawable-25.1.0" level="project" />
-    <orderEntry type="library" exported="" name="support-v4-25.1.0" level="project" />
-    <orderEntry type="library" exported="" name="support-core-ui-25.1.0" level="project" />
-    <orderEntry type="library" exported="" name="support-media-compat-25.1.0" level="project" />
+    <orderEntry type="library" exported="" name="support-compat-25.3.0" level="project" />
+    <orderEntry type="library" exported="" name="support-v4-25.3.0" level="project" />
+    <orderEntry type="library" exported="" name="support-media-compat-25.3.0" level="project" />
+    <orderEntry type="library" exported="" name="support-core-ui-25.3.0" level="project" />
     <orderEntry type="library" exported="" name="android-gif-drawable-1.1.15" level="project" />
-    <orderEntry type="library" exported="" name="support-vector-drawable-25.1.0" level="project" />
-    <orderEntry type="library" exported="" name="appcompat-v7-25.1.0" level="project" />
-    <orderEntry type="library" exported="" name="recyclerview-v7-25.1.0" level="project" />
-    <orderEntry type="library" exported="" name="support-core-utils-25.1.0" level="project" />
+    <orderEntry type="library" exported="" name="recyclerview-v7-25.3.0" level="project" />
+    <orderEntry type="library" exported="" name="support-core-utils-25.3.0" level="project" />
+    <orderEntry type="library" exported="" name="appcompat-v7-25.3.0" level="project" />
+    <orderEntry type="library" exported="" name="support-fragment-25.3.0" level="project" />
+    <orderEntry type="library" exported="" name="animated-vector-drawable-25.3.0" level="project" />
+    <orderEntry type="library" exported="" name="support-vector-drawable-25.3.0" level="project" />
+    <orderEntry type="module" module-name="turquoise-imageloader" exported="" />
     <orderEntry type="module" module-name="turquoise" exported="" />
-    <orderEntry type="module" module-name="turquoise.imageloader" exported="" />
   </component>
 </module>
