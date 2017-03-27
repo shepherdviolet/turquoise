@@ -8,8 +8,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode 4
-        versionName "4.4.170320"
+        versionCode ((Integer)library_version_code)
+        versionName library_version_name
     }
     buildTypes {
         release {
@@ -46,12 +46,12 @@ artifacts {
 uploadArchives{
     repositories.mavenDeployer{
         //暂时使用绝对路径指定本地仓库
-        repository(url:local_repo_path)
+        repository(url:mvn_local_repo)
         pom.project {
             groupId 'sviolet'
             artifactId 'turquoise-imageloader'
             name 'turquoise-imageloader'
-            version 'snapshot'
+            version mvn_version
             packaging 'aar'
             licenses {
                 license {
