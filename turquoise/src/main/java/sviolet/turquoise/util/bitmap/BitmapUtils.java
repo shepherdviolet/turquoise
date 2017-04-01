@@ -46,6 +46,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.InvalidParameterException;
 
 /**
  * <p>Bitmap工具</p>
@@ -793,6 +794,35 @@ public class BitmapUtils {
         return bitmap;
     }
 
+    /**
+     * 图片变色, 请谨慎处理大图, 可能会OOM, 请放在子线程处理
+     * @param bitmap bitmap
+     * @param recycle true:回收原Bitmap
+     * @param filter 变色过滤器
+     */
+    public static Bitmap discolor(Bitmap bitmap, boolean recycle, DiscolorFilter filter){
+        if (bitmap == null){
+            return null;
+        }
+        if (bitmap.isRecycled()){
+            throw new InvalidParameterException("bitmap is recycled");
+        }
+        if (filter == null){
+            throw new InvalidParameterException("filter can not be null");
+        }
+        Bitmap result = copy(bitmap, recycle);
+        for (int x = 0 ; x < result.getWidth() ; x++ ){
+            for (int y = 0 ; y < result.getHeight() ; y++){
+                int color = result.getPixel(x, y);
+                int resultColor = filter.filter(color);
+                if (color != resultColor){
+                    result.setPixel(x, y, resultColor);
+                }
+            }
+        }
+        return result;
+    }
+
     /**********************************************
      * interface
      */
@@ -804,6 +834,18 @@ public class BitmapUtils {
         void onSaveSucceed();
 
         void onSaveFailed(Throwable e);
+    }
+
+    /**
+     * 变色过滤器
+     */
+    public interface DiscolorFilter {
+
+        /**
+         * @param color 将传入的颜色变为指定颜色, 返回原值表示放弃变化该像素
+         */
+        int filter(int color);
+
     }
 
     /***********************************************
