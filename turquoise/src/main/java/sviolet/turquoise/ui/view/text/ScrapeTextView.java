@@ -89,7 +89,7 @@ import sviolet.turquoise.R;
  * @author S.Violet (ZhuQinChao)
  *
  */
-
+@SuppressLint("AppCompatCustomView")
 public class ScrapeTextView extends TextView {
 
 	private boolean hasCallback = false;

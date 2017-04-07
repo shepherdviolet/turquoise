@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.ui.view.text;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -32,6 +33,7 @@ import sviolet.turquoise.R;
  * @author S.Violet
  *
  */
+@SuppressLint("AppCompatCustomView")
 public class RotateTextView extends TextView {
 
 	private float angle = 0;

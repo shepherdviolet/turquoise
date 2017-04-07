@@ -39,6 +39,7 @@ import sviolet.turquoise.util.droid.DeviceUtils;
  *
  * Created by S.Violet on 2015/7/10.
  */
+@SuppressLint("AppCompatCustomView")
 public class GradualImageView extends ImageView {
 
     //渐变时间

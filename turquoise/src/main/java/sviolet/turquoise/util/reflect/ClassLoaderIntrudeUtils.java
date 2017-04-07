@@ -19,6 +19,9 @@
 
 package sviolet.turquoise.util.reflect;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+
 import java.lang.reflect.Field;
 
 import dalvik.system.BaseDexClassLoader;
@@ -39,6 +42,7 @@ public class ClassLoaderIntrudeUtils {
      * @param clonePathList true:克隆originClassLoader的pathList到intrusionClassLoader中
      * @throws IntrusionException 侵入异常
      */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public static void intrudeBaseDexClassLoader(BaseDexClassLoader originClassLoader, BaseDexClassLoader intrusionClassLoader, boolean clonePathList) throws IntrusionException {
         try {
             //克隆dexPathList

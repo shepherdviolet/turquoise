@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.ui.view.image;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -41,6 +42,7 @@ import sviolet.turquoise.R;
  * @author S.Violet (ZhuQinChao)
  *
  */
+@SuppressLint("AppCompatCustomView")
 public class RotateImageView extends ImageView {
 
 	private Context context;
