@@ -7,7 +7,7 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 25
-        versionCode ((Integer)library_version_code)
+        versionCode Integer.valueOf(library_version_code)
         versionName library_version_name
     }
     buildTypes {
