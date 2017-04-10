@@ -19,14 +19,20 @@
 
 package sviolet.turquoise.utilx.lifecycle;
 
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.os.Build;
 import android.support.v4.app.FragmentActivity;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.util.common.ParasiticVars;
 import sviolet.turquoise.util.droid.DeviceUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * 生命周期监听工具, 可为Activity添加生命周期监听, 或添加含生命周期的组件<p/>
@@ -461,7 +467,8 @@ public class LifeCycleUtils {
                 //生命周期管理器不存在则新建
                 if (!(manager instanceof LifeCycleManager)) {
                     manager = new LifeCycleManagerImpl();//新建管理器
-                    android.app.Fragment oldFragment = activity.getFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
+                    FragmentManager fragmentManager = activity.getFragmentManager();
+                    android.app.Fragment oldFragment = fragmentManager.findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
                     android.app.Fragment fragment = new LifeCycleFragment(activity, (LifeCycleManager) manager);//新生命周期监听Fragment
                     android.app.FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
                     if (oldFragment != null) {
@@ -471,6 +478,13 @@ public class LifeCycleUtils {
                     try {
                         transaction.commitAllowingStateLoss();
                     } catch (Exception e){
+                        if (!isDestroyed(fragmentManager)) {
+                            /*
+                             * 在Activity或FragmentActivity初始化之前，不可以使用LifeCycleUtils绑定生命周期，
+                             * 一般建议在Context.onCreate()方法中使用
+                             */
+                            throw new RuntimeException("You should use LifeCycleUtils in Context.onCreate() method or after onCreate()", e);
+                        }
                         //通常在Activity.onDestroy后提交会抛出异常
                         fragment.onDestroy();//销毁Fragment, 同时会销毁Manager
                     }
@@ -495,7 +509,8 @@ public class LifeCycleUtils {
                 //生命周期管理器不存在则新建
                 if (!(manager instanceof LifeCycleManager)){
                     manager = new LifeCycleManagerImpl();//新建管理器
-                    android.support.v4.app.Fragment oldFragment = fragmentActivity.getSupportFragmentManager().findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
+                    android.support.v4.app.FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
+                    android.support.v4.app.Fragment oldFragment = fragmentManager.findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
                     android.support.v4.app.Fragment fragment = new LifeCycleFragmentV4(fragmentActivity, (LifeCycleManager) manager);//新生命周期监听Fragment
                     android.support.v4.app.FragmentTransaction transaction = fragmentActivity.getSupportFragmentManager().beginTransaction();
                     if (oldFragment != null) {
@@ -505,6 +520,13 @@ public class LifeCycleUtils {
                     try {
                         transaction.commitAllowingStateLoss();
                     } catch (Exception e){
+                        if (!isDestroyed(fragmentManager)) {
+                            /*
+                             * 在Activity或FragmentActivity初始化之前，不可以使用LifeCycleUtils绑定生命周期，
+                             * 一般建议在Context.onCreate()方法中使用
+                             */
+                            throw new RuntimeException("You should use LifeCycleUtils in Context.onCreate() method or after onCreate()", e);
+                        }
                         //通常在Activity.onDestroy后提交会抛出异常
                         fragment.onDestroy();//销毁Fragment, 同时会销毁Manager
                     }
@@ -515,6 +537,47 @@ public class LifeCycleUtils {
         }
 
         return (LifeCycleManager) manager;
+    }
+
+    private static Field fragmentManagerIsDestroyedField;
+    private static Field fragmentManagerIsDestroyedFieldV4;
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    @SuppressLint("PrivateApi")
+    private static boolean isDestroyed(FragmentManager fragmentManager){
+        if (DeviceUtils.getVersionSDK() >= 17){
+            return fragmentManager.isDestroyed();
+        }
+        try {
+            if (fragmentManagerIsDestroyedField == null) {
+                Class<?> clazz = Class.forName("android.app.FragmentManagerImpl");
+                fragmentManagerIsDestroyedField = clazz.getDeclaredField("mDestroyed");
+                fragmentManagerIsDestroyedField.setAccessible(true);
+            }
+            return (boolean) fragmentManagerIsDestroyedField.get(fragmentManager);
+        } catch (Exception e) {
+            TLogger.get(LifeCycleUtils.class).e("we can not get mDestroyed field in FragmentManagerImpl class", e);
+            return true;
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    @SuppressLint("PrivateApi")
+    private static boolean isDestroyed(android.support.v4.app.FragmentManager fragmentManager){
+        if (DeviceUtils.getVersionSDK() >= 17){
+            return fragmentManager.isDestroyed();
+        }
+        try {
+            if (fragmentManagerIsDestroyedFieldV4 == null) {
+                Class<?> clazz = Class.forName("android.support.v4.app.FragmentManagerImpl");
+                fragmentManagerIsDestroyedFieldV4 = clazz.getDeclaredField("mDestroyed");
+                fragmentManagerIsDestroyedFieldV4.setAccessible(true);
+            }
+            return (boolean) fragmentManagerIsDestroyedFieldV4.get(fragmentManager);
+        } catch (Exception e) {
+            TLogger.get(LifeCycleUtils.class).e("we can not get mDestroyed field in FragmentManagerImpl class", e);
+            return true;
+        }
     }
 
 }
