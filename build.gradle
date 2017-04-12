@@ -24,3 +24,14 @@ allprojects {
 //        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}//阿里云仓库
     }
 }
+
+subprojects {
+    //打印依赖对应的缓存文件
+    task printDependenciesCacheMapping {
+        doLast {
+            configurations.getByName('compile').each{ dependency ->
+                println dependency
+            }
+        }
+    }
+}
