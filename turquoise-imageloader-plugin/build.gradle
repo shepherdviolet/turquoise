@@ -1,72 +1,7 @@
-apply plugin: 'com.android.library'
-apply plugin: 'maven'
-
-android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
-
-    defaultConfig {
-        minSdkVersion 11
-        targetSdkVersion 25
-        versionCode Integer.valueOf(library_version_code)
-        versionName library_version_name
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-}
 
 dependencies {
     //required
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':turquoise-imageloader') { group 'sviolet'; version mvn_version }//指定groupId和version, artifactId为project名
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
-}
-
-//upload//////////////////////////////////////////////////////////////////////////////////////
-//1.配置本地仓库路径: gradle.properties -> local_repo_path=file:C:/m2repository/repository
-//2.Gradle执行: uploadArchives
-//3.添加仓库: maven{ url 'file:C:/m2repository/repository'}
-//4.添加依赖: compile 'sviolet:turquoise-imageloader-plugin:snapshot'
-
-//编译时产生源代码jar
-task generateSourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier'sources'
-}
-
-//将源代码jar加入artifacts
-artifacts {
-    archives generateSourcesJar
-}
-
-//上传artifacts
-uploadArchives{
-    repositories.mavenDeployer{
-        //暂时使用绝对路径指定本地仓库
-        repository(url:mvn_local_repo)
-        pom.project {
-            groupId 'sviolet'
-            artifactId 'turquoise-imageloader-plugin'
-            name 'turquoise-imageloader-plugin'
-            version mvn_version
-            packaging 'aar'
-            licenses {
-                license {
-                    name 'The Apache Software License, Version 2.0'
-                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    distribution 'repo'
-                }
-            }
-            developers {
-                developer {
-                    id 'shepherdviolet'
-                    name 'Shepherd Violet'
-                }
-            }
-        }
-    }
 }

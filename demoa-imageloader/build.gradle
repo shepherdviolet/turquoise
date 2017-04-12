@@ -1,5 +1,3 @@
-apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 25
     buildToolsVersion '25.0.2'
@@ -14,6 +12,7 @@ android {
         //true:多dex允许,突破类65535的限制
         multiDexEnabled false
     }
+
     buildTypes {
         release {
             //混淆
@@ -46,8 +45,10 @@ android {
             buildConfigField "boolean", "_DEBUG", "true"
         }
     }
+
     productFlavors {
     }
+
     sourceSets {
         main {
             //指定JNI的so库路径

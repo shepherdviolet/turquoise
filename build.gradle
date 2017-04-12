@@ -1,22 +1,22 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+//构建脚本通用配置////////////////////////////////////////////////////////////////////////////////////
 
-//编译脚本依赖配置
 buildscript {
+    //构建脚本依赖仓库
     repositories {
         jcenter()//jcenter
 //        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}//阿里云仓库
     }
+    //构建脚本依赖
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.4.0-alpha4'
-//        classpath 'com.android.tools.build:gradle:2.3.0'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle:2.4.0-alpha4'//安卓构建插件
+//        classpath 'com.android.tools.build:gradle:2.3.0'//安卓构建插件
     }
 }
 
-//module依赖配置
+//全部工程通用配置////////////////////////////////////////////////////////////////////////////////////
+
 allprojects {
+    //工程依赖仓库
     repositories {
 //        mavenLocal()//本地仓库
 //        maven{ url 'file:C:/m2repository/repository'}//本地仓库:指定路径
@@ -25,11 +25,96 @@ allprojects {
     }
 }
 
+//库工程通用配置////////////////////////////////////////////////////////////////////////////////////
+
+configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
+    apply plugin: 'com.android.library'
+
+    android {
+        compileSdkVersion 25
+        buildToolsVersion '25.0.2'
+
+        defaultConfig {
+            minSdkVersion 11
+            targetSdkVersion 25
+            versionCode Integer.valueOf(library_version_code)
+            versionName library_version_name
+        }
+
+        buildTypes {
+            release {
+                minifyEnabled false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            }
+        }
+    }
+}
+
+//DEMO工程通用配置////////////////////////////////////////////////////////////////////////////////////
+
+configure(subprojects.findAll { it.name.startsWith('demo') }) {
+    apply plugin: 'com.android.application'
+}
+
+//库工程上传本地仓库////////////////////////////////////////////////////////////////////////////////////
+
+//1.配置本地仓库路径: gradle.properties -> local_repo_path=file:C:/m2repository/repository
+//2.Gradle执行: uploadArchives
+//3.添加仓库: maven{ url 'file:C:/m2repository/repository'}
+//4.添加依赖: compile 'sviolet:turquoise:version'
+configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
+
+    apply plugin: 'maven'
+
+    //编译时产生源代码jar
+    task generateSourcesJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier 'sources'
+    }
+
+    //将源代码jar加入artifacts
+    artifacts {
+        archives generateSourcesJar
+    }
+
+    //上传artifacts
+    uploadArchives {
+        repositories.mavenDeployer {
+            //暂时使用绝对路径指定本地仓库
+            repository(url: mvn_local_repo)
+            pom.project {
+                groupId 'sviolet'
+                artifactId project.name
+                name project.name
+                version mvn_version
+                packaging 'aar'
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        distribution 'repo'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'shepherdviolet'
+                        name 'Shepherd Violet'
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+//其他////////////////////////////////////////////////////////////////////////////////////
+
+//打印依赖对应的缓存文件
 subprojects {
-    //打印依赖对应的缓存文件
     task printDependenciesCacheMapping {
+        group 'sv-help'
         doLast {
-            configurations.getByName('compile').each{ dependency ->
+            configurations.getByName('compile').each { dependency ->
                 println dependency
             }
         }
