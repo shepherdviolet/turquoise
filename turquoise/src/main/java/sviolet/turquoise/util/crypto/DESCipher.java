@@ -43,7 +43,7 @@ public class DESCipher {
 
     /**
      * @param data 数据
-     * @param keyData 秘钥数据 8bytes
+     * @param keyData 秘钥数据 8bytes(64bit)
      */
     public static byte[] encryptDes(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         return encrypt(data, keyData, CRYPTO_TRANSFORMATION_DES, CRYPTO_TRANSFORMATION_DES);
@@ -51,7 +51,7 @@ public class DESCipher {
 
     /**
      * @param data 数据
-     * @param keyData 秘钥数据
+     * @param keyData 秘钥数据 24bytes(192bit), 若为16bytes秘钥， 则在后面补上前8bytes（111111112222222211111111）
      */
     public static byte[] encryptDesEdeEcbNoPadding(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         return encrypt(data, keyData, CRYPTO_TRANSFORMATION_DES_EDE, CRYPTO_TRANSFORMATION_DES_EDE_ECB_NO_PADDING);
@@ -59,7 +59,7 @@ public class DESCipher {
 
     /**
      * @param data 数据
-     * @param keyData 秘钥数据
+     * @param keyData 秘钥数据 24bytes(192bit), 若为16bytes秘钥， 则在后面补上前8bytes（111111112222222211111111）
      */
     public static byte[] encryptDesEdeEcbPKCS5(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         return encrypt(data, keyData, CRYPTO_TRANSFORMATION_DES_EDE, CRYPTO_TRANSFORMATION_DES_EDE_ECB_PKCS5);
@@ -78,7 +78,7 @@ public class DESCipher {
 
     /**
      * @param data 数据
-     * @param keyData 秘钥数据 8bytes
+     * @param keyData 秘钥数据 8bytes(64bit)
      */
     public static byte[] decryptDes(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         return decrypt(data, keyData, CRYPTO_TRANSFORMATION_DES, CRYPTO_TRANSFORMATION_DES);
@@ -86,7 +86,7 @@ public class DESCipher {
 
     /**
      * @param data 数据
-     * @param keyData 秘钥数据
+     * @param keyData 秘钥数据 24bytes(192bit), 若为16bytes秘钥， 则在后面补上前8bytes（111111112222222211111111）
      */
     public static byte[] decryptDesEdeEcbNoPadding(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         return decrypt(data, keyData, CRYPTO_TRANSFORMATION_DES_EDE, CRYPTO_TRANSFORMATION_DES_EDE_ECB_NO_PADDING);
@@ -94,7 +94,7 @@ public class DESCipher {
 
     /**
      * @param data 数据
-     * @param keyData 秘钥数据
+     * @param keyData 秘钥数据 24bytes(192bit), 若为16bytes秘钥， 则在后面补上前8bytes（111111112222222211111111）
      */
     public static byte[] decryptDesEdeEcbPKCS5(byte[] data, byte[] keyData) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         return decrypt(data, keyData, CRYPTO_TRANSFORMATION_DES_EDE, CRYPTO_TRANSFORMATION_DES_EDE_ECB_PKCS5);
