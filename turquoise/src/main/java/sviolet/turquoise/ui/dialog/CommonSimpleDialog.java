@@ -35,6 +35,7 @@ import android.widget.TextView;
 import sviolet.turquoise.ui.util.StateListDrawableUtils;
 import sviolet.turquoise.util.conversion.StringUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * <p>简单的Dialog</p>
@@ -243,6 +244,15 @@ public class CommonSimpleDialog extends Dialog {
         }
 
         this.info = null;//销毁信息
+    }
+
+    @Override
+    public void show() {
+        try {
+            super.show();
+        } catch (Exception e) {
+            TLogger.get(this).e("error while show dialog", e);
+        }
     }
 
     /**
