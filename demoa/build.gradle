@@ -57,7 +57,7 @@ android {
     }
 
     dexOptions {
-        //dex编译的最大内存(2g/4g)
+        //dex编译的最大内存(2g/4g, 4g会较快)
         javaMaxHeapSize "2g"
         preDexLibraries = false
         //设置单Dex最大方法数, 一般情况下设置40000, 此处为了测试, 设置了10000
