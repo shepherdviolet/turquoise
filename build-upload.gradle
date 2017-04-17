@@ -1,6 +1,6 @@
 //库工程上传本地仓库////////////////////////////////////////////////////////////////////////////////////
 
-//1.配置本地仓库路径: gradle.properties -> local_repo_path=C:/m2repository/repository
+//1.配置本地仓库路径: gradle.properties -> local_repo_path=file:C:/m2repository/repository
 //2.Gradle执行: uploadArchivesToLocalRepo
 //3.添加仓库: maven{ url 'file:C:/m2repository/repository'}
 //4.添加依赖: compile 'sviolet:turquoise:version'
