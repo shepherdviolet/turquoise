@@ -1,9 +1,14 @@
 //库工程上传本地仓库////////////////////////////////////////////////////////////////////////////////////
 
-//1.配置本地仓库路径: gradle.properties -> local_repo_path=file:C:/m2repository/repository
-//2.Gradle执行: uploadArchives
+//1.配置本地仓库路径: gradle.properties -> local_repo_path=C:/m2repository/repository
+//2.Gradle执行: uploadArchivesToLocalRepo
 //3.添加仓库: maven{ url 'file:C:/m2repository/repository'}
 //4.添加依赖: compile 'sviolet:turquoise:version'
+
+ext {
+    mvn_temp_repo = rootProject.rootDir.absolutePath + '/release'
+}
+
 configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
 
     apply plugin: 'maven'
@@ -23,7 +28,7 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
     uploadArchives {
         repositories.mavenDeployer {
             //暂时使用绝对路径指定本地仓库
-            repository(url: mvn_local_repo)
+            repository(url: uri(mvn_temp_repo))
             pom.project {
                 groupId 'sviolet'
                 artifactId project.name
@@ -48,3 +53,16 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
     }
 
 }
+
+//move archives to local repo
+task uploadArchivesToLocalRepo(type: Copy, group: 'upload', description: 'move archives to local repo') {
+    from uri(mvn_temp_repo)
+    into uri(mvn_local_repo)
+}
+subprojects {
+    tasks.getByName("uploadArchives") {
+        uploadArchivesToLocalRepo.dependsOn it
+    }
+}
+
+

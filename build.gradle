@@ -60,15 +60,5 @@ configure(subprojects.findAll { it.name.startsWith('demo') }) {
 
 //上传本地仓库
 apply from: 'build-upload.gradle'
-
-//打印依赖对应的缓存文件
-subprojects {
-    task printDependenciesCacheMapping {
-        group 'sv-help'
-        doLast {
-            configurations.getByName('compile').each { dependency ->
-                println dependency
-            }
-        }
-    }
-}
+//应用gradle-turquoise插件
+//apply from: 'build-plugin.gradle'
