@@ -1,32 +1,42 @@
-//参数配置////////////////////////////////////////////////////////////////////////////////////
-
-//装载gradle-local.properties
-ext {
-    //加载
-    def gradleLocalProperties = new Properties()
-    def gradleLocalFile = file("gradle-local.properties")
-    if (gradleLocalFile.exists()) {
-        gradleLocalFile.withInputStream { stream -> gradleLocalProperties.load(stream) }
-    }
-    //配置
-    mvn_version = gradleLocalProperties.mvn_version != null ? gradleLocalProperties.mvn_version : library_version_name + '-SNAPSHOT'
-    mvn_local_repo = gradleLocalProperties.mvn_local_repo != null  ? gradleLocalProperties.mvn_local_repo : rootProject.rootDir.absolutePath + '/release'
-
-}
 
 //构建脚本通用配置////////////////////////////////////////////////////////////////////////////////////
 
 buildscript {
+
+    //装载gradle-local.properties
+    ext {
+        gradleLocalProperties = new Properties()
+        def gradleLocalFile = file("gradle-local.properties")
+        if (gradleLocalFile.exists()) {
+            gradleLocalFile.withInputStream { stream -> gradleLocalProperties.load(stream) }
+        }
+
+        upload_mvn_version = gradleLocalProperties.upload_mvn_version != null ? gradleLocalProperties.upload_mvn_version : library_version_name + '-SNAPSHOT'
+        upload_mvn_local_repo = gradleLocalProperties.upload_mvn_local_repo != null  ? gradleLocalProperties.upload_mvn_local_repo : rootProject.rootDir.absolutePath + '/release'
+        plugin_mvn_local_repo = gradleLocalProperties.plugin_mvn_local_repo
+        plugin_name_gradle_turquoise = gradleLocalProperties.plugin_name_gradle_turquoise
+    }
+
     //构建脚本依赖仓库
     repositories {
+        //plugin
+        if (gradleLocalProperties.plugin_mvn_local_repo != null) { maven {url gradleLocalProperties.plugin_mvn_local_repo} }//local plugin repo
+
+        //common
         jcenter()//jcenter
 //        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}//阿里云仓库
     }
+
     //构建脚本依赖
     dependencies {
+        //common
         classpath 'com.android.tools.build:gradle:2.4.0-alpha6'//安卓构建插件
 //        classpath 'com.android.tools.build:gradle:2.3.0'//安卓构建插件
+
+        //plugin
+        if (gradleLocalProperties.plugin_name_gradle_turquoise != null) { classpath gradleLocalProperties.plugin_name_gradle_turquoise }//gradle-turquoise plugin
     }
+
 }
 
 //全部工程通用配置////////////////////////////////////////////////////////////////////////////////////
@@ -77,4 +87,4 @@ configure(subprojects.findAll { it.name.startsWith('demo') }) {
 //上传本地仓库
 apply from: 'build-upload.gradle'
 //应用gradle-turquoise插件
-//apply from: 'build-plugin.gradle'
+if (plugin_name_gradle_turquoise != null) {apply plugin: 'gradle-turquoise'}

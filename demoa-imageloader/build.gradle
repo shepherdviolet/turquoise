@@ -59,7 +59,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':turquoise') { group 'sviolet'; version mvn_version }//指定groupId和version, artifactId为project名
-    compile project(':turquoise-imageloader') { group 'sviolet'; version mvn_version }//指定groupId和version, artifactId为project名
-    compile project(':turquoise-imageloader-plugin') { group 'sviolet'; version mvn_version }//指定groupId和version, artifactId为project名
+    compile project(':turquoise') { group 'sviolet'; version upload_mvn_version }//指定groupId和version, artifactId为project名
+    compile project(':turquoise-imageloader') { group 'sviolet'; version upload_mvn_version }//指定groupId和version, artifactId为project名
+    compile project(':turquoise-imageloader-plugin') { group 'sviolet'; version upload_mvn_version }//指定groupId和version, artifactId为project名
 }
