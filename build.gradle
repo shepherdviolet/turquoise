@@ -1,3 +1,19 @@
+//参数配置////////////////////////////////////////////////////////////////////////////////////
+
+//装载gradle-local.properties
+ext {
+    //加载
+    def gradleLocalProperties = new Properties()
+    def gradleLocalFile = file("gradle-local.properties")
+    if (gradleLocalFile.exists()) {
+        gradleLocalFile.withInputStream { stream -> gradleLocalProperties.load(stream) }
+    }
+    //配置
+    mvn_version = gradleLocalProperties.mvn_version != null ? gradleLocalProperties.mvn_version : library_version_name + '-SNAPSHOT'
+    mvn_local_repo = gradleLocalProperties.mvn_local_repo != null  ? gradleLocalProperties.mvn_local_repo : rootProject.rootDir.absolutePath + '/release'
+
+}
+
 //构建脚本通用配置////////////////////////////////////////////////////////////////////////////////////
 
 buildscript {
