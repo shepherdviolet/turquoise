@@ -70,6 +70,7 @@ public class OkHttpNetworkLoadHandler implements NetworkLoadHandler {
                 requestBuilder.addHeader(entry.getKey(), entry.getValue());
             }
         }
+//        requestBuilder.post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), ""));//post报文体
         Request request = requestBuilder.build();
 
         okHttpClient.newCall(request).enqueue(new okhttp3.Callback() {
