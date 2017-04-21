@@ -86,5 +86,11 @@ configure(subprojects.findAll { it.name.startsWith('demo') }) {
 
 //上传本地仓库
 apply from: 'build-upload.gradle'
+
 //应用gradle-turquoise插件
-if (plugin_name_gradle_turquoise != null) {apply plugin: 'gradle-turquoise'}
+if (plugin_name_gradle_turquoise != null) {
+    apply plugin: 'gradle-turquoise'
+    turquoise{
+        printCachePathOfDependenciesFilter = ['compile']
+    }
+}
