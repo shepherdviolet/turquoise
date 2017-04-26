@@ -1,0 +1,19 @@
+
+//打包备份程序
+task archiveProject(type: Zip){
+    group = 'turquoise-tools'
+    //archive name
+    baseName = 'turquoise-backup'
+    //archive path
+    destinationDir = file('backup')
+    //resource path
+    from ('.') {
+        //we must exclude itself !!!
+        exclude '/backup'
+        exclude '/.gradle'
+        exclude '/build'
+        exclude '/captures'
+        exclude '/release'
+        exclude '*/build'
+    }
+}

@@ -86,6 +86,8 @@ configure(subprojects.findAll { it.name.startsWith('demo') }) {
 
 //上传本地仓库
 apply from: 'build-upload.gradle'
+//工具任务
+apply from: 'build-tools.gradle'
 
 //应用gradle-turquoise插件
 if (plugin_name_gradle_turquoise != null) {
