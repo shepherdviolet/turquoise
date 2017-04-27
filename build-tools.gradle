@@ -30,7 +30,7 @@ task startBackup(dependsOn: cleanBackup) {
                 'release'
         ]
         //zip
-        ant.zip(destfile: 'backup/turquoise.zip') {
+        ant.zip(destfile: 'backup/sviolet.turquoise.zip') {
             fileList.each { file ->
                 if (excludeSet.contains(file.name)) {
                     //exclude by exclude set
