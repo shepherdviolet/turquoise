@@ -19,10 +19,15 @@ task startBackup(type: Zip, dependsOn: cleanBackup){
     from ('.') {
         //we must exclude itself !!!
         exclude backup_dir
+        exclude '/.git'
         exclude '/.gradle'
         exclude '/build'
         exclude '/captures'
         exclude '/release'
         exclude '*/build'
+    }
+    //.git maybe hidden, we must configure it by absolute path
+    from (rootDir.getAbsolutePath() + '/.git') {
+        into '.git/'
     }
 }
