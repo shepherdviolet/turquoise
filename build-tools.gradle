@@ -8,7 +8,7 @@ task cleanBackup{
     }
 }
 
-//备份程序
+//备份程序(目前还有问题，无法打包.gitignore)
 task startBackup(type: Zip, dependsOn: cleanBackup){
     group = 'turquoise-tools'
     //archive name
