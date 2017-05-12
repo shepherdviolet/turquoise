@@ -18,6 +18,7 @@
  */
 package sviolet.demoa.other;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -87,6 +88,7 @@ public class WebViewOtherActivity extends TActivity {
     /**
      * 初始化显示
      */
+    @SuppressLint("SetJavaScriptEnabled")
     private void initView() {
         WebSettings settings = webView.getSettings();
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
@@ -95,9 +97,11 @@ public class WebViewOtherActivity extends TActivity {
         settings.setDatabaseEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setAppCacheEnabled(false);
-//        settings.setJavaScriptEnabled(true);
+        settings.setJavaScriptEnabled(true);
 //		settings.setSupportZoom(true);
 //		settings.setBuiltInZoomControls(true);
+
+        webView.removeJavascriptInterface("searchBoxJavaBridge_");
 
         webView.setWebViewClient(webViewClient);
         webView.setWebChromeClient(webChromeClient);
