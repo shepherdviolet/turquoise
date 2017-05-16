@@ -11,6 +11,11 @@ android {
 
         //true:多dex允许,突破类65535的限制
         multiDexEnabled true
+
+        ndk {
+            //使得APK中只包含指定版本的so库
+            abiFilters "armeabi", "armeabi-v7a", "x86"
+        }
     }
 
     buildTypes {
