@@ -88,6 +88,11 @@
         <activity android:name=".info.ScreenInfoActivity"
             android:label="@string/screen_info_main_title"/>
 
+        <activity android:name=".kotlin.KtTestActivity"
+            android:label="@string/kotlin_main_title"/>
+        <activity android:name=".kotlin.SimpleKtTestActivity"
+            android:label="@string/simple_kotlin_main_title"/>
+
         <activity android:name=".TempActivity"
             android:label="@string/temp_main_title"/>
     </application>

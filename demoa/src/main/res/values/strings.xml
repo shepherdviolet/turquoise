@@ -44,6 +44,9 @@
     <string name="screen_info_main_title">Screen Info</string>
     <string name="screen_info_edit_text_hint">input screen size (inch)</string>
 
+    <string name="kotlin_main_title">Kotlin Demo</string>
+    <string name="simple_kotlin_main_title">Simple Kt Demo</string>
+
     <string name="temp_main_title">Temp</string>
 
 </resources>

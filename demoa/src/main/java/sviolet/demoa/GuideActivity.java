@@ -32,6 +32,7 @@ import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
 import sviolet.demoa.info.InfoActivity;
+import sviolet.demoa.kotlin.KtTestActivity;
 import sviolet.demoa.other.OtherActivity;
 import sviolet.demoa.refresh.RefreshActivity;
 import sviolet.demoa.slide.SlideActivity;
@@ -54,6 +55,7 @@ import sviolet.turquoise.ui.util.motion.MultiClickFilter;
         RefreshActivity.class,
         OtherActivity.class,
         InfoActivity.class,
+        KtTestActivity.class,
         TempActivity.class
 })
 
