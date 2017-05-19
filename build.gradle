@@ -61,7 +61,7 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
         buildToolsVersion '25.0.2'
 
         defaultConfig {
-            minSdkVersion 11
+            minSdkVersion 14
             targetSdkVersion 25
             versionCode Integer.valueOf(library_version_code)
             versionName library_version_name

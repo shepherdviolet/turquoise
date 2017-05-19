@@ -8,7 +8,7 @@
 <br/>
 
 # Module turquoise
-![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
+![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
 
 ###### The basic library module, as detailed below:
@@ -39,10 +39,10 @@
 
     compile project(':turquoise')
     //required
-    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:support-v4:26.0.0-alpha1'
     //optional
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
+    compile 'com.android.support:recyclerview-v7:26.0.0-alpha1'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
 ```
@@ -52,7 +52,7 @@
 <br/>
 
 # Module turquoise-imageloader
-![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
+![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 
 ###### TurquoiseImageLoader. it's a new image loader.
@@ -93,7 +93,7 @@
     compile project(':turquoise')
     compile project(':turquoise-imageloader')
     //required
-    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:support-v4:26.0.0-alpha1'
     //optional
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
@@ -108,7 +108,7 @@
 <br/>
 
 # Module turquoise-imageloader-plugin
-![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
+![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise--imageloader-2ed8a8.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
 
@@ -125,7 +125,7 @@
     compile project(':turquoise-imageloader')
     compile project(':turquoise-imageloader-plugin')
     //required
-    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:support-v4:26.0.0-alpha1'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
     //optional
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
@@ -139,7 +139,7 @@
 <br/>
 
 # Module turquoise-multidex
-![API](https://img.shields.io/badge/API-11%2B-6a5acd.svg?style=flat)
+![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 
 ###### Expansion Module of `turquoise`. Optional.
