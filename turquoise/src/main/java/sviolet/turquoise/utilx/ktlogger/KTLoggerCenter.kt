@@ -56,12 +56,13 @@ internal class KTLoggerCenter {
         }
 
         fun check(host: Class<Any>?): Int {
-            val className = host?.getClassName() ?: return KTLogger.ALL
+            val className = host?.name ?: return KTLogger.ALL
             var ruleKeyLength = 0
             var ruleLevel = globalLevel
             customRules.forEach { (key, value) ->
-                if (!className.startsWith(key))
+                if (!className.startsWith(key)) {
                     return@forEach
+                }
                 if (key.length > ruleKeyLength) {
                     ruleKeyLength = key.length
                     ruleLevel = value
