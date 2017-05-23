@@ -19,6 +19,8 @@
 
 package sviolet.demoa.kotlin.utils
 
+import sviolet.turquoise.kotlin.extensions.getSimpleClassName
+
 /**
  * simple kotlin demo
  *
@@ -27,7 +29,7 @@ package sviolet.demoa.kotlin.utils
 class KtTest(val name: String) {
 
     fun greet() : String {
-        val msg = "Hello to $name"
+        val msg = "[${getSimpleClassName()}]Hello to $name"
         println(msg)
         return msg
     }
