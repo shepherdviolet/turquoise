@@ -26,29 +26,25 @@ package sviolet.turquoise.kotlin.extensions
  */
 
 /**
- * Get jvm class name, return null if receiver is null
+ * Get jvm class.
+ * Can be called with a null receiver, in which case it returns null.
  */
-fun Any?.getClassName() : String{
-    val instanceString = this.toString()
-    if ("@" in instanceString){
-        return instanceString.split("@")[0]
-    } else {
-        return "null"
-    }
+fun <T: Any> T?.getClass() : Class<T>?{
+    return this?.javaClass
 }
 
 /**
- * Get jvm class simple name (without package), return null if receiver is null
+ * Get jvm class name.
+ * Can be called with a null receiver, in which case it returns "null".
+ */
+fun Any?.getClassName() : String{
+    return this.getClass()?.name ?: "null"
+}
+
+/**
+ * Get jvm class simple name (without package).
+ * Can be called with a null receiver, in which case it returns "null".
  */
 fun Any?.getSimpleClassName() : String{
-    val className = getClassName()
-    if (className == "null") return className
-    val list = className.split(".")
-    if (className.startsWith("[L")){
-        return list[list.size - 1].replace(";", "[]")
-    } else if (className.startsWith("[[L")) {
-        return list[list.size - 1].replace(";", "[][]")
-    } else {
-        return list[list.size - 1]
-    }
+    return this.getClass()?.simpleName ?: "null"
 }
