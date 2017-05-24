@@ -19,9 +19,7 @@
 
 package sviolet.turquoise.utilx.tlogger
 
-import sviolet.turquoise.kotlin.extensions.getClass
-import sviolet.turquoise.kotlin.extensions.getSnapShot
-import sviolet.turquoise.kotlin.extensions.sync
+import sviolet.turquoise.kotlin.extensions.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
 
@@ -122,14 +120,14 @@ internal object TLoggerCenter {
      * 创建打印器
      */
     fun newLogger(hostObj: Any?): TLogger {
-        return newLogger(hostObj?.getClass())
+        return newLogger(hostObj?.getJClass())
     }
 
     /**
      * 尝试从缓存获取打印器(用于kotlin)
      */
     fun fetchLogger(hostObj: Any?): TLogger {
-        val host = hostObj?.getClass() ?: return nullLogger
+        val host = hostObj?.getJClass() ?: return nullLogger
         var logger = loggerCache[host]
         if (logger == null) {
             cacheLock.sync {
