@@ -28,7 +28,7 @@ import sviolet.turquoise.util.common.ConcurrentUtils
  */
 
 /**
- * get snap shot of map, for concurrent use
+ * Get snap shot of map, for concurrent use
  */
 fun <K, V> Map<K, V>?.getSnapShot() : Map<K, V>?{
     return ConcurrentUtils.getSnapShot(this)

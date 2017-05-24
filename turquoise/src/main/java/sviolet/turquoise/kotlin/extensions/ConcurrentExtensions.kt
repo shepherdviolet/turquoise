@@ -28,7 +28,7 @@ import java.util.concurrent.locks.ReentrantLock
  */
 
 /**
- * ReentrantLock try lock and finally unlock
+ * ReentrantLock: execute try lock and finally unlock
  */
 fun ReentrantLock.sync(action: () -> Unit){
     try {
