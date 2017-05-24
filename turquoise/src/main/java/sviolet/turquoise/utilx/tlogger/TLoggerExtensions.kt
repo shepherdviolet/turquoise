@@ -70,3 +70,7 @@ fun Any?.logi(msg: String?) {
 fun Any?.logd(msg: String?) {
     TLoggerCenter.fetchLogger(this).d(msg)
 }
+
+fun Any?.getLogger() : TLogger {
+    return TLoggerCenter.newLogger(this)
+}

@@ -24,7 +24,7 @@ import sviolet.turquoise.common.statics.StringConstants
 import sviolet.turquoise.util.common.CheckUtils
 
 /**
- * Logger proxy
+ * 日志打印器代理类
  *
  * Created by S.Violet on 2017/5/23.
  */

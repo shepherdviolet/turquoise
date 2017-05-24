@@ -22,64 +22,94 @@ package sviolet.turquoise.utilx.tlogger
 import sviolet.turquoise.kotlin.extensions.getClass
 
 /**
- * logger rule
+ * 日志打印器核心逻辑
  *
  * Created by S.Violet on 2017/5/23.
  */
-internal class TLoggerCenter {
-    companion object Companion {
+internal object TLoggerCenter {
 
-        private var globalLevel = TLogger.ALL
-        private var customRules = mutableMapOf<String, Int>()
+    //全局日志级别
+    private var globalLevel = TLogger.ALL
+    //规则
+    private var customRules = mutableMapOf<String, Int>()
+    //日志打印器缓存(用于kotlin)
+    private var loggerCache = mutableMapOf<Class<Any>, TLogger>()
 
-        private var loggerCache = mutableMapOf<Class<Any>, TLogger>()
-        private var defaultLogger = TLoggerProxy(null, TLogger.ALL)
+    //空打印器
+    private val nullLogger = TLoggerProxy(null, TLogger.NULL)
 
-        fun addRules(rules: Map<String, Int>?) {
-            if (rules == null) return
-            customRules.putAll(rules)
+    /**
+     * 添加规则
+     */
+    fun addRules(rules: Map<String, Int>?) {
+        if (rules == null) return
+        customRules.putAll(rules)
+    }
+
+    /**
+     * 重新设置规则
+     */
+    fun resetRules(rules: Map<String, Int>?) {
+        customRules = mutableMapOf<String, Int>()
+        if (rules == null) return
+        customRules.putAll(rules)
+    }
+
+    /**
+     * 设置全局日志级别
+     */
+    fun setGlobalLevel(level: Int?) {
+        if (level == null) {
+            globalLevel = TLogger.NULL
+            return
         }
+        globalLevel = level
+    }
 
-        fun resetRules(rules: Map<String, Int>?) {
-            customRules = mutableMapOf<String, Int>()
-            if (rules == null) return
-            customRules.putAll(rules)
-        }
-
-        fun setGlobalLevel(level: Int?){
-            if (level == null){
-                globalLevel = TLogger.NULL
-                return
+    /**
+     * 根据规则生成打印器的日志级别
+     */
+    private fun check(host: Class<Any>?): Int {
+        val className = host?.name ?: return TLogger.NULL
+        var ruleKeyLength = 0
+        var ruleLevel = globalLevel
+        customRules.forEach { (key, value) ->
+            if (!className.startsWith(key)) {
+                return@forEach
             }
-            globalLevel = level
-        }
-
-        fun check(host: Class<Any>?): Int {
-            val className = host?.name ?: return TLogger.ALL
-            var ruleKeyLength = 0
-            var ruleLevel = globalLevel
-            customRules.forEach { (key, value) ->
-                if (!className.startsWith(key)) {
-                    return@forEach
-                }
-                if (key.length > ruleKeyLength) {
-                    ruleKeyLength = key.length
-                    ruleLevel = value
-                }
+            if (key.length > ruleKeyLength) {
+                ruleKeyLength = key.length
+                ruleLevel = value
             }
-            return ruleLevel
         }
+        return ruleLevel
+    }
 
-        fun fetchLogger(hostObj: Any?) : TLogger {
-            val host = hostObj?.getClass() ?: return defaultLogger
-            var logger = loggerCache[host]
-            if (logger != null){
-                return logger
-            }
-            logger = TLoggerProxy(host, check(host))
-            loggerCache.put(host, logger)
+    /**
+     * 创建打印器
+     */
+    fun newLogger(host: Class<Any>?) : TLogger {
+        return TLoggerProxy(host, check(host))
+    }
+
+    /**
+     * 创建打印器
+     */
+    fun newLogger(hostObj: Any?): TLogger {
+        return newLogger(hostObj?.getClass())
+    }
+
+    /**
+     * 尝试从缓存获取打印器(用于kotlin)
+     */
+    fun fetchLogger(hostObj: Any?): TLogger {
+        val host = hostObj?.getClass() ?: return nullLogger
+        var logger = loggerCache[host]
+        if (logger != null) {
             return logger
         }
-
+        logger = newLogger(host)
+        loggerCache.put(host, logger)
+        return logger
     }
 }

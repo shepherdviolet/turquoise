@@ -22,7 +22,47 @@ package sviolet.turquoise.utilx.tlogger;
 import java.util.Map;
 
 /**
- * KTLogger java interface
+ * <p>TLogger日志打印器Java入口 (Kotlin参考TLoggerExtensions.kt)</p>
+ *
+ * <p>日志级别配置==============================================</p>
+ *
+ * <p>注意:请在Application初始化时配置日志级别. 若先获取打印器打印日志, 再配置, 新配置将不会生效.</p>
+ *
+ * <pre>{@code
+ *  @ApplicationSettings(
+ *      DEBUG = true
+ *  )
+ *  @ReleaseSettings(
+ *      logGlobalLevel = TLogger.ERROR | TLogger.INFO
+ *  )
+ *  @DebugSettings(
+ *      logGlobalLevel = TLogger.ERROR | TLogger.INFO | TLogger.WARNING | TLogger.DEBUG
+ *  )
+ *  public class MyApplication extends TApplicationForMultiDex {
+ *      protected void afterCreate() {
+ *          super.afterCreate();
+ *
+ *          Map<String, Integer> rules = new HashMap<>(3);
+ *          rules.put("sviolet.turquoise", TLogger.ALL);//sviolet.turquoise包名的类打印全部日志
+ *          rules.put("sviolet.turquoise.x.imageloader", TLogger.ERROR | TLogger.INFO);//sviolet.turquoise.x.imageloader包名的类打印ERROR和INFO日志
+ *          TLogger.addRules(rules);
+ *      }
+ *  }
+ * }</pre>
+ *
+ * <p>日志打印==============================================</p>
+ *
+ * <pre>{@code
+ *  public class MyActivity extends TActivity{
+ *
+ *      private TLogger logger = TLogger.get(this);
+ *
+ *      public void function(){
+ *          logger.d("message");
+ *      }
+ *
+ *  }
+ * }</pre>
  *
  * Created by S.Violet on 2017/5/23.
  */
@@ -41,10 +81,7 @@ public abstract class TLogger {
      * @return 日志打印器(代理)
      */
     public static TLogger get(Object host){
-        Class hostClass = null;
-        if (host != null)
-            hostClass = host.getClass();
-        return get(hostClass);
+        return TLoggerCenter.INSTANCE.newLogger(host);
     }
 
     /**
@@ -53,22 +90,31 @@ public abstract class TLogger {
      * @return 日志打印器(代理)
      */
     public static TLogger get(Class<Object> host){
-        if (host == null){
-            return new TLoggerProxy(null, NULL);
-        }
-        return new TLoggerProxy(host, TLoggerCenter.Companion.check(host));
+        return TLoggerCenter.INSTANCE.newLogger(host);
     }
 
+    /**
+     * 设置全局日志级别
+     * @param level 日志级别, 例如TLogger.ERROR | TLogger.INFO
+     */
     public static void setGlobalLevel(int level){
-        TLoggerCenter.Companion.setGlobalLevel(level);
+        TLoggerCenter.INSTANCE.setGlobalLevel(level);
     }
 
+    /**
+     * 设置规则
+     * @param rules Map<String, Integer>, {{"sviolet.turquoise.x.imageloader", TLogger.ERROR | TLogger.INFO}, {"sviolet.turquoise", TLogger.ALL}}
+     */
     public static void addRules(Map<String, Integer> rules){
-        TLoggerCenter.Companion.addRules(rules);
+        TLoggerCenter.INSTANCE.addRules(rules);
     }
 
+    /**
+     * 重新设置规则
+     * @param rules Map<String, Integer>, {{"sviolet.turquoise.x.imageloader", TLogger.ERROR | TLogger.INFO}, {"sviolet.turquoise", TLogger.ALL}}
+     */
     public static void resetRules(Map<String, Integer> rules){
-        TLoggerCenter.Companion.resetRules(rules);
+        TLoggerCenter.INSTANCE.resetRules(rules);
     }
 
     /**
