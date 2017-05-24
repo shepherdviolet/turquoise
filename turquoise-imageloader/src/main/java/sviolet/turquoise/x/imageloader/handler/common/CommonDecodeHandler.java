@@ -46,13 +46,13 @@ public class CommonDecodeHandler extends DecodeHandler {
         return onDecodeInner(applicationContext, context, taskInfo, data, logger, reqWidth, reqHeight);
     }
 
-    protected ImageResource onDecodeInner(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger, int reqWidth, int reqHeight){
+    protected ImageResource onDecodeInner(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger, int reqWidth, int reqHeight) {
         //decoding
         Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), taskInfo.getParams().getDecodeInSampleQuality());
         if (bitmap == null)
             throw new RuntimeException("[TILoader:CommonDecodeHandler]decoding failed, illegal image data");
         //scale
-        switch (taskInfo.getParams().getDecodeScaleStrategy()){
+        switch (taskInfo.getParams().getDecodeScaleStrategy()) {
             case SCALE_FIT_WIDTH_HEIGHT:
                 bitmap = BitmapUtils.scaleTo(bitmap, reqWidth, reqHeight, true);
                 break;
@@ -67,7 +67,7 @@ public class CommonDecodeHandler extends DecodeHandler {
         }
         if (bitmap == null)
             throw new RuntimeException("[TILoader:CommonDecodeHandler]scale: scale failed");
-        if (!logger.isNullLogger()) {
+        if (logger.checkEnable(TLogger.DEBUG)){
             logger.d("[CommonDecodeHandler]decoded size:" + bitmap.getWidth() + "*" + bitmap.getHeight() + " task:" + taskInfo);
         }
         return new ImageResource(ImageResource.Type.BITMAP, bitmap);
@@ -103,7 +103,7 @@ public class CommonDecodeHandler extends DecodeHandler {
         }
         if (bitmap == null)
             throw new RuntimeException("[TILoader:CommonDecodeHandler]scale: scale failed");
-        if (!logger.isNullLogger()) {
+        if (logger.checkEnable(TLogger.DEBUG)) {
             logger.d("[CommonDecodeHandler]decoded size:" + bitmap.getWidth() + "*" + bitmap.getHeight() + " task:" + taskInfo);
         }
         return new ImageResource(ImageResource.Type.BITMAP, bitmap);

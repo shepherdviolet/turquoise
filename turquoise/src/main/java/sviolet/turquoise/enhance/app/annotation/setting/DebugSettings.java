@@ -26,7 +26,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import sviolet.turquoise.utilx.tlogger.TLogger;
-import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
 
 /**
  * [TApplication注释]调试模式参数设置
@@ -55,23 +54,11 @@ public @interface DebugSettings {
     boolean enableCrashHandle() default false;
 
     /**
-     * 日志标签
-     */
-    String logDefaultTag() default "Undefined";
-
-    /**
      * 日志级别开关<p/>
      *
      * 示例:<br/>
      * 开启ERROR和INFO日志 : TLogger.ERROR | TLogger.INFO
      */
     int logGlobalLevel() default TLogger.ERROR | TLogger.INFO;
-
-    /**
-     * 日志打印器实现模块<p/>
-     *
-     * 默认采用简易日志打印器模块
-     */
-    Class logModule() default SimpleTLoggerModule.class;
 
 }

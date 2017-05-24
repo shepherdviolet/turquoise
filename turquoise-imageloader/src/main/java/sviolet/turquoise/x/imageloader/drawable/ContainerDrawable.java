@@ -159,7 +159,7 @@ public class ContainerDrawable extends TransitionDrawable {
         if (stub != null){
             return stub.getLogger();
         }
-        return TLogger.getNullLogger();
+        return TLogger.get(null);
     }
 
     private Stub getStub(){

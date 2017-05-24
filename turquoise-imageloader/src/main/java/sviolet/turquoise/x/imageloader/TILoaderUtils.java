@@ -25,14 +25,13 @@ import android.view.View;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import sviolet.turquoise.common.statics.PublicConstants;
-import sviolet.turquoise.common.statics.StringConstants;
 import sviolet.turquoise.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
-import sviolet.turquoise.utilx.tlogger.TLoggerModule;
-import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.Node;
@@ -195,23 +194,18 @@ public class TILoaderUtils {
         return ComponentManager.getInstance().getMemoryCacheServer().getMemoryReport();
     }
 
-    /***********************************************************************888
+    /***********************************************************************
      * other
      */
 
     /**
-     * set TILoader's log level, valid only in SimpleTLoggerModule, it will be invalid if you use custom TLoggerModule
+     * set TILoader's log level
      * @param level e.g. TLogger.ERROR | TLogger.INFO
-     * @return true:set succeed, module is SimpleTLoggerModule, false:set failed, module is not SimpleTLoggerModule
      */
-    public static boolean setLoggerLevel(int level){
-        TLoggerModule module = TLogger.getModule();
-        //valid in SimpleTLoggerModule
-        if (module instanceof SimpleTLoggerModule){
-            ((SimpleTLoggerModule) module).addRule(StringConstants.TILOADER_TAG, new SimpleTLoggerModule.Rule(level));
-            return true;
-        }
-        return false;
+    public static void setLoggerLevel(int level){
+        Map<String, Integer> rules = new HashMap<>(1);
+        rules.put("sviolet.turquoise.x.imageloader", level);
+        TLogger.addRules(rules);
     }
 
 }

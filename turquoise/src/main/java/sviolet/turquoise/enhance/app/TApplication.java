@@ -37,16 +37,13 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import sviolet.turquoise.common.statics.StringConstants;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
+import sviolet.turquoise.util.droid.ApplicationUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.utilx.eventbus.EvBus;
 import sviolet.turquoise.utilx.tlogger.TLogger;
-import sviolet.turquoise.utilx.tlogger.TLoggerModule;
-import sviolet.turquoise.util.droid.ApplicationUtils;
-import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
 
 /**
  * [组件扩展]Application<br>
@@ -55,7 +52,7 @@ import sviolet.turquoise.utilx.tlogger.def.SimpleTLoggerModule;
  */
 public abstract class TApplication extends Application  implements Thread.UncaughtExceptionHandler {
 
-    private TLogger logger = TLogger.get(this, StringConstants.LIBRARY_TAG);//日志打印器
+    private TLogger logger = TLogger.get(this);//日志打印器
 
     private static TApplication mApplication;//实例
     private final Set<Activity> mActivities = Collections.newSetFromMap(new WeakHashMap<Activity, Boolean>());
@@ -210,9 +207,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
     private boolean enableStrictMode = false;
     private boolean enableCrashRestart = false;
     private boolean enableCrashHandle = false;
-    private String logDefaultTag = "Undefined";
     private int logGlobalLevel = TLogger.ERROR | TLogger.INFO;
-    private Class logModule = SimpleTLoggerModule.class;
 
     /**
      * 加载设置: ApplicationSettings/ReleaseSettings/DebugSettings
@@ -239,9 +234,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
             enableStrictMode = settings.enableStrictMode();
             enableCrashRestart = settings.enableCrashRestart();
             enableCrashHandle = settings.enableCrashHandle();
-            logDefaultTag = settings.logDefaultTag();
             logGlobalLevel = settings.logGlobalLevel();
-            logModule = settings.logModule();
         }else{
             if (!this.getClass().isAnnotationPresent(ReleaseSettings.class)) {
                 return;
@@ -250,9 +243,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
             enableStrictMode = settings.enableStrictMode();
             enableCrashRestart = settings.enableCrashRestart();
             enableCrashHandle = settings.enableCrashHandle();
-            logDefaultTag = settings.logDefaultTag();
             logGlobalLevel = settings.logGlobalLevel();
-            logModule = settings.logModule();
         }
 
         //应用配置参数//////////////////////////////////////////////////////////
@@ -263,24 +254,7 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
         }
 
         //日志打印器配置
-        installTLogger(logModule, logDefaultTag, logGlobalLevel);
-    }
-
-    private void installTLogger(Class<?> moduleClass, String tag, int level){
-        if (moduleClass != null){
-            if (TLoggerModule.class.isAssignableFrom(moduleClass)){
-                try {
-                    TLogger.install((TLoggerModule)moduleClass.newInstance());
-                } catch (Exception e) {
-                    throw new RuntimeException("[TApplication]TLogger install error", e);
-                }
-            }else{
-                //ReleaseSettings/DebugSettings中配置的logModule参数, 必须为实现TLoggerModule接口的类
-                throw new RuntimeException("[TApplication]\"logModule\" is not assignable from TLoggerModule.class which setting in ReleaseSettings/DebugSettings");
-            }
-        }
-        TLogger.setDefaultTag(tag);
-        TLogger.setGlobalLevel(level);
+        TLogger.setGlobalLevel(logGlobalLevel);
     }
 
     /**************************************

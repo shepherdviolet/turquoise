@@ -290,7 +290,7 @@ public class NodeControllerImpl extends NodeController {
         if (task == null){
             return;
         }
-        if (!manager.getLogger().isNullLogger()) {
+        if (manager.getLogger().checkEnable(TLogger.DEBUG)) {
             manager.getLogger().d("[NodeControllerImpl]task finish, callback to stub, task:" + task.getTaskInfo());
         }
         Message msg = myHandler.obtainMessage(MyHandler.HANDLER_CALLBACK);

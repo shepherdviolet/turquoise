@@ -37,7 +37,6 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
         enableStrictMode = false,
         enableCrashRestart = true,
         enableCrashHandle = true,
-        logDefaultTag = Constants.TAG,
         logGlobalLevel = TLogger.ERROR | TLogger.INFO
 )
 //调试配置
@@ -45,7 +44,6 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
         enableStrictMode = true,
         enableCrashRestart = false,
         enableCrashHandle = true,
-        logDefaultTag = Constants.TAG,
         logGlobalLevel = TLogger.ERROR | TLogger.INFO | TLogger.WARNING | TLogger.DEBUG
 )
 public class MyApplication extends TApplicationForMultiDex {

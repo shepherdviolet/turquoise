@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.IndispensableState;
 import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
@@ -109,7 +110,7 @@ public class NetEngine extends Engine {
         }
         //waiting for result
         int result = callback.getResult();
-        if (!getComponentManager().getLogger().isNullLogger()) {
+        if (getComponentManager().getLogger().checkEnable(TLogger.DEBUG)) {
             getComponentManager().getLogger().d("[NetEngine]get result from networkHandler, result:" + result + ", task:" + task);
         }
         switch(result){
@@ -193,7 +194,7 @@ public class NetEngine extends Engine {
         }
         //try to write disk cache
         LowNetworkSpeedStrategy.Configure lowNetworkSpeedConfig = getComponentManager().getServerSettings().getLowNetworkSpeedStrategy().getConfigure(getComponentManager().getApplicationContextImage(), indispensableState);
-        if (!getComponentManager().getLogger().isNullLogger()) {
+        if (getComponentManager().getLogger().checkEnable(TLogger.DEBUG)) {
             getComponentManager().getLogger().d("[NetEngine]LowNetworkSpeedStrategy:" + lowNetworkSpeedConfig.getType() + ", task:" + task);
         }
         DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream, lowNetworkSpeedConfig);

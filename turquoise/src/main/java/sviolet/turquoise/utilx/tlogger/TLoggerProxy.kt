@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utilx.ktlogger
+package sviolet.turquoise.utilx.tlogger
 
 import android.util.Log
 import sviolet.turquoise.common.statics.StringConstants
@@ -28,7 +28,11 @@ import sviolet.turquoise.util.common.CheckUtils
  *
  * Created by S.Violet on 2017/5/23.
  */
-internal class KTLoggerProxy(val host: Class<Any>?, val level: Int?) : KTLogger(){
+internal class TLoggerProxy(val host: Class<Any>?, val level: Int?) : TLogger(){
+
+    override fun checkEnable(level: Int): Boolean {
+        return CheckUtils.isFlagMatch(this.level ?: NULL, level)
+    }
 
     override fun e(msg: String?) {
         if (CheckUtils.isFlagMatch(level ?: NULL, ERROR))

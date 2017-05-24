@@ -61,7 +61,7 @@ public class EngineCallback <ResultDataType> {
             throw new RuntimeException("[EngineCallback]timeout must > 0");
         }
         if (logger == null){
-            logger = TLogger.getNullLogger();
+            logger = TLogger.get(null);
         }
         this.timeout = timeout;
         this.logger = logger;

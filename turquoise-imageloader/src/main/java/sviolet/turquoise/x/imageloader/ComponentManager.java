@@ -105,7 +105,7 @@ public class ComponentManager {
      * Extras
      **********************************************************************************************/
 
-    private final TLogger logger = TLogger.get(TILoader.class, StringConstants.TILOADER_TAG);
+    private final TLogger logger = TLogger.get(TILoader.class);
     private WeakReference<Context> contextImage;
     private WeakReference<Context> applicationContextImage;
 
@@ -259,7 +259,7 @@ public class ComponentManager {
         if (getServerSettings().isLogEnabled()) {
             return logger;
         }else{
-            return TLogger.getNullLogger();
+            return TLogger.get(null);
         }
     }
 

@@ -17,14 +17,16 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utilx.ktlogger;
+package sviolet.turquoise.utilx.tlogger;
+
+import java.util.Map;
 
 /**
  * KTLogger java interface
  *
  * Created by S.Violet on 2017/5/23.
  */
-public abstract class KTLogger {
+public abstract class TLogger {
 
     public static final int ALL = 0xffffffff;//打印所有日志级别
     public static final int NULL = 0x00000000;//不打印日志
@@ -38,7 +40,7 @@ public abstract class KTLogger {
      * @param host 信息发送者标识, 通常为打印日志的当前类
      * @return 日志打印器(代理)
      */
-    public static KTLogger get(Object host){
+    public static TLogger get(Object host){
         Class hostClass = null;
         if (host != null)
             hostClass = host.getClass();
@@ -50,11 +52,23 @@ public abstract class KTLogger {
      * @param host 信息发送者标识, 通常为打印日志的当前类
      * @return 日志打印器(代理)
      */
-    public static KTLogger get(Class<Object> host){
+    public static TLogger get(Class<Object> host){
         if (host == null){
-            return new KTLoggerProxy(null, NULL);
+            return new TLoggerProxy(null, NULL);
         }
-        return new KTLoggerProxy(host, KTLoggerCenter.Companion.check(host));
+        return new TLoggerProxy(host, TLoggerCenter.Companion.check(host));
+    }
+
+    public static void setGlobalLevel(int level){
+        TLoggerCenter.Companion.setGlobalLevel(level);
+    }
+
+    public static void addRules(Map<String, Integer> rules){
+        TLoggerCenter.Companion.addRules(rules);
+    }
+
+    public static void resetRules(Map<String, Integer> rules){
+        TLoggerCenter.Companion.resetRules(rules);
     }
 
     /**
@@ -130,5 +144,12 @@ public abstract class KTLogger {
      * @param msg 信息
      */
     public abstract void d(String msg);
+
+    /**
+     * 检查某个日志级别是否允许打印
+     * @param level 日志级别， 例如TLogger.DEBUG
+     * @return true:允许打印
+     */
+    public abstract boolean checkEnable(int level);
 
 }

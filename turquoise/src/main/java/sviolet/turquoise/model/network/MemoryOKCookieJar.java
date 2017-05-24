@@ -45,7 +45,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  */
 public class MemoryOKCookieJar implements CookieJar {
 
-    protected TLogger logger = TLogger.get(this, StringConstants.OK_HTTP_TAG);
+    protected TLogger logger = TLogger.get(this);
 
     protected Map<String, List<Cookie>> cookieDataMap = new HashMap<>();
     private CookieFilter cookieFilter;

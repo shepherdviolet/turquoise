@@ -17,24 +17,23 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utilx.ktlogger
+package sviolet.turquoise.utilx.tlogger
 
 import sviolet.turquoise.kotlin.extensions.getClass
-import sviolet.turquoise.kotlin.extensions.getClassName
 
 /**
  * logger rule
  *
  * Created by S.Violet on 2017/5/23.
  */
-internal class KTLoggerCenter {
+internal class TLoggerCenter {
     companion object Companion {
 
-        private var globalLevel = KTLogger.ALL
+        private var globalLevel = TLogger.ALL
         private var customRules = mutableMapOf<String, Int>()
 
-        private var loggerCache = mutableMapOf<Class<Any>, KTLogger>()
-        private var defaultLogger = KTLoggerProxy(null, KTLogger.ALL)
+        private var loggerCache = mutableMapOf<Class<Any>, TLogger>()
+        private var defaultLogger = TLoggerProxy(null, TLogger.ALL)
 
         fun addRules(rules: Map<String, Int>?) {
             if (rules == null) return
@@ -49,14 +48,14 @@ internal class KTLoggerCenter {
 
         fun setGlobalLevel(level: Int?){
             if (level == null){
-                globalLevel = KTLogger.NULL
+                globalLevel = TLogger.NULL
                 return
             }
             globalLevel = level
         }
 
         fun check(host: Class<Any>?): Int {
-            val className = host?.name ?: return KTLogger.ALL
+            val className = host?.name ?: return TLogger.ALL
             var ruleKeyLength = 0
             var ruleLevel = globalLevel
             customRules.forEach { (key, value) ->
@@ -71,13 +70,13 @@ internal class KTLoggerCenter {
             return ruleLevel
         }
 
-        fun fetchLogger(hostObj: Any?) : KTLogger {
+        fun fetchLogger(hostObj: Any?) : TLogger {
             val host = hostObj?.getClass() ?: return defaultLogger
             var logger = loggerCache[host]
             if (logger != null){
                 return logger
             }
-            logger = KTLoggerProxy(host, check(host))
+            logger = TLoggerProxy(host, check(host))
             loggerCache.put(host, logger)
             return logger
         }

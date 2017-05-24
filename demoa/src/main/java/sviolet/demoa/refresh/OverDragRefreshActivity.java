@@ -57,7 +57,7 @@ public class OverDragRefreshActivity extends TActivity {
     @ResourceId(R.id.refresh_overdrag_listview)
     private ListView listView;
 
-    private TLogger logger = TLogger.get(this, "OverDragDemo");
+    private TLogger logger = TLogger.get(this);
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {

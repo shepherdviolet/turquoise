@@ -41,7 +41,6 @@ import sviolet.turquoise.x.imageloader.handler.common.OkHttpNetworkLoadHandler;
         enableStrictMode = false,
         enableCrashRestart = true,
         enableCrashHandle = true,
-        logDefaultTag = Constants.TAG,
         logGlobalLevel = TLogger.ERROR | TLogger.INFO
 )
 //调试配置
@@ -49,7 +48,6 @@ import sviolet.turquoise.x.imageloader.handler.common.OkHttpNetworkLoadHandler;
         enableStrictMode = true,
         enableCrashRestart = false,
         enableCrashHandle = true,
-        logDefaultTag = Constants.TAG,
         logGlobalLevel = TLogger.ERROR | TLogger.INFO | TLogger.WARNING | TLogger.DEBUG
 )
 public class MyApplication extends TApplication {

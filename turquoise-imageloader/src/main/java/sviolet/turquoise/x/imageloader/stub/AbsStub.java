@@ -193,7 +193,7 @@ public abstract class AbsStub implements Stub {
                 state.compareAndSet(State.LOAD_CANCELED, State.LOADING)){
             reloadTimes = 0;
             controller.execute(this);
-            if (!getLogger().isNullLogger()) {
+            if (getLogger().checkEnable(TLogger.DEBUG)) {
                 getLogger().d("[AbsStub]load: key:" + getKey() + " url:" + getUrl());
             }
             return true;
@@ -226,7 +226,7 @@ public abstract class AbsStub implements Stub {
                     state.compareAndSet(State.LOAD_CANCELED, State.LOADING)){
                 reloadTimes++;
                 controller.execute(this);
-                if (!getLogger().isNullLogger()) {
+                if (getLogger().checkEnable(TLogger.DEBUG)) {
                     getLogger().d("[AbsStub]reload: key:" + getKey());
                 }
                 return true;
@@ -429,7 +429,7 @@ public abstract class AbsStub implements Stub {
         if (controller != null){
             return controller.getLogger();
         }
-        return TLogger.getNullLogger();
+        return TLogger.get(null);
     }
 
     protected NodeController getNodeController(){
