@@ -22,6 +22,7 @@ package sviolet.turquoise.utilx.tlogger
 import sviolet.turquoise.kotlin.extensions.getClass
 import sviolet.turquoise.kotlin.extensions.getSnapShot
 import sviolet.turquoise.kotlin.extensions.sync
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
 
 /**
@@ -38,8 +39,11 @@ internal object TLoggerCenter {
     //日志打印器缓存(用于kotlin)
     private var loggerCache = mutableMapOf<Class<Any>, TLogger>()
 
+    //规则更新时间
+    private var ruleUpdateTimes = AtomicInteger(0)
+
     //空打印器
-    private val nullLogger = TLoggerProxy(null, TLogger.NULL)
+    private val nullLogger = TLoggerProxy(null, TLogger.NULL, 0)
 
     //同步锁
     private val cacheLock = ReentrantLock()
@@ -53,6 +57,7 @@ internal object TLoggerCenter {
         ruleLock.sync {
             customRules.putAll(rules)
         }
+        ruleUpdateTimes.incrementAndGet()
     }
 
     /**
@@ -64,6 +69,7 @@ internal object TLoggerCenter {
             if (rules == null) return@sync
             customRules.putAll(rules)
         }
+        ruleUpdateTimes.incrementAndGet()
     }
 
     /**
@@ -75,12 +81,17 @@ internal object TLoggerCenter {
             return
         }
         globalLevel = level
+        ruleUpdateTimes.incrementAndGet()
+    }
+
+    fun getRuleUpdateTimes() : Int{
+        return ruleUpdateTimes.get()
     }
 
     /**
      * 根据规则生成打印器的日志级别
      */
-    private fun check(host: Class<Any>?): Int {
+    fun check(host: Class<Any>?): Int {
         val className = host?.name ?: return TLogger.NULL
         var ruleKeyLength = 0
         var ruleLevel = globalLevel
@@ -104,7 +115,7 @@ internal object TLoggerCenter {
      * 创建打印器
      */
     fun newLogger(host: Class<Any>?) : TLogger {
-        return TLoggerProxy(host, check(host))
+        return TLoggerProxy(host, check(host), ruleUpdateTimes.get())
     }
 
     /**

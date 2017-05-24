@@ -21,57 +21,80 @@ package sviolet.turquoise.utilx.tlogger
 
 import android.util.Log
 import sviolet.turquoise.common.statics.StringConstants
+import sviolet.turquoise.kotlin.extensions.sync
 import sviolet.turquoise.util.common.CheckUtils
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * 日志打印器代理类
  *
  * Created by S.Violet on 2017/5/23.
  */
-internal class TLoggerProxy(val host: Class<Any>?, val level: Int?) : TLogger(){
+internal class TLoggerProxy(val host: Class<Any>?, var level: Int?, var ruleUpdateTimes: Int?) : TLogger(){
+
+    private val lock = ReentrantLock()
 
     override fun checkEnable(level: Int): Boolean {
+        updateLevel()
         return CheckUtils.isFlagMatch(this.level ?: NULL, level)
     }
 
     override fun e(msg: String?) {
+        updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, ERROR))
             Log.e(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")
     }
 
     override fun e(msg: String?, t: Throwable?) {
+        updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, ERROR))
             Log.e(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg", t)
     }
 
     override fun e(t: Throwable?) {
+        updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, ERROR))
             Log.e(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]", t)
     }
 
     override fun w(msg: String?) {
+        updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, WARNING))
             Log.w(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")
     }
 
     override fun w(msg: String?, t: Throwable?) {
+        updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, WARNING))
             Log.w(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg", t)
     }
 
     override fun w(t: Throwable?) {
+        updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, WARNING))
             Log.w(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]", t)
     }
 
     override fun i(msg: String?) {
+        updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, INFO))
             Log.i(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")
     }
 
     override fun d(msg: String?) {
+        updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, DEBUG))
             Log.d(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")
+    }
+
+    private fun updateLevel(){
+        if (ruleUpdateTimes != TLoggerCenter.getRuleUpdateTimes()){
+            lock.sync {
+                if (ruleUpdateTimes != TLoggerCenter.getRuleUpdateTimes()) {
+                    this.level = TLoggerCenter.check(host)
+                }
+            }
+        }
     }
 
 }
