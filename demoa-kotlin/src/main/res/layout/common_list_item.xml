@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:paddingLeft="5dp"
+    android:paddingRight="5dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <!-- 标题 -->
+        <TextView
+            android:id="@+id/common_list_item_title"
+            style="@style/common_list_text_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:singleLine="true" />
+
+        <!-- 类型 -->
+        <TextView
+            android:id="@+id/common_list_item_type"
+            style="@style/common_list_text_common"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="right"
+            android:singleLine="true" />
+
+    </LinearLayout>
+
+    <!-- 信息 -->
+    <TextView
+        android:id="@+id/common_list_item_info"
+        style="@style/common_list_text_common"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="7dp" />
+
+</LinearLayout>

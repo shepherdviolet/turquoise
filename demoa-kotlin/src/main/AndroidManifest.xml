@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="sviolet.demoakotlin">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="sviolet.demoakotlin">
 
-    <application android:allowBackup="true" android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name" android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true" android:theme="@style/AppTheme"></application>
+    <application
+        android:name=".KtApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <activity
+            android:name=".MyMultiDexLoadingActivity"
+            android:process=":mini"
+            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="false"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait" />
+
+    </application>
 
 </manifest>

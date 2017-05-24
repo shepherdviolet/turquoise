@@ -62,7 +62,7 @@ class KtApplication : TApplicationForMultiDex() {
     }
 
     override fun getMultiDexLoadingActivityClass(): Class<out Activity> {
-        return MultiDexLoadingActivity::class.java
+        return MyMultiDexLoadingActivity::class.java
     }
 
     override fun onUncaughtException(ex: Throwable, isCrashRestart: Boolean) {
