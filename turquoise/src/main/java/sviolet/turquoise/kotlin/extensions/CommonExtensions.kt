@@ -26,11 +26,11 @@ package sviolet.turquoise.kotlin.extensions
  */
 
 /*********************************************************************************
- * java class
+ * Java Class
  */
 
 /**
- * Get jvm class.
+ * Get java class.
  * Can be called with a null receiver, in which case it returns null.
  */
 fun <T: Any> T?.getClass() : Class<T>?{
@@ -38,7 +38,7 @@ fun <T: Any> T?.getClass() : Class<T>?{
 }
 
 /**
- * Get jvm class name.
+ * Get java class name.
  * Can be called with a null receiver, in which case it returns "null".
  */
 fun Any?.getClassName() : String{
@@ -46,7 +46,7 @@ fun Any?.getClassName() : String{
 }
 
 /**
- * Get jvm class simple name (without package).
+ * Get java class simple name (without package).
  * Can be called with a null receiver, in which case it returns "null".
  */
 fun Any?.getSimpleClassName() : String{

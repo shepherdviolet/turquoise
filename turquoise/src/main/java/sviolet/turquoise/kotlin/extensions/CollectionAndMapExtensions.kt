@@ -22,7 +22,7 @@ package sviolet.turquoise.kotlin.extensions
 import sviolet.turquoise.util.common.ConcurrentUtils
 
 /**
- * collection extensions
+ * collection and map extensions
  *
  * Created by S.Violet on 2017/5/24.
  */
