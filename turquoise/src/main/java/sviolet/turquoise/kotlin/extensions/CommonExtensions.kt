@@ -25,6 +25,10 @@ package sviolet.turquoise.kotlin.extensions
  * Created by S.Violet on 2017/5/23.
  */
 
+/*********************************************************************************
+ * java class
+ */
+
 /**
  * Get jvm class.
  * Can be called with a null receiver, in which case it returns null.
@@ -48,3 +52,27 @@ fun Any?.getClassName() : String{
 fun Any?.getSimpleClassName() : String{
     return this.getClass()?.simpleName ?: "null"
 }
+
+/*********************************************************************************
+ * DEMO
+ */
+
+/**
+ * define function of BigDecimal("0.1") ADD BigDecimal("0.2")
+ */
+//infix fun BigDecimal?.ADD(d: BigDecimal?) : BigDecimal?{
+//    if (d == null){
+//        return null
+//    }
+//    return this?.add(d)
+//}
+
+/**
+ * define function of BigDecimal("0.1") + BigDecimal("0.2")
+ */
+//operator fun BigDecimal?.plus(d: BigDecimal?) : BigDecimal?{
+//    if (d == null){
+//        return null
+//    }
+//    return this?.add(d)
+//}
