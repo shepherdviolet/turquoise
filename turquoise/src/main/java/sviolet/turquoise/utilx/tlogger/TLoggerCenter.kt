@@ -20,6 +20,9 @@
 package sviolet.turquoise.utilx.tlogger
 
 import sviolet.turquoise.kotlin.extensions.getClass
+import sviolet.turquoise.kotlin.extensions.getSnapShot
+import sviolet.turquoise.kotlin.extensions.sync
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * 日志打印器核心逻辑
@@ -38,21 +41,29 @@ internal object TLoggerCenter {
     //空打印器
     private val nullLogger = TLoggerProxy(null, TLogger.NULL)
 
+    //同步锁
+    private val cacheLock = ReentrantLock()
+    private val ruleLock = ReentrantLock()
+
     /**
      * 添加规则
      */
     fun addRules(rules: Map<String, Int>?) {
         if (rules == null) return
-        customRules.putAll(rules)
+        ruleLock.sync {
+            customRules.putAll(rules)
+        }
     }
 
     /**
      * 重新设置规则
      */
     fun resetRules(rules: Map<String, Int>?) {
-        customRules = mutableMapOf<String, Int>()
-        if (rules == null) return
-        customRules.putAll(rules)
+        ruleLock.sync {
+            customRules = mutableMapOf<String, Int>()
+            if (rules == null) return@sync
+            customRules.putAll(rules)
+        }
     }
 
     /**
@@ -73,7 +84,11 @@ internal object TLoggerCenter {
         val className = host?.name ?: return TLogger.NULL
         var ruleKeyLength = 0
         var ruleLevel = globalLevel
-        customRules.forEach { (key, value) ->
+        var snapshot: Map<String, Int>? = null
+        ruleLock.sync {
+            snapshot = customRules.getSnapShot()
+        }
+        snapshot?.forEach { (key, value) ->
             if (!className.startsWith(key)) {
                 return@forEach
             }
@@ -105,11 +120,15 @@ internal object TLoggerCenter {
     fun fetchLogger(hostObj: Any?): TLogger {
         val host = hostObj?.getClass() ?: return nullLogger
         var logger = loggerCache[host]
-        if (logger != null) {
-            return logger
+        if (logger == null) {
+            cacheLock.sync {
+                logger = loggerCache[host]
+                if (logger == null) {
+                    logger = newLogger(host)
+                    loggerCache.put(host, logger as TLogger)
+                }
+            }
         }
-        logger = newLogger(host)
-        loggerCache.put(host, logger)
-        return logger
+        return logger ?: nullLogger
     }
 }
