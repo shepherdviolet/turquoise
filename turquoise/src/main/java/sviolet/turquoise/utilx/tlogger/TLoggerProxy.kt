@@ -92,6 +92,7 @@ internal class TLoggerProxy(val host: Class<Any>?, var level: Int?, var ruleUpda
             lock.sync {
                 if (ruleUpdateTimes != TLoggerCenter.getRuleUpdateTimes()) {
                     this.level = TLoggerCenter.check(host)
+                    this.ruleUpdateTimes = TLoggerCenter.getRuleUpdateTimes()
                 }
             }
         }
