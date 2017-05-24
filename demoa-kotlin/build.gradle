@@ -1,0 +1,90 @@
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        applicationId "sviolet.demoakotlin"
+        minSdkVersion 14
+        targetSdkVersion 25
+        versionCode Integer.valueOf(library_version_code)
+        versionName library_version_name
+
+        //true:多dex允许,突破类65535的限制
+        multiDexEnabled true
+
+        ndk {
+            //使得APK中只包含指定版本的so库
+            abiFilters "armeabi", "armeabi-v7a", "x86"
+        }
+
+//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            //混淆
+            minifyEnabled true
+            //Zipalign优化
+            zipAlignEnabled true
+            //调试
+            debuggable false
+            //移除无用resource
+            shrinkResources false
+            //proguard配置文件proguard-rules.pro
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            //自定义参数, 程序中BuildConfig._DEBUG获得
+            buildConfigField "boolean", "_DEBUG", "false"
+        }
+        debug {
+            //混淆
+            minifyEnabled false
+            //Zipalign优化
+            zipAlignEnabled false
+            //调试
+            debuggable true
+            //移除无用resource
+            shrinkResources false
+            //proguard配置文件proguard-rules.pro
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            //自定义参数, 程序中BuildConfig._DEBUG获得
+            buildConfigField "boolean", "_DEBUG", "true"
+        }
+    }
+
+    productFlavors {
+    }
+
+    sourceSets {
+        main {
+            //指定JNI的so库路径
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    dexOptions {
+        //dex编译的最大内存(2g/4g, 4g会较快)
+        javaMaxHeapSize "2g"
+        preDexLibraries = false
+        //设置单Dex最大方法数, 一般情况下设置40000, 此处为了测试, 设置了10000
+        additionalParameters = ['--multi-dex',
+                                '--set-max-idx-number=10000']
+    }
+
+}
+
+dependencies {
+
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(':turquoise') { group 'sviolet'; version upload_mvn_version }//指定groupId和version, artifactId为project名
+    compile project(':turquoise-multidex') { group 'sviolet'; version upload_mvn_version }//指定groupId和version, artifactId为project名
+
+    //bak
+//    compile 'com.android.support.constraint:constraint-layout:1.0.2'
+//    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+//        exclude group: 'com.android.support', module: 'support-annotations'
+//    })
+//    testCompile 'junit:junit:4.12'
+
+}

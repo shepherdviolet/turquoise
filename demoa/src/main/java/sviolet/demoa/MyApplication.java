@@ -21,7 +21,6 @@ package sviolet.demoa;
 
 import android.app.Activity;
 
-import sviolet.demoa.common.Constants;
 import sviolet.turquoise.enhance.app.TApplicationForMultiDex;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;

@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/demoa/demoa.iml" filepath="$PROJECT_DIR$/demoa/demoa.iml" />
       <module fileurl="file://$PROJECT_DIR$/demoa-imageloader/demoa-imageloader.iml" filepath="$PROJECT_DIR$/demoa-imageloader/demoa-imageloader.iml" />
+      <module fileurl="file://$PROJECT_DIR$/demoa-kotlin/demoa-kotlin.iml" filepath="$PROJECT_DIR$/demoa-kotlin/demoa-kotlin.iml" />
       <module fileurl="file://$PROJECT_DIR$/sviolet.turquoise.iml" filepath="$PROJECT_DIR$/sviolet.turquoise.iml" />
       <module fileurl="file://$PROJECT_DIR$/turquoise/turquoise.iml" filepath="$PROJECT_DIR$/turquoise/turquoise.iml" />
       <module fileurl="file://$PROJECT_DIR$/turquoise-imageloader/turquoise-imageloader.iml" filepath="$PROJECT_DIR$/turquoise-imageloader/turquoise-imageloader.iml" />
