@@ -22,7 +22,42 @@ package sviolet.turquoise.utilx.tlogger
 import android.app.Application
 
 /**
- * extensions for kotlin
+ * <p>TLogger日志打印器Kotlin入口 (Java参考TLogger.java)</p>
+ *
+ * <p>日志级别配置==============================================</p>
+ *
+ * <p>注意:请在Application初始化时配置日志级别. 若先获取打印器打印日志, 再配置, 新配置将不会生效.</p>
+ *
+ * <pre>{@code
+ *  @ApplicationSettings(
+ *      DEBUG = true
+ *  )
+ *  @ReleaseSettings(
+ *      logGlobalLevel = TLogger.ERROR or TLogger.INFO
+ *  )
+ *  @DebugSettings(
+ *      logGlobalLevel = TLogger.ERROR or TLogger.INFO or TLogger.WARNING or TLogger.DEBUG
+ *  )
+ *  class KtApplication : TApplicationForMultiDex() {
+ *      override fun afterCreate() {
+ *          super.afterCreate()
+ *          tloggerAddRules(hashMapOf(
+ *              "sviolet.turquoise" to TLogger.ALL,//sviolet.turquoise包名的类打印全部日志
+ *              "sviolet.turquoise.x.imageloader" to (TLogger.ERROR or TLogger.INFO)//sviolet.turquoise.x.imageloader包名的类打印ERROR和INFO日志
+ *          ))
+ *      }
+ *  }
+ * }</pre>
+ *
+ * <p>日志打印==============================================</p>
+ *
+ * <pre>{@code
+ *  class MyActivity : TActivity(){
+ *      fun function(){
+ *          logd("message")
+ *      }
+ *  }
+ * }</pre>
  *
  * Created by S.Violet on 2017/5/23.
  */
