@@ -89,7 +89,7 @@ public abstract class TLogger {
      * @param host 信息发送者标识, 通常为打印日志的当前类
      * @return 日志打印器(代理)
      */
-    public static TLogger get(Class<Object> host){
+    public static TLogger get(Class host){
         return TLoggerCenter.INSTANCE.newLogger(host);
     }
 
