@@ -30,7 +30,11 @@ import java.util.concurrent.locks.ReentrantLock
  *
  * Created by S.Violet on 2017/5/23.
  */
-internal class TLoggerProxy(val host: Class<Any>?, var level: Int?, var ruleUpdateTimes: Int?) : TLogger(){
+internal class TLoggerProxy(
+        private val host: Class<Any>?,
+        private var level: Int?,
+        private var ruleUpdateTimes: Int?
+) : TLogger(){
 
     private val lock = ReentrantLock()
 

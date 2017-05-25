@@ -19,22 +19,17 @@
 
 package sviolet.turquoise.kotlin.extensions
 
-import java.util.concurrent.locks.ReentrantLock
+import sviolet.turquoise.util.common.ConcurrentUtils
 
 /**
- * concurrent extensions
+ * Map extensions
  *
  * Created by S.Violet on 2017/5/24.
  */
 
 /**
- * ReentrantLock: execute try lock and finally unlock
+ * Get snap shot of map, for concurrent use
  */
-fun ReentrantLock.sync(action: () -> Unit){
-    try {
-        this.lock()
-        action()
-    } finally {
-        this.unlock()
-    }
+fun <K, V> Map<K, V>?.getSnapShot() : Map<K, V>?{
+    return ConcurrentUtils.getSnapShot(this)
 }

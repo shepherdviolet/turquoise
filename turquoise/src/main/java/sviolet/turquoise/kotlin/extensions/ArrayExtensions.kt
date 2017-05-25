@@ -19,17 +19,19 @@
 
 package sviolet.turquoise.kotlin.extensions
 
-import sviolet.turquoise.util.common.ConcurrentUtils
-
 /**
- * collection and map extensions
+ * Array extensions
  *
- * Created by S.Violet on 2017/5/24.
+ * Created by S.Violet on 2017/5/25.
  */
 
 /**
- * Get snap shot of map, for concurrent use
+ * Get item from Array without exceptions
  */
-fun <K, V> Map<K, V>?.getSnapShot() : Map<K, V>?{
-    return ConcurrentUtils.getSnapShot(this)
+fun <T> Array<T>?.safeGet(index: Int) : T?{
+    try {
+        return this?.get(index)
+    } catch (e: Exception) {
+        return null
+    }
 }
