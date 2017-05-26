@@ -20,13 +20,12 @@
 package sviolet.demoakotlin
 
 import android.app.Activity
-import sviolet.turquoise.enhance.app.MultiDexLoadingActivity
 import sviolet.turquoise.enhance.app.TApplicationForMultiDex
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings
 import sviolet.turquoise.utilx.tlogger.TLogger
-import sviolet.turquoise.utilx.tlogger.tloggerAddRules
+import sviolet.turquoise.utilx.tlogger.logAddRules
 
 @ApplicationSettings(
         DEBUG = BuildConfig._DEBUG,//Debug模式, 装载DebugSetting配置
@@ -51,9 +50,8 @@ class KtApplication : TApplicationForMultiDex() {
     override fun afterCreate() {
         super.afterCreate()
 
-        tloggerAddRules(hashMapOf(
-                "sviolet.turquoise" to TLogger.ALL,//sviolet.turquoise包名的类打印全部日志
-                "sviolet.turquoise.x.imageloader" to (TLogger.ERROR or TLogger.INFO)//sviolet.turquoise.x.imageloader包名的类打印ERROR和INFO日志
+        logAddRules(hashMapOf(
+                "sviolet.demoakotlin.logger" to (TLogger.ERROR or TLogger.INFO)//sviolet.demoakotlin.logger包名的类打印ERROR和INFO日志
         ))
     }
 

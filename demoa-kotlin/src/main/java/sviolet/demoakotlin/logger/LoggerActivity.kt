@@ -29,7 +29,7 @@ import sviolet.demoakotlin.common.DemoList
 
 // Demo列表
 @DemoList(
-
+        SimpleLoggerActivity::class
 )
 /**************************************************************
  * Activity
@@ -37,8 +37,8 @@ import sviolet.demoakotlin.common.DemoList
 
 //Demo描述
 @DemoDescription(
-        title = "Other Demo",
-        type = "View",
-        info = "Demo of others"
+        title = "TLogger Demo",
+        type = "log",
+        info = "Demo of TLogger"
 )
 class LoggerActivity : GuideActivity()

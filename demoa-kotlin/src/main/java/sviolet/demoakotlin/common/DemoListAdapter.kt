@@ -26,7 +26,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import sviolet.demoakotlin.R
-import sviolet.turquoise.kotlin.extensions.safeGet
+import sviolet.turquoise.kotlin.extension.safeGet
 import sviolet.turquoise.ui.adapter.TViewHolder
 import kotlin.reflect.KClass
 
@@ -58,7 +58,7 @@ constructor (
         return position.toLong()
     }
 
-    override fun getView(position: Int, convertView: View, parent: ViewGroup): View {
+    override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val holder = TViewHolder.create(context, convertView, parent, resId)
         inflateView(position, holder)
         return holder.convertView
@@ -75,9 +75,9 @@ constructor (
      * @param holder holder
      */
     private fun inflateView(position: Int, holder: TViewHolder) {
-        val activity = getItem(position) as Class<*>? ?: return
-        if (activity.isAnnotationPresent(DemoDescription::class.java)) {
-            val description = activity.getAnnotation(DemoDescription::class.java)
+        val activity = getItem(position) as KClass<out Activity>? ?: return
+        if (activity.java.isAnnotationPresent(DemoDescription::class.java)) {
+            val description = activity.java.getAnnotation(DemoDescription::class.java)
             setViewParams(holder, description.title, description.type, description.info)
         } else {
             setViewParams(holder, null, null, null)

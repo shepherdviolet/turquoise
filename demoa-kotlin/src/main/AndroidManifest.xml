@@ -28,6 +28,9 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".logger.LoggerActivity"/>
+        <activity android:name=".logger.SimpleLoggerActivity"/>
+.
     </application>
 
 </manifest>
