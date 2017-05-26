@@ -19,14 +19,10 @@
 
 package sviolet.turquoise.utilx.tlogger
 
-import android.app.Application
-
 /**
  * <p>TLogger日志打印器Kotlin入口 (Java参考TLogger.java)</p>
  *
  * <p>日志级别配置==============================================</p>
- *
- * <p>注意:请在Application初始化时配置日志级别. 若先获取打印器打印日志, 再配置, 新配置将不会生效.</p>
  *
  * <pre>{@code
  *  @ApplicationSettings(
@@ -62,15 +58,15 @@ import android.app.Application
  * Created by S.Violet on 2017/5/23.
  */
 
-fun Application?.tloggerSetGlobalLevel(level: Int?){
+fun Any?.logSetGlobalLevel(level: Int?){
     TLoggerCenter.setGlobalLevel(level)
 }
 
-fun Application?.tloggerAddRules(rules: Map<String, Int>?){
+fun Any?.logAddRules(rules: Map<String, Int>?){
     TLoggerCenter.addRules(rules)
 }
 
-fun Application?.tloggerResetRules(rules: Map<String, Int>?){
+fun Any?.logResetRules(rules: Map<String, Int>?){
     TLoggerCenter.resetRules(rules)
 }
 

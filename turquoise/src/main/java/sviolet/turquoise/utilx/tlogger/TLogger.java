@@ -26,8 +26,6 @@ import java.util.Map;
  *
  * <p>日志级别配置==============================================</p>
  *
- * <p>注意:请在Application初始化时配置日志级别. 若先获取打印器打印日志, 再配置, 新配置将不会生效.</p>
- *
  * <pre>{@code
  *  @ApplicationSettings(
  *      DEBUG = true
