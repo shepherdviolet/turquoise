@@ -41,7 +41,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings
 )
 class TempActivity : TActivity() {
 
-    override fun onInitViews(savedInstanceState: Bundle) {
+    override fun onInitViews(savedInstanceState: Bundle?) {
 
     }
 
