@@ -10,7 +10,7 @@
 # Module turquoise
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
-
+![Dependency](https://img.shields.io/badge/Maven%20Dependency-kotlin--stdlib--jre7-dc143c.svg?style=flat)
 ###### The basic library module, as detailed below:
 
 ### Utils/Models ┃ sviolet.turquoise.util/utilx/model/modelx
@@ -28,17 +28,22 @@
 * LinearIndicatorTabView: easy to build TabView
 * shadow/image/gif/ripple/rotate/scrape/dialog......
 
-### enhanced android component ┃ sviolet.turquoise.enhance
+### Enhanced android component ┃ sviolet.turquoise.enhance
 * InjectUtils: inject Views by annotation way
 * TApplication/TActivity/TFragment: enhanced Component
 * TActivity.executePermissionTask: easy to use Runtime Permission
 * WeakHandler: help Handler to avoid Memory Leak(design specifications)
+
+### Kotlin support | sviolet.turquoise.kotlin
+* Kotlin extensions: extension function package
+* TLogger: Kotlin style
 
 ### Dependency:
 ```java
 
     compile project(':turquoise')
     //required
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
     compile 'com.android.support:support-v4:25.3.1'
     //optional
     compile 'com.android.support:appcompat-v7:25.3.1'
@@ -54,6 +59,8 @@
 # Module turquoise-imageloader
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Maven%20Dependency-kotlin--stdlib--jre7-dc143c.svg?style=flat)
 
 ###### TurquoiseImageLoader. it's a new image loader.
 
@@ -93,6 +100,7 @@
     compile project(':turquoise')
     compile project(':turquoise-imageloader')
     //required
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
     compile 'com.android.support:support-v4:25.3.1'
     //optional
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
@@ -109,7 +117,10 @@
 
 # Module turquoise-imageloader-plugin
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise--imageloader-2ed8a8.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Maven%20Dependency-kotlin--stdlib--jre7-dc143c.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
 
 ###### Expansion Module of `turquoise-imageloader`. Optional.
@@ -125,6 +136,7 @@
     compile project(':turquoise-imageloader')
     compile project(':turquoise-imageloader-plugin')
     //required
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
     compile 'com.android.support:support-v4:25.3.1'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
     //optional
@@ -141,6 +153,7 @@
 # Module turquoise-multidex
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Maven%20Dependency-kotlin--stdlib--jre7-dc143c.svg?style=flat)
 
 ###### Expansion Module of `turquoise`. Optional.
 
@@ -152,6 +165,8 @@
 
     compile project(':turquoise')
     compile project(':turquoise-multidex')
+    //required
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
 
 ```
 <br/>
