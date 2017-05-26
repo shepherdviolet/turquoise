@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.kotlin.extensions
+package sviolet.turquoise.kotlin.extension
 
 /**
  * kotlin common extensions

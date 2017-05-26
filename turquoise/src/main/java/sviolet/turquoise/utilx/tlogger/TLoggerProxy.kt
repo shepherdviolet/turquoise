@@ -21,7 +21,7 @@ package sviolet.turquoise.utilx.tlogger
 
 import android.util.Log
 import sviolet.turquoise.common.statics.StringConstants
-import sviolet.turquoise.kotlin.extensions.sync
+import sviolet.turquoise.kotlin.extension.sync
 import sviolet.turquoise.util.common.CheckUtils
 import java.util.concurrent.locks.ReentrantLock
 

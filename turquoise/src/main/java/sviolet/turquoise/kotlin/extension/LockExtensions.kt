@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.kotlin.extensions
+package sviolet.turquoise.kotlin.extension
 
 import java.util.concurrent.locks.ReentrantLock
 

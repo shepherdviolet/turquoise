@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.utilx.tlogger
 
-import sviolet.turquoise.kotlin.extensions.*
+import sviolet.turquoise.kotlin.extension.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantLock
 

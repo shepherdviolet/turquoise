@@ -17,21 +17,33 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.kotlin.extensions
+package sviolet.turquoise.kotlin.extensiona
+
+import android.content.Context
+import android.widget.Toast
 
 /**
- * Array extensions
+ * Android Toast extensions
  *
- * Created by S.Violet on 2017/5/25.
+ * Created by S.Violet on 2017/5/26.
  */
 
 /**
- * Get item from Array without exceptions
+ * Show short toast
  */
-fun <T> Array<T>?.safeGet(index: Int) : T?{
-    try {
-        return this?.get(index)
-    } catch (e: Exception) {
-        return null
+fun Context?.toast(msg: String?){
+    if (this == null || msg == null){
+        return
     }
+    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+}
+
+/**
+ * Show long toast
+ */
+fun Context?.toastl(msg: String?){
+    if (this == null || msg == null){
+        return
+    }
+    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 }
