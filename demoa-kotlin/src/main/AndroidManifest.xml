@@ -30,6 +30,8 @@
 
         <activity android:name=".logger.LoggerActivity"/>
         <activity android:name=".logger.SimpleLoggerActivity"/>
+
+        <activity android:name=".TempActivity"/>
 .
     </application>
 

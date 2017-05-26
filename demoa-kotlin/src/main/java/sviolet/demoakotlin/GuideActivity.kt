@@ -46,7 +46,8 @@ import kotlin.reflect.KClass
 
 // Demo列表
 @DemoList(
-    LoggerActivity::class
+        LoggerActivity::class,
+        TempActivity::class
 )
 /**************************************************************
  * Activity
