@@ -48,10 +48,6 @@ import sviolet.turquoise.utilx.tlogger.tloggerAddRules
 )
 class KtApplication : TApplicationForMultiDex() {
 
-    companion object Companion{
-        val SHARED_PREF_COMMON_CONFIG = "common_config"
-    }
-
     override fun afterCreate() {
         super.afterCreate()
 

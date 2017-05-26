@@ -29,6 +29,7 @@ import android.widget.Toast
 import sviolet.demoakotlin.common.DemoDefault
 import sviolet.demoakotlin.common.DemoList
 import sviolet.demoakotlin.common.DemoListAdapter
+import sviolet.demoakotlin.logger.LoggerActivity
 import sviolet.turquoise.enhance.app.TActivity
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings
@@ -45,7 +46,7 @@ import kotlin.reflect.KClass
 
 // Demo列表
 @DemoList(
-
+    LoggerActivity::class
 )
 /**************************************************************
  * Activity
@@ -58,7 +59,7 @@ import kotlin.reflect.KClass
         statusBarColor = 0xFF30C0C0.toInt(),
         navigationBarColor = 0xFF30C0C0.toInt()
 )
-class GuideActivity : TActivity() {
+open class GuideActivity : TActivity() {
 
     @ResourceId(R.id.guide_main_listview)
     private val demoListView: ListView? = null
@@ -66,7 +67,7 @@ class GuideActivity : TActivity() {
 
     private val multiClickFilter = MultiClickFilter()
 
-    override fun onInitViews(savedInstanceState: Bundle) {
+    override fun onInitViews(savedInstanceState: Bundle?) {
         injectDemoListView()
         injectDefaultDemo()
     }
@@ -85,7 +86,7 @@ class GuideActivity : TActivity() {
             }
             R.id.guide_menu_about -> {
                 //版本显示
-                Toast.makeText(this, "Turquoise Demo " + BuildConfig.VERSION_NAME, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Kotlin Demo " + BuildConfig.VERSION_NAME, Toast.LENGTH_SHORT).show()
                 return true
             }
             else -> return super.onOptionsItemSelected(item)

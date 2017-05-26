@@ -26,12 +26,9 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import sviolet.demoakotlin.R
+import sviolet.turquoise.kotlin.extensions.safeGet
 import sviolet.turquoise.ui.adapter.TViewHolder
 import kotlin.reflect.KClass
-
-/**
- * Created by S.Violet on 2017/5/25.
- */
 
 /**
  * Demo列表适配器
@@ -40,25 +37,21 @@ import kotlin.reflect.KClass
  */
 class DemoListAdapter
 /**
-
  * @param context context
- * *
  * @param activityList 要显示的activity
  */
-(private val context: Context, private val resId: Int, private val activityList: Array<out KClass<out Activity>>?) : BaseAdapter() {
+constructor (
+        private val context: Context,
+        private val resId: Int,
+        private val activityList: Array<out KClass<out Activity>>?
+) : BaseAdapter() {
 
     override fun getCount(): Int {
-        if (activityList != null)
-            return activityList.size
-        else
-            return 0
+        return activityList?.size ?: 0
     }
 
     override fun getItem(position: Int): Any? {
-        if (activityList != null && position < activityList.size && position >= 0)
-            return activityList[position]
-        else
-            return null
+        return activityList.safeGet(position)
     }
 
     override fun getItemId(position: Int): Long {

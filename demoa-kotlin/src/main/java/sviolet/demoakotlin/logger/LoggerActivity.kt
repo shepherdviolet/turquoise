@@ -17,10 +17,28 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.demoakotlin.common
+package sviolet.demoakotlin.logger
 
-object Constants {
+import sviolet.demoakotlin.GuideActivity
+import sviolet.demoakotlin.common.DemoDescription
+import sviolet.demoakotlin.common.DemoList
 
-    val TAG = "KotlinDemoa"
+/**************************************************************
+ * Demo配置
+ */
 
-}
+// Demo列表
+@DemoList(
+
+)
+/**************************************************************
+ * Activity
+ */
+
+//Demo描述
+@DemoDescription(
+        title = "Other Demo",
+        type = "View",
+        info = "Demo of others"
+)
+class LoggerActivity : GuideActivity()

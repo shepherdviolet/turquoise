@@ -20,6 +20,14 @@
             android:excludeFromRecents="true"
             android:screenOrientation="portrait" />
 
+        <activity android:name=".GuideActivity"
+            android:label="@string/guide_main_title">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

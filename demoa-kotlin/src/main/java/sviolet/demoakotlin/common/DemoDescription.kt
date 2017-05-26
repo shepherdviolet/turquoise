@@ -26,4 +26,8 @@ package sviolet.demoakotlin.common
  */
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class DemoDescription(val title: String, val type: String, val info: String)
+annotation class DemoDescription(
+        val title: String,
+        val type: String,
+        val info: String
+)
