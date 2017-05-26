@@ -76,7 +76,7 @@ android {
 
 dependencies {
 
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(dir: 'libs', include: ['*.jar'])//这个配置会自动在混淆时引入Jar包, 不要在proguard-rules.pro中配置-libraryjars, 否则会报错!
     compile project(':turquoise') { group 'sviolet'; version upload_mvn_version }//指定groupId和version, artifactId为project名
     compile project(':turquoise-multidex') { group 'sviolet'; version upload_mvn_version }//指定groupId和version, artifactId为project名
 

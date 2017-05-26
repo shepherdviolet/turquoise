@@ -61,7 +61,7 @@
 #避免混淆泛型 如果混淆报错建议关掉
 #-keepattributes Signature
 #####################引用第三方jar包#########################
-#混淆时引用的jar包
+#混淆时引用的jar包(Studio中Gradle编译会自动在混淆时引入jar包, 不要配置该选项, 否则会报错!)
 #-libraryjars libs/name.jar
 #需要混淆的jar包(不常用)
 #-injars libs/name.jar
