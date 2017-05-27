@@ -30,7 +30,7 @@ buildscript {
     //构建脚本依赖
     dependencies {
         //common
-        classpath 'com.android.tools.build:gradle:3.0.0-alpha1'//安卓构建插件
+        classpath 'com.android.tools.build:gradle:3.0.0-alpha2'//安卓构建插件
 //        classpath 'com.android.tools.build:gradle:2.3.0'//安卓构建插件
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"//kotlin
 
