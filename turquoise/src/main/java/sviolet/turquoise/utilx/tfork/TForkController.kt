@@ -31,47 +31,47 @@ class TForkController internal constructor() {
     private var blockCounter = 0
     private object mHandler : Handler(Looper.getMainLooper())
 
-    fun <R> park(block: (TForkCallback<R>) -> Unit) : R?{
-        return park(0, block)
+    fun <R> await(block: (TForkCallback<R>) -> Unit) : R?{
+        return await(0, block)
     }
 
-    fun <R> park(timeout: Long, block: (TForkCallback<R>) -> Unit) : R?{
+    fun <R> await(timeout: Long, block: (TForkCallback<R>) -> Unit) : R?{
         val blockIndex = blockCounter++
         val callback = TForkCallback<R>(timeout)
         TForkCenter.threadPool.execute{
             try {
                 block(callback)
             } catch (e: Exception){
-                callback.callback(Exception("[TFork]catch exception from \"park\" block, block index($blockIndex)", e))
+                callback.callback(Exception("[TFork]catch exception from \"await\" block, block index($blockIndex)", e))
             }
         }
         val result = callback.waitForResult()
         when(result){
             AsyncWaiter.Result.SUCCESS -> return callback.getValue()
             AsyncWaiter.Result.ERROR -> throw callback.getException()
-            AsyncWaiter.Result.TIMEOUT -> throw TForkParkTimeoutException("[TFork]park timeout($timeout ms), block index($blockIndex)")
+            AsyncWaiter.Result.TIMEOUT -> throw TForkParkTimeoutException("[TFork]await timeout($timeout ms), block index($blockIndex)")
         }
     }
 
-    fun <R> park(block: (TForkCallback<R>) -> Unit, exceptionHandler: (Exception) -> Boolean) : R?{
-        return park(0, block, exceptionHandler)
+    fun <R> await(block: (TForkCallback<R>) -> Unit, exceptionHandler: (Exception) -> Boolean) : R?{
+        return await(0, block, exceptionHandler)
     }
 
-    fun <R> park(timeout: Long, block: (TForkCallback<R>) -> Unit, exceptionHandler: (Exception) -> Boolean) : R?{
+    fun <R> await(timeout: Long, block: (TForkCallback<R>) -> Unit, exceptionHandler: (Exception) -> Boolean) : R?{
         val blockIndex = blockCounter++
         val callback = TForkCallback<R>(timeout)
         TForkCenter.threadPool.execute{
             try {
                 block(callback)
             } catch (e: Exception){
-                callback.callback(Exception("[TFork]catch exception from \"park\" block, block index($blockIndex)", e))
+                callback.callback(Exception("[TFork]catch exception from \"await\" block, block index($blockIndex)", e))
             }
         }
         val result = callback.waitForResult()
         when(result){
             AsyncWaiter.Result.SUCCESS -> return callback.getValue()
             AsyncWaiter.Result.ERROR -> if (exceptionHandler(callback.getException())) return null else throw callback.getException()
-            AsyncWaiter.Result.TIMEOUT -> throw TForkParkTimeoutException("[TFork]park timeout($timeout ms), block index($blockIndex)")
+            AsyncWaiter.Result.TIMEOUT -> throw TForkParkTimeoutException("[TFork]await timeout($timeout ms), block index($blockIndex)")
         }
     }
 
