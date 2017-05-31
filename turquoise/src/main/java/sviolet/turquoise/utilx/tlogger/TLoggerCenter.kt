@@ -35,7 +35,7 @@ internal object TLoggerCenter {
     //规则
     private var customRules = mutableMapOf<String, Int>()
     //日志打印器缓存(用于kotlin)
-    private var loggerCache = mutableMapOf<Class<Any>, TLogger>()
+    private var loggerCache = mutableMapOf<Class<*>, TLogger>()
 
     //规则更新时间
     private var ruleUpdateTimes = AtomicInteger(0)
@@ -89,7 +89,7 @@ internal object TLoggerCenter {
     /**
      * 根据规则生成打印器的日志级别
      */
-    fun check(host: Class<Any>?): Int {
+    fun check(host: Class<*>?): Int {
         val className = host?.name ?: return TLogger.NULL
         var ruleKeyLength = 0
         var ruleLevel = globalLevel
@@ -112,7 +112,7 @@ internal object TLoggerCenter {
     /**
      * 创建打印器
      */
-    fun newLogger(host: Class<Any>?) : TLogger {
+    fun newLogger(host: Class<*>?) : TLogger {
         return TLoggerProxy(host, check(host), ruleUpdateTimes.get())
     }
 
@@ -127,7 +127,16 @@ internal object TLoggerCenter {
      * 尝试从缓存获取打印器(用于kotlin)
      */
     fun fetchLogger(hostObj: Any?): TLogger {
-        val host = hostObj?.getJClass() ?: return nullLogger
+
+        val host: Class<*>
+        if (hostObj is kotlin.jvm.internal.ClassReference){
+            host = hostObj.jClass
+        } else if (hostObj is Class<*>) {
+            host = hostObj
+        } else {
+            host = hostObj?.getJClass() ?: return nullLogger
+        }
+
         var logger = loggerCache[host]
         if (logger == null) {
             cacheLock.sync {

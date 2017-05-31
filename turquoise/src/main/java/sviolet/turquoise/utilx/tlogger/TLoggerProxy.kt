@@ -31,7 +31,7 @@ import java.util.concurrent.locks.ReentrantLock
  * Created by S.Violet on 2017/5/23.
  */
 internal class TLoggerProxy(
-        private val host: Class<Any>?,
+        private val host: Class<*>?,
         private var level: Int?,
         private var ruleUpdateTimes: Int?
 ) : TLogger(){
