@@ -51,6 +51,7 @@ package sviolet.turquoise.utilx.tlogger
  *  class MyActivity : TActivity(){
  *      fun function(){
  *          logd("message")
+ *          TActivity::class.logd("message")
  *      }
  *  }
  * }</pre>
