@@ -42,7 +42,7 @@ public abstract class TPresenter<V extends TView>{
     /**
      * @return 获得弱引用持有的View实例, 可能为空
      */
-    protected V getViewLayer(){
+    public V getViewLayer(){
         return viewLayerRef.get();
     }
 
@@ -50,7 +50,7 @@ public abstract class TPresenter<V extends TView>{
      * 刷新View层
      * @param code 自定义标记
      */
-    protected void refreshViewLayer(int code){
+    public void refreshViewLayer(int code){
         V viewLayer = getViewLayer();
         if (viewLayer != null){
             viewLayer.onPresenterRefresh(code);
