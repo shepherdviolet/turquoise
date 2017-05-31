@@ -24,6 +24,7 @@ import android.os.*;
 import android.view.Menu;
 
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.app.mvp.TView;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
 import sviolet.turquoise.enhance.app.utils.RuntimePermissionManager;
 import sviolet.turquoise.utilx.tlogger.TLogger;
@@ -41,7 +42,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  * @author S.Violet
  */
 
-public abstract class TActivity extends Activity implements EnhancedContext, RuntimePermissionManager.OnRequestPermissionsResultCallback {
+public abstract class TActivity extends Activity implements EnhancedContext, TView, RuntimePermissionManager.OnRequestPermissionsResultCallback {
 
     private final TActivityProvider provider = new TActivityProvider();
     private RuntimePermissionManager runtimePermissionManager = new RuntimePermissionManager(this);
@@ -162,6 +163,11 @@ public abstract class TActivity extends Activity implements EnhancedContext, Run
         }else{
             TLogger.get(this).e("[TActivity]please use annotation \"@ResourceId()\" instead of setContentView()");
         }
+    }
+
+    @Override
+    public void onPresenterRefresh(int code) {
+
     }
 
     /**********************************************

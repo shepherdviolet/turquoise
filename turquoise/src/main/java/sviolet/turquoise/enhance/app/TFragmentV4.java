@@ -28,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import sviolet.turquoise.enhance.app.mvp.TView;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
 import sviolet.turquoise.enhance.common.WeakHandler;
 
@@ -40,7 +41,7 @@ import sviolet.turquoise.enhance.common.WeakHandler;
  *
  * @author S.Violet
  */
-public abstract class TFragmentV4 extends Fragment {
+public abstract class TFragmentV4 extends Fragment implements TView {
 
     //View复用
     private View fragmentViewCache;
@@ -113,6 +114,11 @@ public abstract class TFragmentV4 extends Fragment {
         activityStarted = false;
 
         afterStop();
+    }
+
+    @Override
+    public void onPresenterRefresh(int code) {
+
     }
 
     @Override
