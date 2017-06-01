@@ -1,4 +1,4 @@
-# Turquoise 5.1.170526
+# Turquoise 5.1.170601
 * A comprehensive Android library for private use.
 * https://github.com/shepherdviolet/turquoise
 
@@ -39,7 +39,7 @@
 * TLogger: Kotlin style
 
 ### Dependency:
-```java
+```gradle
 
     compile project(':turquoise')
     //required
@@ -65,7 +65,7 @@
 ###### TurquoiseImageLoader. it's a new image loader.
 
 ### Basic Usage:
-```java
+```gradle
 
         //TILoader setting, non-essential
         TILoader.setting(
@@ -95,7 +95,7 @@
 ```
 
 ### Dependency:
-```java
+```gradle
 
     compile project(':turquoise')
     compile project(':turquoise-imageloader')
@@ -130,7 +130,7 @@
 <br/>
 
 ### Dependency:
-```java
+```gradle
 
     compile project(':turquoise')
     compile project(':turquoise-imageloader')
@@ -161,7 +161,7 @@
 <br/>
 
 ### Dependency:
-```java
+```gradle
 
     compile project(':turquoise')
     compile project(':turquoise-multidex')
@@ -173,14 +173,29 @@
 <br/>
 <br/>
 
-# Package Releases (aar/source)
-https://github.com/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
-https://git.oschina.net/shepherdviolet/static-resources/tree/master/turquoise-release <br/>
+# Releases (aar/source)
+https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository <br/>
+https://git.oschina.net/shepherdviolet/alternate-maven-repository/raw/master/repository <br/>
 <br/>
 <br/>
 <br/>
 
-# How to import Turquoise into your project
+# How to dependence from maven repository
+
+```gradle
+    repositories {
+        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
+    }
+    dependencies {
+        compile 'sviolet:turquoise:5.0'
+        compile 'sviolet:turquoise-imageloader:5.0'
+        compile 'sviolet:turquoise-imageloader-plugin:5.0'
+        compile 'sviolet:turquoise-multidex:5.0'
+    }
+```
+
+# How to dependence by aar package
+
 https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md <br/>
 <br/>
 <br/>
