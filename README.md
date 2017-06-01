@@ -7,6 +7,34 @@
 <br/>
 <br/>
 
+# Releases (aar/source)
+https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository <br/>
+https://git.oschina.net/shepherdviolet/alternate-maven-repository/raw/master/repository <br/>
+<br/>
+<br/>
+<br/>
+
+# Import dependencies from maven repository
+
+```gradle
+    repositories {
+        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
+    }
+    dependencies {
+        compile 'sviolet:turquoise:5.0'
+        compile 'sviolet:turquoise-imageloader:5.0'
+        compile 'sviolet:turquoise-imageloader-plugin:5.0'
+        compile 'sviolet:turquoise-multidex:5.0'
+    }
+```
+
+# Import dependencies from aar package
+
+https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md <br/>
+<br/>
+<br/>
+<br/>
+
 # Module turquoise
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
@@ -169,34 +197,6 @@
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
 
 ```
-<br/>
-<br/>
-<br/>
-
-# Releases (aar/source)
-https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository <br/>
-https://git.oschina.net/shepherdviolet/alternate-maven-repository/raw/master/repository <br/>
-<br/>
-<br/>
-<br/>
-
-# How to dependence from maven repository
-
-```gradle
-    repositories {
-        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
-    }
-    dependencies {
-        compile 'sviolet:turquoise:5.0'
-        compile 'sviolet:turquoise-imageloader:5.0'
-        compile 'sviolet:turquoise-imageloader-plugin:5.0'
-        compile 'sviolet:turquoise-multidex:5.0'
-    }
-```
-
-# How to dependence by aar package
-
-https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md <br/>
 <br/>
 <br/>
 <br/>
