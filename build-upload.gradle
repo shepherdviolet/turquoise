@@ -28,12 +28,12 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
     uploadArchives {
         repositories.mavenDeployer {
             //暂时使用绝对路径指定本地仓库
-            repository(url: uri(rootProject.ext.upload_mvn_local_repo))
+            repository(url: uri(rootProject.ext.upload_repositoryPath))
             pom.project {
                 groupId 'sviolet'
                 artifactId project.name
                 name project.name
-                version rootProject.ext.upload_mvn_version
+                version rootProject.ext.upload_mavenVersion
                 packaging 'aar'
                 licenses {
                     license {

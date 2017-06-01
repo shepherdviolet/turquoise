@@ -11,20 +11,17 @@ buildscript {
             gradleLocalFile.withInputStream { stream -> gradleLocalProperties.load(stream) }
         }
 
-        upload_mvn_version = gradleLocalProperties.upload_mvn_version != null ? gradleLocalProperties.upload_mvn_version : library_version_name + '-SNAPSHOT'
-        upload_mvn_local_repo = gradleLocalProperties.upload_mvn_local_repo != null  ? gradleLocalProperties.upload_mvn_local_repo : rootProject.rootDir.absolutePath + '/release'
-        plugin_mvn_local_repo = gradleLocalProperties.plugin_mvn_local_repo
-        plugin_name_gradle_turquoise = gradleLocalProperties.plugin_name_gradle_turquoise
+        upload_mavenVersion = gradleLocalProperties.upload_mavenVersion != null ? gradleLocalProperties.upload_mavenVersion : version_projectVersionName + '-SNAPSHOT'
+        upload_repositoryPath = gradleLocalProperties.upload_repositoryPath != null  ? gradleLocalProperties.upload_repositoryPath : rootProject.rootDir.absolutePath + '/release'
+        repository_localRepositoryPath = gradleLocalProperties.repository_localRepositoryPath
     }
 
     //构建脚本依赖仓库
     repositories {
-        //plugin
-        if (gradleLocalProperties.plugin_mvn_local_repo != null) { maven {url gradleLocalProperties.plugin_mvn_local_repo} }//local plugin repo
+        if (gradleLocalProperties.repository_localRepositoryPath != null) { maven {url gradleLocalProperties.repository_localRepositoryPath} }//local repo path
 
-        //common
-//        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}//阿里云仓库
         jcenter()//jcenter
+        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
     }
 
     //构建脚本依赖
@@ -32,10 +29,8 @@ buildscript {
         //common
         classpath 'com.android.tools.build:gradle:3.0.0-alpha2'//安卓构建插件
 //        classpath 'com.android.tools.build:gradle:2.3.0'//安卓构建插件
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"//kotlin
-
-        //plugin
-        if (gradleLocalProperties.plugin_name_gradle_turquoise != null) { classpath gradleLocalProperties.plugin_name_gradle_turquoise }//gradle-turquoise plugin
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$version_kotlinVersion"//kotlin
+        classpath "sviolet:gradle-turquoise:$version_gradleTurquoiseVersion"//gradle-turquoise plugin
     }
 
 }
@@ -45,10 +40,13 @@ buildscript {
 allprojects {
     //工程依赖仓库
     repositories {
+        if (gradleLocalProperties.repository_localRepositoryPath != null) { maven {url gradleLocalProperties.repository_localRepositoryPath} }//local repo path
+
+        jcenter()//jcenter
+        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
+
 //        mavenLocal()//本地仓库
 //        maven{ url 'file:C:/m2repository/repository'}//本地仓库:指定路径
-        jcenter()//jcenter
-//        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public'}//阿里云仓库
     }
 }
 
@@ -65,8 +63,8 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
         defaultConfig {
             minSdkVersion 14
             targetSdkVersion 25
-            versionCode Integer.valueOf(library_version_code)
-            versionName library_version_name
+            versionCode Integer.valueOf(version_projectVersionCode)
+            versionName version_projectVersionName
         }
 
         buildTypes {
@@ -78,7 +76,7 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
     }
 
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+        compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$version_kotlinVersion"
     }
 
 }
@@ -90,7 +88,7 @@ configure(subprojects.findAll { it.name.startsWith('demo') }) {
     apply plugin: 'kotlin-android'
 
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+        compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$version_kotlinVersion"
     }
 
 }
@@ -101,11 +99,8 @@ configure(subprojects.findAll { it.name.startsWith('demo') }) {
 apply from: 'build-upload.gradle'
 //工具任务
 apply from: 'build-tools.gradle'
-
 //应用gradle-turquoise插件
-if (plugin_name_gradle_turquoise != null) {
-    apply plugin: 'gradle-turquoise'
-    turquoise{
-        printCachePathOfDependenciesFilter = ['compile']
-    }
+apply plugin: 'gradle-turquoise'
+turquoise {
+    printCachePathOfDependenciesFilter = ['compile']
 }

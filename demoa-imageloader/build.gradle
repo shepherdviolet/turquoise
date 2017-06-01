@@ -6,8 +6,8 @@ android {
         applicationId "sviolet.demoaimageloader"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode Integer.valueOf(library_version_code)
-        versionName library_version_name
+        versionCode Integer.valueOf(version_projectVersionCode)
+        versionName version_projectVersionName
 
         //true:多dex允许,突破类65535的限制
         multiDexEnabled false
@@ -64,7 +64,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')//这个配置会自动在混淆时引入Jar包, 不要在proguard-rules.pro中配置-libraryjars, 否则会报错!
-    compile project(':turquoise') { group 'sviolet'; version upload_mvn_version }//指定groupId和version, artifactId为project名
-    compile project(':turquoise-imageloader') { group 'sviolet'; version upload_mvn_version }//指定groupId和version, artifactId为project名
-    compile project(':turquoise-imageloader-plugin') { group 'sviolet'; version upload_mvn_version }//指定groupId和version, artifactId为project名
+    compile project(':turquoise') { group 'sviolet'; version upload_mavenVersion }//指定groupId和version, artifactId为project名
+    compile project(':turquoise-imageloader') { group 'sviolet'; version upload_mavenVersion }//指定groupId和version, artifactId为project名
+    compile project(':turquoise-imageloader-plugin') { group 'sviolet'; version upload_mavenVersion }//指定groupId和version, artifactId为project名
 }
