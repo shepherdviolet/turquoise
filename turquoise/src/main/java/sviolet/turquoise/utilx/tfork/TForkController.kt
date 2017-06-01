@@ -38,7 +38,7 @@ class TForkController internal constructor() {
     fun <R> await(timeout: Long, block: (TForkCallback<R>) -> Unit) : R?{
         val blockIndex = blockCounter++
         val callback = TForkCallback<R>(timeout)
-        TForkCenter.threadPool.execute{
+        TForkCenter.execute{
             try {
                 block(callback)
             } catch (e: Exception){
@@ -60,7 +60,7 @@ class TForkController internal constructor() {
     fun <R> await(timeout: Long, block: (TForkCallback<R>) -> Unit, exceptionHandler: (Exception) -> Boolean) : R?{
         val blockIndex = blockCounter++
         val callback = TForkCallback<R>(timeout)
-        TForkCenter.threadPool.execute{
+        TForkCenter.execute{
             try {
                 block(callback)
             } catch (e: Exception){

@@ -19,13 +19,32 @@
 
 package sviolet.turquoise.utilx.tfork
 
+import sviolet.turquoise.utilx.tlogger.logw
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * Created by S.Violet on 2017/5/31.
  */
 internal object TForkCenter {
 
-    val threadPool = Executors.newCachedThreadPool()
+    private val threadPool = Executors.newCachedThreadPool()
+    private val counter = AtomicInteger(0)
+
+    fun execute(block: () -> Unit){
+        threadPool.execute{
+            val count = counter.incrementAndGet()
+            try {
+                if (count > TForkConfigure.MAX_THREAD_NUM) {
+                    throw RuntimeException("[TFork]Too many fork threads:$count")
+                } else if (count > TForkConfigure.WARNING_THREAD_NUM) {
+                    logw("[TFork]Too many fork threads:$count")
+                }
+                block()
+            } finally {
+                counter.decrementAndGet()
+            }
+        }
+    }
 
 }

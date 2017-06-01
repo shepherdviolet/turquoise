@@ -19,30 +19,12 @@
 
 package sviolet.turquoise.utilx.tfork
 
-import sviolet.turquoise.utilx.tlogger.logw
-
 /**
- * Created by S.Violet on 2017/5/31.
+ * Created by S.Violet on 2017/6/2.
  */
+object TForkConfigure {
 
-fun Any?.fork(block: (TForkController) -> Unit) {
-    TForkCenter.execute {
-        try {
-            block(TForkController())
-        } catch (e: TForkParkTimeoutException) {
-            logw(e)
-        }
-    }
-}
+    var WARNING_THREAD_NUM = 10
+    var MAX_THREAD_NUM = 100
 
-fun Any?.fork(block: (TForkController) -> Unit, exceptionHandler: (Exception) -> Boolean) {
-    TForkCenter.execute {
-        try {
-            block(TForkController())
-        } catch (e: TForkParkTimeoutException) {
-            logw(e)
-        } catch (e: Exception) {
-            if (exceptionHandler(e)) return@execute else throw e
-        }
-    }
 }
