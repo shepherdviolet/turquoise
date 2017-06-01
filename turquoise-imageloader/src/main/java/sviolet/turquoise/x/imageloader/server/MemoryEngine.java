@@ -35,7 +35,11 @@ public class MemoryEngine extends Engine {
         try {
             resource = getComponentManager().getMemoryCacheServer().get(task.getKey());
         } catch (Exception e) {
-            getComponentManager().getServerSettings().getExceptionHandler().onMemoryCacheCommonException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), e, getComponentManager().getLogger());
+            try {
+                getComponentManager().getServerSettings().getExceptionHandler().onMemoryCacheCommonException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), e, getComponentManager().getLogger());
+            } catch (Exception e2) {
+                getComponentManager().getLogger().e("exception in ExceptionHandler", e2);
+            }
             task.setState(Task.State.FAILED);
             response(task);
             return;
