@@ -75,21 +75,57 @@ class TForkController internal constructor() {
         }
     }
 
-    fun uiPost(block: () -> Unit){
+    fun uiAwait(block: () -> Unit){
+        uiAwait(0, block)
+    }
+
+    fun uiAwait(timeout: Long, block: () -> Unit){
         val blockIndex = blockCounter++
+        val callback = TForkCallback<Unit>(timeout)
         mHandler.post {
-            block()
+            try {
+                block()
+                callback.callback(null)
+            } catch (e: Exception){
+                callback.callback(Exception("[TFork]catch exception from \"uiAwait\" block, block index($blockIndex)", e))
+            }
+        }
+        val result = callback.waitForResult()
+        when(result){
+            AsyncWaiter.Result.SUCCESS -> return
+            AsyncWaiter.Result.ERROR -> throw callback.getException()
+            AsyncWaiter.Result.TIMEOUT -> throw TForkParkTimeoutException("[TFork]uiAwait timeout($timeout ms), block index($blockIndex)")
+        }
+    }
+
+    fun uiAwait(block: () -> Unit, exceptionHandler: (Exception) -> Boolean){
+        uiAwait(0, block, exceptionHandler)
+    }
+
+    fun uiAwait(timeout: Long, block: () -> Unit, exceptionHandler: (Exception) -> Boolean){
+        val blockIndex = blockCounter++
+        val callback = TForkCallback<Unit>(timeout)
+        mHandler.post {
+            try {
+                block()
+                callback.callback(null)
+            } catch (e: Exception){
+                callback.callback(Exception("[TFork]catch exception from \"uiAwait\" block, block index($blockIndex)", e))
+            }
+        }
+        val result = callback.waitForResult()
+        when(result){
+            AsyncWaiter.Result.SUCCESS -> return
+            AsyncWaiter.Result.ERROR -> if (exceptionHandler(callback.getException())) return else throw callback.getException()
+            AsyncWaiter.Result.TIMEOUT -> throw TForkParkTimeoutException("[TFork]uiAwait timeout($timeout ms), block index($blockIndex)")
         }
     }
 
     fun ui(block: () -> Unit){
         val blockIndex = blockCounter++
-        val callback = TForkCallback<Unit>(0)
         mHandler.post {
             block()
-            callback.callback(null)
         }
-        callback.waitForResult()
     }
 
 }
