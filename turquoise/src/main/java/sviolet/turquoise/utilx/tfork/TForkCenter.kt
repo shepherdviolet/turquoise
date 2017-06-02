@@ -31,7 +31,7 @@ internal object TForkCenter {
     private val threadPool = Executors.newCachedThreadPool()
     private val counter = AtomicInteger(0)
 
-    fun execute(block: () -> Unit){
+    fun executeFork(block: () -> Unit){
         threadPool.execute{
             val count = counter.incrementAndGet()
             try {
@@ -44,6 +44,12 @@ internal object TForkCenter {
             } finally {
                 counter.decrementAndGet()
             }
+        }
+    }
+
+    fun execute(block: () -> Unit){
+        threadPool.execute{
+            block()
         }
     }
 

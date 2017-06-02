@@ -26,7 +26,7 @@ import sviolet.turquoise.utilx.tlogger.logw
  */
 
 fun Any?.fork(block: (TForkController) -> Unit) {
-    TForkCenter.execute {
+    TForkCenter.executeFork {
         try {
             block(TForkController())
         } catch (e: TForkParkTimeoutException) {
@@ -36,13 +36,13 @@ fun Any?.fork(block: (TForkController) -> Unit) {
 }
 
 fun Any?.fork(block: (TForkController) -> Unit, exceptionHandler: (Exception) -> Boolean) {
-    TForkCenter.execute {
+    TForkCenter.executeFork {
         try {
             block(TForkController())
         } catch (e: TForkParkTimeoutException) {
             logw(e)
         } catch (e: Exception) {
-            if (exceptionHandler(e)) return@execute else throw e
+            if (exceptionHandler(e)) return@executeFork else throw e
         }
     }
 }
