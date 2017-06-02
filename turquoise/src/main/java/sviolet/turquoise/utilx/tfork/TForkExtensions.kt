@@ -22,24 +22,34 @@ package sviolet.turquoise.utilx.tfork
 import sviolet.turquoise.utilx.tlogger.logw
 
 /**
+ * TFork
+ * !!!实验性功能, 谨慎使用!!!
+ *
  * Created by S.Violet on 2017/5/31.
  */
 
+/**
+ * 启动新线程执行代码块
+ */
 fun Any?.fork(block: (TForkController) -> Unit) {
     TForkCenter.executeFork {
         try {
             block(TForkController())
-        } catch (e: TForkParkTimeoutException) {
+        } catch (e: TForkAwaitTimeoutException) {
             logw(e)
         }
     }
 }
 
+/**
+ * 启动新线程执行代码块, 第二个代码块用于处理第一个代码块中抛出的异常, 第二个代码块返回true时, 表示异常已被
+ * 妥善处理, 程序不再向外抛出异常, 若返回false, 则继续向外抛出异常
+ */
 fun Any?.fork(block: (TForkController) -> Unit, exceptionHandler: (Exception) -> Boolean) {
     TForkCenter.executeFork {
         try {
             block(TForkController())
-        } catch (e: TForkParkTimeoutException) {
+        } catch (e: TForkAwaitTimeoutException) {
             logw(e)
         } catch (e: Exception) {
             if (exceptionHandler(e)) return@executeFork else throw e

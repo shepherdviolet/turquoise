@@ -20,6 +20,8 @@
 package sviolet.turquoise.utilx.tfork
 
 /**
+ * await/uiAwait块超时的异常
+ *
  * Created by S.Violet on 2017/5/31.
  */
-internal class TForkParkTimeoutException(val msg: String) : Exception(msg)
+internal class TForkAwaitTimeoutException(val msg: String) : Exception(msg)

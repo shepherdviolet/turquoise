@@ -24,18 +24,29 @@ import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
+ * TFork线程池
+ *
  * Created by S.Violet on 2017/5/31.
  */
 internal object TForkCenter {
 
+    //线程池
     private val threadPool = Executors.newCachedThreadPool()
+    //fork计数
     private val counter = AtomicInteger(0)
 
+    /**
+     * fork块执行
+     */
     fun executeFork(block: () -> Unit){
         threadPool.execute{
             val count = counter.incrementAndGet()
             try {
                 if (count > TForkConfigure.MAX_THREAD_NUM) {
+                    /*
+                     * 同时执行的fork块过多, 通常是因为fork块的线程执行时间过长导致,
+                     * 特别是await/uiAwait块中, 忘记使用callback返回结果, 导致大量线程阻塞
+                     */
                     throw RuntimeException("[TFork]Too many fork threads:$count")
                 } else if (count > TForkConfigure.WARNING_THREAD_NUM) {
                     logw("[TFork]Too many fork threads:$count")
@@ -47,6 +58,9 @@ internal object TForkCenter {
         }
     }
 
+    /**
+     * await/uiAwait/ui块执行
+     */
     fun execute(block: () -> Unit){
         threadPool.execute{
             block()

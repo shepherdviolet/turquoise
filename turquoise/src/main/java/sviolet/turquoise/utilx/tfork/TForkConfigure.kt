@@ -20,11 +20,15 @@
 package sviolet.turquoise.utilx.tfork
 
 /**
+ * TFork公共配置
+ *
  * Created by S.Violet on 2017/6/2.
  */
 object TForkConfigure {
 
+    //当同时执行的fork块达到该数量时, 打印日志警告
     var WARNING_THREAD_NUM = 10
+    //当同时执行的fork块达到该数量时, 抛出异常(APP崩溃)
     var MAX_THREAD_NUM = 100
 
 }
