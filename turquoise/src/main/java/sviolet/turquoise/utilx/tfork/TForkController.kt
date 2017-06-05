@@ -190,7 +190,7 @@ class TForkController internal constructor() {
      * @param block 代码块
      */
     fun ui(block: () -> Unit){
-        val blockIndex = blockCounter++
+        blockCounter++
         mHandler.post {
             block()
         }
