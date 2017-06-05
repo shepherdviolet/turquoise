@@ -42,17 +42,20 @@ fun Any?.fork(block: (TForkController) -> Unit) {
 }
 
 /**
- * 启动新线程执行代码块, 第二个代码块用于处理第一个代码块中抛出的异常, 第二个代码块返回true时, 表示异常已被
- * 妥善处理, 程序不再向外抛出异常, 若返回false, 则继续向外抛出异常
+ * 启动新线程执行代码块
+ * @param block 代码块
+ * @param exceptionHandler 异常处理块, 用于处理代码块中抛出的异常. 返回true时, 表示异常已被妥善处理,
+ * 程序不再向外抛出异常; 若返回false, 则继续向外抛出异常. 异常处理块第一个参数exception为异常对象,
+ * 第二个参数isTimeout=true时表示fork代码块由于内部的await/uiAwait块等待超时导致流程终止.
  */
-fun Any?.fork(block: (TForkController) -> Unit, exceptionHandler: (Exception) -> Boolean) {
+fun Any?.fork(block: (TForkController) -> Unit, exceptionHandler: (exception: Exception, isTimeout: Boolean) -> Boolean) {
     TForkCenter.executeFork {
         try {
             block(TForkController())
         } catch (e: TForkAwaitTimeoutException) {
-            logw(e)
+            if (exceptionHandler(e, true)) return@executeFork else logw(e)
         } catch (e: Exception) {
-            if (exceptionHandler(e)) return@executeFork else throw e
+            if (exceptionHandler(e, false)) return@executeFork else throw e
         }
     }
 }
