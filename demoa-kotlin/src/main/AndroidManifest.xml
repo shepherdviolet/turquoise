@@ -3,6 +3,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="sviolet.demoakotlin">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
     <application
         android:name=".KtApplication"
         android:allowBackup="true"
@@ -30,6 +33,9 @@
 
         <activity android:name=".logger.LoggerActivity"/>
         <activity android:name=".logger.SimpleLoggerActivity"/>
+
+        <activity android:name=".tfork.TForkActivity"/>
+        <activity android:name=".tfork.SimpleTForkActivity"/>
 
         <activity android:name=".TempActivity"/>
 .
