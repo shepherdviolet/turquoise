@@ -42,7 +42,7 @@ class TForkController internal constructor() {
      * @param block 代码块
      */
     fun <R> await(block: (TForkCallback<R>) -> Unit) : R?{
-        return await(0, block)
+        return await(TForkConfigure.DEFAULT_AWAIT_TIMEOUT, block)
     }
 
     /**
@@ -79,7 +79,7 @@ class TForkController internal constructor() {
      * 执行, await块返回结果为null; 返回false时, fork线程终止并抛出异常.
      */
     fun <R> await(block: (TForkCallback<R>) -> Unit, exceptionHandler: (Exception) -> Boolean) : R?{
-        return await(0, block, exceptionHandler)
+        return await(TForkConfigure.DEFAULT_AWAIT_TIMEOUT, block, exceptionHandler)
     }
 
     /**
@@ -116,7 +116,7 @@ class TForkController internal constructor() {
      * @param block 代码块
      */
     fun uiAwait(block: () -> Unit){
-        uiAwait(0, block)
+        uiAwait(TForkConfigure.DEFAULT_AWAIT_TIMEOUT, block)
     }
 
     /**
@@ -154,7 +154,7 @@ class TForkController internal constructor() {
      * 执行, uiAwait块返回结果为null; 返回false时, fork线程终止并抛出异常.
      */
     fun uiAwait(block: () -> Unit, exceptionHandler: (Exception) -> Boolean){
-        uiAwait(0, block, exceptionHandler)
+        uiAwait(TForkConfigure.DEFAULT_AWAIT_TIMEOUT, block, exceptionHandler)
     }
 
     /**

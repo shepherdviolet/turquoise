@@ -31,4 +31,7 @@ object TForkConfigure {
     //当同时执行的fork块达到该数量时, 抛出异常(APP崩溃)
     var MAX_THREAD_NUM = 100
 
+    //await/uiAwait默认超时时间(超时后流程终止)
+    var DEFAULT_AWAIT_TIMEOUT = 5 * 60 * 1000L
+
 }
