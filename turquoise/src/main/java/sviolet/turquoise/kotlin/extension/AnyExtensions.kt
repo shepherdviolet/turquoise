@@ -20,7 +20,7 @@
 package sviolet.turquoise.kotlin.extension
 
 /**
- * kotlin common extensions
+ * Any extensions
  *
  * Created by S.Violet on 2017/5/23.
  */
