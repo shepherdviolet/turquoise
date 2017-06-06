@@ -122,7 +122,7 @@ public abstract class TLogger {
      *
      * @param msg 错误信息
      */
-    public abstract void e(String msg);
+    public abstract void e(Object msg);
 
     /**
      * 错误日志<p/>
@@ -132,7 +132,7 @@ public abstract class TLogger {
      * @param msg 错误信息
      * @param t 异常
      */
-    public abstract void e(String msg, Throwable t);
+    public abstract void e(Object msg, Throwable t);
 
     /**
      * 错误日志<p/>
@@ -150,7 +150,7 @@ public abstract class TLogger {
      *
      * @param msg 错误信息
      */
-    public abstract void w(String msg);
+    public abstract void w(Object msg);
 
     /**
      * 警告日志<p/>
@@ -160,7 +160,7 @@ public abstract class TLogger {
      * @param msg 错误信息
      * @param t 异常
      */
-    public abstract void w(String msg, Throwable t);
+    public abstract void w(Object msg, Throwable t);
 
     /**
      * 警告日志<p/>
@@ -178,7 +178,7 @@ public abstract class TLogger {
      *
      * @param msg 信息
      */
-    public abstract void i(String msg);
+    public abstract void i(Object msg);
 
     /**
      * debug日志<p/>
@@ -187,7 +187,7 @@ public abstract class TLogger {
      *
      * @param msg 信息
      */
-    public abstract void d(String msg);
+    public abstract void d(Object msg);
 
     /**
      * 检查某个日志级别是否允许打印

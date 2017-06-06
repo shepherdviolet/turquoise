@@ -43,13 +43,13 @@ internal class TLoggerProxy(
         return CheckUtils.isFlagMatch(this.level ?: NULL, level)
     }
 
-    override fun e(msg: String?) {
+    override fun e(msg: Any?) {
         updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, ERROR))
             Log.e(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")
     }
 
-    override fun e(msg: String?, t: Throwable?) {
+    override fun e(msg: Any?, t: Throwable?) {
         updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, ERROR))
             Log.e(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg", t)
@@ -61,13 +61,13 @@ internal class TLoggerProxy(
             Log.e(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]", t)
     }
 
-    override fun w(msg: String?) {
+    override fun w(msg: Any?) {
         updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, WARNING))
             Log.w(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")
     }
 
-    override fun w(msg: String?, t: Throwable?) {
+    override fun w(msg: Any?, t: Throwable?) {
         updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, WARNING))
             Log.w(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg", t)
@@ -79,13 +79,13 @@ internal class TLoggerProxy(
             Log.w(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]", t)
     }
 
-    override fun i(msg: String?) {
+    override fun i(msg: Any?) {
         updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, INFO))
             Log.i(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")
     }
 
-    override fun d(msg: String?) {
+    override fun d(msg: Any?) {
         updateLevel()
         if (CheckUtils.isFlagMatch(level ?: NULL, DEBUG))
             Log.d(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")

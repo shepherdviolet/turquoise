@@ -71,11 +71,11 @@ fun Any?.logResetRules(rules: Map<String, Int>?){
     TLoggerCenter.resetRules(rules)
 }
 
-fun Any?.loge(msg: String?) {
+fun Any?.loge(msg: Any?) {
     TLoggerCenter.fetchLogger(this).e(msg)
 }
 
-fun Any?.loge(msg: String?, t: Throwable?) {
+fun Any?.loge(msg: Any?, t: Throwable?) {
     TLoggerCenter.fetchLogger(this).e(msg, t)
 }
 
@@ -83,11 +83,11 @@ fun Any?.loge(t: Throwable?) {
     TLoggerCenter.fetchLogger(this).e(t)
 }
 
-fun Any?.logw(msg: String?) {
+fun Any?.logw(msg: Any?) {
     TLoggerCenter.fetchLogger(this).w(msg)
 }
 
-fun Any?.logw(msg: String?, t: Throwable?) {
+fun Any?.logw(msg: Any?, t: Throwable?) {
     TLoggerCenter.fetchLogger(this).w(msg, t)
 }
 
@@ -95,11 +95,11 @@ fun Any?.logw(t: Throwable?) {
     TLoggerCenter.fetchLogger(this).w(t)
 }
 
-fun Any?.logi(msg: String?) {
+fun Any?.logi(msg: Any?) {
     TLoggerCenter.fetchLogger(this).i(msg)
 }
 
-fun Any?.logd(msg: String?) {
+fun Any?.logd(msg: Any?) {
     TLoggerCenter.fetchLogger(this).d(msg)
 }
 
