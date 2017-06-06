@@ -1,4 +1,4 @@
-# Turquoise 5.1.170601
+# Turquoise 5.1.170606
 * A comprehensive Android library for private use.
 * https://github.com/shepherdviolet/turquoise
 
@@ -68,6 +68,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 ### Kotlin support | sviolet.turquoise.kotlin
 * Kotlin extensions: extension function package
 * TLogger: Kotlin style
+* TFork: Experimental feature, a simple coroutine
 
 ### Dependency:
 ```gradle
