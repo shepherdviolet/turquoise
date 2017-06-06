@@ -30,6 +30,7 @@ import sviolet.demoakotlin.common.DemoDefault
 import sviolet.demoakotlin.common.DemoList
 import sviolet.demoakotlin.common.DemoListAdapter
 import sviolet.demoakotlin.logger.LoggerActivity
+import sviolet.demoakotlin.tfork.TForkActivity
 import sviolet.turquoise.enhance.app.TActivity
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings
@@ -47,6 +48,7 @@ import kotlin.reflect.KClass
 // Demo列表
 @DemoList(
         LoggerActivity::class,
+        TForkActivity::class,
         TempActivity::class
 )
 /**************************************************************

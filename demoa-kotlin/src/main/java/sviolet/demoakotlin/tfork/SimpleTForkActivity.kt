@@ -29,7 +29,7 @@ import sviolet.turquoise.enhance.app.annotation.inject.ResourceId
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings
 
 /**
- * 临时调试用Activity
+ * TFork的简单示例
  */
 
 @DemoDescription(
@@ -51,24 +51,13 @@ class SimpleTForkActivity : TActivity() {
 
     override fun onInitViews(savedInstanceState: Bundle?) {
 
+        //fork放在presenter中, presenter弱引用持有context, 这样可以避免fork代码块持有context导致内存泄漏
         presenter.queryInfo("https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/slate.jpg")
 
     }
 
     fun setImage(bitmap: Bitmap?){
         imageView?.setImageBitmap(bitmap)
-    }
-
-    override fun onPresenterRefresh(code: Int) {
-        super.onPresenterRefresh(code)
-    }
-
-    override fun afterDestroy() {
-
-    }
-
-    override fun onResume() {
-        super.onResume()
     }
 
 }
