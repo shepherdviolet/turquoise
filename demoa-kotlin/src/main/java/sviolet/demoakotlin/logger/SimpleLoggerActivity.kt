@@ -21,6 +21,7 @@ package sviolet.demoakotlin.logger
 
 import android.os.Bundle
 import sviolet.demoakotlin.R
+import sviolet.demoakotlin.TempActivity
 import sviolet.demoakotlin.common.DemoDescription
 import sviolet.turquoise.enhance.app.TActivity
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId
@@ -45,6 +46,8 @@ import sviolet.turquoise.utilx.tlogger.*
 class SimpleLoggerActivity : TActivity() {
 
     override fun onInitViews(savedInstanceState: Bundle?) {
+
+        TempActivity::class.logd("log from temp activity")
 
         println("Turquoise: SimpleLoggerDemo: global level = ALL, no rules")
 
