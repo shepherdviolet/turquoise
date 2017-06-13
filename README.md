@@ -1,4 +1,4 @@
-# Turquoise 5.3.170613
+# Turquoise 5.3
 * A comprehensive Android library for private use.
 * https://github.com/shepherdviolet/turquoise
 
@@ -22,10 +22,10 @@ https://git.oschina.net/shepherdviolet/alternate-maven-repository/raw/master/rep
         //maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
     }
     dependencies {
-        compile 'sviolet:turquoise:5.2'
-        compile 'sviolet:turquoise-imageloader:5.2'
-        compile 'sviolet:turquoise-imageloader-plugin:5.2'
-        compile 'sviolet:turquoise-multidex:5.2'
+        compile 'com.github.shepherdviolet.turquoise:turquoise:5.3'
+        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader:5.3'
+        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader-plugin:5.3'
+        compile 'com.github.shepherdviolet.turquoise:turquoise-multidex:5.3'
     }
 ```
 
@@ -73,7 +73,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 ### Kotlin support | sviolet.turquoise.kotlin
 * Kotlin extensions: extension function package
 * TLogger: Kotlin style
-* TFork: Experimental feature, a simple coroutine
+* TFork: Experimental feature, a simple async tools
 
 ### Source Code Dependency:
 ```gradle
@@ -82,7 +82,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
     //required
     compile 'com.android.support:support-v4:25.3.1'
     //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-5"
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
@@ -138,7 +138,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
     //required
     compile 'com.android.support:support-v4:25.3.1'
     //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-5"
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
 ```
@@ -174,7 +174,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
     compile 'com.android.support:support-v4:25.3.1'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
     //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-5"
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
 ```
@@ -200,7 +200,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
     compile project(':turquoise')
     compile project(':turquoise-multidex')
     //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-5"
 
 ```
 <br/>

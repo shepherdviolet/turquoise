@@ -30,7 +30,7 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
             //暂时使用绝对路径指定本地仓库
             repository(url: uri(rootProject.ext.upload_repositoryPath))
             pom.project {
-                groupId 'sviolet'
+                groupId 'com.github.shepherdviolet.turquoise'
                 artifactId project.name
                 name project.name
                 version rootProject.ext.upload_mavenVersion

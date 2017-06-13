@@ -2,5 +2,5 @@
 dependencies {
     //required
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':turquoise') { group 'sviolet'; version upload_mavenVersion }//指定groupId和version, artifactId为project名
+    compile project(':turquoise') { group 'com.github.shepherdviolet.turquoise'; version upload_mavenVersion }//指定groupId和version, artifactId为project名
 }
