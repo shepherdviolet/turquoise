@@ -59,50 +59,62 @@ package sviolet.turquoise.utilx.tlogger
  * Created by S.Violet on 2017/5/23.
  */
 
-fun Any?.logSetGlobalLevel(level: Int?){
-    TLoggerCenter.setGlobalLevel(level)
+fun Any?.logSetGlobalLevel(level: Int){
+    TLoggerCenter.INSTANCE.setGlobalLevel(level)
 }
 
 fun Any?.logAddRules(rules: Map<String, Int>?){
-    TLoggerCenter.addRules(rules)
+    TLoggerCenter.INSTANCE.addRules(rules)
 }
 
 fun Any?.logResetRules(rules: Map<String, Int>?){
-    TLoggerCenter.resetRules(rules)
+    TLoggerCenter.INSTANCE.resetRules(rules)
 }
 
 fun Any?.loge(msg: Any?) {
-    TLoggerCenter.fetchLogger(this).e(msg)
+    var host = this
+    if (this is kotlin.jvm.internal.ClassReference) host = this.jClass
+    TLoggerCenter.INSTANCE.fetchLogger(host).e(msg)
 }
 
 fun Any?.loge(msg: Any?, t: Throwable?) {
-    TLoggerCenter.fetchLogger(this).e(msg, t)
+    var host = this
+    if (this is kotlin.jvm.internal.ClassReference) host = this.jClass
+    TLoggerCenter.INSTANCE.fetchLogger(host).e(msg, t)
 }
 
 fun Any?.loge(t: Throwable?) {
-    TLoggerCenter.fetchLogger(this).e(t)
+    var host = this
+    if (this is kotlin.jvm.internal.ClassReference) host = this.jClass
+    TLoggerCenter.INSTANCE.fetchLogger(host).e(t)
 }
 
 fun Any?.logw(msg: Any?) {
-    TLoggerCenter.fetchLogger(this).w(msg)
+    var host = this
+    if (this is kotlin.jvm.internal.ClassReference) host = this.jClass
+    TLoggerCenter.INSTANCE.fetchLogger(host).w(msg)
 }
 
 fun Any?.logw(msg: Any?, t: Throwable?) {
-    TLoggerCenter.fetchLogger(this).w(msg, t)
+    var host = this
+    if (this is kotlin.jvm.internal.ClassReference) host = this.jClass
+    TLoggerCenter.INSTANCE.fetchLogger(host).w(msg, t)
 }
 
 fun Any?.logw(t: Throwable?) {
-    TLoggerCenter.fetchLogger(this).w(t)
+    var host = this
+    if (this is kotlin.jvm.internal.ClassReference) host = this.jClass
+    TLoggerCenter.INSTANCE.fetchLogger(host).w(t)
 }
 
 fun Any?.logi(msg: Any?) {
-    TLoggerCenter.fetchLogger(this).i(msg)
+    var host = this
+    if (this is kotlin.jvm.internal.ClassReference) host = this.jClass
+    TLoggerCenter.INSTANCE.fetchLogger(host).i(msg)
 }
 
 fun Any?.logd(msg: Any?) {
-    TLoggerCenter.fetchLogger(this).d(msg)
-}
-
-fun Any?.getLogger() : TLogger {
-    return TLoggerCenter.newLogger(this)
+    var host = this
+    if (this is kotlin.jvm.internal.ClassReference) host = this.jClass
+    TLoggerCenter.INSTANCE.fetchLogger(host).d(msg)
 }
