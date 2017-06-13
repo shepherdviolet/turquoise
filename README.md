@@ -1,4 +1,4 @@
-# Turquoise 5.2.170613
+# Turquoise 5.3.170613
 * A comprehensive Android library for private use.
 * https://github.com/shepherdviolet/turquoise
 
@@ -21,10 +21,10 @@ https://git.oschina.net/shepherdviolet/alternate-maven-repository/raw/master/rep
         maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
     }
     dependencies {
-        compile 'sviolet:turquoise:5.0'
-        compile 'sviolet:turquoise-imageloader:5.0'
-        compile 'sviolet:turquoise-imageloader-plugin:5.0'
-        compile 'sviolet:turquoise-multidex:5.0'
+        compile 'sviolet:turquoise:5.2'
+        compile 'sviolet:turquoise-imageloader:5.2'
+        compile 'sviolet:turquoise-imageloader-plugin:5.2'
+        compile 'sviolet:turquoise-multidex:5.2'
     }
 ```
 <br/>
