@@ -17,11 +17,21 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utilx.tfork
+package sviolet.turquoise.kotlin.utilx.tfork
 
 /**
- * await/uiAwait块超时的异常
+ * TFork公共配置
  *
- * Created by S.Violet on 2017/5/31.
+ * Created by S.Violet on 2017/6/2.
  */
-internal class TForkAwaitTimeoutException(val msg: String) : Exception(msg)
+object TForkConfigure {
+
+    //当同时执行的fork块达到该数量时, 打印日志警告
+    var WARNING_THREAD_NUM = 10
+    //当同时执行的fork块达到该数量时, 抛出异常(APP崩溃)
+    var MAX_THREAD_NUM = 100
+
+    //await/uiAwait默认超时时间(超时后流程终止)
+    var DEFAULT_AWAIT_TIMEOUT = 5 * 60 * 1000L
+
+}

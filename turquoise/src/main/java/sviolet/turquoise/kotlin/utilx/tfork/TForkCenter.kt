@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.utilx.tfork
+package sviolet.turquoise.kotlin.utilx.tfork
 
 import sviolet.turquoise.utilx.tlogger.logw
 import java.util.concurrent.Executors

@@ -21,7 +21,7 @@ package sviolet.demoakotlin.tfork
 
 import android.graphics.Bitmap
 import sviolet.turquoise.enhance.app.mvp.TPresenter
-import sviolet.turquoise.utilx.tfork.fork
+import sviolet.turquoise.kotlin.utilx.tfork.fork
 import sviolet.turquoise.utilx.tlogger.logd
 import sviolet.turquoise.utilx.tlogger.loge
 import sviolet.turquoise.utilx.tlogger.logw
