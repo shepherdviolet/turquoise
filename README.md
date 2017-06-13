@@ -27,6 +27,11 @@ https://git.oschina.net/shepherdviolet/alternate-maven-repository/raw/master/rep
         compile 'sviolet:turquoise-multidex:5.2'
     }
 ```
+
+* Exclude dependencies
+
+https://github.com/shepherdviolet/turquoise/blob/master/doc/ExcludeDependencies.md <br/>
+
 <br/>
 <br/>
 <br/>
@@ -69,7 +74,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 * TLogger: Kotlin style
 * TFork: Experimental feature, a simple coroutine
 
-### Dependency:
+### Source Code Dependency:
 ```gradle
 
     compile project(':turquoise')
@@ -124,7 +129,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 
 ```
 
-### Dependency:
+### Source Code Dependency:
 ```gradle
 
     compile project(':turquoise')
@@ -158,7 +163,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 * TILoader will load this plugin automatically, as long as your project dependent on this plugin module. Don't need to do anything else.
 <br/>
 
-### Dependency:
+### Source Code Dependency:
 ```gradle
 
     compile project(':turquoise')
@@ -188,7 +193,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 * Add support for MultiDex.
 <br/>
 
-### Dependency:
+### Source Code Dependency:
 ```gradle
 
     compile project(':turquoise')
