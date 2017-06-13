@@ -18,7 +18,8 @@ https://git.oschina.net/shepherdviolet/alternate-maven-repository/raw/master/rep
 
 ```gradle
     repositories {
-        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
+        maven { url 'https://jitpack.io' }
+        //maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
     }
     dependencies {
         compile 'sviolet:turquoise:5.2'

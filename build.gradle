@@ -21,7 +21,9 @@ buildscript {
         if (gradleLocalProperties.repository_localRepositoryPath != null) { maven {url gradleLocalProperties.repository_localRepositoryPath} }//local repo path
 
         jcenter()//jcenter
+        maven { url 'https://jitpack.io' }
         maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
+        maven { url 'https://maven.google.com' }
     }
 
     //构建脚本依赖
@@ -43,7 +45,9 @@ allprojects {
         if (gradleLocalProperties.repository_localRepositoryPath != null) { maven {url gradleLocalProperties.repository_localRepositoryPath} }//local repo path
 
         jcenter()//jcenter
+        maven { url 'https://jitpack.io' }
         maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
+        maven { url 'https://maven.google.com' }
 
 //        mavenLocal()//本地仓库
 //        maven{ url 'file:C:/m2repository/repository'}//本地仓库:指定路径
