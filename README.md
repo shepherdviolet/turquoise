@@ -1,4 +1,4 @@
-# Turquoise 5.2.170606
+# Turquoise 5.2.170613
 * A comprehensive Android library for private use.
 * https://github.com/shepherdviolet/turquoise
 
@@ -41,7 +41,6 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 # Module turquoise
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Maven%20Dependency-kotlin--stdlib--jre7-dc143c.svg?style=flat)
 ###### The basic library module, as detailed below:
 
 ### Utils/Models ┃ sviolet.turquoise.util/utilx/model/modelx
@@ -75,9 +74,9 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 
     compile project(':turquoise')
     //required
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
     compile 'com.android.support:support-v4:25.3.1'
     //optional
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
@@ -92,7 +91,6 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Maven%20Dependency-kotlin--stdlib--jre7-dc143c.svg?style=flat)
 
 ###### TurquoiseImageLoader. it's a new image loader.
 
@@ -132,9 +130,9 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
     compile project(':turquoise')
     compile project(':turquoise-imageloader')
     //required
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
     compile 'com.android.support:support-v4:25.3.1'
     //optional
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
 ```
@@ -152,7 +150,6 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise--imageloader-2ed8a8.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Maven%20Dependency-kotlin--stdlib--jre7-dc143c.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
 
 ###### Expansion Module of `turquoise-imageloader`. Optional.
@@ -168,10 +165,10 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
     compile project(':turquoise-imageloader')
     compile project(':turquoise-imageloader-plugin')
     //required
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
     compile 'com.android.support:support-v4:25.3.1'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
     //optional
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
 ```
@@ -185,7 +182,6 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 # Module turquoise-multidex
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Maven%20Dependency-kotlin--stdlib--jre7-dc143c.svg?style=flat)
 
 ###### Expansion Module of `turquoise`. Optional.
 
@@ -197,7 +193,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 
     compile project(':turquoise')
     compile project(':turquoise-multidex')
-    //required
+    //optional
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-4"
 
 ```
