@@ -51,19 +51,6 @@ android {
         }
     }
 
-    //多渠道打包
-    //左侧工具栏--BuildVariants, 可配置调试时的渠道类型
-//    productFlavors {
-//        google {
-//            applicationId "sviolet.demoa.google"
-//            buildConfigField 'String', 'URL', '"https://github.com/shepherdviolet/turquoise"'
-//        }
-//        wandoujia {
-//            applicationId "sviolet.demoa.wandoujia"
-//            buildConfigField 'String', 'URL', '"https://github.com/shepherdviolet/turquoise"'
-//        }
-//    }
-
     sourceSets {
         main {
             //指定JNI的so库路径
@@ -79,6 +66,37 @@ android {
         additionalParameters = ['--multi-dex',
                                 '--set-max-idx-number=10000']
     }
+
+    //多渠道打包///////////////////////////////////////////////////////////////////
+    //左侧工具栏--BuildVariants, 可配置调试时的flavor类型
+
+    //flavor维度, 使得productFlavors具有多个维度, 例如:发布渠道, 测试/生产环境
+//    flavorDimensions "channel", "environment"
+
+    //flavor配置
+//    productFlavors {
+//        google {//谷歌市场
+//            flavorDimension "channel"
+//            buildConfigField 'String', 'CHANNEL', '"谷歌市场版"'
+//        }
+//        wandoujia {//豌豆荚市场
+//            flavorDimension "channel"
+//            buildConfigField 'String', 'CHANNEL', '"豌豆荚市场版"'
+//        }
+//        prod {//生产环境
+//            flavorDimension "environment"
+//            manifestPlaceholders = [APP_NAME: "demoa"]//生产应用名(在Manifest中用${APP_NAME}取值)
+//            applicationId "sviolet.demoa"//生产包名
+//            buildConfigField 'String', 'URL', '"https://github.com/shepherdviolet/"'//生产URL
+//        }
+//        dev {//开发环境
+//            flavorDimension "environment"
+//            manifestPlaceholders = [APP_NAME: "demoa-test"]//测试应用名(在Manifest中用${APP_NAME}取值)
+//            applicationId "sviolet.demoa.test"//测试包名
+//            buildConfigField 'String', 'URL', '"https://github.com/shepherdviolet/test"'//测试URL
+//        }
+//    }
+
 }
 
 dependencies {
