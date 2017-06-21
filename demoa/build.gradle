@@ -51,11 +51,15 @@ android {
         }
     }
 
+    //多渠道打包
+    //左侧工具栏--BuildVariants, 可配置调试时的渠道类型
 //    productFlavors {
 //        google {
+//            applicationId "sviolet.demoa.google"
 //            buildConfigField 'String', 'URL', '"https://github.com/shepherdviolet/turquoise"'
 //        }
 //        wandoujia {
+//            applicationId "sviolet.demoa.wandoujia"
 //            buildConfigField 'String', 'URL', '"https://github.com/shepherdviolet/turquoise"'
 //        }
 //    }
