@@ -51,8 +51,14 @@ android {
         }
     }
 
-    productFlavors {
-    }
+//    productFlavors {
+//        google {
+//
+//        }
+//        wandoujia {
+//
+//        }
+//    }
 
     sourceSets {
         main {
