@@ -97,13 +97,16 @@ android {
 //        }
 //    }
 
+    //过滤维度组合
 //    variantFilter { variant ->
 //        // release 忽略 除了prod以外的环境
 //        if (variant.buildType.name == 'release') {
+//            //get(1)表示获取第二个维度(即environment)
 //            variant.setIgnore(variant.getFlavors().get(1).name != 'prod')
 //        }
 //        // debug 忽略 prod环境
 //        if (variant.buildType.name == 'debug') {
+//            //get(1)表示获取第二个维度(即environment)
 //            variant.setIgnore(variant.getFlavors().get(1).name == 'prod')
 //        }
 //    }
