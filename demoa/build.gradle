@@ -53,10 +53,10 @@ android {
 
 //    productFlavors {
 //        google {
-//
+//            buildConfigField 'String', 'URL', '"https://github.com/shepherdviolet/turquoise"'
 //        }
 //        wandoujia {
-//
+//            buildConfigField 'String', 'URL', '"https://github.com/shepherdviolet/turquoise"'
 //        }
 //    }
 
