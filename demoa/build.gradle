@@ -97,6 +97,17 @@ android {
 //        }
 //    }
 
+//    variantFilter { variant ->
+//        // release 忽略 dev环境
+//        if (variant.buildType.name == 'release') {
+//            variant.setIgnore(variant.getFlavors().get(1).name == 'dev')
+//        }
+//        // debug 忽略 prod环境
+//        if (variant.buildType.name == 'debug') {
+//            variant.setIgnore(variant.getFlavors().get(1).name == 'prod')
+//        }
+//    }
+
 }
 
 dependencies {
