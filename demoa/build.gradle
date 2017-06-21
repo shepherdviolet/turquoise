@@ -98,9 +98,9 @@ android {
 //    }
 
 //    variantFilter { variant ->
-//        // release 忽略 dev环境
+//        // release 忽略 除了prod以外的环境
 //        if (variant.buildType.name == 'release') {
-//            variant.setIgnore(variant.getFlavors().get(1).name == 'dev')
+//            variant.setIgnore(variant.getFlavors().get(1).name != 'prod')
 //        }
 //        // debug 忽略 prod环境
 //        if (variant.buildType.name == 'debug') {
