@@ -24,6 +24,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 
 /**
  * Byte处理工具
@@ -47,6 +50,33 @@ public class ByteUtils {
 		System.arraycopy(left, 0, result, 0, left.length);
 		System.arraycopy(right, 0, result, left.length, right.length);
 		return result;
+	}
+
+	/**
+	 * bytes转为hexString
+	 * @param bytes bytes
+	 * @return lower case hex string
+	 */
+	public static String bytesToHex(byte bytes) {
+		return bytesToHex(bytes, false);
+	}
+
+	/**
+	 * bytes转为hexString
+	 * @param bytes bytes
+	 * @param upperCase true:upper case
+	 * @return hex string
+	 */
+	public static String bytesToHex(byte bytes, boolean upperCase) {
+		int unitInt = bytes & 0xFF;
+		String unitHex = Integer.toHexString(unitInt);
+		if (unitHex.length() < 2) {
+			return "0" + unitHex;
+		}
+		if (upperCase)
+			return unitHex.toUpperCase();
+		else
+			return unitHex;
 	}
 
     /**
@@ -118,7 +148,7 @@ public class ByteUtils {
 	 * @param obj object
 	 * @return bytes
 	 */
-	public static byte[] objectToByte (Object obj) throws IOException {
+	public static byte[] objectToByte(Object obj) throws IOException {
 		byte[] bytes = null;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -135,7 +165,7 @@ public class ByteUtils {
 	 * @param bytes bytes
 	 * @return object
 	 */
-	public static Object byteToObject (byte[] bytes) throws IOException, ClassNotFoundException {
+	public static Object byteToObject(byte[] bytes) throws IOException, ClassNotFoundException {
 		Object obj = null;
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         ObjectInputStream ois = new ObjectInputStream(bis);
@@ -143,6 +173,30 @@ public class ByteUtils {
         ois.close();
         bis.close();
         return obj;
+	}
+
+	/**
+	 * char[] 转 byte[]
+	 * @param chars char[]
+	 * @param charset charset
+	 */
+	public static byte[] charsToBytes(char[] chars, String charset) {
+		CharBuffer charBuffer = CharBuffer.allocate(chars.length);
+		charBuffer.put(chars);
+		charBuffer.flip();
+		return Charset.forName(charset).encode(charBuffer).array();
+	}
+
+	/**
+	 * byte[] 转 char[]
+	 * @param bytes byte[]
+	 * @param charset charset
+	 */
+	public static char[] bytesToChars(byte[] bytes, String charset) {
+		ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length);
+		byteBuffer.put(bytes);
+		byteBuffer.flip();
+		return Charset.forName(charset).decode(byteBuffer).array();
 	}
 
 }
