@@ -68,6 +68,9 @@ public class ReflectCache {
         Field[] fields = cache.get(clazz);
         if (fields == null){
             fields = clazz.getDeclaredFields();
+            for (Field field : fields){
+                field.setAccessible(true);
+            }
             cache.put(clazz, fields);
         }
         return fields;
@@ -86,6 +89,9 @@ public class ReflectCache {
         Method[] methods = cache.get(clazz);
         if (methods == null){
             methods = clazz.getDeclaredMethods();
+            for (Method method : methods){
+                method.setAccessible(true);
+            }
             cache.put(clazz, methods);
         }
         return methods;
@@ -104,6 +110,9 @@ public class ReflectCache {
         Constructor[] constructors = cache.get(clazz);
         if (constructors == null){
             constructors = clazz.getDeclaredConstructors();
+            for (Constructor constructor : constructors){
+                constructor.setAccessible(true);
+            }
             cache.put(clazz, constructors);
         }
         return constructors;
