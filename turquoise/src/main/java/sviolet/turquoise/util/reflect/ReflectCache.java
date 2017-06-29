@@ -33,14 +33,11 @@ import sviolet.turquoise.common.compat.CompatLruCache;
 
 public class ReflectCache {
 
-    private static final int DEFAULT_MAX_SIZE = 50;
+    private static final int DEFAULT_MAX_SIZE = 100;
 
     private static CompatLruCache<Class, Field[]> declaredFields = new CompatLruCache<>(DEFAULT_MAX_SIZE);
-    private static CompatLruCache<Class, Field[]> publicFields = new CompatLruCache<>(DEFAULT_MAX_SIZE);
     private static CompatLruCache<Class, Method[]> declaredMethods = new CompatLruCache<>(DEFAULT_MAX_SIZE);
-    private static CompatLruCache<Class, Method[]> publicMethods = new CompatLruCache<>(DEFAULT_MAX_SIZE);
     private static CompatLruCache<Class, Constructor[]> declaredConstructors = new CompatLruCache<>(DEFAULT_MAX_SIZE);
-    private static CompatLruCache<Class, Constructor[]> publicConstructors = new CompatLruCache<>(DEFAULT_MAX_SIZE);
 
     /**
      * 设置缓存大小
@@ -50,17 +47,12 @@ public class ReflectCache {
         if (size <= 0){
             declaredFields = null;
             declaredMethods = null;
-            publicFields = null;
-            publicMethods = null;
             declaredConstructors = null;
-            publicConstructors = null;
         }else {
             declaredFields = new CompatLruCache<>(size);
             declaredMethods = new CompatLruCache<>(size);
-            publicFields = new CompatLruCache<>(size);
-            publicMethods = new CompatLruCache<>(size);
             declaredConstructors = new CompatLruCache<>(size);
-        }   publicConstructors = new CompatLruCache<>(size);
+        }
     }
 
     public static Field[] getDeclaredFields(Class clazz){
@@ -76,24 +68,6 @@ public class ReflectCache {
         Field[] fields = cache.get(clazz);
         if (fields == null){
             fields = clazz.getDeclaredFields();
-            cache.put(clazz, fields);
-        }
-        return fields;
-    }
-
-    public static Field[] getFields(Class clazz){
-        if (clazz == null){
-            throw new NullPointerException("[ReflectCache]class is null");
-        }
-
-        final CompatLruCache<Class, Field[]> cache = publicFields;
-        if (cache == null){
-            return clazz.getFields();
-        }
-
-        Field[] fields = cache.get(clazz);
-        if (fields == null){
-            fields = clazz.getFields();
             cache.put(clazz, fields);
         }
         return fields;
@@ -117,24 +91,6 @@ public class ReflectCache {
         return methods;
     }
 
-    public static Method[] getMethods(Class clazz){
-        if (clazz == null){
-            throw new NullPointerException("[ReflectCache]class is null");
-        }
-
-        final CompatLruCache<Class, Method[]> cache = publicMethods;
-        if (cache == null){
-            return clazz.getMethods();
-        }
-
-        Method[] methods = cache.get(clazz);
-        if (methods == null){
-            methods = clazz.getMethods();
-            cache.put(clazz, methods);
-        }
-        return methods;
-    }
-
     public static Constructor[] getDeclaredConstructors(Class clazz){
         if (clazz == null){
             throw new NullPointerException("[ReflectCache]class is null");
@@ -148,24 +104,6 @@ public class ReflectCache {
         Constructor[] constructors = cache.get(clazz);
         if (constructors == null){
             constructors = clazz.getDeclaredConstructors();
-            cache.put(clazz, constructors);
-        }
-        return constructors;
-    }
-
-    public static Constructor[] getConstructors(Class clazz){
-        if (clazz == null){
-            throw new NullPointerException("[ReflectCache]class is null");
-        }
-
-        final CompatLruCache<Class, Constructor[]> cache = publicConstructors;
-        if (cache == null){
-            return clazz.getConstructors();
-        }
-
-        Constructor[] constructors = cache.get(clazz);
-        if (constructors == null){
-            constructors = clazz.getConstructors();
             cache.put(clazz, constructors);
         }
         return constructors;
