@@ -36,8 +36,7 @@ import java.nio.charset.Charset;
 
 public class ByteUtils {
 
-	private static final String HEX_STRING_MAPPING = "0123456789ABCDEF";
-
+	private static final String HEX_STRING_MAPPING = "0123456789abcdef0123456789ABCDEF";
 	/**
 	 * 把两个byte[]前后拼接成一个byte[]
 	 * 
@@ -57,26 +56,22 @@ public class ByteUtils {
 	 * @param bytes bytes
 	 * @return lower case hex string
 	 */
-	public static String bytesToHex(byte bytes) {
-		return bytesToHex(bytes, false);
+	public static String bytesToUpperCaseHex(byte bytes) {
+		return bytesToHex(bytes).toUpperCase();
 	}
 
 	/**
 	 * bytes转为hexString
 	 * @param bytes bytes
-	 * @param upperCase true:upper case
 	 * @return hex string
 	 */
-	public static String bytesToHex(byte bytes, boolean upperCase) {
+	public static String bytesToHex(byte bytes) {
 		int unitInt = bytes & 0xFF;
 		String unitHex = Integer.toHexString(unitInt);
 		if (unitHex.length() < 2) {
 			return "0" + unitHex;
 		}
-		if (upperCase)
-			return unitHex.toUpperCase();
-		else
-			return unitHex;
+		return unitHex;
 	}
 
     /**
@@ -84,24 +79,23 @@ public class ByteUtils {
      * @param bytes bytes
      * @return lower case hex string
      */
-    public static String bytesToHex(byte[] bytes){
-        return bytesToHex(bytes, false);
+    public static String bytesToUpperCaseHex(byte[] bytes){
+        return bytesToHex(bytes).toUpperCase();
     }
 
 	/**
 	 * bytes转为hexString
 	 * @param bytes bytes
-     * @param upperCase true:upper case
 	 * @return hex string
 	 */
-	public static String bytesToHex(byte[] bytes, boolean upperCase){
+	public static String bytesToHex(byte[] bytes){
 		if (bytes == null) {
 			return null;
 		}
         if (bytes.length <= 0){
             return "";
         }
-		StringBuilder stringBuilder = new StringBuilder("");
+		StringBuilder stringBuilder = new StringBuilder();
         for (byte unit : bytes) {
             int unitInt = unit & 0xFF;
             String unitHex = Integer.toHexString(unitInt);
@@ -110,10 +104,7 @@ public class ByteUtils {
             }
             stringBuilder.append(unitHex);
         }
-		if (upperCase)
-			return stringBuilder.toString().toUpperCase();
-		else
-			return stringBuilder.toString();
+		return stringBuilder.toString();
 	}
 
 	/**
@@ -128,19 +119,22 @@ public class ByteUtils {
         if (hexString.length() <= 0){
             return new byte[0];
         }
-		hexString = hexString.toUpperCase();
 		int length = hexString.length() / 2;
 		char[] hexChars = hexString.toCharArray();
 		byte[] result = new byte[length];
 		for (int i = 0; i < length; i++) {
 			int step = i * 2;
-			result[i] = (byte) (charToByte(hexChars[step]) << 4 | charToByte(hexChars[step + 1]));
+			result[i] = (byte) (charToByte(hexChars[step], hexString) << 4 | charToByte(hexChars[step + 1], hexString));
 		}
 		return result;
 	}
 
-	private static byte charToByte(char c) {
-		return (byte) HEX_STRING_MAPPING.indexOf(c);
+	private static byte charToByte(char c, String hexString) {
+		int index = HEX_STRING_MAPPING.indexOf(c);
+		if (index < 0){
+			throw new IllegalArgumentException("[ByteUtils]hexToBytes: illegal char:" + c + ", hex string:" + hexString);
+		}
+		return (byte) (index % 16);
 	}
 
 	/**
