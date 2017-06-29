@@ -74,32 +74,32 @@ public class DataTypeUtils {
      * 填充文件头-文件类型映射表
      */
     static {
-        typesMapping.put("FFD8FF", Type.JPG);
-        typesMapping.put("89504E47", Type.PNG);
+        typesMapping.put("ffd8ff", Type.JPG);
+        typesMapping.put("89504e47", Type.PNG);
         typesMapping.put("47494638", Type.GIF);
-        typesMapping.put("49492A00", Type.TIF);
-        typesMapping.put("424D", Type.BMP);
+        typesMapping.put("49492a00", Type.TIF);
+        typesMapping.put("424d", Type.BMP);
         typesMapping.put("41433130", Type.DWG);
         typesMapping.put("38425053", Type.PSD);
-        typesMapping.put("7B5C727466", Type.RTF);
-        typesMapping.put("3C3F786D6C", Type.XML);
-        typesMapping.put("68746D6C3E", Type.HTML);
-        typesMapping.put("44656C69766572792D646174653A", Type.EMAIL);
-        typesMapping.put("D0CF11E0", Type.DOC);
-        typesMapping.put("5374616E64617264204A", Type.MDB);
-        typesMapping.put("252150532D41646F6265", Type.PS);
-        typesMapping.put("255044462D312E", Type.PDF);
-        typesMapping.put("504B0304", Type.ZIP);
+        typesMapping.put("7b5c727466", Type.RTF);
+        typesMapping.put("3c3f786d6c", Type.XML);
+        typesMapping.put("68746d6c3e", Type.HTML);
+        typesMapping.put("44656c69766572792d646174653a", Type.EMAIL);
+        typesMapping.put("d0cf11e0", Type.DOC);
+        typesMapping.put("5374616e64617264204a", Type.MDB);
+        typesMapping.put("252150532d41646f6265", Type.PS);
+        typesMapping.put("255044462d312e", Type.PDF);
+        typesMapping.put("504b0304", Type.ZIP);
         typesMapping.put("52617221", Type.RAR);
         typesMapping.put("57415645", Type.WAV);
         typesMapping.put("41564920", Type.AVI);
-        typesMapping.put("2E524D46", Type.RM);
-        typesMapping.put("000001BA", Type.MPG);
-        typesMapping.put("000001B3", Type.MPG);
-        typesMapping.put("6D6F6F76", Type.MOV);
-        typesMapping.put("3026B2758E66CF11", Type.ASF);
-        typesMapping.put("4D546864", Type.MID);
-        typesMapping.put("1F8B08", Type.GZ);
+        typesMapping.put("2e524d46", Type.RM);
+        typesMapping.put("000001ba", Type.MPG);
+        typesMapping.put("000001b3", Type.MPG);
+        typesMapping.put("6d6f6f76", Type.MOV);
+        typesMapping.put("3026b2758e66cf11", Type.ASF);
+        typesMapping.put("4d546864", Type.MID);
+        typesMapping.put("1f8b08", Type.GZ);
     }
 
     /**
@@ -139,7 +139,7 @@ public class DataTypeUtils {
             byte[] buffer = new byte[headerLength];
             inputStream = new FileInputStream(file);
             inputStream.read(buffer);
-            return ByteUtils.bytesToHex(buffer, true);
+            return ByteUtils.bytesToHex(buffer);
         }catch(Exception ignored){
         }finally {
             if (inputStream != null){
@@ -182,7 +182,7 @@ public class DataTypeUtils {
         }
         byte[] buffer = new byte[headerLength];
         System.arraycopy(bytes, 0, buffer, 0, headerLength);
-        return ByteUtils.bytesToHex(buffer, true);
+        return ByteUtils.bytesToHex(buffer);
     }
 
 }
