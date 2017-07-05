@@ -20,8 +20,12 @@
 package sviolet.turquoise.util.crypto;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.Signature;
@@ -95,7 +99,36 @@ public class RSACipher {
         signature.update(data);
         return signature.sign();
     }
-  
+
+    /**
+     * <p>用私钥对信息生成数字签名(NIO)</p>
+     *
+     * @param file 需要签名的文件
+     * @param privateKey 私钥
+     * @param signAlgorithm 签名逻辑: RSACipher.SIGN_ALGORITHM_RSA_MD5 / RSACipher.SIGN_ALGORITHM_RSA_SHA1
+     *
+     * @return 数字签名
+     * @throws NoSuchAlgorithmException 无效的signAlgorithm
+     * @throws InvalidKeyException 无效的私钥
+     * @throws SignatureException 签名异常
+     */
+    public static byte[] sign(File file, RSAPrivateKey privateKey, String signAlgorithm) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, IOException {
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+            FileChannel channel = inputStream.getChannel();
+            MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+            return sign(byteBuffer, privateKey, signAlgorithm);
+        } finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
+
     /**
      * <p>用公钥验证数字签名</p>
      *  
@@ -144,6 +177,37 @@ public class RSACipher {
         signature.initVerify(publicKey);
         signature.update(data);
         return signature.verify(sign);
+    }
+
+    /**
+     * <p>用公钥验证数字签名(NIO)</p>
+     *
+     * @param file 被签名的文件
+     * @param sign 数字签名
+     * @param publicKey 公钥
+     * @param signAlgorithm 签名逻辑: RSACipher.SIGN_ALGORITHM_RSA_MD5 / RSACipher.SIGN_ALGORITHM_RSA_SHA1
+     *
+     * @return true:数字签名有效
+     * @throws NoSuchAlgorithmException 无效的signAlgorithm
+     * @throws InvalidKeyException 无效的私钥
+     * @throws SignatureException 签名异常
+     *
+     */
+    public static boolean verify(File file, byte[] sign, RSAPublicKey publicKey, String signAlgorithm) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, IOException {
+        FileInputStream inputStream = null;
+        try {
+            inputStream = new FileInputStream(file);
+            FileChannel channel = inputStream.getChannel();
+            MappedByteBuffer byteBuffer = channel.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+            return verify(byteBuffer, sign, publicKey, signAlgorithm);
+        } finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
     }
 
     /**
