@@ -193,4 +193,45 @@ public class ByteUtils {
 		return Charset.forName(charset).decode(byteBuffer).array();
 	}
 
+	/**
+	 * 循环左移
+	 * @param b byte
+	 * @param n 左移位数[0, 8]
+	 */
+	public static byte cyclicLeftShift(byte b, int n){
+		n = n % 8;
+		if (n < 0){
+			return cyclicRightShift(b, -n);
+		}
+		//byte做移位时, 会先转为int, 必须与0xff, 否则会出问题
+		int bi = b & 0xff;
+		return (byte)(bi << n | bi >>> 8 - n);
+	}
+
+	/**
+	 * 循环右移
+	 * @param b byte
+	 * @param n 右移位数[0, 8]
+	 */
+	public static byte cyclicRightShift(byte b, int n){
+		n = n % 8;
+		if (n < 0){
+			return cyclicLeftShift(b, -n);
+		}
+		//byte做移位时, 会先转为int, 必须与0xff, 否则会出问题
+		int bi = b & 0xff;
+		return (byte)(bi >>> n | bi << 8 - n);
+	}
+
+	private static final String[] BIN_MAPPING = {"0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111", "1000", "1001", "1010", "1011", "1100", "1101", "1110", "1111"};
+
+	/**
+	 * byte转二进制字符串
+	 * @param b byte
+	 */
+	public static String byteToBin(byte b){
+		//byte做移位时, 会先转为int, 必须与0xff, 否则会出问题
+		return BIN_MAPPING[(b & 0xff) >>> 4] + BIN_MAPPING[b & 0x0F];
+	}
+
 }
