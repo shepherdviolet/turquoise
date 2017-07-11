@@ -20,6 +20,7 @@ public class DirectoryUtils {
     /**
      * 应用对应外部文件路径
      * @param context context
+     * @return nullable, 可能为空!
      */
     public static File getExternalFilesDir(Context context){
         return context.getExternalFilesDir(null);
@@ -29,6 +30,7 @@ public class DirectoryUtils {
      * 应用对应外部文件路径
      * @param context context
      * @param type Environment.DIRECTORY_...
+     * @return nullable, 可能为空!
      */
     public static File getExternalFilesDir(Context context, String type){
         return context.getExternalFilesDir(type);
