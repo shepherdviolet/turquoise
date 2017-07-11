@@ -2,6 +2,7 @@ package sviolet.turquoise.util.droid;
 
 import android.content.Context;
 import android.os.Environment;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +23,7 @@ public class DirectoryUtils {
      * @param context context
      * @return nullable, 可能为空!
      */
+    @Nullable
     public static File getExternalFilesDir(Context context){
         return context.getExternalFilesDir(null);
     }
@@ -32,6 +34,7 @@ public class DirectoryUtils {
      * @param type Environment.DIRECTORY_...
      * @return nullable, 可能为空!
      */
+    @Nullable
     public static File getExternalFilesDir(Context context, String type){
         return context.getExternalFilesDir(type);
     }
