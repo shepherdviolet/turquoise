@@ -82,7 +82,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
     //required
     compile 'com.android.support:support-v4:25.3.1'
     //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-5"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.3"
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
@@ -138,7 +138,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
     //required
     compile 'com.android.support:support-v4:25.3.1'
     //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-5"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.3"
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
 ```
@@ -174,7 +174,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
     compile 'com.android.support:support-v4:25.3.1'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
     //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-5"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.3"
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
 
 ```
@@ -200,7 +200,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
     compile project(':turquoise')
     compile project(':turquoise-multidex')
     //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.2-5"
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.3"
 
 ```
 <br/>
