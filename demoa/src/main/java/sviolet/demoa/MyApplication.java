@@ -25,6 +25,7 @@ import sviolet.turquoise.enhance.app.TApplicationForMultiDex;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
+import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 @ApplicationSettings(
@@ -48,6 +49,12 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 public class MyApplication extends TApplicationForMultiDex {
 
     public static final String SHARED_PREF_COMMON_CONFIG = "common_config";
+
+    @Override
+    protected void afterCreate() {
+        super.afterCreate();
+        TLogger.get(this).d("Memory class:" + DeviceUtils.getMemoryClass(this));
+    }
 
     @Override
     public void onUncaughtException(Throwable ex, boolean isCrashRestart) {
