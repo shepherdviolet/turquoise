@@ -22,7 +22,7 @@ buildscript {
 
         jcenter()//jcenter
         maven { url 'https://jitpack.io' }
-        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
+//        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
         maven { url 'https://maven.google.com' }
     }
 
@@ -46,7 +46,7 @@ allprojects {
 
         jcenter()//jcenter
         maven { url 'https://jitpack.io' }
-        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
+//        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
         maven { url 'https://maven.google.com' }
 
 //        mavenLocal()//本地仓库
