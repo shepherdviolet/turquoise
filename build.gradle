@@ -18,12 +18,13 @@ buildscript {
 
     //构建脚本依赖仓库
     repositories {
-        if (gradleLocalProperties.repository_localRepositoryPath != null) { maven {url gradleLocalProperties.repository_localRepositoryPath} }//local repo path
-
-        jcenter()//jcenter
+        if (gradleLocalProperties.repository_localRepositoryPath != null) {
+            maven {url gradleLocalProperties.repository_localRepositoryPath}
+        }
+        jcenter()
         maven { url 'https://jitpack.io' }
-//        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
         maven { url 'https://maven.google.com' }
+//        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
     }
 
     //构建脚本依赖
@@ -42,15 +43,15 @@ buildscript {
 allprojects {
     //工程依赖仓库
     repositories {
-        if (gradleLocalProperties.repository_localRepositoryPath != null) { maven {url gradleLocalProperties.repository_localRepositoryPath} }//local repo path
-
-        jcenter()//jcenter
+        if (gradleLocalProperties.repository_localRepositoryPath != null) {
+            maven {url gradleLocalProperties.repository_localRepositoryPath}
+        }
+        jcenter()
         maven { url 'https://jitpack.io' }
-//        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
         maven { url 'https://maven.google.com' }
-
 //        mavenLocal()//本地仓库
 //        maven{ url 'file:C:/m2repository/repository'}//本地仓库:指定路径
+//        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
     }
 }
 
@@ -106,5 +107,6 @@ apply from: 'build-tools.gradle'
 //应用gradle-turquoise插件
 apply plugin: 'gradle-turquoise'
 turquoise {
+//    disableLint = true //禁用lint
     printCachePathOfDependenciesFilter = ['compile']
 }
