@@ -100,13 +100,9 @@ configure(subprojects.findAll { it.name.startsWith('demo') }) {
 
 //其他////////////////////////////////////////////////////////////////////////////////////
 
-//上传本地仓库
-apply from: 'build-upload.gradle'
-//工具任务
-apply from: 'build-tools.gradle'
-//应用gradle-turquoise插件
-apply plugin: 'gradle-turquoise'
-turquoise {
-//    disableLint = true //禁用lint
-    printCachePathOfDependenciesFilter = ['compile']
-}
+//上传
+apply from: 'gradle/build-upload.gradle'
+//工具
+apply from: 'gradle/build-tools.gradle'
+//gradle-turquoise插件
+apply from: 'gradle/build-turquoise.gradle'

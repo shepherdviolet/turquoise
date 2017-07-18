@@ -1,7 +1,7 @@
 
 //清除备份文件
 task cleanBackup{
-    group = 'turquoise-tools'
+    group = 'tools'
     doLast {
         File backupDir = new File(rootDir.getAbsolutePath() + '/backup')
         backupDir.deleteDir()
@@ -10,7 +10,7 @@ task cleanBackup{
 
 //备份程序
 task startBackup(dependsOn: cleanBackup) {
-    group = 'turquoise-tools'
+    group = 'tools'
     doLast{
         //skip
         File rootFile = new File('.')
