@@ -3,23 +3,27 @@
 
 buildscript {
 
-    //装载gradle-local.properties
+    //装载其他配置文件
     ext {
-        gradleLocalProperties = new Properties()
-        def gradleLocalFile = file("gradle-local.properties")
-        if (gradleLocalFile.exists()) {
-            gradleLocalFile.withInputStream { stream -> gradleLocalProperties.load(stream) }
+        //解析配置文件
+        def customProperties = new Properties()
+        file("gradle-local.properties").withInputStream { stream -> customProperties.load(stream) }
+//        file("gradle-other.properties").withInputStream { stream -> customProperties.load(stream) }
+
+        //将配置放入公共配置, 在gradle中可直接引用
+        customProperties.each {
+            project.extensions.add("$it.key",it.value)
         }
 
-        upload_mavenVersion = gradleLocalProperties.upload_mavenVersion != null ? gradleLocalProperties.upload_mavenVersion : version_projectVersionName + '-SNAPSHOT'
-        upload_repositoryPath = gradleLocalProperties.upload_repositoryPath != null  ? gradleLocalProperties.upload_repositoryPath : rootProject.rootDir.absolutePath + '/release'
-        repository_localRepositoryPath = gradleLocalProperties.repository_localRepositoryPath
+        //默认值, 判断配置项是否存在, 需要使用project.extensions.findByName('name'). 而确保配置项存在的情况下, 可直接引用
+        upload_mavenVersion = project.extensions.findByName('upload_mavenVersion') != null ? upload_mavenVersion : version_projectVersionName + '-SNAPSHOT'
+        upload_repositoryPath = project.extensions.findByName('upload_repositoryPath') != null  ? upload_repositoryPath : rootProject.rootDir.absolutePath + '/release'
     }
 
     //构建脚本依赖仓库
     repositories {
-        if (gradleLocalProperties.repository_localRepositoryPath != null) {
-            maven {url gradleLocalProperties.repository_localRepositoryPath}
+        if (project.extensions.findByName('repository_localRepositoryPath') != null) {
+            maven {url repository_localRepositoryPath}
         }
         jcenter()
         maven { url 'https://jitpack.io' }
@@ -43,8 +47,8 @@ buildscript {
 allprojects {
     //工程依赖仓库
     repositories {
-        if (gradleLocalProperties.repository_localRepositoryPath != null) {
-            maven {url gradleLocalProperties.repository_localRepositoryPath}
+        if (project.extensions.findByName('repository_localRepositoryPath') != null) {
+            maven {url repository_localRepositoryPath}
         }
         jcenter()
         maven { url 'https://jitpack.io' }
