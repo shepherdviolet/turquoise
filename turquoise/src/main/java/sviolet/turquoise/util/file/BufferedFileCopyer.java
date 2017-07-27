@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.util.copy;
+package sviolet.turquoise.util.file;
 
 import java.io.File;
 import java.io.FileInputStream;
