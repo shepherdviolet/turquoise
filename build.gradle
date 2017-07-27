@@ -12,17 +12,17 @@ buildscript {
 
         //将配置放入公共配置, 在gradle中可直接引用
         customProperties.each {
-            project.extensions.add("$it.key",it.value)
+            rootProject.extensions.add("$it.key",it.value)
         }
 
-        //默认值, 判断配置项是否存在, 需要使用project.extensions.findByName('name'). 而确保配置项存在的情况下, 可直接引用
-        upload_mavenVersion = project.extensions.findByName('upload_mavenVersion') != null ? upload_mavenVersion : version_projectVersionName + '-SNAPSHOT'
-        upload_repositoryPath = project.extensions.findByName('upload_repositoryPath') != null  ? upload_repositoryPath : rootProject.rootDir.absolutePath + '/release'
+        //默认值, 判断配置项是否存在, 需要使用rootProject.extensions.findByName('name'). 而确保配置项存在的情况下, 可直接引用
+        upload_mavenVersion = rootProject.extensions.findByName('upload_mavenVersion') != null ? upload_mavenVersion : version_projectVersionName + '-SNAPSHOT'
+        upload_repositoryPath = rootProject.extensions.findByName('upload_repositoryPath') != null  ? upload_repositoryPath : rootProject.rootDir.absolutePath + '/release'
     }
 
     //构建脚本依赖仓库
     repositories {
-        if (project.extensions.findByName('repository_localRepositoryPath') != null) {
+        if (rootProject.extensions.findByName('repository_localRepositoryPath') != null) {
             maven {url repository_localRepositoryPath}
         }
         jcenter()
@@ -47,7 +47,7 @@ buildscript {
 allprojects {
     //工程依赖仓库
     repositories {
-        if (project.extensions.findByName('repository_localRepositoryPath') != null) {
+        if (rootProject.extensions.findByName('repository_localRepositoryPath') != null) {
             maven {url repository_localRepositoryPath}
         }
         jcenter()
