@@ -45,17 +45,17 @@ class SimpleTForkPresenter(view: SimpleTForkActivity) : TPresenter<SimpleTForkAc
             logd("fork: load bitmap")
             //await代码块用于将异步操作转为同步
             //await代码块会在新线程中执行, 同时fork代码块会阻塞直到结果返回
-            val bitmap = it.await<Bitmap> ({
+            val bitmap = await<Bitmap> ({
                 //await代码块
                 //异步加载Bitmap
                 TILoader.extract(viewLayer, url, null, object: OnLoadedListener<Unit>(){
                     override fun onLoadSucceed(url: String?, params: Params?, resource: ImageResource?) {
                         //所有结果都必须用callback返回, 否则fork代码块会长时间阻塞直到超时
-                        it.callback(resource?.resource as Bitmap)
+                        callback(resource?.resource as Bitmap)
                     }
                     override fun onLoadCanceled(url: String?, params: Params?) {
                         //所有结果都必须用callback返回, 否则fork代码块会长时间阻塞直到超时
-                        it.callback(Exception("fork: bitmap load canceled"))
+                        callback(Exception("fork: bitmap load canceled"))
                     }
                 })
             }, {
@@ -73,7 +73,7 @@ class SimpleTForkPresenter(view: SimpleTForkActivity) : TPresenter<SimpleTForkAc
 
             logd("fork: callback ui")
             //在主线程执行代码块
-            it.ui {
+            ui {
                 logd("fork: callback ui, thread:${Thread.currentThread()}")
                 //刷新显示
                 this@SimpleTForkPresenter.viewLayer.setImage(bitmap)

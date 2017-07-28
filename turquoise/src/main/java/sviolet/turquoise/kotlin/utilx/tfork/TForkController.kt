@@ -41,7 +41,7 @@ class TForkController internal constructor() {
      * 阻塞!!!
      * @param block 代码块
      */
-    fun <R> await(block: (TForkCallback<R>) -> Unit) : R?{
+    fun <R> await(block: TForkCallback<R>.() -> Unit) : R?{
         return await(TForkConfigure.DEFAULT_AWAIT_TIMEOUT, block)
     }
 
@@ -52,12 +52,12 @@ class TForkController internal constructor() {
      * @param timeout 等待超时时间
      * @param block 代码块
      */
-    fun <R> await(timeout: Long, block: (TForkCallback<R>) -> Unit) : R?{
+    fun <R> await(timeout: Long, block: TForkCallback<R>.() -> Unit) : R?{
         val blockIndex = blockCounter++
         val callback = TForkCallback<R>(timeout)
         TForkCenter.execute {
             try {
-                block(callback)
+                callback.block()
             } catch (e: Exception){
                 callback.callback(Exception("[TFork]catch exception from \"await\" block, block index($blockIndex)", e))
             }
@@ -78,7 +78,7 @@ class TForkController internal constructor() {
      * @param exceptionHandler 处理代码块中抛出的异常(包括主动callback的异常); 返回true时, fork线程继续
      * 执行, await块返回结果为null; 返回false时, fork线程终止并抛出异常.
      */
-    fun <R> await(block: (TForkCallback<R>) -> Unit, exceptionHandler: (Exception) -> Boolean) : R?{
+    fun <R> await(block: TForkCallback<R>.() -> Unit, exceptionHandler: (Exception) -> Boolean) : R?{
         return await(TForkConfigure.DEFAULT_AWAIT_TIMEOUT, block, exceptionHandler)
     }
 
@@ -91,12 +91,12 @@ class TForkController internal constructor() {
      * @param exceptionHandler 处理代码块中抛出的异常(包括主动callback的异常); 返回true时, fork线程继续
      * 执行, await块返回结果为null; 返回false时, fork线程终止并抛出异常.
      */
-    fun <R> await(timeout: Long, block: (TForkCallback<R>) -> Unit, exceptionHandler: (Exception) -> Boolean) : R?{
+    fun <R> await(timeout: Long, block: TForkCallback<R>.() -> Unit, exceptionHandler: (Exception) -> Boolean) : R?{
         val blockIndex = blockCounter++
         val callback = TForkCallback<R>(timeout)
         TForkCenter.execute {
             try {
-                block(callback)
+                callback.block()
             } catch (e: Exception){
                 callback.callback(Exception("[TFork]catch exception from \"await\" block, block index($blockIndex)", e))
             }

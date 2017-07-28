@@ -31,10 +31,11 @@ import sviolet.turquoise.utilx.tlogger.logw
 /**
  * 启动新线程执行代码块
  */
-fun Any?.fork(block: (TForkController) -> Unit) {
+fun Any?.fork(block: TForkController.() -> Unit) {
     TForkCenter.executeFork {
         try {
-            block(TForkController())
+            val controller = TForkController()
+            controller.block()
         } catch (e: TForkAwaitTimeoutException) {
             logw(e)
         }
@@ -48,10 +49,11 @@ fun Any?.fork(block: (TForkController) -> Unit) {
  * 程序不再向外抛出异常; 若返回false, 则继续向外抛出异常. 异常处理块第一个参数exception为异常对象,
  * 第二个参数isTimeout=true时表示fork代码块由于内部的await/uiAwait块等待超时导致流程终止.
  */
-fun Any?.fork(block: (TForkController) -> Unit, exceptionHandler: (exception: Exception, isTimeout: Boolean) -> Boolean) {
+fun Any?.fork(block: TForkController.() -> Unit, exceptionHandler: (exception: Exception, isTimeout: Boolean) -> Boolean) {
     TForkCenter.executeFork {
         try {
-            block(TForkController())
+            val controller = TForkController()
+            controller.block()
         } catch (e: TForkAwaitTimeoutException) {
             if (exceptionHandler(e, true)) return@executeFork else logw(e)
         } catch (e: Exception) {
