@@ -24,7 +24,7 @@ package sviolet.turquoise.kotlin.utilx.tjson
  * Created by S.Violet on 2017/7/31.
  */
 
-fun Any?.toJson (block: TJsonObjectBuilder.() -> Unit) : TJsonObjectBuilder {
+fun Any?.jsonBuild (block: TJsonObjectBuilder.() -> Unit) : TJsonObjectBuilder {
     val obj = TJsonObjectBuilder()
     obj.block()
     return obj
