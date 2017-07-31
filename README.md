@@ -86,6 +86,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.google.code.gson:gson:2.8.1'
 
 ```
 
