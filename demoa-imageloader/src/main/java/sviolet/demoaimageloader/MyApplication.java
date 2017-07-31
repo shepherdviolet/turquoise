@@ -91,7 +91,6 @@ public class MyApplication extends TApplication {
 //                .setBackgroundColor(0xFFF0F0F0)//自定义背景色(作为加载目标图的背景)
 //                .setBackgroundImageResId(R.mipmap.async_image_loading)//自定义背景图(作为加载目标图的背景, 不常用)
 //                .setWipeDiskCacheWhenUpdate(true)//当APP更新时清空磁盘缓存(versionCode变化)
-//                .setPluginEnabled(true)//高级配置:默认true, 若设置false, 将不会加载插件包(无法加载GIF)
 //                .setImageDataLengthLimitPercent(this, 0.3f)//高级配置:图片资源数据长度限制(超过设定值将取消加载任务)
 //                .setMemoryBufferLengthLimitPercent(this, 0.02f)//高级配置:内存缓存区数据长度限制(超过设定值将取消任务), 仅在磁盘缓存访问异常时, 才会用到内存缓存区
 //                .setLowNetworkSpeedStrategy(lowNetworkSpeedStrategy)//高级配置

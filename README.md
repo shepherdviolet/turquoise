@@ -18,8 +18,6 @@
     dependencies {
         compile 'com.github.shepherdviolet.turquoise:turquoise:6.0'
         compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader:6.0'
-        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader-plugin:6.0'
-        compile 'com.github.shepherdviolet.turquoise:turquoise-multidex:6.0'
     }
 ```
 
@@ -70,6 +68,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 * Kotlin extensions: extension function package
 * TLogger: Kotlin style
 * TFork: Experimental feature, a simple async tools
+* TJson: Make json by DSL
 
 <br/>
 <br/>
@@ -79,6 +78,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
+[![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
 
 ###### TurquoiseImageLoader. it's a new image loader.
 
@@ -115,39 +115,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 ### Preview:
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/tiloader/tiloader_demo_list.gif)
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/tiloader/tiloader_demo_rounded.gif)
-<br/>
-<br/>
-<br/>
-<br/>
-
-# Module turquoise-imageloader-plugin
-![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise--imageloader-2ed8a8.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
-[![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
-
-###### Expansion Module of `turquoise-imageloader`. Optional.
-
-* Add support for GIF loading, dependent on `pl.droidsonroids.gif:android-gif-drawable:1.1.15`.
-* TILoader will load this plugin automatically, as long as your project dependent on this plugin module. Don't need to do anything else.
-<br/>
-
-### Preview:
 ![](https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/tiloader/tiloader_demo_gif.gif)<br/>
-<br/>
-<br/>
-<br/>
-
-# Module turquoise-multidex
-![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
-
-###### Expansion Module of `turquoise`. Optional.
-
-* Add support for MultiDex.
-<br/>
-
 <br/>
 <br/>
 <br/>

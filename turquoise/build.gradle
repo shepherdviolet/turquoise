@@ -1,4 +1,11 @@
 
+android {
+    defaultConfig {
+        //true:多dex允许,突破类65535的限制
+        multiDexEnabled true
+    }
+}
+
 dependencies {
     //required
     compile fileTree(include: ['*.jar'], dir: 'libs')

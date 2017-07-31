@@ -3,4 +3,6 @@ dependencies {
     //required
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':turquoise') { group 'com.github.shepherdviolet.turquoise'; version upload_mavenVersion }//指定groupId和version, artifactId为project名
+    //optional
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
 }

@@ -25,6 +25,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 
+import pl.droidsonroids.gif.EnhancedGifDrawable;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.x.imageloader.drawable.TIBitmapDrawable;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
@@ -42,11 +43,18 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         if (resource == null || resource.getResource() == null){
             return false;
         }
+        Object res;
         switch (resource.getType()){
             case BITMAP:
-                Object res = resource.getResource();
+                res = resource.getResource();
                 if (res instanceof Bitmap){
                     return !((Bitmap) res).isRecycled();
+                }
+                break;
+            case GIF:
+                res = resource.getResource();
+                if (res instanceof EnhancedGifDrawable){
+                    return !((EnhancedGifDrawable) res).isRecycled();
                 }
                 break;
             default:
@@ -79,11 +87,19 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         if (resource == null || resource.getResource() == null){
             return false;
         }
+        Object res;
         switch (resource.getType()){
             case BITMAP:
-                Object res = resource.getResource();
+                res = resource.getResource();
                 if ((res instanceof Bitmap) && (!((Bitmap) res).isRecycled())){
                     ((Bitmap) res).recycle();
+                    return true;
+                }
+                break;
+            case GIF:
+                res = resource.getResource();
+                if ((res instanceof EnhancedGifDrawable) && (!((EnhancedGifDrawable) res).isRecycled())){
+                    ((EnhancedGifDrawable) res).recycle();
                     return true;
                 }
                 break;
@@ -102,11 +118,18 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         if (resource == null || resource.getResource() == null){
             return null;
         }
+        Object res;
         switch (resource.getType()){
             case BITMAP:
-                Object res = resource.getResource();
+                res = resource.getResource();
                 if ((res instanceof Bitmap) && (!((Bitmap) res).isRecycled())){
                     return new TIBitmapDrawable(applicationContext.getResources(), (Bitmap) res).setSkipException(skipDrawingException);
+                }
+                break;
+            case GIF:
+                res = resource.getResource();
+                if ((res instanceof EnhancedGifDrawable) && (!((EnhancedGifDrawable) res).isRecycled())){
+                    return ((EnhancedGifDrawable) res).setSkipException(skipDrawingException);
                 }
                 break;
             default:
@@ -125,15 +148,22 @@ public class CommonImageResourceHandler implements ImageResourceHandler {
         if (resource == null || resource.getResource() == null){
             return 0;
         }
+        Object res;
         switch (resource.getType()){
             case BITMAP:
-                Object res = resource.getResource();
+                res = resource.getResource();
                 if ((res instanceof Bitmap) && (!((Bitmap) res).isRecycled())){
                     //calculate
                     if (DeviceUtils.getVersionSDK() >= 12) {
                         return ((Bitmap) res).getByteCount();
                     }
                     return ((Bitmap) res).getRowBytes() * ((Bitmap) res).getHeight();
+                }
+                break;
+            case GIF:
+                res = resource.getResource();
+                if ((res instanceof EnhancedGifDrawable) && (!((EnhancedGifDrawable) res).isRecycled())){
+                    return (int) ((EnhancedGifDrawable) res).getByteCount();
                 }
                 break;
             default:

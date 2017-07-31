@@ -23,7 +23,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
+import pl.droidsonroids.gif.EnhancedGifDrawable;
+import sviolet.thistle.util.conversion.ByteUtils;
 import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
@@ -37,6 +41,8 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public class CommonDecodeHandler extends DecodeHandler {
 
+    private static final byte[] GIF_HEADER = ByteUtils.hexToBytes("47494638");
+
     @Override
     public ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
         Integer customReqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_WIDTH);
@@ -47,6 +53,16 @@ public class CommonDecodeHandler extends DecodeHandler {
     }
 
     protected ImageResource onDecodeInner(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger, int reqWidth, int reqHeight) {
+        if (!isGif(data)){
+            //bitmap
+            return onDecodeBitmap(applicationContext, context, taskInfo, data, logger, reqWidth, reqHeight);
+        } else {
+            //gif
+            return onDecodeGif(applicationContext, context, taskInfo, data, logger, reqWidth, reqHeight);
+        }
+    }
+
+    private ImageResource onDecodeBitmap(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger, int reqWidth, int reqHeight) {
         //decoding
         Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), taskInfo.getParams().getDecodeInSampleQuality());
         if (bitmap == null)
@@ -73,6 +89,14 @@ public class CommonDecodeHandler extends DecodeHandler {
         return new ImageResource(ImageResource.Type.BITMAP, bitmap);
     }
 
+    private ImageResource onDecodeGif(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger, int reqWidth, int reqHeight) {
+        try {
+            return new ImageResource(ImageResource.Type.GIF, EnhancedGifDrawable.decode(data, reqWidth, reqHeight, taskInfo.getParams().getDecodeInSampleQuality()));
+        } catch (IOException e) {
+            throw new RuntimeException("[TILoader:EnhancedDecodeHandler]error while decoding gif from bytes", e);
+        }
+    }
+
     @Override
     public ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger) {
         Integer customReqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_WIDTH);
@@ -83,6 +107,14 @@ public class CommonDecodeHandler extends DecodeHandler {
     }
 
     protected ImageResource onDecodeInner(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger, int reqWidth, int reqHeight){
+        if (!isGif(file)) {
+            return onDecodeBitmap(applicationContext, context, taskInfo, file, logger, reqWidth, reqHeight);
+        } else {
+            return onDecodeGif(applicationContext, context, taskInfo, file, logger, reqWidth, reqHeight);
+        }
+    }
+
+    private ImageResource onDecodeBitmap(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger, int reqWidth, int reqHeight){
         //decoding
         Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), BitmapUtils.InSampleQuality.MEDIUM);
         if (bitmap == null)
@@ -108,4 +140,56 @@ public class CommonDecodeHandler extends DecodeHandler {
         }
         return new ImageResource(ImageResource.Type.BITMAP, bitmap);
     }
+
+    private ImageResource onDecodeGif(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger, int reqWidth, int reqHeight) {
+        try {
+            return new ImageResource(ImageResource.Type.GIF, EnhancedGifDrawable.decode(file, reqWidth, reqHeight, taskInfo.getParams().getDecodeInSampleQuality()));
+        } catch (IOException e) {
+            throw new RuntimeException("[TILoader:EnhancedDecodeHandler]error while decoding gif from file", e);
+        }
+    }
+
+    private boolean isGif(byte[] data){
+        if (data == null || data.length < GIF_HEADER.length){
+            return false;
+        }
+        for (int i = 0 ; i < GIF_HEADER.length ; i++){
+            if (data[i] != GIF_HEADER[i]){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean isGif(File file){
+        if (file == null || !file.exists()){
+            return false;
+        }
+        RandomAccessFile randomAccessFile = null;
+        try{
+            randomAccessFile = new RandomAccessFile(file, "r");
+            randomAccessFile.seek(0);
+            byte[] buffer = new byte[GIF_HEADER.length];
+            long length = randomAccessFile.read(buffer);
+            if (length < GIF_HEADER.length){
+                return false;
+            }
+            for (int i = 0 ; i < GIF_HEADER.length ; i++){
+                if (buffer[i] != GIF_HEADER[i]){
+                    return false;
+                }
+            }
+            return true;
+        }catch (Exception e){
+            return false;
+        }finally {
+            if (randomAccessFile != null){
+                try {
+                    randomAccessFile.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
+
 }

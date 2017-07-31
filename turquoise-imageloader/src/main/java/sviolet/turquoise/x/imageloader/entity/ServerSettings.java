@@ -58,7 +58,6 @@ public class ServerSettings implements ComponentManager.Component{
 
         //settings////////////////////////////////////////////////////////////////////////////
 
-        private boolean pluginEnabled = DEFAULT_PLUGIN_ENABLED;
         private boolean logEnabled = DEFAULT_LOG_ENABLED;
         private boolean wipeDiskCacheWhenUpdate = DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE;
         private int memoryCacheSize = DEFAULT_MEMORY_CACHE_SIZE;
@@ -224,21 +223,6 @@ public class ServerSettings implements ComponentManager.Component{
                 throw new RuntimeException("[NodeSettings]reloadTimes must >= 0");
             }
             values.reloadTimes = reloadTimes;
-            return this;
-        }
-
-        /**
-         * <p>If true, TILoader will load plugin automatically:</p>
-         *
-         * <p>1.plugin module "turquoise.imageloader.plugin"</p>
-         *
-         * <p>NOTICE:: TILoader will load plugins automatically, as long as your project dependent on
-         * those modules. Don't need to do anything else.</p>
-         *
-         * @param enabled true by default
-         */
-        public Builder setPluginEnabled(boolean enabled){
-            values.pluginEnabled = enabled;
             return this;
         }
 
@@ -470,7 +454,6 @@ public class ServerSettings implements ComponentManager.Component{
 
     //DEFAULT/////////////////////////////////////////////////////////////////////////////
 
-    public static final boolean DEFAULT_PLUGIN_ENABLED = true;
     public static final boolean DEFAULT_LOG_ENABLED = true;
     public static final boolean DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE = false;
     public static final int DEFAULT_MEMORY_CACHE_SIZE = 0;
@@ -507,14 +490,9 @@ public class ServerSettings implements ComponentManager.Component{
         this.manager = manager;
 
         //instance
-        values.imageResourceHandler = manager.getPluginManager().newEnhancedImageResourceHandler();
-        if (values.imageResourceHandler == null){
-            values.imageResourceHandler = new CommonImageResourceHandler();
-        }
-        values.decodeHandler = manager.getPluginManager().newEnhancedDecodeHandler();
-        if (values.decodeHandler == null){
-            values.decodeHandler = new CommonDecodeHandler();
-        }
+        values.imageResourceHandler = new CommonImageResourceHandler();
+        values.decodeHandler = new CommonDecodeHandler();
+
         if (values.loadingDrawableFactory == null) {
             values.loadingDrawableFactory = new CommonLoadingDrawableFactory();
         }
@@ -527,10 +505,6 @@ public class ServerSettings implements ComponentManager.Component{
     }
 
     //settings////////////////////////////////////////////////////////////////////////////
-
-    public boolean isPluginEnabled(){
-        return values.pluginEnabled;
-    }
 
     public boolean isLogEnabled(){
         return values.logEnabled;

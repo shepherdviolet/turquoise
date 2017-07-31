@@ -13,7 +13,7 @@
 >1.put "turquoise-version.aar" into your module of project (module-name/libs/) <br/>
 >2.edit module's build.gradle <br/>
 
-```java
+```gradle
 repositories {
     ......
     flatDir {
@@ -22,7 +22,7 @@ repositories {
 }
 ```
 
-```java
+```gradle
 dependencies {
     ......
     compile(name:'turquoise-version', ext:'aar')
