@@ -17,21 +17,23 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.kotlin.extension
+package sviolet.turquoise.util.common;
+
+import android.os.SystemClock;
 
 /**
- * Array extensions
+ * 时间工具
  *
- * Created by S.Violet on 2017/5/25.
+ * @author S.Violet (ZhuQinChao)
+ *
  */
+public class DateTimeUtilsForAndroid extends sviolet.thistle.util.common.DateTimeUtils {
 
-/**
- * Get item from Array without exceptions
- */
-fun <T> Array<T>?.safeGet(index: Int) : T?{
-    try {
-        return this?.get(index)
-    } catch (e: Exception) {
-        return null
+    /**
+     * [Android]获得系统启动至今经过的毫秒数, 深睡眠时不计时
+     */
+    public static long getUptimeMillis(){
+        return SystemClock.uptimeMillis();
     }
+
 }

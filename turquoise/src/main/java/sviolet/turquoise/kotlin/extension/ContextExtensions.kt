@@ -19,40 +19,31 @@
 
 package sviolet.turquoise.kotlin.extension
 
-import java.util.*
+import android.content.Context
+import android.widget.Toast
 
 /**
- * Date extensions
+ * Android Toast extensions
  *
- * Created by S.Violet on 2017/6/6.
+ * Created by S.Violet on 2017/5/26.
  */
 
 /**
- * Date() + milliSeconds
+ * Show short toast
  */
-operator fun Date?.plus(milliSeconds: Long?) : Date?{
-    if (this == null || milliSeconds == null){
-        return this
+fun Context?.toast(msg: String?){
+    if (this == null || msg == null){
+        return
     }
-    return Date(this.time + milliSeconds)
+    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 }
 
 /**
- * Date() - milliSeconds
+ * Show long toast
  */
-operator fun Date?.minus(milliSeconds: Long?) : Date?{
-    if (this == null || milliSeconds == null){
-        return this
+fun Context?.toastl(msg: String?){
+    if (this == null || msg == null){
+        return
     }
-    return Date(this.time - milliSeconds)
-}
-
-/**
- * Date() - Date()
- */
-operator fun Date?.minus(date: Date?) : Long?{
-    if (this == null || date == null){
-        return 0
-    }
-    return this.time - date.time
+    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 }

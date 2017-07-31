@@ -29,7 +29,7 @@ import android.view.ViewGroup;
 import java.lang.reflect.Field;
 
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
-import sviolet.turquoise.util.reflect.ReflectCache;
+import sviolet.thistle.util.reflect.ReflectCache;
 
 /**
  * <p>Activity/Dialog的注释式注入工具</p>

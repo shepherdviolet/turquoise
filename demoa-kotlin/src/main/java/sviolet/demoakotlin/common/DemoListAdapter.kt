@@ -26,7 +26,7 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.TextView
 import sviolet.demoakotlin.R
-import sviolet.turquoise.kotlin.extension.safeGet
+import sviolet.thistle.kotlin.extension.safeGet
 import sviolet.turquoise.ui.adapter.TViewHolder
 import kotlin.reflect.KClass
 

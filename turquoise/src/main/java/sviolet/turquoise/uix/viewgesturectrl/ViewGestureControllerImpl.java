@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.turquoise.util.common.MathUtils;
+import sviolet.thistle.util.common.MathUtils;
 
 /**
  *

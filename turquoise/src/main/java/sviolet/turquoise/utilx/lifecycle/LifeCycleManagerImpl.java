@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import sviolet.turquoise.util.common.ConcurrentUtils;
+import sviolet.thistle.util.common.ConcurrentUtils;
 
 /**
  * 生命周期管理器实现<p/>

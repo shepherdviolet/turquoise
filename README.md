@@ -7,18 +7,12 @@
 <br/>
 <br/>
 
-# Releases (aar/source)
-https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository <br/>
-https://git.oschina.net/shepherdviolet/alternate-maven-repository/raw/master/repository <br/>
-<br/>
-<br/>
-<br/>
-
 # Import dependencies from maven repository
 
 ```gradle
     repositories {
         maven { url 'https://jitpack.io' }
+        //Deprecated way, use jitpack.io instead, just for reference
         //maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
     }
     dependencies {
@@ -46,6 +40,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 
 # Module turquoise
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
+![Dependency](https://img.shields.io/badge/Maven%20Dependency-thistle-dc143c.svg?style=flat)(https://github.com/shepherdviolet/thistle)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
 ###### The basic library module, as detailed below:
 
@@ -74,21 +69,6 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 * Kotlin extensions: extension function package
 * TLogger: Kotlin style
 * TFork: Experimental feature, a simple async tools
-
-### Source Code Dependency:
-```gradle
-
-    compile project(':turquoise')
-    //required
-    compile 'com.android.support:support-v4:25.3.1'
-    //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.3"
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:recyclerview-v7:25.3.1'
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
-    compile 'com.google.code.gson:gson:2.8.1'
-
-```
 
 <br/>
 <br/>
@@ -131,19 +111,6 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 
 ```
 
-### Source Code Dependency:
-```gradle
-
-    compile project(':turquoise')
-    compile project(':turquoise-imageloader')
-    //required
-    compile 'com.android.support:support-v4:25.3.1'
-    //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.3"
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
-
-```
-
 ### Preview:
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/tiloader/tiloader_demo_list.gif)
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/tiloader/tiloader_demo_rounded.gif)
@@ -165,21 +132,6 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 * TILoader will load this plugin automatically, as long as your project dependent on this plugin module. Don't need to do anything else.
 <br/>
 
-### Source Code Dependency:
-```gradle
-
-    compile project(':turquoise')
-    compile project(':turquoise-imageloader')
-    compile project(':turquoise-imageloader-plugin')
-    //required
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'pl.droidsonroids.gif:android-gif-drawable:1.1.15'
-    //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.3"
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
-
-```
-
 ### Preview:
 ![](https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/tiloader/tiloader_demo_gif.gif)<br/>
 <br/>
@@ -195,15 +147,6 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 * Add support for MultiDex.
 <br/>
 
-### Source Code Dependency:
-```gradle
-
-    compile project(':turquoise')
-    compile project(':turquoise-multidex')
-    //optional
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.3"
-
-```
 <br/>
 <br/>
 <br/>

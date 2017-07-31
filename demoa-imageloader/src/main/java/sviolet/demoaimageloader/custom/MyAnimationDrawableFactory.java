@@ -27,7 +27,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
-import sviolet.turquoise.util.common.DateTimeUtils;
+import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.drawable.common.CommonLoadingDrawableFactory;
 import sviolet.turquoise.x.imageloader.entity.LoadProgress;
@@ -107,7 +107,7 @@ public class MyAnimationDrawableFactory implements CommonLoadingDrawableFactory.
         private static final int QUANTITY = 3;
         private static final int MIN_POSITION = -2;
         private static final int MAX_POSITION = 4;
-        private long startTime = DateTimeUtils.getUptimeMillis();
+        private long startTime = DateTimeUtilsForAndroid.getUptimeMillis();
 
         private Paint paint;
 
@@ -130,7 +130,7 @@ public class MyAnimationDrawableFactory implements CommonLoadingDrawableFactory.
         }
 
         private int calculateCurrentPosition(){
-            final float progress = (float)((DateTimeUtils.getUptimeMillis() - startTime) % settings.animationDuration) / (float)settings.animationDuration;
+            final float progress = (float)((DateTimeUtilsForAndroid.getUptimeMillis() - startTime) % settings.animationDuration) / (float)settings.animationDuration;
             final int distance = MAX_POSITION - MIN_POSITION;
             final int position = (int) (distance * progress);
             return MIN_POSITION + position;

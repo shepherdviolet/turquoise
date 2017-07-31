@@ -23,7 +23,7 @@ import android.content.Context;
 
 import java.io.File;
 
-import sviolet.turquoise.util.common.CheckUtils;
+import sviolet.thistle.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;

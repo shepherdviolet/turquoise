@@ -28,7 +28,7 @@ import android.support.annotation.RequiresApi;
 import java.lang.ref.WeakReference;
 import java.util.List;
 
-import sviolet.turquoise.common.entity.Destroyable;
+import sviolet.thistle.common.entity.Destroyable;
 
 /**
  * [API14+]传输消息管道(transmit模式专用), 实现新页面onCreate时, 从前一个页面的传输专用消息池中读取消息.

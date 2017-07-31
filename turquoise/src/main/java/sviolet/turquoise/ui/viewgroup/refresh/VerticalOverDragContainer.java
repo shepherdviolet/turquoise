@@ -39,7 +39,7 @@ import sviolet.turquoise.common.compat.CompatOverScroller;
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.ui.util.ListViewUtils;
 import sviolet.turquoise.ui.util.ScrollViewUtils;
-import sviolet.turquoise.util.common.DateTimeUtils;
+import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.util.droid.MotionEventUtils;
 
@@ -385,7 +385,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             if (topParkEnabled && scrollY >= overDragThreshold) {
                                 if (!topParked) {
                                     //过滤频繁的PARK
-                                    if (DateTimeUtils.getCurrentTimeMillis() - lastTopParkTime < parkInterval){
+                                    if (DateTimeUtilsForAndroid.getCurrentTimeMillis() - lastTopParkTime < parkInterval){
                                         callbackTopParkIgnore();
                                         //弹回原始位置
                                         free(true);
@@ -405,7 +405,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                                     topParked = true;
                                     if (callbackTopPark()){
                                         //记录当前时间
-                                        lastTopParkTime = DateTimeUtils.getCurrentTimeMillis();
+                                        lastTopParkTime = DateTimeUtilsForAndroid.getCurrentTimeMillis();
                                         //长时间没归位时, 自动归位
                                         myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_RESET_TOP_PARK_AUTO, autoResetDelay);
                                     } else {
@@ -424,7 +424,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                             if (bottomParkEnabled && scrollY <= -overDragThreshold) {
                                 if (!bottomParked) {
                                     //过滤频繁的PARK
-                                    if (DateTimeUtils.getCurrentTimeMillis() - lastBottomParkTime < parkInterval){
+                                    if (DateTimeUtilsForAndroid.getCurrentTimeMillis() - lastBottomParkTime < parkInterval){
                                         callbackBottomParkIgnore();
                                         //弹回原始位置
                                         free(true);
@@ -444,7 +444,7 @@ public class VerticalOverDragContainer extends RelativeLayout {
                                     bottomParked = true;
                                     if (callbackBottomPark()){
                                         //记录当前时间
-                                        lastBottomParkTime = DateTimeUtils.getCurrentTimeMillis();
+                                        lastBottomParkTime = DateTimeUtilsForAndroid.getCurrentTimeMillis();
                                         //长时间没归位时, 自动归位
                                         myHandler.sendEmptyMessageDelayed(MyHandler.HANDLER_RESET_BOTTOM_PARK_AUTO, autoResetDelay);
                                     } else {

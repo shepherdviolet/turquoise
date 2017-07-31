@@ -31,11 +31,11 @@ import android.util.SparseArray;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import sviolet.turquoise.common.entity.Destroyable;
+import sviolet.thistle.common.entity.Destroyable;
 import sviolet.turquoise.common.statics.PublicConstants;
 import sviolet.turquoise.ui.dialog.CommonSimpleDialog;
 import sviolet.turquoise.ui.dialog.SimpleDialogBuilder;
-import sviolet.turquoise.util.common.CheckUtils;
+import sviolet.thistle.util.common.CheckUtils;
 
 /**
  * <p>运行时权限管理器, 兼容低版本, 占用Activity的requestCode(见PublicConstants.ActivityRequestCode)</p>

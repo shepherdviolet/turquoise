@@ -25,7 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import sviolet.turquoise.util.conversion.ByteUtils;
+import sviolet.thistle.util.conversion.ByteUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.common.CommonDecodeHandler;

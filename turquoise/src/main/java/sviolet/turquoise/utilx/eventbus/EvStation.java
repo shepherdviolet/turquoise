@@ -31,9 +31,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.turquoise.util.common.ConcurrentUtils;
-import sviolet.turquoise.util.common.DateTimeUtils;
-import sviolet.turquoise.util.reflect.ReflectUtils;
+import sviolet.thistle.util.common.ConcurrentUtils;
+import sviolet.thistle.util.reflect.ReflectUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 

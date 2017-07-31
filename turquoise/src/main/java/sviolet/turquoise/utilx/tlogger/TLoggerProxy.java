@@ -24,7 +24,7 @@ import android.util.Log;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.common.statics.StringConstants;
-import sviolet.turquoise.util.common.CheckUtils;
+import sviolet.thistle.util.common.CheckUtils;
 
 /**
  * 日志打印器代理类

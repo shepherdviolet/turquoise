@@ -3,6 +3,7 @@
 ```gradle
     repositories {
         maven { url 'https://jitpack.io' }
+        //Deprecated way, use jitpack.io instead, just for reference
         //maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
     }
     dependencies {
@@ -30,6 +31,7 @@
 ```gradle
     repositories {
         maven { url 'https://jitpack.io' }
+        //Deprecated way, use jitpack.io instead, just for reference
         //maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
     }
     dependencies {

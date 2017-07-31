@@ -29,7 +29,7 @@ import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicLong;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.turquoise.util.common.DateTimeUtils;
+import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.NetStateUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
@@ -63,7 +63,7 @@ public class CommonExceptionHandler implements ExceptionHandler {
 
     @Override
     public void onDiskCacheOpenException(Context applicationContext, Context context, Throwable throwable, TLogger logger) {
-        long time = DateTimeUtils.getUptimeMillis();
+        long time = DateTimeUtilsForAndroid.getUptimeMillis();
         long previousTime = diskCacheExceptionNoticeTime.get();
         if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
             if (diskCacheExceptionNoticeTime.compareAndSet(previousTime, time)) {
@@ -77,7 +77,7 @@ public class CommonExceptionHandler implements ExceptionHandler {
 
     @Override
     public void onDiskCacheReadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
-        long time = DateTimeUtils.getUptimeMillis();
+        long time = DateTimeUtilsForAndroid.getUptimeMillis();
         long previousTime = diskCacheExceptionNoticeTime.get();
         if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
             if (diskCacheExceptionNoticeTime.compareAndSet(previousTime, time)) {
@@ -91,7 +91,7 @@ public class CommonExceptionHandler implements ExceptionHandler {
 
     @Override
     public void onDiskCacheWriteException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
-        long time = DateTimeUtils.getUptimeMillis();
+        long time = DateTimeUtilsForAndroid.getUptimeMillis();
         long previousTime = diskCacheExceptionNoticeTime.get();
         if ((time - previousTime) > DISK_CACHE_EXCEPTION_NOTICE_INTERVAL) {
             if (diskCacheExceptionNoticeTime.compareAndSet(previousTime, time)) {
@@ -111,7 +111,7 @@ public class CommonExceptionHandler implements ExceptionHandler {
     @Override
     public void onNetworkLoadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
         if (!NetStateUtils.isNetworkConnected(applicationContext)){
-            long time = DateTimeUtils.getUptimeMillis();
+            long time = DateTimeUtilsForAndroid.getUptimeMillis();
             long previousTime = networkExceptionNoticeTime.get();
             if ((time - previousTime) > NETWORK_EXCEPTION_NOTICE_INTERVAL) {
                 if (networkExceptionNoticeTime.compareAndSet(previousTime, time)) {

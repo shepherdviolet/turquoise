@@ -22,8 +22,8 @@ package sviolet.turquoise.x.imageloader.stub;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import sviolet.turquoise.util.conversion.ByteUtils;
-import sviolet.turquoise.util.crypto.DigestCipher;
+import sviolet.thistle.util.conversion.ByteUtils;
+import sviolet.thistle.util.crypto.DigestCipher;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;

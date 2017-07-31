@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.util.common.ConcurrentUtils;
+import sviolet.thistle.util.common.ConcurrentUtils;
 
 /**
  * 日志打印器核心逻辑

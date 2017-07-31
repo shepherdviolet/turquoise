@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.turquoise.model.thread.LazySingleThreadPool;
+import sviolet.thistle.model.thread.LazySingleThreadPool;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;

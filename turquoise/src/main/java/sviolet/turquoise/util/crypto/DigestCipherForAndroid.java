@@ -17,36 +17,33 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.util.file;
+package sviolet.turquoise.util.crypto;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
-/**
- * 文件工具
- *
- * Created by S.Violet on 2017/7/27.
- */
+import sviolet.thistle.util.crypto.DigestCipher;
+import sviolet.turquoise.util.droid.DeviceUtils;
 
-public class FileUtils {
+/**
+ * [国际算法]摘要工具
+ *
+ * Created by S.Violet on 2017/7/31.
+ */
+public class DigestCipherForAndroid extends DigestCipher {
 
     /**
-     * 向文件写入字符串
+     * 摘要文件(根据安卓API版本选择NIO或IO方式)
+     *
      * @param file 文件
-     * @param msg 字符串
-     * @param append true:追加 false:覆盖
+     * @param type 摘要算法
+     * @return 摘要bytes
      */
-    public static void writeString(File file, String msg, boolean append) throws IOException {
-        BufferedWriter writer = null;
-        try {
-            writer = new BufferedWriter(new FileWriter(file, append));
-            writer.write(msg);
-        } finally {
-            try { if (writer != null) writer.flush(); } catch (IOException ignored) { }
-            try { if (writer != null) writer.close(); } catch (IOException ignored) { }
-        }
+    public static byte[] digestFile(File file, String type) throws IOException {
+        if(DeviceUtils.getVersionSDK() < 11)
+            return digestFileIo(file, type);//API10使用普通IO(NIO很慢)
+        else
+            return digestFileNio(file, type);//API11以上使用NIO,效率高
     }
 
 }

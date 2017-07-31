@@ -36,7 +36,7 @@ import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
 import sviolet.turquoise.common.statics.StringConstants;
-import sviolet.turquoise.util.conversion.StringUtils;
+import sviolet.thistle.util.conversion.StringUtils;
 import sviolet.turquoise.util.droid.ApplicationUtils;
 
 /**

@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
-import sviolet.turquoise.model.thread.LazySingleThreadPool;
+import sviolet.thistle.model.thread.LazySingleThreadPool;
 import sviolet.turquoise.enhance.common.WeakHandler;
 
 /**

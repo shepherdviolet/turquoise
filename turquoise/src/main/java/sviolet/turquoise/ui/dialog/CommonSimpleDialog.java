@@ -33,7 +33,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import sviolet.turquoise.ui.util.StateListDrawableUtils;
-import sviolet.turquoise.util.conversion.StringUtils;
+import sviolet.turquoise.util.conversion.HtmlStringUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
@@ -122,7 +122,7 @@ public class CommonSimpleDialog extends Dialog {
         contentView.setTextColor(0xFF505050);
         contentView.setTextSize(17f);
         contentView.setPadding(dp20, 0, dp20, 0);
-        contentView.setText(info.htmlEnabled ? StringUtils.toHtmlSpanned(info.content) : info.content);
+        contentView.setText(info.htmlEnabled ? HtmlStringUtils.toHtmlSpanned(info.content) : info.content);
         contentView.setLineSpacing(0, 1.1f);
         contentScrollView.addView(contentView, params);
 

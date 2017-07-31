@@ -26,7 +26,7 @@ import sviolet.demoakotlin.common.DemoDescription
 import sviolet.turquoise.enhance.app.TActivity
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings
-import sviolet.turquoise.kotlin.extensiona.toast
+import sviolet.turquoise.kotlin.extension.toast
 import sviolet.turquoise.utilx.tlogger.*
 
 /**

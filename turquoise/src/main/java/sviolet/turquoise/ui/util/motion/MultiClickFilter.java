@@ -21,7 +21,7 @@ package sviolet.turquoise.ui.util.motion;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-import sviolet.turquoise.util.common.DateTimeUtils;
+import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
 
 /**
  * <p>多重点击过滤器, 用于避免双击或多击</p>
@@ -62,7 +62,7 @@ public class MultiClickFilter {
      * @return true:有效点击 false:无效点击(多重点击, 需要跳过处理)
      */
     public boolean tryHandle(){
-        long time = DateTimeUtils.getCurrentTimeMillis();
+        long time = DateTimeUtilsForAndroid.getCurrentTimeMillis();
         long lastTime = this.lastTime.get();
         if (time - lastTime < interval){
             return false;

@@ -21,7 +21,7 @@ package sviolet.turquoise.kotlin.utilx.tfork
 
 import android.os.Handler
 import android.os.Looper
-import sviolet.turquoise.model.queue.AsyncWaiter
+import sviolet.thistle.model.queue.AsyncWaiter
 
 /**
  * 提供fork块中的操作

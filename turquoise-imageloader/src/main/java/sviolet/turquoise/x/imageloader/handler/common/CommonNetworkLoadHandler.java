@@ -21,14 +21,13 @@ package sviolet.turquoise.x.imageloader.handler.common;
 
 import android.content.Context;
 
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import sviolet.turquoise.util.common.CheckUtils;
+import sviolet.thistle.util.common.CheckUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;

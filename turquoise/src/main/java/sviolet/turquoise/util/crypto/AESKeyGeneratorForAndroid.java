@@ -28,10 +28,13 @@ import java.security.SecureRandom;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import sviolet.thistle.util.crypto.AESKeyGenerator;
+import sviolet.thistle.util.crypto.DigestCipher;
+
 /**
  * Android专用AES秘钥生成工具
  */
-public class AndroidAESKeyGenerator {
+public class AESKeyGeneratorForAndroid {
 
 	/**
 	 * <p>生成128位AES密钥(不同系统平台相同seed生成结果可能不同)</p>

@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import sviolet.turquoise.common.statics.PublicConstants;
-import sviolet.turquoise.util.common.CheckUtils;
+import sviolet.thistle.util.common.CheckUtils;
 import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;

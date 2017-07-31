@@ -27,7 +27,6 @@ import java.util.Map;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
-import sviolet.turquoise.common.statics.StringConstants;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**

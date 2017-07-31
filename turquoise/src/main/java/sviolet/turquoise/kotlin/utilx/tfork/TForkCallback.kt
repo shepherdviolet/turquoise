@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.kotlin.utilx.tfork
 
-import sviolet.turquoise.model.queue.AsyncWaiter
+import sviolet.thistle.model.queue.AsyncWaiter
 
 /**
  * 用于在await/uiAwait异步块中返回异步处理的结果, 使fork调度块的线程继续执行

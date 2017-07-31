@@ -30,7 +30,7 @@ import android.support.v4.app.FragmentActivity;
 import java.lang.reflect.Field;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.util.common.ParasiticVars;
+import sviolet.thistle.util.common.ParasiticVars;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 

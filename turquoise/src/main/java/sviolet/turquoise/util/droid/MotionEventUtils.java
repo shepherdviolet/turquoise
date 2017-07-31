@@ -24,7 +24,7 @@ import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.View;
 
-import sviolet.turquoise.util.common.DateTimeUtils;
+import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
 
 /**
  * <p>创建MotionEvent的工具</p>
@@ -98,7 +98,7 @@ public class MotionEventUtils {
         }
 
         //事件发生时间
-        long eventTime = DateTimeUtils.getUptimeMillis();
+        long eventTime = DateTimeUtilsForAndroid.getUptimeMillis();
         //默认按下时间
         if (downTime <= 0){
             downTime = eventTime;
