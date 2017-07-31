@@ -2,7 +2,7 @@
 dependencies {
     //required
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile "com.github.shepherdviolet:thistle:1.0"
+    compile "com.github.shepherdviolet:thistle:$version_thistleVersion"
     compile "com.android.support:support-v4:$version_supportVersion"
     //optional
     compile "com.android.support:appcompat-v7:$version_supportVersion"

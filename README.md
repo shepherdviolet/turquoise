@@ -1,4 +1,4 @@
-# Turquoise 5.4
+# Turquoise 6.0
 * A comprehensive Android library for private use.
 * https://github.com/shepherdviolet/turquoise
 
@@ -16,10 +16,10 @@
         //maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
     }
     dependencies {
-        compile 'com.github.shepherdviolet.turquoise:turquoise:5.3'
-        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader:5.3'
-        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader-plugin:5.3'
-        compile 'com.github.shepherdviolet.turquoise:turquoise-multidex:5.3'
+        compile 'com.github.shepherdviolet.turquoise:turquoise:6.0'
+        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader:6.0'
+        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader-plugin:6.0'
+        compile 'com.github.shepherdviolet.turquoise:turquoise-multidex:6.0'
     }
 ```
 
@@ -40,8 +40,9 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 
 # Module turquoise
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
-![Dependency](https://img.shields.io/badge/Maven%20Dependency-thistle-dc143c.svg?style=flat)(https://github.com/shepherdviolet/thistle)
+[![Dependency](https://img.shields.io/badge/Maven%20Dependency-thistle-dc143c.svg?style=flat)](https://github.com/shepherdviolet/thistle)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
+
 ###### The basic library module, as detailed below:
 
 ### Utils/Models ┃ sviolet.turquoise.util/utilx/model/modelx
@@ -65,7 +66,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 * TActivity.executePermissionTask: easy to use Runtime Permission
 * WeakHandler: help Handler to avoid Memory Leak(design specifications)
 
-### Kotlin support | sviolet.turquoise.kotlin
+### Kotlin support ┃ sviolet.turquoise.kotlin
 * Kotlin extensions: extension function package
 * TLogger: Kotlin style
 * TFork: Experimental feature, a simple async tools
