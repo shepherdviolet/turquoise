@@ -26,7 +26,7 @@ import com.google.gson.JsonArray
  *
  * Created by S.Violet on 2017/7/31.
  */
-class TJsonArray
+class TJsonArrayBuilder
 internal constructor() {
 
     internal val provider = JsonArray()
@@ -60,8 +60,8 @@ internal constructor() {
         /**
          * block(to build JsonObject)
          */
-        infix fun v(block: TJsonObject.() -> Unit) {
-            val obj = TJsonObject()
+        infix fun v(block: TJsonObjectBuilder.() -> Unit) {
+            val obj = TJsonObjectBuilder()
             obj.block()
             provider.add(obj.provider)
         }
@@ -95,8 +95,8 @@ internal constructor() {
         /**
          * block(to build JsonArray)
          */
-        infix fun v(block: TJsonArray.(Any?) -> Unit) {
-            val array = TJsonArray()
+        infix fun v(block: TJsonArrayBuilder.(Any?) -> Unit) {
+            val array = TJsonArrayBuilder()
             if (hasIterable) {
                 val i = iterable
                 if (i is Iterable<*>) {

@@ -26,7 +26,7 @@ import com.google.gson.JsonObject
  *
  * Created by S.Violet on 2017/7/31.
  */
-class TJsonObject
+class TJsonObjectBuilder
 internal constructor() {
 
     internal val provider = JsonObject()
@@ -73,11 +73,11 @@ internal constructor() {
         /**
          * block(to build JsonObject)
          */
-        infix fun v(block: TJsonObject.() -> Unit) {
+        infix fun v(block: TJsonObjectBuilder.() -> Unit) {
             if (key == null){
                 throw IllegalArgumentException("[TJson]You should invoke method \"k\" to set key before set value")
             }
-            val obj = TJsonObject()
+            val obj = TJsonObjectBuilder()
             obj.block()
             provider.add(key, obj.provider)
         }
@@ -120,11 +120,11 @@ internal constructor() {
         /**
          * block(to build JsonArray)
          */
-        infix fun v(block: TJsonArray.(Any?) -> Unit) {
+        infix fun v(block: TJsonArrayBuilder.(Any?) -> Unit) {
             if (key == null){
                 throw IllegalArgumentException("[TJson]You should invoke method \"k\" to set key before set value")
             }
-            val array = TJsonArray()
+            val array = TJsonArrayBuilder()
             if (hasIterable) {
                 val i = iterable
                 if (i is Iterable<*>) {
