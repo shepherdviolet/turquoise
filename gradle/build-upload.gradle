@@ -1,7 +1,6 @@
 //库工程上传本地仓库////////////////////////////////////////////////////////////////////////////////////
 //1.配置本地仓库路径和版本: gradle-local.properties
-//      mvn_version=5.1.170407.1121
-//      mvn_local_repo=file:C:/m2repository/repository
+//      repository_localRepositoryPath=file:C:/m2repository/repository
 //2.Gradle执行: uploadArchives
 
 //其他工程引入依赖////////////////////////////////////////////////////////////////////////////////////
@@ -28,12 +27,12 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
     uploadArchives {
         repositories.mavenDeployer {
             //暂时使用绝对路径指定本地仓库
-            repository(url: uri(upload_repositoryPath))
+            repository(url: uri(repository_localRepositoryPath))
             pom.project {
                 groupId 'com.github.shepherdviolet.turquoise'
                 artifactId project.name
                 name project.name
-                version upload_mavenVersion
+                version project.version
                 packaging 'aar'
                 licenses {
                     license {
