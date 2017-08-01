@@ -70,10 +70,10 @@
 #####################避免混淆包/类#########################
 #忽略警告
 -dontwarn sviolet.turquoise.**
+-dontwarn sviolet.thistle.**
 #保留一个完整的包
--keep class sviolet.turquoise.** {
-    *;
- }
+-keep class sviolet.turquoise.** {*;}
+-keep class sviolet.thistle.** {*;}
 #如果引用了v4或者v7包
 #-dontwarn android.support.**
 ############避免native方法混淆#################
