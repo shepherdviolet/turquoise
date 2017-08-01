@@ -32,7 +32,7 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
                 groupId 'com.github.shepherdviolet.turquoise'
                 artifactId project.name
                 name project.name
-                version project.version
+                version version_projectVersionName
                 packaging 'aar'
                 licenses {
                     license {
