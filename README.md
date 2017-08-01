@@ -11,7 +11,9 @@
 
 ```gradle
     repositories {
+        jcenter()
         maven { url 'https://jitpack.io' }
+        maven { url 'https://maven.google.com' }
         //Deprecated way, use jitpack.io instead, just for reference
         //maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
     }
