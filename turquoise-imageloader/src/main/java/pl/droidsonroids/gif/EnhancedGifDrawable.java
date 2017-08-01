@@ -19,6 +19,7 @@
 
 package pl.droidsonroids.gif;
 
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 
@@ -47,31 +48,35 @@ public class EnhancedGifDrawable extends GifDrawable {
     private int fixedHeight = Integer.MIN_VALUE;
 
     public static EnhancedGifDrawable decode(@NonNull File file, int reqWidth, int reqHeight, BitmapUtils.InSampleQuality quality) throws IOException {
-        //decode gif
-        GifInfoHandle gifInfoHandle = new GifInfoHandle(file.getPath(), false);
-        final int width = gifInfoHandle.getWidth();
-        final int height = gifInfoHandle.getHeight();
         //calculate sample size
-        int sampleSize = BitmapUtils.calculateInSampleSize(width, height, reqWidth, reqHeight, quality);
-        //set sample size
-        gifInfoHandle.setSampleSize(sampleSize);
-        return new EnhancedGifDrawable(gifInfoHandle);
+        final BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+        bitmapOptions.inJustDecodeBounds = true;//仅计算参数, 不解码
+        BitmapFactory.decodeFile(file.getAbsolutePath(), bitmapOptions);
+        int inSampleSize = BitmapUtils.calculateInSampleSize(bitmapOptions.outWidth, bitmapOptions.outHeight, reqWidth, reqHeight, quality);//缩放因子(整数倍)
+        //decode
+        GifOptions options = new GifOptions();
+        options.setInSampleSize(inSampleSize);
+        return new EnhancedGifDrawable(file, options);
     }
 
     public static EnhancedGifDrawable decode(@NonNull byte[] bytes, int reqWidth, int reqHeight, BitmapUtils.InSampleQuality quality) throws IOException {
-        //decode gif
-        GifInfoHandle gifInfoHandle = new GifInfoHandle(bytes, false);
-        final int width = gifInfoHandle.getWidth();
-        final int height = gifInfoHandle.getHeight();
         //calculate sample size
-        int sampleSize = BitmapUtils.calculateInSampleSize(width, height, reqWidth, reqHeight, quality);
+        final BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+        bitmapOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeByteArray(bytes, 0, bytes.length, bitmapOptions);
+        int inSampleSize = BitmapUtils.calculateInSampleSize(bitmapOptions.outWidth, bitmapOptions.outHeight, reqWidth, reqHeight, quality);
         //set sample size
-        gifInfoHandle.setSampleSize(sampleSize);
-        return new EnhancedGifDrawable(gifInfoHandle).setBytesDataMode();
+        GifOptions options = new GifOptions();
+        options.setInSampleSize(inSampleSize);
+        return new EnhancedGifDrawable(bytes, options).setBytesDataMode();
     }
 
-    private EnhancedGifDrawable(GifInfoHandle gifInfoHandle) {
-        super(gifInfoHandle, null, null, true);
+    private EnhancedGifDrawable(@NonNull File file, GifOptions options) throws IOException {
+        super(new InputSource.FileSource(file), null, null, true, options);
+    }
+
+    private EnhancedGifDrawable(@NonNull byte[] bytes, GifOptions options) throws IOException {
+        super(new InputSource.ByteArraySource(bytes), null, null, true, options);
     }
 
     @Override
