@@ -32,6 +32,7 @@ import android.support.annotation.RequiresPermission;
 import java.security.Signature;
 
 import javax.crypto.Cipher;
+import javax.crypto.Mac;
 
 /**
  * <p>
@@ -140,7 +141,7 @@ public class FingerprintUtils {
             }
             @Override
             public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-                callback.onAuthenticationSucceeded(result);
+                callback.onAuthenticationSucceeded(result.getCryptoObject().getSignature(), result.getCryptoObject().getCipher(), result.getCryptoObject().getMac());
             }
             @Override
             public void onAuthenticationFailed() {
@@ -172,9 +173,11 @@ public class FingerprintUtils {
 
         /**
          * Called when a fingerprint is recognized.
-         * @param result An object containing authentication-related data
+         * @param signature signature instance to sign data
+         * @param cipher cipher instance to encrypt/decrypt data
+         * @param mac mac instance
          */
-        public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) { }
+        public void onAuthenticationSucceeded(Signature signature, Cipher cipher, Mac mac) { }
 
         /**
          * Called when a fingerprint is valid but not recognized.
