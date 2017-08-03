@@ -20,6 +20,7 @@
 package sviolet.demoa.fingerprint;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
@@ -37,6 +38,8 @@ import javax.crypto.Mac;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.thistle.util.conversion.ByteUtils;
+import sviolet.thistle.util.crypto.RSACipher;
+import sviolet.thistle.util.crypto.RSAKeyGenerator;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
@@ -69,6 +72,8 @@ public class SignFingerprintActivity extends TActivity {
 
     private boolean signing = false;
     private CancellationSignal cancellationSignal;
+
+    private TLogger logger = TLogger.get(this);
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -107,12 +112,12 @@ public class SignFingerprintActivity extends TActivity {
         } catch (AndroidKeyStoreUtils.KeyLoadException e) {
             Toast.makeText(SignFingerprintActivity.this, "密钥加载失败, 请重新申请密钥", Toast.LENGTH_SHORT).show();
             signTextView.setText("密钥加载失败, 请重新申请密钥");
-            TLogger.get(this).e(e);
+            logger.e(e);
             return;
         } catch (AndroidKeyStoreUtils.KeyNotFoundException e) {
             Toast.makeText(SignFingerprintActivity.this, "请先申请密钥", Toast.LENGTH_SHORT).show();
             signTextView.setText("请先申请密钥");
-            TLogger.get(this).e(e);
+            logger.e(e);
             return;
         }
         signing = true;
@@ -152,11 +157,13 @@ public class SignFingerprintActivity extends TActivity {
                             byte[] sign = signature.sign();
                             Toast.makeText(SignFingerprintActivity.this, "数据签名成功", Toast.LENGTH_SHORT).show();
                             signTextView.setText(ByteUtils.bytesToHex(sign));
-                            TLogger.get(this).i("sign:" + ByteUtils.bytesToHex(sign));
+                            logger.i("sign:" + ByteUtils.bytesToHex(sign));
+                            //模拟服务端验签, 客户端无需该操作
+                            verifySign(msgEditText.getText().toString().getBytes("UTF-8"), sign);
                         } catch (Exception e) {
                             Toast.makeText(SignFingerprintActivity.this, "数据签名失败, 请重新申请密钥", Toast.LENGTH_SHORT).show();
                             signTextView.setText("数据签名失败, 请重新申请密钥");
-                            TLogger.get(this).e(e);
+                            logger.e(e);
                         }
                         signButton.setText("Sign");
                         signing = false;
@@ -169,6 +176,24 @@ public class SignFingerprintActivity extends TActivity {
                         signTextView.setText("无法识别的指纹, 请重试");
                     }
                 });
+    }
+
+    /**
+     * 模拟服务端验签, 客户端无需该操作
+     */
+    private void verifySign(byte[] msg, byte[] sign){
+        logger.i("Mock verify sign: start");
+        String storedPublicKey = getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE).getString("fingerprint_rsa_public_key", null);
+        if (storedPublicKey == null){
+            logger.e("Mock verify sign: public key is null");
+            return;
+        }
+        try {
+            boolean valid = RSACipher.verify(msg, sign, RSAKeyGenerator.generatePublicKeyByX509(ByteUtils.hexToBytes(storedPublicKey)), RSACipher.SIGN_ALGORITHM_RSA_SHA256);
+            logger.i("Mock verify sign: result:" + valid);
+        } catch (Exception e) {
+            logger.e("Mock verify sign: verify sign failed", e);
+        }
     }
 
 }
