@@ -89,7 +89,8 @@ public abstract class WeekAsyncTask<Host, Params, Progress, Result> extends Asyn
             return doInBackgroundEnhanced(params);
         } catch (ExceptionWrapper e) {
             this.throwable = e.getCause();
-            throw e;
+            cancel(false);
+            return null;
         }
     }
 
