@@ -83,7 +83,7 @@ public class ApplyFingerprintActivity extends TActivity {
         @TargetApi(Build.VERSION_CODES.M)
         protected byte[] doInBackgroundEnhanced(String... strings) throws ExceptionWrapper {
             try {
-                byte[] publicKey = AndroidKeyStoreUtils.genRsaSha256SignKey("test").getEncoded();
+                byte[] publicKey = AndroidKeyStoreUtils.genRsaSha256SignKey("fingerprint_rsa").getEncoded();
                 TLogger.get(this).i("public key:" + ByteUtils.bytesToHex(publicKey));
                 return publicKey;
             } catch (AndroidKeyStoreUtils.KeyGenerateException e) {
