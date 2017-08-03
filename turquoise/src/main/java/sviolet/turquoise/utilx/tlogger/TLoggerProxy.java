@@ -36,6 +36,7 @@ class TLoggerProxy extends TLogger {
     private Class<?> host;
     private int level;
     private int ruleUpdateTimes;
+    private String className;
 
     private ReentrantLock lock = new ReentrantLock();
 
@@ -43,6 +44,16 @@ class TLoggerProxy extends TLogger {
         this.host = host;
         this.level = level;
         this.ruleUpdateTimes = ruleUpdateTimes;
+
+        if (host != null){
+            className = host.getSimpleName();
+            if (CheckUtils.isEmpty(className)){
+                String[] names = host.getName().split("\\.");
+                if (names.length > 0){
+                    className = names[names.length - 1];
+                }
+            }
+        }
     }
 
     @Override
@@ -54,49 +65,49 @@ class TLoggerProxy extends TLogger {
     public void e(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, ERROR))
-            Log.e(StringConstants.LIBRARY_TAG, "[" + host.getSimpleName() + "]" + msg);
+            Log.e(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg);
     }
 
     public void e(Object msg, Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, ERROR))
-            Log.e(StringConstants.LIBRARY_TAG, "[" + host.getSimpleName() + "]" + msg, throwable);
+            Log.e(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg, throwable);
     }
 
     public void e(Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, ERROR))
-            Log.e(StringConstants.LIBRARY_TAG, "[" + host.getSimpleName() + "]", throwable);
+            Log.e(StringConstants.LIBRARY_TAG, "[" + className + "]", throwable);
     }
 
     public void w(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, WARNING))
-            Log.w(StringConstants.LIBRARY_TAG, "[" + host.getSimpleName() + "]" + msg);
+            Log.w(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg);
     }
 
     public void w(Object msg, Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, WARNING))
-            Log.w(StringConstants.LIBRARY_TAG, "[" + host.getSimpleName() + "]" + msg, throwable);
+            Log.w(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg, throwable);
     }
 
     public void w(Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, WARNING))
-            Log.w(StringConstants.LIBRARY_TAG, "[" + host.getSimpleName() + "]", throwable);
+            Log.w(StringConstants.LIBRARY_TAG, "[" + className + "]", throwable);
     }
 
     public void i(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, INFO))
-            Log.i(StringConstants.LIBRARY_TAG, "[" + host.getSimpleName() + "]" + msg);
+            Log.i(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg);
     }
 
     public void d(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, DEBUG))
-            Log.d(StringConstants.LIBRARY_TAG, "[" + host.getSimpleName() + "]" + msg);
+            Log.d(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg);
     }
 
     private void updateLevel() {
