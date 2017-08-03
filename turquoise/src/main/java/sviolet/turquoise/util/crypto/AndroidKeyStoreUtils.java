@@ -66,6 +66,13 @@ public class AndroidKeyStoreUtils {
         }
     }
 
+    /**
+     * 从AndroidKeyStore中读取SHA256withRSA私钥, 并初始化signature
+     * @param keyStoreName 秘钥名称
+     * @return signature
+     * @throws KeyLoadException 密钥读取异常
+     * @throws KeyNotFoundException 秘钥不存在
+     */
     @RequiresApi(api = Build.VERSION_CODES.M)
     public static Signature loadRsaSha256Signature(String keyStoreName) throws KeyLoadException, KeyNotFoundException {
         PrivateKey privateKey;
@@ -95,7 +102,7 @@ public class AndroidKeyStoreUtils {
      * @throws KeyGenerateException 秘钥生成异常
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public static PublicKey genEccSha256SignKey(String keyStoreName) throws KeyGenerateException {
+    public static PublicKey genEcdsaSha256SignKey(String keyStoreName) throws KeyGenerateException {
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
@@ -111,12 +118,19 @@ public class AndroidKeyStoreUtils {
             );
             return keyPairGenerator.generateKeyPair().getPublic();
         } catch (Exception e) {
-            throw new KeyGenerateException("Error while genEccSha256SignKey", e);
+            throw new KeyGenerateException("Error while genEcdsaSha256SignKey", e);
         }
     }
 
+    /**
+     * 从AndroidKeyStore中读取SHA256withECDSA私钥, 并初始化signature
+     * @param keyStoreName 秘钥名称
+     * @return signature
+     * @throws KeyLoadException 密钥读取异常
+     * @throws KeyNotFoundException 秘钥不存在
+     */
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public static Signature loadEccSha256Signature(String keyStoreName) throws KeyLoadException, KeyNotFoundException {
+    public static Signature loadEcdsaSha256Signature(String keyStoreName) throws KeyLoadException, KeyNotFoundException {
         PrivateKey privateKey;
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
