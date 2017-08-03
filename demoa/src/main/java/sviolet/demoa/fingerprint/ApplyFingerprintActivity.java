@@ -35,6 +35,7 @@ import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.common.WeekAsyncTask;
 import sviolet.turquoise.util.crypto.AndroidKeyStoreUtils;
+import sviolet.turquoise.util.droid.FingerprintUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
@@ -62,11 +63,24 @@ public class ApplyFingerprintActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
+        //指纹识别和AndroidKeyStore必须在API23以上, 指纹识别必须判断硬件是否支持且用户录入了指纹
+        if (!FingerprintUtils.isHardwareDetected(this)){
+            applyButton.setEnabled(false);
+            publicKeyTextView.setText("设备不支持指纹识别");
+            return;
+        }
+        if (!FingerprintUtils.hasEnrolledFingerprints(this)){
+            applyButton.setEnabled(false);
+            publicKeyTextView.setText("请在设备中开启并录入指纹后使用该功能");
+            return;
+        }
+        //申请按钮
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!applying) {
                     applying = true;
+                    //异步执行
                     new KeyApplyTask(ApplyFingerprintActivity.this).execute((String) null);
                 }
             }
@@ -83,6 +97,7 @@ public class ApplyFingerprintActivity extends TActivity {
         @TargetApi(Build.VERSION_CODES.M)
         protected byte[] doInBackgroundEnhanced(String... strings) throws ExceptionWrapper {
             try {
+                //在AndroidKeyStore中生成RSA公私钥, 私钥存在TEE中不可读取, 公钥可读取
                 byte[] publicKey = AndroidKeyStoreUtils.genRsaSha256SignKey("fingerprint_rsa").getEncoded();
                 TLogger.get(this).i("public key:" + ByteUtils.bytesToHex(publicKey));
                 return publicKey;
@@ -93,11 +108,13 @@ public class ApplyFingerprintActivity extends TActivity {
 
         @Override
         protected void onPostExecuteWithHost(byte[] bytes, ApplyFingerprintActivity host) {
+            //显示公钥
             host.publicKeyTextView.setText(ByteUtils.bytesToHex(bytes));
         }
 
         @Override
         protected void onExceptionWithHost(Throwable throwable, ApplyFingerprintActivity host) {
+            //显示异常
             host.publicKeyTextView.setText(StringUtils.throwableToString(throwable));
         }
 
