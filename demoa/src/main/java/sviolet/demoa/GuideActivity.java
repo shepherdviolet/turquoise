@@ -31,6 +31,7 @@ import android.widget.Toast;
 import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
+import sviolet.demoa.fingerprint.FingerprintActivity;
 import sviolet.demoa.info.InfoActivity;
 import sviolet.demoa.kotlin.KtTestActivity;
 import sviolet.demoa.other.OtherActivity;
@@ -56,6 +57,7 @@ import sviolet.turquoise.ui.util.motion.MultiClickFilter;
         OtherActivity.class,
         InfoActivity.class,
         KtTestActivity.class,
+        FingerprintActivity.class,
         TempActivity.class
 })
 

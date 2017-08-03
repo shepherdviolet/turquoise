@@ -47,6 +47,10 @@
     <string name="kotlin_main_title">Kotlin Demo</string>
     <string name="simple_kotlin_main_title">Simple Kt Demo</string>
 
+    <string name="fingerprint_main_title">Fingerprint Demo</string>
+    <string name="fingerprint_apply_main_title">Fingerprint Apply</string>
+    <string name="fingerprint_apply_main_apply_button">Apply Key</string>
+
     <string name="temp_main_title">Temp</string>
 
 </resources>
