@@ -20,6 +20,8 @@
 package sviolet.demoa.fingerprint;
 
 import android.annotation.TargetApi;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -74,6 +76,10 @@ public class ApplyFingerprintActivity extends TActivity {
             publicKeyTextView.setText("请在设备中开启并录入指纹后使用该功能");
             return;
         }
+        //显示之前申请的公钥
+        String storedPublicKey = getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE).getString("fingerprint_rsa_public_key", "");
+        publicKeyTextView.setText(storedPublicKey);
+        TLogger.get(this).i("public key:" + storedPublicKey);
         //申请按钮
         applyButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,9 +104,7 @@ public class ApplyFingerprintActivity extends TActivity {
         protected byte[] doInBackgroundEnhanced(String... strings) throws ExceptionWrapper {
             try {
                 //在AndroidKeyStore中生成RSA公私钥, 私钥存在TEE中不可读取, 公钥可读取
-                byte[] publicKey = AndroidKeyStoreUtils.genRsaSha256SignKey("fingerprint_rsa").getEncoded();
-                TLogger.get(this).i("public key:" + ByteUtils.bytesToHex(publicKey));
-                return publicKey;
+                return AndroidKeyStoreUtils.genRsaSha256SignKey("fingerprint_rsa").getEncoded();
             } catch (AndroidKeyStoreUtils.KeyGenerateException e) {
                 throw new ExceptionWrapper(e);
             }
@@ -110,6 +114,11 @@ public class ApplyFingerprintActivity extends TActivity {
         protected void onPostExecuteWithHost(byte[] bytes, ApplyFingerprintActivity host) {
             //显示公钥
             host.publicKeyTextView.setText(ByteUtils.bytesToHex(bytes));
+            TLogger.get(this).i("public key:" + ByteUtils.bytesToHex(bytes));
+            SharedPreferences sharedPreferences = host.getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE);
+            sharedPreferences.edit()
+                    .putString("fingerprint_rsa_public_key", ByteUtils.bytesToHex(bytes))
+                    .apply();
         }
 
         @Override
