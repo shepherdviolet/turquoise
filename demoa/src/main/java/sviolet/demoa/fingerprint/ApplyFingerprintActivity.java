@@ -38,7 +38,7 @@ import sviolet.turquoise.util.crypto.AndroidKeyStoreUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
- * 显示信息
+ * 申请指纹认证的秘钥
  */
 @DemoDescription(
         title = "Fingerprint Apply",

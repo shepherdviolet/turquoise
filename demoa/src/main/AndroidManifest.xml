@@ -98,6 +98,8 @@
             android:label="@string/fingerprint_main_title"/>
         <activity android:name=".fingerprint.ApplyFingerprintActivity"
             android:label="@string/fingerprint_apply_main_title"/>
+        <activity android:name=".fingerprint.SignFingerprintActivity"
+            android:label="@string/fingerprint_sign_main_title"/>
 
         <activity android:name=".TempActivity"
             android:label="@string/temp_main_title"/>

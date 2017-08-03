@@ -29,7 +29,8 @@ import sviolet.demoa.common.DemoList;
 
 // Demo列表
 @DemoList({
-        ApplyFingerprintActivity.class
+        ApplyFingerprintActivity.class,
+        SignFingerprintActivity.class
 })
 
 /**************************************************************
