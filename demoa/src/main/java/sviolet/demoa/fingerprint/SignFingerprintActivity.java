@@ -191,6 +191,9 @@ public class SignFingerprintActivity extends TActivity {
         try {
             boolean valid = RSACipher.verify(msg, sign, RSAKeyGenerator.generatePublicKeyByX509(ByteUtils.hexToBytes(storedPublicKey)), RSACipher.SIGN_ALGORITHM_RSA_SHA256);
             logger.i("Mock verify sign: result:" + valid);
+            if (valid) {
+                Toast.makeText(SignFingerprintActivity.this, "模拟验签通过", Toast.LENGTH_SHORT).show();
+            }
         } catch (Exception e) {
             logger.e("Mock verify sign: verify sign failed", e);
         }
