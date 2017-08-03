@@ -79,6 +79,7 @@ public class FingerprintUtils {
      * @param handler an optional handler to handle callback events
      * @param callback an object to receive authentication events
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @RequiresPermission("android.permission.USE_FINGERPRINT")
     public static void authenticate(@NonNull Context context,
                                     @Nullable Signature signature,
@@ -101,6 +102,7 @@ public class FingerprintUtils {
      * @param handler an optional handler to handle callback events
      * @param callback an object to receive authentication events
      */
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @RequiresPermission("android.permission.USE_FINGERPRINT")
     public static void authenticate(@NonNull Context context,
                                     @Nullable Cipher cipher,
