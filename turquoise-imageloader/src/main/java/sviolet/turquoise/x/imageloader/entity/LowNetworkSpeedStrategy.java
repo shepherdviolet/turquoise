@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.entity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import java.util.HashMap;
@@ -92,6 +93,7 @@ public class LowNetworkSpeedStrategy {
         this.configures = configures;
     }
 
+    @SuppressLint("MissingPermission")
     public Configure getConfigure(Context context, IndispensableState indispensableState){
         if (indispensableState.isIndispensable()){
             return configures.get(Type.INDISPENSABLE_TASK);

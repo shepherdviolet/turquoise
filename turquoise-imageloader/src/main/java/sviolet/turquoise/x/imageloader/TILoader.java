@@ -24,6 +24,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.RequiresPermission;
 
 import java.lang.ref.WeakReference;
 
@@ -45,6 +46,7 @@ public class TILoader {
      * @param context context
      * @return get Node of Context, used to loading image
      */
+    @RequiresPermission(allOf = {"android.permission.INTERNET", "android.permission.ACCESS_NETWORK_STATE"})
     public static Node node(Activity context){
         checkContext(context);
         return ComponentManager.getInstance().getNodeManager().fetchNode(context);
@@ -55,6 +57,7 @@ public class TILoader {
      * @param context context
      * @return get Node of Context, used to loading image
      */
+    @RequiresPermission(allOf = {"android.permission.INTERNET", "android.permission.ACCESS_NETWORK_STATE"})
     public static Node node(android.support.v4.app.FragmentActivity context){
         checkContext(context);
         return ComponentManager.getInstance().getNodeManager().fetchNode(context);
@@ -65,6 +68,7 @@ public class TILoader {
      * @param context context
      * @return get Node of Context, used to loading image
      */
+    @RequiresPermission(allOf = {"android.permission.INTERNET", "android.permission.ACCESS_NETWORK_STATE"})
     public static Node node(android.support.v4.app.Fragment context){
         checkContext(context);
         return ComponentManager.getInstance().getNodeManager().fetchNode(context.getActivity());
@@ -75,6 +79,7 @@ public class TILoader {
      * @param context context
      * @return get Node of Context, used to loading image
      */
+    @RequiresPermission(allOf = {"android.permission.INTERNET", "android.permission.ACCESS_NETWORK_STATE"})
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     public static Node node(Fragment context){
         checkContext(context);
@@ -115,6 +120,7 @@ public class TILoader {
      * @param listener callback when loading succeed / canceled / failed
      * @return {@link StubRemoter}
      */
+    @RequiresPermission(allOf = {"android.permission.INTERNET", "android.permission.ACCESS_NETWORK_STATE"})
     public static StubRemoter extract(Context context, String url, Params params, OnLoadedListener listener) {
         checkContext(context);
         return ComponentManager.getInstance().getNodeManager().fetchExtractNode(context).extract(url, params, listener);

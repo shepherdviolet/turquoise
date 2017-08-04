@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.enhance.app;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -62,9 +63,11 @@ public abstract class MultiDexLoadingActivity extends Activity {
     /**
      * MultiDex加载任务(dexopt任务)
      */
+    @SuppressLint("StaticFieldLeak")
     private class LoadDexTask extends AsyncTask {
 
         @Override
+        @SuppressLint("ApplySharedPref")
         protected Object doInBackground(Object[] params) {
             try {
                 Log.i("TurquoiseMultiDex", "mini process: dex opt start");
@@ -74,13 +77,13 @@ public abstract class MultiDexLoadingActivity extends Activity {
 
                 //保存sha1和客户端版本
                 SharedPreferences prefs = getApplication().getSharedPreferences(StringConstants.MULTI_DEX_PREF_NAME, MODE_MULTI_PROCESS);
-                String recentSha1 = prefs.getString(StringConstants.MULTI_DEX_PREF_SHA1_KEY, "");
-                String recentVersion = prefs.getString(StringConstants.MULTI_DEX_PREF_VERSION_KEY, "");
+//                String recentSha1 = prefs.getString(StringConstants.MULTI_DEX_PREF_SHA1_KEY, "");
+//                String recentVersion = prefs.getString(StringConstants.MULTI_DEX_PREF_VERSION_KEY, "");
 
                 prefs.edit()
                         .putString(StringConstants.MULTI_DEX_PREF_SHA1_KEY, TApplicationForMultiDex.get2thDexSHA1(getApplication()))
                         .putString(StringConstants.MULTI_DEX_PREF_VERSION_KEY, ApplicationUtils.getAppVersionName(getApplication()))
-                        .commit();
+                        .commit();//为了确保写入成功, 使用commit
             } catch (Exception e) {
                 Log.e("TurquoiseMultiDex", "mini process: dex opt error", e);
             }

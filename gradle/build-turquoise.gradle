@@ -1,6 +1,6 @@
 apply plugin: 'gradle-turquoise'
 
 turquoise {
-    disableLint = true //禁用lint
+    disableLint = false //禁用lint
     printDependenciesPathFilter = ['compile']
 }

@@ -34,7 +34,7 @@ public class DeviceUtils {
      */
     @RequiresPermission("android.permission.ACCESS_WIFI_STATE")
     public static String getMacAddress(Context context) {
-        final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        final WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo info = wifiManager.getConnectionInfo();
         if (info != null) {
             return info.getMacAddress();

@@ -3,6 +3,7 @@ package sviolet.turquoise.util.droid;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.RequiresPermission;
 import android.telephony.TelephonyManager;
 
 /**
@@ -10,6 +11,7 @@ import android.telephony.TelephonyManager;
  */
 public class NetStateUtils {
 
+	@RequiresPermission("android.permission.ACCESS_NETWORK_STATE")
 	public static NetworkInfo getNetworkInfo(Context context) {
 		ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		return manager.getActiveNetworkInfo();
@@ -18,6 +20,7 @@ public class NetStateUtils {
 	/**
 	 * 判断当前是否有网络连接
 	 */
+    @RequiresPermission("android.permission.ACCESS_NETWORK_STATE")
 	public static boolean isNetworkConnected(Context context) {
 		NetworkInfo networkInfo = getNetworkInfo(context);
 		return networkInfo != null && networkInfo.isConnected();
@@ -26,6 +29,7 @@ public class NetStateUtils {
 	/**
 	 * 判断当前网络模式是否为CMWAP
 	 */
+    @RequiresPermission("android.permission.ACCESS_NETWORK_STATE")
 	public static boolean isCmwap(Context context) {
 		NetworkInfo networkInfo = getNetworkInfo(context);
 		if (networkInfo != null && networkInfo.isConnected()) {
@@ -37,6 +41,7 @@ public class NetStateUtils {
 	/**
 	 * 判断网络类型
      */
+    @RequiresPermission("android.permission.ACCESS_NETWORK_STATE")
 	public static NetworkType getNetworkType(Context context) {
 		NetworkInfo networkInfo = getNetworkInfo(context);
 

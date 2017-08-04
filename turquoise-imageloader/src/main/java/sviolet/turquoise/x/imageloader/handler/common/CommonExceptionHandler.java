@@ -19,6 +19,7 @@
 
 package sviolet.turquoise.x.imageloader.handler.common;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Looper;
 import android.os.Message;
@@ -109,6 +110,7 @@ public class CommonExceptionHandler implements ExceptionHandler {
     }
 
     @Override
+    @SuppressLint("MissingPermission")
     public void onNetworkLoadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
         if (!NetStateUtils.isNetworkConnected(applicationContext)){
             long time = DateTimeUtilsForAndroid.getUptimeMillis();
