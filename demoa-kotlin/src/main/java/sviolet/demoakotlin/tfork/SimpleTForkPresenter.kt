@@ -21,7 +21,7 @@ package sviolet.demoakotlin.tfork
 
 import android.graphics.Bitmap
 import sviolet.turquoise.enhance.app.mvp.TPresenter
-import sviolet.turquoise.kotlin.utilx.tfork.fork
+import sviolet.turquoise.kotlin.utilx.tfork.TFork
 import sviolet.turquoise.utilx.tlogger.logd
 import sviolet.turquoise.utilx.tlogger.loge
 import sviolet.turquoise.utilx.tlogger.logw
@@ -41,7 +41,7 @@ class SimpleTForkPresenter(view: SimpleTForkActivity) : TPresenter<SimpleTForkAc
 
         logd("fork: start")
         //fork代码块中的代码会在新线程中执行
-        fork ({
+        TFork.fork ({
             logd("fork: load bitmap")
             //await代码块用于将异步操作转为同步
             //await代码块会在新线程中执行, 同时fork代码块会阻塞直到结果返回
