@@ -38,8 +38,8 @@ import javax.crypto.Mac;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.thistle.util.conversion.ByteUtils;
-import sviolet.thistle.util.crypto.RSACipher;
-import sviolet.thistle.util.crypto.RSAKeyGenerator;
+import sviolet.thistle.util.crypto.ECDSACipher;
+import sviolet.thistle.util.crypto.ECDSAKeyGenerator;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
@@ -108,7 +108,7 @@ public class SignFingerprintActivity extends TActivity {
         //从AndroidKeyStore加载私钥
         Signature signature;
         try {
-            signature = AndroidKeyStoreUtils.loadRsaSha256Signature("fingerprint_rsa");
+            signature = AndroidKeyStoreUtils.loadEcdsaSha256Signature("fingerprint_ecdsa");
         } catch (AndroidKeyStoreUtils.KeyLoadException e) {
             Toast.makeText(SignFingerprintActivity.this, "密钥加载失败, 请重新申请密钥", Toast.LENGTH_SHORT).show();
             signTextView.setText("密钥加载失败, 请重新申请密钥");
@@ -183,16 +183,18 @@ public class SignFingerprintActivity extends TActivity {
      */
     private void verifySign(byte[] msg, byte[] sign){
         logger.i("Mock verify sign: start");
-        String storedPublicKey = getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE).getString("fingerprint_rsa_public_key", null);
+        String storedPublicKey = getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE).getString("fingerprint_ecdsa_public_key", null);
         if (storedPublicKey == null){
             logger.e("Mock verify sign: public key is null");
             return;
         }
         try {
-            boolean valid = RSACipher.verify(msg, sign, RSAKeyGenerator.generatePublicKeyByX509(ByteUtils.hexToBytes(storedPublicKey)), RSACipher.SIGN_ALGORITHM_RSA_SHA256);
+            boolean valid = ECDSACipher.verify(msg, sign, ECDSAKeyGenerator.generatePublicKeyByX509(ByteUtils.hexToBytes(storedPublicKey)), ECDSACipher.SIGN_ALGORITHM_ECDSA_SHA256);
             logger.i("Mock verify sign: result:" + valid);
             if (valid) {
                 Toast.makeText(SignFingerprintActivity.this, "模拟验签通过", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(SignFingerprintActivity.this, "模拟验签失败!!!", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             logger.e("Mock verify sign: verify sign failed", e);

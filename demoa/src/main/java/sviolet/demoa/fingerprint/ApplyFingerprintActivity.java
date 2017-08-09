@@ -103,8 +103,8 @@ public class ApplyFingerprintActivity extends TActivity {
         @TargetApi(Build.VERSION_CODES.M)
         protected byte[] doInBackgroundEnhanced(String... strings) throws ExceptionWrapper {
             try {
-                //在AndroidKeyStore中生成RSA公私钥, 私钥存在TEE中不可读取, 公钥可读取
-                return AndroidKeyStoreUtils.genRsaSha256SignKey("fingerprint_rsa", 2048).getEncoded();
+                //在AndroidKeyStore中生成ECDSA公私钥, 私钥存在TEE中不可读取, 公钥可读取
+                return AndroidKeyStoreUtils.genEcdsaSha256SignKey("fingerprint_ecdsa").getEncoded();
             } catch (AndroidKeyStoreUtils.KeyGenerateException e) {
                 throw new ExceptionWrapper(e);
             }
@@ -117,7 +117,7 @@ public class ApplyFingerprintActivity extends TActivity {
             TLogger.get(this).i("public key:" + ByteUtils.bytesToHex(bytes));
             SharedPreferences sharedPreferences = host.getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE);
             sharedPreferences.edit()
-                    .putString("fingerprint_rsa_public_key", ByteUtils.bytesToHex(bytes))
+                    .putString("fingerprint_ecdsa_public_key", ByteUtils.bytesToHex(bytes))
                     .apply();
         }
 
