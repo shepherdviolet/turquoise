@@ -30,7 +30,7 @@ import android.widget.TextView;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
-import sviolet.thistle.util.conversion.ByteUtils;
+import sviolet.thistle.util.conversion.Base64Utils;
 import sviolet.thistle.util.conversion.StringUtils;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
@@ -113,11 +113,11 @@ public class ApplyFingerprintActivity extends TActivity {
         @Override
         protected void onPostExecuteWithHost(byte[] bytes, ApplyFingerprintActivity host) {
             //显示公钥
-            host.publicKeyTextView.setText(ByteUtils.bytesToHex(bytes));
-            TLogger.get(this).i("public key:" + ByteUtils.bytesToHex(bytes));
+            host.publicKeyTextView.setText(Base64Utils.encodeToString(bytes));
+            TLogger.get(this).i("public key:" + Base64Utils.encodeToString(bytes));
             SharedPreferences sharedPreferences = host.getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE);
             sharedPreferences.edit()
-                    .putString("fingerprint_ecdsa_public_key", ByteUtils.bytesToHex(bytes))
+                    .putString("fingerprint_ecdsa_public_key", Base64Utils.encodeToString(bytes))
                     .apply();
         }
 

@@ -37,7 +37,7 @@ import javax.crypto.Mac;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
-import sviolet.thistle.util.conversion.ByteUtils;
+import sviolet.thistle.util.conversion.Base64Utils;
 import sviolet.thistle.util.crypto.ECDSACipher;
 import sviolet.thistle.util.crypto.ECDSAKeyGenerator;
 import sviolet.turquoise.enhance.app.TActivity;
@@ -156,8 +156,8 @@ public class SignFingerprintActivity extends TActivity {
                             signature.update(msgEditText.getText().toString().getBytes("UTF-8"));
                             byte[] sign = signature.sign();
                             Toast.makeText(SignFingerprintActivity.this, "数据签名成功", Toast.LENGTH_SHORT).show();
-                            signTextView.setText(ByteUtils.bytesToHex(sign));
-                            logger.i("sign:" + ByteUtils.bytesToHex(sign));
+                            signTextView.setText(Base64Utils.encodeToString(sign));
+                            logger.i("sign:" + Base64Utils.encodeToString(sign));
                             //模拟服务端验签, 客户端无需该操作
                             verifySign(msgEditText.getText().toString().getBytes("UTF-8"), sign);
                         } catch (Exception e) {
@@ -189,7 +189,7 @@ public class SignFingerprintActivity extends TActivity {
             return;
         }
         try {
-            boolean valid = ECDSACipher.verify(msg, sign, ECDSAKeyGenerator.generatePublicKeyByX509(ByteUtils.hexToBytes(storedPublicKey)), ECDSACipher.SIGN_ALGORITHM_ECDSA_SHA256);
+            boolean valid = ECDSACipher.verify(msg, sign, ECDSAKeyGenerator.generatePublicKeyByX509(Base64Utils.decode(storedPublicKey)), ECDSACipher.SIGN_ALGORITHM_ECDSA_SHA256);
             logger.i("Mock verify sign: result:" + valid);
             if (valid) {
                 Toast.makeText(SignFingerprintActivity.this, "模拟验签通过", Toast.LENGTH_SHORT).show();
