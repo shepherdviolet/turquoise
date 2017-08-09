@@ -104,7 +104,7 @@ public class ApplyFingerprintActivity extends TActivity {
         protected byte[] doInBackgroundEnhanced(String... strings) throws ExceptionWrapper {
             try {
                 //在AndroidKeyStore中生成RSA公私钥, 私钥存在TEE中不可读取, 公钥可读取
-                return AndroidKeyStoreUtils.genRsaSha256SignKey("fingerprint_rsa").getEncoded();
+                return AndroidKeyStoreUtils.genRsaSha256SignKey("fingerprint_rsa", 2048).getEncoded();
             } catch (AndroidKeyStoreUtils.KeyGenerateException e) {
                 throw new ExceptionWrapper(e);
             }

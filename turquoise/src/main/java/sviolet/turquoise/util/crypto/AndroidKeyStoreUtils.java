@@ -41,11 +41,12 @@ public class AndroidKeyStoreUtils {
     /**
      * 在AndroidKeyStore中生成SHA256withRSA签名秘钥, 较慢, 建议放在子线程进行
      * @param keyStoreName 秘钥名称
+     * @param keySize 秘钥长度(768/1024/2048), 默认-1
      * @return 公钥
      * @throws KeyGenerateException 秘钥生成异常
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public static PublicKey genRsaSha256SignKey(String keyStoreName) throws KeyGenerateException {
+    public static PublicKey genRsaSha256SignKey(String keyStoreName, int keySize) throws KeyGenerateException {
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
@@ -54,6 +55,7 @@ public class AndroidKeyStoreUtils {
                     new KeyGenParameterSpec.Builder(
                             keyStoreName,
                             KeyProperties.PURPOSE_SIGN)
+                            .setKeySize(keySize)
                             .setDigests(KeyProperties.DIGEST_SHA256)
                             .setBlockModes(KeyProperties.BLOCK_MODE_ECB)
                             .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
