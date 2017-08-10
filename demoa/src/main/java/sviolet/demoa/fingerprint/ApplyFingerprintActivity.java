@@ -77,7 +77,7 @@ public class ApplyFingerprintActivity extends TActivity {
             return;
         }
         //显示之前申请的公钥
-        String storedPublicKey = getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE).getString("fingerprint_rsa_public_key", "");
+        String storedPublicKey = getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE).getString("fingerprint_ecdsa_public_key", "");
         publicKeyTextView.setText(storedPublicKey);
         TLogger.get(this).i("public key:" + storedPublicKey);
         //申请按钮
