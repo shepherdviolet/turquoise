@@ -28,6 +28,8 @@ import android.os.CancellationSignal;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import java.security.Signature;
@@ -63,6 +65,8 @@ public class FingerprintDialog extends Dialog {
     @ResourceId(R.id.fingerprint_sign_dialog_textview)
     private TextView textView;
 
+    private Animation shakeAnimation;
+
     FingerprintDialog(@NonNull Context context, @NonNull String message, @NonNull Callback callback) {
         super(context);
         this.message = message;
@@ -92,6 +96,7 @@ public class FingerprintDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_NO_TITLE);//无标题
         InjectUtils.inject(this);
 
+        shakeAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_shake_x);
         textView.setText("请按压指纹传感器");
         setCancelable(true);//允许取消
         setCanceledOnTouchOutside(true);//允许点外部取消
@@ -187,8 +192,10 @@ public class FingerprintDialog extends Dialog {
 
     private void onFailed(String message){
         //错误提示
-        textView.setTextColor(0xFFB08080);
+        textView.setTextColor(0xFFFE5C4C);
         textView.setText(message);
+        shakeAnimation.reset();
+        textView.startAnimation(shakeAnimation);
     }
 
     /**

@@ -62,7 +62,7 @@ public class ActivitySlideActivity extends TActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //右侧滑入动画
                 startActivity(new Intent(ActivitySlideActivity.this, SubActivitySlideActivity.class));
-                overridePendingTransition(R.anim.in_from_right, 0);
+                overridePendingTransition(R.anim.anim_in_from_right, 0);
             }
         });
     }
