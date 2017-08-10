@@ -154,6 +154,20 @@ public class AndroidKeyStoreUtils {
     }
 
     /**
+     * 判断密钥是否在AndroidKeyStore中存在
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public static boolean isKeyExists(String keyStoreName){
+        try {
+            KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
+            keyStore.load(null);
+            return keyStore.getKey(keyStoreName, null) != null;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
      * 秘钥生成异常
      */
     public static class KeyGenerateException extends Exception {
