@@ -26,6 +26,7 @@ import com.suke.widget.SwitchButton;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
+import sviolet.demoa.fingerprint.utils.EnhancedSwitchButton;
 import sviolet.demoa.fingerprint.utils.FingerprintSuite;
 import sviolet.demoa.fingerprint.utils.LockableSwitchButtonListener;
 import sviolet.turquoise.enhance.app.TActivity;
@@ -50,7 +51,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 public class ApplyFingerprintActivity extends TActivity {
 
     @ResourceId(R.id.fingerprint_apply_main_switch_button)
-    private SwitchButton switchButton;
+    private EnhancedSwitchButton switchButton;
     @ResourceId(R.id.fingerprint_apply_main_public_key_textview)
     private TextView publicKeyTextView;
 

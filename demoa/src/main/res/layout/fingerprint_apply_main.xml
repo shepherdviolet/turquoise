@@ -17,7 +17,7 @@
             android:layout_weight="1"
             android:text="@string/fingerprint_apply_main_switch_button"/>
 
-        <com.suke.widget.SwitchButton
+        <sviolet.demoa.fingerprint.utils.EnhancedSwitchButton
             android:id="@+id/fingerprint_apply_main_switch_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

@@ -26,7 +26,7 @@ import com.suke.widget.SwitchButton;
 import java.lang.ref.WeakReference;
 
 /**
- * [com.suke.widget.SwitchButton配套使用]
+ * [EnhancedSwitchButton配套使用]
  *
  * 当开关触发一次事件后, 开关会被锁定不允许操作, 必须在回调方法onCheckedChangedEnhanced中调用releaseLock
  * 方法才能进行下一次开关操作. 用于防止开关反复操作造成逻辑问题.
@@ -37,7 +37,6 @@ public abstract class LockableSwitchButtonListener implements SwitchButton.OnChe
 
     private WeakReference<SwitchButton> switchButtonReference;
     private boolean lock = false;
-    private boolean lockedState = false;
 
     public LockableSwitchButtonListener(@NonNull SwitchButton switchButton) {
         this.switchButtonReference = new WeakReference<>(switchButton);
@@ -46,18 +45,12 @@ public abstract class LockableSwitchButtonListener implements SwitchButton.OnChe
     public final void onCheckedChanged(SwitchButton view, boolean isChecked){
         //过滤重复开关
         if (lock){
-            //将开关状态重置为"锁定时的状态"
-            SwitchButton switchButton = switchButtonReference.get();
-            if (switchButton != null) {
-                switchButton.setChecked(lockedState);
-            }
             return;
         }
 
-        //记录锁定时的开关状态
-        lockedState = isChecked;
         //锁定
         lock = true;
+
         //禁用开关
         SwitchButton switchButton = switchButtonReference.get();
         if (switchButton != null) {
@@ -79,6 +72,7 @@ public abstract class LockableSwitchButtonListener implements SwitchButton.OnChe
     public void releaseLock(){
         //释放锁
         lock = false;
+
         //启用开关
         SwitchButton switchButton = switchButtonReference.get();
         if (switchButton != null) {
