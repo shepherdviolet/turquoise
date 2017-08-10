@@ -19,25 +19,18 @@
 
 package sviolet.demoa.fingerprint;
 
-import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
+
+import com.suke.widget.SwitchButton;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
-import sviolet.thistle.util.conversion.Base64Utils;
-import sviolet.thistle.util.conversion.StringUtils;
+import sviolet.demoa.fingerprint.utils.FingerprintSuite;
+import sviolet.demoa.fingerprint.utils.LockableSwitchButtonListener;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-import sviolet.turquoise.enhance.common.WeekAsyncTask;
-import sviolet.turquoise.util.crypto.AndroidKeyStoreUtils;
-import sviolet.turquoise.util.droid.FingerprintUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
@@ -56,81 +49,64 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 )
 public class ApplyFingerprintActivity extends TActivity {
 
-    @ResourceId(R.id.fingerprint_apply_main_apply_button)
-    private Button applyButton;
+    @ResourceId(R.id.fingerprint_apply_main_switch_button)
+    private SwitchButton switchButton;
     @ResourceId(R.id.fingerprint_apply_main_public_key_textview)
     private TextView publicKeyTextView;
 
-    private boolean applying = false;
+    private TLogger logger = TLogger.get(this);
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        //指纹识别和AndroidKeyStore必须在API23以上, 指纹识别必须判断硬件是否支持且用户录入了指纹
-        if (!FingerprintUtils.isHardwareDetected(this)){
-            applyButton.setEnabled(false);
-            publicKeyTextView.setText("设备不支持指纹识别");
-            return;
-        }
-        if (!FingerprintUtils.hasEnrolledFingerprints(this)){
-            applyButton.setEnabled(false);
-            publicKeyTextView.setText("请在设备中开启并录入指纹后使用该功能");
-            return;
-        }
-        //显示之前申请的公钥
-        String storedPublicKey = getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE).getString("fingerprint_ecdsa_public_key", "");
-        publicKeyTextView.setText(storedPublicKey);
-        TLogger.get(this).i("public key:" + storedPublicKey);
-        //申请按钮
-        applyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!applying) {
-                    applying = true;
-                    //异步执行
-                    new KeyApplyTask(ApplyFingerprintActivity.this).execute((String) null);
+
+        FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(this);
+
+        switch (checkResult){
+            case ENABLED:
+            case DISABLED:
+                switchButton.setEnabled(true);
+                switchButton.setChecked(checkResult.isEnabled());
+                if (checkResult.isEnabled()){
+                    String storedPublicKey = FingerprintSuite.getPublicKey(this);
+                    publicKeyTextView.setText(storedPublicKey);
+                    logger.i("public key:" + storedPublicKey);
                 }
-            }
-        });
-    }
-
-    private static class KeyApplyTask extends WeekAsyncTask<ApplyFingerprintActivity, String, Integer, byte[]> {
-
-        public KeyApplyTask(ApplyFingerprintActivity applyFingerprintActivity) {
-            super(applyFingerprintActivity);
+                // LockableSwitchButtonListener:当开关触发一次事件后, 开关会被锁定不允许操作, 必须在回调方法onCheckedChangedEnhanced中调用releaseLock
+                // 方法才能进行下一次开关操作. 用于防止开关反复操作造成逻辑问题.
+                switchButton.setOnCheckedChangeListener(new LockableSwitchButtonListener(switchButton) {
+                    @Override
+                    public void onCheckedChangedEnhanced(SwitchButton view, boolean isChecked) {
+                        if (isChecked){
+                            FingerprintSuite.enable(ApplyFingerprintActivity.this, new FingerprintSuite.KeyApplyCallback() {
+                                @Override
+                                public void onSucceed(String publicKey) {
+                                    publicKeyTextView.setText(publicKey);
+                                    //释放事件(必须)
+                                    releaseLock();
+                                }
+                                @Override
+                                public void onFailed() {
+                                    publicKeyTextView.setText("指纹认证开启失败, 密钥生成错误");
+                                    //释放事件(必须)
+                                    releaseLock();
+                                }
+                            });
+                        }else{
+                            FingerprintSuite.disable(ApplyFingerprintActivity.this);
+                            publicKeyTextView.setText("");
+                            //释放事件(必须)
+                            releaseLock();
+                        }
+                    }
+                });
+                break;
+            case HARDWARE_UNDETECTED:
+            case NO_ENROLLED_FINGERPRINTS:
+                switchButton.setEnabled(false);
+                publicKeyTextView.setText(checkResult.getMessage(this));
+                break;
         }
 
-        @Override
-        @TargetApi(Build.VERSION_CODES.M)
-        protected byte[] doInBackgroundEnhanced(String... strings) throws ExceptionWrapper {
-            try {
-                //在AndroidKeyStore中生成ECDSA公私钥, 私钥存在TEE中不可读取, 公钥可读取
-                return AndroidKeyStoreUtils.genEcdsaSha256SignKey("fingerprint_ecdsa").getEncoded();
-            } catch (AndroidKeyStoreUtils.KeyGenerateException e) {
-                throw new ExceptionWrapper(e);
-            }
-        }
-
-        @Override
-        protected void onPostExecuteWithHost(byte[] bytes, ApplyFingerprintActivity host) {
-            //显示公钥
-            host.publicKeyTextView.setText(Base64Utils.encodeToString(bytes));
-            TLogger.get(this).i("public key:" + Base64Utils.encodeToString(bytes));
-            SharedPreferences sharedPreferences = host.getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE);
-            sharedPreferences.edit()
-                    .putString("fingerprint_ecdsa_public_key", Base64Utils.encodeToString(bytes))
-                    .apply();
-        }
-
-        @Override
-        protected void onExceptionWithHost(Throwable throwable, ApplyFingerprintActivity host) {
-            //显示异常
-            host.publicKeyTextView.setText(StringUtils.throwableToString(throwable));
-        }
-
-        @Override
-        protected void onFinishWithHost(ApplyFingerprintActivity host) {
-            host.applying = false;
-        }
     }
 
 }

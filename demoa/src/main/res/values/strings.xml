@@ -49,7 +49,7 @@
 
     <string name="fingerprint_main_title">Fingerprint Demo</string>
     <string name="fingerprint_apply_main_title">Fingerprint Apply</string>
-    <string name="fingerprint_apply_main_apply_button">Apply Key</string>
+    <string name="fingerprint_apply_main_switch_button">Open fingerprint</string>
     <string name="fingerprint_sign_main_title">Fingerprint Signature</string>
     <string name="fingerprint_sign_main_msg_edittext_default">hello fingerprint</string>
     <string name="fingerprint_sign_main_sign_button">Sign</string>
