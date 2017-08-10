@@ -20,30 +20,26 @@
 package sviolet.demoa.fingerprint;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CancellationSignal;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.Signature;
-
-import javax.crypto.Cipher;
-import javax.crypto.Mac;
+import java.io.UnsupportedEncodingException;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
+import sviolet.demoa.fingerprint.utils.FingerprintDialog;
+import sviolet.demoa.fingerprint.utils.FingerprintSuite;
 import sviolet.thistle.util.conversion.Base64Utils;
 import sviolet.thistle.util.crypto.ECDSACipher;
 import sviolet.thistle.util.crypto.ECDSAKeyGenerator;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-import sviolet.turquoise.util.crypto.AndroidKeyStoreUtils;
 import sviolet.turquoise.util.droid.FingerprintUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
@@ -70,112 +66,49 @@ public class SignFingerprintActivity extends TActivity {
     @ResourceId(R.id.fingerprint_sign_main_sign_textview)
     private TextView signTextView;
 
-    private boolean signing = false;
-    private CancellationSignal cancellationSignal;
-
     private TLogger logger = TLogger.get(this);
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
         //指纹识别和AndroidKeyStore必须在API23以上, 指纹识别必须判断硬件是否支持且用户录入了指纹
-        if (!FingerprintUtils.isHardwareDetected(this)){
-            signButton.setEnabled(false);
-            signTextView.setText("设备不支持指纹识别");
-            return;
+        FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(this);
+        switch (checkResult) {
+            case DISABLED:
+            case NO_ENROLLED_FINGERPRINTS:
+            case HARDWARE_UNDETECTED:
+                signButton.setEnabled(false);
+                signTextView.setText(checkResult.getMessage(this));
+                return;
+            default:
+                break;
         }
-        if (!FingerprintUtils.hasEnrolledFingerprints(this)){
-            signButton.setEnabled(false);
-            signTextView.setText("请在设备中开启并录入指纹后使用该功能");
-            return;
-        }
+
         signButton.setOnClickListener(new View.OnClickListener() {
             @Override
             @TargetApi(Build.VERSION_CODES.M)
             public void onClick(View v) {
-                if (!signing){
-                    //调用指纹认证进行签名
-                    callFingerprint();
-                } else {
-                    //取消指纹认证
-                    cancellationSignal.cancel();
-                }
-            }
-        });
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void callFingerprint() {
-        //从AndroidKeyStore加载私钥
-        Signature signature;
-        try {
-            signature = AndroidKeyStoreUtils.loadEcdsaSha256Signature("fingerprint_ecdsa");
-        } catch (AndroidKeyStoreUtils.KeyLoadException e) {
-            Toast.makeText(SignFingerprintActivity.this, "密钥加载失败, 请重新申请密钥", Toast.LENGTH_SHORT).show();
-            signTextView.setText("密钥加载失败, 请重新申请密钥");
-            logger.e(e);
-            return;
-        } catch (AndroidKeyStoreUtils.KeyNotFoundException e) {
-            Toast.makeText(SignFingerprintActivity.this, "请先申请密钥", Toast.LENGTH_SHORT).show();
-            signTextView.setText("请先申请密钥");
-            logger.e(e);
-            return;
-        }
-        signing = true;
-        cancellationSignal = new CancellationSignal();
-        signButton.setText("Cancel");
-        signTextView.setText("请按压指纹传感器");
-        //调用指纹传感器
-        callFingerprintAuthenticate(signature);
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    private void callFingerprintAuthenticate(Signature signature) {
-        FingerprintUtils.authenticate(SignFingerprintActivity.this, signature, cancellationSignal, null,
-                new FingerprintUtils.AuthenticationCallback() {
+                FingerprintSuite.authenticate(SignFingerprintActivity.this, msgEditText.getText().toString(), new FingerprintDialog.Callback() {
                     @Override
-                    public void onAuthenticationError(int errorCode, CharSequence errString) {
-                        //指纹认证失败/取消(多次失败后终止认证, 可能会锁一段时间)
-                        Toast.makeText(SignFingerprintActivity.this, errString + ":" + errorCode, Toast.LENGTH_SHORT).show();
-                        signTextView.setText(errString + ":" + errorCode);
-                        signButton.setText("Sign");
-                        signing = false;
-                    }
-
-                    @Override
-                    public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-                        //指纹认证提示信息
-                        Toast.makeText(SignFingerprintActivity.this, helpString + ":" + helpCode, Toast.LENGTH_SHORT).show();
-                        signTextView.setText(helpString + ":" + helpCode);
-                    }
-
-                    @Override
-                    public void onAuthenticationSucceeded(Signature signature, Cipher cipher, Mac mac) {
-                        //指纹认证成功
+                    public void onSucceeded(String message, String sign, String publicKey) {
+                        signTextView.setText(sign);
+                        Toast.makeText(SignFingerprintActivity.this, "[指纹]认证成功", Toast.LENGTH_SHORT).show();
                         try {
-                            //在此处对数据签名, AndroidKeyStore必须在指纹认证后方可使用私钥
-                            signature.update(msgEditText.getText().toString().getBytes("UTF-8"));
-                            byte[] sign = signature.sign();
-                            Toast.makeText(SignFingerprintActivity.this, "数据签名成功", Toast.LENGTH_SHORT).show();
-                            signTextView.setText(Base64Utils.encodeToString(sign));
-                            logger.i("sign:" + Base64Utils.encodeToString(sign));
-                            //模拟服务端验签, 客户端无需该操作
-                            verifySign(msgEditText.getText().toString().getBytes("UTF-8"), sign);
-                        } catch (Exception e) {
-                            Toast.makeText(SignFingerprintActivity.this, "数据签名失败, 请重新申请密钥", Toast.LENGTH_SHORT).show();
-                            signTextView.setText("数据签名失败, 请重新申请密钥");
+                            verifySign(message.getBytes("UTF-8"), Base64Utils.decode(sign));
+                        } catch (UnsupportedEncodingException e) {
                             logger.e(e);
                         }
-                        signButton.setText("Sign");
-                        signing = false;
                     }
-
                     @Override
-                    public void onAuthenticationFailed() {
-                        //指纹认证失败(单次失败, 还能尝试多次)
-                        Toast.makeText(SignFingerprintActivity.this, "无法识别的指纹, 请重试", Toast.LENGTH_SHORT).show();
-                        signTextView.setText("无法识别的指纹, 请重试");
+                    public void onError(String message) {
+                        Toast.makeText(SignFingerprintActivity.this, "[指纹]" + message, Toast.LENGTH_SHORT).show();
+                    }
+                    @Override
+                    public void onCanceled() {
+                        Toast.makeText(SignFingerprintActivity.this, "[指纹]认证取消", Toast.LENGTH_SHORT).show();
                     }
                 });
+            }
+        });
     }
 
     /**
@@ -183,13 +116,8 @@ public class SignFingerprintActivity extends TActivity {
      */
     private void verifySign(byte[] msg, byte[] sign){
         logger.i("Mock verify sign: start");
-        String storedPublicKey = getSharedPreferences("fingerprint_key", Context.MODE_PRIVATE).getString("fingerprint_ecdsa_public_key", null);
-        if (storedPublicKey == null){
-            logger.e("Mock verify sign: public key is null");
-            return;
-        }
         try {
-            boolean valid = ECDSACipher.verify(msg, sign, ECDSAKeyGenerator.generatePublicKeyByX509(Base64Utils.decode(storedPublicKey)), ECDSACipher.SIGN_ALGORITHM_ECDSA_SHA256);
+            boolean valid = ECDSACipher.verify(msg, sign, ECDSAKeyGenerator.generatePublicKeyByX509(Base64Utils.decode(FingerprintSuite.getPublicKey(this))), ECDSACipher.SIGN_ALGORITHM_ECDSA_SHA256);
             logger.i("Mock verify sign: result:" + valid);
             if (valid) {
                 Toast.makeText(SignFingerprintActivity.this, "模拟验签通过", Toast.LENGTH_SHORT).show();

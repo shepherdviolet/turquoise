@@ -25,6 +25,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.NonNull;
 
 import java.security.KeyStore;
 
@@ -45,7 +46,7 @@ public class FingerprintSuite {
     private static final String SHARED_PREFERENCES_KEY_ENABLED = "enabled";
     private static final String SHARED_PREFERENCES_KEY_PUBLIC_KEY = "key";
 
-    private static final String ANDROID_KEY_STORE_NAME = "fingerprint-private-key";
+    public static final String ANDROID_KEY_STORE_NAME = "fingerprint-private-key";
 
     /**
      * 判断当前指纹识别状态
@@ -200,6 +201,21 @@ public class FingerprintSuite {
             return keyStore.getKey(ANDROID_KEY_STORE_NAME, null) != null;
         } catch (Exception e) {
             return false;
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    public static void authenticate(@NonNull Context context, @NonNull String message, @NonNull FingerprintDialog.Callback callback){
+        FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(context);
+        switch (checkResult) {
+            case DISABLED:
+            case NO_ENROLLED_FINGERPRINTS:
+            case HARDWARE_UNDETECTED:
+                callback.onError(checkResult.getMessage(context));
+                return;
+            default:
+                new FingerprintDialog(context, message, callback).show();
+                break;
         }
     }
 
