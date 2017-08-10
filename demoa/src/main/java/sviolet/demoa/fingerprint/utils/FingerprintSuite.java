@@ -113,6 +113,11 @@ public class FingerprintSuite {
 
     }
 
+    /**
+     * 启用指纹认证
+     * @param context context
+     * @param callback 结果回调
+     */
     public static void enable(Context context, KeyApplyCallback callback){
         if (context == null || callback == null){
             throw new IllegalArgumentException("context or callback is null");
@@ -126,7 +131,7 @@ public class FingerprintSuite {
         private Context context;
         private KeyApplyCallback callback;
 
-        public KeyApplyTask(Context context, KeyApplyCallback callback) {
+        private KeyApplyTask(Context context, KeyApplyCallback callback) {
             super();
             this.context = context;
             this.callback = callback;
@@ -169,6 +174,10 @@ public class FingerprintSuite {
         void onFailed();
     }
 
+    /**
+     * 禁用指纹认证
+     * @param context context
+     */
     public static void disable(Context context){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         sharedPreferences.edit()
