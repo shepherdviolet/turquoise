@@ -25,9 +25,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.CancellationSignal;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.annotation.UiThread;
 
 import java.security.KeyStore;
+import java.security.Signature;
 
 import sviolet.thistle.util.conversion.Base64Utils;
 import sviolet.turquoise.util.crypto.AndroidKeyStoreUtils;
@@ -194,6 +198,14 @@ public class FingerprintSuite {
         return context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(SHARED_PREFERENCES_KEY_PUBLIC_KEY, "");
     }
 
+    /**
+     * 获取私钥签名器
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    static Signature getPrivateKeySignature(Context context) throws AndroidKeyStoreUtils.KeyLoadException, AndroidKeyStoreUtils.KeyNotFoundException {
+        return AndroidKeyStoreUtils.loadEcdsaSha256Signature(FingerprintSuite.ANDROID_KEY_STORE_NAME);
+    }
+
     private static boolean isPrivateKeyExists(){
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
@@ -204,6 +216,13 @@ public class FingerprintSuite {
         }
     }
 
+    /**
+     * 弹出窗口进行指纹认证(自动防止重复调用)
+     * @param context context
+     * @param message 待签名数据
+     * @param callback 回调
+     */
+    @UiThread
     @TargetApi(Build.VERSION_CODES.M)
     public static void authenticate(@NonNull Context context, @NonNull String message, @NonNull FingerprintDialog.Callback callback){
         FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(context);
@@ -217,6 +236,14 @@ public class FingerprintSuite {
                 new FingerprintDialog(context, message, callback).show();
                 break;
         }
+    }
+
+    /**
+     * 调用指纹认证
+     */
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    static void authenticate(Context context, Signature signature, CancellationSignal cancellationSignal, FingerprintUtils.AuthenticationCallback callback) {
+        FingerprintUtils.authenticate(context, signature, cancellationSignal, null, callback);
     }
 
 }

@@ -60,13 +60,17 @@ public class ApplyFingerprintActivity extends TActivity {
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
 
+        //检查指纹认证状态
         FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(this);
 
         switch (checkResult){
             case ENABLED:
             case DISABLED:
+                //允许设置
                 switchButton.setEnabled(true);
+                //显示开关状态
                 switchButton.setChecked(checkResult.isEnabled());
+                //读取公钥
                 if (checkResult.isEnabled()){
                     String storedPublicKey = FingerprintSuite.getPublicKey(this);
                     publicKeyTextView.setText(storedPublicKey);
@@ -103,6 +107,7 @@ public class ApplyFingerprintActivity extends TActivity {
                 break;
             case HARDWARE_UNDETECTED:
             case NO_ENROLLED_FINGERPRINTS:
+                //禁用开关
                 switchButton.setEnabled(false);
                 publicKeyTextView.setText(checkResult.getMessage(this));
                 break;

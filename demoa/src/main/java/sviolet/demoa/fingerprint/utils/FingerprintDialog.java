@@ -54,10 +54,10 @@ public class FingerprintDialog extends Dialog {
 
     private static boolean fingerprintLock = false;
 
-    private String message;
-    private Callback callback;
+    private String message;//待签名信息
+    private Callback callback;//回调
 
-    private CancellationSignal cancellationSignal = new CancellationSignal();
+    private CancellationSignal cancellationSignal = new CancellationSignal();//取消信号
     private boolean cancelled = false;
 
     @ResourceId(R.id.fingerprint_sign_dialog_textview)
@@ -71,8 +71,9 @@ public class FingerprintDialog extends Dialog {
 
     @Override
     public void show() {
+        //防止同时启动指纹认证
         if (fingerprintLock){
-            onError("duplicate fingerprint dialog, skip this");
+            logger.e("duplicate fingerprint dialog, skip this");
             return;
         }
         fingerprintLock = true;
@@ -97,6 +98,7 @@ public class FingerprintDialog extends Dialog {
         setOnCancelListener(new OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
+                //取消
                 FingerprintDialog.this.onCancel();
             }
         });
@@ -104,7 +106,7 @@ public class FingerprintDialog extends Dialog {
         //从AndroidKeyStore加载私钥
         Signature signature;
         try {
-            signature = AndroidKeyStoreUtils.loadEcdsaSha256Signature(FingerprintSuite.ANDROID_KEY_STORE_NAME);
+            signature = FingerprintSuite.getPrivateKeySignature(getContext());
         } catch (AndroidKeyStoreUtils.KeyLoadException e) {
             onError("密钥加载错误, 尝试重新开启指纹认证");
             logger.e(e);
@@ -115,28 +117,28 @@ public class FingerprintDialog extends Dialog {
             return;
         }
 
-        FingerprintUtils.authenticate(getContext(), signature, cancellationSignal, null,
-                new FingerprintUtils.AuthenticationCallback() {
-                    @Override
-                    public void onAuthenticationError(int errorCode, CharSequence errString) {
-                        //指纹认证失败/取消(多次失败后终止认证, 可能会锁一段时间)
-                        onError(errString.toString());
-                    }
-                    @Override
-                    public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
-                        //指纹认证提示信息
-                        onFailed(helpString.toString());
-                    }
-                    @Override
-                    public void onAuthenticationSucceeded(Signature signature, Cipher cipher, Mac mac) {
-                        onSucceed(signature);
-                    }
-                    @Override
-                    public void onAuthenticationFailed() {
-                        //指纹认证失败(单次失败, 还能尝试多次)
-                        onFailed("无法识别的指纹, 请重试");
-                    }
-                });
+        //指纹认证
+        FingerprintSuite.authenticate(getContext(), signature, cancellationSignal, new FingerprintUtils.AuthenticationCallback() {
+            @Override
+            public void onAuthenticationError(int errorCode, CharSequence errString) {
+                //指纹认证失败/取消(多次失败后终止认证, 可能会锁一段时间)
+                onError(errString.toString());
+            }
+            @Override
+            public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
+                //指纹认证提示信息
+                onFailed(helpString.toString());
+            }
+            @Override
+            public void onAuthenticationSucceeded(Signature signature, Cipher cipher, Mac mac) {
+                onSucceed(signature);
+            }
+            @Override
+            public void onAuthenticationFailed() {
+                //指纹认证失败(单次失败, 还能尝试多次)
+                onFailed("无法识别的指纹, 请重试");
+            }
+        });
 
     }
 
@@ -155,14 +157,17 @@ public class FingerprintDialog extends Dialog {
             return;
         }
 
+        //回调
         callback.onSucceeded(message, sign, FingerprintSuite.getPublicKey(getContext()));
         dismiss();
 
+        //解锁
         fingerprintLock = false;
     }
 
     private void onError(String message){
 
+        //回调
         if (!cancelled) {
             callback.onError(message);
         } else {
@@ -170,27 +175,44 @@ public class FingerprintDialog extends Dialog {
         }
         dismiss();
 
+        //解锁
         fingerprintLock = false;
     }
 
     private void onCancel(){
+        //取消指纹认证
         cancelled = true;
         cancellationSignal.cancel();
     }
 
     private void onFailed(String message){
-
+        //错误提示
         textView.setTextColor(0xFFB08080);
         textView.setText(message);
-
     }
 
+    /**
+     * 回调
+     */
     public interface Callback{
 
+        /**
+         * 认证成功
+         * @param message 原数据
+         * @param sign 签名数据
+         * @param publicKey 公钥
+         */
         void onSucceeded(String message, String sign, String publicKey);
 
+        /**
+         * 认证失败
+         * @param message 错误信息
+         */
         void onError(String message);
 
+        /**
+         * 认证取消
+         */
         void onCanceled();
 
     }

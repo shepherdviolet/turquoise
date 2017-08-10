@@ -40,7 +40,6 @@ import sviolet.thistle.util.crypto.ECDSAKeyGenerator;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-import sviolet.turquoise.util.droid.FingerprintUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
@@ -76,6 +75,7 @@ public class SignFingerprintActivity extends TActivity {
             case DISABLED:
             case NO_ENROLLED_FINGERPRINTS:
             case HARDWARE_UNDETECTED:
+                //禁用
                 signButton.setEnabled(false);
                 signTextView.setText(checkResult.getMessage(this));
                 return;
@@ -87,11 +87,14 @@ public class SignFingerprintActivity extends TActivity {
             @Override
             @TargetApi(Build.VERSION_CODES.M)
             public void onClick(View v) {
+                //弹出窗口进行指纹认证
                 FingerprintSuite.authenticate(SignFingerprintActivity.this, msgEditText.getText().toString(), new FingerprintDialog.Callback() {
                     @Override
                     public void onSucceeded(String message, String sign, String publicKey) {
                         signTextView.setText(sign);
                         Toast.makeText(SignFingerprintActivity.this, "[指纹]认证成功", Toast.LENGTH_SHORT).show();
+                        logger.d("sign:" + sign);
+                        //模拟服务端进行验签
                         try {
                             verifySign(message.getBytes("UTF-8"), Base64Utils.decode(sign));
                         } catch (UnsupportedEncodingException e) {
