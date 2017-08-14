@@ -34,7 +34,7 @@ buildscript {
     //构建脚本依赖
     dependencies {
         //common
-        classpath 'com.android.tools.build:gradle:3.0.0-beta1'//安卓构建插件
+        classpath 'com.android.tools.build:gradle:3.0.0-beta2'//安卓构建插件
 //        classpath 'com.android.tools.build:gradle:2.3.0'//安卓构建插件
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$version_kotlinVersion"//kotlin
         classpath "com.github.shepherdviolet:gradle-turquoise:$version_gradleTurquoiseVersion"//gradle-turquoise plugin
