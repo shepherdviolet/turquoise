@@ -26,6 +26,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.view.Window;
 import android.view.animation.Animation;
@@ -56,6 +57,7 @@ public class FingerprintDialog extends Dialog {
 
     private static boolean fingerprintLock = false;
 
+    private boolean signEnabled = true;//true:启用签名
     private String message;//待签名信息
     private Callback callback;//回调
 
@@ -67,9 +69,10 @@ public class FingerprintDialog extends Dialog {
 
     private Animation shakeAnimation;
 
-    FingerprintDialog(@NonNull Context context, @NonNull String message, @NonNull Callback callback) {
+    FingerprintDialog(@NonNull Context context, @Nullable String message, boolean signEnabled, @NonNull Callback callback) {
         super(context);
-        this.message = message;
+        this.signEnabled = signEnabled;
+        this.message = message != null ? message : "";
         this.callback = callback;
     }
 
@@ -99,7 +102,7 @@ public class FingerprintDialog extends Dialog {
         shakeAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_shake_x);
         textView.setText("请按压指纹传感器");
         setCancelable(true);//允许取消
-        setCanceledOnTouchOutside(true);//允许点外部取消
+        setCanceledOnTouchOutside(false);//允许点外部取消
         setOnCancelListener(new OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -109,17 +112,20 @@ public class FingerprintDialog extends Dialog {
         });
 
         //从AndroidKeyStore加载私钥
-        Signature signature;
-        try {
-            signature = FingerprintSuite.getPrivateKeySignature(getContext());
-        } catch (AndroidKeyStoreUtils.KeyLoadException e) {
-            onError("密钥加载错误, 尝试重新开启指纹认证");
-            logger.e(e);
-            return;
-        } catch (AndroidKeyStoreUtils.KeyNotFoundException e) {
-            onError("密钥加载失败, 尝试重新开启指纹认证");
-            logger.e(e);
-            return;
+        Signature signature = null;
+
+        if (signEnabled) {
+            try {
+                signature = FingerprintSuite.getPrivateKeySignature(getContext());
+            } catch (AndroidKeyStoreUtils.KeyLoadException e) {
+                onError("密钥加载错误, 尝试重新开启指纹认证");
+                logger.e(e);
+                return;
+            } catch (AndroidKeyStoreUtils.KeyNotFoundException e) {
+                onError("密钥加载失败, 尝试重新开启指纹认证");
+                logger.e(e);
+                return;
+            }
         }
 
         //指纹认证
@@ -148,22 +154,26 @@ public class FingerprintDialog extends Dialog {
     }
 
     private void onSucceed(Signature signature){
-
-        String sign;
-
         //指纹认证成功
-        try {
-            //在此处对数据签名, AndroidKeyStore必须在指纹认证后方可使用私钥
-            signature.update(message.getBytes("UTF-8"));
-            sign = Base64Utils.encodeToString(signature.sign());
-        } catch (Exception e) {
-            onError("数据签名失败, 尝试重新开启指纹认证");
-            logger.e(e);
-            return;
+
+        String sign = null;
+        String publicKey = null;
+
+        if (signEnabled) {
+            try {
+                //在此处对数据签名, AndroidKeyStore必须在指纹认证后方可使用私钥
+                signature.update(message.getBytes("UTF-8"));
+                sign = Base64Utils.encodeToString(signature.sign());
+                publicKey = FingerprintSuite.getPublicKey(getContext());
+            } catch (Exception e) {
+                onError("数据签名失败, 尝试重新开启指纹认证");
+                logger.e(e);
+                return;
+            }
         }
 
         //回调
-        callback.onSucceeded(message, sign, FingerprintSuite.getPublicKey(getContext()));
+        callback.onSucceeded(message, sign, publicKey);
         dismiss();
 
         //解锁

@@ -143,7 +143,11 @@ public class FingerprintUtils {
             }
             @Override
             public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
-                callback.onAuthenticationSucceeded(result.getCryptoObject().getSignature(), result.getCryptoObject().getCipher(), result.getCryptoObject().getMac());
+                if (result == null || result.getCryptoObject() == null){
+                    callback.onAuthenticationSucceeded(null, null, null);
+                } else {
+                    callback.onAuthenticationSucceeded(result.getCryptoObject().getSignature(), result.getCryptoObject().getCipher(), result.getCryptoObject().getMac());
+                }
             }
             @Override
             public void onAuthenticationFailed() {

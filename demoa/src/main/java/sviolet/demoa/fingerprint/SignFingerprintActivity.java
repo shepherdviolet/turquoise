@@ -88,7 +88,7 @@ public class SignFingerprintActivity extends TActivity {
             @TargetApi(Build.VERSION_CODES.M)
             public void onClick(View v) {
                 //弹出窗口进行指纹认证
-                FingerprintSuite.authenticate(SignFingerprintActivity.this, msgEditText.getText().toString(), new FingerprintDialog.Callback() {
+                FingerprintSuite.authenticate(SignFingerprintActivity.this, msgEditText.getText().toString(), true, new FingerprintDialog.Callback() {
                     @Override
                     public void onSucceeded(String message, String sign, String publicKey) {
                         signTextView.setText(sign);

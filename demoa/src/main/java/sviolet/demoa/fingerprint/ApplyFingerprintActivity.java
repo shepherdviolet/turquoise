@@ -20,18 +20,22 @@
 package sviolet.demoa.fingerprint;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.suke.widget.SwitchButton;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
 import sviolet.demoa.fingerprint.utils.EnhancedSwitchButton;
+import sviolet.demoa.fingerprint.utils.FingerprintDialog;
 import sviolet.demoa.fingerprint.utils.FingerprintSuite;
 import sviolet.demoa.fingerprint.utils.LockableSwitchButtonListener;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
@@ -82,18 +86,35 @@ public class ApplyFingerprintActivity extends TActivity {
                     @Override
                     public void onCheckedChangedEnhanced(SwitchButton view, boolean isChecked) {
                         if (isChecked){
-                            FingerprintSuite.enable(ApplyFingerprintActivity.this, new FingerprintSuite.KeyApplyCallback() {
+                            FingerprintSuite.authenticate(ApplyFingerprintActivity.this, null, false, new FingerprintDialog.Callback() {
                                 @Override
-                                public void onSucceed(String publicKey) {
-                                    publicKeyTextView.setText(publicKey);
-                                    //释放事件(必须)
-                                    releaseLock();
+                                public void onSucceeded(String message, String sign, String publicKey) {
+                                    FingerprintSuite.enable(ApplyFingerprintActivity.this, new FingerprintSuite.KeyApplyCallback() {
+                                        @Override
+                                        public void onSucceed(String publicKey) {
+                                            publicKeyTextView.setText(publicKey);
+                                            //释放事件(必须)
+                                            releaseLock();
+                                        }
+                                        @Override
+                                        public void onFailed() {
+                                            publicKeyTextView.setText("指纹认证开启失败, 密钥生成错误");
+                                            //延迟释放事件(必须), 同时设置开关状态为关闭
+                                            postEnableFailed();
+                                        }
+                                    });
                                 }
                                 @Override
-                                public void onFailed() {
-                                    publicKeyTextView.setText("指纹认证开启失败, 密钥生成错误");
-                                    //释放事件(必须)
-                                    releaseLock();
+                                public void onError(String message) {
+                                    Toast.makeText(ApplyFingerprintActivity.this, "[指纹]验证失败", Toast.LENGTH_SHORT).show();
+                                    //延迟释放事件(必须), 同时设置开关状态为关闭
+                                    postEnableFailed();
+                                }
+                                @Override
+                                public void onCanceled() {
+                                    Toast.makeText(ApplyFingerprintActivity.this, "[指纹]验证取消", Toast.LENGTH_SHORT).show();
+                                    //延迟释放事件(必须), 同时设置开关状态为关闭
+                                    postEnableFailed();
                                 }
                             });
                         }else{
@@ -103,6 +124,13 @@ public class ApplyFingerprintActivity extends TActivity {
                             releaseLock();
                         }
                     }
+
+                    private void postEnableFailed() {
+                        Message msg = handler.obtainMessage();
+                        msg.obj = this;
+                        handler.sendMessage(msg);
+                    }
+
                 });
                 break;
             case HARDWARE_UNDETECTED:
@@ -111,6 +139,32 @@ public class ApplyFingerprintActivity extends TActivity {
                 switchButton.setEnabled(false);
                 publicKeyTextView.setText(checkResult.getMessage(this));
                 break;
+        }
+
+    }
+
+    private final MyHandler handler = new MyHandler(this);
+
+    private static class MyHandler extends WeakHandler<ApplyFingerprintActivity> {
+
+        private static final int HANDLER_POST_ENABLE_FAILED = 0;
+
+        public MyHandler(ApplyFingerprintActivity host) {
+            super(host);
+        }
+
+        @Override
+        protected void handleMessageWithHost(Message msg, ApplyFingerprintActivity host) {
+            switch (msg.what){
+                case HANDLER_POST_ENABLE_FAILED:
+                    //释放事件(必须)
+                    ((LockableSwitchButtonListener)msg.obj).releaseLock();
+                    //置为关闭状态
+                    host.switchButton.setChecked(false);
+                    break;
+                default:
+                    break;
+            }
         }
 
     }

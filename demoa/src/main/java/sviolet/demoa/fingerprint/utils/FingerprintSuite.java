@@ -27,6 +27,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CancellationSignal;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.UiThread;
 
@@ -220,20 +221,26 @@ public class FingerprintSuite {
      * 弹出窗口进行指纹认证(自动防止重复调用)
      * @param context context
      * @param message 待签名数据
+     * @param signEnabled true:启用签名, 必须ENABLE状态, false:禁用签名, DISABLE状态也可以调起
      * @param callback 回调
      */
     @UiThread
     @TargetApi(Build.VERSION_CODES.M)
-    public static void authenticate(@NonNull Context context, @NonNull String message, @NonNull FingerprintDialog.Callback callback){
+    public static void authenticate(@NonNull Context context, @Nullable String message, boolean signEnabled, @NonNull FingerprintDialog.Callback callback){
         FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(context);
         switch (checkResult) {
             case DISABLED:
+                //禁用签名的模式, 指纹验证关闭时也可以调起
+                if (!signEnabled){
+                    new FingerprintDialog(context, null, false, callback).show();
+                    break;
+                }
             case NO_ENROLLED_FINGERPRINTS:
             case HARDWARE_UNDETECTED:
                 callback.onError(checkResult.getMessage(context));
                 return;
             default:
-                new FingerprintDialog(context, message, callback).show();
+                new FingerprintDialog(context, message, signEnabled, callback).show();
                 break;
         }
     }
