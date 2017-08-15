@@ -58,17 +58,6 @@ public class TILoader {
      * @return get Node of Context, used to loading image
      */
     @RequiresPermission(allOf = {"android.permission.INTERNET", "android.permission.ACCESS_NETWORK_STATE"})
-    public static Node node(android.support.v4.app.FragmentActivity context){
-        checkContext(context);
-        return ComponentManager.getInstance().getNodeManager().fetchNode(context);
-    }
-
-    /**
-     * fetch node to load image
-     * @param context context
-     * @return get Node of Context, used to loading image
-     */
-    @RequiresPermission(allOf = {"android.permission.INTERNET", "android.permission.ACCESS_NETWORK_STATE"})
     public static Node node(android.support.v4.app.Fragment context){
         checkContext(context);
         return ComponentManager.getInstance().getNodeManager().fetchNode(context.getActivity());

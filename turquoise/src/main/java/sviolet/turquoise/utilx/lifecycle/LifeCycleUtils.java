@@ -88,22 +88,6 @@ public class LifeCycleUtils {
     }
 
     /**
-     * 监听FragmentActivity的生命周期, 弱引用持有LifeCycle实例<p/>
-     *
-     * @param fragmentActivity 被监听的FragmentActivity
-     * @param lifeCycle 监听器(被弱引用持有)
-     */
-    public static void attach(android.support.v4.app.FragmentActivity fragmentActivity, LifeCycle lifeCycle){
-        if (fragmentActivity == null)
-            throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
-        if (lifeCycle == null)
-            return;
-
-        LifeCycleManager manager = getLifeCycleManagerV4(fragmentActivity);
-        manager.addWeakListener(lifeCycle);
-    }
-
-    /**
      * 监听Fragment的生命周期, 弱引用持有LifeCycle实例<p/>
      *
      * 实际上是监听其对应的Activity<p/>
@@ -180,23 +164,6 @@ public class LifeCycleUtils {
     /**
      * 添加生命周期监听组件, 强引用持有LifeCycle实例<p/>
      *
-     * @param fragmentActivity 被监听的FragmentActivity
-     * @param componentName 组件名(若和其他的组件名冲突, 之前的组件会被替换掉)
-     * @param lifeCycle 组件(被强引用持有)
-     */
-    public static void addComponent(android.support.v4.app.FragmentActivity fragmentActivity, String componentName, LifeCycle lifeCycle){
-        if (fragmentActivity == null)
-            throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
-        if (lifeCycle == null)
-            return;
-
-        LifeCycleManager manager = getLifeCycleManagerV4(fragmentActivity);
-        manager.addComponent(componentName, lifeCycle);
-    }
-
-    /**
-     * 添加生命周期监听组件, 强引用持有LifeCycle实例<p/>
-     *
      * 实际上是监听其对应的Activity<p/>
      *
      * @param fragment 被监听的Fragment
@@ -258,20 +225,6 @@ public class LifeCycleUtils {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
 
         LifeCycleManager manager = getLifeCycleManager(activity);
-        return manager.getComponent(componentName);
-    }
-
-    /**
-     * 获取生命周期监听组件<p/>
-     *
-     * @param fragmentActivity 被监听的FragmentActivity
-     * @param componentName 组件名
-     */
-    public static LifeCycle getComponent(android.support.v4.app.FragmentActivity fragmentActivity, String componentName){
-        if (fragmentActivity == null)
-            throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
-
-        LifeCycleManager manager = getLifeCycleManagerV4(fragmentActivity);
         return manager.getComponent(componentName);
     }
 
@@ -340,20 +293,6 @@ public class LifeCycleUtils {
     /**
      * 移除生命周期监听组件<p/>
      *
-     * @param fragmentActivity 被监听的FragmentActivity
-     * @param componentName 组件名
-     */
-    public static void removeComponent(android.support.v4.app.FragmentActivity fragmentActivity, String componentName){
-        if (fragmentActivity == null)
-            throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
-
-        LifeCycleManager manager = getLifeCycleManagerV4(fragmentActivity);
-        manager.removeComponent(componentName);
-    }
-
-    /**
-     * 移除生命周期监听组件<p/>
-     *
      * @param fragment 被监听的Fragment
      * @param componentName 组件名
      */
@@ -410,22 +349,6 @@ public class LifeCycleUtils {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
 
         LifeCycleManager manager = getLifeCycleManager(activity);
-        manager.removeComponent(lifeCycle);
-    }
-
-    /**
-     * 移除生命周期监听组件<p/>
-     *
-     * @param fragmentActivity 被监听的FragmentActivity
-     * @param lifeCycle 监听器
-     */
-    public static void removeComponent(android.support.v4.app.FragmentActivity fragmentActivity, LifeCycle lifeCycle){
-        if (fragmentActivity == null)
-            throw new NullPointerException("[LifeCycleUtils] fragmentActivity == null");
-        if (lifeCycle == null)
-            return;
-
-        LifeCycleManager manager = getLifeCycleManagerV4(fragmentActivity);
         manager.removeComponent(lifeCycle);
     }
 

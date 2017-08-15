@@ -195,17 +195,6 @@ public class EvBus {
 
     /**
      * [register/post模式]注册消息接收器
-     * @param activity Activity
-     * @param type 接收方式
-     * @param receiver 接收器, 必须用泛型指定接受的消息类型
-     */
-    public static void register(android.support.v4.app.FragmentActivity activity, Type type, EvReceiver receiver){
-        check(activity, type, receiver);
-        getStation(activity, true).register(type, receiver);
-    }
-
-    /**
-     * [register/post模式]注册消息接收器
      * @param fragment fragment
      * @param type 接收方式
      * @param receiver 接收器, 必须用泛型指定接受的消息类型
@@ -233,16 +222,6 @@ public class EvBus {
     public static void unregister(Fragment fragment, Class<? extends EvMessage> messageClass) {
         check(fragment, messageClass);
         getStation(fragment, true).unregister(messageClass);
-    }
-
-    /**
-     * [register/post模式]反注册消息接收器
-     * @param activity activity
-     * @param messageClass 消息类型
-     */
-    public static void unregister(android.support.v4.app.FragmentActivity activity, Class<? extends EvMessage> messageClass) {
-        check(activity, messageClass);
-        getStation(activity, true).unregister(messageClass);
     }
 
     /**
@@ -316,25 +295,6 @@ public class EvBus {
 
     /**
      * [API14+][transmit模式] 在传输专用消息池中放入消息, 等待新页面从中收走消息
-     * @param activity activity
-     * @param message 消息
-     */
-    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    public static void transmitPush(android.support.v4.app.FragmentActivity activity, EvMessage message){
-        if (DeviceUtils.getVersionSDK() < 14){
-            throw new IllegalStateException("[EvBus]transmitPush can only call in API14+");
-        }
-        if (activity == null){
-            throw new IllegalArgumentException("[EvBus]context == null");
-        }
-        if (message == null){
-            return;
-        }
-        getStation(activity, true).pushTransmitMessage(message);
-    }
-
-    /**
-     * [API14+][transmit模式] 在传输专用消息池中放入消息, 等待新页面从中收走消息
      * @param fragment fragment
      * @param message 消息
      */
@@ -392,25 +352,6 @@ public class EvBus {
 
     /**
      * [API14+][transmit模式] 从传输专用消息池中获取消息, 普通消息会从消息池中删除, 常驻消息(EvResidentMessage)允许复数次获取
-     * @param activity activity
-     * @param messageClass 消息 类型
-     */
-    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    public static <T extends EvMessage> T transmitPop(android.support.v4.app.FragmentActivity activity, Class<T> messageClass){
-        if (DeviceUtils.getVersionSDK() < 14){
-            throw new IllegalStateException("[EvBus]transmitRemove can only call in API14+");
-        }
-        if (activity == null){
-            throw new IllegalArgumentException("[EvBus]context == null");
-        }
-        if (messageClass == null){
-            return null;
-        }
-        return getStation(activity, true).popTransmitMessage(messageClass);
-    }
-
-    /**
-     * [API14+][transmit模式] 从传输专用消息池中获取消息, 普通消息会从消息池中删除, 常驻消息(EvResidentMessage)允许复数次获取
      * @param fragment fragment
      * @param messageClass 消息 类型
      */
@@ -464,25 +405,6 @@ public class EvBus {
             return null;
         }
         return getStation(fragment, true).removeTransmitMessage(messageClass);
-    }
-
-    /**
-     * [API14+][transmit模式] 从传输专用消息池中移除消息, 包括常驻消息(EvResidentMessage)也会被移除
-     * @param activity activity
-     * @param messageClass 消息 类型
-     */
-    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    public static <T extends EvMessage> T transmitRemove(android.support.v4.app.FragmentActivity activity, Class<T> messageClass){
-        if (DeviceUtils.getVersionSDK() < 14){
-            throw new IllegalStateException("[EvBus]transmitRemove can only call in API14+");
-        }
-        if (activity == null){
-            throw new IllegalArgumentException("[EvBus]context == null");
-        }
-        if (messageClass == null){
-            return null;
-        }
-        return getStation(activity, true).removeTransmitMessage(messageClass);
     }
 
     /**
@@ -609,29 +531,6 @@ public class EvBus {
                     //新建station
                     component = new EvStation(fragment.getActivity());
                     LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
-                    stations.add((EvStation) component);
-                }
-            } finally {
-                lock.unlock();
-            }
-        }
-        return (EvStation)component;
-    }
-
-    static EvStation getStation(android.support.v4.app.FragmentActivity activity, boolean create){
-        //获得station
-        LifeCycle component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
-        if (!create){
-            return null;
-        }
-        if (!(component instanceof EvStation)){
-            try{
-                lock.lock();
-                component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
-                if (!(component instanceof EvStation)){
-                    //新建station
-                    component = new EvStation(activity);
-                    LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
                     stations.add((EvStation) component);
                 }
             } finally {

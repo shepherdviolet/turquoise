@@ -21,7 +21,6 @@ package sviolet.turquoise.x.imageloader.node;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
@@ -118,9 +117,7 @@ public class LoadNode extends Node {
 
     @Override
     protected void attachLifeCycle(Context context) {
-        if (context instanceof FragmentActivity){
-            LifeCycleUtils.attach((FragmentActivity) context, controller);
-        }else if (context instanceof Activity){
+        if (context instanceof Activity){
             LifeCycleUtils.attach((Activity) context, controller);
         }else{
             throw new RuntimeException("[LoadNode]can't attach Node on this Context, class=" + context.getClass().getName());
