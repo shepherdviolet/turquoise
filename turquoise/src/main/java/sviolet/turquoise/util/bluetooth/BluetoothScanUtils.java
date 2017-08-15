@@ -47,7 +47,7 @@ import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
  * Created by S.Violet on 2017/8/15.
  */
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-public class BlueToothScanUtils {
+public class BluetoothScanUtils {
 
     public static final int ERROR_BLUETOOTH_UNSUPPORTED = -1;//设备不支持蓝牙
     public static final int ERROR_BLE_UNSUPPORTED = -2;//设备不支持BLE
