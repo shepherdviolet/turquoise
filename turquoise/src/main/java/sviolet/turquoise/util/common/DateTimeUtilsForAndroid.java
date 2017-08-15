@@ -36,4 +36,11 @@ public class DateTimeUtilsForAndroid extends sviolet.thistle.util.common.DateTim
         return SystemClock.uptimeMillis();
     }
 
+    /**
+     * [Android]获得系统启动至今经过的毫秒数, 深睡眠时仍然计时
+     */
+    public static long getElapsedRealtime(){
+        return SystemClock.elapsedRealtime();
+    }
+
 }
