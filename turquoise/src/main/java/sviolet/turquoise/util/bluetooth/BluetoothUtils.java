@@ -40,6 +40,7 @@ import java.util.List;
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
 import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * 蓝牙扫描工具
@@ -52,6 +53,8 @@ public class BluetoothUtils {
     public static final int ERROR_BLUETOOTH_UNSUPPORTED = -1;//设备不支持蓝牙
     public static final int ERROR_BLE_UNSUPPORTED = -2;//设备不支持BLE
     public static final int ERROR_BLUETOOTH_DISABLED = 1;//设备关闭了蓝牙
+
+    private static TLogger logger = TLogger.get(BluetoothUtils.class);
 
     /**
      * 判断设备是否支持BLE
@@ -82,17 +85,20 @@ public class BluetoothUtils {
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     public static void startBLEScan(@NonNull Activity activity, long timeout, @NonNull final ScanManager scanManager) {
         if (!isBLESupported(activity)){
+            logger.d("scan:error_ble_unsupported");
             scanManager.onError(ERROR_BLE_UNSUPPORTED);
             return;
         }
 
         BluetoothAdapter adapter = getAdapter(activity);
         if (adapter == null){
+            logger.d("scan:error_bluetooth_unsupported");
             scanManager.onError(ERROR_BLUETOOTH_UNSUPPORTED);
             return;
         }
 
         if (adapter.getState() != BluetoothAdapter.STATE_ON){
+            logger.d("scan:error_bluetooth_disabled");
             scanManager.onError(ERROR_BLUETOOTH_DISABLED);
             return;
         }
@@ -100,7 +106,9 @@ public class BluetoothUtils {
         BluetoothAdapter.LeScanCallback callback = new BluetoothAdapter.LeScanCallback() {
             @Override
             public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+                logger.d("scan:device found:" + device);
                 if (scanManager.filter(device, rssi, scanRecord)) {
+                    logger.d("scan:valid device");
                     scanManager.addDevice(device);
                     scanManager.onDeviceFound(scanManager.devices);
                 }
@@ -110,6 +118,7 @@ public class BluetoothUtils {
         scanManager.setAdapter(adapter);
         scanManager.setCallback(callback);
         adapter.startLeScan(callback);
+        logger.d("scan:start");
         LifeCycleUtils.attach(activity, scanManager);
 
         if (timeout > 0){
@@ -140,7 +149,6 @@ public class BluetoothUtils {
 
         /**
          * 当扫描出错时调用
-         * @param errorCode
          */
         protected abstract void onError(int errorCode);
 
@@ -160,10 +168,11 @@ public class BluetoothUtils {
          */
         public final void cancel(){
             if (!canceled && adapter != null && callback != null){
-                canceled = true;
                 adapter.stopLeScan(callback);
                 onCancel();
+                logger.d("scan:canceled");
             }
+            canceled = true;
         }
 
         private void setAdapter(BluetoothAdapter adapter) {
