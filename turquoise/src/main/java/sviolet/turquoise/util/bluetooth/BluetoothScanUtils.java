@@ -75,7 +75,7 @@ public class BluetoothScanUtils {
 
     /**
      * 开始扫描BLE设备
-     * @param activity activity
+     * @param activity activity, 当activity销毁时, 会自动取消扫描
      * @param timeout 超时时间, 0不超时
      * @param scanManager 回调及管理
      */
