@@ -85,20 +85,20 @@ public class BluetoothUtils {
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     public static void startBLEScan(@NonNull Activity activity, long timeout, @NonNull final ScanManager scanManager) {
         if (!isBLESupported(activity)){
-            logger.d("scan:error_ble_unsupported");
+            logger.d("bluetooth-scan:error_ble_unsupported");
             scanManager.onError(ERROR_BLE_UNSUPPORTED);
             return;
         }
 
         BluetoothAdapter adapter = getAdapter(activity);
         if (adapter == null){
-            logger.d("scan:error_bluetooth_unsupported");
+            logger.d("bluetooth-scan:error_bluetooth_unsupported");
             scanManager.onError(ERROR_BLUETOOTH_UNSUPPORTED);
             return;
         }
 
         if (adapter.getState() != BluetoothAdapter.STATE_ON){
-            logger.d("scan:error_bluetooth_disabled");
+            logger.d("bluetooth-scan:error_bluetooth_disabled");
             scanManager.onError(ERROR_BLUETOOTH_DISABLED);
             return;
         }
@@ -106,9 +106,9 @@ public class BluetoothUtils {
         BluetoothAdapter.LeScanCallback callback = new BluetoothAdapter.LeScanCallback() {
             @Override
             public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-                logger.d("scan:device found:" + device);
+                logger.d("bluetooth-scan:device found:" + device);
                 if (scanManager.filter(device, rssi, scanRecord)) {
-                    logger.d("scan:valid device");
+                    logger.d("bluetooth-scan:valid device");
                     scanManager.addDevice(device);
                     scanManager.onDeviceFound(scanManager.devices);
                 }
@@ -118,7 +118,7 @@ public class BluetoothUtils {
         scanManager.setAdapter(adapter);
         scanManager.setCallback(callback);
         adapter.startLeScan(callback);
-        logger.d("scan:start");
+        logger.d("bluetooth-scan:start");
         LifeCycleUtils.attach(activity, scanManager);
 
         if (timeout > 0){
@@ -170,7 +170,7 @@ public class BluetoothUtils {
             if (!canceled && adapter != null && callback != null){
                 adapter.stopLeScan(callback);
                 onCancel();
-                logger.d("scan:canceled");
+                logger.d("bluetooth-scan:canceled");
             }
             canceled = true;
         }
