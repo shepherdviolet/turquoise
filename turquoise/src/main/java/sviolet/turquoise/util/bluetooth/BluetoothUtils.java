@@ -106,6 +106,9 @@ public class BluetoothUtils {
         BluetoothAdapter.LeScanCallback callback = new BluetoothAdapter.LeScanCallback() {
             @Override
             public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
+                if (scanManager.devices.contains(device)){
+                    return;
+                }
                 logger.d("bluetooth-scan:device found:" + device);
                 if (scanManager.filter(device, rssi, scanRecord)) {
                     logger.d("bluetooth-scan:valid device");

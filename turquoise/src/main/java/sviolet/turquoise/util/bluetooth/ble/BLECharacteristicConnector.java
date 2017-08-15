@@ -37,10 +37,6 @@ import java.lang.ref.WeakReference;
 import java.util.List;
 
 import sviolet.turquoise.util.bluetooth.BluetoothUtils;
-import sviolet.turquoise.util.bluetooth.exception.BLEUnsupportedException;
-import sviolet.turquoise.util.bluetooth.exception.BluetoothDisabledException;
-import sviolet.turquoise.util.bluetooth.exception.BluetoothUnsupportedException;
-import sviolet.turquoise.util.bluetooth.exception.DeviceNotFoundException;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
@@ -50,6 +46,13 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  */
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BLECharacteristicConnector {
+
+    public static final int ERROR_BLUETOOTH_UNSUPPORTED = -1;//设备不支持蓝牙
+    public static final int ERROR_BLE_UNSUPPORTED = -2;//设备不支持BLE
+    public static final int ERROR_BLUETOOTH_DISABLED = 1;//设备关闭了蓝牙
+    public static final int ERROR_DEVICE_NOT_FOUND = 2;//找不到蓝牙设备
+    public static final int ERROR_SERVICE_NOT_FOUND = 3;//蓝牙设备中的Service找不到(匹配不到serviceUUID)
+    public static final int ERROR_CHARACTERISTIC_NOT_FOUND = 4;//蓝牙设备中的Characteristic找不到(匹配不到characteristicUUID)
 
     private TLogger logger = TLogger.get(this);
 
@@ -62,8 +65,10 @@ public class BLECharacteristicConnector {
     private String characteristicUUID;
     private Callback callback;
 
+    private boolean destroyed = false;
+
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
-    public static BLECharacteristicConnector connect(@NonNull Context context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, @NonNull Callback callback) throws BLEUnsupportedException, BluetoothUnsupportedException, BluetoothDisabledException, DeviceNotFoundException {
+    public static BLECharacteristicConnector connect(@NonNull Context context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, @NonNull Callback callback) {
         if (context == null) {
             throw new IllegalArgumentException("context is null");
         }
@@ -80,16 +85,22 @@ public class BLECharacteristicConnector {
     }
 
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
-    private BLECharacteristicConnector(@NonNull Context context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, @NonNull Callback callback) throws BLEUnsupportedException, BluetoothUnsupportedException, BluetoothDisabledException, DeviceNotFoundException {
+    private BLECharacteristicConnector(@NonNull Context context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, @NonNull Callback callback) {
         if (!BluetoothUtils.isBLESupported(context)) {
-            throw new BLEUnsupportedException("BLE unsupported in this device");
+            destroy();
+            callback.onError(ERROR_BLE_UNSUPPORTED);
+            return;
         }
         bluetoothAdapter = BluetoothUtils.getAdapter(context);
         if (bluetoothAdapter == null) {
-            throw new BluetoothUnsupportedException("Bluetooth unsupported in this device");
+            destroy();
+            callback.onError(ERROR_BLUETOOTH_UNSUPPORTED);
+            return;
         }
         if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON){
-            throw new BluetoothDisabledException("Bluetooth disabled in system settings");
+            destroy();
+            callback.onError(ERROR_BLUETOOTH_DISABLED);
+            return;
         }
 
         this.contextWeakReference = new WeakReference<>(context);
@@ -100,7 +111,9 @@ public class BLECharacteristicConnector {
         logger.d("ble-connect:start");
         BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
         if (device == null) {
-            throw new DeviceNotFoundException("Device " + deviceAddress + " not found");
+            destroy();
+            callback.onError(ERROR_DEVICE_NOT_FOUND);
+            return;
         }
 
         bluetoothGatt = device.connectGatt(context, false, gattCallback);
@@ -109,13 +122,16 @@ public class BLECharacteristicConnector {
     private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            if (destroyed){
+                return;
+            }
             logger.d("ble-connect:onConnectionStateChange(" + status + ", " + newState + ")");
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 if (newState == BluetoothProfile.STATE_CONNECTED) {
                     bluetoothGatt.discoverServices();
                     logger.d("ble-connect:connected");
                 } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
-                    bluetoothGatt.close();
+                    destroy();
                     logger.d("ble-connect:disconnected");
                     callback.onDisconnected();
                 }
@@ -124,6 +140,9 @@ public class BLECharacteristicConnector {
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            if (destroyed){
+                return;
+            }
             logger.d("ble-connect:onServicesDiscovered(" + status + ")");
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 logger.d("ble-connect:discovered");
@@ -133,6 +152,9 @@ public class BLECharacteristicConnector {
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            if (destroyed){
+                return;
+            }
             if (status == BluetoothGatt.GATT_SUCCESS) {
                 byte[] data = characteristic.getValue();
                 logger.d("ble-connect:received data, length:" + data.length);
@@ -142,6 +164,9 @@ public class BLECharacteristicConnector {
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            if (destroyed){
+                return;
+            }
             byte[] data = characteristic.getValue();
             logger.d("ble-connect:received data, length:" + data.length);
             callback.onReceive(data);
@@ -190,8 +215,43 @@ public class BLECharacteristicConnector {
                     }
                 }
                 logger.d("ble-connect:characteristic not found");
+                destroy();
+                callback.onError(ERROR_CHARACTERISTIC_NOT_FOUND);
+                return;
             }
-            logger.d("ble-connect:service not found");
+        }
+        logger.d("ble-connect:service not found");
+        destroy();
+        callback.onError(ERROR_SERVICE_NOT_FOUND);
+    }
+
+    /**
+     * 向蓝牙设备传输数据, 必须在Callback.onReady后调用
+     * @param data 数据
+     * @return true:写入成功
+     */
+    public boolean writeData(byte[] data){
+        if (destroyed){
+            logger.d("Trying to write data through destroyed connector");
+            return false;
+        }
+        if (data == null){
+            logger.d("Trying to write null data");
+            return false;
+        }
+        if (characteristic == null){
+            logger.d("Trying to write data through unconnected connector");
+            return false;
+        }
+        characteristic.setValue(data);
+        bluetoothGatt.writeCharacteristic(characteristic);
+        return true;
+    }
+
+    public void destroy(){
+        destroyed = true;
+        if (bluetoothGatt != null){
+            bluetoothGatt.close();
         }
     }
 
@@ -216,6 +276,12 @@ public class BLECharacteristicConnector {
          * @param data 接收到的数据
          */
         void onReceive(byte[] data);
+
+        /**
+         * 连接错误(之后连接会断开)
+         * @param errorCode 错误码
+         */
+        void onError(int errorCode);
 
     }
 
