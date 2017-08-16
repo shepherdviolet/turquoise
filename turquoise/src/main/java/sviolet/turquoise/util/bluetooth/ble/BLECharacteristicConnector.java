@@ -58,7 +58,6 @@ public class BLECharacteristicConnector {
 
     private WeakReference<Context> contextWeakReference;
 
-    private BluetoothAdapter bluetoothAdapter;
     private BluetoothGatt bluetoothGatt;
     private BluetoothGattCharacteristic characteristic;
     private String serviceUUID;
@@ -67,6 +66,14 @@ public class BLECharacteristicConnector {
 
     private boolean destroyed = false;
 
+    /**
+     * 尝试连接蓝牙设备
+     * @param context context
+     * @param deviceAddress 蓝牙设备地址
+     * @param serviceUUID 服务UUID
+     * @param characteristicUUID 特性UUID
+     * @param callback 回调
+     */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     public static BLECharacteristicConnector connect(@NonNull Context context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, @NonNull Callback callback) {
         if (context == null) {
@@ -91,7 +98,7 @@ public class BLECharacteristicConnector {
             callback.onError(ERROR_BLE_UNSUPPORTED);
             return;
         }
-        bluetoothAdapter = BluetoothUtils.getAdapter(context);
+        BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(context);
         if (bluetoothAdapter == null) {
             destroy();
             callback.onError(ERROR_BLUETOOTH_UNSUPPORTED);
@@ -248,6 +255,9 @@ public class BLECharacteristicConnector {
         return true;
     }
 
+    /**
+     * [重要]销毁
+     */
     public void destroy(){
         destroyed = true;
         if (bluetoothGatt != null){
