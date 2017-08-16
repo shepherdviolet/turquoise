@@ -65,64 +65,72 @@ class TLoggerProxy extends TLogger {
     public void e(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, ERROR)) {
-            Log.e(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg);
-            TLoggerCenter.INSTANCE.getPrinter().e(msg, null);
+            String message = "[" + className + "]" + msg;
+            Log.e(StringConstants.LIBRARY_TAG, message);
+            TLoggerCenter.INSTANCE.getPrinter().e(message, null);
         }
     }
 
     public void e(Object msg, Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, ERROR)) {
-            Log.e(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg, throwable);
-            TLoggerCenter.INSTANCE.getPrinter().e(msg, throwable);
+            String message = "[" + className + "]" + msg;
+            Log.e(StringConstants.LIBRARY_TAG, message, throwable);
+            TLoggerCenter.INSTANCE.getPrinter().e(message, throwable);
         }
     }
 
     public void e(Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, ERROR)) {
-            Log.e(StringConstants.LIBRARY_TAG, "[" + className + "]", throwable);
-            TLoggerCenter.INSTANCE.getPrinter().e(null, throwable);
+            String message = "[" + className + "]ERROR";
+            Log.e(StringConstants.LIBRARY_TAG, message, throwable);
+            TLoggerCenter.INSTANCE.getPrinter().e(message, throwable);
         }
     }
 
     public void w(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, WARNING)) {
-            Log.w(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg);
-            TLoggerCenter.INSTANCE.getPrinter().w(msg, null);
+            String message = "[" + className + "]" + msg;
+            Log.w(StringConstants.LIBRARY_TAG, message);
+            TLoggerCenter.INSTANCE.getPrinter().w(message, null);
         }
     }
 
     public void w(Object msg, Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, WARNING)) {
-            Log.w(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg, throwable);
-            TLoggerCenter.INSTANCE.getPrinter().w(msg, throwable);
+            String message = "[" + className + "]" + msg;
+            Log.w(StringConstants.LIBRARY_TAG, message, throwable);
+            TLoggerCenter.INSTANCE.getPrinter().w(message, throwable);
         }
     }
 
     public void w(Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, WARNING)) {
-            Log.w(StringConstants.LIBRARY_TAG, "[" + className + "]", throwable);
-            TLoggerCenter.INSTANCE.getPrinter().w(null, throwable);
+            String message = "[" + className + "]WARNING";
+            Log.w(StringConstants.LIBRARY_TAG, message, throwable);
+            TLoggerCenter.INSTANCE.getPrinter().w(message, throwable);
         }
     }
 
     public void i(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, INFO)) {
-            Log.i(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg);
-            TLoggerCenter.INSTANCE.getPrinter().i(msg);
+            String message = "[" + className + "]" + msg;
+            Log.i(StringConstants.LIBRARY_TAG, message);
+            TLoggerCenter.INSTANCE.getPrinter().i(message);
         }
     }
 
     public void d(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, DEBUG)) {
-            Log.d(StringConstants.LIBRARY_TAG, "[" + className + "]" + msg);
-            TLoggerCenter.INSTANCE.getPrinter().d(msg);
+            String message = "[" + className + "]" + msg;
+            Log.d(StringConstants.LIBRARY_TAG, message);
+            TLoggerCenter.INSTANCE.getPrinter().d(message);
         }
     }
 
