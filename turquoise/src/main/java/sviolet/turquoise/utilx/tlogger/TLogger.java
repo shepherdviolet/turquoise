@@ -21,6 +21,8 @@ package sviolet.turquoise.utilx.tlogger;
 
 import java.util.Map;
 
+import sviolet.turquoise.utilx.tlogger.printer.LoggerPrinter;
+
 /**
  * <p>TLogger日志打印器Java入口 (Kotlin参考TLoggerExtensions.kt)</p>
  *
@@ -113,6 +115,13 @@ public abstract class TLogger {
      */
     public static void resetRules(Map<String, Integer> rules){
         TLoggerCenter.INSTANCE.resetRules(rules);
+    }
+
+    /**
+     * 设置日志磁盘输出器, 默认不输出到磁盘, 一般使用TLoggerPrinterImpl, 自行实现需要注意性能问题和异常问题
+     */
+    public static void setLoggerPrinter(LoggerPrinter printer){
+        TLoggerCenter.INSTANCE.setPrinter(printer);
     }
 
     /**

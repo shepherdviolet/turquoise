@@ -25,6 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.thistle.util.common.ConcurrentUtils;
+import sviolet.turquoise.utilx.tlogger.printer.LoggerPrinter;
+import sviolet.turquoise.utilx.tlogger.printer.NullLoggerPrinter;
 
 /**
  * 日志打印器核心逻辑
@@ -51,6 +53,9 @@ class TLoggerCenter {
     //同步锁
     private ReentrantLock cacheLock = new ReentrantLock();
     private ReentrantLock ruleLock = new ReentrantLock();
+
+    //磁盘输出
+    private LoggerPrinter printer = new NullLoggerPrinter();
 
     /**
      * 添加规则
@@ -167,6 +172,19 @@ class TLoggerCenter {
         }
         return logger;
     }
+
+    void setPrinter(LoggerPrinter printer){
+        if (printer == null){
+            this.printer = new NullLoggerPrinter();
+        } else {
+            this.printer = printer;
+        }
+    }
+
+    LoggerPrinter getPrinter(){
+        return printer;
+    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
