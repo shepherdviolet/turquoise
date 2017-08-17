@@ -58,8 +58,12 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
     private AtomicBoolean queueFull = new AtomicBoolean(false);
     private AtomicBoolean disabled = new AtomicBoolean(false);
 
+    public SimpleLoggerPrinter(@NonNull File logDirectory, int maxLogSizeMB) {
+        this(logDirectory, maxLogSizeMB, false);
+    }
+
     public SimpleLoggerPrinter(@NonNull File logDirectory, int maxLogSizeMB, boolean sensitiveLogEnabled) {
-        this(logDirectory, maxLogSizeMB, "yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault(), false);
+        this(logDirectory, maxLogSizeMB, "yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault(), sensitiveLogEnabled);
     }
 
     public SimpleLoggerPrinter(@NonNull File logDirectory, int maxLogSizeMB, @NonNull String datePattern, @NonNull Locale locale, boolean sensitiveLogEnabled) {
