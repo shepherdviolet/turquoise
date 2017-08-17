@@ -155,7 +155,7 @@ public class BLECharacteristicConnector implements LifeCycle {
                 return;
             }
 
-            logger.d("ble-connect:start");
+            logger.d("ble-connect:start, address:" + deviceAddress + ", serviceUUID:" + serviceUUID + ", characteristicUUID:" + characteristicUUID);
             BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
             if (device == null) {
                 disconnect();
