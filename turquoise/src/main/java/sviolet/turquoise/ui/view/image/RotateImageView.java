@@ -39,7 +39,7 @@ import sviolet.turquoise.R;
  *
  * xmlns:sviolet="http://schemas.android.com/apk/res/应用包名
  * 
- * @author S.Violet (ZhuQinChao)
+ * @author S.Violet ()
  *
  */
 @SuppressLint("AppCompatCustomView")

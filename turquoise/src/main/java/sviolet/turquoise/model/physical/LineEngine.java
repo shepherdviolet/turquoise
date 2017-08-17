@@ -25,7 +25,7 @@ import sviolet.turquoise.model.physical.abs.Engine;
  * 
  * 直线引擎<<stop()关闭>>
  * 
- * @author S.Violet (ZhuQinChao)
+ * @author S.Violet ()
  *
  */
 

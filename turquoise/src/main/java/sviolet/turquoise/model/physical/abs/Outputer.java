@@ -23,7 +23,7 @@ package sviolet.turquoise.model.physical.abs;
  * 
  * 输出接口
  * 
- * @author S.Violet (ZhuQinChao)
+ * @author S.Violet ()
  *
  */
 

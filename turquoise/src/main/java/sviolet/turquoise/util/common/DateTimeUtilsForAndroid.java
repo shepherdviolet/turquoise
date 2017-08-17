@@ -26,7 +26,7 @@ import sviolet.thistle.util.common.DateTimeUtils;
 /**
  * 时间工具
  *
- * @author S.Violet (ZhuQinChao)
+ * @author S.Violet ()
  *
  */
 public class DateTimeUtilsForAndroid extends DateTimeUtils {

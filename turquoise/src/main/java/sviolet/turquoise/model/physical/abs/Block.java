@@ -22,7 +22,7 @@ package sviolet.turquoise.model.physical.abs;
 /**
  * 障碍区块
  * 
- * @author S.Violet (ZhuQinChao)
+ * @author S.Violet ()
  *
  */
 

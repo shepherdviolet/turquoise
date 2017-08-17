@@ -86,7 +86,7 @@ import sviolet.turquoise.R;
  *	getPercent():获得刮开部分的比例<br/>
  *	destroy():销毁控件<br/>
  *
- * @author S.Violet (ZhuQinChao)
+ * @author S.Violet ()
  *
  */
 @SuppressLint("AppCompatCustomView")

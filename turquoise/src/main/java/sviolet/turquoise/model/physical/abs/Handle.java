@@ -24,7 +24,7 @@ import android.view.MotionEvent;
 /**
  * 运动把手,用于触摸驱动物体运动
  * 
- * @author S.Violet (ZhuQinChao)
+ * @author S.Violet ()
  *
  */
 

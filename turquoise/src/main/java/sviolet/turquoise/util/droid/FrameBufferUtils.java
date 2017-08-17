@@ -17,7 +17,7 @@ import android.view.WindowManager;
 /**
  * FrameBuffer(帧缓冲)读取工具(需要ROOT权限)
  * 
- * @author S.Violet (ZhuQinChao)
+ * @author S.Violet ()
  *
  */
 public class FrameBufferUtils {
@@ -131,7 +131,7 @@ public class FrameBufferUtils {
 	 * @param pixelFormat 格式
 	 * @return
 	 * 
-	 * @author S.Violet(ZhuQinChao)
+	 * @author S.Violet()
 	 */
 	private static int[] convertToARGB8888(byte[] frameBuffer, int pixelFormat) {
 		int[] colors = null;

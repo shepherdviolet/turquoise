@@ -28,7 +28,7 @@ import sviolet.turquoise.model.physical.abs.Inputer;
  * 
  * [实时时钟输入器]按照一定间隔刷新引擎
  * 
- * @author S.Violet (ZhuQinChao)
+ * @author S.Violet ()
  *
  */
 

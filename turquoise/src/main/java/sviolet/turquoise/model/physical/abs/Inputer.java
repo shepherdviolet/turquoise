@@ -25,7 +25,7 @@ package sviolet.turquoise.model.physical.abs;
  * 
  * [[与lite的区别]]本引擎物理算法在子线程中进行, 输出时通过handler调用UI线程处理onOutput
  * 
- * @author S.Violet (ZhuQinChao)
+ * @author S.Violet ()
  *
  */
 
