@@ -41,6 +41,8 @@ import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
 /**
  * 日志磁盘输出简易实现
  *
+ * TLogger.setLoggerPrinter(new SimpleLoggerPrinter(...));
+ *
  * 注意:如果使用外部存储器, 需要申请权限
  *
  * Created by S.Violet on 2017/8/16.
@@ -58,14 +60,30 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
     private AtomicBoolean queueFull = new AtomicBoolean(false);
     private AtomicBoolean disabled = new AtomicBoolean(false);
 
+    /**
+     * @param logDirectory 日志输出路径(如果使用外部储存必须申请权限)
+     * @param maxLogSizeMB 日志最大容量
+     */
     public SimpleLoggerPrinter(@NonNull File logDirectory, int maxLogSizeMB) {
         this(logDirectory, maxLogSizeMB, false);
     }
 
+    /**
+     * @param logDirectory 日志输出路径(如果使用外部储存必须申请权限)
+     * @param maxLogSizeMB 日志最大容量
+     * @param sensitiveLogEnabled 是否输出敏感日志(默认false)
+     */
     public SimpleLoggerPrinter(@NonNull File logDirectory, int maxLogSizeMB, boolean sensitiveLogEnabled) {
         this(logDirectory, maxLogSizeMB, "yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault(), sensitiveLogEnabled);
     }
 
+    /**
+     * @param logDirectory 日志输出路径(如果使用外部储存必须申请权限)
+     * @param maxLogSizeMB 日志最大容量
+     * @param datePattern 日期格式
+     * @param locale 地区
+     * @param sensitiveLogEnabled 是否输出敏感日志(默认false)
+     */
     public SimpleLoggerPrinter(@NonNull File logDirectory, int maxLogSizeMB, @NonNull String datePattern, @NonNull Locale locale, boolean sensitiveLogEnabled) {
         if (maxLogSizeMB <= 0){
             throw new IllegalArgumentException("maxLogSizeMB must > 0");
@@ -164,6 +182,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                 Log.i("Turquoise", "[SimpleLoggerPrinter]directory:" + logDirectory);
             }
 
+            //创建路径
             if (!logDirectory.exists() || logDirectory.isFile()){
                 if (!logDirectory.mkdirs()){
                     Log.e("Turquoise", "[SimpleLoggerPrinter]init failed, can not create log directory");
@@ -172,6 +191,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                 }
             }
 
+            //查找日志
             File[] logFiles = logDirectory.listFiles(new FileFilter() {
                 @Override
                 public boolean accept(File file) {
@@ -179,6 +199,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                 }
             });
 
+            //清理多余日志
             if (logFiles.length > 2){
                 Arrays.sort(logFiles);
                 for (int i = 0 ; i < logFiles.length - 2 ; i++){
@@ -188,6 +209,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                 }
             }
 
+            //加载日志文件
             if (logFiles.length >= 2){
                 currentFile = logFiles[logFiles.length - 1];
                 previousFile = logFiles[logFiles.length - 2];
@@ -198,6 +220,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
 
         @Override
         public void run() {
+            //初始化
             try {
                 init(disabled, logDirectory, sensitiveLogEnabled);
             } catch (Throwable t) {
@@ -208,16 +231,20 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                     Log.e("Turquoise", "[SimpleLoggerPrinter]error while init, SimpleLoggerPrinter disabled");
                 }
             }
+            //循环
             while(!disabled.get()){
                 try {
+                    //从队列中获取消息
                     String message = messageQueue.poll(60, TimeUnit.SECONDS);
                     if (message != null){
+                        //打印消息
                         printMessage(message);
+                        //打印队列满的错误日志
                         if (queueFull.get()){
                             queueFull.set(false);
                             printMessage("[SimpleLoggerPrinter]message queue is full, log can not write to disk");
                         }
-                        //keep writer
+                        //复用Writer
                         continue;
                     }
                 } catch (InterruptedException ignored) {
@@ -226,7 +253,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                     } catch (InterruptedException ignored2) {
                     }
                 }
-                //no message, close writer
+                //无消息时, 关闭writer
                 closeBufferedWriter();
             }
             if (sensitiveLogEnabled) {
@@ -249,7 +276,9 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
         }
 
         private BufferedWriter getCurrentFileWriter() throws IOException {
+            //判断的当前文件是否存在
             if (currentFile == null || !currentFile.exists() || currentFile.isDirectory()){
+                //新建文件
                 closeBufferedWriter();
                 currentFile = new File(logDirectory.getAbsolutePath() + "/" + DateTimeUtilsForAndroid.getCurrentTimeMillis() + ".tlog");
                 bufferedWriter = new BufferedWriter(new FileWriter(currentFile));
@@ -257,7 +286,9 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                     Log.i("Turquoise", "[SimpleLoggerPrinter]writer create");
                 }
             }
+            //判断文件是否过大
             if (currentFile.length() > maxLogSize){
+                //切换文件
                 closeBufferedWriter();
                 if (previousFile != null && previousFile.exists()){
                     if (!previousFile.delete()){
@@ -271,7 +302,9 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                     Log.i("Turquoise", "[SimpleLoggerPrinter]writer switch");
                 }
             }
+            //判断writer是否存在
             if (bufferedWriter == null){
+                //创建writer
                 bufferedWriter = new BufferedWriter(new FileWriter(currentFile));
                 if (sensitiveLogEnabled) {
                     Log.i("Turquoise", "[SimpleLoggerPrinter]writer recreate");
