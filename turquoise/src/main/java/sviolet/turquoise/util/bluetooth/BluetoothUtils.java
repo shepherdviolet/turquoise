@@ -50,10 +50,6 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BluetoothUtils {
 
-    public static final int ERROR_BLUETOOTH_UNSUPPORTED = -1;//设备不支持蓝牙
-    public static final int ERROR_BLE_UNSUPPORTED = -2;//设备不支持BLE
-    public static final int ERROR_BLUETOOTH_DISABLED = 1;//设备关闭了蓝牙
-
     private static TLogger logger = TLogger.get(BluetoothUtils.class);
 
     /**
@@ -87,20 +83,20 @@ public class BluetoothUtils {
     public static void startBLEScan(@NonNull Activity activity, long timeout, boolean attachLifeCycle, @NonNull final ScanManager scanManager) {
         if (!isBLESupported(activity)){
             logger.d("bluetooth-scan:error_ble_unsupported");
-            scanManager.onError(ERROR_BLE_UNSUPPORTED);
+            scanManager.onError(ScanError.ERROR_BLE_UNSUPPORTED);
             return;
         }
 
         BluetoothAdapter adapter = getAdapter(activity);
         if (adapter == null){
             logger.d("bluetooth-scan:error_bluetooth_unsupported");
-            scanManager.onError(ERROR_BLUETOOTH_UNSUPPORTED);
+            scanManager.onError(ScanError.ERROR_BLUETOOTH_UNSUPPORTED);
             return;
         }
 
         if (adapter.getState() != BluetoothAdapter.STATE_ON){
             logger.d("bluetooth-scan:error_bluetooth_disabled");
-            scanManager.onError(ERROR_BLUETOOTH_DISABLED);
+            scanManager.onError(ScanError.ERROR_BLUETOOTH_DISABLED);
             return;
         }
 
@@ -158,7 +154,7 @@ public class BluetoothUtils {
         /**
          * 当扫描出错时调用
          */
-        protected abstract void onError(int errorCode);
+        protected abstract void onError(ScanError error);
 
         /**
          * 复写该方法实现设备过滤
@@ -234,6 +230,12 @@ public class BluetoothUtils {
         protected void handleMessageWithHost(Message msg, ScanManager host) {
             host.cancel();
         }
+    }
+
+    public enum ScanError {
+        ERROR_BLUETOOTH_UNSUPPORTED,//设备不支持蓝牙
+        ERROR_BLE_UNSUPPORTED,//设备不支持BLE
+        ERROR_BLUETOOTH_DISABLED//设备关闭了蓝牙
     }
 
 }

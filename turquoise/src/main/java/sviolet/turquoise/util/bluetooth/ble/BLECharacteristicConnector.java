@@ -53,17 +53,6 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BLECharacteristicConnector implements LifeCycle {
 
-    public static final int ERROR_BLUETOOTH_UNSUPPORTED = -1;//设备不支持蓝牙
-    public static final int ERROR_BLE_UNSUPPORTED = -2;//设备不支持BLE
-    public static final int ERROR_CONTEXT_DESTROYED = 0;//创建连接的Context已被销毁
-    public static final int ERROR_BLUETOOTH_DISABLED = 1;//设备关闭了蓝牙
-    public static final int ERROR_DEVICE_NOT_FOUND = 2;//找不到蓝牙设备
-    public static final int ERROR_SERVICE_NOT_FOUND = 3;//蓝牙设备中的Service找不到(匹配不到serviceUUID)
-    public static final int ERROR_CHARACTERISTIC_NOT_FOUND = 4;//蓝牙设备中的Characteristic找不到(匹配不到characteristicUUID)
-    public static final int ERROR_CONNECT_FAILED = 5;//蓝牙连接失败(附带Exception)
-    public static final int ERROR_DISCOVER_FAILED = 6;//蓝牙连接(查找服务)失败(附带Exception)
-    public static final int ERROR_EXCEPTION = 9;//其他异常(附带Exception)
-
     private TLogger logger = TLogger.get(this);
 
     private WeakReference<Context> contextWeakReference;
@@ -139,23 +128,23 @@ public class BLECharacteristicConnector implements LifeCycle {
             Context context = contextWeakReference.get();
             if (context == null) {
                 disconnect();
-                callback.onError(this, ERROR_CONTEXT_DESTROYED, null);
+                callback.onError(this, Error.ERROR_CONTEXT_DESTROYED, null);
                 return;
             }
             if (!BluetoothUtils.isBLESupported(context)) {
                 disconnect();
-                callback.onError(this, ERROR_BLE_UNSUPPORTED, null);
+                callback.onError(this, Error.ERROR_BLE_UNSUPPORTED, null);
                 return;
             }
             BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(context);
             if (bluetoothAdapter == null) {
                 disconnect();
-                callback.onError(this, ERROR_BLUETOOTH_UNSUPPORTED, null);
+                callback.onError(this, Error.ERROR_BLUETOOTH_UNSUPPORTED, null);
                 return;
             }
             if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON) {
                 disconnect();
-                callback.onError(this, ERROR_BLUETOOTH_DISABLED, null);
+                callback.onError(this, Error.ERROR_BLUETOOTH_DISABLED, null);
                 return;
             }
 
@@ -163,7 +152,7 @@ public class BLECharacteristicConnector implements LifeCycle {
             BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
             if (device == null) {
                 disconnect();
-                callback.onError(this, ERROR_DEVICE_NOT_FOUND, null);
+                callback.onError(this, Error.ERROR_DEVICE_NOT_FOUND, null);
                 return;
             }
 
@@ -175,7 +164,7 @@ public class BLECharacteristicConnector implements LifeCycle {
         } catch (Throwable t){
             if (!disconnected){
                 disconnect();
-                callback.onError(this, ERROR_EXCEPTION, t);
+                callback.onError(this, Error.ERROR_EXCEPTION, t);
             }
         }
     }
@@ -200,12 +189,12 @@ public class BLECharacteristicConnector implements LifeCycle {
                 } else {
                     disconnect();
                     logger.d("ble-connect:connect failed with status(BlueToothGatt.GATT_???):" + status);
-                    callback.onError(BLECharacteristicConnector.this, ERROR_CONNECT_FAILED, new Exception("ble-connect:connect failed with status(BlueToothGatt.GATT_???):" + status));
+                    callback.onError(BLECharacteristicConnector.this, Error.ERROR_CONNECT_FAILED, new Exception("ble-connect:connect failed with status(BlueToothGatt.GATT_???):" + status));
                 }
             } catch (Throwable t){
                 if (!disconnected){
                     disconnect();
-                    callback.onError(BLECharacteristicConnector.this, ERROR_EXCEPTION, t);
+                    callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
                 }
             }
         }
@@ -223,12 +212,12 @@ public class BLECharacteristicConnector implements LifeCycle {
                 } else {
                     disconnect();
                     logger.d("ble-connect:discover failed with status(BlueToothGatt.GATT_???):" + status);
-                    callback.onError(BLECharacteristicConnector.this, ERROR_DISCOVER_FAILED, new Exception("ble-connect:discover failed with status(BlueToothGatt.GATT_???):" + status));
+                    callback.onError(BLECharacteristicConnector.this, Error.ERROR_DISCOVER_FAILED, new Exception("ble-connect:discover failed with status(BlueToothGatt.GATT_???):" + status));
                 }
             } catch (Throwable t){
                 if (!disconnected){
                     disconnect();
-                    callback.onError(BLECharacteristicConnector.this, ERROR_EXCEPTION, t);
+                    callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
                 }
             }
         }
@@ -250,7 +239,7 @@ public class BLECharacteristicConnector implements LifeCycle {
             } catch (Throwable t){
                 if (!disconnected){
                     disconnect();
-                    callback.onError(BLECharacteristicConnector.this, ERROR_EXCEPTION, t);
+                    callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
                 }
             }
         }
@@ -267,7 +256,7 @@ public class BLECharacteristicConnector implements LifeCycle {
             } catch (Throwable t){
                 if (!disconnected){
                     disconnect();
-                    callback.onError(BLECharacteristicConnector.this, ERROR_EXCEPTION, t);
+                    callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
                 }
             }
         }
@@ -316,13 +305,13 @@ public class BLECharacteristicConnector implements LifeCycle {
                 }
                 logger.d("ble-connect:characteristic not found");
                 disconnect();
-                callback.onError(this, ERROR_CHARACTERISTIC_NOT_FOUND, null);
+                callback.onError(this, Error.ERROR_CHARACTERISTIC_NOT_FOUND, null);
                 return;
             }
         }
         logger.d("ble-connect:service not found");
         disconnect();
-        callback.onError(this, ERROR_SERVICE_NOT_FOUND, null);
+        callback.onError(this, Error.ERROR_SERVICE_NOT_FOUND, null);
     }
 
     /**
@@ -361,7 +350,7 @@ public class BLECharacteristicConnector implements LifeCycle {
         } catch (Throwable t){
             if (!disconnected){
                 disconnect();
-                callback.onError(this, ERROR_EXCEPTION, t);
+                callback.onError(this, Error.ERROR_EXCEPTION, t);
             }
         } finally {
             writeLock.unlock();
@@ -380,7 +369,7 @@ public class BLECharacteristicConnector implements LifeCycle {
     }
 
     /**
-     * [重要]关闭连接
+     * 关闭连接
      */
     public void disconnect(){
         disconnected = true;
@@ -392,6 +381,13 @@ public class BLECharacteristicConnector implements LifeCycle {
             bluetoothGatt = null;
             characteristic = null;
         }
+    }
+
+    /**
+     * 销毁实例(无法再重连)
+     */
+    public void destroy(){
+        onDestroy();
     }
 
     private Context getContext() {
@@ -450,11 +446,24 @@ public class BLECharacteristicConnector implements LifeCycle {
 
         /**
          * 连接错误(且连接已断开)
-         * @param errorCode 错误码(BLECharacteristicConnector.ERROR_???)
+         * @param error 错误码(BLECharacteristicConnector.ERROR)
          * @param throwable 异常(可能为空)
          */
-        void onError(BLECharacteristicConnector connector, int errorCode, @Nullable Throwable throwable);
+        void onError(BLECharacteristicConnector connector, Error error, @Nullable Throwable throwable);
 
+    }
+
+    public enum Error {
+        ERROR_BLUETOOTH_UNSUPPORTED,//设备不支持蓝牙
+        ERROR_BLE_UNSUPPORTED,//设备不支持BLE
+        ERROR_CONTEXT_DESTROYED,//创建连接的Context已被销毁
+        ERROR_BLUETOOTH_DISABLED,//设备关闭了蓝牙
+        ERROR_DEVICE_NOT_FOUND,//找不到蓝牙设备
+        ERROR_SERVICE_NOT_FOUND,//蓝牙设备中的Service找不到(匹配不到serviceUUID)
+        ERROR_CHARACTERISTIC_NOT_FOUND,//蓝牙设备中的Characteristic找不到(匹配不到characteristicUUID)
+        ERROR_CONNECT_FAILED,//蓝牙连接失败(附带Exception)
+        ERROR_DISCOVER_FAILED,//蓝牙连接(查找服务)失败(附带Exception)
+        ERROR_EXCEPTION//其他异常(附带Exception)
     }
 
 }
