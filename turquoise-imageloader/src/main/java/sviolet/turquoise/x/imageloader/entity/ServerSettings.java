@@ -20,6 +20,7 @@
 package sviolet.turquoise.x.imageloader.entity;
 
 import android.content.Context;
+import android.support.annotation.RequiresPermission;
 
 import java.io.File;
 
@@ -645,6 +646,7 @@ public class ServerSettings implements ComponentManager.Component{
 
     public enum DiskCachePath{
         INNER_STORAGE,
+        @RequiresPermission("android.permission.WRITE_EXTERNAL_STORAGE")
         EXTERNAL_STORAGE
     }
 
