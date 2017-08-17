@@ -37,6 +37,8 @@ import android.support.annotation.RequiresPermission;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.util.bluetooth.BluetoothUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
@@ -75,6 +77,8 @@ public class BLECharacteristicConnector implements LifeCycle {
 
     private boolean disconnected = false;
     private boolean destroyed = false;
+
+    private ReentrantLock writeLock = new ReentrantLock();
 
     /**
      * 尝试连接蓝牙设备
@@ -322,24 +326,35 @@ public class BLECharacteristicConnector implements LifeCycle {
     }
 
     /**
-     * 向蓝牙设备传输数据, 必须在Callback.onReady后调用
+     * 向蓝牙设备传输数据, 必须在Callback.onReady后调用, 同步锁操作, 请设置合适的等待时间, 超过时间退出锁竞争, 并返回失败
      * @param data 数据
+     * @param timeout 写入排队等待时间, millis, 必须>0
      * @return true:写入成功
      */
-    public boolean writeData(byte[] data){
-        if (disconnected){
-            logger.d("Trying to write data through disconnected connector");
-            return false;
-        }
+    public boolean writeData(byte[] data, int timeout){
         if (data == null){
             logger.d("Trying to write null data");
             return false;
         }
-        if (characteristic == null){
-            logger.d("Trying to write data through unconnected connector");
-            return false;
+        if (timeout <= 0){
+            throw new IllegalArgumentException("timeout must > 0");
         }
         try {
+            try {
+                if (!writeLock.tryLock(timeout, TimeUnit.MILLISECONDS)){
+                    return false;
+                }
+            } catch (InterruptedException e) {
+                return false;
+            }
+            if (disconnected){
+                logger.d("Trying to write data through disconnected connector");
+                return false;
+            }
+            if (characteristic == null){
+                logger.d("Trying to write data through unconnected connector");
+                return false;
+            }
             characteristic.setValue(data);
             bluetoothGatt.writeCharacteristic(characteristic);
             return true;
@@ -348,6 +363,8 @@ public class BLECharacteristicConnector implements LifeCycle {
                 disconnect();
                 callback.onError(this, ERROR_EXCEPTION, t);
             }
+        } finally {
+            writeLock.unlock();
         }
         return false;
     }
