@@ -58,7 +58,9 @@ public class BLECharacteristicConnector implements LifeCycle {
     public static final int ERROR_DEVICE_NOT_FOUND = 2;//找不到蓝牙设备
     public static final int ERROR_SERVICE_NOT_FOUND = 3;//蓝牙设备中的Service找不到(匹配不到serviceUUID)
     public static final int ERROR_CHARACTERISTIC_NOT_FOUND = 4;//蓝牙设备中的Characteristic找不到(匹配不到characteristicUUID)
-    public static final int ERROR_EXCEPTION = 5;//其他异常
+    public static final int ERROR_CONNECT_FAILED = 5;//蓝牙连接失败(附带Exception)
+    public static final int ERROR_DISCOVER_FAILED = 6;//蓝牙连接(查找服务)失败(附带Exception)
+    public static final int ERROR_EXCEPTION = 9;//其他异常(附带Exception)
 
     private TLogger logger = TLogger.get(this);
 
@@ -191,6 +193,10 @@ public class BLECharacteristicConnector implements LifeCycle {
                         logger.d("ble-connect:disconnected");
                         callback.onDisconnected();
                     }
+                } else {
+                    disconnect();
+                    logger.d("ble-connect:connect failed with status(BlueToothGatt.GATT_???):" + status);
+                    callback.onError(ERROR_CONNECT_FAILED, new Exception("ble-connect:connect failed with status(BlueToothGatt.GATT_???):" + status));
                 }
             } catch (Throwable t){
                 if (!disconnected){
@@ -210,6 +216,10 @@ public class BLECharacteristicConnector implements LifeCycle {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     logger.d("ble-connect:discovered");
                     seekCharacteristic(gatt.getServices());
+                } else {
+                    disconnect();
+                    logger.d("ble-connect:discover failed with status(BlueToothGatt.GATT_???):" + status);
+                    callback.onError(ERROR_DISCOVER_FAILED, new Exception("ble-connect:discover failed with status(BlueToothGatt.GATT_???):" + status));
                 }
             } catch (Throwable t){
                 if (!disconnected){
@@ -228,7 +238,10 @@ public class BLECharacteristicConnector implements LifeCycle {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     byte[] data = characteristic.getValue();
                     logger.d("ble-connect:received data, length:" + data.length);
-                    callback.onReceive(data);
+                    callback.onReceiveSucceed(data);
+                } else {
+                    logger.e("ble-connect:received error, status(BluetoothGatt.GATT_???):" + status);
+                    callback.onReceiveFailed(status);
                 }
             } catch (Throwable t){
                 if (!disconnected){
@@ -246,7 +259,7 @@ public class BLECharacteristicConnector implements LifeCycle {
             try {
                 byte[] data = characteristic.getValue();
                 logger.d("ble-connect:received data, length:" + data.length);
-                callback.onReceive(data);
+                callback.onReceiveSucceed(data);
             } catch (Throwable t){
                 if (!disconnected){
                     disconnect();
@@ -402,18 +415,24 @@ public class BLECharacteristicConnector implements LifeCycle {
         void onReady();
 
         /**
-         * 连接已断开
+         * 连接已断开, 尝试重新连接, 或放弃使用
          */
         void onDisconnected();
 
         /**
-         * 接收到数据
+         * 接收到正常数据
          * @param data 接收到的数据
          */
-        void onReceive(byte[] data);
+        void onReceiveSucceed(byte[] data);
 
         /**
-         * 连接错误(之后连接会断开)
+         * 接收到异常数据
+         * @param status 接收到的错误状态(BluetoothGatt.GATT_???)
+         */
+        void onReceiveFailed(int status);
+
+        /**
+         * 连接错误(且连接已断开)
          * @param errorCode 错误码
          * @param t 异常(可能为空)
          */
