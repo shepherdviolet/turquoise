@@ -80,7 +80,7 @@ public class BluetoothUtils {
      * 开始扫描BLE设备
      * @param activity activity
      * @param timeout 超时时间, 0不超时
-     * @param attachLifeCycle true:当activity销毁时, 会自动取消扫描
+     * @param attachLifeCycle true:绑定生命周期(当activity销毁时, 会自动取消扫描)
      * @param scanManager 回调及管理
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
