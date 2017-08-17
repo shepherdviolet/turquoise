@@ -47,7 +47,7 @@ import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
  */
 public class SimpleLoggerPrinter implements LoggerPrinter {
 
-    private static final int MAX_QUEUE_SIZE = 100;
+    private static final int MAX_QUEUE_SIZE = 1000;
 
     private LinkedBlockingQueue<String> messageQueue = new LinkedBlockingQueue<>(MAX_QUEUE_SIZE);
     private ThreadLocal<SimpleDateFormat> dateFormats = new ThreadLocal<>();
@@ -157,17 +157,6 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
             this.logDirectory = logDirectory;
             this.maxLogSize = maxLogSizeMB * 1024 * 1024 / 2;
             this.sensitiveLogEnabled = sensitiveLogEnabled;
-
-            try {
-                init(disabled, logDirectory, sensitiveLogEnabled);
-            } catch (Throwable t) {
-                disabled.set(true);
-                if (sensitiveLogEnabled){
-                    Log.e("Turquoise", "[SimpleLoggerPrinter]error while init, SimpleLoggerPrinter disabled", t);
-                } else {
-                    Log.e("Turquoise", "[SimpleLoggerPrinter]error while init, SimpleLoggerPrinter disabled");
-                }
-            }
         }
 
         private void init(@NonNull AtomicBoolean disabled, @NonNull File logDirectory, boolean sensitiveLogEnabled) {
@@ -209,6 +198,16 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
 
         @Override
         public void run() {
+            try {
+                init(disabled, logDirectory, sensitiveLogEnabled);
+            } catch (Throwable t) {
+                disabled.set(true);
+                if (sensitiveLogEnabled){
+                    Log.e("Turquoise", "[SimpleLoggerPrinter]error while init, SimpleLoggerPrinter disabled", t);
+                } else {
+                    Log.e("Turquoise", "[SimpleLoggerPrinter]error while init, SimpleLoggerPrinter disabled");
+                }
+            }
             while(!disabled.get()){
                 try {
                     String message = messageQueue.poll(60, TimeUnit.SECONDS);
