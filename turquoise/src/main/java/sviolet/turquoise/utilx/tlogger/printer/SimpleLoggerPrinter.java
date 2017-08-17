@@ -22,8 +22,11 @@ package sviolet.turquoise.utilx.tlogger.printer;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -33,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import sviolet.thistle.util.conversion.StringUtils;
-import sviolet.thistle.util.file.FileUtils;
 import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
 
 /**
@@ -45,7 +47,7 @@ import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
  */
 public class SimpleLoggerPrinter implements LoggerPrinter {
 
-    private static final int MAX_QUEUE_SIZE = 1000;
+    private static final int MAX_QUEUE_SIZE = 100;
 
     private LinkedBlockingQueue<String> messageQueue = new LinkedBlockingQueue<>(MAX_QUEUE_SIZE);
     private ThreadLocal<SimpleDateFormat> dateFormats = new ThreadLocal<>();
@@ -56,7 +58,11 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
     private AtomicBoolean queueFull = new AtomicBoolean(false);
     private AtomicBoolean disabled = new AtomicBoolean(false);
 
-    public SimpleLoggerPrinter(@NonNull String datePattern, @NonNull Locale locale, @NonNull File logDirectory, int maxLogSizeMB, boolean sensitiveLogEnabled) {
+    public SimpleLoggerPrinter(@NonNull File logDirectory, int maxLogSizeMB, boolean sensitiveLogEnabled) {
+        this(logDirectory, maxLogSizeMB, "yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault(), false);
+    }
+
+    public SimpleLoggerPrinter(@NonNull File logDirectory, int maxLogSizeMB, @NonNull String datePattern, @NonNull Locale locale, boolean sensitiveLogEnabled) {
         if (maxLogSizeMB <= 0){
             throw new IllegalArgumentException("maxLogSizeMB must > 0");
         }
@@ -138,6 +144,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
 
         private File currentFile;
         private File previousFile;
+        private BufferedWriter bufferedWriter;
 
         public PrintWorker(@NonNull LinkedBlockingQueue<String> messageQueue, @NonNull AtomicBoolean queueFull, @NonNull AtomicBoolean disabled, @NonNull File logDirectory, int maxLogSizeMB, boolean sensitiveLogEnabled) {
             this.messageQueue = messageQueue;
@@ -160,7 +167,6 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
         }
 
         private void init(@NonNull AtomicBoolean disabled, @NonNull File logDirectory, boolean sensitiveLogEnabled) {
-            Log.i("Turquoise", "[SimpleLoggerPrinter]init");
             if (sensitiveLogEnabled){
                 Log.i("Turquoise", "[SimpleLoggerPrinter]directory:" + logDirectory);
             }
@@ -208,6 +214,8 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                             queueFull.set(false);
                             printMessage("[SimpleLoggerPrinter]message queue is full, log can not write to disk");
                         }
+                        //keep writer
+                        continue;
                     }
                 } catch (InterruptedException ignored) {
                     try {
@@ -215,17 +223,18 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                     } catch (InterruptedException ignored2) {
                     }
                 }
+                //no message, close writer
+                closeBufferedWriter();
             }
-            Log.i("Turquoise", "[SimpleLoggerPrinter]closed");
+            if (sensitiveLogEnabled) {
+                Log.i("Turquoise", "[SimpleLoggerPrinter]disabled");
+            }
         }
 
-        /**
-         * TODO 暂时用简易实现, 后续要改成复用BufferedWriter, 不要每次都去连接
-         */
         private void printMessage(String message){
             try {
-                File file = getCurrentFile();
-                FileUtils.writeString(file, message, true);
+                BufferedWriter writer = getCurrentFileWriter();
+                writer.write(message);
             } catch (Throwable t) {
                 disabled.set(true);
                 if (sensitiveLogEnabled){
@@ -236,11 +245,17 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
             }
         }
 
-        private File getCurrentFile(){
+        private BufferedWriter getCurrentFileWriter() throws IOException {
             if (currentFile == null || !currentFile.exists() || currentFile.isDirectory()){
+                closeBufferedWriter();
                 currentFile = new File(logDirectory.getAbsolutePath() + "/" + DateTimeUtilsForAndroid.getCurrentTimeMillis() + ".tlog");
+                bufferedWriter = new BufferedWriter(new FileWriter(currentFile));
+                if (sensitiveLogEnabled) {
+                    Log.i("Turquoise", "[SimpleLoggerPrinter]writer create");
+                }
             }
             if (currentFile.length() > maxLogSize){
+                closeBufferedWriter();
                 if (previousFile != null && previousFile.exists()){
                     if (!previousFile.delete()){
                         Log.e("Turquoise", "[SimpleLoggerPrinter]trim log file failed, delete failed" + (sensitiveLogEnabled ? " (" + previousFile + ")" : ""));
@@ -248,8 +263,34 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                 }
                 previousFile = currentFile;
                 currentFile = new File(logDirectory.getAbsolutePath() + "/" + DateTimeUtilsForAndroid.getCurrentTimeMillis() + ".tlog");
+                bufferedWriter = new BufferedWriter(new FileWriter(currentFile));
+                if (sensitiveLogEnabled) {
+                    Log.i("Turquoise", "[SimpleLoggerPrinter]writer switch");
+                }
             }
-            return currentFile;
+            if (bufferedWriter == null){
+                bufferedWriter = new BufferedWriter(new FileWriter(currentFile));
+                if (sensitiveLogEnabled) {
+                    Log.i("Turquoise", "[SimpleLoggerPrinter]writer recreate");
+                }
+            }
+            return bufferedWriter;
+        }
+
+        @Override
+        protected void finalize() throws Throwable {
+            super.finalize();
+            closeBufferedWriter();
+        }
+
+        private void closeBufferedWriter() {
+            if (bufferedWriter != null){
+                try { bufferedWriter.flush(); bufferedWriter.close(); } catch (Throwable ignore){}
+                bufferedWriter = null;
+                if (sensitiveLogEnabled) {
+                    Log.i("Turquoise", "[SimpleLoggerPrinter]writer closed");
+                }
+            }
         }
 
     }
@@ -258,6 +299,5 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
     protected void finalize() throws Throwable {
         super.finalize();
         disabled.set(true);
-        Log.i("Turquoise", "[SimpleLoggerPrinter]close");
     }
 }
