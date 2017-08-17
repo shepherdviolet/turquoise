@@ -106,11 +106,12 @@ public class BluetoothUtils {
 
         BluetoothAdapter.LeScanCallback callback = new BluetoothAdapter.LeScanCallback() {
             @Override
+            @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
             public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
                 if (scanManager.devices.contains(device)){
                     return;
                 }
-                logger.d("bluetooth-scan:device found:" + device);
+                logger.d("bluetooth-scan:device found:<" + device.getName() + "><" + device.getAddress() + ">");
                 if (scanManager.filter(device, rssi, scanRecord)) {
                     logger.d("bluetooth-scan:valid device");
                     scanManager.addDevice(device);
