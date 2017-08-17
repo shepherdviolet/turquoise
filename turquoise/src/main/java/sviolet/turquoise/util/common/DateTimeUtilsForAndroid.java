@@ -21,13 +21,15 @@ package sviolet.turquoise.util.common;
 
 import android.os.SystemClock;
 
+import sviolet.thistle.util.common.DateTimeUtils;
+
 /**
  * 时间工具
  *
  * @author S.Violet (ZhuQinChao)
  *
  */
-public class DateTimeUtilsForAndroid extends sviolet.thistle.util.common.DateTimeUtils {
+public class DateTimeUtilsForAndroid extends DateTimeUtils {
 
     /**
      * [Android]获得系统启动至今经过的毫秒数, 深睡眠时不计时
