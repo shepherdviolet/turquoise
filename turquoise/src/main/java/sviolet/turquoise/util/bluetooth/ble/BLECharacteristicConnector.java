@@ -135,23 +135,23 @@ public class BLECharacteristicConnector implements LifeCycle {
             Context context = contextWeakReference.get();
             if (context == null) {
                 disconnect();
-                callback.onError(ERROR_CONTEXT_DESTROYED, null);
+                callback.onError(this, ERROR_CONTEXT_DESTROYED, null);
                 return;
             }
             if (!BluetoothUtils.isBLESupported(context)) {
                 disconnect();
-                callback.onError(ERROR_BLE_UNSUPPORTED, null);
+                callback.onError(this, ERROR_BLE_UNSUPPORTED, null);
                 return;
             }
             BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(context);
             if (bluetoothAdapter == null) {
                 disconnect();
-                callback.onError(ERROR_BLUETOOTH_UNSUPPORTED, null);
+                callback.onError(this, ERROR_BLUETOOTH_UNSUPPORTED, null);
                 return;
             }
             if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON) {
                 disconnect();
-                callback.onError(ERROR_BLUETOOTH_DISABLED, null);
+                callback.onError(this, ERROR_BLUETOOTH_DISABLED, null);
                 return;
             }
 
@@ -159,7 +159,7 @@ public class BLECharacteristicConnector implements LifeCycle {
             BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
             if (device == null) {
                 disconnect();
-                callback.onError(ERROR_DEVICE_NOT_FOUND, null);
+                callback.onError(this, ERROR_DEVICE_NOT_FOUND, null);
                 return;
             }
 
@@ -171,7 +171,7 @@ public class BLECharacteristicConnector implements LifeCycle {
         } catch (Throwable t){
             if (!disconnected){
                 disconnect();
-                callback.onError(ERROR_EXCEPTION, t);
+                callback.onError(this, ERROR_EXCEPTION, t);
             }
         }
     }
@@ -191,17 +191,17 @@ public class BLECharacteristicConnector implements LifeCycle {
                     } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                         disconnect();
                         logger.d("ble-connect:disconnected");
-                        callback.onDisconnected();
+                        callback.onDisconnected(BLECharacteristicConnector.this);
                     }
                 } else {
                     disconnect();
                     logger.d("ble-connect:connect failed with status(BlueToothGatt.GATT_???):" + status);
-                    callback.onError(ERROR_CONNECT_FAILED, new Exception("ble-connect:connect failed with status(BlueToothGatt.GATT_???):" + status));
+                    callback.onError(BLECharacteristicConnector.this, ERROR_CONNECT_FAILED, new Exception("ble-connect:connect failed with status(BlueToothGatt.GATT_???):" + status));
                 }
             } catch (Throwable t){
                 if (!disconnected){
                     disconnect();
-                    callback.onError(ERROR_EXCEPTION, t);
+                    callback.onError(BLECharacteristicConnector.this, ERROR_EXCEPTION, t);
                 }
             }
         }
@@ -219,12 +219,12 @@ public class BLECharacteristicConnector implements LifeCycle {
                 } else {
                     disconnect();
                     logger.d("ble-connect:discover failed with status(BlueToothGatt.GATT_???):" + status);
-                    callback.onError(ERROR_DISCOVER_FAILED, new Exception("ble-connect:discover failed with status(BlueToothGatt.GATT_???):" + status));
+                    callback.onError(BLECharacteristicConnector.this, ERROR_DISCOVER_FAILED, new Exception("ble-connect:discover failed with status(BlueToothGatt.GATT_???):" + status));
                 }
             } catch (Throwable t){
                 if (!disconnected){
                     disconnect();
-                    callback.onError(ERROR_EXCEPTION, t);
+                    callback.onError(BLECharacteristicConnector.this, ERROR_EXCEPTION, t);
                 }
             }
         }
@@ -238,15 +238,15 @@ public class BLECharacteristicConnector implements LifeCycle {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
                     byte[] data = characteristic.getValue();
                     logger.d("ble-connect:received data, length:" + data.length);
-                    callback.onReceiveSucceed(data);
+                    callback.onReceiveSucceed(BLECharacteristicConnector.this, data);
                 } else {
                     logger.e("ble-connect:received error, status(BluetoothGatt.GATT_???):" + status);
-                    callback.onReceiveFailed(status);
+                    callback.onReceiveFailed(BLECharacteristicConnector.this, status);
                 }
             } catch (Throwable t){
                 if (!disconnected){
                     disconnect();
-                    callback.onError(ERROR_EXCEPTION, t);
+                    callback.onError(BLECharacteristicConnector.this, ERROR_EXCEPTION, t);
                 }
             }
         }
@@ -259,11 +259,11 @@ public class BLECharacteristicConnector implements LifeCycle {
             try {
                 byte[] data = characteristic.getValue();
                 logger.d("ble-connect:received data, length:" + data.length);
-                callback.onReceiveSucceed(data);
+                callback.onReceiveSucceed(BLECharacteristicConnector.this, data);
             } catch (Throwable t){
                 if (!disconnected){
                     disconnect();
-                    callback.onError(ERROR_EXCEPTION, t);
+                    callback.onError(BLECharacteristicConnector.this, ERROR_EXCEPTION, t);
                 }
             }
         }
@@ -306,19 +306,19 @@ public class BLECharacteristicConnector implements LifeCycle {
                         logger.d("ble-connect:characteristic found");
                         this.characteristic = gattCharacteristic;
                         bluetoothGatt.setCharacteristicNotification(characteristic, true);
-                        callback.onReady();
+                        callback.onReady(this);
                         return;
                     }
                 }
                 logger.d("ble-connect:characteristic not found");
                 disconnect();
-                callback.onError(ERROR_CHARACTERISTIC_NOT_FOUND, null);
+                callback.onError(this, ERROR_CHARACTERISTIC_NOT_FOUND, null);
                 return;
             }
         }
         logger.d("ble-connect:service not found");
         disconnect();
-        callback.onError(ERROR_SERVICE_NOT_FOUND, null);
+        callback.onError(this, ERROR_SERVICE_NOT_FOUND, null);
     }
 
     /**
@@ -346,7 +346,7 @@ public class BLECharacteristicConnector implements LifeCycle {
         } catch (Throwable t){
             if (!disconnected){
                 disconnect();
-                callback.onError(ERROR_EXCEPTION, t);
+                callback.onError(this, ERROR_EXCEPTION, t);
             }
         }
         return false;
@@ -412,31 +412,31 @@ public class BLECharacteristicConnector implements LifeCycle {
         /**
          * 连接成功并获取到了characteristic, 可以开始读写数据
          */
-        void onReady();
+        void onReady(BLECharacteristicConnector connector);
 
         /**
          * 连接已断开, 尝试重新连接, 或放弃使用
          */
-        void onDisconnected();
+        void onDisconnected(BLECharacteristicConnector connector);
 
         /**
          * 接收到正常数据
          * @param data 接收到的数据
          */
-        void onReceiveSucceed(byte[] data);
+        void onReceiveSucceed(BLECharacteristicConnector connector, byte[] data);
 
         /**
          * 接收到异常数据
          * @param status 接收到的错误状态(BluetoothGatt.GATT_???)
          */
-        void onReceiveFailed(int status);
+        void onReceiveFailed(BLECharacteristicConnector connector, int status);
 
         /**
          * 连接错误(且连接已断开)
-         * @param errorCode 错误码
-         * @param t 异常(可能为空)
+         * @param errorCode 错误码(BLECharacteristicConnector.ERROR_???)
+         * @param throwable 异常(可能为空)
          */
-        void onError(int errorCode, @Nullable Throwable t);
+        void onError(BLECharacteristicConnector connector, int errorCode, @Nullable Throwable throwable);
 
     }
 
