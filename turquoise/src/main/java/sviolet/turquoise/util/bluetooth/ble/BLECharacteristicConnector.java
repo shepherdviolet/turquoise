@@ -88,7 +88,7 @@ public class BLECharacteristicConnector implements LifeCycle {
     }
 
         /**
-         * 尝试连接蓝牙设备
+         * 尝试连接蓝牙设备(不绑定生命周期(必须手动调用disconnect断开连接))
          * @param context context
          * @param deviceAddress 蓝牙设备地址
          * @param serviceUUID 服务UUID
@@ -109,7 +109,7 @@ public class BLECharacteristicConnector implements LifeCycle {
         if (characteristicUUID == null) {
             throw new IllegalArgumentException("characteristicUUID is null");
         }
-        return new BLECharacteristicConnector(context, deviceAddress, serviceUUID, characteristicUUID, callback);
+        return new BLECharacteristicConnector(context.getApplicationContext(), deviceAddress, serviceUUID, characteristicUUID, callback);
     }
 
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
@@ -128,7 +128,7 @@ public class BLECharacteristicConnector implements LifeCycle {
             Context context = contextWeakReference.get();
             if (context == null) {
                 disconnect();
-                callback.onError(this, Error.ERROR_CONTEXT_DESTROYED, null);
+                callback.onError(this, Error.ERROR_EXCEPTION, new Exception("ApplicationContext destroyed can not connect"));
                 return;
             }
             if (!BluetoothUtils.isBLESupported(context)) {
@@ -456,7 +456,6 @@ public class BLECharacteristicConnector implements LifeCycle {
     public enum Error {
         ERROR_BLUETOOTH_UNSUPPORTED,//设备不支持蓝牙
         ERROR_BLE_UNSUPPORTED,//设备不支持BLE
-        ERROR_CONTEXT_DESTROYED,//创建连接的Context已被销毁
         ERROR_BLUETOOTH_DISABLED,//设备关闭了蓝牙
         ERROR_DEVICE_NOT_FOUND,//找不到蓝牙设备
         ERROR_SERVICE_NOT_FOUND,//蓝牙设备中的Service找不到(匹配不到serviceUUID)
