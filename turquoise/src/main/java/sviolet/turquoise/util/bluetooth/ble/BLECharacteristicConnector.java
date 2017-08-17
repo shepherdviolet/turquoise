@@ -82,7 +82,7 @@ public class BLECharacteristicConnector implements LifeCycle {
      * @param deviceAddress 蓝牙设备地址
      * @param serviceUUID 服务UUID
      * @param characteristicUUID 特性UUID
-     * @param attachLifeCycle true:绑定生命周期(当activity销毁时, 会自动断开连接)
+     * @param attachLifeCycle true:绑定生命周期(当activity销毁时, 会自动断开连接) false:不绑定生命周期(必须手动调用disconnect断开连接)
      * @param callback 回调
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
