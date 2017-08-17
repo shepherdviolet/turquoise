@@ -78,12 +78,13 @@ public class BluetoothUtils {
 
     /**
      * 开始扫描BLE设备
-     * @param activity activity, 当activity销毁时, 会自动取消扫描
+     * @param activity activity
      * @param timeout 超时时间, 0不超时
+     * @param attachLifeCycle true:当activity销毁时, 会自动取消扫描
      * @param scanManager 回调及管理
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
-    public static void startBLEScan(@NonNull Activity activity, long timeout, @NonNull final ScanManager scanManager) {
+    public static void startBLEScan(@NonNull Activity activity, long timeout, boolean attachLifeCycle, @NonNull final ScanManager scanManager) {
         if (!isBLESupported(activity)){
             logger.d("bluetooth-scan:error_ble_unsupported");
             scanManager.onError(ERROR_BLE_UNSUPPORTED);
@@ -122,7 +123,10 @@ public class BluetoothUtils {
         scanManager.setCallback(callback);
         adapter.startLeScan(callback);
         logger.d("bluetooth-scan:start");
-        LifeCycleUtils.attach(activity, scanManager);
+
+        if (attachLifeCycle) {
+            LifeCycleUtils.attach(activity, scanManager);
+        }
 
         if (timeout > 0){
             new CancelHandler(scanManager).sendEmptyMessageDelayed(0, timeout);
@@ -167,7 +171,7 @@ public class BluetoothUtils {
         }
 
         /**
-         * 取消扫描
+         * [重要]停止扫描
          */
         public final void cancel(){
             if (!canceled && adapter != null && callback != null){
