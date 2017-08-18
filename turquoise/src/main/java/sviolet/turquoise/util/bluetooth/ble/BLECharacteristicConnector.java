@@ -124,7 +124,18 @@ public class BLECharacteristicConnector implements LifeCycle {
     }
 
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
-    private void connect() {
+    private void connect(){
+        new Thread(new Runnable() {
+            @Override
+            @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+            public void run() {
+                connect0();
+            }
+        }).start();
+    }
+
+    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+    private void connect0() {
         try {
             Context context = contextWeakReference.get();
             if (context == null) {
