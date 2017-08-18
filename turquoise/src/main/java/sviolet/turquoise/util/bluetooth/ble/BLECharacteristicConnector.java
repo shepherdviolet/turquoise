@@ -91,6 +91,7 @@ public class BLECharacteristicConnector implements LifeCycle {
 
     private BluetoothGatt bluetoothGatt;
     private BluetoothGattCharacteristic characteristic;
+    private String deviceName;//设备名称
     private String deviceAddress;//设备MAC地址
     private String serviceUUID;//服务UUID(取决于对方蓝牙设备)
     private String characteristicUUID;//特性UUID(取决于对方蓝牙设备)
@@ -206,6 +207,7 @@ public class BLECharacteristicConnector implements LifeCycle {
                 return;
             }
 
+            deviceName = device.getName();
             bluetoothGatt = device.connectGatt(context, false, gattCallback);
 
             if (connectStatus != Status.DESTROYED){
@@ -464,8 +466,14 @@ public class BLECharacteristicConnector implements LifeCycle {
         return connectStatus;
     }
 
+    @Nullable
     public String getDeviceAddress(){
         return deviceAddress;
+    }
+
+    @Nullable
+    public String getDeviceName(){
+        return deviceName;
     }
 
     private Context getContext() {
