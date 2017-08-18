@@ -45,8 +45,6 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 /**
  * 蓝牙扫描工具
  *
- * 注意:需要申请运行时权限"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"
- *
  * <pre>{@code
  *  //参数1:当前Activity, 参数2:搜索30秒后停止, 参数3:与Activity绑定生命周期(当Activity销毁时, 搜索自动停止)
  *  BluetoothUtils.startBLEScan(this, 30000, true, new BluetoothUtils.ScanManager() {
@@ -78,12 +76,13 @@ public class BluetoothUtils {
 
     /**
      * 获取BluetoothAdapter
+     *
      * @return 返回空表示设备不支持蓝牙
      */
     @Nullable
     public static BluetoothAdapter getAdapter(@NonNull Context context) {
-        final BluetoothManager bluetoothManager = (BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE);
-        if (bluetoothManager == null){
+        final BluetoothManager bluetoothManager = (BluetoothManager) context.getSystemService(Context.BLUETOOTH_SERVICE);
+        if (bluetoothManager == null) {
             return null;
         }
         return bluetoothManager.getAdapter();
@@ -91,15 +90,18 @@ public class BluetoothUtils {
 
     /**
      * 开始扫描BLE设备
-     * @param activity activity
-     * @param timeout 超时时间, millis, 0不超时
+     *
+     * 注意:需要申请运行时权限"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"
+     *
+     * @param activity        activity
+     * @param timeout         超时时间, millis, 0不超时
      * @param attachLifeCycle true:绑定生命周期(当activity销毁时, 会自动取消扫描), false:不绑定生命周期(必须手动调用cancel停止扫描)
-     * @param scanManager 回调及管理
+     * @param scanManager     回调及管理
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
     public static void startBLEScan(@NonNull Activity activity, long timeout, boolean attachLifeCycle, @NonNull final ScanManager scanManager) {
         //判断是否支持BLE
-        if (!isBLESupported(activity)){
+        if (!isBLESupported(activity)) {
             logger.d("bluetooth-scan:error_ble_unsupported");
             scanManager.onError(ScanError.ERROR_BLE_UNSUPPORTED);
             return;
@@ -107,14 +109,14 @@ public class BluetoothUtils {
 
         //获取Adapter
         BluetoothAdapter adapter = getAdapter(activity);
-        if (adapter == null){
+        if (adapter == null) {
             logger.d("bluetooth-scan:error_bluetooth_unsupported");
             scanManager.onError(ScanError.ERROR_BLUETOOTH_UNSUPPORTED);
             return;
         }
 
         //判断蓝牙是否开启
-        if (adapter.getState() != BluetoothAdapter.STATE_ON){
+        if (adapter.getState() != BluetoothAdapter.STATE_ON) {
             logger.d("bluetooth-scan:error_bluetooth_disabled");
             scanManager.onError(ScanError.ERROR_BLUETOOTH_DISABLED);
             return;
@@ -125,7 +127,7 @@ public class BluetoothUtils {
             @Override
             @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
             public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
-                if (scanManager.devices.contains(device)){
+                if (scanManager.devices.contains(device)) {
                     return;
                 }
                 logger.d("bluetooth-scan:device found:<" + device.getName() + "><" + device.getAddress() + ">");
@@ -149,7 +151,7 @@ public class BluetoothUtils {
         }
 
         //时间限制
-        if (timeout > 0){
+        if (timeout > 0) {
             new CancelHandler(scanManager).sendEmptyMessageDelayed(0, timeout);
         }
 
@@ -166,6 +168,7 @@ public class BluetoothUtils {
 
         /**
          * 当扫描到设备时回调该方法, 内部维护了一个设备列表, 保存所有已扫描到的设备
+         *
          * @param devices
          */
         protected abstract void onDeviceFound(List<BluetoothDevice> devices);
@@ -182,20 +185,21 @@ public class BluetoothUtils {
 
         /**
          * 复写该方法实现设备过滤
-         * @param device 设备信息
-         * @param rssi 信号强度
+         *
+         * @param device     设备信息
+         * @param rssi       信号强度
          * @param scanRecord scan record
          * @return true:记录设备 false:不记录设备
          */
-        protected boolean filter(BluetoothDevice device, int rssi, byte[] scanRecord){
+        protected boolean filter(BluetoothDevice device, int rssi, byte[] scanRecord) {
             return true;
         }
 
         /**
          * [重要]停止扫描
          */
-        public final void cancel(){
-            if (!canceled && adapter != null && callback != null){
+        public final void cancel() {
+            if (!canceled && adapter != null && callback != null) {
                 adapter.stopLeScan(callback);
                 onCancel();
                 logger.d("bluetooth-scan:canceled");
@@ -211,7 +215,7 @@ public class BluetoothUtils {
             this.callback = callback;
         }
 
-        private void addDevice(BluetoothDevice device){
+        private void addDevice(BluetoothDevice device) {
             if (device != null && devices != null)
                 devices.add(device);
         }
@@ -250,6 +254,7 @@ public class BluetoothUtils {
         public CancelHandler(ScanManager host) {
             super(Looper.getMainLooper(), host);
         }
+
         @Override
         protected void handleMessageWithHost(Message msg, ScanManager host) {
             host.cancel();
