@@ -64,8 +64,7 @@ public class BLECharacteristicConnector implements LifeCycle {
     private String characteristicUUID;
     private Callback callback;
 
-    private boolean disconnected = false;
-    private boolean destroyed = false;
+    private Status connectStatus;
 
     private ReentrantLock writeLock = new ReentrantLock();
 
@@ -160,11 +159,11 @@ public class BLECharacteristicConnector implements LifeCycle {
 
             bluetoothGatt = device.connectGatt(context, false, gattCallback);
 
-            if (!destroyed){
-                disconnected = false;
+            if (connectStatus != Status.DESTROYED){
+                connectStatus = Status.CONNECTING;
             }
         } catch (Throwable t){
-            if (!disconnected){
+            if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                 disconnect();
                 callback.onError(this, Error.ERROR_EXCEPTION, t);
             }
@@ -174,7 +173,7 @@ public class BLECharacteristicConnector implements LifeCycle {
     private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-            if (disconnected){
+            if (connectStatus == Status.DISCONNECTED || connectStatus == Status.DESTROYED){
                 return;
             }
             try {
@@ -194,7 +193,7 @@ public class BLECharacteristicConnector implements LifeCycle {
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_CONNECT_FAILED, new Exception("ble-connect:connect failed with status(BlueToothGatt.GATT_???):" + status));
                 }
             } catch (Throwable t){
-                if (!disconnected){
+                if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                     disconnect();
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
                 }
@@ -203,7 +202,7 @@ public class BLECharacteristicConnector implements LifeCycle {
 
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-            if (disconnected){
+            if (connectStatus == Status.DISCONNECTED || connectStatus == Status.DESTROYED){
                 return;
             }
             try {
@@ -217,7 +216,7 @@ public class BLECharacteristicConnector implements LifeCycle {
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_DISCOVER_FAILED, new Exception("ble-connect:discover failed with status(BlueToothGatt.GATT_???):" + status));
                 }
             } catch (Throwable t){
-                if (!disconnected){
+                if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                     disconnect();
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
                 }
@@ -226,7 +225,7 @@ public class BLECharacteristicConnector implements LifeCycle {
 
         @Override
         public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-            if (disconnected){
+            if (connectStatus == Status.DISCONNECTED || connectStatus == Status.DESTROYED){
                 return;
             }
             try {
@@ -239,7 +238,7 @@ public class BLECharacteristicConnector implements LifeCycle {
                     callback.onReceiveFailed(BLECharacteristicConnector.this, status);
                 }
             } catch (Throwable t){
-                if (!disconnected){
+                if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                     disconnect();
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
                 }
@@ -248,7 +247,7 @@ public class BLECharacteristicConnector implements LifeCycle {
 
         @Override
         public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
-            if (disconnected){
+            if (connectStatus == Status.DISCONNECTED || connectStatus == Status.DESTROYED){
                 return;
             }
             try {
@@ -256,7 +255,7 @@ public class BLECharacteristicConnector implements LifeCycle {
                 logger.d("ble-connect:received data, length:" + data.length);
                 callback.onReceiveSucceed(BLECharacteristicConnector.this, data);
             } catch (Throwable t){
-                if (!disconnected){
+                if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                     disconnect();
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
                 }
@@ -339,7 +338,7 @@ public class BLECharacteristicConnector implements LifeCycle {
             return false;
         }
         try {
-            if (disconnected){
+            if (connectStatus == Status.DISCONNECTED || connectStatus == Status.DESTROYED){
                 logger.d("Trying to write data through disconnected connector");
                 return false;
             }
@@ -351,7 +350,7 @@ public class BLECharacteristicConnector implements LifeCycle {
             bluetoothGatt.writeCharacteristic(characteristic);
             return true;
         } catch (Throwable t){
-            if (!disconnected){
+            if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                 disconnect();
                 callback.onError(this, Error.ERROR_EXCEPTION, t);
             }
@@ -365,17 +364,21 @@ public class BLECharacteristicConnector implements LifeCycle {
      * 重新连接
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
-    public void reconnect(){
-        if (!destroyed){
+    public boolean reconnect(){
+        if (connectStatus == Status.DISCONNECTED){
             connect();
+            return true;
         }
+        return false;
     }
 
     /**
      * 关闭连接
      */
     public void disconnect(){
-        disconnected = true;
+        if (connectStatus != Status.DESTROYED){
+            connectStatus = Status.DISCONNECTED;
+        }
         if (bluetoothGatt != null){
             try {
                 bluetoothGatt.close();
@@ -391,6 +394,10 @@ public class BLECharacteristicConnector implements LifeCycle {
      */
     public void destroy(){
         onDestroy();
+    }
+
+    public Status getConnectStatus(){
+        return connectStatus;
     }
 
     private Context getContext() {
@@ -419,7 +426,7 @@ public class BLECharacteristicConnector implements LifeCycle {
 
     @Override
     public void onDestroy() {
-        destroyed = true;
+        connectStatus = Status.DESTROYED;
         disconnect();
     }
 
@@ -466,6 +473,13 @@ public class BLECharacteristicConnector implements LifeCycle {
         ERROR_CONNECT_FAILED,//蓝牙连接失败(附带Exception)
         ERROR_DISCOVER_FAILED,//蓝牙连接(查找服务)失败(附带Exception)
         ERROR_EXCEPTION//其他异常(附带Exception)
+    }
+
+    public enum Status {
+        CONNECTING,//连接中,暂不可用
+        READY,//连接可用
+        DISCONNECTED,//连接已断开
+        DESTROYED//已销毁
     }
 
 }
