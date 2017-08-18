@@ -38,27 +38,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.util.droid.LocationUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
 import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * 蓝牙扫描工具
- *
- * <pre>{@code
- *  //参数1:当前Activity, 参数2:搜索30秒后停止, 参数3:与Activity绑定生命周期(当Activity销毁时, 搜索自动停止)
- *  BluetoothUtils.startBLEScan(this, 30000, true, new BluetoothUtils.ScanManager() {
- *   protected void onDeviceFound(List<BluetoothDevice> devices) {
- *       //devices为当前搜索到的所有设备
- *   }
- *   protected void onCancel() {
- *       //搜索取消/超时
- *   }
- *   protected void onError(BluetoothUtils.ScanError errorCode) {
- *       //搜索失败(终止)
- *   }
- *  });
- * }</pre>
  *
  * Created by S.Violet on 2017/8/15.
  */
@@ -91,7 +77,41 @@ public class BluetoothUtils {
     /**
      * 开始扫描BLE设备
      *
-     * 注意:需要申请运行时权限"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"
+     * 注意:
+     * 1.需要申请运行时权限"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"
+     * 2.需要开启位置信息
+     *
+     * <pre>{@code
+     *
+     *      executePermissionTask(Manifest.permission.ACCESS_FINE_LOCATION,
+     *          null,
+     *          "扫描蓝牙设备需要开启位置信息并允许位置权限, 请通过权限申请",
+     *          new RuntimePermissionManager.RequestPermissionTask() {
+     *              @Override
+     *              public void onResult(String[] permissions, int[] grantResults, boolean allGranted) {
+     *                  if (allGranted){
+     *                      //参数1:当前Activity, 参数2:搜索30秒后停止, 参数3:与Activity绑定生命周期(当Activity销毁时, 搜索自动停止)
+     *                      BluetoothUtils.startBLEScan(this, 30000, true, new BluetoothUtils.ScanManager() {
+     *                          @Override
+     *                          protected void onDeviceFound(List<BluetoothDevice> devices) {
+     *                              //devices为当前搜索到的所有设备
+     *                          }
+     *                          @Override
+     *                          protected void onCancel() {
+     *                              //搜索取消/超时
+     *                          }
+     *                          @Override
+     *                          protected void onError(BluetoothUtils.ScanError errorCode) {
+     *                              //搜索失败(终止)
+     *                          }
+     *                      });
+     *                  } else {
+     *                      //提醒用户没有权限无法扫描蓝牙设备
+     *                  }
+     *              }
+     *          });
+     *
+     * }</pre>
      *
      * @param activity        activity
      * @param timeout         超时时间, millis, 0不超时
@@ -119,6 +139,13 @@ public class BluetoothUtils {
         if (adapter.getState() != BluetoothAdapter.STATE_ON) {
             logger.d("bluetooth-scan:error_bluetooth_disabled");
             scanManager.onError(ScanError.ERROR_BLUETOOTH_DISABLED);
+            return;
+        }
+
+        //判断位置信息是否开启
+        if (!LocationUtils.isEnabled(activity)){
+            logger.d("bluetooth-scan:error_location_disabled");
+            scanManager.onError(ScanError.ERROR_LOCATION_DISABLED);
             return;
         }
 
@@ -264,7 +291,8 @@ public class BluetoothUtils {
     public enum ScanError {
         ERROR_BLUETOOTH_UNSUPPORTED,//设备不支持蓝牙
         ERROR_BLE_UNSUPPORTED,//设备不支持BLE
-        ERROR_BLUETOOTH_DISABLED//设备关闭了蓝牙
+        ERROR_BLUETOOTH_DISABLED,//设备关闭了蓝牙
+        ERROR_LOCATION_DISABLED//设备关闭了位置信息
     }
 
 }
