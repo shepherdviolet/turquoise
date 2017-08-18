@@ -45,6 +45,21 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 /**
  * 蓝牙扫描工具
  *
+ * <pre>{@code
+ *  //参数1:当前Activity, 参数2:搜索30秒后停止, 参数3:与Activity绑定生命周期(当Activity销毁时, 搜索自动停止)
+ *  BluetoothUtils.startBLEScan(this, 30000, true, new BluetoothUtils.ScanManager() {
+ *   protected void onDeviceFound(List<BluetoothDevice> devices) {
+ *       //devices为当前搜索到的所有设备
+ *   }
+ *   protected void onCancel() {
+ *       //搜索取消/超时
+ *   }
+ *   protected void onError(BluetoothUtils.ScanError errorCode) {
+ *       //搜索失败(终止)
+ *   }
+ *  });
+ * }</pre>
+ *
  * Created by S.Violet on 2017/8/15.
  */
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -81,12 +96,14 @@ public class BluetoothUtils {
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     public static void startBLEScan(@NonNull Activity activity, long timeout, boolean attachLifeCycle, @NonNull final ScanManager scanManager) {
+        //判断是否支持BLE
         if (!isBLESupported(activity)){
             logger.d("bluetooth-scan:error_ble_unsupported");
             scanManager.onError(ScanError.ERROR_BLE_UNSUPPORTED);
             return;
         }
 
+        //获取Adapter
         BluetoothAdapter adapter = getAdapter(activity);
         if (adapter == null){
             logger.d("bluetooth-scan:error_bluetooth_unsupported");
@@ -94,12 +111,14 @@ public class BluetoothUtils {
             return;
         }
 
+        //判断蓝牙是否开启
         if (adapter.getState() != BluetoothAdapter.STATE_ON){
             logger.d("bluetooth-scan:error_bluetooth_disabled");
             scanManager.onError(ScanError.ERROR_BLUETOOTH_DISABLED);
             return;
         }
 
+        //回调
         BluetoothAdapter.LeScanCallback callback = new BluetoothAdapter.LeScanCallback() {
             @Override
             @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
@@ -116,15 +135,18 @@ public class BluetoothUtils {
             }
         };
 
+        //开始监听蓝牙扫描
         scanManager.setAdapter(adapter);
         scanManager.setCallback(callback);
         adapter.startLeScan(callback);
         logger.d("bluetooth-scan:start");
 
+        //绑定生命周期
         if (attachLifeCycle) {
             LifeCycleUtils.attach(activity, scanManager);
         }
 
+        //时间限制
         if (timeout > 0){
             new CancelHandler(scanManager).sendEmptyMessageDelayed(0, timeout);
         }

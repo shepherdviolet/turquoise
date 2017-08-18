@@ -47,6 +47,38 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * Bluetooth Le Characteristic 连接器
+ * 与一个蓝牙设备的一个特性连接, 发送或接受数据, 维护连接关系
+ *
+ * <pre>{@code
+ *      BLECharacteristicConnector.connect(
+ *          getApplicationContext(),//Context
+ *          "50:8C:B1:69:83:1A",//蓝牙设备地址
+ *          "0000ffe0-0000-1000-8000-00805f9b34fb",//要连接的服务UUID
+ *          "0000ffe1-0000-1000-8000-00805f9b34fb",//要连接的特性UUID
+ *          new BLECharacteristicConnector.Callback() {
+ *              @Override
+ *              public void onReady(BLECharacteristicConnector connector) {
+ *                  //连接成功, 可以开始读写数据
+ *              }
+ *              @Override
+ *              public void onDisconnected(BLECharacteristicConnector connector) {
+ *                  //连接断开
+ *              }
+ *              @Override
+ *              public void onReceiveSucceed(BLECharacteristicConnector connector, byte[] data) {
+ *                  //收到有效数据
+ *              }
+ *              @Override
+ *              public void onReceiveFailed(BLECharacteristicConnector connector, int status) {
+ *                  //读取数据失败
+ *              }
+ *              @Override
+ *              public void onError(BLECharacteristicConnector connector, BLECharacteristicConnector.Error errorCode, Throwable throwable) {
+ *                  //连接错误, 注意:此时连接已断开
+ *                  //connector.reconnect();//可以重连
+ *              }
+ *          });
+ * }</pre>
  *
  * Created by S.Violet on 2017/8/15.
  */
@@ -59,12 +91,12 @@ public class BLECharacteristicConnector implements LifeCycle {
 
     private BluetoothGatt bluetoothGatt;
     private BluetoothGattCharacteristic characteristic;
-    private String deviceAddress;
-    private String serviceUUID;
-    private String characteristicUUID;
+    private String deviceAddress;//设备MAC地址
+    private String serviceUUID;//服务UUID(取决于对方蓝牙设备)
+    private String characteristicUUID;//特性UUID(取决于对方蓝牙设备)
     private Callback callback;
 
-    private Status connectStatus;
+    private Status connectStatus;//连接状态
 
     private ReentrantLock writeLock = new ReentrantLock();
 
@@ -120,6 +152,7 @@ public class BLECharacteristicConnector implements LifeCycle {
         this.serviceUUID = serviceUUID;
         this.characteristicUUID = characteristicUUID;
         this.callback = callback;
+        //连接
         connect();
     }
 
@@ -137,29 +170,34 @@ public class BLECharacteristicConnector implements LifeCycle {
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     private void connect0() {
         try {
+            //检查Context
             Context context = contextWeakReference.get();
             if (context == null) {
                 disconnect();
                 callback.onError(this, Error.ERROR_EXCEPTION, new Exception("ApplicationContext destroyed can not connect"));
                 return;
             }
+            //检查是否支持BLE
             if (!BluetoothUtils.isBLESupported(context)) {
                 disconnect();
                 callback.onError(this, Error.ERROR_BLE_UNSUPPORTED, null);
                 return;
             }
+            //获取Adapter
             BluetoothAdapter bluetoothAdapter = BluetoothUtils.getAdapter(context);
             if (bluetoothAdapter == null) {
                 disconnect();
                 callback.onError(this, Error.ERROR_BLUETOOTH_UNSUPPORTED, null);
                 return;
             }
+            //判断蓝牙是否开启
             if (bluetoothAdapter.getState() != BluetoothAdapter.STATE_ON) {
                 disconnect();
                 callback.onError(this, Error.ERROR_BLUETOOTH_DISABLED, null);
                 return;
             }
 
+            //连接
             logger.d("ble-connect:start, address:" + deviceAddress + ", serviceUUID:" + serviceUUID + ", characteristicUUID:" + characteristicUUID);
             BluetoothDevice device = bluetoothAdapter.getRemoteDevice(deviceAddress);
             if (device == null) {
@@ -190,15 +228,19 @@ public class BLECharacteristicConnector implements LifeCycle {
             try {
                 logger.d("ble-connect:onConnectionStateChange(" + status + ", " + newState + ")");
                 if (status == BluetoothGatt.GATT_SUCCESS) {
+                    //通讯成功
                     if (newState == BluetoothProfile.STATE_CONNECTED) {
+                        //连接成功
                         bluetoothGatt.discoverServices();
                         logger.d("ble-connect:connected");
                     } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                        //连接断开
                         disconnect();
                         logger.d("ble-connect:disconnected");
                         callback.onDisconnected(BLECharacteristicConnector.this);
                     }
                 } else {
+                    //通讯失败
                     disconnect();
                     logger.d("ble-connect:connect failed with status(BlueToothGatt.GATT_???):" + status);
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_CONNECT_FAILED, new Exception("ble-connect:connect failed with status(BlueToothGatt.GATT_???):" + status));
@@ -219,9 +261,11 @@ public class BLECharacteristicConnector implements LifeCycle {
             try {
                 logger.d("ble-connect:onServicesDiscovered(" + status + ")");
                 if (status == BluetoothGatt.GATT_SUCCESS) {
+                    //找到设备提供的服务
                     logger.d("ble-connect:discovered");
                     seekCharacteristic(gatt.getServices());
                 } else {
+                    //通讯失败
                     disconnect();
                     logger.d("ble-connect:discover failed with status(BlueToothGatt.GATT_???):" + status);
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_DISCOVER_FAILED, new Exception("ble-connect:discover failed with status(BlueToothGatt.GATT_???):" + status));
@@ -241,6 +285,7 @@ public class BLECharacteristicConnector implements LifeCycle {
             }
             try {
                 if (status == BluetoothGatt.GATT_SUCCESS) {
+                    //成功读取数据
                     byte[] data = characteristic.getValue();
                     logger.d("ble-connect:received data, length:" + data.length);
                     callback.onReceiveSucceed(BLECharacteristicConnector.this, data);
@@ -262,6 +307,7 @@ public class BLECharacteristicConnector implements LifeCycle {
                 return;
             }
             try {
+                //数据变化
                 byte[] data = characteristic.getValue();
                 logger.d("ble-connect:received data, length:" + data.length);
                 callback.onReceiveSucceed(BLECharacteristicConnector.this, data);
@@ -296,12 +342,14 @@ public class BLECharacteristicConnector implements LifeCycle {
     };
 
     private void seekCharacteristic(List<BluetoothGattService> gattServices) {
+        //从蓝牙设备提供的服务列表中找到需要的服务
         logger.d("ble-connect:discovered " + gattServices.size() + " services");
         logger.d("ble-connect:finding service with uuid:" + serviceUUID);
         for (BluetoothGattService gattService : gattServices) {
             logger.d("ble-connect:checking:" + gattService.getUuid());
             if (gattService.getUuid().toString().equalsIgnoreCase(serviceUUID)) {
                 logger.d("ble-connect:service found");
+                //从蓝牙设备提供服务中找到需要的特性
                 List<BluetoothGattCharacteristic> gattCharacteristics = gattService.getCharacteristics();
                 logger.d("ble-connect:discovered " + gattCharacteristics.size() + " characteristics");
                 logger.d("ble-connect:finding characteristic with uuid:" + characteristicUUID);
@@ -361,6 +409,7 @@ public class BLECharacteristicConnector implements LifeCycle {
                 logger.e("ERROR:Trying to write data through unconnected connector, please wait for ready");
                 return false;
             }
+            //写数据
             characteristic.setValue(data);
             bluetoothGatt.writeCharacteristic(characteristic);
             return true;
@@ -376,7 +425,7 @@ public class BLECharacteristicConnector implements LifeCycle {
     }
 
     /**
-     * 重新连接
+     * 重新连接(销毁后无法重连)
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     public boolean reconnect(){
@@ -452,7 +501,7 @@ public class BLECharacteristicConnector implements LifeCycle {
     public interface Callback {
 
         /**
-         * 连接成功并获取到了characteristic, 可以开始读写数据
+         * 连接成功并获取到了characteristic, 可以开始读写数据(之前无法读写数据)
          */
         void onReady(BLECharacteristicConnector connector);
 
@@ -474,7 +523,7 @@ public class BLECharacteristicConnector implements LifeCycle {
         void onReceiveFailed(BLECharacteristicConnector connector, int status);
 
         /**
-         * 连接错误(且连接已断开)
+         * 连接错误(注意:此时连接已断开)
          * @param error 错误码(BLECharacteristicConnector.ERROR)
          * @param throwable 异常(可能为空)
          */
