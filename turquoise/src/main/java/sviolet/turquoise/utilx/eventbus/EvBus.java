@@ -26,6 +26,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -143,7 +144,8 @@ public class EvBus {
     private static final String COMPONENT_ID = "TURQUOISE_EV_BUS_STATION_COMPONENT";
 
     private static final TLogger logger = TLogger.get(EvBus.class);
-    private static final ReentrantLock lock = new ReentrantLock();
+    private static final ReentrantLock createLock = new ReentrantLock();
+    private static final ReentrantLock mapLock = new ReentrantLock();
 
     private static final Set<EvStation> stations = Collections.newSetFromMap(new WeakHashMap<EvStation, Boolean>());
 
@@ -160,8 +162,15 @@ public class EvBus {
             return;
         }
         boolean result = false;
+        List<EvStation> stations;
+        try {
+            mapLock.lock();
+            stations = ConcurrentUtils.getSnapShot(EvBus.stations);
+        } finally {
+            mapLock.unlock();
+        }
         //遍历所有station并推送消息
-        for (EvStation station : ConcurrentUtils.getSnapShot(stations)){
+        for (EvStation station : stations){
             if (station.post(message)){
                 result = true;
             }
@@ -502,16 +511,21 @@ public class EvBus {
                 return null;
             }
             try{
-                lock.lock();
+                createLock.lock();
                 component = LifeCycleUtils.getComponent(activity, COMPONENT_ID);
                 if (!(component instanceof EvStation)){
                     //新建station
                     component = new EvStation(activity);
                     LifeCycleUtils.addComponent(activity, COMPONENT_ID, component);
-                    stations.add((EvStation) component);
+                    try {
+                        mapLock.lock();
+                        stations.add((EvStation) component);
+                    } finally {
+                        mapLock.unlock();
+                    }
                 }
             } finally {
-                lock.unlock();
+                createLock.unlock();
             }
         }
         return (EvStation) component;
@@ -525,16 +539,20 @@ public class EvBus {
                 return null;
             }
             try{
-                lock.lock();
+                createLock.lock();
                 component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
                 if (!(component instanceof EvStation)){
                     //新建station
                     component = new EvStation(fragment.getActivity());
                     LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
-                    stations.add((EvStation) component);
+                    try {
+                        stations.add((EvStation) component);
+                    } finally {
+                        mapLock.unlock();
+                    }
                 }
             } finally {
-                lock.unlock();
+                createLock.unlock();
             }
         }
         return (EvStation)component;
@@ -548,16 +566,20 @@ public class EvBus {
         }
         if (!(component instanceof EvStation)){
             try{
-                lock.lock();
+                createLock.lock();
                 component = LifeCycleUtils.getComponent(fragment, COMPONENT_ID);
                 if (!(component instanceof EvStation)){
                     //新建station
                     component = new EvStation(fragment.getActivity());
                     LifeCycleUtils.addComponent(fragment, COMPONENT_ID, component);
-                    stations.add((EvStation) component);
+                    try {
+                        stations.add((EvStation) component);
+                    } finally {
+                        mapLock.unlock();
+                    }
                 }
             } finally {
-                lock.unlock();
+                createLock.unlock();
             }
         }
         return (EvStation) component;

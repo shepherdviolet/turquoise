@@ -328,14 +328,15 @@ public class BLECharacteristicConnector implements LifeCycle {
         if (timeout <= 0){
             throw new IllegalArgumentException("timeout must > 0");
         }
+        //如果超时则不需要进行unlock操作
         try {
-            try {
-                if (!writeLock.tryLock(timeout, TimeUnit.MILLISECONDS)){
-                    return false;
-                }
-            } catch (InterruptedException e) {
+            if (!writeLock.tryLock(timeout, TimeUnit.MILLISECONDS)){
                 return false;
             }
+        } catch (InterruptedException e) {
+            return false;
+        }
+        try {
             if (disconnected){
                 logger.d("Trying to write data through disconnected connector");
                 return false;
