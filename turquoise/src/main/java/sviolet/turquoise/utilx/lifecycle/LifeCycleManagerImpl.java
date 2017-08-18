@@ -20,10 +20,12 @@
 package sviolet.turquoise.utilx.lifecycle;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.thistle.util.common.ConcurrentUtils;
 
@@ -40,6 +42,8 @@ class LifeCycleManagerImpl implements LifeCycleManager {
     private final Set<LifeCycle> weakListeners = Collections.newSetFromMap(new WeakHashMap<LifeCycle, Boolean>());//生命周期监听器(弱引用)
 
     private boolean destroyed = false;
+
+    private ReentrantLock weakListenersLock = new ReentrantLock();
 
     LifeCycleManagerImpl() {
     }
@@ -88,7 +92,13 @@ class LifeCycleManagerImpl implements LifeCycleManager {
             return;
         }
 
-        weakListeners.add(listener);
+        try {
+            weakListenersLock.lock();
+            weakListeners.add(listener);
+        } finally {
+            weakListenersLock.unlock();
+        }
+
     }
 
     @Override
@@ -97,7 +107,12 @@ class LifeCycleManagerImpl implements LifeCycleManager {
             return;
         }
 
-        weakListeners.remove(listener);
+        try {
+            weakListenersLock.lock();
+            weakListeners.remove(listener);
+        } finally {
+            weakListenersLock.unlock();
+        }
     }
 
     @Override
@@ -109,7 +124,15 @@ class LifeCycleManagerImpl implements LifeCycleManager {
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onCreate();
         }
-        for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
+
+        List<LifeCycle> weakListeners;
+        try {
+            weakListenersLock.lock();
+            weakListeners = ConcurrentUtils.getSnapShot(this.weakListeners);
+        } finally {
+            weakListenersLock.unlock();
+        }
+        for (LifeCycle listener : weakListeners){
             listener.onCreate();
         }
     }
@@ -122,6 +145,14 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onStart();
+        }
+
+        List<LifeCycle> weakListeners;
+        try {
+            weakListenersLock.lock();
+            weakListeners = ConcurrentUtils.getSnapShot(this.weakListeners);
+        } finally {
+            weakListenersLock.unlock();
         }
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
             listener.onStart();
@@ -137,6 +168,14 @@ class LifeCycleManagerImpl implements LifeCycleManager {
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onResume();
         }
+
+        List<LifeCycle> weakListeners;
+        try {
+            weakListenersLock.lock();
+            weakListeners = ConcurrentUtils.getSnapShot(this.weakListeners);
+        } finally {
+            weakListenersLock.unlock();
+        }
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
             listener.onResume();
         }
@@ -150,6 +189,14 @@ class LifeCycleManagerImpl implements LifeCycleManager {
 
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onPause();
+        }
+
+        List<LifeCycle> weakListeners;
+        try {
+            weakListenersLock.lock();
+            weakListeners = ConcurrentUtils.getSnapShot(this.weakListeners);
+        } finally {
+            weakListenersLock.unlock();
         }
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
             listener.onPause();
@@ -165,6 +212,14 @@ class LifeCycleManagerImpl implements LifeCycleManager {
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onStop();
         }
+
+        List<LifeCycle> weakListeners;
+        try {
+            weakListenersLock.lock();
+            weakListeners = ConcurrentUtils.getSnapShot(this.weakListeners);
+        } finally {
+            weakListenersLock.unlock();
+        }
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
             listener.onStop();
         }
@@ -177,12 +232,27 @@ class LifeCycleManagerImpl implements LifeCycleManager {
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(components.values())){
             listener.onDestroy();
         }
+
+        List<LifeCycle> weakListeners;
+        try {
+            weakListenersLock.lock();
+            weakListeners = ConcurrentUtils.getSnapShot(this.weakListeners);
+        } finally {
+            weakListenersLock.unlock();
+        }
         for (LifeCycle listener : ConcurrentUtils.getSnapShot(weakListeners)){
             listener.onDestroy();
         }
+
         //销毁时移除所有监听器
         components.clear();
-        weakListeners.clear();
+
+        try {
+            weakListenersLock.lock();
+            weakListeners.clear();
+        } finally {
+            weakListenersLock.unlock();
+        }
     }
 
 }
