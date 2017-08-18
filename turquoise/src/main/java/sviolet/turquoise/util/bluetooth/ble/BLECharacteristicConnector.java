@@ -334,7 +334,7 @@ public class BLECharacteristicConnector implements LifeCycle {
      */
     public boolean writeData(byte[] data, int timeout){
         if (data == null){
-            logger.d("Trying to write null data");
+            logger.d("ERROR:Trying to write null data");
             return false;
         }
         if (timeout <= 0){
@@ -350,11 +350,15 @@ public class BLECharacteristicConnector implements LifeCycle {
         }
         try {
             if (connectStatus == Status.DISCONNECTED || connectStatus == Status.DESTROYED){
-                logger.d("Trying to write data through disconnected connector");
+                logger.e("ERROR:Trying to write data through disconnected connector, please reconnect or new one");
+                return false;
+            }
+            if (connectStatus == Status.CONNECTING) {
+                logger.e("ERROR:Trying to write data through connecting connector, please wait for ready");
                 return false;
             }
             if (characteristic == null){
-                logger.d("Trying to write data through unconnected connector");
+                logger.e("ERROR:Trying to write data through unconnected connector, please wait for ready");
                 return false;
             }
             characteristic.setValue(data);
