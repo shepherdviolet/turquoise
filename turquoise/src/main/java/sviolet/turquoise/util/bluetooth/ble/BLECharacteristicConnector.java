@@ -400,6 +400,10 @@ public class BLECharacteristicConnector implements LifeCycle {
         return connectStatus;
     }
 
+    public String getDeviceAddress(){
+        return deviceAddress;
+    }
+
     private Context getContext() {
         return contextWeakReference.get();
     }
