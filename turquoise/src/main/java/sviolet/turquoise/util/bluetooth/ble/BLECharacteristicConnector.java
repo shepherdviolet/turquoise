@@ -49,6 +49,8 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  * Bluetooth Le Characteristic 连接器
  * 与一个蓝牙设备的一个特性连接, 发送或接受数据, 维护连接关系
  *
+ * 注意:需要申请运行时权限"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"
+ *
  * <pre>{@code
  *      BLECharacteristicConnector.connect(
  *          getApplicationContext(),//Context
@@ -111,7 +113,7 @@ public class BLECharacteristicConnector implements LifeCycle {
      * @param attachLifeCycle    true:绑定生命周期(当activity销毁时, 会自动断开连接) false:不绑定生命周期(必须手动调用disconnect断开连接)
      * @param callback           回调
      */
-    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
     public static BLECharacteristicConnector connect(@NonNull Activity context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, boolean attachLifeCycle, @NonNull Callback callback) {
         BLECharacteristicConnector connector = connect(context, deviceAddress, serviceUUID, characteristicUUID, callback);
         if (attachLifeCycle){
@@ -129,7 +131,7 @@ public class BLECharacteristicConnector implements LifeCycle {
      * @param characteristicUUID 特性UUID
      * @param callback           回调
      */
-    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
     public static BLECharacteristicConnector connect(@NonNull Context context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, @NonNull Callback callback) {
         if (context == null) {
             throw new IllegalArgumentException("context is null");
@@ -146,7 +148,7 @@ public class BLECharacteristicConnector implements LifeCycle {
         return new BLECharacteristicConnector(context.getApplicationContext(), deviceAddress, serviceUUID, characteristicUUID, callback);
     }
 
-    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
     private BLECharacteristicConnector(@NonNull Context context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, @NonNull Callback callback) {
         this.contextWeakReference = new WeakReference<>(context);
         this.deviceAddress = deviceAddress;
@@ -157,18 +159,18 @@ public class BLECharacteristicConnector implements LifeCycle {
         connect();
     }
 
-    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
     private void connect(){
         new Thread(new Runnable() {
             @Override
-            @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+            @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
             public void run() {
                 connect0();
             }
         }).start();
     }
 
-    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
     private void connect0() {
         try {
             //检查Context
@@ -432,7 +434,7 @@ public class BLECharacteristicConnector implements LifeCycle {
     /**
      * 重新连接(销毁后无法重连)
      */
-    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
     public boolean reconnect(){
         if (connectStatus == Status.DISCONNECTED){
             connect();

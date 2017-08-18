@@ -45,6 +45,8 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 /**
  * 蓝牙扫描工具
  *
+ * 注意:需要申请运行时权限"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"
+ *
  * <pre>{@code
  *  //参数1:当前Activity, 参数2:搜索30秒后停止, 参数3:与Activity绑定生命周期(当Activity销毁时, 搜索自动停止)
  *  BluetoothUtils.startBLEScan(this, 30000, true, new BluetoothUtils.ScanManager() {
@@ -94,7 +96,7 @@ public class BluetoothUtils {
      * @param attachLifeCycle true:绑定生命周期(当activity销毁时, 会自动取消扫描), false:不绑定生命周期(必须手动调用cancel停止扫描)
      * @param scanManager 回调及管理
      */
-    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
     public static void startBLEScan(@NonNull Activity activity, long timeout, boolean attachLifeCycle, @NonNull final ScanManager scanManager) {
         //判断是否支持BLE
         if (!isBLESupported(activity)){
@@ -121,7 +123,7 @@ public class BluetoothUtils {
         //回调
         BluetoothAdapter.LeScanCallback callback = new BluetoothAdapter.LeScanCallback() {
             @Override
-            @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+            @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
             public void onLeScan(BluetoothDevice device, int rssi, byte[] scanRecord) {
                 if (scanManager.devices.contains(device)){
                     return;

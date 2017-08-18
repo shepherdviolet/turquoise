@@ -202,7 +202,8 @@ public class ServerSettings implements ComponentManager.Component{
         /**
          * <p>Set disk cache path</p>
          *
-         * <p>WARNING:: EXTERNAL_STORAGE need permission</p>
+         * <p>WARNING:: EXTERNAL_STORAGE need permission "android.permission.WRITE_EXTERNAL_STORAGE",
+         * you should request runtime permission before TILoader.setting(...)</p>
          *
          * @param context context
          * @param diskCachePath {@link DiskCachePath#INNER_STORAGE} by default

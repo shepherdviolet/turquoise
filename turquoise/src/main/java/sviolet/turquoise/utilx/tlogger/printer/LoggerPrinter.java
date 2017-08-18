@@ -22,6 +22,9 @@ package sviolet.turquoise.utilx.tlogger.printer;
 /**
  * 日志磁盘输出接口
  *
+ * <p>WARNING:: Need permission "android.permission.WRITE_EXTERNAL_STORAGE",
+ * you should request runtime permission before TLogger.setLoggerPrinter(new SimpleLoggerPrinter(...))</p>
+ *
  * Created by S.Violet on 2017/8/16.
  */
 public interface LoggerPrinter {
