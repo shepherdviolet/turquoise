@@ -361,7 +361,10 @@ public class BLECharacteristicConnector implements LifeCycle {
                         logger.d("ble-connect:characteristic found");
                         this.characteristic = gattCharacteristic;
                         bluetoothGatt.setCharacteristicNotification(characteristic, true);
-                        callback.onReady(this);
+                        if (connectStatus != Status.DESTROYED){
+                            connectStatus = Status.READY;
+                            callback.onReady(this);
+                        }
                         return;
                     }
                 }
@@ -452,6 +455,7 @@ public class BLECharacteristicConnector implements LifeCycle {
             }
             bluetoothGatt = null;
             characteristic = null;
+            callback.onDisconnected(this);
         }
     }
 
