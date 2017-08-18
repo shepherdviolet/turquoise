@@ -31,6 +31,7 @@ import java.lang.reflect.Field;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.thistle.util.common.ParasiticVars;
+import sviolet.turquoise.common.statics.StringConstants;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
@@ -380,24 +381,24 @@ public class LifeCycleUtils {
 
     private static LifeCycleManager getLifeCycleManager(Activity activity){
         //ParasiticVars中获取Activity的生命周期管理器
-        Object manager = ParasiticVars.get(activity, LifeCycleManager.MANAGER_TAG);
+        Object manager = ParasiticVars.get(activity, StringConstants.LIFECYCLE_MANAGER_TAG);
 
         if (!(manager instanceof LifeCycleManager)) {
             try {
                 lock.lock();
                 //ParasiticVars中获取Activity的生命周期管理器
-                manager = ParasiticVars.get(activity, LifeCycleManager.MANAGER_TAG);
+                manager = ParasiticVars.get(activity, StringConstants.LIFECYCLE_MANAGER_TAG);
                 //生命周期管理器不存在则新建
                 if (!(manager instanceof LifeCycleManager)) {
                     manager = new LifeCycleManagerImpl();//新建管理器
                     FragmentManager fragmentManager = activity.getFragmentManager();
-                    android.app.Fragment oldFragment = fragmentManager.findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
+                    android.app.Fragment oldFragment = fragmentManager.findFragmentByTag(StringConstants.LIFECYCLE_FRAGMENT_TAG);//原有Fragment
                     android.app.Fragment fragment = new LifeCycleFragment(activity, (LifeCycleManager) manager);//新生命周期监听Fragment
                     android.app.FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
                     if (oldFragment != null) {
                         transaction.remove(oldFragment);//移除原有Fragment
                     }
-                    transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
+                    transaction.add(fragment, StringConstants.LIFECYCLE_FRAGMENT_TAG);//绑定生命周期监听Fragment
                     try {
                         transaction.commitAllowingStateLoss();
                     } catch (Exception e){
@@ -422,24 +423,24 @@ public class LifeCycleUtils {
 
     private static LifeCycleManager getLifeCycleManagerV4(android.support.v4.app.FragmentActivity fragmentActivity){
         //ParasiticVars中获取FragmentActivity的生命周期管理器
-        Object manager = ParasiticVars.get(fragmentActivity, LifeCycleManager.MANAGER_TAG);
+        Object manager = ParasiticVars.get(fragmentActivity, StringConstants.LIFECYCLE_MANAGER_TAG);
 
         if (!(manager instanceof LifeCycleManager)) {
             try {
                 lock.lock();
                 //ParasiticVars中获取FragmentActivity的生命周期管理器
-                manager = ParasiticVars.get(fragmentActivity, LifeCycleManager.MANAGER_TAG);
+                manager = ParasiticVars.get(fragmentActivity, StringConstants.LIFECYCLE_MANAGER_TAG);
                 //生命周期管理器不存在则新建
                 if (!(manager instanceof LifeCycleManager)){
                     manager = new LifeCycleManagerImpl();//新建管理器
                     android.support.v4.app.FragmentManager fragmentManager = fragmentActivity.getSupportFragmentManager();
-                    android.support.v4.app.Fragment oldFragment = fragmentManager.findFragmentByTag(LifeCycleManager.FRAGMENT_TAG);//原有Fragment
+                    android.support.v4.app.Fragment oldFragment = fragmentManager.findFragmentByTag(StringConstants.LIFECYCLE_FRAGMENT_TAG);//原有Fragment
                     android.support.v4.app.Fragment fragment = new LifeCycleFragmentV4(fragmentActivity, (LifeCycleManager) manager);//新生命周期监听Fragment
                     android.support.v4.app.FragmentTransaction transaction = fragmentActivity.getSupportFragmentManager().beginTransaction();
                     if (oldFragment != null) {
                         transaction.remove(oldFragment);//移除原有Fragment
                     }
-                    transaction.add(fragment, LifeCycleManager.FRAGMENT_TAG);//绑定生命周期监听Fragment
+                    transaction.add(fragment, StringConstants.LIFECYCLE_FRAGMENT_TAG);//绑定生命周期监听Fragment
                     try {
                         transaction.commitAllowingStateLoss();
                     } catch (Exception e){

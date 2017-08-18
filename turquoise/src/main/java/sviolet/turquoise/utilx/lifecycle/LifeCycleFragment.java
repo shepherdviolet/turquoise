@@ -25,6 +25,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 
 import sviolet.thistle.util.common.ParasiticVars;
+import sviolet.turquoise.common.statics.StringConstants;
 
 /**
  * 生命周期监听Fragment<p/>
@@ -56,7 +57,7 @@ public class LifeCycleFragment extends Fragment {
         }
         this.manager = manager;
         //管理器放入寄生变量
-        ParasiticVars.set(activity, LifeCycleManager.MANAGER_TAG, manager);
+        ParasiticVars.set(activity, StringConstants.LIFECYCLE_MANAGER_TAG, manager);
     }
 
     @Override
@@ -121,7 +122,7 @@ public class LifeCycleFragment extends Fragment {
         } catch (Exception ignore) {
         }
         //寄生变量中移除管理器
-        ParasiticVars.remove(getActivity(), LifeCycleManager.MANAGER_TAG);
+        ParasiticVars.remove(getActivity(), StringConstants.LIFECYCLE_MANAGER_TAG);
         if (invalidateSelf())
             return;
         manager.onDestroy();

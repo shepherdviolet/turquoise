@@ -30,9 +30,14 @@ public class StringConstants {
      * Logger TAG
      */
 
-    public static final String LIBRARY_TAG = "Turquoise";
-    public static final String TILOADER_TAG = "Turquoise#TILoader";
-    public static final String OK_HTTP_TAG = "Turquoise#OKHttp";
+    public static final String LIBRARY_TAG = "Turquoise";//库名称
+
+    /*******************************************************************************
+     * LifeCycle
+     */
+
+    public static final String LIFECYCLE_FRAGMENT_TAG = "TURQUOISE_LIFE_CYCLE_FRAGMENT";//生命周期Fragment的TAG名
+    public static final String LIFECYCLE_MANAGER_TAG = "TURQUOISE_LIFE_CYCLE_MANAGER";//生命周期管理器在ParasiticVars中的key
 
     /*******************************************************************************
      * Shared Preferences
