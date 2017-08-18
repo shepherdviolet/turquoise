@@ -71,12 +71,13 @@ public class BLECharacteristicConnector implements LifeCycle {
 
     /**
      * 尝试连接蓝牙设备
-     * @param context activity
-     * @param deviceAddress 蓝牙设备地址
-     * @param serviceUUID 服务UUID
+     *
+     * @param context            activity
+     * @param deviceAddress      蓝牙设备地址
+     * @param serviceUUID        服务UUID
      * @param characteristicUUID 特性UUID
-     * @param attachLifeCycle true:绑定生命周期(当activity销毁时, 会自动断开连接) false:不绑定生命周期(必须手动调用disconnect断开连接)
-     * @param callback 回调
+     * @param attachLifeCycle    true:绑定生命周期(当activity销毁时, 会自动断开连接) false:不绑定生命周期(必须手动调用disconnect断开连接)
+     * @param callback           回调
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     public static BLECharacteristicConnector connect(@NonNull Activity context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, boolean attachLifeCycle, @NonNull Callback callback) {
@@ -87,14 +88,15 @@ public class BLECharacteristicConnector implements LifeCycle {
         return connector;
     }
 
-        /**
-         * 尝试连接蓝牙设备(不绑定生命周期(必须手动调用disconnect断开连接))
-         * @param context context
-         * @param deviceAddress 蓝牙设备地址
-         * @param serviceUUID 服务UUID
-         * @param characteristicUUID 特性UUID
-         * @param callback 回调
-         */
+    /**
+     * 尝试连接蓝牙设备(不绑定生命周期(必须手动调用disconnect断开连接))
+     *
+     * @param context            context
+     * @param deviceAddress      蓝牙设备地址
+     * @param serviceUUID        服务UUID
+     * @param characteristicUUID 特性UUID
+     * @param callback           回调
+     */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     public static BLECharacteristicConnector connect(@NonNull Context context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, @NonNull Callback callback) {
         if (context == null) {
