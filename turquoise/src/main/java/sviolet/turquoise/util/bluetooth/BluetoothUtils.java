@@ -44,9 +44,7 @@ import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
- * 蓝牙扫描工具
- *
- * Created by S.Violet on 2017/8/15.
+ * <p>蓝牙工具(状态判断/设备扫描)</p>
  */
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BluetoothUtils {
@@ -54,15 +52,17 @@ public class BluetoothUtils {
     private static TLogger logger = TLogger.get(BluetoothUtils.class);
 
     /**
-     * 判断设备是否支持BLE
+     * <p>判断设备是否支持BLE</p>
+     * @param context context
+     * @return true:支持BLE false:不支持BLE
      */
     public static boolean isBLESupported(@NonNull Context context) {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE);
     }
 
     /**
-     * 获取BluetoothAdapter
-     *
+     * <p>获取BluetoothAdapter</p>
+     * @param context context
      * @return 返回空表示设备不支持蓝牙
      */
     @Nullable
@@ -75,48 +75,67 @@ public class BluetoothUtils {
     }
 
     /**
-     * 开始扫描BLE设备
+     * <p>扫描BLE设备</p>
      *
-     * 注意:
-     * 1.需要申请运行时权限"android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"
-     * 2.需要开启位置信息
+     * <p>
+     * 注意:<br/>
+     * 1.需要声明权限:android.permission.BLUETOOTH_ADMIN/android.permission.BLUETOOTH/android.permission.ACCESS_FINE_LOCATION/android.permission.ACCESS_COARSE_LOCATION<br/>
+     * 2.需要申请运行时权限:android.Manifest.permission.ACCESS_FINE_LOCATION/android.Manifest.permission.ACCESS_COARSE_LOCATION<br/>
+     * 3.需要开启蓝牙/开启位置信息<br/>
+     * </p>
+     *
+     * <p>示例:</p>
      *
      * <pre>{@code
-     *
-     *      executePermissionTask(Manifest.permission.ACCESS_FINE_LOCATION,
-     *          null,
-     *          "扫描蓝牙设备需要开启位置信息并允许位置权限, 请通过权限申请",
+     *      //申请运行时权限(此为Turquoise库TActivity封装的方法)
+     *      executePermissionTask(
+     *          Manifest.permission.ACCESS_FINE_LOCATION,//位置信息权限
+     *          null,//提示标题
+     *          "扫描蓝牙设备需要开启位置信息并允许位置权限, 请通过权限申请",//提示信息
      *          new RuntimePermissionManager.RequestPermissionTask() {
-     *              @Override
+     *
+     *              //权限申请回调, 参数1:申请的权限列表, 参数2:结果列表 参数3:true表示所有权限均通过
      *              public void onResult(String[] permissions, int[] grantResults, boolean allGranted) {
+     *
      *                  if (allGranted){
-     *                      //参数1:当前Activity, 参数2:搜索30秒后停止, 参数3:与Activity绑定生命周期(当Activity销毁时, 搜索自动停止)
+     *
+     *                      //权限申请通过
+     *                      //开始扫描BLE蓝牙设备
+     *                      //参数1:当前Activity, 参数2:搜索30秒后停止, 参数3:建议true, 与Activity绑定生命周期(当Activity销毁时, 搜索自动停止)
      *                      BluetoothUtils.startBLEScan(this, 30000, true, new BluetoothUtils.ScanManager() {
-     *                          @Override
+     *
      *                          protected void onDeviceFound(List<BluetoothDevice> devices) {
      *                              //devices为当前搜索到的所有设备
+     *                              //ScanManager内部维护了一个List, 记录了本次扫描到的所有设备
      *                          }
-     *                          @Override
+     *
      *                          protected void onCancel() {
      *                              //搜索取消/超时
      *                          }
-     *                          @Override
+     *
      *                          protected void onError(BluetoothUtils.ScanError errorCode) {
      *                              //搜索失败(终止)
      *                          }
+     *
      *                      });
+     *
      *                  } else {
+     *
+     *                      //权限申请未通过
      *                      //提醒用户没有权限无法扫描蓝牙设备
+     *
      *                  }
+     *
      *              }
+     *
      *          });
      *
      * }</pre>
      *
      * @param activity        activity
-     * @param timeout         超时时间, millis, 0不超时
-     * @param attachLifeCycle true:绑定生命周期(当activity销毁时, 会自动取消扫描), false:不绑定生命周期(必须手动调用cancel停止扫描)
-     * @param scanManager     回调及管理
+     * @param timeout         超时时间, 单位millis, 设置0不超时
+     * @param attachLifeCycle true:绑定生命周期(当activity销毁时, 会自动取消扫描), false:不绑定生命周期, 必须手动调用ScanManager.cancel()停止扫描
+     * @param scanManager     回调(并提供取消等管理操作)
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
     public static void startBLEScan(@NonNull Activity activity, long timeout, boolean attachLifeCycle, @NonNull final ScanManager scanManager) {
@@ -184,6 +203,11 @@ public class BluetoothUtils {
 
     }
 
+    /**
+     * <p>蓝牙扫描回调(并提供取消等管理操作)</p>
+     *
+     * <p>当attachLifeCycle==true时, 与Activity生命周期绑定, 在Activity.onDestroy时, 自动取消扫描</p>
+     */
     @SuppressLint("MissingPermission")
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static abstract class ScanManager implements LifeCycle {
@@ -194,36 +218,41 @@ public class BluetoothUtils {
         private boolean canceled = false;
 
         /**
-         * 当扫描到设备时回调该方法, 内部维护了一个设备列表, 保存所有已扫描到的设备
+         * 当扫描到新设备时回调该方法.
+         * ScanManager内部维护了一个List, 记录了本次扫描到的所有设备.
          *
-         * @param devices
+         * @param devices 从调用BluetoothUtils.startBLEScan()开始, 扫描到的所有设备(累加)
          */
         protected abstract void onDeviceFound(List<BluetoothDevice> devices);
 
         /**
-         * 当扫描被手动取消/超时/activity销毁时调用
+         * 当扫描被取消/超时/activity销毁时回调
          */
         protected abstract void onCancel();
 
         /**
-         * 当扫描出错时调用
+         * 当扫描出错时回调(注意此时扫描已终止)
+         *
+         * @param error 错误类型
          */
         protected abstract void onError(ScanError error);
 
         /**
-         * 复写该方法实现设备过滤
+         * 可以复写该方法实现设备过滤, 默认全通过
          *
          * @param device     设备信息
          * @param rssi       信号强度
          * @param scanRecord scan record
-         * @return true:记录设备 false:不记录设备
+         * @return true:记录设备 false:忽略设备
          */
         protected boolean filter(BluetoothDevice device, int rssi, byte[] scanRecord) {
             return true;
         }
 
         /**
-         * [重要]停止扫描
+         * <p>[重要]取消扫描</p>
+         *
+         * <p>若attachLifeCycle==false时, 请在Context结束时调用该方法取消扫描</p>
          */
         public final void cancel() {
             if (!canceled && adapter != null && callback != null) {
@@ -276,9 +305,13 @@ public class BluetoothUtils {
         }
     }
 
+    /**
+     * 用于回调主线程
+     */
     @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
     private static class CancelHandler extends WeakHandler<ScanManager> {
-        public CancelHandler(ScanManager host) {
+
+        private CancelHandler(ScanManager host) {
             super(Looper.getMainLooper(), host);
         }
 
@@ -286,13 +319,29 @@ public class BluetoothUtils {
         protected void handleMessageWithHost(Message msg, ScanManager host) {
             host.cancel();
         }
+
     }
 
+    /**
+     * 扫描错误
+     */
     public enum ScanError {
-        ERROR_BLUETOOTH_UNSUPPORTED,//设备不支持蓝牙
-        ERROR_BLE_UNSUPPORTED,//设备不支持BLE
-        ERROR_BLUETOOTH_DISABLED,//设备关闭了蓝牙
-        ERROR_LOCATION_DISABLED//设备关闭了位置信息
+        /**
+         * 设备不支持蓝牙
+         */
+        ERROR_BLUETOOTH_UNSUPPORTED,
+        /**
+         * 设备不支持BLE
+         */
+        ERROR_BLE_UNSUPPORTED,
+        /**
+         * 设备关闭了蓝牙
+         */
+        ERROR_BLUETOOTH_DISABLED,
+        /**
+         * 设备关闭了位置信息
+         */
+        ERROR_LOCATION_DISABLED
     }
 
 }
