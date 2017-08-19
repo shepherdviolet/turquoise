@@ -47,7 +47,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
  * <p>
- * Bluetooth Le Characteristic connectorbr/>
+ * Bluetooth Le Characteristic connector<br/>
  * BLE特性连接器.<br/>
  * 与一个蓝牙设备的一个特性连接, 发送或接受数据, 维护连接关系.<br/>
  * </p>
