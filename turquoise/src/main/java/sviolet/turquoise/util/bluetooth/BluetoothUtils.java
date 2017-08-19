@@ -135,7 +135,7 @@ public class BluetoothUtils {
      * @param activity        activity
      * @param timeout         超时时间, 单位millis, 设置0不超时
      * @param attachLifeCycle true:绑定生命周期(当activity销毁时, 会自动取消扫描), false:不绑定生命周期, 必须手动调用ScanManager.cancel()停止扫描
-     * @param scanManager     回调(并提供取消等管理操作)
+     * @param scanManager     回调(并提供取消等管理操作), 回调并非UI线程
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
     public static void startBLEScan(@NonNull Activity activity, long timeout, boolean attachLifeCycle, @NonNull final ScanManager scanManager) {
@@ -204,7 +204,7 @@ public class BluetoothUtils {
     }
 
     /**
-     * <p>蓝牙扫描回调(并提供取消等管理操作)</p>
+     * <p>蓝牙扫描回调(并提供取消等管理操作), 回调并非UI线程</p>
      *
      * <p>当attachLifeCycle==true时, 与Activity生命周期绑定, 在Activity.onDestroy时, 自动取消扫描</p>
      */

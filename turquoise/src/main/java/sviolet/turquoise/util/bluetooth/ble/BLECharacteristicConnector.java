@@ -46,70 +46,78 @@ import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
- * Bluetooth Le Characteristic 连接器
- * 与一个蓝牙设备的一个特性连接, 发送或接受数据, 维护连接关系
- *
- * <pre>{@code
- *      BLECharacteristicConnector.connect(
- *          getApplicationContext(),//Context
- *          "50:8C:B1:69:83:1A",//蓝牙设备地址
- *          "0000ffe0-0000-1000-8000-00805f9b34fb",//要连接的服务UUID
- *          "0000ffe1-0000-1000-8000-00805f9b34fb",//要连接的特性UUID
- *          new BLECharacteristicConnector.Callback() {
- *              @Override
- *              public void onReady(BLECharacteristicConnector connector) {
- *                  //连接成功, 可以开始读写数据
- *              }
- *              @Override
- *              public void onDisconnected(BLECharacteristicConnector connector) {
- *                  //连接断开
- *              }
- *              @Override
- *              public void onReceiveSucceed(BLECharacteristicConnector connector, byte[] data) {
- *                  //收到有效数据
- *              }
- *              @Override
- *              public void onReceiveFailed(BLECharacteristicConnector connector, int status) {
- *                  //读取数据失败
- *              }
- *              @Override
- *              public void onError(BLECharacteristicConnector connector, BLECharacteristicConnector.Error errorCode, Throwable throwable) {
- *                  //连接错误, 注意:此时连接已断开
- *                  //connector.reconnect();//可以重连
- *              }
- *          });
- * }</pre>
- *
- * Created by S.Violet on 2017/8/15.
+ * <p>
+ * Bluetooth Le Characteristic connectorbr/>
+ * BLE特性连接器.<br/>
+ * 与一个蓝牙设备的一个特性连接, 发送或接受数据, 维护连接关系.<br/>
+ * </p>
  */
 @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class BLECharacteristicConnector implements LifeCycle {
 
     private TLogger logger = TLogger.get(this);
 
-    private WeakReference<Context> contextWeakReference;
+    private WeakReference<Context> contextWeakReference;//context弱引用
 
-    private BluetoothGatt bluetoothGatt;
-    private BluetoothGattCharacteristic characteristic;
+    private BluetoothGatt bluetoothGatt;//协议实例
+    private BluetoothGattCharacteristic characteristic;//特性实例
     private String deviceName;//设备名称
     private String deviceAddress;//设备MAC地址
     private String serviceUUID;//服务UUID(取决于对方蓝牙设备)
     private String characteristicUUID;//特性UUID(取决于对方蓝牙设备)
-    private Callback callback;
+    private Callback callback;//回调
 
     private Status connectStatus;//连接状态
 
     private ReentrantLock writeLock = new ReentrantLock();
 
     /**
-     * 尝试连接蓝牙设备
+     * <p>尝试连接蓝牙设备</p>
+     *
+     * <p>示例</p>
+     *
+     * <pre>{@code
+     *      BLECharacteristicConnector.connect(
+     *          this,//Activity
+     *          "50:8C:B1:69:83:1A",//蓝牙设备地址
+     *          "0000ffe0-0000-1000-8000-00805f9b34fb",//要连接的服务UUID
+     *          "0000ffe1-0000-1000-8000-00805f9b34fb",//要连接的特性UUID
+     *          true,//true:绑定生命周期, 当activity销毁时, 会自动断开连接 false:不绑定生命周期, 必须手动调用BLECharacteristicConnector.destroy()销毁连接
+     *          new BLECharacteristicConnector.Callback() {
+     *
+     *              public void onReady(BLECharacteristicConnector connector) {
+     *                  //连接成功, 可以开始读写数据
+     *              }
+     *
+     *              public void onDisconnected(BLECharacteristicConnector connector) {
+     *                  //连接断开
+     *                  //可以在此处进行重连BLECharacteristicConnector.reconnect()或BLECharacteristicConnector.connect(...)
+     *              }
+     *
+     *              public void onReceiveSucceed(BLECharacteristicConnector connector, byte[] data) {
+     *                  //收到有效数据
+     *              }
+     *
+     *              public void onReceiveFailed(BLECharacteristicConnector connector, int status) {
+     *                  //读取数据失败
+     *                  //一般不处理该事件
+     *              }
+     *
+     *              public void onError(BLECharacteristicConnector connector, BLECharacteristicConnector.Error errorCode, Throwable throwable) {
+     *                  //连接错误
+     *                  //注意, 此时连接已断开
+     *                  //可以在此处进行重连BLECharacteristicConnector.reconnect()或BLECharacteristicConnector.connect(...)
+     *              }
+     *
+     *          });
+     * }</pre>
      *
      * @param context            activity
      * @param deviceAddress      蓝牙设备地址
-     * @param serviceUUID        服务UUID
+     * @param serviceUUID        指定服务UUID
      * @param characteristicUUID 特性UUID
-     * @param attachLifeCycle    true:绑定生命周期(当activity销毁时, 会自动断开连接) false:不绑定生命周期(必须手动调用disconnect断开连接)
-     * @param callback           回调
+     * @param attachLifeCycle    true:绑定生命周期, 当activity销毁时, 会自动断开连接 false:不绑定生命周期, 必须手动调用BLECharacteristicConnector.destroy()销毁连接
+     * @param callback           回调, 非UI线程
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     public static BLECharacteristicConnector connect(@NonNull Activity context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, boolean attachLifeCycle, @NonNull Callback callback) {
@@ -121,13 +129,50 @@ public class BLECharacteristicConnector implements LifeCycle {
     }
 
     /**
-     * 尝试连接蓝牙设备(不绑定生命周期(必须手动调用disconnect断开连接))
+     * <p>尝试连接蓝牙设备, 不绑定生命周期, 必须手动调用BLECharacteristicConnector.destroy()销毁连接</p>
      *
-     * @param context            context
+     * <p>示例</p>
+     *
+     * <pre>{@code
+     *      BLECharacteristicConnector.connect(
+     *          getApplicationContext(),//Context
+     *          "50:8C:B1:69:83:1A",//蓝牙设备地址
+     *          "0000ffe0-0000-1000-8000-00805f9b34fb",//要连接的服务UUID
+     *          "0000ffe1-0000-1000-8000-00805f9b34fb",//要连接的特性UUID
+     *          new BLECharacteristicConnector.Callback() {
+     *
+     *              public void onReady(BLECharacteristicConnector connector) {
+     *                  //连接成功, 可以开始读写数据
+     *              }
+     *
+     *              public void onDisconnected(BLECharacteristicConnector connector) {
+     *                  //连接断开
+     *                  //可以在此处进行重连BLECharacteristicConnector.reconnect()或BLECharacteristicConnector.connect(...)
+     *              }
+     *
+     *              public void onReceiveSucceed(BLECharacteristicConnector connector, byte[] data) {
+     *                  //收到有效数据
+     *              }
+     *
+     *              public void onReceiveFailed(BLECharacteristicConnector connector, int status) {
+     *                  //读取数据失败
+     *                  //一般不处理该事件
+     *              }
+     *
+     *              public void onError(BLECharacteristicConnector connector, BLECharacteristicConnector.Error errorCode, Throwable throwable) {
+     *                  //连接错误
+     *                  //注意, 此时连接已断开
+     *                  //可以在此处进行重连BLECharacteristicConnector.reconnect()或BLECharacteristicConnector.connect(...)
+     *              }
+     *
+     *          });
+     * }</pre>
+     *
+     * @param context            activity
      * @param deviceAddress      蓝牙设备地址
-     * @param serviceUUID        服务UUID
+     * @param serviceUUID        指定服务UUID
      * @param characteristicUUID 特性UUID
-     * @param callback           回调
+     * @param callback           回调, 非UI线程
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     public static BLECharacteristicConnector connect(@NonNull Context context, @NonNull String deviceAddress, @NonNull String serviceUUID, @NonNull String characteristicUUID, @NonNull Callback callback) {
@@ -157,6 +202,9 @@ public class BLECharacteristicConnector implements LifeCycle {
         connect();
     }
 
+    /**
+     * 开始连接
+     */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     private void connect(){
         new Thread(new Runnable() {
@@ -168,6 +216,9 @@ public class BLECharacteristicConnector implements LifeCycle {
         }).start();
     }
 
+    /**
+     * 开始连接
+     */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     private void connect0() {
         try {
@@ -221,6 +272,9 @@ public class BLECharacteristicConnector implements LifeCycle {
         }
     }
 
+    /**
+     * 回调
+     */
     private final BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -343,6 +397,9 @@ public class BLECharacteristicConnector implements LifeCycle {
 
     };
 
+    /**
+     * 查找特性
+     */
     private void seekCharacteristic(List<BluetoothGattService> gattServices) {
         //从蓝牙设备提供的服务列表中找到需要的服务
         logger.d("ble-connect:discovered " + gattServices.size() + " services");
@@ -380,10 +437,17 @@ public class BLECharacteristicConnector implements LifeCycle {
     }
 
     /**
-     * 向蓝牙设备传输数据, 必须在Callback.onReady后调用, 同步锁操作, 请设置合适的等待时间, 超过时间退出锁竞争, 并返回失败
+     * <p>向蓝牙设备传输数据</p>
+     *
+     * <p>
+     * 注意:<br/>
+     * 1.必须在Callback.onReady()后调用.<br/>
+     * 2.该方法有同步锁, 会阻塞线程, 请设置合适的超时时间. 超过时间会退出竞争, 并返回失败.<br/>
+     * </p>
+     *
      * @param data 数据
-     * @param timeout 写入排队等待时间, millis, 必须>0
-     * @return true:写入成功
+     * @param timeout 写入超时时间(等待时线程阻塞), 单位millis, 必须>0
+     * @return true:写入成功 false:写入超时
      */
     public boolean writeData(byte[] data, int timeout){
         if (data == null){
@@ -430,7 +494,7 @@ public class BLECharacteristicConnector implements LifeCycle {
     }
 
     /**
-     * 重新连接(销毁后无法重连)
+     * <p>重新连接. 注意销毁后无法重连.</p>
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
     public boolean reconnect(){
@@ -442,7 +506,7 @@ public class BLECharacteristicConnector implements LifeCycle {
     }
 
     /**
-     * 关闭连接
+     * <p>断开连接, 可以重连</p>
      */
     public void disconnect(){
         if (connectStatus != Status.DESTROYED){
@@ -460,21 +524,30 @@ public class BLECharacteristicConnector implements LifeCycle {
     }
 
     /**
-     * 销毁实例(无法再重连)
+     * 销毁, 无法重连
      */
     public void destroy(){
         onDestroy();
     }
 
+    /**
+     * @return 获得当前连接状态
+     */
     public Status getConnectStatus(){
         return connectStatus;
     }
 
+    /**
+     * @return 获得连接的设备地址(断开后仍会返回)
+     */
     @Nullable
     public String getDeviceAddress(){
         return deviceAddress;
     }
 
+    /**
+     * @return 获得连接的设备名称(断开后仍会返回)
+     */
     @Nullable
     public String getDeviceName(){
         return deviceName;
@@ -485,35 +558,38 @@ public class BLECharacteristicConnector implements LifeCycle {
     }
 
     @Override
-    public void onCreate() {
+    public final void onCreate() {
     }
 
     @Override
-    public void onStart() {
+    public final void onStart() {
     }
 
     @Override
-    public void onResume() {
+    public final void onResume() {
     }
 
     @Override
-    public void onPause() {
+    public final void onPause() {
     }
 
     @Override
-    public void onStop() {
+    public final void onStop() {
     }
 
     @Override
-    public void onDestroy() {
+    public final void onDestroy() {
         connectStatus = Status.DESTROYED;
         disconnect();
     }
 
+    /**
+     * 回调, 非UI线程
+     */
     public interface Callback {
 
         /**
-         * 连接成功并获取到了characteristic, 可以开始读写数据(之前无法读写数据)
+         * 连接成功, 可以开始读写数据
          */
         void onReady(BLECharacteristicConnector connector);
 
@@ -523,43 +599,88 @@ public class BLECharacteristicConnector implements LifeCycle {
         void onDisconnected(BLECharacteristicConnector connector);
 
         /**
-         * 接收到正常数据
+         * 接收到正常的数据
          * @param data 接收到的数据
          */
         void onReceiveSucceed(BLECharacteristicConnector connector, byte[] data);
 
         /**
-         * 接收到异常数据
+         * 接受数据错误
          * @param status 接收到的错误状态(BluetoothGatt.GATT_???)
          */
         void onReceiveFailed(BLECharacteristicConnector connector, int status);
 
         /**
-         * 连接错误(注意:此时连接已断开)
-         * @param error 错误码(BLECharacteristicConnector.ERROR)
+         * 连接错误. 注意:此时连接已断开.
+         * @param error 错误码
          * @param throwable 异常(可能为空)
          */
         void onError(BLECharacteristicConnector connector, Error error, @Nullable Throwable throwable);
 
     }
 
+    /**
+     * 错误
+     */
     public enum Error {
-        ERROR_BLUETOOTH_UNSUPPORTED,//设备不支持蓝牙
-        ERROR_BLE_UNSUPPORTED,//设备不支持BLE
-        ERROR_BLUETOOTH_DISABLED,//设备关闭了蓝牙
-        ERROR_DEVICE_NOT_FOUND,//找不到蓝牙设备
-        ERROR_SERVICE_NOT_FOUND,//蓝牙设备中的Service找不到(匹配不到serviceUUID)
-        ERROR_CHARACTERISTIC_NOT_FOUND,//蓝牙设备中的Characteristic找不到(匹配不到characteristicUUID)
-        ERROR_CONNECT_FAILED,//蓝牙连接失败(附带Exception)
-        ERROR_DISCOVER_FAILED,//蓝牙连接(查找服务)失败(附带Exception)
-        ERROR_EXCEPTION//其他异常(附带Exception)
+        /**
+         * 设备不支持蓝牙
+         */
+        ERROR_BLUETOOTH_UNSUPPORTED,
+        /**
+         * 设备不支持BLE
+         */
+        ERROR_BLE_UNSUPPORTED,
+        /**
+         * 设备关闭了蓝牙
+         */
+        ERROR_BLUETOOTH_DISABLED,
+        /**
+         * 找不到蓝牙设备
+         */
+        ERROR_DEVICE_NOT_FOUND,
+        /**
+         * 无法识别的蓝牙设备, 蓝牙设备中匹配不到指定的serviceUUID
+         */
+        ERROR_SERVICE_NOT_FOUND,
+        /**
+         * 无法识别的蓝牙设备, 蓝牙设备中匹配不到指定的characteristicUUID
+         */
+        ERROR_CHARACTERISTIC_NOT_FOUND,
+        /**
+         * 蓝牙连接失败(附带Exception)
+         */
+        ERROR_CONNECT_FAILED,
+        /**
+         * 蓝牙连接失败(查找服务)(附带Exception)
+         */
+        ERROR_DISCOVER_FAILED,
+        /**
+         * 其他异常(附带Exception)
+         */
+        ERROR_EXCEPTION
     }
 
+    /**
+     * 连接状态
+     */
     public enum Status {
-        CONNECTING,//连接中,暂不可用
-        READY,//连接可用
-        DISCONNECTED,//连接已断开
-        DESTROYED//已销毁
+        /**
+         * 连接中,暂不可用
+         */
+        CONNECTING,
+        /**
+         * 连接可用, 可进行读写操作
+         */
+        READY,
+        /**
+         * 连接已断开, 允许重连
+         */
+        DISCONNECTED,
+        /**
+         * 已销毁, 不允许重连
+         */
+        DESTROYED
     }
 
 }
