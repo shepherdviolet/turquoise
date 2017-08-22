@@ -263,11 +263,14 @@ public class BLECharacteristicConnector implements LifeCycle {
 
             if (connectStatus != Status.DESTROYED){
                 connectStatus = Status.CONNECTING;
+                logger.d("ble-connect:connecting");
             }
         } catch (Throwable t){
             if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                 disconnect();
                 callback.onError(this, Error.ERROR_EXCEPTION, t);
+            } else {
+                logger.e("ble-connect:exception", t);
             }
         }
     }
@@ -305,6 +308,8 @@ public class BLECharacteristicConnector implements LifeCycle {
                 if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                     disconnect();
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
+                } else {
+                    logger.e("ble-connect:exception", t);
                 }
             }
         }
@@ -330,6 +335,8 @@ public class BLECharacteristicConnector implements LifeCycle {
                 if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                     disconnect();
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
+                } else {
+                    logger.e("ble-connect:exception", t);
                 }
             }
         }
@@ -353,6 +360,8 @@ public class BLECharacteristicConnector implements LifeCycle {
                 if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                     disconnect();
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
+                } else {
+                    logger.e("ble-connect:exception", t);
                 }
             }
         }
@@ -371,6 +380,8 @@ public class BLECharacteristicConnector implements LifeCycle {
                 if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                     disconnect();
                     callback.onError(BLECharacteristicConnector.this, Error.ERROR_EXCEPTION, t);
+                } else {
+                    logger.e("ble-connect:exception", t);
                 }
             }
         }
@@ -486,6 +497,8 @@ public class BLECharacteristicConnector implements LifeCycle {
             if (connectStatus == Status.CONNECTING || connectStatus == Status.READY){
                 disconnect();
                 callback.onError(this, Error.ERROR_EXCEPTION, t);
+            } else {
+                logger.e("ble-write:exception", t);
             }
         } finally {
             writeLock.unlock();
