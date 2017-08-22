@@ -59,6 +59,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
 
     private String datePattern;
     private Locale locale;
+    private PrintWorker worker;
 
     private AtomicBoolean queueFull = new AtomicBoolean(false);
     private AtomicBoolean disabled = new AtomicBoolean(false);
@@ -93,7 +94,8 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
         }
         this.datePattern = datePattern;
         this.locale = locale;
-        new Thread(new PrintWorker(messageQueue, queueFull, disabled, logDirectory, maxLogSizeMB, sensitiveLogEnabled)).start();
+        this.worker = new PrintWorker(messageQueue, queueFull, disabled, logDirectory, maxLogSizeMB, sensitiveLogEnabled);
+        new Thread(this.worker).start();
     }
 
     @Override
@@ -148,6 +150,18 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
         }
     }
 
+    @Override
+    public void flush() {
+        worker.flushBufferedWriter();
+        Log.i("Turquoise", "[SimpleLoggerPrinter]flush by manual");
+    }
+
+    @Override
+    public void close() {
+        disabled.set(true);
+        Log.i("Turquoise", "[SimpleLoggerPrinter]close");
+    }
+
     @NonNull
     private SimpleDateFormat getDateFormat() {
         SimpleDateFormat dateFormat = dateFormats.get();
@@ -182,7 +196,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
 
         private void init(@NonNull AtomicBoolean disabled, @NonNull File logDirectory, boolean sensitiveLogEnabled) {
             if (sensitiveLogEnabled){
-                Log.i("Turquoise", "[SimpleLoggerPrinter]directory:" + logDirectory);
+                Log.i("Turquoise", "[SimpleLoggerPrinter]init directory:" + logDirectory);
             }
 
             //创建路径
@@ -335,7 +349,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
         @Override
         protected void finalize() throws Throwable {
             super.finalize();
-            Log.i("Turquoise", "[SimpleLoggerPrinter]finalize");
+            Log.i("Turquoise", "[SimpleLoggerPrinter]worker finalize");
             closeBufferedWriter();
         }
 
@@ -363,6 +377,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
     @Override
     protected void finalize() throws Throwable {
         super.finalize();
-        disabled.set(true);
+        close();
+        Log.i("Turquoise", "[SimpleLoggerPrinter]finalize");
     }
 }

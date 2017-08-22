@@ -185,6 +185,9 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
             }
         }
 
+        //将缓存中的日志强制写入磁盘
+        TLogger.flush();
+
         //重启
         if (isCrashRestart){
             restartApp();

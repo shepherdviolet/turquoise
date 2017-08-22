@@ -125,6 +125,14 @@ public abstract class TLogger {
     }
 
     /**
+     * [特殊:当设置了LoggerPrinter时有效]
+     * 强制将缓存中的日志写入磁盘, 通常在Application.
+     */
+    public static void flush(){
+        TLoggerCenter.INSTANCE.flush();
+    }
+
+    /**
      * 错误日志<p/>
      *
      * 用于严重的错误.

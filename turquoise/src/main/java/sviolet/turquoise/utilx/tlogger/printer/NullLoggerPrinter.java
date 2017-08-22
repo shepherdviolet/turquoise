@@ -46,4 +46,14 @@ public class NullLoggerPrinter implements LoggerPrinter {
 
     }
 
+    @Override
+    public void flush() {
+
+    }
+
+    @Override
+    public void close() {
+
+    }
+
 }

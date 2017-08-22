@@ -185,6 +185,10 @@ class TLoggerCenter {
         return printer;
     }
 
+    void flush(){
+        getPrinter().flush();
+    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

@@ -37,4 +37,8 @@ public interface LoggerPrinter {
 
     void d(Object msg);
 
+    void flush();
+
+    void close();
+
 }
