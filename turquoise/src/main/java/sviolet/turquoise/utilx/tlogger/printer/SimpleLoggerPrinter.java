@@ -94,6 +94,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
         }
         this.datePattern = datePattern;
         this.locale = locale;
+        this.messageQueue.offer(getDateFormat().format(new Date()) + " --------------------------SimpleLoggerPrinter--------------------------\n");
         this.worker = new PrintWorker(messageQueue, queueFull, disabled, logDirectory, maxLogSizeMB, sensitiveLogEnabled);
         new Thread(this.worker).start();
     }
@@ -314,7 +315,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                 //新建文件
                 closeBufferedWriter();
                 currentFile = new File(logDirectory.getAbsolutePath() + "/" + DateTimeUtilsForAndroid.getCurrentTimeMillis() + ".tlog");
-                bufferedWriter = new BufferedWriter(new FileWriter(currentFile));
+                bufferedWriter = new BufferedWriter(new FileWriter(currentFile, true));
                 if (sensitiveLogEnabled) {
                     Log.i("Turquoise", "[SimpleLoggerPrinter]writer create");
                 }
@@ -330,7 +331,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                 }
                 previousFile = currentFile;
                 currentFile = new File(logDirectory.getAbsolutePath() + "/" + DateTimeUtilsForAndroid.getCurrentTimeMillis() + ".tlog");
-                bufferedWriter = new BufferedWriter(new FileWriter(currentFile));
+                bufferedWriter = new BufferedWriter(new FileWriter(currentFile, true));
                 if (sensitiveLogEnabled) {
                     Log.i("Turquoise", "[SimpleLoggerPrinter]writer switch");
                 }
@@ -338,7 +339,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
             //判断writer是否存在
             if (bufferedWriter == null){
                 //创建writer
-                bufferedWriter = new BufferedWriter(new FileWriter(currentFile));
+                bufferedWriter = new BufferedWriter(new FileWriter(currentFile, true));
                 if (sensitiveLogEnabled) {
                     Log.i("Turquoise", "[SimpleLoggerPrinter]writer recreate");
                 }
