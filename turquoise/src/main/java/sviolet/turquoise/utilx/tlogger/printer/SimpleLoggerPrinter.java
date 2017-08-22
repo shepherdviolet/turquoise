@@ -235,10 +235,12 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                 }
             }
             //循环
+            int interruptTimes = 0;
+            int timeout = 1;
             while(!disabled.get()){
                 try {
                     //从队列中获取消息
-                    String message = messageQueue.poll(60, TimeUnit.SECONDS);
+                    String message = messageQueue.poll(timeout, TimeUnit.SECONDS);
                     if (message != null){
                         //打印消息
                         printMessage(message);
@@ -247,17 +249,25 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                             queueFull.set(false);
                             printMessage("[SimpleLoggerPrinter]message queue is full, log can not write to disk");
                         }
-                        //复用Writer
-                        continue;
+                        //有新日志后, 超时较短. 当短暂地无日志后, 会及时将日志写入磁盘(flush)
+                        timeout = 1;
+                    } else if (timeout == 1){
+                        //当短暂地无日志后, 会及时将日志写入磁盘(flush)
+                        flushBufferedWriter();
+                        //写入磁盘后, 将超时调整为较大的值, 若仍然无日志, 会关闭Writer
+                        timeout = 60;
+                    } else {
+                        //长时间无日志时, 关闭writer
+                        closeBufferedWriter();
                     }
+                    interruptTimes = 0;
                 } catch (InterruptedException ignored) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ignored2) {
+                    interruptTimes++;
+                    if (interruptTimes == 10){
+                        closeBufferedWriter();
                     }
+                    try { Thread.sleep(100); } catch (InterruptedException ignored2) { }
                 }
-                //无消息时, 关闭writer
-                closeBufferedWriter();
             }
             if (sensitiveLogEnabled) {
                 Log.i("Turquoise", "[SimpleLoggerPrinter]disabled");
@@ -319,7 +329,17 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
         @Override
         protected void finalize() throws Throwable {
             super.finalize();
+            Log.i("Turquoise", "[SimpleLoggerPrinter]finalize");
             closeBufferedWriter();
+        }
+
+        private void flushBufferedWriter() {
+            if (bufferedWriter != null){
+                try { bufferedWriter.flush(); } catch (Throwable ignore){}
+                if (sensitiveLogEnabled) {
+                    Log.i("Turquoise", "[SimpleLoggerPrinter]writer flush");
+                }
+            }
         }
 
         private void closeBufferedWriter() {
