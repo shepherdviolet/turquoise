@@ -126,7 +126,8 @@ public abstract class TLogger {
 
     /**
      * [特殊:当设置了LoggerPrinter时有效]
-     * 强制将缓存中的日志写入磁盘, 通常在Application.
+     * 强制将缓存中的日志写入磁盘, 通常在Thread.UncaughtExceptionHandler.uncaughtException(...)中调用,
+     * 保证异常崩溃时, 日志能够顺利写入磁盘.
      */
     public static void flush(){
         TLoggerCenter.INSTANCE.flush();
