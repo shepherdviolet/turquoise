@@ -221,6 +221,10 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
             }
         }
 
+        private static final int FLUSH_TIMEOUT = 100;
+        private static final int CLOSE_TIMEOUT = 20000;
+        private static final int MAX_TIMEOUT = 300000;
+
         @Override
         public void run() {
             //初始化
@@ -236,11 +240,11 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
             }
             //循环
             int interruptTimes = 0;
-            int timeout = 1;
+            int timeout = FLUSH_TIMEOUT;
             while(!disabled.get()){
                 try {
                     //从队列中获取消息
-                    String message = messageQueue.poll(timeout, TimeUnit.SECONDS);
+                    String message = messageQueue.poll(timeout, TimeUnit.MILLISECONDS);
                     if (message != null){
                         //打印消息
                         printMessage(message);
@@ -249,16 +253,18 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
                             queueFull.set(false);
                             printMessage("[SimpleLoggerPrinter]message queue is full, log can not write to disk");
                         }
-                        //有新日志后, 超时较短. 当短暂地无日志后, 会及时将日志写入磁盘(flush)
-                        timeout = 1;
-                    } else if (timeout == 1){
+                        //有新日志后, 将超时调整为极小的值. 当短暂地无日志后, 会及时将日志写入磁盘(flush)
+                        timeout = FLUSH_TIMEOUT;
+                    } else if (timeout == FLUSH_TIMEOUT){
                         //当短暂地无日志后, 会及时将日志写入磁盘(flush)
                         flushBufferedWriter();
-                        //写入磁盘后, 将超时调整为较大的值, 若仍然无日志, 会关闭Writer
-                        timeout = 60;
+                        //当写入磁盘后, 将超时调整为较大的值, 若仍然无日志, 会关闭Writer
+                        timeout = CLOSE_TIMEOUT;
                     } else {
                         //长时间无日志时, 关闭writer
                         closeBufferedWriter();
+                        //将超时调整为最大的值
+                        timeout = MAX_TIMEOUT;
                     }
                     interruptTimes = 0;
                 } catch (InterruptedException ignored) {
