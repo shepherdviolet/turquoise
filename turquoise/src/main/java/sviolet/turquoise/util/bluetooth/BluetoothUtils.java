@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.LocationUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
 import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
@@ -61,6 +62,17 @@ public class BluetoothUtils {
     }
 
     /**
+     * <p>判断蓝牙是否开启(不包括开启中状态)</p>
+     * @param context context
+     * @return true:开启成功
+     */
+    @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH"})
+    public static boolean isBluetoothEnabled(@NonNull Context context){
+        BluetoothAdapter adapter = getAdapter(context);
+        return adapter != null && adapter.getState() == BluetoothAdapter.STATE_ON;
+    }
+
+    /**
      * <p>获取BluetoothAdapter</p>
      * @param context context
      * @return 返回空表示设备不支持蓝牙
@@ -81,7 +93,8 @@ public class BluetoothUtils {
      * 注意:<br/>
      * 1.需要声明权限:android.permission.BLUETOOTH_ADMIN/android.permission.BLUETOOTH/android.permission.ACCESS_FINE_LOCATION/android.permission.ACCESS_COARSE_LOCATION<br/>
      * 2.需要申请运行时权限:android.Manifest.permission.ACCESS_FINE_LOCATION/android.Manifest.permission.ACCESS_COARSE_LOCATION<br/>
-     * 3.需要开启蓝牙/开启位置信息<br/>
+     * 3.设备需要开启蓝牙<br/>
+     * 4.安卓6.0以上设备需要开启位置信息<br/>
      * </p>
      *
      * <p>示例:</p>
@@ -101,8 +114,11 @@ public class BluetoothUtils {
      *
      *                      //权限申请通过
      *                      //开始扫描BLE蓝牙设备
-     *                      //参数1:当前Activity, 参数2:搜索30秒后停止, 参数3:建议true, 与Activity绑定生命周期(当Activity销毁时, 搜索自动停止)
-     *                      BluetoothUtils.startBLEScan(this, 30000, true, new BluetoothUtils.ScanManager() {
+     *                      //参数1:当前Activity
+     *                      //参数2:搜索30秒后停止
+     *                      //参数3:建议true, 与Activity绑定生命周期(当Activity销毁时, 搜索自动停止)
+     *                      //参数4:建议true, 验证设备状态(是否支持BLE/蓝牙是否开启/6.0以上定位是否开启)
+     *                      BluetoothUtils.startBLEScan(this, 30000, true, true, new BluetoothUtils.ScanManager() {
      *
      *                          protected void onDeviceFound(List<BluetoothDevice> devices) {
      *                              //devices为当前搜索到的所有设备
@@ -135,16 +151,11 @@ public class BluetoothUtils {
      * @param activity        activity
      * @param timeout         超时时间, 单位millis, 设置0不超时
      * @param attachLifeCycle true:绑定生命周期(当activity销毁时, 会自动取消扫描), false:不绑定生命周期, 必须手动调用ScanManager.cancel()停止扫描
+     * @param checkEnabled    true:验证设备是否支持BLE/蓝牙是否开启/6.0以上定位是否开启, false:不验证设备状态(需要自行验证)
      * @param scanManager     回调(并提供取消等管理操作), 回调并非UI线程
      */
     @RequiresPermission(allOf = {"android.permission.BLUETOOTH_ADMIN", "android.permission.BLUETOOTH", "android.permission.ACCESS_FINE_LOCATION", "android.permission.ACCESS_COARSE_LOCATION"})
-    public static void startBLEScan(@NonNull Activity activity, long timeout, boolean attachLifeCycle, @NonNull final ScanManager scanManager) {
-        //判断是否支持BLE
-        if (!isBLESupported(activity)) {
-            logger.d("bluetooth-scan:error_ble_unsupported");
-            scanManager.onError(ScanError.ERROR_BLE_UNSUPPORTED);
-            return;
-        }
+    public static void startBLEScan(@NonNull Activity activity, long timeout, boolean attachLifeCycle, boolean checkEnabled, @NonNull final ScanManager scanManager) {
 
         //获取Adapter
         BluetoothAdapter adapter = getAdapter(activity);
@@ -154,18 +165,32 @@ public class BluetoothUtils {
             return;
         }
 
-        //判断蓝牙是否开启
-        if (adapter.getState() != BluetoothAdapter.STATE_ON) {
-            logger.d("bluetooth-scan:error_bluetooth_disabled");
-            scanManager.onError(ScanError.ERROR_BLUETOOTH_DISABLED);
-            return;
-        }
+        if (checkEnabled) {
 
-        //判断位置信息是否开启
-        if (!LocationUtils.isEnabled(activity)){
-            logger.d("bluetooth-scan:error_location_disabled");
-            scanManager.onError(ScanError.ERROR_LOCATION_DISABLED);
-            return;
+            //判断是否支持BLE
+            if (!isBLESupported(activity)) {
+                logger.d("bluetooth-scan:error_ble_unsupported");
+                scanManager.onError(ScanError.ERROR_BLE_UNSUPPORTED);
+                return;
+            }
+
+            //判断蓝牙是否开启
+            if (adapter.getState() != BluetoothAdapter.STATE_ON) {
+                logger.d("bluetooth-scan:error_bluetooth_disabled");
+                scanManager.onError(ScanError.ERROR_BLUETOOTH_DISABLED);
+                return;
+            }
+
+            //安卓6.0以上扫描蓝牙需要开启位置信息,
+            if (DeviceUtils.getVersionSDK() >= 23) {
+                //判断位置信息是否开启
+                if (!LocationUtils.isEnabled(activity)) {
+                    logger.d("bluetooth-scan:error_location_disabled");
+                    scanManager.onError(ScanError.ERROR_LOCATION_DISABLED);
+                    return;
+                }
+            }
+
         }
 
         //回调
