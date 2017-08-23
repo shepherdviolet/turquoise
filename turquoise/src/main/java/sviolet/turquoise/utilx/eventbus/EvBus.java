@@ -22,6 +22,7 @@ package sviolet.turquoise.utilx.eventbus;
 import android.app.Activity;
 import android.app.Application;
 import android.app.Fragment;
+import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 
@@ -437,43 +438,43 @@ public class EvBus {
 
     /**
      * [API14+][transmit模式] 使用transmit模式前必须安装传输管道, 在Application.onCreate中安装即可.
-     * 注意::使用TApplication时, 无需调用此方法安装传输管道
-     * @param application application
+     * 注意::使用TApplication时, 无需调用此方法安装传输管道(TApplication已实现)
+     * @param context context
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Deprecated
-    public static void installTransmitPipeline(Application application){
+    public static void installTransmitPipeline(Context context){
         if (DeviceUtils.getVersionSDK() < 14){
             throw new IllegalStateException("[EvBus]installTransmitPipeline can only call in API14+");
         }
-        if (application == null){
-            throw new NullPointerException("[EvBus]can not install TransmitPipeline on null Application");
+        if (context == null){
+            throw new NullPointerException("[EvBus]can not install TransmitPipeline on null context");
         }
         if (transmitPipeline != null){
             throw new IllegalStateException("[EvBus]you can only install TransmitPipeline once");
         }
         transmitPipeline = new EvTransmitPipeline();
-        application.registerActivityLifecycleCallbacks(transmitPipeline);
+        ((Application)context.getApplicationContext()).registerActivityLifecycleCallbacks(transmitPipeline);
     }
 
     /**
      * [API14+][transmit模式] 使用transmit模式后必须卸载传输管道, 在Application.onTerminate中卸载即可.
      * 注意::使用TApplication时, 无需调用此方法卸载传输管道
-     * @param application application
+     * @param context context
      */
     @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     @Deprecated
-    public static void uninstallTransmitPipeline(Application application){
+    public static void uninstallTransmitPipeline(Context context){
         if (DeviceUtils.getVersionSDK() < 14){
             throw new IllegalStateException("[EvBus]uninstallTransmitPipeline can only call in API14+");
         }
-        if (application == null){
-            throw new NullPointerException("[EvBus]can not uninstall TransmitPipeline on null Application");
+        if (context == null){
+            throw new NullPointerException("[EvBus]can not uninstall TransmitPipeline on null context");
         }
         if (transmitPipeline == null){
             throw new IllegalStateException("[EvBus]no EvTransmitPipeline to uninstall");
         }
-        application.registerActivityLifecycleCallbacks(transmitPipeline);
+        ((Application)context.getApplicationContext()).unregisterActivityLifecycleCallbacks(transmitPipeline);
         transmitPipeline.onDestroy();
         transmitPipeline = null;
     }
