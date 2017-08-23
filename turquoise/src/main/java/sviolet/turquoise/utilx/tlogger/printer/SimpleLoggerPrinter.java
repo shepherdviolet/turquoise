@@ -237,7 +237,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
         }
 
         private static final int FLUSH_TIMEOUT = 100;
-        private static final int CLOSE_TIMEOUT = 20000;
+        private static final int CLOSE_TIMEOUT = 5000;
         private static final int MAX_TIMEOUT = 300000;
 
         @Override
