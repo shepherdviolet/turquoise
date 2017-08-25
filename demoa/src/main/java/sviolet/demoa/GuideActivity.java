@@ -19,6 +19,7 @@
 
 package sviolet.demoa;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.io.File;
 
 import sviolet.demoa.common.DemoDefault;
 import sviolet.demoa.common.DemoList;
@@ -40,7 +43,11 @@ import sviolet.demoa.slide.SlideActivity;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.app.utils.RuntimePermissionManager;
 import sviolet.turquoise.ui.util.motion.MultiClickFilter;
+import sviolet.turquoise.util.droid.DirectoryUtils;
+import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.utilx.tlogger.printer.SimpleLoggerPrinter;
 
 /**************************************************************
  * Demo配置
@@ -80,10 +87,39 @@ public class GuideActivity extends TActivity {
 
     private MultiClickFilter multiClickFilter = new MultiClickFilter();
 
+    private static boolean loggerPrinterInitialized = false;
+
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
         injectDemoListView();
         injectDefaultDemo();
+        initLoggerPrinter();
+    }
+
+    private void initLoggerPrinter() {
+        if (!loggerPrinterInitialized){
+            loggerPrinterInitialized = true;
+            executePermissionTask(
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    null,
+                    "We need permission to write log to disk",
+                    new RuntimePermissionManager.RequestPermissionTask() {
+                        @Override
+                        public void onResult(String[] permissions, int[] grantResults, boolean allGranted) {
+                            if (allGranted) {
+                                File dataDir = DirectoryUtils.getExternalFilesDir(GuideActivity.this);
+                                if (dataDir == null){
+                                    Toast.makeText(GuideActivity.this, "No external disk in your device", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                File logDir = new File(dataDir.getAbsolutePath() + "/logs");
+                                TLogger.setLoggerPrinter(new SimpleLoggerPrinter(logDir, 5, true));
+                            } else {
+                                Toast.makeText(GuideActivity.this, "No permission to write log to disk", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
     }
 
     @Override
