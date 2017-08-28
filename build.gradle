@@ -16,8 +16,7 @@ buildscript {
         }
 
         //默认值, 判断配置项是否存在, 需要使用rootProject.extensions.findByName('name'). 而确保配置项存在的情况下, 可直接引用
-        upload_mavenVersion = rootProject.extensions.findByName('upload_mavenVersion') != null ? upload_mavenVersion : version_projectVersionName + '-SNAPSHOT'
-        upload_repositoryPath = rootProject.extensions.findByName('upload_repositoryPath') != null  ? upload_repositoryPath : rootProject.rootDir.absolutePath + '/release'
+        //upload_mavenVersion = rootProject.extensions.findByName('upload_mavenVersion') != null ? upload_mavenVersion : version_projectVersionName + '-SNAPSHOT'
     }
 
     //构建脚本依赖仓库

@@ -115,7 +115,7 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')//这个配置会自动在混淆时引入Jar包, 不要在proguard-rules.pro中配置-libraryjars, 否则会报错!
-    compile project(':turquoise') { group 'com.github.shepherdviolet.turquoise'; version upload_mavenVersion }//指定groupId和version, artifactId为project名
+    compile project(':turquoise') { group 'com.github.shepherdviolet.turquoise'; version version_projectVersionName }//指定groupId和version, artifactId为project名
 
     //3rd party ui library
     compile 'com.github.zcweng:switch-button:0.0.3@aar'
