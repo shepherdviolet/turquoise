@@ -43,6 +43,12 @@ public class CommonDecodeHandler extends DecodeHandler {
 
     private static final byte[] GIF_HEADER = ByteUtils.hexToBytes("47494638");
 
+    private static final int GIF_DRAWABLE_REFERENCE_STATE_UNKNOWN = 0;
+    private static final int GIF_DRAWABLE_REFERENCE_STATE_MISSING = -1;
+    private static final int GIF_DRAWABLE_REFERENCE_STATE_EXISTS = 1;
+
+    private int gifDrawableReferenceState = 0;
+
     @Override
     public ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger) {
         Integer customReqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_WIDTH);
@@ -53,7 +59,7 @@ public class CommonDecodeHandler extends DecodeHandler {
     }
 
     protected ImageResource onDecodeInner(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger, int reqWidth, int reqHeight) {
-        if (!isGif(data)){
+        if (!isGif(data, logger)){
             //bitmap
             return onDecodeBitmap(applicationContext, context, taskInfo, data, logger, reqWidth, reqHeight);
         } else {
@@ -107,7 +113,7 @@ public class CommonDecodeHandler extends DecodeHandler {
     }
 
     protected ImageResource onDecodeInner(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger, int reqWidth, int reqHeight){
-        if (!isGif(file)) {
+        if (!isGif(file, logger)) {
             return onDecodeBitmap(applicationContext, context, taskInfo, file, logger, reqWidth, reqHeight);
         } else {
             return onDecodeGif(applicationContext, context, taskInfo, file, logger, reqWidth, reqHeight);
@@ -149,7 +155,21 @@ public class CommonDecodeHandler extends DecodeHandler {
         }
     }
 
-    private boolean isGif(byte[] data){
+    private boolean isGif(byte[] data, TLogger logger){
+        if (gifDrawableReferenceState == GIF_DRAWABLE_REFERENCE_STATE_UNKNOWN) {
+            try {
+                Class.forName("pl.droidsonroids.gif.GifDrawable");
+                gifDrawableReferenceState = GIF_DRAWABLE_REFERENCE_STATE_EXISTS;
+            } catch (ClassNotFoundException e) {
+                gifDrawableReferenceState = GIF_DRAWABLE_REFERENCE_STATE_MISSING;
+                logger.e("[TILoader:EnhancedDecodeHandler]Your project lacks a dependency of pl.droidsonroids.gif:android-gif-drawable:?.?.?, can not display GIF", e);
+            }
+        }
+        if (gifDrawableReferenceState == GIF_DRAWABLE_REFERENCE_STATE_MISSING) {
+            //no class def found : GifDrawable
+            return false;
+        }
+
         if (data == null || data.length < GIF_HEADER.length){
             return false;
         }
@@ -161,7 +181,21 @@ public class CommonDecodeHandler extends DecodeHandler {
         return true;
     }
 
-    private boolean isGif(File file){
+    private boolean isGif(File file, TLogger logger){
+        if (gifDrawableReferenceState == GIF_DRAWABLE_REFERENCE_STATE_UNKNOWN) {
+            try {
+                Class.forName("pl.droidsonroids.gif.GifDrawable");
+                gifDrawableReferenceState = GIF_DRAWABLE_REFERENCE_STATE_EXISTS;
+            } catch (ClassNotFoundException e) {
+                gifDrawableReferenceState = GIF_DRAWABLE_REFERENCE_STATE_MISSING;
+                logger.e("[TILoader:EnhancedDecodeHandler]Your project lacks a dependency of pl.droidsonroids.gif:android-gif-drawable:?.?.?, can not display GIF", e);
+            }
+        }
+        if (gifDrawableReferenceState == GIF_DRAWABLE_REFERENCE_STATE_MISSING) {
+            //no class def found : GifDrawable
+            return false;
+        }
+
         if (file == null || !file.exists()){
             return false;
         }
