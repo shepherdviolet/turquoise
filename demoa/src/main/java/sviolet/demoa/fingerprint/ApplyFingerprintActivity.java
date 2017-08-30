@@ -54,6 +54,8 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 )
 public class ApplyFingerprintActivity extends TActivity {
 
+    private static final String ID = null;//指纹用户ID
+
     @ResourceId(R.id.fingerprint_apply_main_switch_button)
     private EnhancedSwitchButton switchButton;
     @ResourceId(R.id.fingerprint_apply_main_public_key_textview)
@@ -65,7 +67,7 @@ public class ApplyFingerprintActivity extends TActivity {
     protected void onInitViews(Bundle savedInstanceState) {
 
         //检查指纹认证状态
-        FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(this);
+        FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(this, ID);
 
         switch (checkResult){
             case ENABLED:
@@ -76,7 +78,7 @@ public class ApplyFingerprintActivity extends TActivity {
                 switchButton.setChecked(checkResult.isEnabled());
                 //读取公钥
                 if (checkResult.isEnabled()){
-                    String storedPublicKey = FingerprintSuite.getPublicKey(this);
+                    String storedPublicKey = FingerprintSuite.getPublicKey(this, ID);
                     publicKeyTextView.setText(storedPublicKey);
                     logger.i("public key:" + storedPublicKey);
                 }
@@ -86,10 +88,10 @@ public class ApplyFingerprintActivity extends TActivity {
                     @Override
                     public void onCheckedChangedEnhanced(SwitchButton view, boolean isChecked) {
                         if (isChecked){
-                            FingerprintSuite.authenticate(ApplyFingerprintActivity.this, null, false, new FingerprintDialog.Callback() {
+                            FingerprintSuite.authenticate(ApplyFingerprintActivity.this, ID, null, false, new FingerprintDialog.Callback() {
                                 @Override
                                 public void onSucceeded(String message, String sign, String publicKey) {
-                                    FingerprintSuite.enable(ApplyFingerprintActivity.this, new FingerprintSuite.KeyApplyCallback() {
+                                    FingerprintSuite.enable(ApplyFingerprintActivity.this, ID, new FingerprintSuite.KeyApplyCallback() {
                                         @Override
                                         public void onSucceed(String publicKey) {
                                             publicKeyTextView.setText(publicKey);
@@ -118,7 +120,7 @@ public class ApplyFingerprintActivity extends TActivity {
                                 }
                             });
                         }else{
-                            FingerprintSuite.disable(ApplyFingerprintActivity.this);
+                            FingerprintSuite.disable(ApplyFingerprintActivity.this, ID);
                             publicKeyTextView.setText("");
                             //释放事件(必须)
                             releaseLock();

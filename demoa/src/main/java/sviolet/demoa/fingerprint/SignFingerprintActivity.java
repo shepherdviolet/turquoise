@@ -58,6 +58,8 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 )
 public class SignFingerprintActivity extends TActivity {
 
+    private static final String ID = null;//指纹用户ID
+
     @ResourceId(R.id.fingerprint_sign_main_msg_edittext)
     private EditText msgEditText;
     @ResourceId(R.id.fingerprint_sign_main_sign_button)
@@ -70,7 +72,7 @@ public class SignFingerprintActivity extends TActivity {
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
         //指纹识别和AndroidKeyStore必须在API23以上, 指纹识别必须判断硬件是否支持且用户录入了指纹
-        FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(this);
+        FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(this, ID);
         switch (checkResult) {
             case DISABLED:
             case NO_ENROLLED_FINGERPRINTS:
@@ -88,7 +90,7 @@ public class SignFingerprintActivity extends TActivity {
             @TargetApi(Build.VERSION_CODES.M)
             public void onClick(View v) {
                 //弹出窗口进行指纹认证
-                FingerprintSuite.authenticate(SignFingerprintActivity.this, msgEditText.getText().toString(), true, new FingerprintDialog.Callback() {
+                FingerprintSuite.authenticate(SignFingerprintActivity.this, ID, msgEditText.getText().toString(), true, new FingerprintDialog.Callback() {
                     @Override
                     public void onSucceeded(String message, String sign, String publicKey) {
                         signTextView.setText(sign);
@@ -120,7 +122,7 @@ public class SignFingerprintActivity extends TActivity {
     private void verifySign(byte[] msg, byte[] sign){
         logger.i("Mock verify sign: start");
         try {
-            boolean valid = ECDSACipher.verify(msg, sign, ECDSAKeyGenerator.generatePublicKeyByX509(Base64Utils.decode(FingerprintSuite.getPublicKey(this))), ECDSACipher.SIGN_ALGORITHM_ECDSA_SHA256);
+            boolean valid = ECDSACipher.verify(msg, sign, ECDSAKeyGenerator.generatePublicKeyByX509(Base64Utils.decode(FingerprintSuite.getPublicKey(this, ID))), ECDSACipher.SIGN_ALGORITHM_ECDSA_SHA256);
             logger.i("Mock verify sign: result:" + valid);
             if (valid) {
                 Toast.makeText(SignFingerprintActivity.this, "模拟验签通过", Toast.LENGTH_SHORT).show();

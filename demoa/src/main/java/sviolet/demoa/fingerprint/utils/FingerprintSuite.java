@@ -48,16 +48,17 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 public class FingerprintSuite {
 
     private static final String SHARED_PREFERENCES_NAME = "fingerprint";
-    private static final String SHARED_PREFERENCES_KEY_ENABLED = "enabled";
-    private static final String SHARED_PREFERENCES_KEY_PUBLIC_KEY = "key";
+    private static final String SHARED_PREFERENCES_KEY_ENABLED = "enabled-";
+    private static final String SHARED_PREFERENCES_KEY_PUBLIC_KEY = "key-";
 
-    public static final String ANDROID_KEY_STORE_NAME = "fingerprint-private-key";
+    public static final String ANDROID_KEY_STORE_NAME = "fingerprint-private-key-";
 
     /**
      * 判断当前指纹识别状态
      * @param context context
+     * @param id 用户ID
      */
-    public static CheckResult check(Context context){
+    public static CheckResult check(Context context, @Nullable String id){
         //指纹识别和AndroidKeyStore必须在API23以上, 指纹识别必须判断硬件是否支持且用户录入了指纹
         if (!FingerprintUtils.isHardwareDetected(context)){
             return CheckResult.HARDWARE_UNDETECTED;
@@ -66,9 +67,9 @@ public class FingerprintSuite {
             return CheckResult.NO_ENROLLED_FINGERPRINTS;
         }
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-        String enabled = sharedPreferences.getString(SHARED_PREFERENCES_KEY_ENABLED, "");
-        String publicKey = sharedPreferences.getString(SHARED_PREFERENCES_KEY_PUBLIC_KEY, "");
-        return "true".equals(enabled) && !"".equals(publicKey) && isPrivateKeyExists() ? CheckResult.ENABLED : CheckResult.DISABLED;
+        String enabled = sharedPreferences.getString(SHARED_PREFERENCES_KEY_ENABLED + id, "");
+        String publicKey = sharedPreferences.getString(SHARED_PREFERENCES_KEY_PUBLIC_KEY + id, "");
+        return "true".equals(enabled) && !"".equals(publicKey) && isPrivateKeyExists(id) ? CheckResult.ENABLED : CheckResult.DISABLED;
     }
 
     public enum CheckResult {
@@ -122,24 +123,27 @@ public class FingerprintSuite {
     /**
      * 启用指纹认证
      * @param context context
+     * @param id 用户ID
      * @param callback 结果回调
      */
-    public static void enable(Context context, KeyApplyCallback callback){
+    public static void enable(Context context, @Nullable String id, KeyApplyCallback callback){
         if (context == null || callback == null){
             throw new IllegalArgumentException("context or callback is null");
         }
-        new KeyApplyTask(context, callback).execute();
+        new KeyApplyTask(context, id, callback).execute();
     }
 
     private static class KeyApplyTask extends AsyncTask<Integer, Integer, byte[]> {
 
         @SuppressLint("StaticFieldLeak")
         private Context context;
+        private String id;
         private KeyApplyCallback callback;
 
-        private KeyApplyTask(Context context, KeyApplyCallback callback) {
+        private KeyApplyTask(Context context, String id, KeyApplyCallback callback) {
             super();
             this.context = context;
+            this.id = id;
             this.callback = callback;
         }
 
@@ -148,7 +152,7 @@ public class FingerprintSuite {
         protected byte[] doInBackground(Integer... args) {
             try {
                 //在AndroidKeyStore中生成ECDSA公私钥, 私钥存在TEE中不可读取, 公钥可读取
-                return AndroidKeyStoreUtils.genEcdsaSha256SignKey(ANDROID_KEY_STORE_NAME).getEncoded();
+                return AndroidKeyStoreUtils.genEcdsaSha256SignKey(ANDROID_KEY_STORE_NAME + id).getEncoded();
             } catch (AndroidKeyStoreUtils.KeyGenerateException e) {
                 TLogger.get(this).e(e);
                 return null;
@@ -166,8 +170,8 @@ public class FingerprintSuite {
             TLogger.get(this).d("public key:" + publicKey);
             SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
             sharedPreferences.edit()
-                    .putString(SHARED_PREFERENCES_KEY_ENABLED, "true")
-                    .putString(SHARED_PREFERENCES_KEY_PUBLIC_KEY, publicKey)
+                    .putString(SHARED_PREFERENCES_KEY_ENABLED + id, "true")
+                    .putString(SHARED_PREFERENCES_KEY_PUBLIC_KEY + id, publicKey)
                     .apply();
 
             callback.onSucceed(publicKey);
@@ -183,35 +187,40 @@ public class FingerprintSuite {
     /**
      * 禁用指纹认证
      * @param context context
+     * @param id 用户ID
      */
-    public static void disable(Context context){
+    public static void disable(Context context, String id){
         SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         sharedPreferences.edit()
-                .putString(SHARED_PREFERENCES_KEY_ENABLED, "false")
-                .putString(SHARED_PREFERENCES_KEY_PUBLIC_KEY, "")
+                .putString(SHARED_PREFERENCES_KEY_ENABLED + id, "false")
+                .putString(SHARED_PREFERENCES_KEY_PUBLIC_KEY + id, "")
                 .apply();
     }
 
     /**
      * 获取公钥
+     * @param context context
+     * @param id 用户ID
      */
-    public static String getPublicKey(Context context){
-        return context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(SHARED_PREFERENCES_KEY_PUBLIC_KEY, "");
+    public static String getPublicKey(Context context, String id){
+        return context.getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE).getString(SHARED_PREFERENCES_KEY_PUBLIC_KEY + id, "");
     }
 
     /**
      * 获取私钥签名器
+     * @param context context
+     * @param id 用户ID
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
-    static Signature getPrivateKeySignature(Context context) throws AndroidKeyStoreUtils.KeyLoadException, AndroidKeyStoreUtils.KeyNotFoundException {
-        return AndroidKeyStoreUtils.loadEcdsaSha256Signature(FingerprintSuite.ANDROID_KEY_STORE_NAME);
+    static Signature getPrivateKeySignature(Context context, String id) throws AndroidKeyStoreUtils.KeyLoadException, AndroidKeyStoreUtils.KeyNotFoundException {
+        return AndroidKeyStoreUtils.loadEcdsaSha256Signature(FingerprintSuite.ANDROID_KEY_STORE_NAME + id);
     }
 
-    private static boolean isPrivateKeyExists(){
+    private static boolean isPrivateKeyExists(String id){
         try {
             KeyStore keyStore = KeyStore.getInstance("AndroidKeyStore");
             keyStore.load(null);
-            return keyStore.getKey(ANDROID_KEY_STORE_NAME, null) != null;
+            return keyStore.getKey(ANDROID_KEY_STORE_NAME + id, null) != null;
         } catch (Exception e) {
             return false;
         }
@@ -220,19 +229,20 @@ public class FingerprintSuite {
     /**
      * 弹出窗口进行指纹认证(自动防止重复调用)
      * @param context context
+     * @param id 用户ID
      * @param message 待签名数据
      * @param signEnabled true:启用签名, 必须ENABLE状态, false:禁用签名, DISABLE状态也可以调起
      * @param callback 回调
      */
     @UiThread
     @TargetApi(Build.VERSION_CODES.M)
-    public static void authenticate(@NonNull Context context, @Nullable String message, boolean signEnabled, @NonNull FingerprintDialog.Callback callback){
-        FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(context);
+    public static void authenticate(@NonNull Context context, @Nullable String id, @Nullable String message, boolean signEnabled, @NonNull FingerprintDialog.Callback callback){
+        FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(context, id);
         switch (checkResult) {
             case DISABLED:
                 //禁用签名的模式, 指纹验证关闭时也可以调起
                 if (!signEnabled){
-                    new FingerprintDialog(context, null, false, callback).show();
+                    new FingerprintDialog(context, id, null, false, callback).show();
                     break;
                 }
             case NO_ENROLLED_FINGERPRINTS:
@@ -240,7 +250,7 @@ public class FingerprintSuite {
                 callback.onError(checkResult.getMessage(context));
                 return;
             default:
-                new FingerprintDialog(context, message, signEnabled, callback).show();
+                new FingerprintDialog(context, id, message, signEnabled, callback).show();
                 break;
         }
     }
