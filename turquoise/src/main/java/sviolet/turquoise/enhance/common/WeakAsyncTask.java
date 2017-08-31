@@ -37,7 +37,7 @@ import java.lang.ref.WeakReference;
  *  new MyTask(MyActivity.this).execute("param");
  *
  *  //define static class
- *  private static class MyTask extends WeekAsyncTask<MyActivity, String, Integer, byte[]> {
+ *  private static class MyTask extends WeakAsyncTask<MyActivity, String, Integer, byte[]> {
  *      public MyTask(MyActivity myActivity) {
  *          super(myActivity);
  *      }
@@ -60,12 +60,12 @@ import java.lang.ref.WeakReference;
  *
  * Created by S.Violet on 2017/8/3.
  */
-public abstract class WeekAsyncTask<Host, Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
+public abstract class WeakAsyncTask<Host, Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
 
     private WeakReference<Host> host;
     private Throwable throwable;
 
-    public WeekAsyncTask(Host host) {
+    public WeakAsyncTask(Host host) {
         super();
         this.host = new WeakReference<>(host);
     }
