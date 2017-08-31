@@ -1,13 +1,10 @@
 # Turquoise 6.3
-* A comprehensive Android library for private use.
-* https://github.com/shepherdviolet/turquoise
+###### A comprehensive Android library for private use.
+###### https://github.com/shepherdviolet/turquoise
 
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/logo/turquoise.jpg)<br/>
-<br/>
-<br/>
-<br/>
 
-# Import dependencies from maven repository
+* Import dependencies from maven repository
 
 ```gradle
     repositories {
@@ -23,66 +20,89 @@
     }
 ```
 
-* Exclude dependencies
+* How to exclude dependencies
 
 https://github.com/shepherdviolet/turquoise/blob/master/doc/ExcludeDependencies.md <br/>
 
-<br/>
-<br/>
-<br/>
-
-# Import dependencies from aar package
+* Import dependencies from aar package
 
 https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md <br/>
+
 <br/>
 <br/>
 <br/>
 
-# Module turquoise
+# Module `turquoise`
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-thistle-dc143c.svg?style=flat)](https://github.com/shepherdviolet/thistle)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
 
-###### The basic library module, as detailed below:
+### Enhance ┃ sviolet.turquoise.enhance
+###### sviolet.turquoise.enhance.app.TApplication/TActivity/TAppCompatActivity/TFragmentActivity/TFragment...
+> Enhanced component
+###### sviolet.turquoise.enhance.app.utils.InjectUtils
+> Inject layout and views by `@ResourceId` annotation (Has been packaged in `TActivity`/`TAppCompatActivity`/`TFragmentActivity`)
+###### sviolet.turquoise.enhance.app.utils.RuntimePermissionManager
+> Easy to use runtime permission (Has been packaged in `TActivity`/`TAppCompatActivity`/`TFragmentActivity`)
+###### sviolet.turquoise.enhance.common.*
+> `WeakHandler/WeakAsyncTask` Used to avoid memory leaks.
 
-### Utils/Models ┃ sviolet.turquoise.util/utilx/model/modelx
-* LifeCycleUtils: monitor LifeCycle of Activity/Fragment
-* TLogger: extensible log utils
-* EvBus: a simple event bus
-* MotionEventUtils: easy to emulate motion event
-* cache/bitmap/queue/conversion/crypt/sort/system utils/......
+### Kotlin ┃ sviolet.turquoise.kotlin
+###### sviolet.turquoise.kotlin.extension
+> Extension functions for android kotlin
+###### sviolet.turquoise.kotlin.utilx.tfork.TFork
+> Easy to coding async logic in kotlin
 
-### Views ┃ sviolet.turquoise.ui/uix
-* ViewGestureController: easy to build gesture-driven view
-* SlideEngine: help to build sliding view, and provides some ready-made Views
-* TViewHolder and adapters: easy to build Adapter of View
-* VerticalOverDragContainer and indicators: easy to build pull to refresh list view
-* LinearIndicatorTabView: easy to build TabView
-* shadow/image/gif/ripple/rotate/scrape/dialog......
+### Model ┃ sviolet.turquoise.model
+###### sviolet.turquoise.model.cache.*
+> Cache model for android
+###### sviolet.turquoise.model.network.*
+> Cookie jar for okhttp
 
-### Enhanced android component ┃ sviolet.turquoise.enhance
-* InjectUtils: inject Views by annotation way
-* TApplication/TActivity/TFragment: enhanced Component
-* TActivity.executePermissionTask: easy to use Runtime Permission
-* WeakHandler: help Handler to avoid Memory Leak(design specifications)
+### UI ┃ sviolet.turquoise.ui
+###### sviolet.turquoise.ui.util.*
+> Utils for view
+###### sviolet.turquoise.ui.adapter.*
+> `TViewHolder`/`TRecyclerViewHolder` is used to instead of manual coding `ViewHolder` in adapters<br/>
+> Enhanced adapters for `RecyclerView`/`ViewPager`
+###### sviolet.turquoise.ui.dialog.*
+> Dialogs
+###### sviolet.turquoise.ui.drawable.*
+> Drawables (RoundedCornerBitmapDrawable/SafeBitmapDrawable)
+###### sviolet.turquoise.ui.view.*
+> Views (GifView/GradualImageView/RotateImageView/LinearShadowView/RotateTextView/ScrapeTextView...)
+###### sviolet.turquoise.ui.viewgroup.*
+> ViewGroups (animation/pull to refresh/tab view)
 
-### Kotlin support ┃ sviolet.turquoise.kotlin
-* Kotlin extensions: extension function package
-* TLogger: Kotlin style
-* TFork: Experimental feature, a simple async tools
-* TJson: Make json by DSL
+### UI suite ┃ sviolet.turquoise.uix
+###### sviolet.turquoise.uix.slideengine.*
+> Help to build sliding views (ViewGroup), and provides some ready-made Views
+###### sviolet.turquoise.uix.viewgesturectrl.*
+> Help to build views which controlled by gestures
+
+### Util ┃ sviolet.turquoise.util
+###### sviolet.turquoise.util.*
+> Utils of android/bitmap/bluetooth/conversion/crypto/reflect...
+
+### Util suite ┃ sviolet.turquoise.utilx
+###### sviolet.turquoise.utilx.eventbus.EvBus
+> Lightweight event bus to post message between components
+###### sviolet.turquoise.utilx.lifecycle.LifeCycleUtils
+> Used to bind listeners to the lifecycle of components
+###### sviolet.turquoise.utilx.tlogger.TLogger
+> Log utils
 
 <br/>
 <br/>
 <br/>
 
-# Module turquoise-imageloader
+# Module `turquoise-imageloader`
 ![API](https://img.shields.io/badge/API-14%2B-6a5acd.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Module%20Dependency-turquoise-2ed8a8.svg?style=flat)
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
 
-###### TurquoiseImageLoader. it's a new image loader.
+###### Load and display image from network
 
 ### Basic Usage:
 ```gradle
@@ -109,7 +129,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
             .setBitmapConfig(Bitmap.Config.ARGB_8888)
             .build();
 
-        //load image
+        //Load image and display in ImageView
         TILoader.node(this).load(url, params, imageView);
 
 ```
