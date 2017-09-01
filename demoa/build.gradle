@@ -9,13 +9,23 @@ android {
         versionCode Integer.valueOf(version_projectVersionCode)
         versionName version_projectVersionName
 
-        //true:多dex允许,突破类65535的限制
+        //[MultiDex]true:多dex允许,突破类65535的限制
         multiDexEnabled true
 
         ndk {
             //使得APK中只包含指定版本的so库
             abiFilters "armeabi", "armeabi-v7a", "x86"
         }
+    }
+
+    dexOptions {
+        //dex编译的最大内存(2g/4g, 4g会较快)
+        javaMaxHeapSize dex_maxHeapSize
+
+        //[MultiDex]与multiDexEnabled配套使用, 设置单Dex最大方法数, 一般情况下设置40000
+        preDexLibraries = false
+        additionalParameters = ['--multi-dex',
+                                '--set-max-idx-number=40000']
     }
 
     buildTypes {
@@ -56,15 +66,6 @@ android {
             //指定JNI的so库路径
             jniLibs.srcDirs = ['libs']
         }
-    }
-
-    dexOptions {
-        //dex编译的最大内存(2g/4g, 4g会较快)
-        javaMaxHeapSize dex_maxHeapSize
-        preDexLibraries = false
-        //设置单Dex最大方法数, 一般情况下设置40000
-        additionalParameters = ['--multi-dex',
-                                '--set-max-idx-number=40000']
     }
 
     //多渠道打包///////////////////////////////////////////////////////////////////

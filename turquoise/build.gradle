@@ -1,7 +1,7 @@
 
 android {
     defaultConfig {
-        //true:多dex允许,突破类65535的限制
+        //[MultiDex]true:多dex允许,突破类65535的限制
         multiDexEnabled true
     }
 }
