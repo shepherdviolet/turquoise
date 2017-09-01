@@ -60,11 +60,11 @@ android {
 
     dexOptions {
         //dex编译的最大内存(2g/4g, 4g会较快)
-        javaMaxHeapSize "2g"
+        javaMaxHeapSize dex_maxHeapSize
         preDexLibraries = false
-        //设置单Dex最大方法数, 一般情况下设置40000, 此处为了测试, 设置了10000
+        //设置单Dex最大方法数, 一般情况下设置40000
         additionalParameters = ['--multi-dex',
-                                '--set-max-idx-number=10000']
+                                '--set-max-idx-number=40000']
     }
 
     //多渠道打包///////////////////////////////////////////////////////////////////

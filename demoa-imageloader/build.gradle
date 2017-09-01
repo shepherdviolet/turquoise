@@ -60,6 +60,11 @@ android {
             jniLibs.srcDirs = ['libs']
         }
     }
+
+    dexOptions {
+        //dex编译的最大内存(2g/4g, 4g会较快)
+        javaMaxHeapSize dex_maxHeapSize
+    }
 }
 
 dependencies {
