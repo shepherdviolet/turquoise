@@ -77,20 +77,11 @@ public abstract class TLogger {
 
     /**
      * 获得日志打印器实例
-     * @param host 信息发送者标识, 通常为打印日志的当前类
+     * @param host 信息发送者标识, 通常为打印日志的当前类或实例
      * @return 日志打印器(代理)
      */
     public static TLogger get(Object host){
-        return TLoggerCenter.INSTANCE.newLogger(host);
-    }
-
-    /**
-     * 获得日志打印器实例
-     * @param host 信息发送者标识, 通常为打印日志的当前类
-     * @return 日志打印器(代理)
-     */
-    public static TLogger get(Class host){
-        return TLoggerCenter.INSTANCE.newLogger(host);
+        return TLoggerCenter.INSTANCE.fetchLogger(host);
     }
 
     /**

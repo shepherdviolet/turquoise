@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
+import sviolet.thistle.common.compat.CompatLruCache;
 import sviolet.thistle.util.common.ConcurrentUtils;
 import sviolet.turquoise.utilx.tlogger.printer.LoggerPrinter;
 import sviolet.turquoise.utilx.tlogger.printer.NullLoggerPrinter;
@@ -41,8 +42,8 @@ class TLoggerCenter {
     private int globalLevel = TLogger.ALL;
     //规则
     private Map<String, Integer> customRules = new HashMap<>();
-    //日志打印器缓存(用于kotlin)
-    private Map<Class<?>, TLogger> loggerCache = new HashMap<>();
+    //日志打印器缓存
+    private CompatLruCache<Class<?>, TLogger> loggerCache = new CompatLruCache<>(100, false);
 
     //规则更新时间
     private AtomicInteger ruleUpdateTimes = new AtomicInteger(0);
@@ -51,7 +52,6 @@ class TLoggerCenter {
     private TLoggerProxy nullLogger = new TLoggerProxy(null, TLogger.NULL, 0);
 
     //同步锁
-    private ReentrantLock cacheLock = new ReentrantLock();
     private ReentrantLock ruleLock = new ReentrantLock();
 
     //磁盘输出
@@ -132,19 +132,12 @@ class TLoggerCenter {
     /**
      * 创建打印器
      */
-    TLogger newLogger(Class<?> host) {
+    private TLogger newLogger(Class<?> host) {
         return new TLoggerProxy(host, check(host), ruleUpdateTimes.get());
     }
 
     /**
-     * 创建打印器
-     */
-    TLogger newLogger(Object hostObj) {
-        return newLogger(hostObj != null ? hostObj.getClass() : null);
-    }
-
-    /**
-     * 尝试从缓存获取打印器(用于kotlin)
+     * 尝试从缓存获取打印器
      */
     TLogger fetchLogger(Object hostObj) {
 
@@ -159,16 +152,9 @@ class TLoggerCenter {
 
         TLogger logger = loggerCache.get(host);
         if (logger == null) {
-            try {
-                cacheLock.lock();
-                logger = loggerCache.get(host);
-                if (logger == null) {
-                    logger = newLogger(host);
-                    loggerCache.put(host, logger);
-                }
-            } finally {
-                cacheLock.unlock();
-            }
+            //并发的时候多创建几个实例也没关系
+            logger = newLogger(host);
+            loggerCache.put(host, logger);
         }
         return logger;
     }
