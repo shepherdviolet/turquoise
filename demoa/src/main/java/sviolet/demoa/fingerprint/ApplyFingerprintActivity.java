@@ -88,7 +88,7 @@ public class ApplyFingerprintActivity extends TActivity {
                     @Override
                     public void onCheckedChangedEnhanced(SwitchButton view, boolean isChecked) {
                         if (isChecked){
-                            FingerprintSuite.authenticate(ApplyFingerprintActivity.this, ID, null, false, new FingerprintDialog.Callback() {
+                            FingerprintSuite.authenticate(ApplyFingerprintActivity.this, "指纹识别", ID, null, false, new FingerprintDialog.Callback() {
                                 @Override
                                 public void onSucceeded(String message, String sign, String publicKey) {
                                     FingerprintSuite.enable(ApplyFingerprintActivity.this, ID, new FingerprintSuite.KeyApplyCallback() {

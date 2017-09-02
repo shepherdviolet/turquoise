@@ -229,6 +229,7 @@ public class FingerprintSuite {
     /**
      * 弹出窗口进行指纹认证(自动防止重复调用)
      * @param context context
+     * @param title 窗口标题
      * @param id 用户ID
      * @param message 待签名数据
      * @param signEnabled true:启用签名, 必须ENABLE状态, false:禁用签名, DISABLE状态也可以调起
@@ -236,13 +237,13 @@ public class FingerprintSuite {
      */
     @UiThread
     @TargetApi(Build.VERSION_CODES.M)
-    public static void authenticate(@NonNull Context context, @Nullable String id, @Nullable String message, boolean signEnabled, @NonNull FingerprintDialog.Callback callback){
+    public static void authenticate(@NonNull Context context, @Nullable String title, @Nullable String id, @Nullable String message, boolean signEnabled, @NonNull FingerprintDialog.Callback callback){
         FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(context, id);
         switch (checkResult) {
             case DISABLED:
                 //禁用签名的模式, 指纹验证关闭时也可以调起
                 if (!signEnabled){
-                    new FingerprintDialog(context, id, null, false, callback).show();
+                    new FingerprintDialog(context, title, id, null, false, callback).show();
                     break;
                 }
             case NO_ENROLLED_FINGERPRINTS:
@@ -250,7 +251,7 @@ public class FingerprintSuite {
                 callback.onError(checkResult.getMessage(context));
                 return;
             default:
-                new FingerprintDialog(context, id, message, signEnabled, callback).show();
+                new FingerprintDialog(context, title, id, message, signEnabled, callback).show();
                 break;
         }
     }

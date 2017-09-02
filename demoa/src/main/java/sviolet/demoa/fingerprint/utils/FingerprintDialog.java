@@ -28,6 +28,7 @@ import android.os.CancellationSignal;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -58,6 +59,7 @@ public class FingerprintDialog extends Dialog {
     private static boolean fingerprintLock = false;
 
     private boolean signEnabled = true;//true:启用签名
+    private String title;//标题
     private String message;//待签名信息
     private String id;//用户ID
     private Callback callback;//回调
@@ -65,14 +67,19 @@ public class FingerprintDialog extends Dialog {
     private CancellationSignal cancellationSignal = new CancellationSignal();//取消信号
     private boolean cancelled = false;
 
-    @ResourceId(R.id.fingerprint_sign_dialog_textview)
-    private TextView textView;
+    @ResourceId(R.id.fingerprint_sign_dialog_cancel)
+    private View cancelView;
+    @ResourceId(R.id.fingerprint_sign_dialog_title)
+    private TextView titleView;
+    @ResourceId(R.id.fingerprint_sign_dialog_notice)
+    private TextView noticeView;
 
     private Animation shakeAnimation;
 
-    FingerprintDialog(@NonNull Context context, @Nullable String id, @Nullable String message, boolean signEnabled, @NonNull Callback callback) {
+    FingerprintDialog(@NonNull Context context, @Nullable String title, @Nullable String id, @Nullable String message, boolean signEnabled, @NonNull Callback callback) {
         super(context);
         this.signEnabled = signEnabled;
+        this.title = title != null ? title : "Fingerprint";
         this.message = message != null ? message : "";
         this.id = id;
         this.callback = callback;
@@ -102,12 +109,20 @@ public class FingerprintDialog extends Dialog {
         InjectUtils.inject(this);
 
         shakeAnimation = AnimationUtils.loadAnimation(getContext(), R.anim.anim_shake_x);
-        textView.setText("请按压指纹传感器");
+        titleView.setText(title);
+        noticeView.setText("请按压指纹传感器");
         setCancelable(true);//允许取消
         setCanceledOnTouchOutside(false);//允许点外部取消
         setOnCancelListener(new OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
+                //取消
+                FingerprintDialog.this.onCancel();
+            }
+        });
+        cancelView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 //取消
                 FingerprintDialog.this.onCancel();
             }
@@ -204,10 +219,10 @@ public class FingerprintDialog extends Dialog {
 
     private void onFailed(String message){
         //错误提示
-        textView.setTextColor(0xFFFE5C4C);
-        textView.setText(message);
+        noticeView.setTextColor(0xFFFF6969);
+        noticeView.setText(message);
         shakeAnimation.reset();
-        textView.startAnimation(shakeAnimation);
+        noticeView.startAnimation(shakeAnimation);
     }
 
     /**
