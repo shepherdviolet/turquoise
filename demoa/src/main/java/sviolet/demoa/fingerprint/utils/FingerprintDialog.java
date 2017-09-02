@@ -19,8 +19,8 @@
 
 package sviolet.demoa.fingerprint.utils;
 
+import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,6 +45,8 @@ import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
 import sviolet.turquoise.util.crypto.AndroidKeyStoreUtils;
 import sviolet.turquoise.util.droid.FingerprintUtils;
+import sviolet.turquoise.utilx.lifecycle.LifeCycle;
+import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
@@ -52,7 +54,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  */
 @RequiresApi(api = Build.VERSION_CODES.M)
 @ResourceId(R.layout.fingerprint_sign_dialog)
-public class FingerprintDialog extends Dialog {
+public class FingerprintDialog extends Dialog implements LifeCycle {
 
     private TLogger logger = TLogger.get(this);
 
@@ -76,13 +78,16 @@ public class FingerprintDialog extends Dialog {
 
     private Animation shakeAnimation;
 
-    FingerprintDialog(@NonNull Context context, @Nullable String title, @Nullable String id, @Nullable String message, boolean signEnabled, @NonNull Callback callback) {
-        super(context);
+    FingerprintDialog(@NonNull Activity activity, @Nullable String title, @Nullable String id, @Nullable String message, boolean signEnabled, @NonNull Callback callback) {
+        super(activity);
         this.signEnabled = signEnabled;
         this.title = title != null ? title : "Fingerprint";
         this.message = message != null ? message : "";
         this.id = id;
         this.callback = callback;
+
+        //绑定生命周期
+        LifeCycleUtils.attach(activity, this);
     }
 
     @Override
@@ -223,6 +228,37 @@ public class FingerprintDialog extends Dialog {
         noticeView.setText(message);
         shakeAnimation.reset();
         noticeView.startAnimation(shakeAnimation);
+    }
+
+    @Override
+    public void onCreate() {
+
+    }
+
+    @Override
+    public void onStart() {
+
+    }
+
+    @Override
+    public void onResume() {
+
+    }
+
+    @Override
+    public void onPause() {
+
+    }
+
+    @Override
+    public void onStop() {
+
+    }
+
+    @Override
+    public void onDestroy() {
+        //Activity销毁时, 取消指纹认证
+        onCancel();
     }
 
     /**

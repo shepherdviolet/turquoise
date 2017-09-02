@@ -21,6 +21,7 @@ package sviolet.demoa.fingerprint.utils;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -228,7 +229,7 @@ public class FingerprintSuite {
 
     /**
      * 弹出窗口进行指纹认证(自动防止重复调用)
-     * @param context context
+     * @param activity activity
      * @param title 窗口标题
      * @param id 用户ID
      * @param message 待签名数据
@@ -237,21 +238,21 @@ public class FingerprintSuite {
      */
     @UiThread
     @TargetApi(Build.VERSION_CODES.M)
-    public static void authenticate(@NonNull Context context, @Nullable String title, @Nullable String id, @Nullable String message, boolean signEnabled, @NonNull FingerprintDialog.Callback callback){
-        FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(context, id);
+    public static void authenticate(@NonNull Activity activity, @Nullable String title, @Nullable String id, @Nullable String message, boolean signEnabled, @NonNull FingerprintDialog.Callback callback){
+        FingerprintSuite.CheckResult checkResult = FingerprintSuite.check(activity, id);
         switch (checkResult) {
             case DISABLED:
                 //禁用签名的模式, 指纹验证关闭时也可以调起
                 if (!signEnabled){
-                    new FingerprintDialog(context, title, id, null, false, callback).show();
+                    new FingerprintDialog(activity, title, id, null, false, callback).show();
                     break;
                 }
             case NO_ENROLLED_FINGERPRINTS:
             case HARDWARE_UNDETECTED:
-                callback.onError(checkResult.getMessage(context));
+                callback.onError(checkResult.getMessage(activity));
                 return;
             default:
-                new FingerprintDialog(context, title, id, message, signEnabled, callback).show();
+                new FingerprintDialog(activity, title, id, message, signEnabled, callback).show();
                 break;
         }
     }
