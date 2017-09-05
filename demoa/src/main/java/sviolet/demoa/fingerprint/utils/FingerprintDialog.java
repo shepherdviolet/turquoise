@@ -25,6 +25,8 @@ import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CancellationSignal;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
@@ -43,6 +45,7 @@ import sviolet.demoa.R;
 import sviolet.thistle.util.conversion.Base64Utils;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
+import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.util.crypto.AndroidKeyStoreUtils;
 import sviolet.turquoise.util.droid.FingerprintUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
@@ -140,11 +143,13 @@ public class FingerprintDialog extends Dialog implements LifeCycle {
             try {
                 signature = FingerprintSuite.getPrivateKeySignature(getContext(), id);
             } catch (AndroidKeyStoreUtils.KeyLoadException e) {
-                onError("密钥加载错误, 尝试重新开启指纹认证");
+                onError("指纹密钥过期, 请在应用中重新开启指纹认证");
+                FingerprintSuite.disable(getContext(), id);
                 logger.e(e);
                 return;
             } catch (AndroidKeyStoreUtils.KeyNotFoundException e) {
-                onError("密钥加载失败, 尝试重新开启指纹认证");
+                onError("指纹密钥不存在, 请在应用重新开启指纹认证");
+                FingerprintSuite.disable(getContext(), id);
                 logger.e(e);
                 return;
             }
@@ -188,7 +193,8 @@ public class FingerprintDialog extends Dialog implements LifeCycle {
                 sign = Base64Utils.encodeToString(signature.sign());
                 publicKey = FingerprintSuite.getPublicKey(getContext(), id);
             } catch (Exception e) {
-                onError("数据签名失败, 尝试重新开启指纹认证");
+                onError("数据签名错误, 请在应用中重新开启指纹认证");
+                FingerprintSuite.disable(getContext(), id);
                 logger.e(e);
                 return;
             }
@@ -259,6 +265,28 @@ public class FingerprintDialog extends Dialog implements LifeCycle {
     public void onDestroy() {
         //Activity销毁时, 取消指纹认证
         onCancel();
+    }
+
+    @Override
+    public void dismiss() {
+        //保证在onCreate时dismiss也能成功关闭窗口
+        dismissHandler.sendEmptyMessage(0);
+    }
+
+    private void superDismiss(){
+        super.dismiss();
+    }
+
+    private DismissHandler dismissHandler = new DismissHandler(this);
+
+    private static class DismissHandler extends WeakHandler<FingerprintDialog>{
+        private DismissHandler(FingerprintDialog host) {
+            super(Looper.getMainLooper(), host);
+        }
+        @Override
+        protected void handleMessageWithHost(Message msg, FingerprintDialog host) {
+            host.superDismiss();
+        }
     }
 
     /**

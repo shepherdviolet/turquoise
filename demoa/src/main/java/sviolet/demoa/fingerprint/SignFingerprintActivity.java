@@ -105,7 +105,7 @@ public class SignFingerprintActivity extends TActivity {
                     }
                     @Override
                     public void onError(String message) {
-                        Toast.makeText(SignFingerprintActivity.this, "[指纹]" + message, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(SignFingerprintActivity.this, "[指纹]" + message, Toast.LENGTH_LONG).show();
                     }
                     @Override
                     public void onCanceled() {
