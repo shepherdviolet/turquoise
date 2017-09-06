@@ -249,7 +249,7 @@ public class FingerprintSuite {
                 }
             case NO_ENROLLED_FINGERPRINTS:
             case HARDWARE_UNDETECTED:
-                callback.onError(checkResult.getMessage(activity));
+                callback.onError(checkResult.getMessage(activity), true);
                 return;
             default:
                 new FingerprintDialog(activity, title, id, message, signEnabled, callback).show();

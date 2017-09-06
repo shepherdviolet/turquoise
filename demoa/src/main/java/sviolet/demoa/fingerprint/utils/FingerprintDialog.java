@@ -143,12 +143,12 @@ public class FingerprintDialog extends Dialog implements LifeCycle {
             try {
                 signature = FingerprintSuite.getPrivateKeySignature(getContext(), id);
             } catch (AndroidKeyStoreUtils.KeyLoadException e) {
-                onError("指纹密钥过期, 请在应用中重新开启指纹认证");
+                onError("指纹密钥过期, 请在应用中重新开启指纹认证", false);
                 FingerprintSuite.disable(getContext(), id);
                 logger.e(e);
                 return;
             } catch (AndroidKeyStoreUtils.KeyNotFoundException e) {
-                onError("指纹密钥不存在, 请在应用重新开启指纹认证");
+                onError("指纹密钥不存在, 请在应用重新开启指纹认证", false);
                 FingerprintSuite.disable(getContext(), id);
                 logger.e(e);
                 return;
@@ -160,7 +160,7 @@ public class FingerprintDialog extends Dialog implements LifeCycle {
             @Override
             public void onAuthenticationError(int errorCode, CharSequence errString) {
                 //指纹认证失败/取消(多次失败后终止认证, 可能会锁一段时间)
-                onError(errString.toString());
+                onError(errString.toString(), true);
             }
             @Override
             public void onAuthenticationHelp(int helpCode, CharSequence helpString) {
@@ -193,7 +193,7 @@ public class FingerprintDialog extends Dialog implements LifeCycle {
                 sign = Base64Utils.encodeToString(signature.sign());
                 publicKey = FingerprintSuite.getPublicKey(getContext(), id);
             } catch (Exception e) {
-                onError("数据签名错误, 请在应用中重新开启指纹认证");
+                onError("数据签名错误, 请在应用中重新开启指纹认证", false);
                 FingerprintSuite.disable(getContext(), id);
                 logger.e(e);
                 return;
@@ -208,11 +208,11 @@ public class FingerprintDialog extends Dialog implements LifeCycle {
         fingerprintLock = false;
     }
 
-    private void onError(String message){
+    private void onError(String message, boolean retryable){
 
         //回调
         if (!cancelled) {
-            callback.onError(message);
+            callback.onError(message, retryable);
         } else {
             callback.onCanceled();
         }
@@ -305,8 +305,9 @@ public class FingerprintDialog extends Dialog implements LifeCycle {
         /**
          * 认证失败
          * @param message 错误信息
+         * @param retryable true:能够再次发起指纹认证 false:不能再次发起指纹认证,因为密钥错误,程序自动关闭了认证开关,需要客户重新开启
          */
-        void onError(String message);
+        void onError(String message, boolean retryable);
 
         /**
          * 认证取消

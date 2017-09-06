@@ -107,7 +107,7 @@ public class ApplyFingerprintActivity extends TActivity {
                                     });
                                 }
                                 @Override
-                                public void onError(String message) {
+                                public void onError(String message, boolean retryable) {
                                     Toast.makeText(ApplyFingerprintActivity.this, "[指纹]验证失败", Toast.LENGTH_SHORT).show();
                                     //延迟释放事件(必须), 同时设置开关状态为关闭
                                     postEnableFailed();
