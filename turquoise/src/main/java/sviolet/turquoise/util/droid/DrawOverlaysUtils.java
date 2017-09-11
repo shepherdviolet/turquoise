@@ -20,6 +20,7 @@
 package sviolet.turquoise.util.droid;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -58,12 +59,18 @@ public class DrawOverlaysUtils {
     /**
      * 6.0以上系统通过该方法引导用户开启覆盖层权限(打开系统设置界面)
      * @param context context
+     * @return true:找到并打开了设置界面 false:找不到设置界面
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public static void toEnableDrawOverlays(@NonNull Context context){
-        Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + context.getPackageName()));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    public static boolean toEnableDrawOverlays(@NonNull Context context){
+        try {
+            Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + context.getPackageName()));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            return true;
+        } catch (ActivityNotFoundException exception){
+            return false;
+        }
     }
 
     /**

@@ -20,6 +20,7 @@
 package sviolet.turquoise.util.droid;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -100,11 +101,17 @@ public class AccessibilityUtils {
     /**
      * 通过该方法引导用户开启辅助(无障碍)权限
      * @param context context
+     * @return true:找到并打开了设置界面 false:找不到设置界面
      */
-    public static void toEnableAccessibility(@NonNull Context context){
-        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS, Uri.parse("package:" + context.getPackageName()));
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+    public static boolean toEnableAccessibility(@NonNull Context context){
+        try {
+            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS, Uri.parse("package:" + context.getPackageName()));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
+            return true;
+        } catch (ActivityNotFoundException exception){
+            return false;
+        }
     }
 
 }
