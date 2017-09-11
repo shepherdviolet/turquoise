@@ -176,4 +176,18 @@ public class DrawOverlaysUtils {
         }
     }
 
+    /**
+     * 更新叠加层布局
+     * @param context context
+     * @param viewGroup 要更新的View
+     * @param layoutParams 新的布局参数
+     */
+    public static void updateOverlays(@NonNull Context context, @NonNull View viewGroup, @NonNull WindowManager.LayoutParams layoutParams) {
+        final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (windowManager == null){
+            throw new RuntimeException("Can not get WindowManager from context");
+        }
+        windowManager.updateViewLayout(viewGroup, layoutParams);
+    }
+
 }
