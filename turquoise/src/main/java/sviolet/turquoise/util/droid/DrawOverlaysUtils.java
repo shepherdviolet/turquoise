@@ -143,6 +143,9 @@ public class DrawOverlaysUtils {
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
 
         if (dragView != null){
+            /*
+             * 拖拽逻辑还可以优化
+             */
             dragView.setOnTouchListener(new View.OnTouchListener() {
                 private int lastX;
                 private int lastY;
