@@ -56,7 +56,7 @@ public class DrawOverlaysUtils {
     }
 
     /**
-     * 6.0以上系统通过该方法请求用户开启覆盖层权限(打开系统设置界面)
+     * 6.0以上系统通过该方法引导用户开启覆盖层权限(打开系统设置界面)
      * @param context context
      */
     @RequiresApi(api = Build.VERSION_CODES.M)

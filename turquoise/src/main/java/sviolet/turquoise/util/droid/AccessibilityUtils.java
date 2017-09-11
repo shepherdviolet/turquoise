@@ -21,6 +21,9 @@ package sviolet.turquoise.util.droid;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.view.accessibility.AccessibilityManager;
 
@@ -28,7 +31,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * 安卓"辅助功能"工具
+ * 安卓"辅助(无障碍)功能"工具
  *
  * Created by S.Violet on 2017/9/8.
  */
@@ -92,6 +95,16 @@ public class AccessibilityUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * 通过该方法引导用户开启辅助(无障碍)权限
+     * @param context context
+     */
+    public static void toEnableAccessibility(@NonNull Context context){
+        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS, Uri.parse("package:" + context.getPackageName()));
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
     }
 
 }
