@@ -28,10 +28,10 @@ import com.suke.widget.SwitchButton;
 
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
-import sviolet.demoa.fingerprint.utils.EnhancedSwitchButton;
+import sviolet.demoa.common.EnhancedSwitchButton;
 import sviolet.demoa.fingerprint.utils.FingerprintDialog;
 import sviolet.demoa.fingerprint.utils.FingerprintSuite;
-import sviolet.demoa.fingerprint.utils.LockableSwitchButtonListener;
+import sviolet.demoa.common.LockableSwitchButtonListener;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;

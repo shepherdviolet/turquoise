@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.demoa.fingerprint.utils;
+package sviolet.demoa.common;
 
 import android.content.Context;
 import android.util.AttributeSet;
