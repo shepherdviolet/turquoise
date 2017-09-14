@@ -20,10 +20,13 @@
 package sviolet.turquoise.utilx.accessibility;
 
 import android.accessibilityservice.AccessibilityService;
+import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
+import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 
@@ -83,6 +86,7 @@ public final class AccessibilityContainerService extends AccessibilityService {
     private static AccessibilityContainerService INSTANCE;//实例
 
     private ConcurrentHashMap<Class<?>, AccessibilityModule> modules = new ConcurrentHashMap<>();//模块
+    private int eventTypesBackup = 0;//备份配置中的事件类型
 
     @Override
     public void onCreate() {
@@ -151,6 +155,11 @@ public final class AccessibilityContainerService extends AccessibilityService {
         super.onServiceConnected();
         for (AccessibilityModule module : modules.values()) {
             module.onServiceConnected();
+        }
+
+        if (android.os.Build.VERSION.SDK_INT >= 16) {
+            AccessibilityServiceInfo serviceInfo = getServiceInfo();
+            eventTypesBackup = serviceInfo.eventTypes;//备份事件类型
         }
     }
 
@@ -222,6 +231,30 @@ public final class AccessibilityContainerService extends AccessibilityService {
             return null;
         }
         return (T) service.modules.get(moduleType);
+    }
+
+    /**
+     * [API16]全局开启/禁用辅助服务(通过修改监听的事件类型实现)
+     * @param enabled true:启用 false:禁用
+     */
+    @RequiresApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static void setEnabled(boolean enabled){
+        AccessibilityContainerService service = INSTANCE;
+        if (service == null) {
+            return;
+        }
+        if (android.os.Build.VERSION.SDK_INT < 16) {
+            throw new RuntimeException("This method require API 16");
+        }
+        if (enabled){
+            AccessibilityServiceInfo serviceInfo = service.getServiceInfo();
+            serviceInfo.eventTypes = service.eventTypesBackup;
+            service.setServiceInfo(serviceInfo);
+        } else {
+            AccessibilityServiceInfo serviceInfo = service.getServiceInfo();
+            serviceInfo.eventTypes = 0x00000000;
+            service.setServiceInfo(serviceInfo);
+        }
     }
 
 }

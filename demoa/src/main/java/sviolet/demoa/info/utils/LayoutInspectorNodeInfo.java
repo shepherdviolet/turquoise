@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
- * 视图节点信息
+ * LayoutInspector视图节点信息
  *
  * Created by S.Violet on 2017/9/11.
  */

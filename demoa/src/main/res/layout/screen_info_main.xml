@@ -47,7 +47,7 @@
 
     </LinearLayout>
 
-    <sviolet.demoa.info.view.RulerView
+    <sviolet.demoa.info.utils.RulerView
         android:id="@+id/screen_info_main_ruler"
         android:layout_width="30dp"
         android:layout_height="match_parent"

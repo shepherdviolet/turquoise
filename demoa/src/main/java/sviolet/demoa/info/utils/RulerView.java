@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.demoa.info.view;
+package sviolet.demoa.info.utils;
 
 import android.content.Context;
 import android.graphics.Canvas;

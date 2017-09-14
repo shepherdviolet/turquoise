@@ -30,7 +30,7 @@ import android.widget.TextView;
 import sviolet.demoa.MyApplication;
 import sviolet.demoa.R;
 import sviolet.demoa.common.DemoDescription;
-import sviolet.demoa.info.view.RulerView;
+import sviolet.demoa.info.utils.RulerView;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
