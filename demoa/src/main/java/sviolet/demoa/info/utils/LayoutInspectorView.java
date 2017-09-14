@@ -45,7 +45,8 @@ public class LayoutInspectorView extends View {
 
     private Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint textBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint[] rectPaints = new Paint[6];
+    private Paint rectFirstPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private Paint rectLastPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
 
     private int[] viewLocationOnScreen = new int[]{0, 0};
     private Rect canvasRect = new Rect();
@@ -75,9 +76,14 @@ public class LayoutInspectorView extends View {
     }
 
     private void init(){
+
+        //measure//////////////////////////////////
+
 //        screenWidth = MeasureUtils.getScreenWidth(getContext());
         screenHeight = MeasureUtils.getScreenHeight(getContext());
         textLineHeight = MeasureUtils.dp2px(getContext(), TEXT_SIZE);
+
+        //text paint//////////////////////////////////
 
         textPaint.setTextSize(MeasureUtils.dp2px(getContext(), TEXT_SIZE));
         textPaint.setColor(0xffffffff);
@@ -85,35 +91,18 @@ public class LayoutInspectorView extends View {
         textBackgroundPaint.setColor(0xA0000000);
         textBackgroundPaint.setStyle(Paint.Style.FILL);
 
-        rectPaints[0] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        rectPaints[0].setColor(0xff00ff00);
-        rectPaints[0].setStrokeWidth(1);
-        rectPaints[0].setStyle(Paint.Style.STROKE);
+        //rect paint///////////////////////////////////
 
-        rectPaints[1] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        rectPaints[1].setColor(0xdf00ff00);
-        rectPaints[1].setStrokeWidth(2);
-        rectPaints[1].setStyle(Paint.Style.STROKE);
+        //level 0 paint
+        rectFirstPaint.setColor(0x00000000);
+        rectFirstPaint.setStrokeWidth(1);
+        rectFirstPaint.setStyle(Paint.Style.STROKE);
 
-        rectPaints[2] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        rectPaints[2].setColor(0xbf00ff00);
-        rectPaints[2].setStrokeWidth(3);
-        rectPaints[2].setStyle(Paint.Style.STROKE);
+        //last paint
+        rectLastPaint.setColor(0xffff0000);
+        rectLastPaint.setStrokeWidth(1);
+        rectLastPaint.setStyle(Paint.Style.STROKE);
 
-        rectPaints[3] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        rectPaints[3].setColor(0x9f00ff00);
-        rectPaints[3].setStrokeWidth(4);
-        rectPaints[3].setStyle(Paint.Style.STROKE);
-
-        rectPaints[4] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        rectPaints[4].setColor(0x7f00ff00);
-        rectPaints[4].setStrokeWidth(5);
-        rectPaints[4].setStyle(Paint.Style.STROKE);
-
-        rectPaints[5] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        rectPaints[5].setColor(0x5f00ff00);
-        rectPaints[5].setStrokeWidth(6);
-        rectPaints[5].setStyle(Paint.Style.STROKE);
     }
 
     @Override
@@ -133,11 +122,21 @@ public class LayoutInspectorView extends View {
      * 绘制视图节点的位置
      */
     private void drawNode(Canvas canvas, LayoutInspectorNodeInfo nodeInfo, int level){
+
+        Paint paint = null;
+
+        if (level <= 0){
+            paint = rectFirstPaint;
+        } else {
+            paint = rectLastPaint;
+        }
+
         canvas.drawRect(
                 nodeInfo.getRect().left - viewLocationOnScreen[0],
                 nodeInfo.getRect().top - viewLocationOnScreen[1],
                 nodeInfo.getRect().right - viewLocationOnScreen[0],
-                nodeInfo.getRect().bottom - viewLocationOnScreen[1], rectPaints[level % 6]);
+                nodeInfo.getRect().bottom - viewLocationOnScreen[1], paint);
+
         if (nodeInfo.getSubs().size() > 0){
             for (LayoutInspectorNodeInfo sub : nodeInfo.getSubs()){
                 drawNode(canvas, sub, level + 1);
