@@ -34,7 +34,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/fingerprint_apply_main_switch_button"/>
+            android:padding="10dp"
+            android:text="@string/layout_inspector_info_main_switch_button"/>
 
         <sviolet.demoa.common.EnhancedSwitchButton
             android:id="@+id/info_layout_inspector_main_switch_button"
@@ -42,6 +43,35 @@
             android:layout_height="wrap_content"/>
 
     </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#E0E0E0"/>
+
+    <TextView
+        android:id="@+id/info_layout_inspector_main_overlays_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:text="@string/layout_inspector_info_main_overlays_button"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#E0E0E0"/>
+
+    <TextView
+        android:id="@+id/info_layout_inspector_main_accessibility_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+        android:text="@string/layout_inspector_info_main_accessibility_button"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#E0E0E0"/>
 
     <TextView
         android:id="@+id/info_layout_inspector_main_textview"

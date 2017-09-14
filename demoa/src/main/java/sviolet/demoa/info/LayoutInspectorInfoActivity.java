@@ -22,6 +22,7 @@ package sviolet.demoa.info;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,6 +64,10 @@ public class LayoutInspectorInfoActivity extends TActivity {
 
     @ResourceId(R.id.info_layout_inspector_main_switch_button)
     private EnhancedSwitchButton switchButton;
+    @ResourceId(R.id.info_layout_inspector_main_overlays_button)
+    private View overlaysButton;
+    @ResourceId(R.id.info_layout_inspector_main_accessibility_button)
+    private View accessibilityButton;
     @ResourceId(R.id.info_layout_inspector_main_textview)
     private TextView noticeView;
 
@@ -89,17 +94,13 @@ public class LayoutInspectorInfoActivity extends TActivity {
 
                     //引导用户开启叠加层权限
                     if (!DrawOverlaysUtils.canDrawOverlays(LayoutInspectorInfoActivity.this)) {
-                        if (!DrawOverlaysUtils.toEnableDrawOverlays(LayoutInspectorInfoActivity.this)) {
-                            Toast.makeText(LayoutInspectorInfoActivity.this, "请手动找到并允许该应用在其他应用上叠加显示", Toast.LENGTH_LONG).show();
-                        }
+                        toEnableDrawOverlays();
                         return;
                     }
 
                     //引导用户开启辅助功能权限
                     if (!AccessibilityUtils.isServiceEnabled(LayoutInspectorInfoActivity.this, getPackageName())) {
-                        if (!AccessibilityUtils.toEnableAccessibility(LayoutInspectorInfoActivity.this)) {
-                            Toast.makeText(LayoutInspectorInfoActivity.this, "请手动找到并允许该应用的辅助功能", Toast.LENGTH_LONG).show();
-                        }
+                        toEnableAccessibility();
                         return;
                     }
 
@@ -121,6 +122,37 @@ public class LayoutInspectorInfoActivity extends TActivity {
 
             }
         });
+
+        overlaysButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toEnableDrawOverlays();
+            }
+        });
+
+        accessibilityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toEnableAccessibility();
+            }
+        });
+
+    }
+
+    private void toEnableAccessibility() {
+        if (!AccessibilityUtils.toEnableAccessibility(LayoutInspectorInfoActivity.this)) {
+            Toast.makeText(LayoutInspectorInfoActivity.this, "请手动找到并允许该应用的辅助功能", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void toEnableDrawOverlays() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!DrawOverlaysUtils.toEnableDrawOverlays(LayoutInspectorInfoActivity.this)) {
+                Toast.makeText(LayoutInspectorInfoActivity.this, "请手动找到并允许该应用在其他应用上叠加显示", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(LayoutInspectorInfoActivity.this, "安卓6.0以下无需申请叠加显示的权限", Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override
@@ -146,7 +178,11 @@ public class LayoutInspectorInfoActivity extends TActivity {
         }
 
         //显示
-        noticeView.setText("isModuleEnabled:" + isModuleEnabled + "\nisApiMeetingRequirement:" + isApiMeetingRequirement + "\ncanDrawOverlays:" + canDrawOverlays + "\nisServiceEnabled:" + isServiceEnabled);
+        noticeView.setText("\nWARNING: \"Accessibility\" is a high risk permission. You should disable it after used by click \"" + getString(R.string.layout_inspector_info_main_accessibility_button) + "\" button.\n" +
+                "\nIs device api level above " + REQUIRED_API + ": " + isApiMeetingRequirement +
+                "\nIs draw overlays permission enabled: " + canDrawOverlays +
+                "\nIs accessibility permission enabled: " + isServiceEnabled +
+                "\nIs service module enabled: " + isModuleEnabled);
         //设置开关状态
         switchButton.setChecked(isModuleEnabled && isApiMeetingRequirement && canDrawOverlays && isServiceEnabled);
     }
@@ -157,7 +193,7 @@ public class LayoutInspectorInfoActivity extends TActivity {
 
         private static final int REFRESH = 1;
 
-        public MyHandler(LayoutInspectorInfoActivity host) {
+        private MyHandler(LayoutInspectorInfoActivity host) {
             super(host);
         }
 

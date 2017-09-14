@@ -62,6 +62,7 @@ public class DrawOverlaysUtils {
      * @return true:找到并打开了设置界面 false:找不到设置界面
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresPermission(Manifest.permission.SYSTEM_ALERT_WINDOW)
     public static boolean toEnableDrawOverlays(@NonNull Context context){
         try {
             Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + context.getPackageName()));
