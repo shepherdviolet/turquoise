@@ -35,22 +35,29 @@ import java.util.List;
 import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**
- * 布局分析界面
+ * 布局分析控件
  *
  * Created by S.Violet on 2017/9/11.
  */
 public class LayoutInspectorView extends View {
 
+    private static final int TEXT_SIZE = 10;
+
     private Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private Paint textBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-    private Paint[] paints = new Paint[6];
-    private int[] locationOnScreen = new int[]{0, 0};
-    private int textThreshold;
+    private Paint[] rectPaints = new Paint[6];
+
+    private int[] viewLocationOnScreen = new int[]{0, 0};
     private Rect canvasRect = new Rect();
+//    private int screenWidth;
+    private int screenHeight;
+    private int textLineHeight;
 
     private LayoutInspectorNodeInfo nodeInfo;
-    private List<String> infos = new ArrayList<>();
     private boolean drawOnUpperHalf = false;
+
+    private List<String> infoList = new ArrayList<>();
+    private boolean infoListContainsPackageName = false;
 
     public LayoutInspectorView(Context context) {
         super(context);
@@ -68,77 +75,93 @@ public class LayoutInspectorView extends View {
     }
 
     private void init(){
-        textThreshold = MeasureUtils.getScreenHeight(getContext()) / 2;
+//        screenWidth = MeasureUtils.getScreenWidth(getContext());
+        screenHeight = MeasureUtils.getScreenHeight(getContext());
+        textLineHeight = MeasureUtils.dp2px(getContext(), TEXT_SIZE);
 
-        textPaint.setTextSize(MeasureUtils.dp2px(getContext(), 12));
-        textPaint.setColor(0xffff0000);
+        textPaint.setTextSize(MeasureUtils.dp2px(getContext(), TEXT_SIZE));
+        textPaint.setColor(0xffffffff);
 
-        textBackgroundPaint.setColor(0x80000000);
+        textBackgroundPaint.setColor(0xA0000000);
         textBackgroundPaint.setStyle(Paint.Style.FILL);
 
-        paints[0] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paints[0].setColor(0xffff0000);
-        paints[0].setStrokeWidth(1);
-        paints[0].setStyle(Paint.Style.STROKE);
+        rectPaints[0] = new Paint(Paint.ANTI_ALIAS_FLAG);
+        rectPaints[0].setColor(0xff00ff00);
+        rectPaints[0].setStrokeWidth(1);
+        rectPaints[0].setStyle(Paint.Style.STROKE);
 
-        paints[1] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paints[1].setColor(0xff00ff00);
-        paints[1].setStrokeWidth(2);
-        paints[1].setStyle(Paint.Style.STROKE);
+        rectPaints[1] = new Paint(Paint.ANTI_ALIAS_FLAG);
+        rectPaints[1].setColor(0xdf00ff00);
+        rectPaints[1].setStrokeWidth(2);
+        rectPaints[1].setStyle(Paint.Style.STROKE);
 
-        paints[2] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paints[2].setColor(0xff0000ff);
-        paints[2].setStrokeWidth(3);
-        paints[2].setStyle(Paint.Style.STROKE);
+        rectPaints[2] = new Paint(Paint.ANTI_ALIAS_FLAG);
+        rectPaints[2].setColor(0xbf00ff00);
+        rectPaints[2].setStrokeWidth(3);
+        rectPaints[2].setStyle(Paint.Style.STROKE);
 
-        paints[3] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paints[3].setColor(0xffffff00);
-        paints[3].setStrokeWidth(4);
-        paints[3].setStyle(Paint.Style.STROKE);
+        rectPaints[3] = new Paint(Paint.ANTI_ALIAS_FLAG);
+        rectPaints[3].setColor(0x9f00ff00);
+        rectPaints[3].setStrokeWidth(4);
+        rectPaints[3].setStyle(Paint.Style.STROKE);
 
-        paints[4] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paints[4].setColor(0xffff00ff);
-        paints[4].setStrokeWidth(5);
-        paints[4].setStyle(Paint.Style.STROKE);
+        rectPaints[4] = new Paint(Paint.ANTI_ALIAS_FLAG);
+        rectPaints[4].setColor(0x7f00ff00);
+        rectPaints[4].setStrokeWidth(5);
+        rectPaints[4].setStyle(Paint.Style.STROKE);
 
-        paints[5] = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paints[5].setColor(0xff00ffff);
-        paints[5].setStrokeWidth(6);
-        paints[5].setStyle(Paint.Style.STROKE);
+        rectPaints[5] = new Paint(Paint.ANTI_ALIAS_FLAG);
+        rectPaints[5].setColor(0x5f00ff00);
+        rectPaints[5].setStrokeWidth(6);
+        rectPaints[5].setStyle(Paint.Style.STROKE);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        getLocationOnScreen(locationOnScreen);
+        getLocationOnScreen(viewLocationOnScreen);
         canvas.getClipBounds(canvasRect);
-        int textLineHeight = MeasureUtils.dp2px(getContext(), 12);
 
         if (nodeInfo != null) {
             drawNode(canvas, nodeInfo, 0);
-            for (int i = 0 ; i < infos.size() ; i++) {
-                int y;
-                if (drawOnUpperHalf){
-                    y = canvasRect.bottom - i * textLineHeight - textThreshold;
-                } else {
-                    y = canvasRect.bottom - i * textLineHeight;
-                }
-                canvas.drawText(infos.get(i), 0, y, textPaint);
-            }
+            drawInfo(canvas);
         }
 
     }
 
+    /**
+     * 绘制视图节点的位置
+     */
     private void drawNode(Canvas canvas, LayoutInspectorNodeInfo nodeInfo, int level){
         canvas.drawRect(
-                nodeInfo.getRect().left - locationOnScreen[0],
-                nodeInfo.getRect().top - locationOnScreen[1],
-                nodeInfo.getRect().right - locationOnScreen[0],
-                nodeInfo.getRect().bottom - locationOnScreen[1], paints[level % 6]);
+                nodeInfo.getRect().left - viewLocationOnScreen[0],
+                nodeInfo.getRect().top - viewLocationOnScreen[1],
+                nodeInfo.getRect().right - viewLocationOnScreen[0],
+                nodeInfo.getRect().bottom - viewLocationOnScreen[1], rectPaints[level % 6]);
         if (nodeInfo.getSubs().size() > 0){
             for (LayoutInspectorNodeInfo sub : nodeInfo.getSubs()){
                 drawNode(canvas, sub, level + 1);
             }
+        }
+    }
+
+    /**
+     * 绘制触摸位置的控件信息
+     */
+    private void drawInfo(Canvas canvas) {
+        if (infoList.size() <= 0) {
+            return;
+        }
+
+        int y = canvasRect.bottom - infoList.size() * textLineHeight;
+        if (drawOnUpperHalf){
+            y -= canvasRect.bottom / 2;
+        }
+
+        canvas.drawRect(0, y, canvasRect.right, (drawOnUpperHalf ? canvasRect.bottom / 2 : canvasRect.bottom) + textLineHeight, textBackgroundPaint);
+        for (int i = 0; i < infoList.size() ; i++) {
+            y += textLineHeight;
+            canvas.drawText(infoList.get(i), 0, y, textPaint);
         }
     }
 
@@ -152,17 +175,14 @@ public class LayoutInspectorView extends View {
     @Override
     @SuppressLint("ClickableViewAccessibility")
     public boolean onTouchEvent(MotionEvent event) {
-        infos.clear();
+        infoList.clear();
+        drawOnUpperHalf = event.getRawY() > screenHeight * 2 / 3;
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
                 if (nodeInfo != null){
-                    seekNode(nodeInfo, event.getRawX(), event.getRawY(), 0);
-                    if (event.getRawY() > textThreshold){
-                        drawOnUpperHalf = true;
-                    } else {
-                        drawOnUpperHalf = false;
-                    }
+                    infoListContainsPackageName = false;
+                    printNodeInfos(nodeInfo, event.getRawX(), event.getRawY(), 0);
                 }
                 break;
         }
@@ -170,15 +190,30 @@ public class LayoutInspectorView extends View {
         return true;
     }
 
-    private void seekNode(LayoutInspectorNodeInfo nodeInfo, float rawX, float rawY, int level){
+    private void printNodeInfos(LayoutInspectorNodeInfo nodeInfo, float rawX, float rawY, int level){
         if (rawX > nodeInfo.getRect().left && rawX < nodeInfo.getRect().right &&
                 rawY > nodeInfo.getRect().top && rawY < nodeInfo.getRect().bottom){
-            infos.add("      " + nodeInfo.getClazz());
-            infos.add("(" + level + ") " + nodeInfo.getId());
+
+            if (nodeInfo.getId() != null) {
+                int index = nodeInfo.getId().indexOf(":");
+                if (index < 0) {
+                    infoList.add("<" + level + "> " + nodeInfo.getId());
+                } else {
+                    if (!infoListContainsPackageName) {
+                        infoListContainsPackageName = true;
+                        infoList.add(0, "package: " + nodeInfo.getId().substring(0, index));
+                    }
+                    infoList.add("<" + level + "> " + nodeInfo.getId().substring(index + 1));
+                }
+            } else {
+                infoList.add("<" + level + "> undefined");
+            }
+            infoList.add("      " + nodeInfo.getClazz());
+
         }
         if (nodeInfo.getSubs().size() > 0){
             for (LayoutInspectorNodeInfo sub : nodeInfo.getSubs()){
-                seekNode(sub, rawX, rawY, level + 1);
+                printNodeInfos(sub, rawX, rawY, level + 1);
             }
         }
     }
