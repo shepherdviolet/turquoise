@@ -21,12 +21,17 @@ package sviolet.turquoise.util.droid;
 
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.content.ActivityNotFoundException;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.view.accessibility.AccessibilityManager;
+import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.Collections;
 import java.util.List;
@@ -111,6 +116,29 @@ public class AccessibilityUtils {
         } catch (ActivityNotFoundException exception){
             return false;
         }
+    }
+
+    /**
+     * 给视图节点设置文字
+     * @param context context
+     * @param nodeInfo AccessibilityNodeInfo
+     * @param label 剪贴板标签(随便)
+     * @param text 设置的文字
+     */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+    public static boolean setTextToNode(@NonNull Context context, @NonNull AccessibilityNodeInfo nodeInfo, String label, String text){
+        ClipboardManager clipboardManager = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboardManager == null){
+            return false;
+        }
+        ClipData clipData = ClipData.newPlainText(label, text);
+        clipboardManager.setPrimaryClip(clipData);
+        Bundle arguments = new Bundle();
+        arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, 0);
+        arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, text.length());
+        nodeInfo.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, arguments);
+        nodeInfo.performAction(AccessibilityNodeInfo.ACTION_PASTE);
+        return true;
     }
 
 }
