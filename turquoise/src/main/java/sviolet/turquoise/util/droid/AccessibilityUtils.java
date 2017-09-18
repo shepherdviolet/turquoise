@@ -122,16 +122,15 @@ public class AccessibilityUtils {
      * 给视图节点设置文字
      * @param context context
      * @param nodeInfo AccessibilityNodeInfo
-     * @param label 剪贴板标签(随便)
      * @param text 设置的文字
      */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public static boolean setTextToNode(@NonNull Context context, @NonNull AccessibilityNodeInfo nodeInfo, String label, String text){
+    public static boolean setTextToNode(@NonNull Context context, @NonNull AccessibilityNodeInfo nodeInfo, String text){
         ClipboardManager clipboardManager = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
         if (clipboardManager == null){
             return false;
         }
-        ClipData clipData = ClipData.newPlainText(label, text);
+        ClipData clipData = ClipData.newPlainText(null, text);
         clipboardManager.setPrimaryClip(clipData);
         Bundle arguments = new Bundle();
         arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, 0);
