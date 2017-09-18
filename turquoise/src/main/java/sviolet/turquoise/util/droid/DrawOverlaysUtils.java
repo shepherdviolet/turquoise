@@ -35,6 +35,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
@@ -154,22 +155,49 @@ public class DrawOverlaysUtils {
             /*
              * 拖拽逻辑还可以优化
              */
+            final int touchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
             dragView.setOnTouchListener(new View.OnTouchListener() {
+                private int downX;
+                private int downY;
                 private int lastX;
                 private int lastY;
+                private boolean moved;
                 @Override
                 @RequiresPermission(Manifest.permission.SYSTEM_ALERT_WINDOW)
                 public boolean onTouch(View v, MotionEvent event) {
                     int action = event.getActionMasked();
                     if (action == MotionEvent.ACTION_DOWN) {
-                        lastX = (int) event.getRawX();
-                        lastY = (int) event.getRawY();
+
                     } else if (action == MotionEvent.ACTION_MOVE) {
-                        layoutParams.x += (int) event.getRawX() - lastX;
-                        layoutParams.y += (int) event.getRawY() - lastY;
-                        lastX = (int) event.getRawX();
-                        lastY = (int) event.getRawY();
-                        windowManager.updateViewLayout(viewGroup, layoutParams);
+
+                    }
+                    switch (event.getActionMasked()){
+                        case MotionEvent.ACTION_DOWN:
+                            downX = (int) event.getRawX();
+                            downY = (int) event.getRawY();
+                            lastX = (int) event.getRawX();
+                            lastY = (int) event.getRawY();
+                            moved = false;
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+                            if (!moved){
+                                if (Math.abs(event.getRawX() - downX) > touchSlop || Math.abs(event.getRawY() - downY) > touchSlop) {
+                                    moved = true;
+                                }
+                            }
+                            if (moved) {
+                                layoutParams.x += (int) event.getRawX() - lastX;
+                                layoutParams.y += (int) event.getRawY() - lastY;
+                                lastX = (int) event.getRawX();
+                                lastY = (int) event.getRawY();
+                                windowManager.updateViewLayout(viewGroup, layoutParams);
+                            }
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            if (moved) {
+                                return true;
+                            }
+                            break;
                     }
                     return consumeTouchEvent;
                 }
