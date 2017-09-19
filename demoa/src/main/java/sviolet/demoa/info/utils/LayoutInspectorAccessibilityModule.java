@@ -115,6 +115,10 @@ public class LayoutInspectorAccessibilityModule extends AccessibilityModule {
         //解析布局数据
         String logPrefix = "";
         LayoutInspectorNodeInfo nodeInfo = parseNode(accessibilityNodeInfo, logPrefix);
+        //根视图所属应用包名
+        nodeInfo.setPackageName(String.valueOf(accessibilityNodeInfo.getPackageName()));
+        //回收节点
+        accessibilityNodeInfo.recycle();
 
         //刷新显示
         LayoutInspectorView inspectorView = this.inspectorView;
@@ -256,11 +260,11 @@ public class LayoutInspectorAccessibilityModule extends AccessibilityModule {
                 }
                 LayoutInspectorNodeInfo subNodeInfo = parseNode(subAccessibilityNodeInfo, logPrefix);
                 nodeInfo.getSubs().add(subNodeInfo);
+                //回收节点
+                subAccessibilityNodeInfo.recycle();
             }
         }
 
-        //回收节点
-        accessibilityNodeInfo.recycle();
         return nodeInfo;
     }
 

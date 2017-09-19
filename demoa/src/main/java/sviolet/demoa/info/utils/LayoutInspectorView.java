@@ -58,7 +58,6 @@ public class LayoutInspectorView extends View {
     private boolean drawOnUpperHalf = false;
 
     private List<String> infoList = new ArrayList<>();
-    private boolean infoListContainsPackageName = false;
 
     public LayoutInspectorView(Context context) {
         super(context);
@@ -180,7 +179,7 @@ public class LayoutInspectorView extends View {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_MOVE:
                 if (nodeInfo != null){
-                    infoListContainsPackageName = false;
+                    infoList.add("package:" + nodeInfo.getPackageName());
                     printNodeInfos(nodeInfo, event.getRawX(), event.getRawY(), 0);
                 }
                 break;
@@ -198,10 +197,6 @@ public class LayoutInspectorView extends View {
                 if (index < 0) {
                     infoList.add("<" + level + "> " + nodeInfo.getId());
                 } else {
-                    if (!infoListContainsPackageName) {
-                        infoListContainsPackageName = true;
-                        infoList.add(0, "package: " + nodeInfo.getId().substring(0, index));
-                    }
                     infoList.add("<" + level + "> " + nodeInfo.getId().substring(index + 1));
                 }
             } else {

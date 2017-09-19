@@ -56,6 +56,7 @@ public class LayoutInspectorNodeInfo {
 
     private String id;//视图ID
     private String clazz;//视图类型
+    private String packageName;//所属应用包名
     private Rect rect = new Rect();//视图在屏幕中的位置
     private List<LayoutInspectorNodeInfo> subs = new ArrayList<>();//子视图
 
@@ -89,5 +90,13 @@ public class LayoutInspectorNodeInfo {
 
     public void setClazz(String clazz) {
         this.clazz = clazz;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 }
