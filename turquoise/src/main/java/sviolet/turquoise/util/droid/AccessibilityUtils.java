@@ -126,16 +126,24 @@ public class AccessibilityUtils {
      */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public static boolean setTextToNode(@NonNull Context context, @NonNull AccessibilityNodeInfo nodeInfo, String text){
+        //剪贴板服务
         ClipboardManager clipboardManager = (ClipboardManager)context.getSystemService(Context.CLIPBOARD_SERVICE);
         if (clipboardManager == null){
             return false;
         }
+
+        //将原来的字选中(相当于删除)
+        CharSequence charSequence = nodeInfo.getText();
+        if (charSequence != null){
+            Bundle arguments = new Bundle();
+            arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, 0);
+            arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, charSequence.length());
+            nodeInfo.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, arguments);
+        }
+
+        //从剪贴板粘贴(相当于设置字)
         ClipData clipData = ClipData.newPlainText(null, text);
         clipboardManager.setPrimaryClip(clipData);
-        Bundle arguments = new Bundle();
-        arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, 0);
-        arguments.putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, text.length());
-        nodeInfo.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, arguments);
         nodeInfo.performAction(AccessibilityNodeInfo.ACTION_PASTE);
         return true;
     }
