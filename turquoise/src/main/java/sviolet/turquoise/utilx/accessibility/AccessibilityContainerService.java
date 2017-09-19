@@ -131,6 +131,7 @@ public final class AccessibilityContainerService extends AccessibilityService {
                 }
                 //实例化
                 Constructor<?> constructor = clazz.getDeclaredConstructor(AccessibilityContainerService.class);
+                constructor.setAccessible(true);//修复构造函数不是public导致辅助服务崩溃的BUG
                 AccessibilityModule module = (AccessibilityModule) constructor.newInstance(this);
                 //判断API版本
                 if (clazz.isAnnotationPresent(AccessibilityModule.Api.class)) {
