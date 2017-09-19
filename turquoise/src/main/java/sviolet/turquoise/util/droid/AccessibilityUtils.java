@@ -111,6 +111,7 @@ public class AccessibilityUtils {
     public static boolean toEnableAccessibility(@NonNull Context context){
         try {
             Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
             return true;
         } catch (ActivityNotFoundException exception){
