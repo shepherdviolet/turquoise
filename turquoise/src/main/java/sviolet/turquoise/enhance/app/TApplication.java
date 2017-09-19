@@ -48,6 +48,27 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 /**
  * [组件扩展]Application<br>
  *
+ * <pre>{@code
+ *  (AT)ApplicationSettings(
+ *      DEBUG = BuildConfig._DEBUG,//Debug模式, 装载DebugSetting配置
+ *      transmitPipeLine = true//启用EvBus:Transmit模式
+ *  )
+ *  //发布配置
+ *  (AT)ReleaseSettings(
+ *      enableStrictMode = false,
+ *      enableCrashRestart = false,
+ *      enableCrashHandle = true,
+ *      logGlobalLevel = TLogger.ERROR | TLogger.INFO
+ *  )
+ *  //调试配置
+ *  (AT)DebugSettings(
+ *      enableStrictMode = true,
+ *      enableCrashRestart = false,
+ *      enableCrashHandle = true,
+ *      logGlobalLevel = TLogger.ERROR | TLogger.INFO | TLogger.WARNING | TLogger.DEBUG
+ *  )
+ * }</pre>
+ *
  * Created by S.Violet on 2015/6/12.
  */
 public abstract class TApplication extends Application  implements Thread.UncaughtExceptionHandler {
