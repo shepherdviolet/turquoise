@@ -67,6 +67,7 @@ public class CanvasDrawUtils {
 
         int textLength = text.length();//字数
         float lineMaxWidth = right - left;
+        float textHeight = paint.getTextSize();//字体高度
 
         int measureStart = 0;//宽度测量起始位置
         int measureEnd = textWidthBuffer.length - 1;//宽度测量结束位置
@@ -76,7 +77,7 @@ public class CanvasDrawUtils {
 
         int drawStart = 0;//绘制起始位置
         int drawEnd = 0;//绘制结束位置
-        int drawLines = 1;//当前绘制的行数
+        int drawLines = 0;//当前绘制的行数
 
         int widthCount = 0;
 
@@ -88,7 +89,7 @@ public class CanvasDrawUtils {
             for (int i = 0; i <= measureEnd - measureStart ; i++){
                 //超过行最大宽度时绘制
                 if (widthCount + textWidthBuffer[i] > lineMaxWidth){
-                    canvas.drawText(text, drawStart, drawEnd, left + offsetX, top + drawLines * rowSpacing + offsetY, paint);
+                    canvas.drawText(text, drawStart, drawEnd, left + offsetX, top + textHeight + drawLines * rowSpacing + offsetY, paint);
                     drawStart = drawEnd;
                     drawLines++;
                     widthCount = 0;
@@ -110,7 +111,7 @@ public class CanvasDrawUtils {
 
         //绘制剩余字
         if (drawEnd > drawStart) {
-            canvas.drawText(text, drawStart, drawEnd, left + offsetX, top + drawLines * rowSpacing + offsetY, paint);
+            canvas.drawText(text, drawStart, drawEnd, left + offsetX, top + textHeight + drawLines * rowSpacing + offsetY, paint);
         }
 
         //裁剪恢复
