@@ -121,7 +121,18 @@ public class DrawOverlaysUtils {
     @RequiresPermission(Manifest.permission.SYSTEM_ALERT_WINDOW)
     public static void addOverlays(@NonNull Context context, @NonNull View viewGroup, @Nullable final View dragView, boolean consumeTouchEvent, int initX, int initY){
         WindowManager.LayoutParams windowLayoutParams = new WindowManager.LayoutParams();
-        windowLayoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+//        if (DeviceUtils.getVersionSDK() >= 26){
+//            /*
+//             * TargetAp26+禁止使用TYPE_PHONE/TYPE_PRIORITY_PHONE/TYPE_SYSTEM_ALERT/TYPE_SYSTEM_OVERLAY/TYPE_SYSTEM_ERROR类型的窗口.
+//             * 必须使用TYPE_APPLICATION_OVERLAY:
+//             * 1.系统可以移动使用 TYPE_APPLICATION_OVERLAY 窗口类型的窗口或调整其大小，以改善屏幕显示效果。
+//             * 2.通过打开通知栏，用户可以访问设置来阻止应用显示使用 TYPE_APPLICATION_OVERLAY 窗口类型显示的提醒窗口。
+//             * 3.内容变更通知
+//             */
+//            windowLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+//        } else {
+            windowLayoutParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+//        }
         windowLayoutParams.format = PixelFormat.RGBA_8888;
         windowLayoutParams.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         windowLayoutParams.gravity = Gravity.START | Gravity.TOP;
