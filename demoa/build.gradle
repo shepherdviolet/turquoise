@@ -1,11 +1,11 @@
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
+    compileSdkVersion Integer.valueOf(version_compileSdkVersion)
+    buildToolsVersion version_buildToolsVersion
 
     defaultConfig {
         applicationId "sviolet.demoa"
-        minSdkVersion 14
-        targetSdkVersion 25
+        minSdkVersion Integer.valueOf(version_minSdkVersion)
+        targetSdkVersion Integer.valueOf(version_targetSdkVersion)
         versionCode Integer.valueOf(version_projectVersionCode)
         versionName version_projectVersionName
 
