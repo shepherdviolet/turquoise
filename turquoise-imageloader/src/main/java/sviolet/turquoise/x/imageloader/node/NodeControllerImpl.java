@@ -467,27 +467,29 @@ public class NodeControllerImpl extends NodeController {
 //            getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
             return;
         }
-        dispatchThreadPool.execute(new Runnable() {
-            @Override
-            public void run() {
+        dispatchThreadPool.execute(dispatchRunnable);
+    }
+
+    private Runnable dispatchRunnable = new Runnable() {
+        @Override
+        public void run() {
+            //check state
+            if (nodePauseCount.get() > 0 || status.get() < NORMAL){
+//                    getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
+                return;
+            }
+            Task task;
+            while((task = responseQueue.get()) != null){
+                //execute
+                executeTask(task);
                 //check state
                 if (nodePauseCount.get() > 0 || status.get() < NORMAL){
-//                    getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
+//                        getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
                     return;
                 }
-                Task task;
-                while((task = responseQueue.get()) != null){
-                    //execute
-                    executeTask(task);
-                    //check state
-                    if (nodePauseCount.get() > 0 || status.get() < NORMAL){
-//                        getLogger().d("[NodeControllerImpl]paused/destroyed/initial/frozen, skip dispatch");
-                        return;
-                    }
-                }
             }
-        });
-    }
+        }
+    };
 
     @Override
     void postIgnite(){

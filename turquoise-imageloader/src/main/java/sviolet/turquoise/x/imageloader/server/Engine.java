@@ -77,20 +77,22 @@ public abstract class Engine implements ComponentManager.Component, Server {
      * notify engine to work
      */
     public void ignite(){
-        dispatchThreadPool.execute(new Runnable() {
-            @Override
-            public void run() {
-                while (taskCount.get() < getMaxThread()){
-                    Task task = getTask();
-                    if (task != null){
-                        executeTask(task);
-                    }else{
-                        break;
-                    }
+        dispatchThreadPool.execute(dispatchRunnable);
+    }
+
+    private Runnable dispatchRunnable = new Runnable() {
+        @Override
+        public void run() {
+            while (taskCount.get() < getMaxThread()){
+                Task task = getTask();
+                if (task != null){
+                    executeTask(task);
+                }else{
+                    break;
                 }
             }
-        });
-    }
+        }
+    };
 
     /**
      * single Thread to operate the method!

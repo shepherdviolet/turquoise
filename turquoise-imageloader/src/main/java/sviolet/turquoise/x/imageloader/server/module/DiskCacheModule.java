@@ -200,14 +200,16 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
 
     private void tryToClose() {
         //try to pause cache
-        dispatchThreadPool.execute(new Runnable() {
-            @Override
-            public void run() {
-                LockSupport.parkNanos(PAUSE_DELAY_NANOS);
-                closeCache();
-            }
-        });
+        dispatchThreadPool.execute(dispatchRunnable);
     }
+
+    private Runnable dispatchRunnable = new Runnable() {
+        @Override
+        public void run() {
+            LockSupport.parkNanos(PAUSE_DELAY_NANOS);
+            closeCache();
+        }
+    };
 
     public void wipe(File path) throws IOException {
         DiskLruCache.deleteContents(path);
