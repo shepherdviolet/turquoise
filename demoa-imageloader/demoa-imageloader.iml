@@ -65,6 +65,13 @@
       <sourceFolder url="file://$MODULE_DIR$/src/debug/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/rs" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/debug/shaders" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestDebug/res" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestDebug/resources" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestDebug/assets" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestDebug/aidl" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestDebug/java" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestDebug/rs" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/src/androidTestDebug/shaders" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/testDebug/res" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testDebug/resources" type="java-test-resource" />
       <sourceFolder url="file://$MODULE_DIR$/src/testDebug/assets" type="java-test-resource" />
@@ -95,18 +102,26 @@
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/shaders" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/blame" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/build-info" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/check-manifest" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-classes" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-runtime-classes" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/incremental-verifier" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/instant-run-resources" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/instant-run-support" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/javaPrecompile" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/jniLibs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/lint" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/manifests" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/prebuild" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/proguard-rules" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/reload-dex" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/res" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/rs" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/shaders" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/split-apk" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/splits-support" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/tmp" />
@@ -118,28 +133,28 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 26 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="support-core-ui-26.1.0" level="project" />
-    <orderEntry type="library" name="kotlin-stdlib-1.1.4-3" level="project" />
-    <orderEntry type="library" name="support-media-compat-26.1.0" level="project" />
-    <orderEntry type="library" name="support-compat-26.1.0" level="project" />
-    <orderEntry type="library" name="gson-2.8.1" level="project" />
-    <orderEntry type="library" name="kotlin-stdlib-jre7-1.1.4-3" level="project" />
-    <orderEntry type="library" name="recyclerview-v7-26.1.0" level="project" />
-    <orderEntry type="library" name="annotations-13.0" level="project" />
-    <orderEntry type="library" name="support-annotations-26.1.0" level="project" />
-    <orderEntry type="library" name="support-vector-drawable-26.1.0" level="project" />
-    <orderEntry type="library" name="support-v4-26.1.0" level="project" />
-    <orderEntry type="library" name="support-core-utils-26.1.0" level="project" />
-    <orderEntry type="library" name="animated-vector-drawable-26.1.0" level="project" />
-    <orderEntry type="library" name="support-fragment-26.1.0" level="project" />
-    <orderEntry type="library" name="okio-1.11.0" level="project" />
-    <orderEntry type="library" name="runtime-1.0.0" level="project" />
-    <orderEntry type="library" name="thistle-6.5-20170914.073411-1" level="project" />
-    <orderEntry type="library" name="okhttp-3.6.0" level="project" />
-    <orderEntry type="library" name="android-gif-drawable-1.2.7" level="project" />
-    <orderEntry type="library" name="common-1.0.0" level="project" />
-    <orderEntry type="library" name="1_common-1.0.0" level="project" />
-    <orderEntry type="library" name="appcompat-v7-26.1.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-media-compat-26.1.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-compat-26.1.0" level="project" />
+    <orderEntry type="library" name="com.android.support:recyclerview-v7-26.1.0" level="project" />
+    <orderEntry type="library" name="com.squareup.okhttp3:okhttp:3.6.0@jar" level="project" />
+    <orderEntry type="library" name="org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.4-3@jar" level="project" />
+    <orderEntry type="library" name="android.arch.lifecycle:common:1.0.0@jar" level="project" />
+    <orderEntry type="library" name="android.arch.core:common:1.0.0@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:support-fragment-26.1.0" level="project" />
+    <orderEntry type="library" name="org.jetbrains.kotlin:kotlin-stdlib:1.1.4-3@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:support-vector-drawable-26.1.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-v4-26.1.0" level="project" />
+    <orderEntry type="library" name="com.google.code.gson:gson:2.8.1@jar" level="project" />
+    <orderEntry type="library" name="android.arch.lifecycle:runtime-1.0.0" level="project" />
+    <orderEntry type="library" name="com.squareup.okio:okio:1.11.0@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:appcompat-v7-26.1.0" level="project" />
+    <orderEntry type="library" name="org.jetbrains:annotations:13.0@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:animated-vector-drawable-26.1.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-annotations:26.1.0@jar" level="project" />
+    <orderEntry type="library" name="com.android.support:support-core-utils-26.1.0" level="project" />
+    <orderEntry type="library" name="com.android.support:support-core-ui-26.1.0" level="project" />
+    <orderEntry type="library" name="pl.droidsonroids.gif:android-gif-drawable-1.2.7" level="project" />
+    <orderEntry type="library" name="com.github.shepherdviolet:thistle:6.5-SNAPSHOT@jar" level="project" />
     <orderEntry type="module" module-name="turquoise-imageloader" />
     <orderEntry type="module" module-name="turquoise" />
   </component>
