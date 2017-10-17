@@ -14,5 +14,5 @@ dependencies {
     //optional
     compile "com.android.support:appcompat-v7:$version_supportVersion"
     compile "com.android.support:recyclerview-v7:$version_supportVersion"
-    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.squareup.okhttp3:okhttp:3.9.0'
 }
