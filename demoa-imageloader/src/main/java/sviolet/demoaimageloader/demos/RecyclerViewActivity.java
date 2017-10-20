@@ -152,6 +152,7 @@ public class RecyclerViewActivity extends TAppCompatActivity {
             this.nodeRemoter = nodeRemoter;
         }
 
+        @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             switch (newState) {
                 case RecyclerView.SCROLL_STATE_IDLE:
@@ -164,6 +165,7 @@ public class RecyclerViewActivity extends TAppCompatActivity {
             }
         }
 
+        @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
 
         }

@@ -42,6 +42,7 @@ public abstract class LockableSwitchButtonListener implements SwitchButton.OnChe
         this.switchButtonReference = new WeakReference<>(switchButton);
     }
 
+    @Override
     public final void onCheckedChanged(SwitchButton view, boolean isChecked){
         //过滤重复开关
         if (lock){

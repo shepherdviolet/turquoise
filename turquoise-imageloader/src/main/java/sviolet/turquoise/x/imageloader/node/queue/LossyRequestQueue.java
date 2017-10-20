@@ -83,6 +83,7 @@ public class LossyRequestQueue implements RequestQueue {
         return task;
     }
 
+    @Override
     public void clear(){
         try{
             lock.lock();
@@ -95,6 +96,7 @@ public class LossyRequestQueue implements RequestQueue {
         }
     }
 
+    @Override
     public void setSize(int size){
         if (size < 1){
             throw new RuntimeException("[LossyRequestQueue]queue size must >= 1");

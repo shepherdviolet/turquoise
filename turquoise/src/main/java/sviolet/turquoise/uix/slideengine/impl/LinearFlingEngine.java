@@ -143,6 +143,7 @@ public class LinearFlingEngine extends LinearDragEngine {
 		fling(-velocity);
 	}
 
+	@Override
 	public void destroy() {
 		super.destroy();
 

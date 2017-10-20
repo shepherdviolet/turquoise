@@ -72,6 +72,7 @@ public class ViewCommonUtils {
         //View获取自身宽高等参数方法
         //绘制监听器, 也可以使用addOnGlobalLayoutListener监听layout事件
         view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
             public boolean onPreDraw() {
                 //移除监听器, 以免重复调用
                 View view = viewReference.get();

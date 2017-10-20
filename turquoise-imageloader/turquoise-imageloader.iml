@@ -130,24 +130,24 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="com.android.support:support-media-compat-26.1.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-compat-26.1.0" level="project" />
+    <orderEntry type="library" name="org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.51@jar" level="project" />
     <orderEntry type="library" name="com.android.support:recyclerview-v7-26.1.0" level="project" />
-    <orderEntry type="library" name="com.squareup.okhttp3:okhttp:3.6.0@jar" level="project" />
-    <orderEntry type="library" name="org.jetbrains.kotlin:kotlin-stdlib-jre7:1.1.4-3@jar" level="project" />
     <orderEntry type="library" name="android.arch.lifecycle:common:1.0.0@jar" level="project" />
     <orderEntry type="library" name="android.arch.core:common:1.0.0@jar" level="project" />
+    <orderEntry type="library" name="org.jetbrains.kotlin:kotlin-stdlib:1.1.51@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-fragment-26.1.0" level="project" />
-    <orderEntry type="library" name="org.jetbrains.kotlin:kotlin-stdlib:1.1.4-3@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-vector-drawable-26.1.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-v4-26.1.0" level="project" />
     <orderEntry type="library" name="com.google.code.gson:gson:2.8.1@jar" level="project" />
     <orderEntry type="library" name="android.arch.lifecycle:runtime-1.0.0" level="project" />
-    <orderEntry type="library" name="com.squareup.okio:okio:1.11.0@jar" level="project" />
     <orderEntry type="library" name="com.android.support:appcompat-v7-26.1.0" level="project" />
     <orderEntry type="library" name="org.jetbrains:annotations:13.0@jar" level="project" />
     <orderEntry type="library" name="com.android.support:animated-vector-drawable-26.1.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-annotations:26.1.0@jar" level="project" />
     <orderEntry type="library" name="com.android.support:support-core-utils-26.1.0" level="project" />
     <orderEntry type="library" name="com.android.support:support-core-ui-26.1.0" level="project" />
+    <orderEntry type="library" name="com.squareup.okhttp3:okhttp:3.9.0@jar" level="project" />
+    <orderEntry type="library" name="com.squareup.okio:okio:1.13.0@jar" level="project" />
     <orderEntry type="library" name="pl.droidsonroids.gif:android-gif-drawable-1.2.7" level="project" />
     <orderEntry type="library" name="com.github.shepherdviolet:thistle:6.5-SNAPSHOT@jar" level="project" />
     <orderEntry type="module" module-name="turquoise" />

@@ -62,6 +62,7 @@ class TLoggerProxy extends TLogger {
         return CheckUtils.isFlagMatch(this.level, level);
     }
 
+    @Override
     public void e(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, ERROR)) {
@@ -71,6 +72,7 @@ class TLoggerProxy extends TLogger {
         }
     }
 
+    @Override
     public void e(Object msg, Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, ERROR)) {
@@ -80,6 +82,7 @@ class TLoggerProxy extends TLogger {
         }
     }
 
+    @Override
     public void e(Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, ERROR)) {
@@ -89,6 +92,7 @@ class TLoggerProxy extends TLogger {
         }
     }
 
+    @Override
     public void w(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, WARNING)) {
@@ -98,6 +102,7 @@ class TLoggerProxy extends TLogger {
         }
     }
 
+    @Override
     public void w(Object msg, Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, WARNING)) {
@@ -107,6 +112,7 @@ class TLoggerProxy extends TLogger {
         }
     }
 
+    @Override
     public void w(Throwable throwable) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, WARNING)) {
@@ -116,6 +122,7 @@ class TLoggerProxy extends TLogger {
         }
     }
 
+    @Override
     public void i(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, INFO)) {
@@ -125,6 +132,7 @@ class TLoggerProxy extends TLogger {
         }
     }
 
+    @Override
     public void d(Object msg) {
         updateLevel();
         if (CheckUtils.isFlagMatch(level, DEBUG)) {
