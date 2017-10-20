@@ -63,7 +63,7 @@ public class RootUtils {
             return rootState;
         }
         File file = null;
-        final String searchPaths[] = {"/system/bin/", "/system/xbin/",
+        final String[] searchPaths = {"/system/bin/", "/system/xbin/",
                 "/system/sbin/", "/sbin/", "/vendor/bin/"};
         try {
             for (int i = 0; i < searchPaths.length; i++) {

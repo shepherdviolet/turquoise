@@ -27,7 +27,7 @@ public class AsyncImageItem {
 
     private String title;
     private String content;
-    private String url[] = new String[5];
+    private String[] url = new String[5];
 
     public String getTitle() {
         return title;

@@ -113,15 +113,15 @@ public class BlurUtils {
         int wh = w * h;
         int div = radius + radius + 1;
 
-        int r[] = new int[wh];
-        int g[] = new int[wh];
-        int b[] = new int[wh];
+        int[] r = new int[wh];
+        int[] g = new int[wh];
+        int[] b = new int[wh];
         int rSum, gSum, bSum, x, y, i, p, yp, yi, yw;
-        int vMin[] = new int[Math.max(w, h)];
+        int[] vMin = new int[Math.max(w, h)];
 
         int divSum = (div + 1) >> 1;
         divSum *= divSum;
-        int dv[] = new int[256 * divSum];
+        int[] dv = new int[256 * divSum];
         for (i = 0; i < 256 * divSum; i++) {
             dv[i] = (i / divSum);
         }

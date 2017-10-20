@@ -44,7 +44,7 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
 
     private Random random = new Random(System.currentTimeMillis());
     private int index = 0;
-    private int resourceIds[] = {R.mipmap.async_image_1, R.mipmap.async_image_2, R.mipmap.async_image_3, R.mipmap.async_image_4, R.mipmap.async_image_5};
+    private int[] resourceIds = {R.mipmap.async_image_1, R.mipmap.async_image_2, R.mipmap.async_image_3, R.mipmap.async_image_4, R.mipmap.async_image_5};
     private ExecutorService pool = Executors.newCachedThreadPool();
     private float textSize = 100f;
 

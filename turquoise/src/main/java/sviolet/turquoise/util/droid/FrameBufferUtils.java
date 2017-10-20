@@ -57,8 +57,8 @@ public class FrameBufferUtils {
 	 */
 	public static Bitmap getScreenShot(Context context) throws IOException{
 		//WHD[0]宽度 * WHD[1]高度 * WHD[2]深度
-		int WHD[] = getScreenWHD(context);
-		int colors[] = convertToARGB8888(getFrameBuffer(WHD), PixelFormat.RGBA_8888);
+        int[] WHD = getScreenWHD(context);
+        int[] colors = convertToARGB8888(getFrameBuffer(WHD), PixelFormat.RGBA_8888);
 		return Bitmap.createBitmap(colors,WHD[0],WHD[1],Bitmap.Config.ARGB_8888);
 	}
 	

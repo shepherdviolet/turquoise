@@ -403,7 +403,7 @@ public class LinearGestureDriver implements GestureDriver {
 	private void driveEngine() {
 		if (mSlideEngine != null) {
 			//当前加速度
-			int velocity[] = getVelocity();
+            int[] velocity = getVelocity();
 
             switch(mSlideEngine.inputMode()){
                 case SlideEngine.INPUT_MODE_1D:
@@ -448,7 +448,7 @@ public class LinearGestureDriver implements GestureDriver {
 	private void releaseEngine(){
 		if(mSlideEngine != null){
 			//当前加速度
-			int velocity[] = getVelocity();
+            int[] velocity = getVelocity();
 			//释放时给予加速度
 			switch(state){
 			case STATE_MOVING_X:
