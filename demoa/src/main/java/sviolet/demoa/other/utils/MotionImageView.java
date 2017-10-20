@@ -162,8 +162,9 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
     @Override
     protected void onDraw(Canvas canvas) {
 
-        if (output == null)
+        if (output == null) {
             return;
+        }
 
         //控件尺寸变化时, 调整输出的显示矩形尺寸
         if (sizeChanged){
@@ -178,8 +179,9 @@ public class MotionImageView extends View implements ViewCommonUtils.InitListene
         canvas.drawBitmap(bitmap, bitmapRect, canvasRect, null);
 
         //必须:继续刷新
-        if (output.isActive())
+        if (output.isActive()) {
             postInvalidate();
+        }
 
     }
 

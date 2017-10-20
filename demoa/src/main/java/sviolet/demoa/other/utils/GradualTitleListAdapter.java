@@ -127,22 +127,25 @@ public class GradualTitleListAdapter extends BaseAdapter {
         TextView typeView = holder.get(R.id.common_list_item_type);
         TextView infoView = holder.get(R.id.common_list_item_info);
 
-        if (title != null)
+        if (title != null) {
             titleView.setText(title + tail);
-        else
+        } else {
             titleView.setText("");
+        }
 
         titleView.setTextColor(titleColor);
 
-        if (type != null)
+        if (type != null) {
             typeView.setText(type + tail);
-        else
+        } else {
             typeView.setText("");
+        }
 
-        if (info != null)
+        if (info != null) {
             infoView.setText(info + tail);
-        else
+        } else {
             infoView.setText("");
+        }
 
     }
 }

@@ -159,8 +159,9 @@ public class RippleView extends RelativeLayout{
     public void draw(Canvas canvas){
         super.draw(canvas);
         
-		if (animationRunning)
-			drawCircle(canvas);//绘制圆圈
+		if (animationRunning) {
+            drawCircle(canvas);//绘制圆圈
+        }
     }
 
     /**
@@ -187,8 +188,9 @@ public class RippleView extends RelativeLayout{
 			isPressing = false;//松开时加速波纹
 		}
 		
-        if(childView != null &&	!abordTouchEvent)
-        	childView.onTouchEvent(event);//向子控件分发触摸事件
+        if(childView != null &&	!abordTouchEvent) {
+            childView.onTouchEvent(event);//向子控件分发触摸事件
+        }
         return true;
     }
     
@@ -223,8 +225,9 @@ public class RippleView extends RelativeLayout{
      */
 	private void init(final Context context, final AttributeSet attrs){
     	//预览跳过
-        if (isInEditMode())
+        if (isInEditMode()) {
             return;
+        }
         //取配置
         initSetting(context, attrs);
         //初始化画笔
@@ -326,8 +329,9 @@ public class RippleView extends RelativeLayout{
 				performClick();
 			}
 		}
-		if(mOnAnimationFinishListener != null)
-			mOnAnimationFinishListener.onAnimationFinished(action);
+		if(mOnAnimationFinishListener != null) {
+            mOnAnimationFinishListener.onAnimationFinished(action);
+        }
 	}
 
 	/**
@@ -336,13 +340,15 @@ public class RippleView extends RelativeLayout{
 	 */
 	private void triggerRipple(MotionEvent event) {
 		//是否需要触摸放大
-		if (isZoom)
-		    startAnimation(scaleAnimation);
+		if (isZoom) {
+            startAnimation(scaleAnimation);
+        }
 		//波纹最大半径
 		radiusMax = Math.max(width, height);
 		//圆形半径计算
-		if (rippleType == 1)
-		    radiusMax /= 2;
+		if (rippleType == 1) {
+            radiusMax /= 2;
+        }
 		//除去padding值
 		radiusMax -= ripplePadding;
 		//计算波纹中心坐标
@@ -384,17 +390,21 @@ public class RippleView extends RelativeLayout{
 		}
 
 		//画布保存初始状态
-		if (timer <= TIMER_MIN)
-			canvas.save();
+		if (timer <= TIMER_MIN) {
+            canvas.save();
+        }
 
 		//绘制圆形
 		canvas.drawCircle(x, y, calculateRadius(), paint);
 		paint.setAlpha(calculateAlpha());
 
 		if(isPressing && longpressEnabled)//按下时减速
-			timer++;
-		else//松开加速
-			timer+=SLOW_DOWN;
+        {
+            timer++;
+        } else//松开加速
+        {
+            timer += SLOW_DOWN;
+        }
 	}
 
 	/**
@@ -483,8 +493,9 @@ public class RippleView extends RelativeLayout{
 	 * @param mOnAnimationFinishListener
 	 */
 	public void setOnAnimationFinishListener(float callbackPercent, OnAnimationFinishListener mOnAnimationFinishListener){
-		if(callbackPercent > 0f && callbackPercent <= 1)
-			this.callbackPercent = callbackPercent;
+		if(callbackPercent > 0f && callbackPercent <= 1) {
+            this.callbackPercent = callbackPercent;
+        }
 		this.mOnAnimationFinishListener = mOnAnimationFinishListener;
 	}
 	

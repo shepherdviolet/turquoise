@@ -87,8 +87,9 @@ public abstract class TTask {
 	 * @return
 	 */
 	public TQueue getQueue() {
-		if (mQueue != null)
+		if (mQueue != null) {
             return mQueue.get();
+        }
         return null;
 	}
 
@@ -160,8 +161,9 @@ public abstract class TTask {
 	 */
 	protected void addFollower(TTask task){
 		synchronized (TTask.this) {
-			if (follower == null)
-				follower = new ArrayList<TTask>();
+			if (follower == null) {
+                follower = new ArrayList<TTask>();
+            }
 			follower.add(task);
             if (task.getFollower() != null){
                 for (int i = 0 ; i < task.getFollower().size() ; i++){
@@ -210,8 +212,9 @@ public abstract class TTask {
 	 * 若设置cancelable = false, 则此方法无效<br>
 	 */
 	public void cancel(){
-		if(cancelable)
-			onCancel();
+		if(cancelable) {
+            onCancel();
+        }
 	}
 
 	/**
@@ -279,8 +282,9 @@ public abstract class TTask {
 	 * 任务执行过程(主线程)
 	 */
 	protected void process(){
-        if (checkCancelState())
+        if (checkCancelState()) {
             return;
+        }
         onPreExecute(params);
 		resetTimeOutTimer();
 		if (getQueue() == null){
@@ -290,15 +294,17 @@ public abstract class TTask {
             @Override
             public void run() {
                 synchronized (TTask.this) {
-                    if (checkCancelState())
+                    if (checkCancelState()) {
                         return;
+                    }
                     state = STATE_EXECUTING;
                 }
                 result = TTask.this.doInBackground(params);
                 cancelTimeOutTimer();
                 synchronized (TTask.this) {
-                    if (checkCancelState())
+                    if (checkCancelState()) {
                         return;
+                    }
                     state = STATE_POST_EXECUTE;
                 }
                 if (getQueue() != null) {
@@ -375,8 +381,9 @@ public abstract class TTask {
 	 * 重置超时计时器
 	 */
 	private void resetTimeOutTimer() {
-		if(timeOutSet <= 0)
-			return;
+		if(timeOutSet <= 0) {
+            return;
+        }
 		timeOutTimer = new Timer();
 		timeOutTimer.schedule(new TimerTask() {
 			@Override
@@ -392,10 +399,12 @@ public abstract class TTask {
 	 * 取消超时计时器
 	 */
 	private void cancelTimeOutTimer(){
-		if(timeOutSet <= 0)
-			return;
-		if(timeOutTimer != null)
-			timeOutTimer.cancel();
+		if(timeOutSet <= 0) {
+            return;
+        }
+		if(timeOutTimer != null) {
+            timeOutTimer.cancel();
+        }
 	}
 
 	/**
@@ -405,8 +414,9 @@ public abstract class TTask {
 		timeOutTimer = null;//超时计时器
 		params = null;
 		result = null;
-        if (follower != null)
+        if (follower != null) {
             follower.clear();
+        }
 	}
 
 }

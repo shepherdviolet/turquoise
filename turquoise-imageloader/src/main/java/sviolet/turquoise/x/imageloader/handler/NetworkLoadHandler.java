@@ -133,8 +133,9 @@ public interface NetworkLoadHandler {
         }
 
         public Result setLength(int length) {
-            if (this.type != ResultType.NULL)
+            if (this.type != ResultType.NULL) {
                 this.length = length;
+            }
             return this;
         }
 

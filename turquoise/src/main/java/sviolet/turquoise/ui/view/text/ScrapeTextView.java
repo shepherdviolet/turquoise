@@ -183,12 +183,15 @@ public class ScrapeTextView extends TextView {
 		if(oBitmap == null){
 			tempCanvas.drawColor(color);
 		}else{
-			if(oBitmap.isRecycled())
-				initOriginalBitmap();
-			if(mBitmap.isRecycled())
-				initDrawCanvas();
-			if(tempCanvas != null && oBitmap != null)
-				tempCanvas.drawBitmap(oBitmap, 0, 0, null);
+			if(oBitmap.isRecycled()) {
+                initOriginalBitmap();
+            }
+			if(mBitmap.isRecycled()) {
+                initDrawCanvas();
+            }
+			if(tempCanvas != null && oBitmap != null) {
+                tempCanvas.drawBitmap(oBitmap, 0, 0, null);
+            }
 		}
 		
 		setText(text);
@@ -247,13 +250,15 @@ public class ScrapeTextView extends TextView {
 		int windowHeight = windowManager.getDefaultDisplay().getHeight();
 		if(widthProportion > 0 && windowWidth > 0){
 			width = (int) (windowWidth * widthProportion);
-			if(heightProportion < 0 && widthHeightRatio > 0)
-				height = (int) (width / widthHeightRatio);
+			if(heightProportion < 0 && widthHeightRatio > 0) {
+                height = (int) (width / widthHeightRatio);
+            }
 		}
 		if(heightProportion > 0 && windowHeight > 0){
 			height = (int) (windowHeight * heightProportion);
-			if(widthProportion < 0 && widthHeightRatio > 0)
-				width = (int) (height * widthHeightRatio);
+			if(widthProportion < 0 && widthHeightRatio > 0) {
+                width = (int) (height * widthHeightRatio);
+            }
 		}
 		setWidth(width);
 		setHeight(height);
@@ -283,17 +288,20 @@ public class ScrapeTextView extends TextView {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		// 将处理过的bitmap画上去
-		if(mBitmap == null || mBitmap.isRecycled())
-			initDrawCanvas();
-		if(canvas != null && mBitmap != null)
-			canvas.drawBitmap(mBitmap, 0, 0, null);
+		if(mBitmap == null || mBitmap.isRecycled()) {
+            initDrawCanvas();
+        }
+		if(canvas != null && mBitmap != null) {
+            canvas.drawBitmap(mBitmap, 0, 0, null);
+        }
 	}
 
 	@Override
 	@SuppressLint("ClickableViewAccessibility")
 	public boolean onTouchEvent(MotionEvent event) {
-		if(!touchEnabled)
-			return false;
+		if(!touchEnabled) {
+            return false;
+        }
 		
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
@@ -370,8 +378,9 @@ public class ScrapeTextView extends TextView {
 					}
 					// 取出像素点
 					synchronized (mBitmap) {
-						if (pixels == null)
-							pixels = new int[mBitmap.getWidth() * mBitmap.getHeight()];
+						if (pixels == null) {
+                            pixels = new int[mBitmap.getWidth() * mBitmap.getHeight()];
+                        }
 						mBitmap.getPixels(pixels, 0, width, 0, 0, width, height);
 					}
 
@@ -384,9 +393,11 @@ public class ScrapeTextView extends TextView {
 					}
 					scrapePercent = num / (double) sum;
 
-					if(!hasCallback && onPercentListener != null)
-						if(scrapePercent >= callbackPercent)
-							mHandler.sendEmptyMessage(MyHandler.HANDLER_PERCENT_CALLBACK);
+					if(!hasCallback && onPercentListener != null) {
+                        if (scrapePercent >= callbackPercent) {
+                            mHandler.sendEmptyMessage(MyHandler.HANDLER_PERCENT_CALLBACK);
+                        }
+                    }
 					return true;
 				}
 			});
@@ -410,8 +421,9 @@ public class ScrapeTextView extends TextView {
 		protected void handleMessageWithHost(Message msg, ScrapeTextView host) {
 			switch (msg.what) {
 				case HANDLER_PERCENT_CALLBACK:
-					if(host.onPercentListener != null)
-						host.onPercentListener.run();
+					if(host.onPercentListener != null) {
+                        host.onPercentListener.run();
+                    }
 					break;
 				default:
 					break;

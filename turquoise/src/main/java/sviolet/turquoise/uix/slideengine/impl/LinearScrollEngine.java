@@ -90,10 +90,11 @@ public class LinearScrollEngine extends LinearDragEngine {
 	 * @param stageDuration 一个阶段的全程滑动时间(ms) [0, INTEGER_MAX)
 	 */
 	public void setStageDuration(int stageDuration) {
-        if (stageDuration >= 0)
-		    this.stageDuration = stageDuration;
-        else
+        if (stageDuration >= 0) {
+            this.stageDuration = stageDuration;
+        } else {
             this.stageDuration = 0;
+        }
 	}
 
     /**
@@ -180,8 +181,9 @@ public class LinearScrollEngine extends LinearDragEngine {
 		isStaticTouchAreaFeedbackRunning = false;
 		
 		//滚动目标锁定后, 无视手势驱动
-		if(scrollTargetLock)
-			return;
+		if(scrollTargetLock) {
+            return;
+        }
 		
 		super.handleGestureDrive(curr, offset, velocity);
 	}
@@ -197,8 +199,9 @@ public class LinearScrollEngine extends LinearDragEngine {
 		isStaticTouchAreaFeedbackRunning = false;
 		
 		//滚动目标锁定后, 无视手势驱动
-		if(scrollTargetLock)
-			return;
+		if(scrollTargetLock) {
+            return;
+        }
 		
 		super.handleGestureHold();
 		
@@ -218,8 +221,9 @@ public class LinearScrollEngine extends LinearDragEngine {
 		isStaticTouchAreaFeedbackRunning = false;
 		
 		//滚动目标锁定后, 无视手势驱动
-		if(scrollTargetLock)
-			return;
+		if(scrollTargetLock) {
+            return;
+        }
 		
 		//先置为stop状态
 		super.handleGestureRelease(velocity);
@@ -236,12 +240,13 @@ public class LinearScrollEngine extends LinearDragEngine {
 	@Override
 	public void onStaticTouchAreaCaptureEscapedTouch() {
 		//触摸监听
-		if(mOnStaticTouchAreaTouchListener != null)
-			try{
-				mOnStaticTouchAreaTouchListener.onClick((View)getSlideView());
-			}catch (ClassCastException e){
-				mOnStaticTouchAreaTouchListener.onClick(null);
-			}
+		if(mOnStaticTouchAreaTouchListener != null) {
+            try {
+                mOnStaticTouchAreaTouchListener.onClick((View) getSlideView());
+            } catch (ClassCastException e) {
+                mOnStaticTouchAreaTouchListener.onClick(null);
+            }
+        }
 		//允许反馈效果, 且当前运动已停止
 		if(staticTouchAreaFeedbackEnabled && isStop()){
 			//激活永久触摸区域反馈效果状态
@@ -416,11 +421,13 @@ public class LinearScrollEngine extends LinearDragEngine {
 	 */
 	public void scrollToPosition(int targetPosition, int duration, boolean targetLock){
 		//无需滚动
-		if(targetPosition == position)
-			return;
+		if(targetPosition == position) {
+            return;
+        }
 		//目标已被锁定, 取消滚动
-		if(scrollTargetLock)
-			return;
+		if(scrollTargetLock) {
+            return;
+        }
 		
 		//惯性滑动状态
 		state = STATE_SLIDING;
@@ -433,11 +440,13 @@ public class LinearScrollEngine extends LinearDragEngine {
 			position--;
 		}
 		//目标锁定
-		if(targetLock)
-			scrollTargetLock = true;
+		if(targetLock) {
+            scrollTargetLock = true;
+        }
 		//开始滚动
-		if(mScroller != null)
-			mScroller.startScroll(position, 0, targetPosition - position, 0, duration);
+		if(mScroller != null) {
+            mScroller.startScroll(position, 0, targetPosition - position, 0, duration);
+        }
 		//通知刷新UI
 		notifySlideView();
 	}
@@ -450,8 +459,9 @@ public class LinearScrollEngine extends LinearDragEngine {
 	 * 强制停止scroller
 	 */
 	protected void abortScroller(){
-		if(mScroller != null && !mScroller.isFinished())
-			mScroller.abortAnimation();
+		if(mScroller != null && !mScroller.isFinished()) {
+            mScroller.abortAnimation();
+        }
 	}
 	
 	/**
@@ -489,10 +499,11 @@ public class LinearScrollEngine extends LinearDragEngine {
 		int target = ORIGIN_POSITION;
 		if(velocity == 0){
 			//速度为0根据距离判断目标
-			if(Math.abs(position - range) < Math.abs(position - 0))
-				target = range;
-			else
-				target = ORIGIN_POSITION;
+			if(Math.abs(position - range) < Math.abs(position - 0)) {
+                target = range;
+            } else {
+                target = ORIGIN_POSITION;
+            }
 		}else if(velocity < 0){
 			target = range;
 		}else{
@@ -508,10 +519,11 @@ public class LinearScrollEngine extends LinearDragEngine {
 	 * @return
 	 */
 	protected int calculateSlideDuration(int target) {
-		if(range > 0)
-			return (int)((float)stageDuration * (float)Math.abs(position - target) / (float)range);
-		else
-			return stageDuration;
+		if(range > 0) {
+            return (int) ((float) stageDuration * (float) Math.abs(position - target) / (float) range);
+        } else {
+            return stageDuration;
+        }
 	}
 	
 }

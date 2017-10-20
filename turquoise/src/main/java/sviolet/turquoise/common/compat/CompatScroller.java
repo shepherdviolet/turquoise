@@ -125,9 +125,14 @@ public class CompatScroller {
                 x = x_min + (x_max - x_min) / 2.0f;
                 coef = 3.0f * x * (1.0f - x);
                 tx = coef * ((1.0f - x) * P1 + x * P2) + x * x * x;
-                if (Math.abs(tx - alpha) < 1E-5) break;
-                if (tx > alpha) x_max = x;
-                else x_min = x;
+                if (Math.abs(tx - alpha) < 1E-5) {
+                    break;
+                }
+                if (tx > alpha) {
+                    x_max = x;
+                } else {
+                    x_min = x;
+                }
             }
             SPLINE_POSITION[i] = coef * ((1.0f - x) * START_TENSION + x) + x * x * x;
 
@@ -137,9 +142,14 @@ public class CompatScroller {
                 y = y_min + (y_max - y_min) / 2.0f;
                 coef = 3.0f * y * (1.0f - y);
                 dy = coef * ((1.0f - y) * START_TENSION + y) + y * y * y;
-                if (Math.abs(dy - alpha) < 1E-5) break;
-                if (dy > alpha) y_max = y;
-                else y_min = y;
+                if (Math.abs(dy - alpha) < 1E-5) {
+                    break;
+                }
+                if (dy > alpha) {
+                    y_max = y;
+                } else {
+                    y_min = y;
+                }
             }
             SPLINE_TIME[i] = coef * ((1.0f - y) * P1 + y * P2) + y * y * y;
         }

@@ -142,8 +142,9 @@ public class DotPageIndicator extends View implements SlideIndicator {
 	 */
 	@Override
 	protected void onDraw(Canvas canvas) {
-		if(quantity <= 0 || radius <= 0 || interval < 0)
-			return;
+		if(quantity <= 0 || radius <= 0 || interval < 0) {
+            return;
+        }
 		
 		int width = getWidth();
 		int height = getHeight();

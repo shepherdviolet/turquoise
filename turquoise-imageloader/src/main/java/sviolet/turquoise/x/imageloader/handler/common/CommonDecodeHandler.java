@@ -71,8 +71,9 @@ public class CommonDecodeHandler extends DecodeHandler {
     private ImageResource onDecodeBitmap(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger, int reqWidth, int reqHeight) {
         //decoding
         Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), taskInfo.getParams().getDecodeInSampleQuality());
-        if (bitmap == null)
+        if (bitmap == null) {
             throw new RuntimeException("[TILoader:CommonDecodeHandler]decoding failed, illegal image data");
+        }
         //scale
         switch (taskInfo.getParams().getDecodeScaleStrategy()) {
             case SCALE_FIT_WIDTH_HEIGHT:
@@ -87,8 +88,9 @@ public class CommonDecodeHandler extends DecodeHandler {
             default:
                 break;
         }
-        if (bitmap == null)
+        if (bitmap == null) {
             throw new RuntimeException("[TILoader:CommonDecodeHandler]scale: scale failed");
+        }
         if (logger.checkEnable(TLogger.DEBUG)){
             logger.d("[CommonDecodeHandler]decoded size:" + bitmap.getWidth() + "*" + bitmap.getHeight() + " task:" + taskInfo);
         }
@@ -123,8 +125,9 @@ public class CommonDecodeHandler extends DecodeHandler {
     private ImageResource onDecodeBitmap(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger, int reqWidth, int reqHeight){
         //decoding
         Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), BitmapUtils.InSampleQuality.MEDIUM);
-        if (bitmap == null)
+        if (bitmap == null) {
             throw new RuntimeException("[TILoader:CommonDecodeHandler]decoding failed, illegal image data");
+        }
         //scale
         switch (taskInfo.getParams().getDecodeScaleStrategy()){
             case SCALE_FIT_WIDTH_HEIGHT:
@@ -139,8 +142,9 @@ public class CommonDecodeHandler extends DecodeHandler {
             default:
                 break;
         }
-        if (bitmap == null)
+        if (bitmap == null) {
             throw new RuntimeException("[TILoader:CommonDecodeHandler]scale: scale failed");
+        }
         if (logger.checkEnable(TLogger.DEBUG)) {
             logger.d("[CommonDecodeHandler]decoded size:" + bitmap.getWidth() + "*" + bitmap.getHeight() + " task:" + taskInfo);
         }

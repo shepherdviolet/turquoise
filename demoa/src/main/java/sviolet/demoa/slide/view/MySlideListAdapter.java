@@ -138,22 +138,25 @@ public class MySlideListAdapter extends BaseAdapter implements SlideListAdapter 
          */
 
         String tail = Integer.toString(position);
-        if (title != null)
+        if (title != null) {
             titleView.setText(title + tail);
-        else
+        } else {
             titleView.setText("");
+        }
 
         titleView.setTextColor(titleColor);
 
-        if (type != null)
+        if (type != null) {
             typeView.setText(type + tail);
-        else
+        } else {
             typeView.setText("");
+        }
 
-        if (info != null)
+        if (info != null) {
             infoView.setText(info + tail);
-        else
+        } else {
             infoView.setText("");
+        }
 
         /*
          * 返回
@@ -169,8 +172,9 @@ public class MySlideListAdapter extends BaseAdapter implements SlideListAdapter 
     @Override
     public boolean hasSliddenItem() {
         for (LinearLayoutDrawer linearLayoutDrawer : drawerList) {
-            if (linearLayoutDrawer.getCurrentStage() != linearLayoutDrawer.getPullOutStage())
+            if (linearLayoutDrawer.getCurrentStage() != linearLayoutDrawer.getPullOutStage()) {
                 return true;
+            }
         }
         return false;
     }

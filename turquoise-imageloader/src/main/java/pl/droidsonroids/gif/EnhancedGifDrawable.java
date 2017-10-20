@@ -96,15 +96,17 @@ public class EnhancedGifDrawable extends GifDrawable {
 
     @Override
     public int getIntrinsicWidth() {
-        if (fixedWidth > Integer.MIN_VALUE)
+        if (fixedWidth > Integer.MIN_VALUE) {
             return fixedWidth;
+        }
         return super.getIntrinsicWidth();
     }
 
     @Override
     public int getIntrinsicHeight() {
-        if (fixedHeight > Integer.MIN_VALUE)
+        if (fixedHeight > Integer.MIN_VALUE) {
             return fixedHeight;
+        }
         return super.getIntrinsicHeight();
     }
 

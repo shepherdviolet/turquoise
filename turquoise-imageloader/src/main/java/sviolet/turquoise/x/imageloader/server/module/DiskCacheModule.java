@@ -182,16 +182,18 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
     protected void release(){
         try {
             DiskLruCache diskLruCacheToFlush = this.diskLruCache;
-            if (diskLruCacheToFlush != null)
+            if (diskLruCacheToFlush != null) {
                 diskLruCacheToFlush.flush();
+            }
         } catch (IOException e) {
             manager.getServerSettings().getExceptionHandler().onDiskCacheCommonException(manager.getApplicationContextImage(), manager.getContextImage(), e, manager.getLogger());
         }
         try{
             statusLock.lock();
             holdCounter--;
-            if (holdCounter < 0)
+            if (holdCounter < 0) {
                 holdCounter = 0;
+            }
         }finally {
             statusLock.unlock();
         }

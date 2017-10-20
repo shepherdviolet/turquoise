@@ -174,9 +174,10 @@ public class FrameBufferUtils {
 	 * @return
 	 */
 	private static int toUnsigned(byte i){
-		if(i < 0)
-			return i + 256;
-		else
-			return i;
+		if(i < 0) {
+            return i + 256;
+        } else {
+            return i;
+        }
 	}
 }

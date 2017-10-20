@@ -45,8 +45,9 @@ public class RootUtils {
             if (line != null && line.length() >= 4) {
                 char flag = line.charAt(3);
                 //拥有可执行权限表示已ROOT
-                if (flag == 's' || flag == 'x')
+                if (flag == 's' || flag == 'x') {
                     return true;
+                }
             }
         } catch (IOException ignored) {
         } finally {
@@ -158,8 +159,9 @@ public class RootUtils {
         try {
             process = Runtime.getRuntime().exec("su");
             os = new DataOutputStream(process.getOutputStream());
-            for (int i = 0; i < paths.length; i++)
+            for (int i = 0; i < paths.length; i++) {
                 os.writeBytes("chmod 777 " + paths[i] + "\n");
+            }
             os.writeBytes("exit\n");
             os.flush();
             int exitValue = process.waitFor();

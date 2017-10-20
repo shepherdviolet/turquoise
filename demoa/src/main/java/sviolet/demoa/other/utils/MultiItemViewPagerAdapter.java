@@ -52,8 +52,9 @@ public class MultiItemViewPagerAdapter extends RecyclingPagerAdapter {
 
     @Override
     public int getCount() {
-        if (imageResIds == null)
+        if (imageResIds == null) {
             return 0;
+        }
         return imageResIds.size();
     }
 

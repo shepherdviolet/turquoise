@@ -66,22 +66,25 @@ public class ContainerDrawable extends TransitionDrawable {
     @Override
     public void startTransition(int durationMillis) {
         //skip method if it's not in transitionMode
-        if (transitionMode)
+        if (transitionMode) {
             super.startTransition(durationMillis);
+        }
     }
 
     @Override
     public void resetTransition() {
         //skip method if it's not in transitionMode
-        if (transitionMode)
+        if (transitionMode) {
             super.resetTransition();
+        }
     }
 
     @Override
     public void reverseTransition(int duration) {
         //skip method if it's not in transitionMode
-        if (transitionMode)
+        if (transitionMode) {
             super.reverseTransition(duration);
+        }
     }
 
     public ContainerDrawable bindStub(Stub stub){

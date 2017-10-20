@@ -102,8 +102,9 @@ public class FlingView extends LinearLayout implements SlideView {
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         boolean original = super.onInterceptTouchEvent(ev);
-        if (mGestureDriver != null && mGestureDriver.onInterceptTouchEvent(ev))
+        if (mGestureDriver != null && mGestureDriver.onInterceptTouchEvent(ev)) {
             return true;
+        }
         return original;
     }
 
@@ -113,8 +114,9 @@ public class FlingView extends LinearLayout implements SlideView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean original = super.onTouchEvent(event);
-        if (mGestureDriver != null && mGestureDriver.onTouchEvent(event))
+        if (mGestureDriver != null && mGestureDriver.onTouchEvent(event)) {
             return true;
+        }
         return original;
     }
 

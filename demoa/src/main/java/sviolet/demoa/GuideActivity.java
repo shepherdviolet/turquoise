@@ -155,8 +155,9 @@ public class GuideActivity extends TActivity {
      * @param activity 指定的Acitivity
      */
     private void go(Class<? extends Activity> activity) {
-        if (activity == null)
+        if (activity == null) {
             return;
+        }
         Intent intent = new Intent(this, activity);
         startActivity(intent);
     }

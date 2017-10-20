@@ -113,10 +113,12 @@ public class TQueue {
      * @param task
      */
     public void put(String key, TTask task) {
-        if (key == null)
+        if (key == null) {
             throw new RuntimeException("[TQueue]key is null", new NullPointerException());
-        if (task == null)
+        }
+        if (task == null) {
             throw new RuntimeException("[TQueue]task is null", new NullPointerException());
+        }
 
         //给任务设置队列对象(用于回调)
         task.setQueue(this);
@@ -131,8 +133,9 @@ public class TQueue {
                     }else{
                         oldTask = runningTasks.remove(key);
                     }
-                    if (oldTask != null)
+                    if (oldTask != null) {
                         oldTask.cancel();
+                    }
                     //继续执行,新任务加入等待队列
                 }else if(keyConflictPolicy == KEY_CONFLICT_POLICY_FOLLOW){
                     if (runningTasks.get(key).getState() >= TTask.STATE_COMPLETE){
@@ -270,11 +273,13 @@ public class TQueue {
                 TTask task = entry.getValue();
                 if (waitCancelingTask){
                     //等待取消中任务模式下, STATE_CANCELING状态也计入并发量
-                    if (task.getState() == TTask.STATE_PRE_EXECUTE || task.getState() == TTask.STATE_EXECUTING || task.getState() == TTask.STATE_POST_EXECUTE || task.getState() == TTask.STATE_CANCELING)
+                    if (task.getState() == TTask.STATE_PRE_EXECUTE || task.getState() == TTask.STATE_EXECUTING || task.getState() == TTask.STATE_POST_EXECUTE || task.getState() == TTask.STATE_CANCELING) {
                         count++;
+                    }
                 }else {
-                    if (task.getState() == TTask.STATE_PRE_EXECUTE || task.getState() == TTask.STATE_EXECUTING || task.getState() == TTask.STATE_POST_EXECUTE)
+                    if (task.getState() == TTask.STATE_PRE_EXECUTE || task.getState() == TTask.STATE_EXECUTING || task.getState() == TTask.STATE_POST_EXECUTE) {
                         count++;
+                    }
                 }
             }
         }
@@ -340,8 +345,9 @@ public class TQueue {
             }
             if (waittingTasks.containsKey(key)){
                 TTask task = waittingTasks.remove(key);
-                if (task != null)
+                if (task != null) {
                     task.cancel();
+                }
             }
         }
     }
@@ -353,13 +359,15 @@ public class TQueue {
         synchronized (TQueue.this) {
             for (Map.Entry<String, TTask> entry : runningTasks.entrySet()) {
                 TTask task = entry.getValue();
-                if (task != null)
+                if (task != null) {
                     task.cancel();
+                }
             }
             for (Map.Entry<String, TTask> entry : waittingTasks.entrySet()) {
                 TTask task = entry.getValue();
-                if (task != null)
+                if (task != null) {
                     task.cancel();
+                }
             }
             runningTasks.clear();
             waittingTasks.clear();
@@ -391,8 +399,9 @@ public class TQueue {
                 waittingTasks.get(key);
             }else{
                 for (Object taskKey : waittingTasks.keySet().toArray()) {
-                    if (!taskKey.equals(key))
+                    if (!taskKey.equals(key)) {
                         waittingTasks.get(taskKey);
+                    }
                 }
             }
         }
@@ -403,10 +412,12 @@ public class TQueue {
      */
     public void destroy(){
         cancelAll();
-        if (taskThreadPool != null)
+        if (taskThreadPool != null) {
             taskThreadPool.shutdown();
-        if (dispatchThreadPool != null)
+        }
+        if (dispatchThreadPool != null) {
             dispatchThreadPool.shutdown();
+        }
     }
 
     /**
@@ -414,10 +425,12 @@ public class TQueue {
      */
     public void forceDestroy(){
         cancelAll();
-        if (taskThreadPool != null)
+        if (taskThreadPool != null) {
             taskThreadPool.shutdownNow();
-        if (dispatchThreadPool != null)
+        }
+        if (dispatchThreadPool != null) {
             dispatchThreadPool.shutdownNow();
+        }
     }
 
     /**

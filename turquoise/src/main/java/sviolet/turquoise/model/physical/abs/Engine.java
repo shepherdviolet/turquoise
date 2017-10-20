@@ -54,8 +54,9 @@ public abstract class Engine {
 	 */
 	public void input(long time){
 		isStatic = false;
-		if(mHandle == null || mHandle.isReleased())
-			onInput(time);
+		if(mHandle == null || mHandle.isReleased()) {
+            onInput(time);
+        }
 	}
 	
 	/**
@@ -78,8 +79,9 @@ public abstract class Engine {
 	 * 不回调Outputer的onStop
 	 */
 	public void destroy(){
-		if(mInputer != null)
-			mInputer.onStop();
+		if(mInputer != null) {
+            mInputer.onStop();
+        }
 		handler.removeCallbacksAndMessages(null);
 	}
 	
@@ -100,10 +102,12 @@ public abstract class Engine {
 	 * 当停止时处理(I/O回调onStop(),handler清空)
 	 */
 	public void onStop(){
-		if(mInputer != null)
-			mInputer.onStop();
-		if(mOutputer != null)
-			mOutputer.onStop();
+		if(mInputer != null) {
+            mInputer.onStop();
+        }
+		if(mOutputer != null) {
+            mOutputer.onStop();
+        }
 		handler.removeCallbacksAndMessages(null);
 		isStatic = true;
 	}
@@ -187,8 +191,9 @@ public abstract class Engine {
         @Override
         protected void handleMessageWithHost(Message msg, Engine host) {
             host.messageCounter--;
-			if(host.messageCounter > 0)
-				return;
+			if(host.messageCounter > 0) {
+                return;
+            }
 
 			synchronized (this) {
 				switch (msg.what) {

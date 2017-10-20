@@ -182,8 +182,9 @@ public class MeasureUtils {
 	 * dp转px
 	 */
 	public static int dp2px(Context context, float dp) {
-		if(dp == 0)
-			return 0;
+		if(dp == 0) {
+            return 0;
+        }
 		return (int) (dp * getDensity(context) + 0.5f);
 	}
 
@@ -191,8 +192,9 @@ public class MeasureUtils {
 	 * px转dp
 	 */
 	public static int px2dp(Context context, float px) {
-		if(px == 0)
-			return 0;
+		if(px == 0) {
+            return 0;
+        }
 		return (int) (px / getDensity(context) + 0.5f);
 	}
 

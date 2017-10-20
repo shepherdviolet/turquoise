@@ -50,8 +50,9 @@ public class OkHttpNetworkLoadHandler implements NetworkLoadHandler {
     private Map<String, String> headers;
 
     public OkHttpNetworkLoadHandler(OkHttpClient okHttpClient){
-        if (okHttpClient == null)
+        if (okHttpClient == null) {
             throw new NullPointerException("[OkHttpNetworkLoadHandler]okHttpClient is null!!!");
+        }
         this.okHttpClient = okHttpClient;
     }
 

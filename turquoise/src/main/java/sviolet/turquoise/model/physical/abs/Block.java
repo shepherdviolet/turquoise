@@ -38,10 +38,11 @@ public abstract class Block {
 	 * @return
 	 */
 	public boolean isInRange(int valueAmount){
-		if(valueAmount >= range_min && valueAmount <= range_max)
-			return true;
-		else
-			return false;
+		if(valueAmount >= range_min && valueAmount <= range_max) {
+            return true;
+        } else {
+            return false;
+        }
 	}
 	
 	//加速度变化效果(计算前)

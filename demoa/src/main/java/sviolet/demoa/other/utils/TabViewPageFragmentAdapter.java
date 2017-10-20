@@ -42,15 +42,17 @@ public class TabViewPageFragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        if (fragments == null)
+        if (fragments == null) {
             return null;
+        }
         return fragments.get(position);
     }
 
     @Override
     public int getCount() {
-        if (fragments == null)
+        if (fragments == null) {
             return 0;
+        }
         return fragments.size();
     }
 

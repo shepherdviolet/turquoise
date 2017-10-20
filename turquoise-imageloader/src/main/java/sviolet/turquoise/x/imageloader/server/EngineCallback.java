@@ -158,8 +158,8 @@ public class EngineCallback <ResultDataType> {
     int getResult(){
         lock.lock();
         try{
-            if (result == RESULT_NULL)
-                if (!condition.await(timeout, TimeUnit.MILLISECONDS)){
+            if (result == RESULT_NULL) {
+                if (!condition.await(timeout, TimeUnit.MILLISECONDS)) {
                     /**
                      * <p>waiting for result timeout! Make sure that NetworkLoadHandler correctly use EngineCallback to return result,
                      * whether load succeed or failed.</p>
@@ -171,6 +171,7 @@ public class EngineCallback <ResultDataType> {
                     result = RESULT_INTERRUPTED;
                     logger.e("[EngineCallback]waiting for result timeout! Make sure that NetworkLoadHandler correctly use EngineCallback to return result, whether load succeed or failed");
                 }
+            }
             return result;
         } catch (InterruptedException ignored) {
             result = RESULT_INTERRUPTED;//中断状态
@@ -211,8 +212,9 @@ public class EngineCallback <ResultDataType> {
         lock.lock();
         try{
             isCancelling = true;
-            if (onCancelListener != null)
+            if (onCancelListener != null) {
                 onCancelListener.run();
+            }
         } finally {
             lock.unlock();
         }

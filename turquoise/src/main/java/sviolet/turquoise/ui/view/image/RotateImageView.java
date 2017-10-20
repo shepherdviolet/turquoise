@@ -112,8 +112,9 @@ public class RotateImageView extends ImageView {
 	 * 实际初始化操作
 	 */
 	private void initDo(){
-		if(!imageRefresh || !hasDisplay())
-			return;
+		if(!imageRefresh || !hasDisplay()) {
+            return;
+        }
 		
 		imageRefresh = false;
 		
@@ -166,12 +167,15 @@ public class RotateImageView extends ImageView {
 	 * 销毁
 	 */
 	public void destroy(){
-		if(bitmap != null && !bitmap.isRecycled())
-			bitmap.recycle();
-		if(originBitmap != null && !originBitmap.isRecycled())
-			originBitmap.recycle();
-		if(tempBitmap != null && !tempBitmap.isRecycled())
-			tempBitmap.recycle();
+		if(bitmap != null && !bitmap.isRecycled()) {
+            bitmap.recycle();
+        }
+		if(originBitmap != null && !originBitmap.isRecycled()) {
+            originBitmap.recycle();
+        }
+		if(tempBitmap != null && !tempBitmap.isRecycled()) {
+            tempBitmap.recycle();
+        }
 	}
 	
 	/**

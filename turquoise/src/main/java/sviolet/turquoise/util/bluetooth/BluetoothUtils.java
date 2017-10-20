@@ -297,8 +297,9 @@ public class BluetoothUtils {
         }
 
         private void addDevice(BluetoothDevice device) {
-            if (device != null && devices != null)
+            if (device != null && devices != null) {
                 devices.add(device);
+            }
         }
 
         @Override

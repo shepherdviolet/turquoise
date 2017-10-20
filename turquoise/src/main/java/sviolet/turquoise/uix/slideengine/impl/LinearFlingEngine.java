@@ -218,8 +218,9 @@ public class LinearFlingEngine extends LinearDragEngine {
 	 * 强制停止scroller
 	 */
 	protected void abortScroller(){
-		if(mScroller != null && !mScroller.isFinished())
-			mScroller.abortAnimation();
+		if(mScroller != null && !mScroller.isFinished()) {
+            mScroller.abortAnimation();
+        }
 	}
 
 	/**
@@ -256,8 +257,9 @@ public class LinearFlingEngine extends LinearDragEngine {
 	 */
 	public void fling(int velocity){
 		//速度为0无需滚动
-		if(velocity == 0)
-			return;
+		if(velocity == 0) {
+            return;
+        }
         //惯性滑动最大速度限制
         if(velocity > flingMaxVelocity){
             velocity = flingMaxVelocity;

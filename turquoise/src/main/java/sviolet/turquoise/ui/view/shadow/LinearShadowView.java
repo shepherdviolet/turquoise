@@ -207,8 +207,9 @@ public class LinearShadowView extends View {
 		super.onDraw(canvas);
 		
 		//初始化完成后绘制阴影
-		if(isInitComplete)
-			drawShadow(canvas);
+		if(isInitComplete) {
+            drawShadow(canvas);
+        }
 	}
 
 	@Override
@@ -226,8 +227,9 @@ public class LinearShadowView extends View {
 	 */
 	private void setShader() {
 		
-		if(shadowPaint == null)
-			return;
+		if(shadowPaint == null) {
+            return;
+        }
 			
 		Shader mShader;
 		switch(direction){
@@ -257,8 +259,9 @@ public class LinearShadowView extends View {
      */
     private void drawShadow(Canvas canvas){
     	
-    	if(shadowPaint == null)
-    		return;
+    	if(shadowPaint == null) {
+            return;
+        }
     		
     	shadowRect.set(0, 0, getWidth(), getHeight());//矩形
     	canvas.drawRoundRect(shadowRect, 0f, 0f, shadowPaint);//绘制矩形(带阴影)

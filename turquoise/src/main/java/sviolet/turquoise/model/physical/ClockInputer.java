@@ -55,8 +55,9 @@ public class ClockInputer extends Inputer {
 	 */
 	public void start(long interval){
 		
-		if(timer != null)
-			onStop();
+		if(timer != null) {
+            onStop();
+        }
 		
 		lastTime = System.currentTimeMillis();
 		timer = new Timer();

@@ -77,8 +77,9 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	@Override
 	public void bind(GestureDriver gestureDriver) {
 		onBind(gestureDriver);
-		if(mGestureDriver != null)
-			mGestureDriver.onBind(this);
+		if(mGestureDriver != null) {
+            mGestureDriver.onBind(this);
+        }
 	}
 
 	@Override
@@ -92,51 +93,67 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	public void onGestureDrive(int x, int y, int offsetX, int offsetY, int velocityX, int velocityY) {
 		onGestureDriveEngines.clear();
 		dispatchGestureDrive(onGestureDriveEngines, x, y, offsetX, offsetY, velocityX, velocityY);
-		if(onGestureDriveEngines != null && onGestureDriveEngines.size() > 0)
-			for(String alias : onGestureDriveEngines)
-				if(mSlideEngines.containsKey(alias))
-					handleGestureDrive(mSlideEngines.get(alias), alias, x, y, offsetX, offsetY, velocityX, velocityY);
+		if(onGestureDriveEngines != null && onGestureDriveEngines.size() > 0) {
+            for (String alias : onGestureDriveEngines) {
+                if (mSlideEngines.containsKey(alias)) {
+                    handleGestureDrive(mSlideEngines.get(alias), alias, x, y, offsetX, offsetY, velocityX, velocityY);
+                }
+            }
+        }
 	}
 
 	@Override
 	public void onGestureDrive(int curr, int offset, int velocity) {
 		onGestureDriveEngines.clear();
 		dispatchGestureDrive(onGestureDriveEngines, curr, offset, velocity);
-		if(onGestureDriveEngines != null && onGestureDriveEngines.size() > 0)
-			for(String alias : onGestureDriveEngines)
-				if(mSlideEngines.containsKey(alias))
-					handleGestureDrive(mSlideEngines.get(alias), alias, curr, offset, velocity);
+		if(onGestureDriveEngines != null && onGestureDriveEngines.size() > 0) {
+            for (String alias : onGestureDriveEngines) {
+                if (mSlideEngines.containsKey(alias)) {
+                    handleGestureDrive(mSlideEngines.get(alias), alias, curr, offset, velocity);
+                }
+            }
+        }
 	}
 	
 	@Override
 	public void onGestureHold() {
 		onGestureHoldEngines.clear();
 		dispatchGestureHold(onGestureHoldEngines);
-		if(onGestureHoldEngines != null && onGestureHoldEngines.size() > 0)
-			for(String alias : onGestureHoldEngines)
-				if(mSlideEngines.containsKey(alias))
-					handleGestureHold(mSlideEngines.get(alias), alias);
+		if(onGestureHoldEngines != null && onGestureHoldEngines.size() > 0) {
+            for (String alias : onGestureHoldEngines) {
+                if (mSlideEngines.containsKey(alias)) {
+                    handleGestureHold(mSlideEngines.get(alias), alias);
+                }
+            }
+        }
 	}
 
 	@Override
 	public void onGestureRelease(int velocity) {
 		onGestureReleaseEngines.clear();
 		dispatchGestureRelease(onGestureReleaseEngines, velocity);
-		if(onGestureReleaseEngines != null && onGestureReleaseEngines.size() > 0)
-			for(String alias : onGestureReleaseEngines)
-				if(mSlideEngines.containsKey(alias))
-					handleGestureRelease(mSlideEngines.get(alias), alias, velocity);
+		if(onGestureReleaseEngines != null && onGestureReleaseEngines.size() > 0) {
+            for (String alias : onGestureReleaseEngines) {
+                if (mSlideEngines.containsKey(alias)) {
+                    handleGestureRelease(mSlideEngines.get(alias), alias, velocity);
+                }
+            }
+        }
 	}
 
 	@Override
 	public boolean isSliding() {
 		onIsSlidingEngines.clear();
 		dispatchIsSliding(onIsSlidingEngines);
-		if(onIsSlidingEngines != null && onIsSlidingEngines.size() > 0)
-			for(String alias : onIsSlidingEngines)
-				if(mSlideEngines.containsKey(alias))
-					if(handleIsSliding(mSlideEngines.get(alias), alias))
-						return true;
+		if(onIsSlidingEngines != null && onIsSlidingEngines.size() > 0) {
+            for (String alias : onIsSlidingEngines) {
+                if (mSlideEngines.containsKey(alias)) {
+                    if (handleIsSliding(mSlideEngines.get(alias), alias)) {
+                        return true;
+                    }
+                }
+            }
+        }
 		return false;
 	}
 
@@ -152,8 +169,9 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	 */
 	@Override
 	public void addInnerEngine(SlideEngine slideEngine) {
-		if (slideEngine != null)
-			slideEngine.setParentEngine(this);
+		if (slideEngine != null) {
+            slideEngine.setParentEngine(this);
+        }
 	}
 
 	@Override
@@ -174,11 +192,13 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	@Override
 	public void skipIntercepted() {
 		//手势驱动器跳过本次拦截
-		if (getGestureDriver() != null)
-			getGestureDriver().skipIntercepted();
+		if (getGestureDriver() != null) {
+            getGestureDriver().skipIntercepted();
+        }
 		//外部驱动跳过本次拦截
-		if (parentSlideEngine != null)
-			parentSlideEngine.skipIntercepted();
+		if (parentSlideEngine != null) {
+            parentSlideEngine.skipIntercepted();
+        }
 	}
 
 	@Override
@@ -206,8 +226,9 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	 */
 	@Override
 	public int getState() {
-		if(mGestureDriver != null)
-			return mGestureDriver.getState();
+		if(mGestureDriver != null) {
+            return mGestureDriver.getState();
+        }
 		return 0;
 	}
 	
@@ -418,10 +439,11 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	 */
 	public void handleGestureRelease(SlideEngine engine, String alias, int velocity) {
 		//若改引擎未被驱动, 则释放时速度为0
-		if(onGestureDriveEngines.contains(alias))
-			engine.onGestureRelease(velocity);
-		else
-			engine.onGestureRelease(0);
+		if(onGestureDriveEngines.contains(alias)) {
+            engine.onGestureRelease(velocity);
+        } else {
+            engine.onGestureRelease(0);
+        }
 	}
 	
 	/**
@@ -456,8 +478,9 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	 * @param slideEngines Map<别名, SlideEngine>
 	 */
 	public void addSlideEngine(Map<String, SlideEngine> slideEngines){
-		if(slideEngines != null && slideEngines.size() > 0)
-			getAllSlideEngines().putAll(slideEngines);
+		if(slideEngines != null && slideEngines.size() > 0) {
+            getAllSlideEngines().putAll(slideEngines);
+        }
 	}
 	
 	/**
@@ -473,8 +496,9 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	 * @return 可能为null
 	 */
 	public SlideEngine getSlideEngine(String alias){
-		if(alias == null)
-			return null;
+		if(alias == null) {
+            return null;
+        }
 		return getAllSlideEngines().get(alias);
 	}
 	
@@ -483,8 +507,9 @@ public abstract class SlideEngineGroup implements SlideEngine, GestureDriver {
 	 * @return
 	 */
 	public Map<String, SlideEngine> getAllSlideEngines(){
-		if(mSlideEngines == null)
-			mSlideEngines = new HashMap<String, SlideEngine>();
+		if(mSlideEngines == null) {
+            mSlideEngines = new HashMap<String, SlideEngine>();
+        }
 		return mSlideEngines;
 	}
 	

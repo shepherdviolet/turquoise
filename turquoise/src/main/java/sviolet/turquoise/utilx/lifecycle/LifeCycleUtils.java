@@ -49,10 +49,12 @@ public class LifeCycleUtils {
      * @param lifeCycle 监听器(被弱引用持有)
      */
     public static void attach(Activity activity, LifeCycle lifeCycle){
-        if (activity == null)
+        if (activity == null) {
             throw new NullPointerException("[LifeCycleUtils] activity == null");
-        if (lifeCycle == null)
+        }
+        if (lifeCycle == null) {
             return;
+        }
 
         if (DeviceUtils.getVersionSDK() < 11){
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
@@ -71,18 +73,21 @@ public class LifeCycleUtils {
      * @param lifeCycle 监听器(被弱引用持有)
      */
     public static void attach(Fragment fragment, LifeCycle lifeCycle){
-        if (fragment == null)
+        if (fragment == null) {
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
-        if (lifeCycle == null)
+        }
+        if (lifeCycle == null) {
             return;
+        }
 
         if (DeviceUtils.getVersionSDK() < 11){
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Fragment before api 11");
         }
 
         Activity activity = fragment.getActivity();
-        if (activity == null)
+        if (activity == null) {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+        }
 
         LifeCycleManager manager = getLifeCycleManager(activity);
         manager.addWeakListener(lifeCycle);
@@ -97,14 +102,17 @@ public class LifeCycleUtils {
      * @param lifeCycle 监听器(被弱引用持有)
      */
     public static void attach(android.support.v4.app.Fragment fragment, LifeCycle lifeCycle){
-        if (fragment == null)
+        if (fragment == null) {
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
-        if (lifeCycle == null)
+        }
+        if (lifeCycle == null) {
             return;
+        }
 
         android.support.v4.app.FragmentActivity activity = fragment.getActivity();
-        if (activity == null)
+        if (activity == null) {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+        }
 
         LifeCycleManager manager = getLifeCycleManagerV4(activity);
         manager.addWeakListener(lifeCycle);
@@ -122,10 +130,12 @@ public class LifeCycleUtils {
      * @param lifeCycle 组件(被强引用持有)
      */
     public static void addComponent(Activity activity, String componentName, LifeCycle lifeCycle){
-        if (activity == null)
+        if (activity == null) {
             throw new NullPointerException("[LifeCycleUtils] activity == null");
-        if (lifeCycle == null)
+        }
+        if (lifeCycle == null) {
             return;
+        }
 
         if (DeviceUtils.getVersionSDK() < 11){
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
@@ -145,18 +155,21 @@ public class LifeCycleUtils {
      * @param lifeCycle 组件(被强引用持有)
      */
     public static void addComponent(Fragment fragment, String componentName, LifeCycle lifeCycle){
-        if (fragment == null)
+        if (fragment == null) {
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
-        if (lifeCycle == null)
+        }
+        if (lifeCycle == null) {
             return;
+        }
 
         if (DeviceUtils.getVersionSDK() < 11){
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Fragment before api 11");
         }
 
         Activity activity = fragment.getActivity();
-        if (activity == null)
+        if (activity == null) {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+        }
 
         LifeCycleManager manager = getLifeCycleManager(activity);
         manager.addComponent(componentName, lifeCycle);
@@ -172,14 +185,17 @@ public class LifeCycleUtils {
      * @param lifeCycle 组件(被强引用持有)
      */
     public static void addComponent(android.support.v4.app.Fragment fragment, String componentName, LifeCycle lifeCycle){
-        if (fragment == null)
+        if (fragment == null) {
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
-        if (lifeCycle == null)
+        }
+        if (lifeCycle == null) {
             return;
+        }
 
         android.support.v4.app.FragmentActivity activity = fragment.getActivity();
-        if (activity == null)
+        if (activity == null) {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+        }
 
         LifeCycleManager manager = getLifeCycleManagerV4(activity);
         manager.addComponent(componentName, lifeCycle);
@@ -196,8 +212,9 @@ public class LifeCycleUtils {
      * @param componentName 组件名
      */
     public static LifeCycle getComponent(Activity activity, String componentName){
-        if (activity == null)
+        if (activity == null) {
             throw new NullPointerException("[LifeCycleUtils] activity == null");
+        }
 
         if (DeviceUtils.getVersionSDK() < 11){
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
@@ -214,16 +231,18 @@ public class LifeCycleUtils {
      * @param componentName 组件名
      */
     public static LifeCycle getComponent(Fragment fragment, String componentName){
-        if (fragment == null)
+        if (fragment == null) {
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
+        }
 
         if (DeviceUtils.getVersionSDK() < 11){
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Fragment before api 11");
         }
 
         Activity activity = fragment.getActivity();
-        if (activity == null)
+        if (activity == null) {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+        }
 
         LifeCycleManager manager = getLifeCycleManager(activity);
         return manager.getComponent(componentName);
@@ -236,12 +255,14 @@ public class LifeCycleUtils {
      * @param componentName 组件名
      */
     public static LifeCycle getComponent(android.support.v4.app.Fragment fragment, String componentName){
-        if (fragment == null)
+        if (fragment == null) {
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
+        }
 
         android.support.v4.app.FragmentActivity activity = fragment.getActivity();
-        if (activity == null)
+        if (activity == null) {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+        }
 
         LifeCycleManager manager = getLifeCycleManagerV4(activity);
         return manager.getComponent(componentName);
@@ -258,8 +279,9 @@ public class LifeCycleUtils {
      * @param componentName 组件名
      */
     public static void removeComponent(Activity activity, String componentName){
-        if (activity == null)
+        if (activity == null) {
             throw new NullPointerException("[LifeCycleUtils] activity == null");
+        }
 
         if (DeviceUtils.getVersionSDK() < 11){
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
@@ -276,16 +298,18 @@ public class LifeCycleUtils {
      * @param componentName 组件名
      */
     public static void removeComponent(Fragment fragment, String componentName){
-        if (fragment == null)
+        if (fragment == null) {
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
+        }
 
         if (DeviceUtils.getVersionSDK() < 11){
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Fragment before api 11");
         }
 
         Activity activity = fragment.getActivity();
-        if (activity == null)
+        if (activity == null) {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+        }
 
         LifeCycleManager manager = getLifeCycleManager(activity);
         manager.removeComponent(componentName);
@@ -298,12 +322,14 @@ public class LifeCycleUtils {
      * @param componentName 组件名
      */
     public static void removeComponent(android.support.v4.app.Fragment fragment, String componentName){
-        if (fragment == null)
+        if (fragment == null) {
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
+        }
 
         android.support.v4.app.FragmentActivity activity = fragment.getActivity();
-        if (activity == null)
+        if (activity == null) {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+        }
 
         LifeCycleManager manager = getLifeCycleManagerV4(activity);
         manager.removeComponent(componentName);
@@ -316,10 +342,12 @@ public class LifeCycleUtils {
      * @param lifeCycle 监听器
      */
     public static void removeComponent(Activity activity, LifeCycle lifeCycle){
-        if (activity == null)
+        if (activity == null) {
             throw new NullPointerException("[LifeCycleUtils] activity == null");
-        if (lifeCycle == null)
+        }
+        if (lifeCycle == null) {
             return;
+        }
 
         if (DeviceUtils.getVersionSDK() < 11){
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Activity before api 11");
@@ -336,18 +364,21 @@ public class LifeCycleUtils {
      * @param lifeCycle 监听器
      */
     public static void removeComponent(Fragment fragment, LifeCycle lifeCycle){
-        if (fragment == null)
+        if (fragment == null) {
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
-        if (lifeCycle == null)
+        }
+        if (lifeCycle == null) {
             return;
+        }
 
         if (DeviceUtils.getVersionSDK() < 11){
             throw new RuntimeException("[LifeCycleUtils]can't use android.app.Fragment before api 11");
         }
 
         Activity activity = fragment.getActivity();
-        if (activity == null)
+        if (activity == null) {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+        }
 
         LifeCycleManager manager = getLifeCycleManager(activity);
         manager.removeComponent(lifeCycle);
@@ -360,14 +391,17 @@ public class LifeCycleUtils {
      * @param lifeCycle 监听器
      */
     public static void removeComponent(android.support.v4.app.Fragment fragment, LifeCycle lifeCycle){
-        if (fragment == null)
+        if (fragment == null) {
             throw new NullPointerException("[LifeCycleUtils] fragment == null");
-        if (lifeCycle == null)
+        }
+        if (lifeCycle == null) {
             return;
+        }
 
         android.support.v4.app.FragmentActivity activity = fragment.getActivity();
-        if (activity == null)
+        if (activity == null) {
             throw new RuntimeException("[LifeCycleUtils]can't attach fragment without host activity");
+        }
 
         LifeCycleManager manager = getLifeCycleManagerV4(activity);
         manager.removeComponent(lifeCycle);

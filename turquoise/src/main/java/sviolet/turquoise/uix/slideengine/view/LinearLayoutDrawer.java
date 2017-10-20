@@ -367,8 +367,9 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		boolean original = super.onInterceptTouchEvent(ev);
-		if(mDrawerProvider.getGestureDriver() != null && mDrawerProvider.getGestureDriver().onInterceptTouchEvent(ev))
-			return true;
+		if(mDrawerProvider.getGestureDriver() != null && mDrawerProvider.getGestureDriver().onInterceptTouchEvent(ev)) {
+            return true;
+        }
 		return original;
 	}
 	
@@ -376,8 +377,9 @@ public class LinearLayoutDrawer extends LinearLayout implements SlideView{
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		boolean original = super.onTouchEvent(event);
-		if(mDrawerProvider.getGestureDriver() != null && mDrawerProvider.getGestureDriver().onTouchEvent(event))
-			return true;
+		if(mDrawerProvider.getGestureDriver() != null && mDrawerProvider.getGestureDriver().onTouchEvent(event)) {
+            return true;
+        }
 		return original;
 	}
 	

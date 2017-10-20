@@ -214,8 +214,9 @@ public class InjectUtils {
                 try {
                     resourceId = field.getAnnotation(ResourceId.class).value();
                     view = callback.findViewById(object, container, resourceId);
-                    if (view == null)
+                    if (view == null) {
                         throw new InjectException("[InjectUtils]inject view [" + field.getName() + "] failed, can't find resource");
+                    }
                     field.setAccessible(true);
                     field.set(object, view);
                 } catch (IllegalAccessException | IllegalArgumentException e) {

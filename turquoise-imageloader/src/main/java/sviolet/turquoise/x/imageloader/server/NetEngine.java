@@ -339,8 +339,9 @@ public class NetEngine extends Engine {
          * @param task add the task into group, non-repetitive(Set)
          */
         public void add(Task task){
-            if (task == null)
+            if (task == null) {
                 return;
+            }
             stubSet.add(task);
             //check and set indispensable state
             if (task.isIndispensable()){

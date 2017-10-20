@@ -137,8 +137,9 @@ public class PointLoadingAnimationDrawableFactory implements CommonLoadingDrawab
         @Override
         public void draw(Canvas canvas) {
             //skip
-            if(settings.pointRadius <= 0 || settings.pointInterval < 0 || settings.animationDuration <= 0)
+            if(settings.pointRadius <= 0 || settings.pointInterval < 0 || settings.animationDuration <= 0) {
                 return;
+            }
 
             //draw
             drawCircle(canvas, calculateCurrentPosition());

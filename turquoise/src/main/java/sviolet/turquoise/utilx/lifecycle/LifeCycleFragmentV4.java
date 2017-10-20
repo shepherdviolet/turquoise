@@ -66,8 +66,9 @@ public class LifeCycleFragmentV4 extends Fragment {
             super.onActivityCreated(savedInstanceState);
         } catch (Exception ignore) {
         }
-        if (invalidateSelf())
+        if (invalidateSelf()) {
             return;
+        }
         manager.onCreate();
     }
 
@@ -77,8 +78,9 @@ public class LifeCycleFragmentV4 extends Fragment {
             super.onStart();
         } catch (Exception ignore) {
         }
-        if (invalidateSelf())
+        if (invalidateSelf()) {
             return;
+        }
         manager.onStart();
     }
 
@@ -88,8 +90,9 @@ public class LifeCycleFragmentV4 extends Fragment {
             super.onResume();
         } catch (Exception ignore) {
         }
-        if (invalidateSelf())
+        if (invalidateSelf()) {
             return;
+        }
         manager.onResume();
     }
 
@@ -99,8 +102,9 @@ public class LifeCycleFragmentV4 extends Fragment {
             super.onPause();
         } catch (Exception ignore) {
         }
-        if (invalidateSelf())
+        if (invalidateSelf()) {
             return;
+        }
         manager.onPause();
     }
 
@@ -110,8 +114,9 @@ public class LifeCycleFragmentV4 extends Fragment {
             super.onStop();
         } catch (Exception ignore) {
         }
-        if (invalidateSelf())
+        if (invalidateSelf()) {
             return;
+        }
         manager.onStop();
     }
 
@@ -123,8 +128,9 @@ public class LifeCycleFragmentV4 extends Fragment {
         }
         //寄生变量中移除管理器
         ParasiticVars.remove(getActivity(), StringConstants.LIFECYCLE_MANAGER_TAG);
-        if (invalidateSelf())
+        if (invalidateSelf()) {
             return;
+        }
         manager.onDestroy();
     }
 

@@ -83,10 +83,11 @@ public class LinearStageScrollEngine extends LinearScrollEngine {
 	 * @param stageNum 等分阶段数 [2, maxRange + 1]
 	 */
 	public void setStageNum(int stageNum) {
-		if(stageNum > 1)
-			this.stageNum = stageNum;
-		else
-			this.stageNum = 2;
+		if(stageNum > 1) {
+            this.stageNum = stageNum;
+        } else {
+            this.stageNum = 2;
+        }
 
 		//计算最大滑动范围
 		range = stageRange * ( stageNum - 1 );
@@ -97,10 +98,11 @@ public class LinearStageScrollEngine extends LinearScrollEngine {
 	 * @param stageRange 一个阶段的滑动距离 >=0
 	 */
 	public void setStageRange(int stageRange) {
-		if(stageRange >= 0)
-			this.stageRange = stageRange;
-		else
-			this.stageRange = 0;
+		if(stageRange >= 0) {
+            this.stageRange = stageRange;
+        } else {
+            this.stageRange = 0;
+        }
 
 		//计算最大滑动范围
 		range = stageRange * ( stageNum - 1 );
@@ -118,10 +120,11 @@ public class LinearStageScrollEngine extends LinearScrollEngine {
 	 */
 	@Override
 	public float getCurrentStage() {
-		if(stageRange > 0)
-			return (float)position / (float)stageRange;
-		else
-			return 0;
+		if(stageRange > 0) {
+            return (float) position / (float) stageRange;
+        } else {
+            return 0;
+        }
 	}
 
 	/**
@@ -138,10 +141,11 @@ public class LinearStageScrollEngine extends LinearScrollEngine {
 		//根据速度判断目标位置
 		if(velocity == 0){
 			//速度为0根据距离判断目标
-			if(Math.abs(position - arrestPoint[1]) < Math.abs(position - arrestPoint[0]))
-				target = arrestPoint[1];
-			else
-				target = arrestPoint[0];
+			if(Math.abs(position - arrestPoint[1]) < Math.abs(position - arrestPoint[0])) {
+                target = arrestPoint[1];
+            } else {
+                target = arrestPoint[0];
+            }
 		}else if(velocity < 0){
 			target = arrestPoint[1];
 		}else{
@@ -159,10 +163,11 @@ public class LinearStageScrollEngine extends LinearScrollEngine {
 	 */
 	@Override
 	protected int calculateSlideDuration(int target) {
-		if(range > 0)
-			return (int)((float)stageDuration * (float)Math.abs(position - target) / (float)stageRange);
-		else
-			return 0;
+		if(range > 0) {
+            return (int) ((float) stageDuration * (float) Math.abs(position - target) / (float) stageRange);
+        } else {
+            return 0;
+        }
 	}
 	
 	/**
@@ -221,8 +226,9 @@ public class LinearStageScrollEngine extends LinearScrollEngine {
 	private int[] calculateSlideArrestPoint(int position){
 		int[] arrestPoint = new int[]{ORIGIN_POSITION, ORIGIN_POSITION};
 		
-		if(stageRange <= 0)
-			return arrestPoint;
+		if(stageRange <= 0) {
+            return arrestPoint;
+        }
 		
 		//计算上下界的stage
 		int lowerLimitStage = limit(position / stageRange, ORIGIN_POSITION, stageNum - 1);

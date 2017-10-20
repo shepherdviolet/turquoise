@@ -117,10 +117,11 @@ public class LinearDragEngine implements SlideEngine {
 	 * @param maxRange 允许滑动最大距离(全程) >=0
 	 */
 	public void setMaxRange(int maxRange){
-		if(maxRange  >= 0)
-			this.range = maxRange;
-		else
-			this.range = 0;
+		if(maxRange  >= 0) {
+            this.range = maxRange;
+        } else {
+            this.range = 0;
+        }
 	}
 
 	/**
@@ -150,8 +151,9 @@ public class LinearDragEngine implements SlideEngine {
 	 */
 	public void setOverScroll(boolean overScrollEnable, float overScrollDamp){
 		this.overScrollEnable = overScrollEnable;
-		if(overScrollDamp >=0.0f && overScrollDamp < 1.0f)
-			this.overScrollDamp = overScrollDamp;
+		if(overScrollDamp >=0.0f && overScrollDamp < 1.0f) {
+            this.overScrollDamp = overScrollDamp;
+        }
 	}
 
 	/**
@@ -220,8 +222,9 @@ public class LinearDragEngine implements SlideEngine {
 	@Override
 	public void bind(GestureDriver gestureDriver) {
 		onBind(gestureDriver);
-		if(mGestureDriver != null)
-			mGestureDriver.onBind(this);
+		if(mGestureDriver != null) {
+            mGestureDriver.onBind(this);
+        }
 	}
 	
 	@Override
@@ -255,10 +258,11 @@ public class LinearDragEngine implements SlideEngine {
 	 */
 	@Override
 	public void onGestureDrive(int curr, int offset, int velocity) {
-		if(slidingDirection == DIRECTION_LEFT_OR_TOP)
-			handleGestureDrive(curr, offset, velocity);
-		else
-			handleGestureDrive(curr, -offset, -velocity);
+		if(slidingDirection == DIRECTION_LEFT_OR_TOP) {
+            handleGestureDrive(curr, offset, velocity);
+        } else {
+            handleGestureDrive(curr, -offset, -velocity);
+        }
 	}
 
 	/**
@@ -277,10 +281,11 @@ public class LinearDragEngine implements SlideEngine {
 	 */
 	@Override
 	public void onGestureRelease(int velocity) {
-		if(slidingDirection == DIRECTION_LEFT_OR_TOP)
-			handleGestureRelease(velocity);
-		else
-			handleGestureRelease(-velocity);
+		if(slidingDirection == DIRECTION_LEFT_OR_TOP) {
+            handleGestureRelease(velocity);
+        } else {
+            handleGestureRelease(-velocity);
+        }
 	}
 	
 	/**
@@ -340,11 +345,13 @@ public class LinearDragEngine implements SlideEngine {
 	@Override
 	public void skipIntercepted() {
 		//手势驱动器跳过本次拦截
-		if (getGestureDriver() != null)
-			getGestureDriver().skipIntercepted();
+		if (getGestureDriver() != null) {
+            getGestureDriver().skipIntercepted();
+        }
 		//外部驱动跳过本次拦截
-		if (parentSlideEngine != null)
-			parentSlideEngine.skipIntercepted();
+		if (parentSlideEngine != null) {
+            parentSlideEngine.skipIntercepted();
+        }
 	}
 
 	/**
@@ -502,8 +509,9 @@ public class LinearDragEngine implements SlideEngine {
 	 * 获得与引擎绑定的SlideView, 弱引用, 可能为空
 	 */
 	public SlideView getSlideView(){
-        if (mSlideView != null)
+        if (mSlideView != null) {
             return mSlideView.get();
+        }
 		return null;
 	}
 	
@@ -535,19 +543,21 @@ public class LinearDragEngine implements SlideEngine {
 	 */
 	protected int checkPositionState(int position){
 		//无限滑动范围
-		if(infiniteRange)
-			return POSITION_IN_RANGE;
+		if(infiniteRange) {
+            return POSITION_IN_RANGE;
+        }
 		
-		if(position < ORIGIN_POSITION)
-			return POSITION_OUT_OF_MIN;
-		else if(position == ORIGIN_POSITION)
-			return POSITION_ON_MIN;
-		else if(position == range)
-			return POSITION_ON_MAX;
-		else if(position > range)
-			return POSITION_OUT_OF_MAX;
-		else
-			return POSITION_IN_RANGE;
+		if(position < ORIGIN_POSITION) {
+            return POSITION_OUT_OF_MIN;
+        } else if(position == ORIGIN_POSITION) {
+            return POSITION_ON_MIN;
+        } else if(position == range) {
+            return POSITION_ON_MAX;
+        } else if(position > range) {
+            return POSITION_OUT_OF_MAX;
+        } else {
+            return POSITION_IN_RANGE;
+        }
 	}
 	
 	/**
@@ -583,12 +593,13 @@ public class LinearDragEngine implements SlideEngine {
 	 * @return
 	 */
 	protected int limit(int num, int lowerLimit, int higherLimit){
-		if(num < lowerLimit)
-			return lowerLimit;
-		else if(num > higherLimit)
-			return higherLimit;
-		else
-			return num;
+		if(num < lowerLimit) {
+            return lowerLimit;
+        } else if(num > higherLimit) {
+            return higherLimit;
+        } else {
+            return num;
+        }
 	}
 	
 	/****************************************************
@@ -610,8 +621,9 @@ public class LinearDragEngine implements SlideEngine {
 			switch (msg.what) {
 			case HANDLER_NOTIFY_SLIDE://通知SlideView刷新
                 final SlideView slideView = host.getSlideView();
-				if(slideView != null)
+				if(slideView != null) {
                     slideView.notifyRefresh();
+                }
 				break;
 			default:
 				break;

@@ -62,8 +62,9 @@ public class ZoomRelativeLayoutDrawer extends RelativeLayoutDrawer {
                     break;
             }
             //Sdk11以上可用setScaleX/Y方法缩放
-            if (DeviceUtils.getVersionSDK() >= 11)
+            if (DeviceUtils.getVersionSDK() >= 11) {
                 scale();
+            }
             //变色
             changeColor();
 

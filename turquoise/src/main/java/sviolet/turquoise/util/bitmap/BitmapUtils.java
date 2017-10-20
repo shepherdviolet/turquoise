@@ -490,8 +490,9 @@ public class BitmapUtils {
             throw new NullPointerException("[BitmapUtils]bitmap is null or recycled");
         }
         Config config = Config.ARGB_8888;
-        if (bitmap.getConfig() != null)
+        if (bitmap.getConfig() != null) {
             config = bitmap.getConfig();
+        }
         Bitmap result = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), config);
         Canvas canvas = new Canvas(result);
         final int color = 0xff424242;
@@ -535,8 +536,9 @@ public class BitmapUtils {
      */
     public static Bitmap drawTextOnResource(Resources res, int resId, int reqWidth, int reqHeight, String text, float x, float y, float textSize, int textColor) {
         Bitmap bitmap = decodeFromResource(res, resId, reqWidth, reqHeight);
-        if (text == null)
+        if (text == null) {
             return bitmap;
+        }
         return drawText(bitmap, text, x, y, textSize, textColor, true);
     }
 
@@ -557,11 +559,13 @@ public class BitmapUtils {
         }
         //copy, 防止出现immutable bitmap异常
         Config config = Config.ARGB_8888;
-        if (bitmap.getConfig() != null)
+        if (bitmap.getConfig() != null) {
             config = bitmap.getConfig();
+        }
         Bitmap result = bitmap.copy(config, true);
-        if (bitmap != result && recycle)
+        if (bitmap != result && recycle) {
             bitmap.recycle();
+        }
 
         Canvas canvas = new Canvas(result);
         TextPaint textPaint = new TextPaint();

@@ -350,15 +350,17 @@ public class LayoutDrawerProvider {
 			int staticTouchAreaTop = 0;
 			int staticTouchAreaBottom = 0;
 			boolean staticTouchAreaEnabled = false;
-			if(handleWidth > 0)
-				staticTouchAreaEnabled = true;
+			if(handleWidth > 0) {
+                staticTouchAreaEnabled = true;
+            }
 			
 			//把手触摸反馈
 			int _handleFeedbackRange = 0;
-			if(handleFeedbackRange > FEEDBACK_RANGE_HALF_HANDLE_WIDTH)
-				_handleFeedbackRange = MeasureUtils.dp2px(context, handleFeedbackRange);
-			else
-				_handleFeedbackRange = MeasureUtils.dp2px(context, handleWidth / 2);
+			if(handleFeedbackRange > FEEDBACK_RANGE_HALF_HANDLE_WIDTH) {
+                _handleFeedbackRange = MeasureUtils.dp2px(context, handleFeedbackRange);
+            } else {
+                _handleFeedbackRange = MeasureUtils.dp2px(context, handleWidth / 2);
+            }
 			
 			switch(scrollDirection){
 			case DIRECTION_TOP:
@@ -374,10 +376,11 @@ public class LayoutDrawerProvider {
 				//把手触摸反馈
 				_handleFeedbackRange = - _handleFeedbackRange;//设定方向
 				//初始位置
-				if(initStage == STAGE_PULL_OUT)
-					initPosition = 0;//初始位置:原位
-				else
-					initPosition = scrollRange;//初始位置:上面
+				if(initStage == STAGE_PULL_OUT) {
+                    initPosition = 0;//初始位置:原位
+                } else {
+                    initPosition = scrollRange;//初始位置:上面
+                }
 				break;
 			case DIRECTION_BOTTOM:
 				scrollRange = yScrollRange;//滑动范围
@@ -392,10 +395,11 @@ public class LayoutDrawerProvider {
 				//把手触摸反馈
 //				_handleFeedbackRange = _handleFeedbackRange;//设定方向
 				//初始位置
-				if(initStage == STAGE_PULL_OUT)
-					initPosition = scrollRange;//初始位置:原位
-				else
-					initPosition = 0;//初始位置:下面
+				if(initStage == STAGE_PULL_OUT) {
+                    initPosition = scrollRange;//初始位置:原位
+                } else {
+                    initPosition = 0;//初始位置:下面
+                }
 				break;
 			case DIRECTION_LEFT:
 				scrollRange = xScrollRange;//滑动范围
@@ -410,10 +414,11 @@ public class LayoutDrawerProvider {
 				//把手触摸反馈
 				_handleFeedbackRange = - _handleFeedbackRange;//设定方向
 				//初始位置
-				if(initStage == STAGE_PULL_OUT)
-					initPosition = 0;//初始位置:原位
-				else
-					initPosition = scrollRange;//初始位置:左边
+				if(initStage == STAGE_PULL_OUT) {
+                    initPosition = 0;//初始位置:原位
+                } else {
+                    initPosition = scrollRange;//初始位置:左边
+                }
 				break;
 			case DIRECTION_RIGHT:
 				scrollRange = xScrollRange;//滑动范围
@@ -428,10 +433,11 @@ public class LayoutDrawerProvider {
 				//把手触摸反馈
 //				_handleFeedbackRange = _handleFeedbackRange;//设定方向
 				//初始位置
-				if(initStage == STAGE_PULL_OUT)
-					initPosition = scrollRange;//初始位置:原位
-				else
-					initPosition = 0;//初始位置:右边
+				if(initStage == STAGE_PULL_OUT) {
+                    initPosition = scrollRange;//初始位置:原位
+                } else {
+                    initPosition = 0;//初始位置:右边
+                }
 				break;
 			}
 
@@ -453,8 +459,9 @@ public class LayoutDrawerProvider {
 			throw new SlideException("[DrawerProvider]SlideView is not a View instance", e);
 		}
 
-		if (mOnInitCompleteListener != null)
-			mOnInitCompleteListener.onInitComplete((View) mSlideView);
+		if (mOnInitCompleteListener != null) {
+            mOnInitCompleteListener.onInitComplete((View) mSlideView);
+        }
 	}
 	
 	/****************************************************
@@ -465,16 +472,18 @@ public class LayoutDrawerProvider {
 	 * 拉出抽屉
 	 */
 	protected void pullOut(){
-		if(mSlideEngine != null)
-			mSlideEngine.scrollToStage(pullOutStage, false);
+		if(mSlideEngine != null) {
+            mSlideEngine.scrollToStage(pullOutStage, false);
+        }
 	}
 	
 	/**
 	 * 关闭抽屉
 	 */
 	protected void pushIn(){
-		if(mSlideEngine != null)
-			mSlideEngine.scrollToStage(pushInStage, false);
+		if(mSlideEngine != null) {
+            mSlideEngine.scrollToStage(pushInStage, false);
+        }
 	}
 	
 	/**
@@ -486,8 +495,9 @@ public class LayoutDrawerProvider {
 	 * @param force 是否强制执行(锁定目标)
 	 */
 	protected void pullOut(boolean force){
-		if(mSlideEngine != null)
-			mSlideEngine.scrollToStage(pullOutStage, force);
+		if(mSlideEngine != null) {
+            mSlideEngine.scrollToStage(pullOutStage, force);
+        }
 	}
 	
 	/**
@@ -499,24 +509,27 @@ public class LayoutDrawerProvider {
 	 * @param force 是否强制执行(锁定目标)
 	 */
 	protected void pushIn(boolean force){
-		if(mSlideEngine != null)
-			mSlideEngine.scrollToStage(pushInStage, force);
+		if(mSlideEngine != null) {
+            mSlideEngine.scrollToStage(pushInStage, force);
+        }
 	}
 
     /**
      * 打开抽屉(立即, 无动画)
      */
 	protected void pullOutImmediately(){
-		if (mSlideEngine != null)
-			mSlideEngine.scrollToPosition(mSlideEngine.getPositionOfStage(pullOutStage), 0, false);
+		if (mSlideEngine != null) {
+            mSlideEngine.scrollToPosition(mSlideEngine.getPositionOfStage(pullOutStage), 0, false);
+        }
 	}
 
     /**
      * 关闭抽屉(立即, 无动画)
      */
 	protected void pushInImmediately(){
-		if (mSlideEngine != null)
-			mSlideEngine.scrollToPosition(mSlideEngine.getPositionOfStage(pushInStage), 0, false);
+		if (mSlideEngine != null) {
+            mSlideEngine.scrollToPosition(mSlideEngine.getPositionOfStage(pushInStage), 0, false);
+        }
 	}
 	
 	/**
@@ -598,10 +611,11 @@ public class LayoutDrawerProvider {
 	}
 
 	protected float getCurrentStage(){
-		if (mSlideEngine != null)
-			return mSlideEngine.getCurrentStage();
-		else
-			return 0;
+		if (mSlideEngine != null) {
+            return mSlideEngine.getCurrentStage();
+        } else {
+            return 0;
+        }
 	}
 	
 }

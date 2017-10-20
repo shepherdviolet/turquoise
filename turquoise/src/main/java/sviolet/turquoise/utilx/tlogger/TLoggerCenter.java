@@ -61,8 +61,9 @@ class TLoggerCenter {
      * 添加规则
      */
     void addRules(Map<String, Integer> rules) {
-        if (rules == null)
+        if (rules == null) {
             return;
+        }
         try {
             ruleLock.lock();
             customRules.putAll(rules);
@@ -79,8 +80,9 @@ class TLoggerCenter {
         try {
             ruleLock.lock();
             customRules = new HashMap<>(rules != null ? rules.size() : 0);
-            if (rules == null)
+            if (rules == null) {
                 return;
+            }
             customRules.putAll(rules);
         } finally {
             ruleLock.unlock();

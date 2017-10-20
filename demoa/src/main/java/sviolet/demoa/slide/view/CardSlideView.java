@@ -109,8 +109,9 @@ public class CardSlideView extends LinearLayout implements SlideView {
 			public void onVelocityOverflow(int velocity) {
 				if (velocity < 0) {
 					//限速, 防止滑动过快
-                    if(velocity < - MeasureUtils.dp2px(getContext(), 1200))
-                        velocity = - MeasureUtils.dp2px(getContext(), 1200);
+                    if(velocity < - MeasureUtils.dp2px(getContext(), 1200)) {
+                        velocity = -MeasureUtils.dp2px(getContext(), 1200);
+                    }
                     //由于titleSlideEngine反向输出, 此处将速度反向
 					titleSlideEngine.fling(-velocity);
 				}
@@ -142,8 +143,9 @@ public class CardSlideView extends LinearLayout implements SlideView {
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent ev) {
 		boolean original = super.onInterceptTouchEvent(ev);
-		if(mGestureDriver != null && mGestureDriver.onInterceptTouchEvent(ev))
-			return true;
+		if(mGestureDriver != null && mGestureDriver.onInterceptTouchEvent(ev)) {
+            return true;
+        }
 		return original;
 	}
 	
@@ -154,8 +156,9 @@ public class CardSlideView extends LinearLayout implements SlideView {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		boolean original = super.onTouchEvent(event);
-		if(mGestureDriver != null && mGestureDriver.onTouchEvent(event))
-			return true;
+		if(mGestureDriver != null && mGestureDriver.onTouchEvent(event)) {
+            return true;
+        }
 		return original;
 	}
 	
@@ -195,8 +198,9 @@ public class CardSlideView extends LinearLayout implements SlideView {
 	 * @param titleView
 	 */
 	public void bindTitleView(CardSlideTitleView titleView){
-		if(titleView != null)
-			titleSlideEngine = titleView.getSlideEngine();
+		if(titleView != null) {
+            titleSlideEngine = titleView.getSlideEngine();
+        }
 	}
 	
 	/**
@@ -204,8 +208,9 @@ public class CardSlideView extends LinearLayout implements SlideView {
 	 * @param adaptListView
 	 */
 	public void bindListView(AdaptListView adaptListView){
-		if(adaptListView != null)
-			listSlideEngine = adaptListView.getSlideEngine();
+		if(adaptListView != null) {
+            listSlideEngine = adaptListView.getSlideEngine();
+        }
 	}
 
 	/**

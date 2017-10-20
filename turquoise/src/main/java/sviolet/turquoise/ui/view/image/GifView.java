@@ -83,15 +83,17 @@ public class GifView extends View {
             mMovie = Movie.decodeStream(is);  
     		//计算动画持续时间
     		int _duration = mMovie.duration();
-    		if (_duration > 0)
-    			duration = _duration;
+    		if (_duration > 0) {
+                duration = _duration;
+            }
         }  
 	}
 	
 	@Override
 	protected void onDraw(Canvas canvas) {
-		if (mMovie == null)
-			return;
+		if (mMovie == null) {
+            return;
+        }
 		
 		//计算时间
 		if (startTime == 0) {

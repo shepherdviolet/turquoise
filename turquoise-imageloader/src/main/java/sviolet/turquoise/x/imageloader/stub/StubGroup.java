@@ -44,8 +44,9 @@ public class StubGroup {
      * @param stub add the stub into group, non-repetitive(Set)
      */
     public void add(Stub stub){
-        if (stub == null)
+        if (stub == null) {
             return;
+        }
         stubSet.add(stub);
         //check and set indispensable state
         if (stub.getParams().isIndispensable()){

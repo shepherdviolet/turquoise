@@ -98,8 +98,9 @@ public abstract class WeakHandler<T> extends Handler {
      * @return 获取弱引用宿主对象, 可能为null, 注意判断
      */
     protected T getHost(){
-        if (host != null)
+        if (host != null) {
             return host.get();
+        }
         return null;
     }
 

@@ -74,8 +74,9 @@ public abstract class WeakAsyncTask<Host, Params, Progress, Result> extends Asyn
      * @return 获取弱引用宿主对象, 可能为null, 注意判断
      */
     protected Host getHost(){
-        if (host != null)
+        if (host != null) {
             return host.get();
+        }
         return null;
     }
 

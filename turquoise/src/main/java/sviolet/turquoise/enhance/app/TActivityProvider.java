@@ -69,8 +69,9 @@ public class TActivityProvider {
      */
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     void windowSetting(Activity activity) {
-        if (getActivitySettings(activity) == null)
+        if (getActivitySettings(activity) == null) {
             return;
+        }
 
         //硬件加速
         if(getActivitySettings(activity).enableHardwareAccelerated()){

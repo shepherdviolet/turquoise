@@ -96,8 +96,9 @@ public class GradualImageView extends ImageView {
         mHandler.removeMessages(MyHandler.HANDLER_SET_ALPHA);
         updateTimestamp = SystemClock.uptimeMillis();
         super.setImageDrawable(drawable);
-        if (drawable != null)
+        if (drawable != null) {
             setAlphaCompat(255);
+        }
     }
 
     /**
@@ -108,8 +109,9 @@ public class GradualImageView extends ImageView {
         mHandler.removeMessages(MyHandler.HANDLER_SET_ALPHA);
         updateTimestamp = SystemClock.uptimeMillis();
         super.setImageResource(resId);
-        if (resId > 0)
+        if (resId > 0) {
             setAlphaCompat(255);
+        }
     }
 
     /**
@@ -120,8 +122,9 @@ public class GradualImageView extends ImageView {
         mHandler.removeMessages(MyHandler.HANDLER_SET_ALPHA);
         updateTimestamp = SystemClock.uptimeMillis();
         super.setImageBitmap(bm);
-        if (bm != null)
+        if (bm != null) {
             setAlphaCompat(255);
+        }
     }
 
     /**

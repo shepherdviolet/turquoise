@@ -292,15 +292,17 @@ public class LinearGestureDriver implements GestureDriver {
 		case TOUCH_AREA_MODE_ALL://全部有效
 			return true;
 		case TOUCH_AREA_MODE_VALID://区域内有效
-			if(isInArea)
-				return true;
-			else
-				return false;
+			if(isInArea) {
+                return true;
+            } else {
+                return false;
+            }
 		case TOUCH_AREA_MODE_INVALID://区域内无效
-			if(isInArea)
-				return false;
-			else
-				return true;
+			if(isInArea) {
+                return false;
+            } else {
+                return true;
+            }
 		default:
 		}
 		return false;
@@ -314,8 +316,9 @@ public class LinearGestureDriver implements GestureDriver {
 	 */
 	private boolean isStaticTouch(int x, int y){
 		//是否启用永久触摸区域
-		if(!staticTouchAreaEnabled)
-			return false;
+		if(!staticTouchAreaEnabled) {
+            return false;
+        }
 		
 		//判断是否在区域内
 		return x > staticTouchAreaLeft && x < staticTouchAreaRight && y > staticTouchAreaTop && y < staticTouchAreaBottom;
@@ -502,8 +505,9 @@ public class LinearGestureDriver implements GestureDriver {
 	 * 限刷新UI的情况.
 	 */
 	private void releaseCheck(){
-		if(mSlideEngine == null)
-			return;
+		if(mSlideEngine == null) {
+            return;
+        }
 		if(!mSlideEngine.isSliding() && releaseCheckCounter <= 0){
 			//超时释放引擎
 			release();
@@ -566,8 +570,9 @@ public class LinearGestureDriver implements GestureDriver {
 			public void run() {
 				staticTouchAreaLongPressHandled = true;
 				staticTouchAreaLongPressTimer = null;
-				if(mSlideEngine != null)
-					mSlideEngine.onStaticTouchAreaLongPress();
+				if(mSlideEngine != null) {
+                    mSlideEngine.onStaticTouchAreaLongPress();
+                }
 			}
 		}, STATIC_TOUCH_AREA_LONG_PRESS_DELAY); 
 	}
@@ -602,8 +607,9 @@ public class LinearGestureDriver implements GestureDriver {
 		//重置速度计
 		resetVelocityTracker();
 		//判断是否有效触摸
-		if(isValidTouch(downX, downY))
-			state = STATE_DOWN;
+		if(isValidTouch(downX, downY)) {
+            state = STATE_DOWN;
+        }
 		//engine正在惯性滑动时, 触摸并停住控件, 通知engine持有
 		if(mSlideEngine != null && mSlideEngine.isSliding()){
 			holdEngine();
@@ -614,8 +620,9 @@ public class LinearGestureDriver implements GestureDriver {
 	
 	private boolean onInterceptMove(MotionEvent event) {
 		//是否被跳过本次拦截
-		if(skipIntercepted)
-			return false;
+		if(skipIntercepted) {
+            return false;
+        }
 		//判断是否有效滑动, 有效滑动通知engine持有
 		if(state == STATE_DOWN){
 			//计算坐标
@@ -623,16 +630,18 @@ public class LinearGestureDriver implements GestureDriver {
 			checkValidMove();
 		}
 		//有效滑动后拦截事件
-		if(state > STATE_DOWN)
-			return true;
+		if(state > STATE_DOWN) {
+            return true;
+        }
 		//非有效滑动不拦截事件
 		return false;
 	}
 
 	private boolean onInterceptUP(MotionEvent event) {
 		//是否被跳过本次拦截
-		if(skipIntercepted)
-			return false;
+		if(skipIntercepted) {
+            return false;
+        }
 		//有效滑动状态拦截事件
 		if(state > STATE_DOWN){
 			return true;
@@ -705,8 +714,9 @@ public class LinearGestureDriver implements GestureDriver {
 	
 	private boolean onTouchUp(MotionEvent event){
 		//永久触摸区域点击事件
-		if(captureEscapedTouch && !staticTouchAreaLongPressHandled && mSlideEngine != null)
-			mSlideEngine.onStaticTouchAreaClick();
+		if(captureEscapedTouch && !staticTouchAreaLongPressHandled && mSlideEngine != null) {
+            mSlideEngine.onStaticTouchAreaClick();
+        }
 			
 		release();//释放手势
 		return true;
@@ -724,8 +734,9 @@ public class LinearGestureDriver implements GestureDriver {
 	@Override
 	public void bind(SlideEngine slideEngine) {
 		onBind(slideEngine);
-		if(mSlideEngine != null)
-			mSlideEngine.onBind(this);
+		if(mSlideEngine != null) {
+            mSlideEngine.onBind(this);
+        }
 	}
 
 	@Override
@@ -751,8 +762,9 @@ public class LinearGestureDriver implements GestureDriver {
 	 */
 	@Override
 	public boolean onInterceptTouchEvent(MotionEvent event) {
-		if(isDestroyed)
-			return false;
+		if(isDestroyed) {
+            return false;
+        }
 		
 		//[ACTION超时释放]计数
 		releaseCheckCounter++;
@@ -788,8 +800,9 @@ public class LinearGestureDriver implements GestureDriver {
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if(isDestroyed)
-			return false;
+		if(isDestroyed) {
+            return false;
+        }
 		
 		//[ACTION超时释放]计数
 		releaseCheckCounter++;

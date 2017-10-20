@@ -374,8 +374,9 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
         //清理
         synchronized (this) {
             getMap().clear();
-            if(recyclerMap != null)
+            if(recyclerMap != null) {
                 recyclerMap.clear();
+            }
             unusedMap.clear();
             setSize(0);
             recyclerSize = 0;
@@ -438,8 +439,9 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
      * @return 回收站位图数量
      */
     public int recyclerQuantity() {
-        if (recyclerMap != null)
+        if (recyclerMap != null) {
             return recyclerMap.size();
+        }
         return 0;
     }
 
@@ -554,8 +556,9 @@ public class BitmapCache extends CompatLruCache<String, Bitmap> {
     @Override
     protected int sizeOf(String key, Bitmap value) {
         //资源不存在或被回收返回0
-        if (value == null || value.isRecycled())
+        if (value == null || value.isRecycled()) {
             return 0;
+        }
         //计算图片占内存大小
         if (DeviceUtils.getVersionSDK() >= 12) {
             return value.getByteCount();

@@ -494,8 +494,9 @@ public class VerticalOverDragContainer extends RelativeLayout {
         }
 
         //必须实现自刷新
-        if (this.state == STATE_RELEASE && !scroller.isFinished())
+        if (this.state == STATE_RELEASE && !scroller.isFinished()) {
             postInvalidate();
+        }
     }
 
     /*****************************************************************************88

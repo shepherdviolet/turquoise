@@ -23,8 +23,9 @@ public class ProcessUtils {
     public static boolean isRunningForeground(Context applicationContext) {
 
         List<RunningAppProcessInfo> appProcesses = getRunningAppProcessInfo(applicationContext);
-        if (appProcesses == null)
+        if (appProcesses == null) {
             return false;
+        }
 
         String packageName = getCurrentAppProcessName(applicationContext);
 

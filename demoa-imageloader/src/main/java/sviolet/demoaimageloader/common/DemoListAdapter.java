@@ -53,18 +53,20 @@ public class DemoListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        if (activityList != null)
+        if (activityList != null) {
             return activityList.length;
-        else
+        } else {
             return 0;
+        }
     }
 
     @Override
     public Object getItem(int position) {
-        if (activityList != null && position < activityList.length && position >= 0)
+        if (activityList != null && position < activityList.length && position >= 0) {
             return activityList[position];
-        else
+        } else {
             return null;
+        }
     }
 
     @Override
@@ -90,8 +92,9 @@ public class DemoListAdapter extends BaseAdapter {
      */
     private void inflateView(int position, TViewHolder holder) {
         Class<? extends Activity> activity = (Class) getItem(position);
-        if (activity == null)
+        if (activity == null) {
             return;
+        }
         if (activity.isAnnotationPresent(DemoDescription.class)) {
             DemoDescription description = activity.getAnnotation(DemoDescription.class);
             setViewParams(holder, description.title(), description.type(), description.info());
@@ -104,13 +107,15 @@ public class DemoListAdapter extends BaseAdapter {
      * 设置View的显示值
      */
     private void setViewParams(TViewHolder holder, String title, String type, String info) {
-        if (holder == null)
+        if (holder == null) {
             return;
+        }
 
-        if (title != null)
+        if (title != null) {
             holder.get(R.id.guide_main_item_title, TextView.class).setText(title);
-        else
+        } else {
             holder.get(R.id.guide_main_item_title, TextView.class).setText("未设置@DemoDescription");
+        }
 
         holder.get(R.id.guide_main_item_type, TextView.class).setText(type);
         holder.get(R.id.guide_main_item_info, TextView.class).setText(info);

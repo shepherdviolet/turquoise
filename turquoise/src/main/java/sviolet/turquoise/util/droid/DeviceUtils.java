@@ -23,8 +23,9 @@ public class DeviceUtils {
     public static String getIMEI(Context context) {
         final TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String imei = manager.getDeviceId();
-        if (imei != null)
+        if (imei != null) {
             return imei;
+        }
         return "";
     }
 
@@ -47,8 +48,9 @@ public class DeviceUtils {
      */
     public static String getModel() {
         String model = android.os.Build.MODEL;
-        if (model != null)
+        if (model != null) {
             return model;
+        }
         return "";
     }
 

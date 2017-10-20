@@ -401,8 +401,9 @@ public abstract class AbsStub implements Stub {
     public String getResourceKey() {
         if (resourceKey == null){
             String url = getUrl();
-            if (url == null)
+            if (url == null) {
                 url = NULL;
+            }
             resourceKey = ByteUtils.bytesToHex(DigestCipher.digestStr(url, DigestCipher.TYPE_SHA1));
         }
         return resourceKey;
