@@ -75,7 +75,7 @@ public class NetStateUtils {
 					return NetworkType.MOBILE_4G;
 				default:
 					String subtypeName = networkInfo.getSubtypeName();
-					if (subtypeName.equalsIgnoreCase("TD-SCDMA") || subtypeName.equalsIgnoreCase("WCDMA") || subtypeName.equalsIgnoreCase("CDMA2000")) {
+					if ("TD-SCDMA".equalsIgnoreCase(subtypeName) || "WCDMA".equalsIgnoreCase(subtypeName) || "CDMA2000".equalsIgnoreCase(subtypeName)) {
 						return NetworkType.MOBILE_3G;
 					}
 					return NetworkType.UNKNOWN;

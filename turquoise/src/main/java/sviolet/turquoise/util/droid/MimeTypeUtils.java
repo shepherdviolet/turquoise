@@ -48,15 +48,15 @@ public class MimeTypeUtils {
     public static String getFromExtension(@NonNull String extension) {
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
         return mimeType != null ? mimeType : (
-                extension.equalsIgnoreCase("htm") ? "text/html" : (
-                extension.equalsIgnoreCase("html") ? "text/html" : (
-                extension.equalsIgnoreCase("js") ? "application/x-javascript" : (
-                extension.equalsIgnoreCase("css") ? "text/css" : (
-                extension.equalsIgnoreCase("ttf") ? "application/x-font-ttf" : (
-                extension.equalsIgnoreCase("eot") ? "application/vnd.ms-fontobject" : (
-                extension.equalsIgnoreCase("svg") ? "image/svg+xml" : (
-                extension.equalsIgnoreCase("woff") ? "application/font-woff" : (
-                extension.equalsIgnoreCase("otf") ? "application/x-font-opentype" :
+                "htm".equalsIgnoreCase(extension) ? "text/html" : (
+                "html".equalsIgnoreCase(extension) ? "text/html" : (
+                "js".equalsIgnoreCase(extension) ? "application/x-javascript" : (
+                "css".equalsIgnoreCase(extension) ? "text/css" : (
+                "ttf".equalsIgnoreCase(extension) ? "application/x-font-ttf" : (
+                "eot".equalsIgnoreCase(extension) ? "application/vnd.ms-fontobject" : (
+                "svg".equalsIgnoreCase(extension) ? "image/svg+xml" : (
+                "woff".equalsIgnoreCase(extension) ? "application/font-woff" : (
+                "otf".equalsIgnoreCase(extension) ? "application/x-font-opentype" :
                 null)))))))));
     }
 }

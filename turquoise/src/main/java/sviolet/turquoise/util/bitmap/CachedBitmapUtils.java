@@ -223,7 +223,7 @@ public class CachedBitmapUtils implements LifeCycle {
      */
     public void cacheBitmap(String key, Bitmap bitmap) {
         //若key为空, 自动分配一个
-        if (key == null || key.equals("")){
+        if (key == null || "".equals(key)){
             key = DEFAULT_KEY_PREFIX + defaultKeyIndex;
             defaultKeyIndex++;
         }

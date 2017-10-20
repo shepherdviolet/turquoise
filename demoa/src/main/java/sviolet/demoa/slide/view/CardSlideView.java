@@ -297,7 +297,7 @@ public class CardSlideView extends LinearLayout implements SlideView {
 		public void handleGestureRelease(SlideEngine engine, String alias, int velocity) {
 			
 			//手势向下, 且分发给卡片的情况
-			if(velocity > 0 && alias.equals("card")){
+			if(velocity > 0 && "card".equals(alias)){
 				//外部卡片引擎(根据别名取)
 				LinearStageScrollEngine cardSlideEngine = (LinearStageScrollEngine)getSlideEngine("card");
 				//内部列表引擎(根据别名取)
