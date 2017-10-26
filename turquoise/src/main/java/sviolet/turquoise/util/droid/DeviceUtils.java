@@ -4,6 +4,9 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.RequiresPermission;
 import android.telephony.TelephonyManager;
 
@@ -108,6 +111,25 @@ public class DeviceUtils {
      */
     public static int getMemoryClass(Context context){
         return ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass();
+    }
+
+    /**
+     * 判断该设备是否是低内存设备
+     *
+     * Android 8.1 (API level 27) adds two new hardware-feature constants, FEATURE_RAM_LOW and FEATURE_RAM_NORMAL,
+     * to Package Manager. These constants allow you target the distribution of your apps and APK splits to
+     * normal- or low-RAM devices.
+     * These constants enable the Play store to promote a better user experience by highlighting apps especially
+     * well-suited to the capabilities of a given device.
+     *
+     * NotificationListenerService and ConditionProviderService are not supported on low-ram Android-powered
+     * devices that return true whenActivityManager.isLowRamDevice() is called.
+     *
+     */
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public static boolean isLowRamDevice(@NonNull Context context) {
+        ActivityManager mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        return mActivityManager != null && mActivityManager.isLowRamDevice();
     }
 
 }
