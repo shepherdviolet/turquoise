@@ -3,6 +3,7 @@
 /.idea/libraries
 /.idea/statistic.xml
 /.idea/gradle_extensions.xml
+/.idea/caches
 /build
 /captures
 /demoa/buildlog
