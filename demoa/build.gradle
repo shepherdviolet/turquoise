@@ -77,21 +77,21 @@ android {
     //flavor配置
 //    productFlavors {
 //        google {//谷歌市场
-//            flavorDimension "channel"
+//            dimension "channel"
 //            buildConfigField 'String', 'CHANNEL', '"谷歌市场版"'
 //        }
 //        wandoujia {//豌豆荚市场
-//            flavorDimension "channel"
+//            dimension "channel"
 //            buildConfigField 'String', 'CHANNEL', '"豌豆荚市场版"'
 //        }
 //        prod {//生产环境
-//            flavorDimension "environment"
+//            dimension "environment"
 //            manifestPlaceholders = [APP_NAME: "demoa"]//生产应用名(在Manifest中用${APP_NAME}取值)
 //            applicationId "sviolet.demoa"//生产包名
 //            buildConfigField 'String', 'URL', '"https://github.com/shepherdviolet/"'//生产URL
 //        }
 //        dev {//开发环境
-//            flavorDimension "environment"
+//            dimension "environment"
 //            manifestPlaceholders = [APP_NAME: "demoa-test"]//测试应用名(在Manifest中用${APP_NAME}取值)
 //            applicationId "sviolet.demoa.test"//测试包名
 //            buildConfigField 'String', 'URL', '"https://github.com/shepherdviolet/test"'//测试URL
