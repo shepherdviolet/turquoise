@@ -26,9 +26,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import sviolet.demoaimageloader.R;
+import sviolet.thistle.util.common.ThreadPoolExecutorUtils;
 import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
@@ -45,7 +45,7 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
     private Random random = new Random(System.currentTimeMillis());
     private int index = 0;
     private int[] resourceIds = {R.mipmap.async_image_1, R.mipmap.async_image_2, R.mipmap.async_image_3, R.mipmap.async_image_4, R.mipmap.async_image_5};
-    private ExecutorService pool = Executors.newCachedThreadPool();
+    private ExecutorService pool = ThreadPoolExecutorUtils.newInstance(0, Integer.MAX_VALUE, 60L, "TLoaderDemo-MyNetworkLoadHandler-%d");
     private float textSize = 100f;
 
     public MyNetworkLoadHandler(){

@@ -27,10 +27,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 
 import sviolet.thistle.model.thread.LazySingleThreadPool;
+import sviolet.thistle.util.common.ThreadPoolExecutorUtils;
 import sviolet.turquoise.enhance.common.WeakHandler;
 
 /**
@@ -625,7 +625,7 @@ public class TQueue {
         if (taskThreadPool == null){
             synchronized (this) {
                 if (taskThreadPool == null) {
-                    taskThreadPool = Executors.newCachedThreadPool();
+                    taskThreadPool = ThreadPoolExecutorUtils.newInstance(0, Integer.MAX_VALUE, 60L, "TQueue-%d");
                 }
             }
         }

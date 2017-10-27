@@ -21,10 +21,10 @@ package sviolet.turquoise.x.imageloader.server;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.thistle.model.thread.LazySingleThreadPool;
+import sviolet.thistle.util.common.ThreadPoolExecutorUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
@@ -42,8 +42,8 @@ public abstract class Engine implements ComponentManager.Component, Server {
 
     private ComponentManager manager;
 
-    private LazySingleThreadPool dispatchThreadPool = new LazySingleThreadPool("TLoader-Engine-%d");
-    private ExecutorService taskThreadPool = Executors.newCachedThreadPool();
+    private LazySingleThreadPool dispatchThreadPool = new LazySingleThreadPool("TLoader-Engine-dispatcher-%d");
+    private ExecutorService taskThreadPool = ThreadPoolExecutorUtils.newInstance(0, Integer.MAX_VALUE, 60L, "TLoader-Engine-worker-%d");
 
     private AtomicInteger taskCount = new AtomicInteger(0);
     private List<Task> cache;//single Thread to operate the cache!
