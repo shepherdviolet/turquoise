@@ -458,7 +458,7 @@ public class NodeControllerImpl extends NodeController {
      * Dispatch Thread
      */
 
-    private LazySingleThreadPool dispatchThreadPool = new LazySingleThreadPool();
+    private LazySingleThreadPool dispatchThreadPool = new LazySingleThreadPool("TLoader-NodeController-%d");
 
     @Override
     public void postDispatch() {

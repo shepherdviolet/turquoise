@@ -42,7 +42,7 @@ public abstract class Engine implements ComponentManager.Component, Server {
 
     private ComponentManager manager;
 
-    private LazySingleThreadPool dispatchThreadPool = new LazySingleThreadPool();
+    private LazySingleThreadPool dispatchThreadPool = new LazySingleThreadPool("TLoader-Engine-%d");
     private ExecutorService taskThreadPool = Executors.newCachedThreadPool();
 
     private AtomicInteger taskCount = new AtomicInteger(0);

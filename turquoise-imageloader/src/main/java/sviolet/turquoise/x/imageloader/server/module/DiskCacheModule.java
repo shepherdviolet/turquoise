@@ -63,7 +63,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
     @Override
     public void init(ComponentManager manager) {
         this.manager = manager;
-        this.dispatchThreadPool = new LazySingleThreadPool();
+        this.dispatchThreadPool = new LazySingleThreadPool("TLoader-DiskCacheModule-%d");
         if (manager.getServerSettings().isWipeDiskCacheWhenUpdate() && manager.getApplicationContextImage() != null){
             this.appVersion = ApplicationUtils.getAppVersionCode(manager.getApplicationContextImage());
         }

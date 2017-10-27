@@ -599,7 +599,7 @@ public class TQueue {
         if (dispatchThreadPool == null){
             synchronized (this) {
                 if (dispatchThreadPool == null) {
-                    dispatchThreadPool = new LazySingleThreadPool();
+                    dispatchThreadPool = new LazySingleThreadPool("TQueue-%d");
                 }
             }
         }
