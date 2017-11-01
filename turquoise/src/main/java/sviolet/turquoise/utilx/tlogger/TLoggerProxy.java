@@ -19,218 +19,81 @@
 
 package sviolet.turquoise.utilx.tlogger;
 
-import android.util.Log;
-
-import java.util.concurrent.locks.ReentrantLock;
-
-import sviolet.turquoise.common.statics.StringConstants;
-import sviolet.thistle.util.common.CheckUtils;
-
 /**
- * 日志打印器代理类
- * <p>
- * Created by S.Violet on 2017/5/23.
+ * 日志打印器代理(用于实现空打印器或转由开发者自行实现)
+ *
+ * Created by S.Violet on 2017/11/1.
  */
 class TLoggerProxy extends TLogger {
 
-    private Class<?> host;
-    private int level;
-    private int ruleUpdateTimes;
-    private String className;
+    private TLogger provider;
 
-    private ReentrantLock lock = new ReentrantLock();
-
-    TLoggerProxy(Class<?> host, int level, int ruleUpdateTimes) {
-        this.host = host;
-        this.level = level;
-        this.ruleUpdateTimes = ruleUpdateTimes;
-
-        if (host != null){
-            className = host.getSimpleName();
-            if (CheckUtils.isEmpty(className)){
-                String[] names = host.getName().split("\\.");
-                if (names.length > 0){
-                    className = names[names.length - 1];
-                }
-            }
-        }
-    }
-
-    @Override
-    public boolean checkEnable(int level) {
-        updateLevel();
-        return CheckUtils.isFlagMatch(this.level, level);
+    public TLoggerProxy(TLogger provider) {
+        this.provider = provider;
     }
 
     @Override
     public void e(Object msg) {
-        updateLevel();
-        if (CheckUtils.isFlagMatch(level, ERROR)) {
-            String message = "[" + className + "]" + msg;
-            Log.e(StringConstants.LIBRARY_TAG, message);
-            TLoggerCenter.INSTANCE.getPrinter().e(message, null);
+        if (provider != null) {
+            provider.e(msg);
         }
     }
 
     @Override
-    public void e(Object msg, Throwable throwable) {
-        updateLevel();
-        if (CheckUtils.isFlagMatch(level, ERROR)) {
-            String message = "[" + className + "]" + msg;
-            Log.e(StringConstants.LIBRARY_TAG, message, throwable);
-            TLoggerCenter.INSTANCE.getPrinter().e(message, throwable);
+    public void e(Object msg, Throwable t) {
+        if (provider != null) {
+            provider.e(msg, t);
         }
     }
 
     @Override
-    public void e(Throwable throwable) {
-        updateLevel();
-        if (CheckUtils.isFlagMatch(level, ERROR)) {
-            String message = "[" + className + "]ERROR";
-            Log.e(StringConstants.LIBRARY_TAG, message, throwable);
-            TLoggerCenter.INSTANCE.getPrinter().e(message, throwable);
+    public void e(Throwable t) {
+        if (provider != null) {
+            provider.e(t);
         }
     }
 
     @Override
     public void w(Object msg) {
-        updateLevel();
-        if (CheckUtils.isFlagMatch(level, WARNING)) {
-            String message = "[" + className + "]" + msg;
-            Log.w(StringConstants.LIBRARY_TAG, message);
-            TLoggerCenter.INSTANCE.getPrinter().w(message, null);
+        if (provider != null) {
+            provider.w(msg);
         }
     }
 
     @Override
-    public void w(Object msg, Throwable throwable) {
-        updateLevel();
-        if (CheckUtils.isFlagMatch(level, WARNING)) {
-            String message = "[" + className + "]" + msg;
-            Log.w(StringConstants.LIBRARY_TAG, message, throwable);
-            TLoggerCenter.INSTANCE.getPrinter().w(message, throwable);
+    public void w(Object msg, Throwable t) {
+        if (provider != null) {
+            provider.w(msg, t);
         }
     }
 
     @Override
-    public void w(Throwable throwable) {
-        updateLevel();
-        if (CheckUtils.isFlagMatch(level, WARNING)) {
-            String message = "[" + className + "]WARNING";
-            Log.w(StringConstants.LIBRARY_TAG, message, throwable);
-            TLoggerCenter.INSTANCE.getPrinter().w(message, throwable);
+    public void w(Throwable t) {
+        if (provider != null) {
+            provider.w(t);
         }
     }
 
     @Override
     public void i(Object msg) {
-        updateLevel();
-        if (CheckUtils.isFlagMatch(level, INFO)) {
-            String message = "[" + className + "]" + msg;
-            Log.i(StringConstants.LIBRARY_TAG, message);
-            TLoggerCenter.INSTANCE.getPrinter().i(message);
+        if (provider != null) {
+            provider.i(msg);
         }
     }
 
     @Override
     public void d(Object msg) {
-        updateLevel();
-        if (CheckUtils.isFlagMatch(level, DEBUG)) {
-            String message = "[" + className + "]" + msg;
-            Log.d(StringConstants.LIBRARY_TAG, message);
-            TLoggerCenter.INSTANCE.getPrinter().d(message);
+        if (provider != null) {
+            provider.d(msg);
         }
     }
 
-    private void updateLevel() {
-        if (ruleUpdateTimes != TLoggerCenter.INSTANCE.getRuleUpdateTimes()) {
-            try {
-                lock.lock();
-                if (ruleUpdateTimes != TLoggerCenter.INSTANCE.getRuleUpdateTimes()) {
-                    this.level = TLoggerCenter.INSTANCE.check(host);
-                    this.ruleUpdateTimes = TLoggerCenter.INSTANCE.getRuleUpdateTimes();
-                }
-            } finally {
-                lock.unlock();
-            }
+    @Override
+    public boolean checkEnable(int level) {
+        if (provider != null) {
+            return provider.checkEnable(level);
         }
+        return false;
     }
 
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////
-// Kotlin 实现
-
-//internal class TLoggerProxy(
-//        private val host: Class<*>?,
-//        private var level: Int?,
-//        private var ruleUpdateTimes: Int?
-//) : TLogger(){
-//
-//    private val lock = ReentrantLock()
-//
-//    override fun checkEnable(level: Int): Boolean {
-//        updateLevel()
-//        return CheckUtils.isFlagMatch(this.level ?: NULL, level)
-//    }
-//
-//    override fun e(msg: Any?) {
-//        updateLevel()
-//        if (CheckUtils.isFlagMatch(level ?: NULL, ERROR))
-//            Log.e(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")
-//    }
-//
-//    override fun e(msg: Any?, t: Throwable?) {
-//        updateLevel()
-//        if (CheckUtils.isFlagMatch(level ?: NULL, ERROR))
-//            Log.e(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg", t)
-//    }
-//
-//    override fun e(t: Throwable?) {
-//        updateLevel()
-//        if (CheckUtils.isFlagMatch(level ?: NULL, ERROR))
-//            Log.e(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]", t)
-//    }
-//
-//    override fun w(msg: Any?) {
-//        updateLevel()
-//        if (CheckUtils.isFlagMatch(level ?: NULL, WARNING))
-//            Log.w(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")
-//    }
-//
-//    override fun w(msg: Any?, t: Throwable?) {
-//        updateLevel()
-//        if (CheckUtils.isFlagMatch(level ?: NULL, WARNING))
-//            Log.w(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg", t)
-//    }
-//
-//    override fun w(t: Throwable?) {
-//        updateLevel()
-//        if (CheckUtils.isFlagMatch(level ?: NULL, WARNING))
-//            Log.w(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]", t)
-//    }
-//
-//    override fun i(msg: Any?) {
-//        updateLevel()
-//        if (CheckUtils.isFlagMatch(level ?: NULL, INFO))
-//            Log.i(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")
-//    }
-//
-//    override fun d(msg: Any?) {
-//        updateLevel()
-//        if (CheckUtils.isFlagMatch(level ?: NULL, DEBUG))
-//            Log.d(StringConstants.LIBRARY_TAG, "[${host?.simpleName}]$msg")
-//    }
-//
-//    private fun updateLevel(){
-//        if (ruleUpdateTimes != TLoggerCenter.getRuleUpdateTimes()){
-//            lock.sync {
-//                if (ruleUpdateTimes != TLoggerCenter.getRuleUpdateTimes()) {
-//                    this.level = TLoggerCenter.check(host)
-//                    this.ruleUpdateTimes = TLoggerCenter.getRuleUpdateTimes()
-//                }
-//            }
-//        }
-//    }
-//
-//}

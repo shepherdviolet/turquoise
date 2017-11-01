@@ -49,13 +49,16 @@ class TLoggerCenter {
     private AtomicInteger ruleUpdateTimes = new AtomicInteger(0);
 
     //空打印器
-    private TLoggerProxy nullLogger = new TLoggerProxy(null, TLogger.NULL, 0);
+    private TLogger nullLogger = new TLoggerProxy(null);
 
     //同步锁
     private ReentrantLock ruleLock = new ReentrantLock();
 
     //磁盘输出
     private LoggerPrinter printer = new NullLoggerPrinter();
+
+    //开发者自定义的日志实现
+    private TLogger customLogger;
 
     /**
      * 添加规则
@@ -135,7 +138,13 @@ class TLoggerCenter {
      * 创建打印器
      */
     private TLogger newLogger(Class<?> host) {
-        return new TLoggerProxy(host, check(host), ruleUpdateTimes.get());
+        if (host == null){
+            return new TLoggerProxy(null);
+        }
+        if (customLogger != null){
+            return new TLoggerProxy(customLogger);
+        }
+        return new TLoggerImpl(host, check(host), ruleUpdateTimes.get());
     }
 
     /**
@@ -177,6 +186,10 @@ class TLoggerCenter {
         getPrinter().flush();
     }
 
+    void setCustomLogger(TLogger customLogger) {
+        this.customLogger = customLogger;
+    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -195,7 +208,7 @@ class TLoggerCenter {
 //    private var ruleUpdateTimes = AtomicInteger(0)
 //
 //    //空打印器
-//    private val nullLogger = TLoggerProxy(null, TLogger.NULL, 0)
+//    private val nullLogger = TLoggerImpl(null, TLogger.NULL, 0)
 //
 //    //同步锁
 //    private val cacheLock = ReentrantLock()
@@ -267,7 +280,7 @@ class TLoggerCenter {
 //     * 创建打印器
 //     */
 //    fun newLogger(host: Class<*>?) : TLogger {
-//        return TLoggerProxy(host, check(host), ruleUpdateTimes.get())
+//        return TLoggerImpl(host, check(host), ruleUpdateTimes.get())
 //    }
 //
 //    /**

@@ -109,20 +109,35 @@ public abstract class TLogger {
     }
 
     /**
-     * 设置日志磁盘输出器, 默认不输出到磁盘, 一般使用TLoggerPrinterImpl, 自行实现需要注意性能问题和异常问题
+     * [特殊]设置日志磁盘输出器, 默认不输出到磁盘, 一般使用SimpleLoggerPrinter, 自行实现需要注意性能问题和异常问题
      */
     public static void setLoggerPrinter(LoggerPrinter printer){
         TLoggerCenter.INSTANCE.setPrinter(printer);
     }
 
     /**
-     * [特殊:当设置了LoggerPrinter时有效]
+     * [特殊]当设置了LoggerPrinter时有效,
      * 强制将缓存中的日志写入磁盘, 通常在Thread.UncaughtExceptionHandler.uncaughtException(...)中调用,
      * 保证异常崩溃时, 日志能够顺利写入磁盘.
      */
     public static void flush(){
         TLoggerCenter.INSTANCE.flush();
     }
+
+    /**
+     * [特殊]开发者可以使用该方法, 实现自定义的日志打印器逻辑.
+     * 一旦设置了自定义的日志打印器, TLogger原有的日志级别/规则/LoggerPrinter都会无效, 通过TLogger.get()
+     * 获得的日志打印器将会变成自定义的日志打印器. 当开发者不想使用Turquoise组件的日志打印方式时可以使用.
+     * @param customLogger 自定义的日志打印器
+     */
+    public static void replaceLoggerImplements(TLogger customLogger) {
+        TLoggerCenter.INSTANCE.setCustomLogger(customLogger);
+    }
+
+    /**********************************************************************************************************
+     * abstract
+     **********************************************************************************************************/
+
 
     /**
      * 错误日志<p/>
@@ -201,7 +216,7 @@ public abstract class TLogger {
     /**
      * 检查某个日志级别是否允许打印
      * @param level 日志级别， 例如TLogger.DEBUG
-     * @return true:允许打印
+     * @return true:允许打印 false:不允许打印
      */
     public abstract boolean checkEnable(int level);
 
