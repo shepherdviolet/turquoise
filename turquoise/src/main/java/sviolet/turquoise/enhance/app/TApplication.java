@@ -206,9 +206,6 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
             }
         }
 
-        //将缓存中的日志强制写入磁盘
-        TLogger.flush();
-
         //重启
         if (isCrashRestart){
             restartApp();
@@ -376,6 +373,10 @@ public abstract class TApplication extends Application  implements Thread.Uncaug
      * 强杀应用
      */
     public void killApp() {
+
+        //将缓存中的日志强制写入磁盘
+        TLogger.flush();
+
         try {
             for (Activity activity : mActivities){
                 activity.finish();
