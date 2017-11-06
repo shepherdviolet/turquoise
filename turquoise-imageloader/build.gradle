@@ -1,8 +1,12 @@
 
 dependencies {
+    //implementation依赖的库, 对上一层依赖不可见. api依赖的库, 对上一层依赖可见
+    //api
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api project(':turquoise') { group 'com.github.shepherdviolet.turquoise'; version version_projectVersionName }//指定groupId和version, artifactId为project名
     //required
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(':turquoise') { group 'com.github.shepherdviolet.turquoise'; version version_projectVersionName }//指定groupId和version, artifactId为project名
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
+    implementation "com.android.support:support-v4:$version_supportVersion"
     //optional
-    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
+    implementation "com.squareup.okhttp3:okhttp:$version_okHttpVersion"
 }

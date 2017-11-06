@@ -109,9 +109,9 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')//这个配置会自动在混淆时引入Jar包, 不要在proguard-rules.pro中配置-libraryjars, 否则会报错!
-    compile project(':turquoise') { group 'com.github.shepherdviolet.turquoise'; version version_projectVersionName }//指定groupId和version, artifactId为project名
-
-    //3rd party ui library
-    compile 'com.github.zcweng:switch-button:0.0.3@aar'
+    //implementation依赖的库, 对上一层依赖不可见. api依赖的库, 对上一层依赖可见
+    implementation fileTree(include: ['*.jar'], dir: 'libs')//这个配置会自动在混淆时引入Jar包, 不要在proguard-rules.pro中配置-libraryjars, 否则会报错!
+    implementation project(':turquoise') { group 'com.github.shepherdviolet.turquoise'; version version_projectVersionName }//指定groupId和version, artifactId为project名
+    implementation "com.android.support:support-v4:$version_supportVersion"
+    implementation 'com.github.zcweng:switch-button:0.0.3@aar'
 }

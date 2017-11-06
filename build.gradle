@@ -99,7 +99,8 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
     }
 
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$version_kotlinVersion"
+        //implementation依赖的库, 对上一层依赖不可见. api依赖的库, 对上一层依赖可见
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$version_kotlinVersion"
     }
 
 }
@@ -111,7 +112,8 @@ configure(subprojects.findAll { it.name.startsWith('demo') }) {
     apply plugin: 'kotlin-android'
 
     dependencies {
-        compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$version_kotlinVersion"
+        //implementation依赖的库, 对上一层依赖不可见. api依赖的库, 对上一层依赖可见
+        implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$version_kotlinVersion"
     }
 
 }
