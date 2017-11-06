@@ -1,6 +1,6 @@
 android {
     compileSdkVersion Integer.valueOf(version_compileSdkVersion)
-    buildToolsVersion version_buildToolsVersion
+//    buildToolsVersion version_buildToolsVersion
 
     defaultConfig {
         applicationId "sviolet.demoaimageloader"
@@ -30,34 +30,28 @@ android {
 
     buildTypes {
         release {
-            //混淆
-            minifyEnabled true
-            //Zipalign优化
-            zipAlignEnabled true
-            //调试
-            debuggable false
-            //移除无用resource
-            shrinkResources false
-            //proguard配置文件proguard-rules.pro
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            //自定义参数, 程序中BuildConfig._DEBUG获得
-            buildConfigField "boolean", "_DEBUG", "false"
+            postprocessing {
+                removeUnusedCode false
+                removeUnusedResources false
+                obfuscate false
+                optimizeCode false
+                debuggable false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                //自定义参数, 程序中BuildConfig._DEBUG获得
+                buildConfigField "boolean", "_DEBUG", "false"
+            }
         }
         debug {
-            //混淆
-            minifyEnabled false
-            //Zipalign优化
-            zipAlignEnabled false
-            //调试
-            debuggable true
-            //移除无用resource
-            shrinkResources false
-            //proguard配置文件proguard-rules.pro
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
-            //自定义参数, 程序中BuildConfig._DEBUG获得
-            buildConfigField "boolean", "_DEBUG", "true"
+            postprocessing {
+                removeUnusedCode false
+                removeUnusedResources false
+                obfuscate false
+                optimizeCode false
+                debuggable true
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                //自定义参数, 程序中BuildConfig._DEBUG获得
+                buildConfigField "boolean", "_DEBUG", "true"
+            }
         }
     }
 

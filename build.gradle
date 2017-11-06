@@ -65,7 +65,7 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
 
     android {
         compileSdkVersion Integer.valueOf(version_compileSdkVersion)
-        buildToolsVersion version_buildToolsVersion
+//        buildToolsVersion version_buildToolsVersion
 
         defaultConfig {
             minSdkVersion Integer.valueOf(version_minSdkVersion)
@@ -76,8 +76,14 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
 
         buildTypes {
             release {
-                minifyEnabled false
-                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                postprocessing {
+                    removeUnusedCode false
+                    removeUnusedResources false
+                    obfuscate false
+                    optimizeCode false
+                    debuggable false
+                    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                }
             }
         }
     }
@@ -101,6 +107,11 @@ configure(subprojects.findAll { it.name.startsWith('demo') }) {
 }
 
 //其他////////////////////////////////////////////////////////////////////////////////////
+
+task clean(type: Delete) {
+    group = 'build'
+    delete rootProject.buildDir
+}
 
 //上传
 apply from: 'gradle/build-upload.gradle'
