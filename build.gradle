@@ -85,6 +85,16 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
                     proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
                 }
             }
+            debug {
+                postprocessing {
+                    removeUnusedCode false
+                    removeUnusedResources false
+                    obfuscate false
+                    optimizeCode false
+                    debuggable true
+                    proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+                }
+            }
         }
     }
 
