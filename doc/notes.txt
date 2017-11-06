@@ -1,0 +1,1 @@
+1.android gradle plugin 3.1.0-alpha02 使用Note3等5.0设备时无法使用instant run, 会导致编译问题, 关闭instant run即可
