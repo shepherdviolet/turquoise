@@ -7,4 +7,4 @@
 /backup
 buildlog
 .DS_Store
-.iml
+*.iml
