@@ -1,4 +1,4 @@
-# Turquoise 6.5
+# Turquoise 7.0
 ###### A comprehensive Android library for private use.
 ###### https://github.com/shepherdviolet/turquoise
 
@@ -10,13 +10,13 @@
     repositories {
         jcenter()
         maven { url 'https://jitpack.io' }
-        google()
-        //Deprecated way, use jitpack.io instead, just for reference
+        google()
+        //Deprecated way, use jitpack.io instead, just for reference
         //maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
     }
     dependencies {
-        compile 'com.github.shepherdviolet.turquoise:turquoise:6.5'
-        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader:6.5'
+        compile 'com.github.shepherdviolet.turquoise:turquoise:7.0'
+        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader:7.0'
     }
 ```
 
