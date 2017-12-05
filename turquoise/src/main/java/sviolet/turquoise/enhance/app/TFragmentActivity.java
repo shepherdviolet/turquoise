@@ -63,6 +63,7 @@ public abstract class TFragmentActivity extends FragmentActivity implements Enha
         } else {
             onRelaunchFragments(savedInstanceState);
         }
+        onCreateEnhanced(savedInstanceState);
         onInitViews(savedInstanceState);
     }
 
@@ -71,6 +72,7 @@ public abstract class TFragmentActivity extends FragmentActivity implements Enha
     }
 
     /**
+     * <p>[Can Override]</p>
      * <p>初始化Fragment, 该方法只在Activity初次创建时调用, 重建(屏幕旋转/长时间后重开)时不会调用该方法</p>
      *
      * <p>用于一般的Fragment用法, 防止Fragment在旋转屏幕时不停的创建实例并重叠显示,
@@ -94,6 +96,7 @@ public abstract class TFragmentActivity extends FragmentActivity implements Enha
     }
 
     /**
+     * <p>[Can Override]</p>
      * <p>重建Fragment, 该方法只在Activity重建(屏幕旋转/长时间后重开)时调用, Activity初次创建时不调用该方法</p>
      *
      * <p>用于一般的Fragment用法, 防止Fragment在旋转屏幕时不停的创建实例并重叠显示,
@@ -112,9 +115,18 @@ public abstract class TFragmentActivity extends FragmentActivity implements Enha
     }
 
     /**
+     * <p>[Can Override]</p>
      * 初始化View, 该方法在Activity初次创建时, 和重建(屏幕旋转/长时间后重开)时, 都会调用
      */
     protected abstract void onInitViews(Bundle savedInstanceState);
+
+    /**
+     * <p>[Can Override]</p>
+     * 等同于原生的onCreate
+     */
+    protected void onCreateEnhanced(Bundle savedInstanceState){
+
+    }
 
     /**
      * 根据Activity的@OptionsMenuId标签, 注入OptionsMenu菜单布局文件<br>
@@ -132,6 +144,7 @@ public abstract class TFragmentActivity extends FragmentActivity implements Enha
         provider.onDestroy(this);
         runtimePermissionManager.onDestroy();
         activityResultCallbackManager.onDestroy();
+        onDestroyEnhanced();
         afterDestroy();
     }
 
@@ -140,9 +153,18 @@ public abstract class TFragmentActivity extends FragmentActivity implements Enha
     }
 
     /**
+     * <p>[Can Override]</p>
      * 等同于onDestroy方法, 监听销毁的生命周期事件
      */
     protected void afterDestroy(){
+
+    }
+
+    /**
+     * <p>[Can Override]</p>
+     * 等同于onDestroy方法, 监听销毁的生命周期事件
+     */
+    protected void onDestroyEnhanced(){
 
     }
 
@@ -276,18 +298,18 @@ public abstract class TFragmentActivity extends FragmentActivity implements Enha
     @Override
     protected final void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (!activityResultCallbackManager.handleActivityResult(requestCode, resultCode, data)){
-            onActivityResultOtherwise(requestCode, resultCode, data);
+            onActivityResultEnhanced(requestCode, resultCode, data);
         }
     }
 
     /**
-     * 当内置的ActivityResultCallbackManager未能处理onActivityResult时回调此方法, 因此在未使用registerActivityResultCallback的
-     * 情况下, 复写该方法等同于原生复写onActivityResult方法.
+     * <p>[Can Override]</p>
+     * 等同于原生复写onActivityResult方法. 当内置的ActivityResultCallbackManager未能处理onActivityResult时回调此方法
      * @param requestCode requestCode
      * @param resultCode resultCode
      * @param data data
      */
-    protected void onActivityResultOtherwise(int requestCode, int resultCode, Intent data){
+    protected void onActivityResultEnhanced(int requestCode, int resultCode, Intent data){
 
     }
 
