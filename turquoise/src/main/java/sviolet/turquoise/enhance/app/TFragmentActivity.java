@@ -19,12 +19,14 @@
 
 package sviolet.turquoise.enhance.app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.mvp.TView;
+import sviolet.turquoise.enhance.app.utils.ActivityResultCallbackManager;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
 import sviolet.turquoise.enhance.app.utils.RuntimePermissionManager;
 import sviolet.turquoise.utilx.tlogger.TLogger;
@@ -46,6 +48,7 @@ public abstract class TFragmentActivity extends FragmentActivity implements Enha
 
     private final TActivityProvider provider = new TActivityProvider();
     private RuntimePermissionManager runtimePermissionManager = new RuntimePermissionManager(this);
+    private ActivityResultCallbackManager activityResultCallbackManager = new ActivityResultCallbackManager();
 
     private int contentId;
 
@@ -128,6 +131,7 @@ public abstract class TFragmentActivity extends FragmentActivity implements Enha
         super.onDestroy();
         provider.onDestroy(this);
         runtimePermissionManager.onDestroy();
+        activityResultCallbackManager.onDestroy();
         afterDestroy();
     }
 
@@ -240,6 +244,51 @@ public abstract class TFragmentActivity extends FragmentActivity implements Enha
     @Override
     public final void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         runtimePermissionManager.handleRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    /**********************************************
+     * Public
+     *
+     * ActivityResult callback
+     */
+
+    /**
+     * 注册一个回调并返回一个请求号, 将原先需要重写Activity.onActivityResult处理的事件转为回调形式
+     *
+     * <pre>{@code
+     *      startActivityForResult(new Intent(SourceActivity.this, TargetActivity.class), registerActivityResultCallback(new ActivityResultCallbackManager.OnActivityResultCallback{
+     *          public void onActivityResult(int requestCode, int resultCode, Intent data){
+     *              ......
+     *          }
+     *      }));
+     * }</pre>
+     *
+     * @param callback 回调
+     * @return 回调对应的请求号
+     */
+    public int registerActivityResultCallback(ActivityResultCallbackManager.OnActivityResultCallback callback) {
+        return activityResultCallbackManager.register(callback);
+    }
+
+    /**
+     * onActivityResult先交由activityResultCallbackManager处理
+     */
+    @Override
+    protected final void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (!activityResultCallbackManager.handleActivityResult(requestCode, resultCode, data)){
+            onActivityResultOtherwise(requestCode, resultCode, data);
+        }
+    }
+
+    /**
+     * 当内置的ActivityResultCallbackManager未能处理onActivityResult时回调此方法, 因此在未使用registerActivityResultCallback的
+     * 情况下, 复写该方法等同于原生复写onActivityResult方法.
+     * @param requestCode requestCode
+     * @param resultCode resultCode
+     * @param data data
+     */
+    protected void onActivityResultOtherwise(int requestCode, int resultCode, Intent data){
+
     }
 
 }

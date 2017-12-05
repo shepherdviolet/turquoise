@@ -67,6 +67,12 @@ public class PublicConstants {
         public static final int RuntimePermissionTaskStart = 17000;//start code, must < 65535
         public static final int RuntimePermissionTaskMax = 100;//quantity
 
+        /**
+         * request code of activity result callback manager, for {@link sviolet.turquoise.enhance.app.utils.ActivityResultCallbackManager}
+         */
+        public static final int ActivityResultCallbackStart = 17200;//start code, must < 65535
+        public static final int ActivityResultCallbackMax = 100;//quantity
+
     }
 
 }
