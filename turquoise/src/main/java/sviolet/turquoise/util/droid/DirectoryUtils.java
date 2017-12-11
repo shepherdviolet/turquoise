@@ -14,6 +14,13 @@ import java.io.InputStream;
  */
 public class DirectoryUtils {
 
+    /**
+     * 获得默认的外部存储根路径
+     */
+    public static File getExternalStorageDirectory(){
+        return Environment.getExternalStorageDirectory();
+    }
+
     /************************
      * 应用文件目录
      */
