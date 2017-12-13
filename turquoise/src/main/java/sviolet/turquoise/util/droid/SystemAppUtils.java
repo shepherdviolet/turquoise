@@ -1,9 +1,17 @@
 package sviolet.turquoise.util.droid;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
+import java.util.List;
 
 /**
  * 调用系统APP工具
@@ -68,6 +76,50 @@ public class SystemAppUtils {
         Uri uri = Uri.parse(url);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         activity.startActivity(intent);
+    }
+
+    /**
+     * 获取系统自带WebView(Android System WebView)的信息
+     * @param context context
+     * @return 可为空, 如果没有Android System WebView
+     */
+    @Nullable
+    public static AndroidSystemWebViewInfo getAndroidSystemWebViewInfo(@NonNull Context context){
+        PackageManager packageManager = context.getPackageManager();
+        List<PackageInfo> packageInfoList = packageManager.getInstalledPackages(0);
+        for (PackageInfo packageInfo : packageInfoList) {
+            if ("com.google.android.webview".equals(packageInfo.packageName)) {
+                AndroidSystemWebViewInfo info = new AndroidSystemWebViewInfo();
+                info.versionName = packageInfo.versionName;
+                info.versionCode = packageInfo.versionCode;
+                if ((packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_UPDATED_SYSTEM_APP) > 0) {
+                    info.isUpdated = true;
+                } else {
+                    info.isUpdated = false;
+                }
+                return info;
+            }
+        }
+        return null;
+    }
+
+    public static class AndroidSystemWebViewInfo {
+
+        /**
+         * WebView版本
+         */
+        public String versionName;
+
+        /**
+         * WebView版本(数字)
+         */
+        public int versionCode;
+
+        /**
+         * true:用户升级过系统WebView, 一般系统WebView不可以升级, 升级会与系统不兼容
+         * false:用户未升级过系统WebView, 系统自带
+         */
+        public boolean isUpdated;
     }
 
 }

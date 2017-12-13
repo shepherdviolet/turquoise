@@ -30,7 +30,8 @@ import sviolet.demoa.common.DemoList;
 // Demo列表
 @DemoList({
         ScreenInfoActivity.class,
-        LayoutInspectorInfoActivity.class
+        LayoutInspectorInfoActivity.class,
+        SystemInfoActivity.class
 })
 
 /**************************************************************

@@ -91,6 +91,8 @@
             android:label="@string/screen_info_main_title"/>
         <activity android:name=".info.LayoutInspectorInfoActivity"
             android:label="@string/layout_inspector_info_main_title"/>
+        <activity android:name=".info.SystemInfoActivity"
+            android:label="@string/system_info_main_title"/>
 
         <activity android:name=".kotlin.KtTestActivity"
             android:label="@string/kotlin_main_title"/>

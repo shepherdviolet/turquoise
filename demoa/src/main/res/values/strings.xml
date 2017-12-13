@@ -48,6 +48,7 @@
     <string name="layout_inspector_info_main_overlays_button">Force enable/disable draw overlays permission</string>
     <string name="layout_inspector_info_main_accessibility_button">Force enable/disable accessibility permission</string>
     <string name="layout_inspector_info_floating_window_button">LI </string>
+    <string name="system_info_main_title">System Info</string>
 
     <string name="kotlin_main_title">Kotlin Demo</string>
     <string name="simple_kotlin_main_title">Simple Kt Demo</string>
