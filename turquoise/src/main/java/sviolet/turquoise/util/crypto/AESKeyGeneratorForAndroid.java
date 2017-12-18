@@ -53,14 +53,14 @@ public class AESKeyGeneratorForAndroid {
 	 * <p>android专用, 相同seed产生相同秘钥</p>
 	 *
 	 * @param seed 秘钥种子
-	 * @param bits 秘钥位数(128/192/256)
+	 * @param bits 秘钥位数(128)
 	 */
 	@SuppressLint("TrulyRandom")
 	public static byte[] generate(byte[] seed, int bits) throws NoSuchProviderException{
 		KeyGenerator keyGenerator;
 		SecureRandom secureRandom;
 		try {
-			keyGenerator = KeyGenerator.getInstance(AESKeyGenerator.AES_KEY_ALGORITHM);
+			keyGenerator = KeyGenerator.getInstance(AESKeyGenerator.KEY_ALGORITHM);
 			//指定算法, 保证结果固定
 			if (android.os.Build.VERSION.SDK_INT >=  17) {
 				secureRandom = SecureRandom.getInstance("SHA1PRNG", "Crypto");
