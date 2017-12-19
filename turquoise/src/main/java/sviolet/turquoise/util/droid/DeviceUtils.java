@@ -1,5 +1,6 @@
 package sviolet.turquoise.util.droid;
 
+import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
@@ -130,6 +131,18 @@ public class DeviceUtils {
     public static boolean isLowRamDevice(@NonNull Context context) {
         ActivityManager mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         return mActivityManager != null && mActivityManager.isLowRamDevice();
+    }
+
+    /**
+     * @return 获得CPU架构(arm,x86)和参数(32位,64位,v7a,v8a...), API21以上会返回多个值, 第一个是首选值
+     */
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    public static String[] getCpuAbis(){
+        if (getVersionSDK() >= Build.VERSION_CODES.LOLLIPOP) {
+            return Build.SUPPORTED_ABIS;
+        } else {
+            return new String[]{Build.CPU_ABI};
+        }
     }
 
 }
