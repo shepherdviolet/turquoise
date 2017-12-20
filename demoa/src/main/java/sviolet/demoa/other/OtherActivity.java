@@ -35,7 +35,8 @@ import sviolet.demoa.common.DemoList;
         MotionImageOtherActivity.class,
         MultiItemViewPagerOtherActivity.class,
         TabViewOtherActivity.class,
-        TabViewHelperOtherActivity.class
+        TabViewHelperOtherActivity.class,
+        WebViewOtherActivity.class
 })
 
 /**************************************************************

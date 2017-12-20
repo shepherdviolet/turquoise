@@ -29,12 +29,21 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
 import sviolet.demoa.R;
+import sviolet.demoa.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 
 /**
  * WebView简易示例
+ * @author S.Violet
  */
+
+//Demo描述
+@DemoDescription(
+        title = "WebView Demo",
+        type = "View",
+        info = "Demo of WebView"
+)
 @ResourceId(R.layout.other_webview)
 public class WebViewOtherActivity extends TActivity {
 
@@ -91,12 +100,12 @@ public class WebViewOtherActivity extends TActivity {
     @SuppressLint("SetJavaScriptEnabled")
     private void initView() {
         WebSettings settings = webView.getSettings();
-        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+        settings.setCacheMode(WebSettings.LOAD_DEFAULT);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        settings.setSaveFormData(false);
+        settings.setSaveFormData(true);
         settings.setDatabaseEnabled(true);
         settings.setDomStorageEnabled(true);
-        settings.setAppCacheEnabled(false);
+        settings.setAppCacheEnabled(true);
         settings.setJavaScriptEnabled(true);
 //		settings.setSupportZoom(true);
 //		settings.setBuiltInZoomControls(true);
