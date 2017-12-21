@@ -48,14 +48,10 @@ public class DeviceUtils {
     }
 
     /**
-     * 获取设备类型
+     * 获取设备型号(机型)
      */
     public static String getModel() {
-        String model = android.os.Build.MODEL;
-        if (model != null) {
-            return model;
-        }
-        return "";
+        return android.os.Build.MODEL;
     }
 
     /**
@@ -143,6 +139,20 @@ public class DeviceUtils {
         } else {
             return new String[]{Build.CPU_ABI};
         }
+    }
+
+    /**
+     * @return 获得硬件设备制造商
+     */
+    public static String getManufacturer(){
+        return Build.MANUFACTURER;
+    }
+
+    /**
+     * @return 获得设备品牌
+     */
+    public static String getBrand(){
+        return Build.BRAND;
     }
 
 }
