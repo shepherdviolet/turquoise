@@ -144,15 +144,22 @@ public class DeviceUtils {
     /**
      * @return 获得硬件设备制造商
      */
-    public static String getManufacturer(){
+    public static String getProductManufacturer(){
         return Build.MANUFACTURER;
     }
 
     /**
      * @return 获得设备品牌
      */
-    public static String getBrand(){
+    public static String getProductBrand(){
         return Build.BRAND;
+    }
+
+    /**
+     * @return 获得操作系统版本(编译版本)
+     */
+    public static String getBuildDisplayId(){
+        return Build.DISPLAY;
     }
 
 }

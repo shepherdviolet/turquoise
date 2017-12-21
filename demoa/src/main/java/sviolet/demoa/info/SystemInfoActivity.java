@@ -27,6 +27,7 @@ import sviolet.demoa.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.SystemAppUtils;
 
 /**
@@ -51,8 +52,36 @@ public class SystemInfoActivity extends TActivity {
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(getDeviceInfo());
+        stringBuilder.append(getSystemInfo());
+        stringBuilder.append(getCpuInfo());
         stringBuilder.append(getWebViewInfo());
         textView.setText(stringBuilder.toString());
+    }
+
+    private String getDeviceInfo(){
+        return "\nManufacturer: " + DeviceUtils.getProductManufacturer() +
+                "\nBrand: " + DeviceUtils.getProductBrand() +
+                "\nModel: " + DeviceUtils.getModel();
+    }
+
+    private String getSystemInfo(){
+        return "\nBuild id: " + DeviceUtils.getBuildDisplayId() +
+                "\nVersion sdk: " + DeviceUtils.getVersionSDK() +
+                "\nVersion release: " + DeviceUtils.getVersionRelease() +
+                "\nMemory class: " + DeviceUtils.getMemoryClass(this);
+    }
+
+    private String getCpuInfo(){
+        StringBuilder stringBuilder = new StringBuilder("\nCpu AIBS: ");
+        String[] aibs = DeviceUtils.getCpuAbis();
+        if (aibs != null){
+            for (String aib : aibs){
+                stringBuilder.append(aib);
+                stringBuilder.append(" ");
+            }
+        }
+        return stringBuilder.toString();
     }
 
     /**
@@ -61,9 +90,9 @@ public class SystemInfoActivity extends TActivity {
     private String getWebViewInfo() {
         SystemAppUtils.AndroidSystemWebViewInfo info = SystemAppUtils.getAndroidSystemWebViewInfo(this);
         if (info != null) {
-            return "Android System WebView version:\n" + info.versionName + "(" + info.versionCode + ")\nAndroid System WebView is updated:\n" + info.isUpdated + "\n";
+            return "\nWebView version: " + info.versionName + "(" + info.versionCode + ")\nWebView is updated: " + info.isUpdated;
         }
-        return "Android System WebView version:\nnull\nAndroid System WebView is updated:\nnull\n";
+        return "\nWebView version: null\nWebView is updated: null";
     }
 
 }
