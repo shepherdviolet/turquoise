@@ -79,7 +79,6 @@ public class FingerprintUtils {
      * @param handler an optional handler to handle callback events
      * @param callback an object to receive authentication events
      */
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @RequiresPermission("android.permission.USE_FINGERPRINT")
     public static void authenticate(@NonNull Context context,
                                     @Nullable Signature signature,
@@ -102,7 +101,6 @@ public class FingerprintUtils {
      * @param handler an optional handler to handle callback events
      * @param callback an object to receive authentication events
      */
-    @RequiresApi(api = Build.VERSION_CODES.M)
     @RequiresPermission("android.permission.USE_FINGERPRINT")
     public static void authenticate(@NonNull Context context,
                                     @Nullable Cipher cipher,
@@ -123,6 +121,11 @@ public class FingerprintUtils {
                              @Nullable CancellationSignal cancel,
                              @Nullable Handler handler,
                              @NonNull final AuthenticationCallback callback){
+        /*
+         * 这里不用FingerprintManagerCompat, 因为FingerprintManagerCompat的authenticate方法中, 会判断
+         * context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_FINGERPRINT), 个别手机
+         * 虽然支持指纹, 但是这个返回的是false, 导致一些机型无法使用指纹认证. 所以这里采用自己的方法判断.
+         */
         FingerprintManager fingerprintManager = (FingerprintManager) context.getSystemService(Context.FINGERPRINT_SERVICE);
         if (fingerprintManager == null || !fingerprintManager.isHardwareDetected()) {
             callback.onAuthenticationError(17701, "The device does not support fingerprints");
