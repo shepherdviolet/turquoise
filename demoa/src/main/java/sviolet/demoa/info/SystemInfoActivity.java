@@ -28,6 +28,7 @@ import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.util.droid.DeviceUtils;
+import sviolet.turquoise.util.droid.FingerprintUtils;
 import sviolet.turquoise.util.droid.SystemAppUtils;
 
 /**
@@ -69,7 +70,8 @@ public class SystemInfoActivity extends TActivity {
         return "\nBuild id: " + DeviceUtils.getBuildDisplayId() +
                 "\nVersion sdk: " + DeviceUtils.getVersionSDK() +
                 "\nVersion release: " + DeviceUtils.getVersionRelease() +
-                "\nMemory class: " + DeviceUtils.getMemoryClass(this);
+                "\nMemory class: " + DeviceUtils.getMemoryClass(this) +
+                "\nFingerprint: " + FingerprintUtils.getDebugInfo(this);
     }
 
     private String getCpuInfo(){
