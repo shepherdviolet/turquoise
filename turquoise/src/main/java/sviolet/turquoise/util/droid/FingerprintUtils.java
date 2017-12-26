@@ -29,7 +29,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.RequiresPermission;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
-import android.support.v4.hardware.fingerprint.FingerprintManagerCompatApi23;
 import android.support.v4.os.CancellationSignal;
 import android.util.Log;
 
@@ -57,26 +56,6 @@ import javax.crypto.Mac;
  */
 
 public class FingerprintUtils {
-
-    /**
-     * 无法使用反射方式调用指纹认证
-     */
-    private static boolean reflectWayFailed = false;
-
-    static {
-        /*
-            初步判断android.support.v4是否支持反射调起指纹认证
-         */
-        try {
-            Class.forName("android.hardware.fingerprint.FingerprintManager$CryptoObject");
-            Class.forName("android.hardware.fingerprint.FingerprintManager$AuthenticationCallback");
-            FingerprintManagerCompatApi23.class.getDeclaredMethod("wrapCryptoObject", FingerprintManagerCompatApi23.CryptoObject.class);
-            FingerprintManagerCompatApi23.class.getDeclaredMethod("wrapCallback", FingerprintManagerCompatApi23.AuthenticationCallback.class);
-        } catch (Throwable t){
-            reflectWayFailed = true;
-            Log.w("Turquoise", "[FingerprintUtils]we can not authentication by reflect way in current version of android.support.v4", t);
-        }
-    }
 
     /**
      * 打印指纹认证支持情况
@@ -221,6 +200,7 @@ public class FingerprintUtils {
     /**
      * 常规方式调起认证
      */
+    @RequiresPermission("android.permission.USE_FINGERPRINT")
     private static void authenticationByCompat(@NonNull Context context,
                                                @Nullable Cipher cipher,
                                                @Nullable Signature signature,
@@ -262,9 +242,69 @@ public class FingerprintUtils {
     }
 
     /**
+     * 回调代理
+     */
+    public static abstract class AuthenticationCallback {
+        /**
+         * Called when an unrecoverable error has been encountered and the operation is complete.
+         * No further callbacks will be made on this object.
+         * @param errorCode An integer identifying the error message
+         * @param errString A human-readable error string that can be shown in UI
+         */
+        public abstract void onAuthenticationError(int errorCode, CharSequence errString);
+
+        /**
+         * Called when a recoverable error has been encountered during authentication. The help
+         * string is provided to give the user guidance for what went wrong, such as
+         * "Sensor dirty, please clean it."
+         * @param helpCode An integer identifying the error message
+         * @param helpString A human-readable string that can be shown in UI
+         */
+        public void onAuthenticationHelp(int helpCode, CharSequence helpString) { }
+
+        /**
+         * Called when a fingerprint is recognized.
+         * @param signature signature instance to sign data
+         * @param cipher cipher instance to encrypt/decrypt data
+         * @param mac mac instance
+         */
+        public void onAuthenticationSucceeded(Signature signature, Cipher cipher, Mac mac) { }
+
+        /**
+         * Called when a fingerprint is valid but not recognized.
+         */
+        public void onAuthenticationFailed() { }
+    }
+
+    /*******************************************************************************************************************
+     * 反射方式兼容个别机型
+     */
+
+    /**
+     * 无法使用反射方式调用指纹认证
+     */
+    private static boolean reflectWayFailed = false;
+
+    static {
+        /*
+            初步判断android.support.v4是否支持反射调起指纹认证
+         */
+        try {
+            Class.forName("android.hardware.fingerprint.FingerprintManager$CryptoObject");
+            Class.forName("android.hardware.fingerprint.FingerprintManager$AuthenticationCallback");
+            FingerprintManagerCompat.class.getDeclaredMethod("wrapCryptoObject", FingerprintManagerCompat.CryptoObject.class);
+            FingerprintManagerCompat.class.getDeclaredMethod("wrapCallback", FingerprintManagerCompat.AuthenticationCallback.class);
+        } catch (Throwable t){
+            reflectWayFailed = true;
+            Log.w("Turquoise", "[FingerprintUtils]we can not authentication by reflect way in current version of android.support.v4", t);
+        }
+    }
+
+    /**
      * 反射方式调起认证
      */
     @RequiresApi(api = Build.VERSION_CODES.M)
+    @RequiresPermission("android.permission.USE_FINGERPRINT")
     private static void authenticationByReflect(@NonNull Context context,
                                                 @Nullable Cipher cipher,
                                                 @Nullable Signature signature,
@@ -283,26 +323,26 @@ public class FingerprintUtils {
 
             //用FingerprintManagerCompatApi23.wrapCryptoObject方法构建FingerprintManager$CryptoObject
 
-            FingerprintManagerCompatApi23.CryptoObject crypto = null;
+            FingerprintManagerCompat.CryptoObject crypto = null;
             if (cipher != null){
-                crypto = new FingerprintManagerCompatApi23.CryptoObject(cipher);
+                crypto = new FingerprintManagerCompat.CryptoObject(cipher);
             } else if (signature != null){
-                crypto = new FingerprintManagerCompatApi23.CryptoObject(signature);
+                crypto = new FingerprintManagerCompat.CryptoObject(signature);
             }
 
             Object cryptoObj = null;
             if (crypto != null){
-                Method wrapCryptoObjectMethod = FingerprintManagerCompatApi23.class.getDeclaredMethod("wrapCryptoObject", FingerprintManagerCompatApi23.CryptoObject.class);
+                Method wrapCryptoObjectMethod = FingerprintManagerCompat.class.getDeclaredMethod("wrapCryptoObject", FingerprintManagerCompat.CryptoObject.class);
                 wrapCryptoObjectMethod.setAccessible(true);
                 cryptoObj = wrapCryptoObjectMethod.invoke(null, crypto);
             }
 
             //用FingerprintManagerCompatApi23.wrapCallback方法构建FingerprintManager$AuthenticationCallback
 
-            Method wrapCallbackMethod = FingerprintManagerCompatApi23.class.getDeclaredMethod("wrapCallback", FingerprintManagerCompatApi23.AuthenticationCallback.class);
+            Method wrapCallbackMethod = FingerprintManagerCompat.class.getDeclaredMethod("wrapCallback", FingerprintManagerCompat.AuthenticationCallback.class);
             wrapCallbackMethod.setAccessible(true);
 
-            Object callbackObj = wrapCallbackMethod.invoke(null, new FingerprintManagerCompatApi23.AuthenticationCallback(){
+            Object callbackObj = wrapCallbackMethod.invoke(null, new FingerprintManagerCompat.AuthenticationCallback(){
                 @Override
                 public void onAuthenticationError(int errorCode, CharSequence errString) {
                     callback.onAuthenticationError(errorCode, errString);
@@ -312,7 +352,7 @@ public class FingerprintUtils {
                     callback.onAuthenticationHelp(helpCode, helpString);
                 }
                 @Override
-                public void onAuthenticationSucceeded(FingerprintManagerCompatApi23.AuthenticationResultInternal result) {
+                public void onAuthenticationSucceeded(FingerprintManagerCompat.AuthenticationResult result) {
                     if (result == null || result.getCryptoObject() == null) {
                         callback.onAuthenticationSucceeded(null, null, null);
                     } else {
@@ -349,41 +389,6 @@ public class FingerprintUtils {
             callback.onAuthenticationError(17701, "The device does not support fingerprints (by reflect way)");
         }
 
-    }
-
-    /**
-     * 回调代理
-     */
-    public static abstract class AuthenticationCallback {
-        /**
-         * Called when an unrecoverable error has been encountered and the operation is complete.
-         * No further callbacks will be made on this object.
-         * @param errorCode An integer identifying the error message
-         * @param errString A human-readable error string that can be shown in UI
-         */
-        public abstract void onAuthenticationError(int errorCode, CharSequence errString);
-
-        /**
-         * Called when a recoverable error has been encountered during authentication. The help
-         * string is provided to give the user guidance for what went wrong, such as
-         * "Sensor dirty, please clean it."
-         * @param helpCode An integer identifying the error message
-         * @param helpString A human-readable string that can be shown in UI
-         */
-        public void onAuthenticationHelp(int helpCode, CharSequence helpString) { }
-
-        /**
-         * Called when a fingerprint is recognized.
-         * @param signature signature instance to sign data
-         * @param cipher cipher instance to encrypt/decrypt data
-         * @param mac mac instance
-         */
-        public void onAuthenticationSucceeded(Signature signature, Cipher cipher, Mac mac) { }
-
-        /**
-         * Called when a fingerprint is valid but not recognized.
-         */
-        public void onAuthenticationFailed() { }
     }
 
 }
