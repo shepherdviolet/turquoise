@@ -61,10 +61,10 @@ import sviolet.turquoise.utilx.tlogger.printer.SimpleLoggerPrinter;
 @DemoList({
         SlideActivity.class,
         RefreshActivity.class,
-        OtherActivity.class,
-        InfoActivity.class,
-        KtTestActivity.class,
         FingerprintActivity.class,
+        KtTestActivity.class,
+        InfoActivity.class,
+        OtherActivity.class,
         TempActivity.class
 })
 
