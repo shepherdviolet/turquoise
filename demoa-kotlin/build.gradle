@@ -75,4 +75,5 @@ dependencies {
     implementation project(':turquoise') { group 'com.github.shepherdviolet.turquoise'; version version_projectVersionName }//指定groupId和version, artifactId为project名
     implementation project(':turquoise-imageloader') { group 'com.github.shepherdviolet.turquoise'; version version_projectVersionName }//指定groupId和version, artifactId为project名
     implementation "com.android.support:support-v4:$version_supportVersion"
+    implementation "com.android.support:appcompat-v7:$version_supportVersion"
 }
