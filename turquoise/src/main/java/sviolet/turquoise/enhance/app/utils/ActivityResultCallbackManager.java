@@ -25,7 +25,7 @@ import android.util.SparseArray;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import sviolet.thistle.common.entity.Destroyable;
+import sviolet.thistle.entity.Destroyable;
 import sviolet.turquoise.common.statics.PublicConstants;
 
 /**

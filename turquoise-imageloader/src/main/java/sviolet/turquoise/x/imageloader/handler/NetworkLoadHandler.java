@@ -24,7 +24,7 @@ import android.content.Context;
 import java.io.IOException;
 import java.io.InputStream;
 
-import sviolet.thistle.common.entity.Destroyable;
+import sviolet.thistle.entity.Destroyable;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.EngineCallback;

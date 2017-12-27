@@ -23,7 +23,7 @@ import android.annotation.SuppressLint;
 
 import java.util.Map;
 
-import sviolet.thistle.common.compat.CompatLruCache;
+import sviolet.thistle.compat.CompatLruCache;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.ImageResourceHandler;
