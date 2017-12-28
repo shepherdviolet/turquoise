@@ -1,19 +1,28 @@
+/*
+ * Copyright (C) 2015-2017 S.Violet
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Project GitHub: https://github.com/shepherdviolet/turquoise
+ * Email: shepherdviolet@163.com
+ */
+
 package sviolet.turquoise.ui.adapter;
 
 import android.os.Build;
 import android.util.SparseArray;
 import android.view.View;
 
-/**
- * The RecycleBin facilitates reuse of views across layouts. The RecycleBin has two levels of
- * storage: ActiveViews and ScrapViews. ActiveViews are those views which were onscreen at the
- * start of a layout. By construction, they are displaying current information. At the end of
- * layout, all views in ActiveViews are demoted to ScrapViews. ScrapViews are old views that
- * could potentially be used by the adapter to avoid allocating views unnecessarily.
- * <p/>
- * This class was taken from Android's implementation of {@link android.widget.AbsListView} which
- * is copyrighted 2006 The Android Open Source Project.
- */
 public class RecycleBin {
     /**
      * Views that were on screen at the start of layout. This array is populated at the start of
