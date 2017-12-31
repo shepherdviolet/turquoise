@@ -29,6 +29,7 @@ import okhttp3.Call;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
@@ -42,8 +43,6 @@ import sviolet.turquoise.x.imageloader.server.EngineCallback;
  * Created by S.Violet on 2016/6/15.
  */
 public class OkHttpNetworkLoadHandler implements NetworkLoadHandler {
-
-    private static final int MAXIMUM_REDIRECT_TIMES = 5;
 
     private OkHttpClient okHttpClient;
 
@@ -78,7 +77,12 @@ public class OkHttpNetworkLoadHandler implements NetworkLoadHandler {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (response.isSuccessful()) {
-                    callback.setResultSucceed(new Result(response.body().byteStream()).setLength((int) response.body().contentLength()));
+                    ResponseBody body = response.body();
+                    if (body == null){
+                        callback.setResultFailed(new Exception("[OkHttpNetworkLoadHandler] error, no response body"));
+                        return;
+                    }
+                    callback.setResultSucceed(new Result(body.byteStream()).setLength((int) body.contentLength()));
                 } else {
                     callback.setResultFailed(new Exception("[OkHttpNetworkLoadHandler] error code:" + response.code() + ", error message:" + response.message()));
                 }
@@ -101,7 +105,7 @@ public class OkHttpNetworkLoadHandler implements NetworkLoadHandler {
      */
     public OkHttpNetworkLoadHandler addHeader(String key, String value){
         if (headers == null){
-            headers = new HashMap<>();
+            headers = new HashMap<>(0);
         }
         headers.put(key, value);
         return this;
