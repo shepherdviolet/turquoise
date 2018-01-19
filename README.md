@@ -8,6 +8,8 @@
 
 ```gradle
     repositories {
+        //Local repository
+        //maven { url 'file:C:/m2repository/repository' }
         jcenter()
         maven { url 'https://jitpack.io' }
         google()
