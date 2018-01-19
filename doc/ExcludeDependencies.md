@@ -13,6 +13,8 @@
         }
         compile ('com.github.shepherdviolet.turquoise:turquoise-imageloader:7.1') {
             exclude group:'org.jetbrains.kotlin', module:'kotlin-stdlib-jre7'
+            exclude group:'com.android.support'
+            exclude group:'com.squareup.okhttp3'
         }
     }
 ```
