@@ -4,14 +4,15 @@
     repositories {
         jcenter()
         maven { url 'https://jitpack.io' }//repository of turquoise
+        google()
     }
     dependencies {
-        compile ('com.github.shepherdviolet.turquoise:turquoise:7.1') {
+        compile ('com.github.shepherdviolet.turquoise:turquoise:8.0') {
             exclude group:'org.jetbrains.kotlin', module:'kotlin-stdlib-jre7'
             exclude group:'com.android.support'
             exclude group:'com.squareup.okhttp3'
         }
-        compile ('com.github.shepherdviolet.turquoise:turquoise-imageloader:7.1') {
+        compile ('com.github.shepherdviolet.turquoise:turquoise-imageloader:8.0') {
             exclude group:'org.jetbrains.kotlin', module:'kotlin-stdlib-jre7'
             exclude group:'com.android.support'
             exclude group:'com.squareup.okhttp3'
@@ -25,16 +26,17 @@
     repositories {
         jcenter()
         maven { url 'https://jitpack.io' }//repository of turquoise
+        google()
     }
     dependencies {
         //thistle is required, if turquoise transitive = false
-        compile ('com.github.shepherdviolet:thistle:7.1') {
+        compile ('com.github.shepherdviolet:thistle:8.0') {
             transitive = false
         }
-        compile ('com.github.shepherdviolet.turquoise:turquoise:7.1') {
+        compile ('com.github.shepherdviolet.turquoise:turquoise:8.0') {
             transitive = false
         }
-        compile ('com.github.shepherdviolet.turquoise:turquoise-imageloader:7.1') {
+        compile ('com.github.shepherdviolet.turquoise:turquoise-imageloader:8.0') {
             transitive = false
         }
     }

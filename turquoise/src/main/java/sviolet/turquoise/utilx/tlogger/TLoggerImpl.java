@@ -24,7 +24,7 @@ import android.util.Log;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.thistle.util.common.CheckUtils;
+import sviolet.thistle.util.judge.CheckUtils;
 import sviolet.turquoise.common.statics.StringConstants;
 
 /**

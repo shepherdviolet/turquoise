@@ -28,7 +28,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 
 import sviolet.demoaimageloader.R;
-import sviolet.thistle.util.common.ThreadPoolExecutorUtils;
+import sviolet.thistle.util.concurrent.ThreadPoolExecutorUtils;
 import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;

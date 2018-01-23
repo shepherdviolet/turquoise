@@ -1,4 +1,4 @@
-# Turquoise 7.1
+# Turquoise 8.0
 ###### A comprehensive Android library for private use.
 ###### https://github.com/shepherdviolet/turquoise
 
@@ -17,8 +17,8 @@
         //maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
     }
     dependencies {
-        compile 'com.github.shepherdviolet.turquoise:turquoise:7.1'
-        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader:7.1'
+        compile 'com.github.shepherdviolet.turquoise:turquoise:8.0'
+        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader:8.0'
     }
 ```
 

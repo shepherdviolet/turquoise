@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
 import sviolet.thistle.model.thread.LazySingleThreadPool;
-import sviolet.thistle.util.common.ThreadPoolExecutorUtils;
+import sviolet.thistle.util.concurrent.ThreadPoolExecutorUtils;
 import sviolet.turquoise.enhance.common.WeakHandler;
 
 /**

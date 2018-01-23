@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.thistle.util.common.ConcurrentUtils;
+import sviolet.thistle.util.concurrent.ConcurrentUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;
 import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;

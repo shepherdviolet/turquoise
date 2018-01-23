@@ -22,7 +22,7 @@ package sviolet.turquoise.ui.util;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 
-import sviolet.thistle.util.common.CheckUtils;
+import sviolet.thistle.util.judge.CheckUtils;
 
 /**
  * 画布绘制工具

@@ -27,7 +27,7 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.thistle.util.common.ConcurrentUtils;
+import sviolet.thistle.util.concurrent.ConcurrentUtils;
 
 /**
  * 生命周期管理器实现<p/>

@@ -35,7 +35,7 @@ import sviolet.thistle.entity.Destroyable;
 import sviolet.turquoise.common.statics.PublicConstants;
 import sviolet.turquoise.ui.dialog.CommonSimpleDialog;
 import sviolet.turquoise.ui.dialog.SimpleDialogBuilder;
-import sviolet.thistle.util.common.CheckUtils;
+import sviolet.thistle.util.judge.CheckUtils;
 
 /**
  * <p>运行时权限管理器, 兼容低版本, 占用Activity的requestCode(见PublicConstants.ActivityRequestCode)</p>

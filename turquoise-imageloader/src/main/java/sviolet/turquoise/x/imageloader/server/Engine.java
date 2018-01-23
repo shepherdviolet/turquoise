@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.thistle.model.thread.LazySingleThreadPool;
-import sviolet.thistle.util.common.ThreadPoolExecutorUtils;
+import sviolet.thistle.util.concurrent.ThreadPoolExecutorUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;

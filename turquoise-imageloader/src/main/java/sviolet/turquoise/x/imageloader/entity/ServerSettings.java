@@ -24,7 +24,7 @@ import android.support.annotation.RequiresPermission;
 
 import java.io.File;
 
-import sviolet.thistle.util.common.CheckUtils;
+import sviolet.thistle.util.judge.CheckUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;

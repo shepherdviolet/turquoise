@@ -21,7 +21,7 @@ package sviolet.turquoise.util.common;
 
 import android.os.SystemClock;
 
-import sviolet.thistle.util.common.DateTimeUtils;
+import sviolet.thistle.util.conversion.DateTimeUtils;
 
 /**
  * 时间工具

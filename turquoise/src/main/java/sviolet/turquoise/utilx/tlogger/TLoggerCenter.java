@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.thistle.compat.CompatLruCache;
-import sviolet.thistle.util.common.ConcurrentUtils;
+import sviolet.thistle.util.concurrent.ConcurrentUtils;
 import sviolet.turquoise.utilx.tlogger.printer.LoggerPrinter;
 import sviolet.turquoise.utilx.tlogger.printer.NullLoggerPrinter;
 
