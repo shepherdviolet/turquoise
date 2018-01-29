@@ -17,4 +17,5 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$version_supportVersion"
     implementation "com.android.support:recyclerview-v7:$version_supportVersion"
     implementation "com.squareup.okhttp3:okhttp:$version_okHttpVersion"
+    implementation 'com.google.zxing:core:3.3.1'
 }

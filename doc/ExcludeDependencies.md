@@ -11,6 +11,7 @@
             exclude group:'org.jetbrains.kotlin', module:'kotlin-stdlib-jre7'
             exclude group:'com.android.support'
             exclude group:'com.squareup.okhttp3'
+            exclude group:'com.google.zxing'
         }
         compile ('com.github.shepherdviolet.turquoise:turquoise-imageloader:8.0') {
             exclude group:'org.jetbrains.kotlin', module:'kotlin-stdlib-jre7'

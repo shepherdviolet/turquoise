@@ -115,4 +115,5 @@ dependencies {
     implementation "com.android.support:support-v4:$version_supportVersion"
     implementation "com.android.support:appcompat-v7:$version_supportVersion"
     implementation 'com.github.zcweng:switch-button:0.0.3@aar'
+    implementation 'com.google.zxing:core:3.3.1'
 }
