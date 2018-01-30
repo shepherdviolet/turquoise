@@ -43,7 +43,7 @@ import android.view.ViewGroup;
  *
  *      public void onBindViewHolder(TRecyclerViewHolder holder, int position) {
  *          //装载数据
- *          holder.get(R.id.xxx, TextView.class).setText(datas.get(position));
+ *          holder.<TextView>get(R.id.xxx).setText(datas.get(position));
  *      }
  *
  *      public int getItemCount() {
@@ -54,7 +54,7 @@ import android.view.ViewGroup;
  *
  * }</pre>
  *
- * Created by S.Violet on 2016/4/26.
+ * @author S.Violet
  */
 public class TRecyclerViewHolder extends RecyclerView.ViewHolder {
 
@@ -81,30 +81,20 @@ public class TRecyclerViewHolder extends RecyclerView.ViewHolder {
     }
 
     /**
-     * 创建(获取)itemView的子控件
+     * <p>创建(获取)itemView的子控件</p>
+     *
+     * <p>
+     *     java: <br>
+     *     holder.<TextView>get(R.id.content).setText(item.getContent()); <br>
+     *     <br>
+     *     kotlin: <br>
+     *     holder.get<TextView>(R.id.content).text = item.content <br>
+     * </p>
      *
      * @param resId 子控件资源ID
      * @return 子控件
      */
     public <V extends View> V get(int resId){
-        View view = subViews.get(resId);
-        if (view == null){
-            view = findView(resId);
-            if (view != null){
-                subViews.put(resId, view);
-            }
-        }
-        return (V)view;
-    }
-
-    /**
-     * 创建(获取)itemView的子控件
-     *
-     * @param resId 子控件资源ID
-     * @param type 指定返回类型
-     * @return 子控件
-     */
-    public <V extends View> V get(int resId, Class<V> type){
         View view = subViews.get(resId);
         if (view == null){
             view = findView(resId);

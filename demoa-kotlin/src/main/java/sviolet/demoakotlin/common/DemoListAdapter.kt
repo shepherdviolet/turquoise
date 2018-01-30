@@ -92,12 +92,12 @@ constructor (
             return
 
         if (title != null)
-            holder.get(R.id.guide_main_item_title, TextView::class.java).text = title
+            holder.get<TextView>(R.id.guide_main_item_title).text = title
         else
-            holder.get(R.id.guide_main_item_title, TextView::class.java).text = "未设置@DemoDescription"
+            holder.get<TextView>(R.id.guide_main_item_title).text = "未设置@DemoDescription"
 
-        holder.get(R.id.guide_main_item_type, TextView::class.java).text = type
-        holder.get(R.id.guide_main_item_info, TextView::class.java).text = info
+        holder.get<TextView>(R.id.guide_main_item_type).text = type
+        holder.get<TextView>(R.id.guide_main_item_info).text = info
     }
 
 }

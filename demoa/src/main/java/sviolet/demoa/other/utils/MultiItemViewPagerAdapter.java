@@ -67,7 +67,7 @@ public class MultiItemViewPagerAdapter extends RecyclingPagerAdapter {
                 String.valueOf(imageResIds.get(position)),
                 context.getResources(),
                 imageResIds.get(position));
-        ((ImageView)holder.get(R.id.other_multiitem_viewpager_viewpager_item_imageview)).setImageDrawable(new SafeBitmapDrawable(context.getResources(), bitmap));
+        holder.<ImageView>get(R.id.other_multiitem_viewpager_viewpager_item_imageview).setImageDrawable(new SafeBitmapDrawable(context.getResources(), bitmap));
         //view记录当前position
         holder.getConvertView().setTag(position);
 

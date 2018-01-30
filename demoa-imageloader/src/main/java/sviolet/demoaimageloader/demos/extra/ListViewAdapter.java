@@ -75,8 +75,8 @@ public class ListViewAdapter extends BaseAdapter {
         TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.list_view_main_item);
 
         AsyncImageItem item = itemList.get(position);
-        holder.get(R.id.list_view_main_item_title, TextView.class).setText(item.getTitle());
-        holder.get(R.id.list_view_main_item_content, TextView.class).setText(item.getContent());
+        holder.<TextView>get(R.id.list_view_main_item_title).setText(item.getTitle());
+        holder.<TextView>get(R.id.list_view_main_item_content).setText(item.getContent());
 
         ImageView[] images = new ImageView[5];
         images[0] = holder.get(R.id.list_view_main_item_imageview0);

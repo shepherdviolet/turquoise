@@ -112,13 +112,13 @@ public class DemoListAdapter extends BaseAdapter {
         }
 
         if (title != null) {
-            holder.get(R.id.guide_main_item_title, TextView.class).setText(title);
+            holder.<TextView>get(R.id.guide_main_item_title).setText(title);
         } else {
-            holder.get(R.id.guide_main_item_title, TextView.class).setText("未设置@DemoDescription");
+            holder.<TextView>get(R.id.guide_main_item_title).setText("未设置@DemoDescription");
         }
 
-        holder.get(R.id.guide_main_item_type, TextView.class).setText(type);
-        holder.get(R.id.guide_main_item_info, TextView.class).setText(info);
+        holder.<TextView>get(R.id.guide_main_item_type).setText(type);
+        holder.<TextView>get(R.id.guide_main_item_info).setText(info);
     }
 
 }

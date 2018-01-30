@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 import sviolet.turquoise.common.statics.PublicConstants;
 
 /**
- * ViewHolder工具, 用于Adapter<br/>
+ * <p>ViewHolder工具, 用于Adapter</p>
  *
  * <pre>{@code
  *     public View getView(int position, View convertView, ViewGroup parent) {
@@ -41,7 +41,7 @@ import sviolet.turquoise.common.statics.PublicConstants;
  *          LinearLayoutDrawer drawer = holder.get(R.id.drawer);
  *          TextView titleView = holder.get(R.id.title);
  *
- *          //可选代码块
+ *          //可选
  *          //createTimes()方法可以获得同一个convertView create次数
  *          //第一次create时, 可以进行一些控件初始化操作
  *          //二次以上create时, 可以进行一些清理重置操作
@@ -64,6 +64,8 @@ import sviolet.turquoise.common.statics.PublicConstants;
  *          //填充数据
  *          Item item = getItem(position);
  *          titleView.setText(item.getTitle());
+ *          //填充数据(直接)
+ *          holder.<TextView>get(R.id.content).setText(item.getContent());
  *
  *          //必须!!!
  *          //从TViewHolder中获取convertView实例
@@ -73,9 +75,9 @@ import sviolet.turquoise.common.statics.PublicConstants;
  * }</pre>
  *
  *
- * 注意:请勿手动持有ViewHolder对象, 这样可能会造成内存泄露. ViewHolder会自动用View.setTag绑定在convertView上.<p/>
+ * <p>注意:请勿手动持有ViewHolder对象, 这样可能会造成内存泄露. ViewHolder会自动用View.setTag绑定在convertView上.</p>
  *
- * Created by S.Violet on 2016/1/13.
+ * @author S.Violet
  */
 public class TViewHolder {
 
@@ -88,11 +90,15 @@ public class TViewHolder {
     }
 
     /**
-     * 创建(获取)convertView的ViewHolder实例<p/>
+     * <p>创建(获取)convertView的ViewHolder实例</p>
      *
-     * 1.第一次create会inflate产生convertView实例, 并产生ViewHolder实例, 用View.setTag绑定在convertView上<Br/>
-     * 2.同一个convertView第二次create时, 会用View.getTag直接获取ViewHolder实例<br/>
-     * 3.每次create都会使得createTimes次数+1<br/>
+     * <p>TViewHolder holder = TViewHolder.create(context, convertView, parent, R.layout.xxx);</p>
+     *
+     * <p>
+     * 1.第一次create会inflate产生convertView实例, 并产生ViewHolder实例, 用View.setTag绑定在convertView上<br>
+     * 2.同一个convertView第二次create时, 会用View.getTag直接获取ViewHolder实例<br>
+     * 3.每次create都会使得createTimes次数+1<br>
+     * </p>
      *
      * @param context context
      * @param convertView convertView
@@ -113,9 +119,9 @@ public class TViewHolder {
         }else{
             Object holder = convertView.getTag(PublicConstants.ViewTag.ViewHolder);
             if (holder instanceof TViewHolder){
-                TViewHolder TViewHolder = (TViewHolder) holder;
-                TViewHolder.incrementCreateTimes();
-                return TViewHolder;
+                TViewHolder tViewHolder = (TViewHolder) holder;
+                tViewHolder.incrementCreateTimes();
+                return tViewHolder;
             }
         }
         TViewHolder holder = new TViewHolder(convertView);
@@ -125,7 +131,7 @@ public class TViewHolder {
     }
 
     /**
-     * 获取由ViewHolder.create()方法所创建(inflate)出来的convertView实例
+     * <p>获取由ViewHolder.create()方法所创建(inflate)出来的convertView实例</p>
      *
      * @return 获取convertView实例
      */
@@ -134,7 +140,15 @@ public class TViewHolder {
     }
 
     /**
-     * 创建(获取)convertView的子控件
+     * <p>创建(获取)convertView的子控件</p>
+     *
+     * <p>
+     *     java: <br>
+     *     holder.<TextView>get(R.id.content).setText(item.getContent()); <br>
+     *     <br>
+     *     kotlin: <br>
+     *     holder.get<TextView>(R.id.content).text = item.content <br>
+     * </p>
      *
      * @param resId 子控件资源ID
      * @return 获取convertView的子控件
@@ -151,33 +165,17 @@ public class TViewHolder {
     }
 
     /**
-     * 创建(获取)convertView的子控件
+     * <p>create次数 (指ViewHolder.create())</p>
      *
-     * @param resId 子控件资源ID
-     * @param type 指定返回类型
-     * @return 获取convertView的子控件
-     */
-    public <V extends View> V get(int resId, Class<V> type){
-        View view = views.get(resId);
-        if (view == null){
-            view = findView(resId);
-            if (view != null){
-                views.put(resId, view);
-            }
-        }
-        return (V) view;
-    }
-
-    /**
-     * create次数 (指ViewHolder.create())<p/>
-     *
-     * 通常用于判断convertView是否为新实例, 当createTimes() == 1 时可进行一些控件初始化操作, 如:绑定监听器等
+     * <p>通常用于判断convertView是否为新实例, 当createTimes() == 1 时可进行一些控件初始化操作, 如:绑定监听器等</p>
      */
     public long createTimes(){
         return createTimes;
     }
 
     /**
+     * <p>convertView为新实例, 可以进行初始化操作, 如:绑定监听器等</p>
+     *
      * @return true:convertView为新实例, 可以进行初始化操作, 如:绑定监听器等
      */
     public boolean isFirstCreate(){

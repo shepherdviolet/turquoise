@@ -72,7 +72,7 @@ import android.view.ViewGroup;
  *
  *      public void onBindViewHolder(TRecyclerViewHolder holder, int position) {
  *          //装载数据
- *          ((TextView) holder.get(R.id.item_text)).setText(dataList.get(position));
+ *          holder.<TextView>get(R.id.item_text).setText(dataList.get(position));
  *      }
  *
  *      public int getItemCount() {
