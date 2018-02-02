@@ -72,7 +72,7 @@ public class CommonDecodeHandler extends DecodeHandler {
         //decoding
         Bitmap bitmap = BitmapUtils.decodeFromByteArray(data, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), taskInfo.getParams().getDecodeInSampleQuality());
         if (bitmap == null) {
-            throw new RuntimeException("[TILoader:CommonDecodeHandler]decoding failed, illegal image data");
+            throw new RuntimeException("[CommonDecodeHandler]decoding failed, illegal image data");
         }
         //scale
         switch (taskInfo.getParams().getDecodeScaleStrategy()) {
@@ -89,7 +89,7 @@ public class CommonDecodeHandler extends DecodeHandler {
                 break;
         }
         if (bitmap == null) {
-            throw new RuntimeException("[TILoader:CommonDecodeHandler]scale: scale failed");
+            throw new RuntimeException("[CommonDecodeHandler]scale: scale failed");
         }
         if (logger.checkEnable(TLogger.DEBUG)){
             logger.d("[CommonDecodeHandler]decoded size:" + bitmap.getWidth() + "*" + bitmap.getHeight() + " task:" + taskInfo);
@@ -101,7 +101,7 @@ public class CommonDecodeHandler extends DecodeHandler {
         try {
             return new ImageResource(ImageResource.Type.GIF, EnhancedGifDrawable.decode(data, reqWidth, reqHeight, taskInfo.getParams().getDecodeInSampleQuality()));
         } catch (IOException e) {
-            throw new RuntimeException("[TILoader:EnhancedDecodeHandler]error while decoding gif from bytes", e);
+            throw new RuntimeException("[EnhancedDecodeHandler]error while decoding gif from bytes", e);
         }
     }
 
@@ -126,7 +126,7 @@ public class CommonDecodeHandler extends DecodeHandler {
         //decoding
         Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), BitmapUtils.InSampleQuality.MEDIUM);
         if (bitmap == null) {
-            throw new RuntimeException("[TILoader:CommonDecodeHandler]decoding failed, illegal image data");
+            throw new RuntimeException("[CommonDecodeHandler]decoding failed, illegal image data");
         }
         //scale
         switch (taskInfo.getParams().getDecodeScaleStrategy()){
@@ -143,7 +143,7 @@ public class CommonDecodeHandler extends DecodeHandler {
                 break;
         }
         if (bitmap == null) {
-            throw new RuntimeException("[TILoader:CommonDecodeHandler]scale: scale failed");
+            throw new RuntimeException("[CommonDecodeHandler]scale: scale failed");
         }
         if (logger.checkEnable(TLogger.DEBUG)) {
             logger.d("[CommonDecodeHandler]decoded size:" + bitmap.getWidth() + "*" + bitmap.getHeight() + " task:" + taskInfo);
@@ -155,7 +155,7 @@ public class CommonDecodeHandler extends DecodeHandler {
         try {
             return new ImageResource(ImageResource.Type.GIF, EnhancedGifDrawable.decode(file, reqWidth, reqHeight, taskInfo.getParams().getDecodeInSampleQuality()));
         } catch (IOException e) {
-            throw new RuntimeException("[TILoader:EnhancedDecodeHandler]error while decoding gif from file", e);
+            throw new RuntimeException("[EnhancedDecodeHandler]error while decoding gif from file", e);
         }
     }
 
@@ -166,7 +166,7 @@ public class CommonDecodeHandler extends DecodeHandler {
                 gifDrawableReferenceState = GIF_DRAWABLE_REFERENCE_STATE_EXISTS;
             } catch (ClassNotFoundException e) {
                 gifDrawableReferenceState = GIF_DRAWABLE_REFERENCE_STATE_MISSING;
-                logger.e("[TILoader:EnhancedDecodeHandler]Your project lacks a dependency of pl.droidsonroids.gif:android-gif-drawable:?.?.?, can not display GIF", e);
+                logger.e("[EnhancedDecodeHandler]Your project lacks a dependency of pl.droidsonroids.gif:android-gif-drawable:?.?.?, can not display GIF", e);
             }
         }
         if (gifDrawableReferenceState == GIF_DRAWABLE_REFERENCE_STATE_MISSING) {
@@ -192,7 +192,7 @@ public class CommonDecodeHandler extends DecodeHandler {
                 gifDrawableReferenceState = GIF_DRAWABLE_REFERENCE_STATE_EXISTS;
             } catch (ClassNotFoundException e) {
                 gifDrawableReferenceState = GIF_DRAWABLE_REFERENCE_STATE_MISSING;
-                logger.e("[TILoader:EnhancedDecodeHandler]Your project lacks a dependency of pl.droidsonroids.gif:android-gif-drawable:?.?.?, can not display GIF", e);
+                logger.e("[EnhancedDecodeHandler]Your project lacks a dependency of pl.droidsonroids.gif:android-gif-drawable:?.?.?, can not display GIF", e);
             }
         }
         if (gifDrawableReferenceState == GIF_DRAWABLE_REFERENCE_STATE_MISSING) {

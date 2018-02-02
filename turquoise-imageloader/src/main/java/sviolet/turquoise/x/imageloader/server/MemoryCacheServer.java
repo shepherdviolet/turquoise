@@ -56,18 +56,18 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
                     if (memoryCacheSize <= 0){
                         final int memoryClass = DeviceUtils.getMemoryClass(manager.getApplicationContextImage());
                         memoryCacheSize = (int) (1024 * 1024 * memoryClass * DEFAULT_MEMORY_CACHE_PERCENT);
-                        manager.getLogger().i("[TILoader:MemoryCacheServer]initialize, calculate default memoryCacheSize");
+                        manager.getLogger().i("[MemoryCacheServer]initialize, calculate default memoryCacheSize");
                     }
                     //limit
                     if (DeviceUtils.getVersionSDK() < 11){
-                        manager.getLogger().i("[TILoader:MemoryCacheServer]initialize, API < 11, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
+                        manager.getLogger().i("[MemoryCacheServer]initialize, API < 11, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
                         memoryCacheSize = MIN_MEMORY_CACHE_SIZE;
                     } else if (memoryCacheSize < MIN_MEMORY_CACHE_SIZE){
-                        manager.getLogger().i("[TILoader:MemoryCacheServer]initialize, setting memoryCacheSize:" + (memoryCacheSize / 1024) + "K < minimumSize, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
+                        manager.getLogger().i("[MemoryCacheServer]initialize, setting memoryCacheSize:" + (memoryCacheSize / 1024) + "K < minimumSize, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
                         memoryCacheSize = MIN_MEMORY_CACHE_SIZE;
                     }
                     imageResourceCacheModule = new ImageResourceCacheModule(memoryCacheSize, manager.getServerSettings().getImageResourceHandler(), manager.getLogger());
-                    manager.getLogger().i("[TILoader:MemoryCacheServer]initialized, memoryCacheSize:" + (memoryCacheSize / 1024) + "K");
+                    manager.getLogger().i("[MemoryCacheServer]initialized, memoryCacheSize:" + (memoryCacheSize / 1024) + "K");
                     initialized = true;
                 }
             }

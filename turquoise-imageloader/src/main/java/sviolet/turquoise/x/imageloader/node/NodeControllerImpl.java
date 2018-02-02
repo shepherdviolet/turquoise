@@ -247,7 +247,7 @@ public class NodeControllerImpl extends NodeController {
                 executeTaskToNet(task);
                 break;
             default:
-                throw new RuntimeException("[TILoader:NodeControllerImpl] illegal ServerType of Task");
+                throw new RuntimeException("[NodeControllerImpl] illegal ServerType of Task");
         }
     }
 
@@ -339,7 +339,7 @@ public class NodeControllerImpl extends NodeController {
                 stubGroup.onLoadCanceled();
                 break;
             default:
-                throw new RuntimeException("[TILoader:NodeControllerImpl] can't callback(callbackInUiThread) when Task.state = " + task.getState());
+                throw new RuntimeException("[NodeControllerImpl] can't callback(callbackInUiThread) when Task.state = " + task.getState());
         }
     }
 

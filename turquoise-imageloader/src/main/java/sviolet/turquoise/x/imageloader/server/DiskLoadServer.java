@@ -33,14 +33,14 @@ public class DiskLoadServer implements ComponentManager.Component, Server {
                     //check assets cache path
                     if (!getComponentManager().getServerSettings().getAssetsCachePath().exists()) {
                         if (!getComponentManager().getServerSettings().getAssetsCachePath().mkdirs()) {
-                            getComponentManager().getLogger().e("[TILoader:DiskLoadServer]Create assets cache path failed, disable assets loading");
+                            getComponentManager().getLogger().e("[DiskLoadServer]Create assets cache path failed, disable assets loading");
                             assetsLoadingEnabled = false;
                         }
                     } else if (!getComponentManager().getServerSettings().getAssetsCachePath().isDirectory()) {
-                        getComponentManager().getLogger().e("[TILoader:DiskLoadServer]Create assets cache path failed, find the same name file");
+                        getComponentManager().getLogger().e("[DiskLoadServer]Create assets cache path failed, find the same name file");
                         assetsLoadingEnabled = false;
                     }
-                    getComponentManager().getLogger().i("[TILoader:DiskLoadServer]initialized");
+                    getComponentManager().getLogger().i("[DiskLoadServer]initialized");
                     initialized = true;
                 }
             }

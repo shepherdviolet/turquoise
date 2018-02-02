@@ -115,7 +115,7 @@ public class NodeManager {
         if (node instanceof ExtractNode) {
             return (ExtractNode)node;
         }else{
-            throw new RuntimeException("[TILoader:NodeManager]fetchExtractNode: can't convert Node to ExtractNode");
+            throw new RuntimeException("[NodeManager]fetchExtractNode: can't convert Node to ExtractNode");
         }
     }
 

@@ -148,7 +148,7 @@ public class NetEngine extends Engine {
         //dispatch by type
         if (data.getType() == NetworkLoadHandler.ResultType.NULL){
             getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[TILoader:NetworkLoadHandler]callback return null result!"), getComponentManager().getLogger());
+                    new Exception("[NetworkLoadHandler]callback return null result!"), getComponentManager().getLogger());
             handleFailed(task);
         }else if (data.getType() == NetworkLoadHandler.ResultType.BYTES){
             //set progress
@@ -284,7 +284,7 @@ public class NetEngine extends Engine {
                 imageResource = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
                         task, file, getComponentManager().getLogger());
             }else{
-                throw new Exception("[TILoader:NetEngine]can't decode neither byte[] nor file");
+                throw new Exception("[NetEngine]can't decode neither byte[] nor file");
             }
         }catch(Exception e){
             getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
@@ -293,7 +293,7 @@ public class NetEngine extends Engine {
         //check valid
         if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
             getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[TILoader:NetEngine]decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
+                    new Exception("[NetEngine]decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
             return null;
         }
         return imageResource;

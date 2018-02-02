@@ -59,7 +59,7 @@ public abstract class AbsStub implements Stub {
 
     public AbsStub(String url, Params params){
         if (url == null){
-            throw new RuntimeException("[TILoader:AbsStub]url must not be null");
+            throw new RuntimeException("[AbsStub]url must not be null");
         }
         if (params == null){
             params = new Params.Builder().build();

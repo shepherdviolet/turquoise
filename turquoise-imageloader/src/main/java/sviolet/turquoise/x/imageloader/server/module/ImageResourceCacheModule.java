@@ -55,7 +55,7 @@ public class ImageResourceCacheModule extends CompatLruCache<String, ImageResour
     @Override
     public ImageResource get(String key) {
         if (key == null){
-            throw new NullPointerException("[TILoader:ImageResourceCacheModule]key must not be null");
+            throw new NullPointerException("[ImageResourceCacheModule]key must not be null");
         }
         //return ImageResource
         ImageResource imageResource = super.get(key);
@@ -70,7 +70,7 @@ public class ImageResourceCacheModule extends CompatLruCache<String, ImageResour
     @Override
     public ImageResource put(String key, ImageResource value) {
         if (key == null){
-            throw new NullPointerException("[TILoader:ImageResourceCacheModule]key must not be null");
+            throw new NullPointerException("[ImageResourceCacheModule]key must not be null");
         }
         //exclude invalid ImageResource
         if (!imageResourceHandler.isValid(value)) {
@@ -84,7 +84,7 @@ public class ImageResourceCacheModule extends CompatLruCache<String, ImageResour
 
     public ImageResource extract(String key){
         if (key == null){
-            throw new NullPointerException("[TILoader:ImageResourceCacheModule]key must not be null");
+            throw new NullPointerException("[ImageResourceCacheModule]key must not be null");
         }
         return super.remove(key);
     }
@@ -92,7 +92,7 @@ public class ImageResourceCacheModule extends CompatLruCache<String, ImageResour
     @Override
     public ImageResource remove(String key) {
         if (key == null){
-            throw new NullPointerException("[TILoader:ImageResourceCacheModule]key must not be null");
+            throw new NullPointerException("[ImageResourceCacheModule]key must not be null");
         }
         ImageResource imageResource = super.remove(key);
         //recycle
@@ -146,7 +146,7 @@ public class ImageResourceCacheModule extends CompatLruCache<String, ImageResour
 
             synchronized (this) {
                 if (size() < 0 || (getMap().isEmpty() && size() != 0)) {
-                    throw new IllegalStateException("[TILoader:ImageResourceCacheModule]byteCountOf: is reporting inconsistent results!");
+                    throw new IllegalStateException("[ImageResourceCacheModule]byteCountOf: is reporting inconsistent results!");
                 }
 
                 if (size() <= maxSize) {

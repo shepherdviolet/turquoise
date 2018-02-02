@@ -215,7 +215,7 @@ public class ComponentManager {
         memoryEngine.init(ComponentManager.getInstance());
         diskEngine.init(ComponentManager.getInstance());
         netEngine.init(ComponentManager.getInstance());
-        getLogger().i("[TILoader:ComponentManager]TILoader initialized");
+        getLogger().i("[ComponentManager]TILoader initialized");
     }
 
     /**

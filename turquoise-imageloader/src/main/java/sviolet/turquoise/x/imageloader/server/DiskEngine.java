@@ -64,7 +64,7 @@ public class DiskEngine extends Engine {
         }
         if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
             getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[TILoader:DiskEngine]decoding failed, return invalid ImageResource"), getComponentManager().getLogger());
+                    new Exception("[DiskEngine]decoding failed, return invalid ImageResource"), getComponentManager().getLogger());
             task.setState(Task.State.CANCELED);
             response(task);
             return;
@@ -91,7 +91,7 @@ public class DiskEngine extends Engine {
         }
         if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
             getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[TILoader:DiskEngine]decoding failed, return invalid ImageResource"), getComponentManager().getLogger());
+                    new Exception("[DiskEngine]decoding failed, return invalid ImageResource"), getComponentManager().getLogger());
             task.setState(Task.State.CANCELED);
             response(task);
             return;
