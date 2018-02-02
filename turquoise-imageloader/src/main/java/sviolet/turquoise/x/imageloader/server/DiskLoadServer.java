@@ -10,8 +10,6 @@ import sviolet.turquoise.x.imageloader.node.Task;
 /**
  * <p>Load image from device local disk (for SourceType.LOCAL_DISK)</p>
  *
- * TODO developing
- *
  * @author S.Violet
  */
 public class DiskLoadServer implements ComponentManager.Component, Server {
@@ -40,6 +38,7 @@ public class DiskLoadServer implements ComponentManager.Component, Server {
                         getComponentManager().getLogger().e("[DiskLoadServer]Create assets cache path failed, find the same name file");
                         assetsLoadingEnabled = false;
                     }
+                    //finish
                     getComponentManager().getLogger().i("[DiskLoadServer]initialized");
                     initialized = true;
                 }
@@ -63,11 +62,24 @@ public class DiskLoadServer implements ComponentManager.Component, Server {
         //fetch cache file
         File targetFile = new File(task.getUrl());
         if (!targetFile.exists()){
+            getComponentManager().getServerSettings().getExceptionHandler().onLocalDiskLoadNotExistsException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                    new Exception("[TILoader]Loading from local disk failed, file not found:" + task.getUrl()), getComponentManager().getLogger());
             return null;
         }
         //decode
-        return decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                task, targetFile, getComponentManager().getLogger());
+        try {
+            ImageResource imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                    task, targetFile, getComponentManager().getLogger());
+            if (imageResource == null) {
+                getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                        new Exception("[TILoader]Decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
+                return null;
+            }
+            return imageResource;
+        } catch (Throwable t) {
+            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), t, getComponentManager().getLogger());
+            return null;
+        }
     }
 
     /**

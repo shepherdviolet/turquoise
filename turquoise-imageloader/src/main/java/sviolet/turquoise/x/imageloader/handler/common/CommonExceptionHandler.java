@@ -53,6 +53,11 @@ public class CommonExceptionHandler implements ExceptionHandler {
     private static final String DISK_LOAD_NOT_EXISTS_TOAST_CN = "磁盘加载图片失败, 不存在";
     private static final String DISK_LOAD_NOT_EXISTS_TOAST_EN = "Image loading failed from local disk, not exists.";
 
+    private static final String ASSETS_LOAD_EXCEPTION_TOAST_CN = "应用加载图片失败";
+    private static final String ASSETS_LOAD_EXCEPTION_TOAST_EN = "Image loading failed from app.";
+    private static final String ASSETS_LOAD_NOT_EXISTS_TOAST_CN = "应用加载图片失败, 不存在";
+    private static final String ASSETS_LOAD_NOT_EXISTS_TOAST_EN = "Image loading failed from app, not exists.";
+
     private static final String IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_CN = "部分图片过大, 加载失败.";
     private static final String IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_EN = "Some images are too large, loading failed.";
     private static final String MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_CN = "磁盘访问失败, 大图加载失败.";
@@ -128,6 +133,22 @@ public class CommonExceptionHandler implements ExceptionHandler {
         msg.obj = new Info(applicationContext);
         msg.sendToTarget();
         logger.e("LocalDiskLoadNotExistsException:" + taskInfo, throwable);
+    }
+
+    @Override
+    public void onAssetsLoadCommonException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_ASSETS_LOAD_COMMON_EXCEPTION);
+        msg.obj = new Info(applicationContext);
+        msg.sendToTarget();
+        logger.e("AssetsLoadCommonException:" + taskInfo, throwable);
+    }
+
+    @Override
+    public void onAssetsLoadNotExistsException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_ASSETS_LOAD_NOT_EXISTS_EXCEPTION);
+        msg.obj = new Info(applicationContext);
+        msg.sendToTarget();
+        logger.e("AssetsLoadNotExistsException:" + taskInfo, throwable);
     }
 
     @Override
@@ -211,10 +232,12 @@ public class CommonExceptionHandler implements ExceptionHandler {
         private static final int HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION = 1;
         private static final int HANDLER_ON_DISK_LOAD_COMMON_EXCEPTION = 2;
         private static final int HANDLER_ON_DISK_LOAD_NOT_EXISTS_EXCEPTION = 3;
-        private static final int HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT = 4;
-        private static final int HANDLER_ON_MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT = 5;
-        private static final int HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK = 6;
-        private static final int HANDLER_NETWORK_NOT_CONNECTED = 7;
+        private static final int HANDLER_ON_ASSETS_LOAD_COMMON_EXCEPTION = 4;
+        private static final int HANDLER_ON_ASSETS_LOAD_NOT_EXISTS_EXCEPTION = 5;
+        private static final int HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT = 6;
+        private static final int HANDLER_ON_MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT = 7;
+        private static final int HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK = 8;
+        private static final int HANDLER_NETWORK_NOT_CONNECTED = 9;
 
         public MyHandler(Looper looper, CommonExceptionHandler host) {
             super(looper, host);
@@ -231,6 +254,11 @@ public class CommonExceptionHandler implements ExceptionHandler {
                     break;
                 case HANDLER_ON_DISK_LOAD_NOT_EXISTS_EXCEPTION:
                     host.showToast(((Info) msg.obj).getApplicationContext(), DISK_LOAD_NOT_EXISTS_TOAST_CN, DISK_LOAD_NOT_EXISTS_TOAST_EN);
+                    break;
+                case HANDLER_ON_ASSETS_LOAD_COMMON_EXCEPTION:
+                    host.showToast(((Info) msg.obj).getApplicationContext(), ASSETS_LOAD_EXCEPTION_TOAST_CN, ASSETS_LOAD_EXCEPTION_TOAST_EN);
+                case HANDLER_ON_ASSETS_LOAD_NOT_EXISTS_EXCEPTION:
+                    host.showToast(((Info) msg.obj).getApplicationContext(), ASSETS_LOAD_NOT_EXISTS_TOAST_CN, ASSETS_LOAD_NOT_EXISTS_TOAST_EN);
                     break;
                 case HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT:
                     host.showToast(((Info) msg.obj).getApplicationContext(), IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_CN, IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_EN);

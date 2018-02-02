@@ -54,6 +54,26 @@ public class MyExceptionHandler implements ExceptionHandler {
     }
 
     @Override
+    public void onLocalDiskLoadCommonException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        Log.e("MyExceptionHandler", "onLocalDiskLoadCommonException", throwable);
+    }
+
+    @Override
+    public void onLocalDiskLoadNotExistsException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        Log.e("MyExceptionHandler", "onLocalDiskLoadNotExistsException", throwable);
+    }
+
+    @Override
+    public void onAssetsLoadCommonException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        Log.e("MyExceptionHandler", "onAssetsLoadCommonException", throwable);
+    }
+
+    @Override
+    public void onAssetsLoadNotExistsException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        Log.e("MyExceptionHandler", "onAssetsLoadNotExistsException", throwable);
+    }
+
+    @Override
     public void onNetworkLoadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
         Log.e("MyExceptionHandler", "onNetworkLoadException", throwable);
     }

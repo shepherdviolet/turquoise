@@ -37,6 +37,12 @@
                     android:layout_height="wrap_content"
                     android:scaleType="center" />
 
+                <ImageView
+                    android:id="@+id/basic_main_imageview7"
+                    android:layout_width="120dp"
+                    android:layout_height="90dp"
+                    android:scaleType="fitXY" />
+
             </LinearLayout>
 
             <LinearLayout

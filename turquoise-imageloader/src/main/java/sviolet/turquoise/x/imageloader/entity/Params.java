@@ -101,7 +101,7 @@ public class Params {
         /**
          * <p>Specify where to get the image.</p>
          *
-         *
+         * TODO document
          *
          * @param sourceType Specify where to get the image. HTTP_GET by default.
          */

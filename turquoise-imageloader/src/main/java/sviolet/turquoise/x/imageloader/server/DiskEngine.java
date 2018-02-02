@@ -49,22 +49,18 @@ public class DiskEngine extends Engine {
 
     /**
      * Load from device local disk
-     *
-     * TODO developing
      */
     private void loadFromLocalDisk(Task task){
         ImageResource imageResource;
         try{
             imageResource = getComponentManager().getDiskLoadServer().readFromLocalDisk(task, getDecodeHandler(task));
         } catch (Exception e){
-            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
+            getComponentManager().getServerSettings().getExceptionHandler().onLocalDiskLoadCommonException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
             task.setState(Task.State.CANCELED);
             response(task);
             return;
         }
         if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
-            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[DiskEngine]decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
             task.setState(Task.State.CANCELED);
             response(task);
             return;
@@ -76,22 +72,18 @@ public class DiskEngine extends Engine {
 
     /**
      * Load from device local disk
-     *
-     * //TODO developing
      */
     private void loadFromAssets(Task task){
         ImageResource imageResource;
         try{
             imageResource = getComponentManager().getDiskLoadServer().readFromAssets(task, getDecodeHandler(task));
         } catch (Exception e){
-            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
+            getComponentManager().getServerSettings().getExceptionHandler().onAssetsLoadCommonException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
             task.setState(Task.State.CANCELED);
             response(task);
             return;
         }
         if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
-            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[DiskEngine]decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
             task.setState(Task.State.CANCELED);
             response(task);
             return;

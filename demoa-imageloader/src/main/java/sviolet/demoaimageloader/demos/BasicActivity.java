@@ -13,6 +13,7 @@ import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.util.bitmap.BlurUtils;
+import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
@@ -62,6 +63,8 @@ public class BasicActivity extends TActivity {
     private ImageView imageView5;
     @ResourceId(R.id.basic_main_imageview6)
     private ImageView imageView6;
+    @ResourceId(R.id.basic_main_imageview7)
+    private ImageView imageView7;
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -248,6 +251,24 @@ public class BasicActivity extends TActivity {
                 TILoaderUtils.getStubRemoter(v).relaunch();
             }
         });
+
+        /*
+         * 加载本地图片
+         */
+        String url7 = DirectoryUtils.getExternalStorageDirectory().getAbsolutePath() + "/test.jpg";
+        Params params7 = new Params.Builder()
+                .setSourceType(Params.SourceType.LOCAL_DISK)
+                .build();
+        TILoader.node(this).load(url7, params7, imageView7);
+
+        imageView7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
+
     }
 
     /**

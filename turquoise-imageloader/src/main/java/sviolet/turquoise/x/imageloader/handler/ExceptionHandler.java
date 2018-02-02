@@ -95,6 +95,26 @@ public interface ExceptionHandler {
      */
     void onLocalDiskLoadNotExistsException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
 
+    /**
+     * exception while loading image from apk assets (SourceType.APK_ASSETS), notify user generally
+     * @param applicationContext application context
+     * @param context activity context, maybe null
+     * @param taskInfo taskInfo
+     * @param throwable throwable
+     * @param logger logger
+     */
+    void onAssetsLoadCommonException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
+
+    /**
+     * Image is not exists in apk assets (SourceType.APK_ASSETS), notify user generally
+     * @param applicationContext application context
+     * @param context activity context, maybe null
+     * @param taskInfo taskInfo
+     * @param throwable throwable
+     * @param logger logger
+     */
+    void onAssetsLoadNotExistsException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
+
     /*************************************************************
      * net engine
      */
