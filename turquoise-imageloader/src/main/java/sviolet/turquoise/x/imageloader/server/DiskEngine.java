@@ -115,8 +115,6 @@ public class DiskEngine extends Engine {
             return;
         }
         if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
-            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[TILoader:DiskEngine]decoding failed, return invalid ImageResource"), getComponentManager().getLogger());
             task.setState(Task.State.FAILED);
             response(task);
             return;

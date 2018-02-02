@@ -54,11 +54,9 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
                     int memoryCacheSize = manager.getServerSettings().getMemoryCacheSize();
                     //try to use default value if memoryCacheSize <= 0
                     if (memoryCacheSize <= 0){
-                        final Context contextImage = manager.getApplicationContextImage();
-                        if (contextImage != null){
-                            final int memoryClass = DeviceUtils.getMemoryClass(contextImage);
-                            memoryCacheSize = (int) (1024 * 1024 * memoryClass * DEFAULT_MEMORY_CACHE_PERCENT);
-                        }
+                        final int memoryClass = DeviceUtils.getMemoryClass(manager.getApplicationContextImage());
+                        memoryCacheSize = (int) (1024 * 1024 * memoryClass * DEFAULT_MEMORY_CACHE_PERCENT);
+                        manager.getLogger().i("[TILoader:MemoryCacheServer]initialize, calculate default memoryCacheSize");
                     }
                     //limit
                     if (DeviceUtils.getVersionSDK() < 11){
