@@ -64,7 +64,7 @@ public class DiskEngine extends Engine {
         }
         if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
             getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[DiskEngine]decoding failed, return invalid ImageResource"), getComponentManager().getLogger());
+                    new Exception("[DiskEngine]decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
             task.setState(Task.State.CANCELED);
             response(task);
             return;
@@ -91,7 +91,7 @@ public class DiskEngine extends Engine {
         }
         if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
             getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[DiskEngine]decoding failed, return invalid ImageResource"), getComponentManager().getLogger());
+                    new Exception("[DiskEngine]decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
             task.setState(Task.State.CANCELED);
             response(task);
             return;
@@ -109,7 +109,7 @@ public class DiskEngine extends Engine {
         try{
             imageResource = getComponentManager().getDiskCacheServer().read(task, getDecodeHandler(task));
         } catch (Exception e){
-            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
+            getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheCommonException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), e, getComponentManager().getLogger());
             task.setState(Task.State.FAILED);
             response(task);
             return;

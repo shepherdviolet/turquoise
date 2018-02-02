@@ -58,8 +58,13 @@ public class DiskCacheServer extends DiskCacheModule {
                 return null;
             }
             //decode
-            return decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                    task, targetFile, getComponentManager().getLogger());
+            try {
+                return decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                        task, targetFile, getComponentManager().getLogger());
+            } catch (Throwable t) {
+                getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), t, getComponentManager().getLogger());
+                return null;
+            }
         } finally {
             //release
             release();
