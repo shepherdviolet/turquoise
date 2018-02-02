@@ -506,7 +506,12 @@ public class Params {
         /**
          * Get image from local disk
          */
-        LOCAL_DISK
+        LOCAL_DISK,
+
+        /**
+         * Get image from assets
+         */
+        APK_ASSETS
     }
 
 }

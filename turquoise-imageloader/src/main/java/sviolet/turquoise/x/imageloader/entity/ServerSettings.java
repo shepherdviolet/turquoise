@@ -70,6 +70,7 @@ public class ServerSettings implements ComponentManager.Component{
         private long networkReadTimeout = DEFAULT_NETWORK_READ_TIMEOUT;
         private int reloadTimes = DEFAULT_RELOAD_TIMES;
         private File diskCachePath = null;
+        private File assetsCachePath = null;
 
         private long imageDataLengthLimit = DEFAULT_IMAGE_DATA_LENGTH_LIMIT;
         private long memoryBufferLengthLimit = DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT;
@@ -476,6 +477,7 @@ public class ServerSettings implements ComponentManager.Component{
 
     public static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
     public static final String DEFAULT_DISK_CACHE_SUB_PATH = "tiloader-cache";
+    public static final String DEFAULT_ASSETS_CACHE_SUB_PATH = "tiloader-assets";
 
     //Var/////////////////////////////////////////////////////////////////////////////////
 
@@ -555,6 +557,13 @@ public class ServerSettings implements ComponentManager.Component{
             values.diskCachePath = fetchDiskCachePath(manager.getApplicationContextImage(), DEFAULT_DISK_CACHE_PATH, null);
         }
         return values.diskCachePath;
+    }
+
+    public File getAssetsCachePath(){
+        if (values.assetsCachePath == null){
+            values.assetsCachePath = fetchAssetsCachePath(manager.getApplicationContextImage(), null);
+        }
+        return values.assetsCachePath;
     }
 
     public int getReloadTimes(){
@@ -666,6 +675,13 @@ public class ServerSettings implements ComponentManager.Component{
             default:
                 return new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + subPath);
         }
+    }
+
+    private static File fetchAssetsCachePath(Context context, String subPath){
+        if (CheckUtils.isEmpty(subPath)){
+            subPath = DEFAULT_ASSETS_CACHE_SUB_PATH;
+        }
+        return new File(DirectoryUtils.getInnerCacheDir(context).getAbsolutePath() + File.separator + subPath);
     }
 
 }

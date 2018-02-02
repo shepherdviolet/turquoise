@@ -10,15 +10,41 @@ import sviolet.turquoise.x.imageloader.node.Task;
 /**
  * <p>Load image from device local disk (for SourceType.LOCAL_DISK)</p>
  *
+ * TODO developing
+ *
  * @author S.Violet
  */
 public class DiskLoadServer implements ComponentManager.Component, Server {
 
     private ComponentManager manager;
+    private boolean assetsLoadingEnabled = true;
+
+    private boolean initialized = false;
 
     @Override
     public void init(ComponentManager manager) {
         this.manager = manager;
+    }
+
+    private void initialize(){
+        if (!initialized) {
+            synchronized (this) {
+                if (!initialized) {
+                    //check assets cache path
+                    if (!getComponentManager().getServerSettings().getAssetsCachePath().exists()) {
+                        if (!getComponentManager().getServerSettings().getAssetsCachePath().mkdirs()) {
+                            getComponentManager().getLogger().e("[TILoader:DiskLoadServer]Create assets cache path failed, disable assets loading");
+                            assetsLoadingEnabled = false;
+                        }
+                    } else if (!getComponentManager().getServerSettings().getAssetsCachePath().isDirectory()) {
+                        getComponentManager().getLogger().e("[TILoader:DiskLoadServer]Create assets cache path failed, find the same name file");
+                        assetsLoadingEnabled = false;
+                    }
+                    getComponentManager().getLogger().i("[TILoader:DiskLoadServer]initialized");
+                    initialized = true;
+                }
+            }
+        }
     }
 
     @Override
@@ -32,29 +58,30 @@ public class DiskLoadServer implements ComponentManager.Component, Server {
      * @param decodeHandler used to decode file
      * @return ImageResource, might be null
      */
-    public ImageResource read(Task task, DecodeHandler decodeHandler){
+    public ImageResource readFromLocalDisk(Task task, DecodeHandler decodeHandler){
+        initialize();
         //fetch cache file
-        File targetFile = getFile(task);
+        File targetFile = new File(task.getUrl());
         if (!targetFile.exists()){
             return null;
         }
         //decode
-        ImageResource imageResource = null;
-        try {
-            imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                    task, targetFile, getComponentManager().getLogger());
-            if (imageResource == null){
-                getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                        new Exception("[TILoader:DiskLoadServer]decoding failed, return null ImageResource"), getComponentManager().getLogger());
-            }
-        }catch(Exception e){
-            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-        }
-        return imageResource;
+        return decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                task, targetFile, getComponentManager().getLogger());
     }
 
-    private File getFile(Task task){
-        return new File(task.getUrl());
+    /**
+     * Read Image from apk assets
+     * @param task task
+     * @param decodeHandler used to decode file
+     * @return ImageResource, might be null
+     */
+    public ImageResource readFromAssets(Task task, DecodeHandler decodeHandler){
+        initialize();
+
+        //TODO developing
+
+        return null;
     }
 
     private ComponentManager getComponentManager(){

@@ -60,15 +60,27 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
     private LazySingleThreadPool dispatchThreadPool;
     private ReentrantLock statusLock = new ReentrantLock();
 
+    private boolean initialized = false;
+
     @Override
     public void init(ComponentManager manager) {
         this.manager = manager;
         this.dispatchThreadPool = new LazySingleThreadPool("TLoader-DiskCacheModule-%d");
-        if (manager.getServerSettings().isWipeDiskCacheWhenUpdate() && manager.getApplicationContextImage() != null){
-            this.appVersion = ApplicationUtils.getAppVersionCode(manager.getApplicationContextImage());
-        }
         status = Status.PAUSE;
-        manager.getLogger().i("[DiskCacheServer]initial, diskCacheSize:" + (manager.getServerSettings().getDiskCacheSize() / 1024) + "K");
+    }
+
+    private void initialize(){
+        if (!initialized) {
+            synchronized (this) {
+                if (!initialized) {
+                    if (manager.getServerSettings().isWipeDiskCacheWhenUpdate()){
+                        appVersion = ApplicationUtils.getAppVersionCode(manager.getApplicationContextImage());
+                    }
+                    manager.getLogger().i("[TILoader:DiskCacheServer]initialized, diskCacheSize:" + (manager.getServerSettings().getDiskCacheSize() / 1024) + "K");
+                    initialized = true;
+                }
+            }
+        }
     }
 
     /**
@@ -76,16 +88,17 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
      * @return true: disk cache ok
      */
     private boolean openCache(){
+        initialize();
         Exception commonException = null;
         Exception openException = null;
         try{
             statusLock.lock();
+            holdCounter++;
             switch (status){
                 case UNINITIALIZED:
                     commonException = new RuntimeException("[TILoader:DiskCacheModule]can not use disk cache before initialize");
                     break;
                 case PAUSE:
-                    holdCounter++;
                     try {
                         diskLruCache = DiskLruCache.open(manager.getServerSettings().getDiskCachePath(), appVersion, 1, manager.getServerSettings().getDiskCacheSize());
                         status = Status.READY;
@@ -98,7 +111,6 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
                     }
                     break;
                 case READY:
-                    holdCounter++;
                     return true;
                 case DISABLE:
                     if ((System.currentTimeMillis() - lastOpenFailedTime) < FAILED_REOPEN_INTERVAL) {
@@ -180,6 +192,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
      * release holding of disk cache, might have close disk cache
      */
     protected void release(){
+        initialize();
         try {
             DiskLruCache diskLruCacheToFlush = this.diskLruCache;
             if (diskLruCacheToFlush != null) {

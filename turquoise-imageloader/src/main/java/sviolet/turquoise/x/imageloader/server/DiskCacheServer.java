@@ -50,27 +50,20 @@ public class DiskCacheServer extends DiskCacheModule {
      * @param decodeHandler used to decode file
      * @return ImageResource, might be null
      */
-    public ImageResource read(Task task, DecodeHandler decodeHandler){
+    public ImageResource read(Task task, DecodeHandler decodeHandler) {
         //fetch cache file
-        File targetFile = get(task);
-        if (targetFile == null || !targetFile.exists()){
-            return null;
-        }
-        //decode
-        ImageResource imageResource = null;
         try {
-            imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                    task, targetFile, getComponentManager().getLogger());
-            if (imageResource == null){
-                getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                        new Exception("[TILoader:DiskEngine]decoding failed, return null ImageResource"), getComponentManager().getLogger());
+            File targetFile = get(task);
+            if (targetFile == null || !targetFile.exists()) {
+                return null;
             }
-        }catch(Exception e){
-            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
+            //decode
+            return decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                    task, targetFile, getComponentManager().getLogger());
+        } finally {
+            //release
+            release();
         }
-        //release
-        release();
-        return imageResource;
     }
 
     /************************************************************************
@@ -206,7 +199,7 @@ public class DiskCacheServer extends DiskCacheModule {
             abortEditor(editor);
             getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                     getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-        }finally {
+        } finally {
             closeStream(inputStream);
             closeStream(outputStream);
             release();
@@ -218,15 +211,19 @@ public class DiskCacheServer extends DiskCacheModule {
 
     private void fetchTargetFile(Task task, Result result) {
         if (result.getType() == ResultType.SUCCEED){
-            File targetFile = get(task);
-            if (targetFile == null || !targetFile.exists()){
-                setHealthy(false);
-                result.setType(ResultType.FAILED);
-                getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheReadException(
-                        getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                        new Exception("[TILoader]resources have been written to disk cache, but we can't find target File!!!"), getComponentManager().getLogger());
-            }else{
-                result.setTargetFile(targetFile);
+            try {
+                File targetFile = get(task);
+                if (targetFile == null || !targetFile.exists()) {
+                    setHealthy(false);
+                    result.setType(ResultType.FAILED);
+                    getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheReadException(
+                            getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                            new Exception("[TILoader]resources have been written to disk cache, but we can't find target File!!!"), getComponentManager().getLogger());
+                } else {
+                    result.setTargetFile(targetFile);
+                }
+            } finally {
+                release();
             }
         }
     }

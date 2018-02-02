@@ -20,7 +20,6 @@
 package sviolet.turquoise.x.imageloader.server;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
@@ -41,36 +40,44 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
 
     private ImageResourceCacheModule imageResourceCacheModule;
 
+    private boolean initialized = false;
+
     @Override
     public void init(ComponentManager manager) {
         this.manager = manager;
-        initBitmapCache();
     }
 
-    private void initBitmapCache() {
-        int memoryCacheSize = manager.getServerSettings().getMemoryCacheSize();
-        //try to use default value if memoryCacheSize <= 0
-        if (memoryCacheSize <= 0){
-            final Context contextImage = manager.getApplicationContextImage();
-            if (contextImage != null){
-                final int memoryClass = DeviceUtils.getMemoryClass(contextImage);
-                memoryCacheSize = (int) (1024 * 1024 * memoryClass * DEFAULT_MEMORY_CACHE_PERCENT);
+    private void initialize() {
+        if (!initialized) {
+            synchronized (this) {
+                if (!initialized){
+                    int memoryCacheSize = manager.getServerSettings().getMemoryCacheSize();
+                    //try to use default value if memoryCacheSize <= 0
+                    if (memoryCacheSize <= 0){
+                        final Context contextImage = manager.getApplicationContextImage();
+                        if (contextImage != null){
+                            final int memoryClass = DeviceUtils.getMemoryClass(contextImage);
+                            memoryCacheSize = (int) (1024 * 1024 * memoryClass * DEFAULT_MEMORY_CACHE_PERCENT);
+                        }
+                    }
+                    //limit
+                    if (DeviceUtils.getVersionSDK() < 11){
+                        manager.getLogger().i("[TILoader:MemoryCacheServer]initialize, API < 11, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
+                        memoryCacheSize = MIN_MEMORY_CACHE_SIZE;
+                    } else if (memoryCacheSize < MIN_MEMORY_CACHE_SIZE){
+                        manager.getLogger().i("[TILoader:MemoryCacheServer]initialize, setting memoryCacheSize:" + (memoryCacheSize / 1024) + "K < minimumSize, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
+                        memoryCacheSize = MIN_MEMORY_CACHE_SIZE;
+                    }
+                    imageResourceCacheModule = new ImageResourceCacheModule(memoryCacheSize, manager.getServerSettings().getImageResourceHandler(), manager.getLogger());
+                    manager.getLogger().i("[TILoader:MemoryCacheServer]initialized, memoryCacheSize:" + (memoryCacheSize / 1024) + "K");
+                    initialized = true;
+                }
             }
         }
-        //limit
-        if (DeviceUtils.getVersionSDK() < 11){
-            manager.getLogger().i("[MemoryCacheServer]initial, API < 11, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
-            memoryCacheSize = MIN_MEMORY_CACHE_SIZE;
-        } else if (memoryCacheSize < MIN_MEMORY_CACHE_SIZE){
-            manager.getLogger().i("[MemoryCacheServer]initial, setting memoryCacheSize:" + (memoryCacheSize / 1024) + "K < minimumSize, reset to minimumSize:" + (MIN_MEMORY_CACHE_SIZE / 1024) + "K");
-            memoryCacheSize = MIN_MEMORY_CACHE_SIZE;
-        }
-
-        manager.getLogger().i("[MemoryCacheServer]initial, memoryCacheSize:" + (memoryCacheSize / 1024) + "K");
-        imageResourceCacheModule = new ImageResourceCacheModule(memoryCacheSize, manager.getServerSettings().getImageResourceHandler(), manager.getLogger());
     }
 
     public void put(String key, ImageResource resource){
+        initialize();
         if (key == null){
             manager.getLogger().e("MemoryCacheServer can't put with null key");
             return;
@@ -79,6 +86,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
     }
 
     public ImageResource get(String key){
+        initialize();
         if (key == null){
             manager.getLogger().e("MemoryCacheServer can't get with null key");
             return null;
@@ -87,6 +95,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
     }
 
     public ImageResource extract(String key){
+        initialize();
         if (key == null){
             manager.getLogger().e("MemoryCacheServer can't extract with null key");
             return null;
@@ -95,6 +104,7 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
     }
 
     public void remove(String key){
+        initialize();
         if (key == null){
             manager.getLogger().e("MemoryCacheServer can't remove with null key");
             return;
@@ -103,10 +113,12 @@ public class MemoryCacheServer implements ComponentManager.Component, Server {
     }
 
     public void removeAll(){
+        initialize();
         imageResourceCacheModule.removeAll();
     }
 
     public String getMemoryReport() {
+        initialize();
         return imageResourceCacheModule.getMemoryReport();
     }
 
