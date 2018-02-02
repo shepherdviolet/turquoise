@@ -32,6 +32,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.IndispensableState;
 import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
+import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
@@ -47,6 +48,11 @@ public class NetEngine extends Engine {
     private Map<String, TaskGroup> taskGroups = new ConcurrentHashMap<>();
     private History history = new History(HISTORY_CAPACITY);
     private ReentrantLock lock = new ReentrantLock();
+
+    @Override
+    protected boolean preCheck(Task task) {
+        return task.getParams().getSourceType() == Params.SourceType.HTTP_GET;
+    }
 
     @Override
     protected void executeNewTask(Task task) {

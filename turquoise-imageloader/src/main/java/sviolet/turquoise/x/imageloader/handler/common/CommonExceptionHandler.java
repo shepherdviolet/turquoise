@@ -44,19 +44,24 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public class CommonExceptionHandler implements ExceptionHandler {
 
-    private static final String DISK_CACHE_EXCEPTION_TOAST_CN = "图片磁盘缓存访问失败,请检查您的手机内存是否已满,图片将通过网络下载.";
-    private static final String DISK_CACHE_EXCEPTION_TOAST_EN = "Image disk cache access fails, check your phone memory, image will loading from network always.";
+    private static final String DISK_CACHE_EXCEPTION_TOAST_CN = "图片缓存访问失败,请检查手机内存是否已满,图片将始终通过网络下载.";
+    private static final String DISK_CACHE_EXCEPTION_TOAST_EN = "Image cache access failed, check your device memory, image will loading from network always.";
     private static final long DISK_CACHE_EXCEPTION_NOTICE_INTERVAL = 20 * 1000L;//20s
 
-    private static final String IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_CN = "部分图片过大, 加载取消.";
-    private static final String IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_EN = "Some images are too large, load tasks ware canceled.";
-    private static final String MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_CN = "由于磁盘访问失败, 大图的加载取消.";
-    private static final String MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_EN = "Owing to failure of disk cache access, load tasks of large image canceled.";
-    private static final String TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_CN = "由于网速过慢, 部分图片取消加载.";
-    private static final String TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_EN = "Network speed is too slow, some of the load tasks were canceled.";
+    private static final String DISK_LOAD_EXCEPTION_TOAST_CN = "磁盘加载图片失败";
+    private static final String DISK_LOAD_EXCEPTION_TOAST_EN = "Image loading failed from local disk.";
+    private static final String DISK_LOAD_NOT_EXISTS_TOAST_CN = "磁盘加载图片失败, 不存在";
+    private static final String DISK_LOAD_NOT_EXISTS_TOAST_EN = "Image loading failed from local disk, not exists.";
+
+    private static final String IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_CN = "部分图片过大, 加载失败.";
+    private static final String IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_EN = "Some images are too large, loading failed.";
+    private static final String MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_CN = "磁盘访问失败, 大图加载失败.";
+    private static final String MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_EN = "Disk access failed, large image loading failed.";
+    private static final String TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_CN = "网速过慢, 图片加载失败.";
+    private static final String TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_EN = "Network speed is too slow, loading failed.";
 
     private static final String NETWORK_NOT_CONNECTED_CN = "图片加载失败, 网络未连接.";
-    private static final String NETWORK_NOT_CONNECTED_EN = "Failed to load image, your network is not connected.";
+    private static final String NETWORK_NOT_CONNECTED_EN = "Image loading failed, network bad.";
     private static final long NETWORK_EXCEPTION_NOTICE_INTERVAL = 20 * 1000L;//20s
 
     private AtomicLong diskCacheExceptionNoticeTime = new AtomicLong(0);
@@ -110,6 +115,22 @@ public class CommonExceptionHandler implements ExceptionHandler {
     }
 
     @Override
+    public void onLocalDiskLoadCommonException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_LOAD_COMMON_EXCEPTION);
+        msg.obj = new Info(applicationContext);
+        msg.sendToTarget();
+        logger.e("LocalDiskLoadCommonException:" + taskInfo, throwable);
+    }
+
+    @Override
+    public void onLocalDiskLoadNotExistsException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_DISK_LOAD_NOT_EXISTS_EXCEPTION);
+        msg.obj = new Info(applicationContext);
+        msg.sendToTarget();
+        logger.e("LocalDiskLoadNotExistsException:" + taskInfo, throwable);
+    }
+
+    @Override
     @SuppressLint("MissingPermission")
     public void onNetworkLoadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
         if (!NetStateUtils.isNetworkConnected(applicationContext)){
@@ -145,7 +166,6 @@ public class CommonExceptionHandler implements ExceptionHandler {
         msg.obj = new Info(applicationContext);
         msg.sendToTarget();
         logger.e("MemoryBufferLengthOutOfLimit: diskCache is unhealthy, we have to write data into memory buffer, but the image is too large, so we cancel loading, ServerSettings->setMemoryBufferLengthLimitPercent() can adjust limit, dataLength:" + dataLength + ", limit:" + lengthLimit + ", task:" + taskInfo);
-
     }
 
     @Override
@@ -189,10 +209,12 @@ public class CommonExceptionHandler implements ExceptionHandler {
     private static class MyHandler extends WeakHandler<CommonExceptionHandler>{
 
         private static final int HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION = 1;
-        private static final int HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT = 2;
-        private static final int HANDLER_ON_MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT = 3;
-        private static final int HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK = 4;
-        private static final int HANDLER_NETWORK_NOT_CONNECTED = 5;
+        private static final int HANDLER_ON_DISK_LOAD_COMMON_EXCEPTION = 2;
+        private static final int HANDLER_ON_DISK_LOAD_NOT_EXISTS_EXCEPTION = 3;
+        private static final int HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT = 4;
+        private static final int HANDLER_ON_MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT = 5;
+        private static final int HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK = 6;
+        private static final int HANDLER_NETWORK_NOT_CONNECTED = 7;
 
         public MyHandler(Looper looper, CommonExceptionHandler host) {
             super(looper, host);
@@ -203,6 +225,12 @@ public class CommonExceptionHandler implements ExceptionHandler {
             switch (msg.what){
                 case HANDLER_ON_DISK_CACHE_OPEN_EXCEPTION:
                     host.showToast(((Info) msg.obj).getApplicationContext(), DISK_CACHE_EXCEPTION_TOAST_CN, DISK_CACHE_EXCEPTION_TOAST_EN);
+                    break;
+                case HANDLER_ON_DISK_LOAD_COMMON_EXCEPTION:
+                    host.showToast(((Info) msg.obj).getApplicationContext(), DISK_LOAD_EXCEPTION_TOAST_CN, DISK_LOAD_EXCEPTION_TOAST_EN);
+                    break;
+                case HANDLER_ON_DISK_LOAD_NOT_EXISTS_EXCEPTION:
+                    host.showToast(((Info) msg.obj).getApplicationContext(), DISK_LOAD_NOT_EXISTS_TOAST_CN, DISK_LOAD_NOT_EXISTS_TOAST_EN);
                     break;
                 case HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT:
                     host.showToast(((Info) msg.obj).getApplicationContext(), IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_CN, IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_EN);

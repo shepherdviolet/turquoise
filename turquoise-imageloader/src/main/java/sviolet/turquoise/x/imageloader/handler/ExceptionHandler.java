@@ -34,11 +34,11 @@ import sviolet.turquoise.x.imageloader.node.Task;
 public interface ExceptionHandler {
 
     /*************************************************************
-     * disk
+     * disk engine
      */
 
     /**
-     * exception while disk cache open, notify user generally.
+     * exception while inner disk cache open, notify user generally.
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param throwable throwable
@@ -47,7 +47,7 @@ public interface ExceptionHandler {
     void onDiskCacheOpenException(Context applicationContext, Context context, Throwable throwable, TLogger logger);
 
     /**
-     * exception while disk cache reading, notify user generally
+     * exception while inner disk cache reading, notify user generally
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
@@ -57,7 +57,7 @@ public interface ExceptionHandler {
     void onDiskCacheReadException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
 
     /**
-     * exception while disk cache writing, notify user generally
+     * exception while inner disk cache writing, notify user generally
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
@@ -67,7 +67,7 @@ public interface ExceptionHandler {
     void onDiskCacheWriteException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
 
     /**
-     * exception while disk cache close/flush..., for unimportance exception, print log generally
+     * exception while inner disk cache close/flush..., for unimportance exception, print log generally
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param throwable throwable
@@ -75,8 +75,28 @@ public interface ExceptionHandler {
      */
     void onDiskCacheCommonException(Context applicationContext, Context context, Throwable throwable, TLogger logger);
 
+    /**
+     * exception while loading image from device local disk (SourceType.LOCAL_DISK), notify user generally
+     * @param applicationContext application context
+     * @param context activity context, maybe null
+     * @param taskInfo taskInfo
+     * @param throwable throwable
+     * @param logger logger
+     */
+    void onLocalDiskLoadCommonException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
+
+    /**
+     * Image is not exists in device local disk (SourceType.LOCAL_DISK), notify user generally
+     * @param applicationContext application context
+     * @param context activity context, maybe null
+     * @param taskInfo taskInfo
+     * @param throwable throwable
+     * @param logger logger
+     */
+    void onLocalDiskLoadNotExistsException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
+
     /*************************************************************
-     * net
+     * net engine
      */
 
     /**
@@ -156,6 +176,19 @@ public interface ExceptionHandler {
     void handleLowNetworkSpeedEvent(Context applicationContext, Context context, Task.Info taskInfo, long elapseTime, int speed, TLogger logger);
 
     /*************************************************************
+     * memory engine
+     */
+
+    /**
+     * exception while memory cache execute..., for unimportance exception, print log generally
+     * @param applicationContext application context
+     * @param context activity context, maybe null
+     * @param throwable throwable
+     * @param logger logger
+     */
+    void onMemoryCacheCommonException(Context applicationContext, Context context, Throwable throwable, TLogger logger);
+
+    /*************************************************************
      * decode
      */
 
@@ -168,18 +201,5 @@ public interface ExceptionHandler {
      * @param logger logger
      */
     void onDecodeException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger);
-
-    /*************************************************************
-     * memory
-     */
-
-    /**
-     * exception while memory cache execute..., for unimportance exception, print log generally
-     * @param applicationContext application context
-     * @param context activity context, maybe null
-     * @param throwable throwable
-     * @param logger logger
-     */
-    void onMemoryCacheCommonException(Context applicationContext, Context context, Throwable throwable, TLogger logger);
 
 }

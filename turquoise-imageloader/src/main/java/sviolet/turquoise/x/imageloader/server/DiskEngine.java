@@ -20,8 +20,8 @@
 package sviolet.turquoise.x.imageloader.server;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**
  * <p>Disk Load Engine</p>
@@ -31,7 +31,48 @@ import sviolet.turquoise.x.imageloader.stub.Stub;
 public class DiskEngine extends Engine {
 
     @Override
+    protected boolean preCheck(Task task) {
+        return true;
+    }
+
+    @Override
     protected void executeNewTask(Task task) {
+        if (task.getParams().getSourceType() == Params.SourceType.LOCAL_DISK) {
+            loadFromLocalDisk(task);
+        } else {
+            //default way
+            loadFromInnerDiskCache(task);
+        }
+    }
+
+    /**
+     * Load from device local disk
+     */
+    private void loadFromLocalDisk(Task task){
+        ImageResource imageResource;
+        try{
+            imageResource = getComponentManager().getDiskLoadServer().read(task, getDecodeHandler(task));
+        } catch (Exception e){
+            getComponentManager().getServerSettings().getExceptionHandler().onLocalDiskLoadCommonException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
+            task.setState(Task.State.CANCELED);
+            response(task);
+            return;
+        }
+        if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
+            getComponentManager().getServerSettings().getExceptionHandler().onLocalDiskLoadNotExistsException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), new Exception("Image loading failed from local disk, not exists."), getComponentManager().getLogger());
+            task.setState(Task.State.CANCELED);
+            response(task);
+            return;
+        }
+        getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
+        task.setState(Task.State.SUCCEED);
+        response(task);
+    }
+
+    /**
+     * Load from disk cache of TILoader
+     */
+    private void loadFromInnerDiskCache(Task task) {
         ImageResource imageResource;
         try{
             imageResource = getComponentManager().getDiskCacheServer().read(task, getDecodeHandler(task));

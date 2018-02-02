@@ -24,7 +24,6 @@ import android.content.Context;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.common.statics.StringConstants;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.NodeFactory;
@@ -32,6 +31,7 @@ import sviolet.turquoise.x.imageloader.node.NodeFactoryImpl;
 import sviolet.turquoise.x.imageloader.node.NodeManager;
 import sviolet.turquoise.x.imageloader.server.DiskCacheServer;
 import sviolet.turquoise.x.imageloader.server.DiskEngine;
+import sviolet.turquoise.x.imageloader.server.DiskLoadServer;
 import sviolet.turquoise.x.imageloader.server.Engine;
 import sviolet.turquoise.x.imageloader.server.MemoryCacheServer;
 import sviolet.turquoise.x.imageloader.server.MemoryEngine;
@@ -81,6 +81,7 @@ public class ComponentManager {
 
     private MemoryCacheServer memoryCacheServer;
     private DiskCacheServer diskCacheServer;
+    private DiskLoadServer diskLoadServer;
     private Engine memoryEngine;
     private Engine diskEngine;
     private Engine netEngine;
@@ -108,6 +109,10 @@ public class ComponentManager {
 
     public DiskCacheServer getDiskCacheServer() {
         return diskCacheServer;
+    }
+
+    public DiskLoadServer getDiskLoadServer(){
+        return diskLoadServer;
     }
 
     public Engine getMemoryEngine(){
@@ -197,6 +202,7 @@ public class ComponentManager {
         //instance components
         memoryCacheServer = new MemoryCacheServer();
         diskCacheServer = new DiskCacheServer();
+        diskLoadServer = new DiskLoadServer();
         memoryEngine = new MemoryEngine();
         diskEngine = new DiskEngine();
         netEngine = new NetEngine();
@@ -205,6 +211,7 @@ public class ComponentManager {
         serverSettings.init(ComponentManager.getInstance());
         memoryCacheServer.init(ComponentManager.getInstance());
         diskCacheServer.init(ComponentManager.getInstance());
+        diskLoadServer.init(ComponentManager.getInstance());
         memoryEngine.init(ComponentManager.getInstance());
         diskEngine.init(ComponentManager.getInstance());
         netEngine.init(ComponentManager.getInstance());

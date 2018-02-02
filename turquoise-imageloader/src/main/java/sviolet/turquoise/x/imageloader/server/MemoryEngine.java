@@ -30,6 +30,11 @@ import sviolet.turquoise.x.imageloader.node.Task;
 public class MemoryEngine extends Engine {
 
     @Override
+    protected boolean preCheck(Task task) {
+        return true;
+    }
+
+    @Override
     protected void executeNewTask(Task task) {
         ImageResource resource;
         try {

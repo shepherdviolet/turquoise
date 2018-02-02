@@ -53,6 +53,11 @@ public abstract class Engine implements ComponentManager.Component, Server {
      */
 
     /**
+     * Pre-check if the task can be executed by this server
+     */
+    protected abstract boolean preCheck(Task task);
+
+    /**
      * the method invoked on single Thread, which "dispatch thread"
      * @param task the task to execute
      */
@@ -116,6 +121,12 @@ public abstract class Engine implements ComponentManager.Component, Server {
             @Override
             public void run() {
                 try {
+                    if (!preCheck(task)) {
+                        getComponentManager().getLogger().e("[Engine]This task can not be executed in this server, serverType:" + getServerType() + ", task:" + task);
+                        task.setState(Task.State.CANCELED);
+                        response(task);
+                        return;
+                    }
                     //EXECUTE
                     executeNewTask(task);
                 } finally {

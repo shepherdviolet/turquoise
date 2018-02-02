@@ -38,6 +38,7 @@ public class Params {
 
     private static class Values{
 
+        private SourceType sourceType = DEFAULT_SOURCE_TYPE;
         private int reqWidth = SIZE_MATCH_RESOURCE;
         private int reqHeight = SIZE_MATCH_RESOURCE;
         private boolean sizeMatchView = true;
@@ -64,6 +65,7 @@ public class Params {
          */
         public Values copy() {
             Values newValues = new Values();
+            newValues.sourceType = sourceType;
             newValues.reqWidth = reqWidth;
             newValues.reqHeight = reqHeight;
             newValues.sizeMatchView = sizeMatchView;
@@ -94,6 +96,21 @@ public class Params {
 
         public Builder(){
             values = new Values();
+        }
+
+        /**
+         * <p>Specify where to get the image.</p>
+         *
+         *
+         *
+         * @param sourceType Specify where to get the image. HTTP_GET by default.
+         */
+        public Builder setSourceType(SourceType sourceType) {
+            if (sourceType == null){
+                throw new RuntimeException("[Params]sourceType is null");
+            }
+            values.sourceType = sourceType;
+            return this;
         }
 
         /**
@@ -332,6 +349,7 @@ public class Params {
 
     //DEFAULT////////////////////////////////////////////////////////////
 
+    public static final SourceType DEFAULT_SOURCE_TYPE = SourceType.HTTP_GET;
     public static final int SIZE_MATCH_RESOURCE = 0;//size match resource (origin size)
     public static final Bitmap.Config DEFAULT_BITMAP_CONFIG = Bitmap.Config.RGB_565;
 
@@ -344,6 +362,10 @@ public class Params {
     }
 
     //getter/////////////////////////////////////////////////////////////////
+
+    public SourceType getSourceType(){
+        return values.sourceType;
+    }
 
     public int getReqWidth() {
         return values.reqWidth;
@@ -457,6 +479,8 @@ public class Params {
         builder.append(getReqWidth());
         builder.append("x");
         builder.append(getReqHeight());
+        builder.append("@");
+        builder.append(getSourceType());
         if (values.decodeInterceptor != null) {
             builder.append("@");
             builder.append(values.decodeInterceptor.getClass().hashCode());
@@ -467,4 +491,22 @@ public class Params {
     public Params copy() {
         return new Params(values.copy());
     }
+
+    //inner class//////////////////////////////////////////////////////////////////
+
+    /**
+     * Source type of image
+     */
+    public enum SourceType {
+        /**
+         * Get image from network (http get)
+         */
+        HTTP_GET,
+
+        /**
+         * Get image from local disk
+         */
+        LOCAL_DISK
+    }
+
 }

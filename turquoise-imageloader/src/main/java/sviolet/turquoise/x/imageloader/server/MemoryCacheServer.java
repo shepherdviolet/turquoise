@@ -28,7 +28,7 @@ import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.server.module.ImageResourceCacheModule;
 
 /**
- * <p>manage all memory caches</p>
+ * <p>Manage memory caches (TILoader inner memory cache)</p>
  *
  * Created by S.Violet on 2016/3/15.
  */

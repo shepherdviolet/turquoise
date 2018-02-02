@@ -91,7 +91,7 @@ public class DirectoryUtils {
 
     /**
      * 打开assets下的文件.
-     * 除此之外, assets还可以使用绝对路径写法new File("file:///android_asset/...")
+     * URL方式获取(不能用于new File()) file:///android_asset/...
      * @param context context
      * @param fileName 文件名(路径), 例如"htmls/index.html"
      * @return InputStream

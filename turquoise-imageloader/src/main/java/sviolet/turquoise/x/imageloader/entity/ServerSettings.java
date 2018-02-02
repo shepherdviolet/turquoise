@@ -475,7 +475,7 @@ public class ServerSettings implements ComponentManager.Component{
     private static final float DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT = 0.02f;
 
     public static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
-    public static final String DEFAULT_DISK_CACHE_SUB_PATH = "TILoader";
+    public static final String DEFAULT_DISK_CACHE_SUB_PATH = "tiloader-cache";
 
     //Var/////////////////////////////////////////////////////////////////////////////////
 
