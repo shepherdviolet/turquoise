@@ -511,7 +511,12 @@ public class Params {
         /**
          * Get image from assets
          */
-        APK_ASSETS
+        APK_ASSETS,
+
+        /**
+         * Get image from resources
+         */
+        APK_RES
     }
 
 }

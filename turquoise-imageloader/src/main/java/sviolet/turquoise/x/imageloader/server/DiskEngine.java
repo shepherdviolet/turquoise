@@ -20,7 +20,6 @@
 package sviolet.turquoise.x.imageloader.server;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
-import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
@@ -37,13 +36,20 @@ public class DiskEngine extends Engine {
 
     @Override
     protected void executeNewTask(Task task) {
-        if (task.getParams().getSourceType() == Params.SourceType.LOCAL_DISK) {
-            loadFromLocalDisk(task);
-        } else if (task.getParams().getSourceType() == Params.SourceType.APK_ASSETS) {
-            loadFromAssets(task);
-        } else {
-            //default way
-            loadFromInnerDiskCache(task);
+        switch (task.getParams().getSourceType()) {
+            case LOCAL_DISK:
+                loadFromLocalDisk(task);
+                break;
+            case APK_ASSETS:
+                loadFromAssets(task);
+                break;
+            case APK_RES:
+                loadFromRes(task);
+                break;
+            default:
+                //default way
+                loadFromInnerDiskCache(task);
+                break;
         }
     }
 
@@ -78,7 +84,27 @@ public class DiskEngine extends Engine {
         try{
             imageResource = getComponentManager().getDiskLoadServer().readFromAssets(task, getDecodeHandler(task));
         } catch (Exception e){
-            getComponentManager().getServerSettings().getExceptionHandler().onAssetsLoadCommonException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
+            getComponentManager().getServerSettings().getExceptionHandler().onApkLoadCommonException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
+            task.setState(Task.State.CANCELED);
+            response(task);
+            return;
+        }
+        if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
+            task.setState(Task.State.CANCELED);
+            response(task);
+            return;
+        }
+        getComponentManager().getMemoryCacheServer().put(task.getKey(), imageResource);
+        task.setState(Task.State.SUCCEED);
+        response(task);
+    }
+
+    private void loadFromRes(Task task){
+        ImageResource imageResource;
+        try{
+            imageResource = getComponentManager().getDiskLoadServer().readFromRes(task, getDecodeHandler(task));
+        } catch (Exception e){
+            getComponentManager().getServerSettings().getExceptionHandler().onApkLoadCommonException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
             task.setState(Task.State.CANCELED);
             response(task);
             return;

@@ -64,13 +64,13 @@ public class MyExceptionHandler implements ExceptionHandler {
     }
 
     @Override
-    public void onAssetsLoadCommonException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
-        Log.e("MyExceptionHandler", "onAssetsLoadCommonException", throwable);
+    public void onApkLoadCommonException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        Log.e("MyExceptionHandler", "onApkLoadCommonException", throwable);
     }
 
     @Override
-    public void onAssetsLoadNotExistsException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
-        Log.e("MyExceptionHandler", "onAssetsLoadNotExistsException", throwable);
+    public void onApkLoadNotExistsException(Context applicationContext, Context context, Task.Info taskInfo, Throwable throwable, TLogger logger) {
+        Log.e("MyExceptionHandler", "onApkLoadNotExistsException", throwable);
     }
 
     @Override

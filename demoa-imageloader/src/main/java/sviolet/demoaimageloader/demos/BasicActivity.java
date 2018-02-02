@@ -255,9 +255,26 @@ public class BasicActivity extends TActivity {
         /*
          * 加载本地图片
          */
-        String url7 = DirectoryUtils.getExternalStorageDirectory().getAbsolutePath() + "/test.jpg";
+//        String url7 = DirectoryUtils.getExternalStorageDirectory().getAbsolutePath() + "/test.jpg";
+//        Params params7 = new Params.Builder()
+//                .setSourceType(Params.SourceType.LOCAL_DISK)
+//                .build();
+//        TILoader.node(this).load(url7, params7, imageView7);
+//
+//        imageView7.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //失败重载
+//                TILoaderUtils.getStubRemoter(v).relaunch();
+//            }
+//        });
+
+        /*
+         * 从assets加载图片
+         */
+        String url7 = "images/local_image_1.jpg";
         Params params7 = new Params.Builder()
-                .setSourceType(Params.SourceType.LOCAL_DISK)
+                .setSourceType(Params.SourceType.APK_ASSETS)
                 .build();
         TILoader.node(this).load(url7, params7, imageView7);
 

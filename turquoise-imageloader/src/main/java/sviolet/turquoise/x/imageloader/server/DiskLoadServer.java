@@ -96,6 +96,20 @@ public class DiskLoadServer implements ComponentManager.Component, Server {
         return null;
     }
 
+    /**
+     * Read Image from apk resources
+     * @param task task
+     * @param decodeHandler used to decode file
+     * @return ImageResource, might be null
+     */
+    public ImageResource readFromRes(Task task, DecodeHandler decodeHandler){
+        initialize();
+
+        //TODO developing
+
+        return null;
+    }
+
     private ComponentManager getComponentManager(){
         return manager;
     }
