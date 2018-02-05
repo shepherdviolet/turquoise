@@ -1,5 +1,7 @@
 package sviolet.turquoise.x.imageloader.server;
 
+import android.content.res.AssetFileDescriptor;
+
 import java.io.File;
 
 import sviolet.turquoise.x.imageloader.ComponentManager;
@@ -15,7 +17,6 @@ import sviolet.turquoise.x.imageloader.node.Task;
 public class DiskLoadServer implements ComponentManager.Component, Server {
 
     private ComponentManager manager;
-    private boolean assetsLoadingEnabled = true;
 
     private boolean initialized = false;
 
@@ -28,16 +29,9 @@ public class DiskLoadServer implements ComponentManager.Component, Server {
         if (!initialized) {
             synchronized (this) {
                 if (!initialized) {
-                    //check assets cache path
-                    if (!getComponentManager().getServerSettings().getAssetsCachePath().exists()) {
-                        if (!getComponentManager().getServerSettings().getAssetsCachePath().mkdirs()) {
-                            getComponentManager().getLogger().e("[DiskLoadServer]Create assets cache path failed, disable assets loading");
-                            assetsLoadingEnabled = false;
-                        }
-                    } else if (!getComponentManager().getServerSettings().getAssetsCachePath().isDirectory()) {
-                        getComponentManager().getLogger().e("[DiskLoadServer]Create assets cache path failed, find the same name file");
-                        assetsLoadingEnabled = false;
-                    }
+
+                    //do nothing
+
                     //finish
                     getComponentManager().getLogger().i("[DiskLoadServer]initialized");
                     initialized = true;
@@ -90,10 +84,35 @@ public class DiskLoadServer implements ComponentManager.Component, Server {
      */
     public ImageResource readFromAssets(Task task, DecodeHandler decodeHandler){
         initialize();
-
-        //TODO developing
-
-        return null;
+        //check if exists
+        AssetFileDescriptor descriptor = null;
+        try {
+            descriptor = getComponentManager().getApplicationContextImage().getAssets().openFd(task.getUrl());
+        } catch (Exception e) {
+            getComponentManager().getServerSettings().getExceptionHandler().onApkLoadNotExistsException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                    new Exception("[TILoader]Loading from apk assets failed, file not found (or error):" + task.getUrl(), e), getComponentManager().getLogger());
+            return null;
+        } finally {
+            if (descriptor != null){
+                try {
+                    descriptor.close();
+                } catch (Exception ignore){
+                }
+            }
+        }
+        //decode
+        try {
+            ImageResource imageResource = decodeHandler.decodeAssets(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task, task.getUrl(), getComponentManager().getLogger());
+            if (imageResource == null) {
+                getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                        new Exception("[TILoader]Decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
+                return null;
+            }
+            return imageResource;
+        } catch (Throwable t) {
+            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), t, getComponentManager().getLogger());
+            return null;
+        }
     }
 
     /**

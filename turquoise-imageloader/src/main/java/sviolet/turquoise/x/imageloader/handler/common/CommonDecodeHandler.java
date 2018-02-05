@@ -146,7 +146,7 @@ public class CommonDecodeHandler extends DecodeHandler {
 
     private ImageResource onDecodeBitmap(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger, int reqWidth, int reqHeight){
         //decoding
-        Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), BitmapUtils.InSampleQuality.MEDIUM);
+        Bitmap bitmap = BitmapUtils.decodeFromFile(file.getAbsolutePath(), reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), taskInfo.getParams().getDecodeInSampleQuality());
         if (bitmap == null) {
             throw new RuntimeException("[CommonDecodeHandler]decoding failed, illegal image data");
         }
@@ -237,7 +237,7 @@ public class CommonDecodeHandler extends DecodeHandler {
 
     private ImageResource onDecodeResBitmap(Context applicationContext, Context context, Task.Info taskInfo, int resId, TLogger logger, int reqWidth, int reqHeight){
         //decoding
-        Bitmap bitmap = BitmapUtils.decodeFromResource(applicationContext.getResources(), resId, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), BitmapUtils.InSampleQuality.MEDIUM);
+        Bitmap bitmap = BitmapUtils.decodeFromResource(applicationContext.getResources(), resId, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), taskInfo.getParams().getDecodeInSampleQuality());
         if (bitmap == null) {
             throw new RuntimeException("[CommonDecodeHandler]decoding failed, illegal image data");
         }
@@ -268,7 +268,7 @@ public class CommonDecodeHandler extends DecodeHandler {
         try {
             return new ImageResource(ImageResource.Type.GIF, EnhancedGifDrawable.decode(applicationContext.getResources(), resId, reqWidth, reqHeight, taskInfo.getParams().getDecodeInSampleQuality()));
         } catch (IOException e) {
-            throw new RuntimeException("[EnhancedDecodeHandler]error while decoding gif from file", e);
+            throw new RuntimeException("[EnhancedDecodeHandler]error while decoding gif from resource", e);
         }
     }
 
@@ -277,9 +277,96 @@ public class CommonDecodeHandler extends DecodeHandler {
             return false;
         }
 
-        InputStream inputStream = resources.openRawResource(resId);
+        InputStream inputStream = null;
         try {
             inputStream = resources.openRawResource(resId);
+            byte[] buffer = new byte[GIF_HEADER.length];
+            long length = inputStream.read(buffer);
+            if (length < GIF_HEADER.length){
+                return false;
+            }
+            for (int i = 0 ; i < GIF_HEADER.length ; i++){
+                if (buffer[i] != GIF_HEADER[i]){
+                    return false;
+                }
+            }
+            return true;
+        } catch (Throwable t) {
+            return false;
+        } finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (Exception ignore){
+                }
+            }
+        }
+    }
+
+    //assets///////////////////////////////////////////////////////////////////////////////////////
+
+    @Override
+    public ImageResource onDecodeAssets(Context applicationContext, Context context, Task.Info taskInfo, String assetsPath, TLogger logger) {
+        Integer customReqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_WIDTH);
+        Integer customReqHeight = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_HEIGHT);
+        int reqWidth = customReqWidth == null ? taskInfo.getParams().getReqWidth() : customReqWidth;
+        int reqHeight = customReqHeight == null ? taskInfo.getParams().getReqHeight() : customReqHeight;
+        return onDecodeAssetsInner(applicationContext, context, taskInfo, assetsPath, logger, reqWidth, reqHeight);
+    }
+
+    protected ImageResource onDecodeAssetsInner(Context applicationContext, Context context, Task.Info taskInfo, String assetsPath, TLogger logger, int reqWidth, int reqHeight){
+        if (!isAssetsGif(applicationContext, assetsPath, logger)) {
+            return onDecodeAssetsBitmap(applicationContext, context, taskInfo, assetsPath, logger, reqWidth, reqHeight);
+        } else {
+            return onDecodeAssetsGif(applicationContext, context, taskInfo, assetsPath, logger, reqWidth, reqHeight);
+        }
+    }
+
+    private ImageResource onDecodeAssetsBitmap(Context applicationContext, Context context, Task.Info taskInfo, String assetsPath, TLogger logger, int reqWidth, int reqHeight){
+        //decoding
+        Bitmap bitmap = BitmapUtils.decodeFromAssets(applicationContext, assetsPath, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), taskInfo.getParams().getDecodeInSampleQuality());
+        if (bitmap == null) {
+            throw new RuntimeException("[CommonDecodeHandler]decoding failed, illegal image data");
+        }
+        //scale
+        switch (taskInfo.getParams().getDecodeScaleStrategy()){
+            case SCALE_FIT_WIDTH_HEIGHT:
+                bitmap = BitmapUtils.scaleTo(bitmap, reqWidth, reqHeight, true);
+                break;
+            case SCALE_FIT_WIDTH:
+                bitmap = BitmapUtils.scaleTo(bitmap, reqWidth, 0, true);
+                break;
+            case SCALE_FIT_HEIGHT:
+                bitmap = BitmapUtils.scaleTo(bitmap, 0, reqHeight, true);
+                break;
+            default:
+                break;
+        }
+        if (bitmap == null) {
+            throw new RuntimeException("[CommonDecodeHandler]scale: scale failed");
+        }
+        if (logger.checkEnable(TLogger.DEBUG)) {
+            logger.d("[CommonDecodeHandler]decoded size:" + bitmap.getWidth() + "*" + bitmap.getHeight() + " task:" + taskInfo);
+        }
+        return new ImageResource(ImageResource.Type.BITMAP, bitmap);
+    }
+
+    private ImageResource onDecodeAssetsGif(Context applicationContext, Context context, Task.Info taskInfo, String assetsPath, TLogger logger, int reqWidth, int reqHeight) {
+        try {
+            return new ImageResource(ImageResource.Type.GIF, EnhancedGifDrawable.decode(applicationContext.getAssets(), assetsPath, reqWidth, reqHeight, taskInfo.getParams().getDecodeInSampleQuality()));
+        } catch (IOException e) {
+            throw new RuntimeException("[EnhancedDecodeHandler]error while decoding gif from assets", e);
+        }
+    }
+
+    private boolean isAssetsGif(Context applicationContext, String assetsPath, TLogger logger){
+        if (checkGifDrawableReference(logger)) {
+            return false;
+        }
+
+        InputStream inputStream = null;
+        try {
+            inputStream = applicationContext.getAssets().open(assetsPath);
             byte[] buffer = new byte[GIF_HEADER.length];
             long length = inputStream.read(buffer);
             if (length < GIF_HEADER.length){

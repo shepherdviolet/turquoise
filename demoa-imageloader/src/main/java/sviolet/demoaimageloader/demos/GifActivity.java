@@ -55,6 +55,8 @@ public class GifActivity extends TAppCompatActivity {
     private ImageView imageView1;
     @ResourceId(R.id.gif_main_imageview2)
     private ImageView imageView2;
+    @ResourceId(R.id.gif_main_imageview3)
+    private ImageView imageView3;
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -110,6 +112,24 @@ public class GifActivity extends TAppCompatActivity {
                 TILoaderUtils.getStubRemoter(v).relaunch();
             }
         });
+
+        /*
+         * 从assets加载GIF
+         */
+        String url3 = "images/local_gif_1.gif";
+        Params params3 = new Params.Builder()
+                .setSourceType(Params.SourceType.APK_ASSETS)
+                .build();
+        TILoader.node(this).load(url3, params3, imageView3);
+
+        imageView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
+
     }
 
 }

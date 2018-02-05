@@ -87,6 +87,17 @@ public abstract class DecodeHandler {
      */
     public abstract ImageResource onDecodeRes(Context applicationContext, Context context, Task.Info taskInfo, int resId, TLogger logger);
 
+    /**
+     * decode image from apk assets
+     * @param applicationContext applicationContext
+     * @param context activity context, might be null
+     * @param taskInfo task info
+     * @param assetsPath assets path of file
+     * @param logger logger
+     * @return ImageResource
+     */
+    public abstract ImageResource onDecodeAssets(Context applicationContext, Context context, Task.Info taskInfo, String assetsPath, TLogger logger);
+
     public final ImageResource decode(Context applicationContext, Context context, Task task, byte[] data, TLogger logger){
         ImageResource imageResource = onDecode(applicationContext, context, task.getTaskInfo(), data, logger);
         imageResource = intercept(applicationContext, context, task, logger, imageResource);
@@ -101,6 +112,12 @@ public abstract class DecodeHandler {
 
     public final ImageResource decodeRes(Context applicationContext, Context context, Task task, int resId, TLogger logger){
         ImageResource imageResource = onDecodeRes(applicationContext, context, task.getTaskInfo(), resId, logger);
+        imageResource = intercept(applicationContext, context, task, logger, imageResource);
+        return imageResource;
+    }
+
+    public final ImageResource decodeAssets(Context applicationContext, Context context, Task task, String assetsPath, TLogger logger){
+        ImageResource imageResource = onDecodeAssets(applicationContext, context, task.getTaskInfo(), assetsPath, logger);
         imageResource = intercept(applicationContext, context, task, logger, imageResource);
         return imageResource;
     }

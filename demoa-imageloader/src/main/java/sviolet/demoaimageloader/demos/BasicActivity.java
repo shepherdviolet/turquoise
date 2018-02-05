@@ -65,6 +65,8 @@ public class BasicActivity extends TActivity {
     private ImageView imageView6;
     @ResourceId(R.id.basic_main_imageview7)
     private ImageView imageView7;
+    @ResourceId(R.id.basic_main_imageview8)
+    private ImageView imageView8;
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -253,23 +255,6 @@ public class BasicActivity extends TActivity {
         });
 
         /*
-         * 加载本地图片
-         */
-//        String url7 = DirectoryUtils.getExternalStorageDirectory().getAbsolutePath() + "/test.jpg";
-//        Params params7 = new Params.Builder()
-//                .setSourceType(Params.SourceType.LOCAL_DISK)
-//                .build();
-//        TILoader.node(this).load(url7, params7, imageView7);
-//
-//        imageView7.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //失败重载
-//                TILoaderUtils.getStubRemoter(v).relaunch();
-//            }
-//        });
-
-        /*
          * 从res加载图片
          */
         String url7 = "mipmap/rounded_list_image1";
@@ -285,6 +270,40 @@ public class BasicActivity extends TActivity {
                 TILoaderUtils.getStubRemoter(v).relaunch();
             }
         });
+
+        /*
+         * 从res加载图片
+         */
+        String url8 = "images/local_image_1.jpg";
+        Params params8 = new Params.Builder()
+                .setSourceType(Params.SourceType.APK_ASSETS)
+                .build();
+        TILoader.node(this).load(url8, params8, imageView8);
+
+        imageView8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
+
+        /*
+         * 加载本地图片
+         */
+//        String url8 = DirectoryUtils.getExternalStorageDirectory().getAbsolutePath() + "/test.jpg";
+//        Params params8 = new Params.Builder()
+//                .setSourceType(Params.SourceType.LOCAL_DISK)
+//                .build();
+//        TILoader.node(this).load(url8, params8, imageView8);
+//
+//        imageView8.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //失败重载
+//                TILoaderUtils.getStubRemoter(v).relaunch();
+//            }
+//        });
 
     }
 

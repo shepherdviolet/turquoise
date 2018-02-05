@@ -95,14 +95,17 @@ public class BitmapUtils {
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
      *
-     * @param res       getResource()
-     * @param resId     资源文件ID
-     * @param reqWidth  需求宽度 px
-     * @param reqHeight 需求高度 px
+     * @param res          getResource()
+     * @param resId        资源文件ID
+     * @param reqWidth     需求宽度 px
+     * @param reqHeight    需求高度 px
      * @param bitmapConfig 颜色深度
-     * @param quality 图片质量, 默认InSampleQuality.MEDIUM, 若不需要缩小, 设置ORIGINAL
+     * @param quality      图片质量, 默认InSampleQuality.MEDIUM, 若不需要缩小, 设置ORIGINAL
      */
     public static Bitmap decodeFromResource(Resources res, int resId, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, InSampleQuality quality) {
+        if (res == null) {
+            throw new IllegalArgumentException("Resources is null");
+        }
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;//仅计算参数, 不解码
         BitmapFactory.decodeResource(res, resId, options);
@@ -110,6 +113,85 @@ public class BitmapUtils {
         options.inJustDecodeBounds = false;//解码模式
         options.inPreferredConfig = bitmapConfig;//颜色深度
         return BitmapFactory.decodeResource(res, resId, options);
+    }
+
+    /**
+     * 从assets中解码图片
+     *
+     * @param context       context
+     * @param assetsPath    assets中的路径
+     */
+    public static Bitmap decodeFromAssets(Context context, String assetsPath) {
+        return decodeFromAssets(context, assetsPath, 0, 0, Config.ARGB_8888, InSampleQuality.MEDIUM);
+    }
+
+    /**
+     * 从assets中解码图片(节省内存)<br/>
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     *
+     * @param context       context
+     * @param assetsPath    assets中的路径
+     * @param reqWidth      需求宽度 px
+     * @param reqHeight     需求高度 px
+     */
+    public static Bitmap decodeFromAssets(Context context, String assetsPath, int reqWidth, int reqHeight) {
+        return decodeFromAssets(context, assetsPath, reqWidth, reqHeight, Config.ARGB_8888, InSampleQuality.MEDIUM);
+    }
+
+    /**
+     * 从assets中解码图片(节省内存)<br/>
+     * <Br/>
+     * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
+     * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
+     *
+     * @param context       context
+     * @param assetsPath    assets中的路径
+     * @param reqWidth      需求宽度 px
+     * @param reqHeight     需求高度 px
+     * @param bitmapConfig  颜色深度
+     * @param quality       图片质量, 默认InSampleQuality.MEDIUM, 若不需要缩小, 设置ORIGINAL
+     */
+    public static Bitmap decodeFromAssets(Context context, String assetsPath, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, InSampleQuality quality) {
+        if (context == null) {
+            throw new IllegalArgumentException("context is null");
+        }
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;//仅计算参数, 不解码
+
+        InputStream inputStream = null;
+        try {
+            inputStream = context.getAssets().open(assetsPath);
+            BitmapFactory.decodeStream(inputStream, null, options);
+        } catch (Throwable t) {
+            return null;
+        } finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight, quality);//缩放因子(整数倍)
+        options.inJustDecodeBounds = false;//解码模式
+        options.inPreferredConfig = bitmapConfig;//颜色深度
+
+        try {
+            inputStream = context.getAssets().open(assetsPath);
+            return BitmapFactory.decodeStream(inputStream, null, options);
+        } catch (Throwable t) {
+            return null;
+        } finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
     }
 
     /**
@@ -319,11 +401,20 @@ public class BitmapUtils {
      * @param bitmapConfig 颜色深度
      */
     public static Bitmap decodeFromStream(InputStream inputStream, int inSampleSize, Bitmap.Config bitmapConfig) {
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = inSampleSize;//缩放因子(整数倍)
-        options.inJustDecodeBounds = false;//解码模式
-        options.inPreferredConfig = bitmapConfig;//颜色深度
-        return BitmapFactory.decodeStream(inputStream, null, options);
+        try {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inSampleSize = inSampleSize;//缩放因子(整数倍)
+            options.inJustDecodeBounds = false;//解码模式
+            options.inPreferredConfig = bitmapConfig;//颜色深度
+            return BitmapFactory.decodeStream(inputStream, null, options);
+        } finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
     }
 
     /*********************************************

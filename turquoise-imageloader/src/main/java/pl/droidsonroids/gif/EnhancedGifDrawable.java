@@ -19,13 +19,16 @@
 
 package pl.droidsonroids.gif;
 
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 import sviolet.turquoise.util.bitmap.BitmapUtils;
 
@@ -74,7 +77,7 @@ public class EnhancedGifDrawable extends GifDrawable {
         return new EnhancedGifDrawable(bytes, options).setBytesDataMode();
     }
 
-    public static EnhancedGifDrawable decode(Resources resources, int resId, int reqWidth, int reqHeight, BitmapUtils.InSampleQuality quality) throws IOException {
+    public static EnhancedGifDrawable decode(@NonNull Resources resources, int resId, int reqWidth, int reqHeight, BitmapUtils.InSampleQuality quality) throws IOException {
         //calculate sample size
         final BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
         bitmapOptions.inJustDecodeBounds = true;
@@ -84,6 +87,35 @@ public class EnhancedGifDrawable extends GifDrawable {
         GifOptions options = new GifOptions();
         options.setInSampleSize(inSampleSize);
         return new EnhancedGifDrawable(resources, resId, options);
+    }
+
+    public static EnhancedGifDrawable decode(@NonNull AssetManager assetManager, String assetsPath, int reqWidth, int reqHeight, BitmapUtils.InSampleQuality quality) throws IOException {
+        //calculate sample size
+        final BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+        bitmapOptions.inJustDecodeBounds = true;
+
+        InputStream inputStream = null;
+        try {
+            inputStream = assetManager.open(assetsPath);
+            BitmapFactory.decodeStream(inputStream, null, bitmapOptions);
+        } catch (FileNotFoundException e){
+            throw new IOException("No gif file found in assets:" + assetsPath, e);
+        } catch (Throwable t) {
+            throw new IOException("Error while loading gif data from assets", t);
+        } finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+
+        int inSampleSize = BitmapUtils.calculateInSampleSize(bitmapOptions.outWidth, bitmapOptions.outHeight, reqWidth, reqHeight, quality);
+        //set sample size
+        GifOptions options = new GifOptions();
+        options.setInSampleSize(inSampleSize);
+        return new EnhancedGifDrawable(assetManager, assetsPath, options);
     }
 
     private EnhancedGifDrawable(@NonNull File file, GifOptions options) throws IOException {
@@ -96,6 +128,10 @@ public class EnhancedGifDrawable extends GifDrawable {
 
     private EnhancedGifDrawable(Resources resources, int resId, GifOptions options) throws IOException {
         super(new InputSource.ResourcesSource(resources, resId), null, null, true, options);
+    }
+
+    private EnhancedGifDrawable(AssetManager assetManager, String assetsPath, GifOptions options) throws IOException {
+        super(new InputSource.AssetSource(assetManager, assetsPath), null, null, true, options);
     }
 
     @Override
