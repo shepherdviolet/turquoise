@@ -67,6 +67,8 @@ public class BasicActivity extends TActivity {
     private ImageView imageView7;
     @ResourceId(R.id.basic_main_imageview8)
     private ImageView imageView8;
+    @ResourceId(R.id.basic_main_imageview9)
+    private ImageView imageView9;
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -291,19 +293,19 @@ public class BasicActivity extends TActivity {
         /*
          * 加载本地图片
          */
-//        String url8 = DirectoryUtils.getExternalStorageDirectory().getAbsolutePath() + "/test.jpg";
-//        Params params8 = new Params.Builder()
-//                .setSourceType(Params.SourceType.LOCAL_DISK)
-//                .build();
-//        TILoader.node(this).load(url8, params8, imageView8);
-//
-//        imageView8.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //失败重载
-//                TILoaderUtils.getStubRemoter(v).relaunch();
-//            }
-//        });
+        String url9 = DirectoryUtils.getExternalStorageDirectory().getAbsolutePath() + "/test.jpg";
+        Params params9 = new Params.Builder()
+                .setSourceType(Params.SourceType.LOCAL_DISK)
+                .build();
+        TILoader.node(this).load(url9, params9, imageView9);
+
+        imageView9.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
 
     }
 

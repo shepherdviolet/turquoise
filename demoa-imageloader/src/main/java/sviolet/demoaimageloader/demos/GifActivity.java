@@ -28,6 +28,7 @@ import sviolet.demoaimageloader.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TAppCompatActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.Params;
@@ -57,6 +58,8 @@ public class GifActivity extends TAppCompatActivity {
     private ImageView imageView2;
     @ResourceId(R.id.gif_main_imageview3)
     private ImageView imageView3;
+    @ResourceId(R.id.gif_main_imageview4)
+    private ImageView imageView4;
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -122,7 +125,24 @@ public class GifActivity extends TAppCompatActivity {
                 .build();
         TILoader.node(this).load(url3, params3, imageView3);
 
-        imageView2.setOnClickListener(new View.OnClickListener() {
+        imageView3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
+
+        /*
+         * 加载本地GIF
+         */
+        String url4 = DirectoryUtils.getExternalStorageDirectory().getAbsolutePath() + "/test.gif";
+        Params params4 = new Params.Builder()
+                .setSourceType(Params.SourceType.LOCAL_DISK)
+                .build();
+        TILoader.node(this).load(url4, params4, imageView4);
+
+        imageView4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //失败重载
