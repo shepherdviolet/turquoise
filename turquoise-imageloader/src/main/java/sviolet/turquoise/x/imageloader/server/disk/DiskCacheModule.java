@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.server.module;
+package sviolet.turquoise.x.imageloader.server.disk;
 
 import java.io.File;
 import java.io.IOException;

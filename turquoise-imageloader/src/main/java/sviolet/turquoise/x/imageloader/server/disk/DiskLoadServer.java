@@ -1,4 +1,4 @@
-package sviolet.turquoise.x.imageloader.server;
+package sviolet.turquoise.x.imageloader.server.disk;
 
 import android.content.res.AssetFileDescriptor;
 
@@ -8,6 +8,7 @@ import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
+import sviolet.turquoise.x.imageloader.server.Server;
 
 /**
  * <p>Load image from device local disk (for SourceType.LOCAL_DISK)</p>

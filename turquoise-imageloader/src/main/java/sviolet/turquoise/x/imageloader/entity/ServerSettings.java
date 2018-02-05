@@ -44,7 +44,7 @@ import sviolet.turquoise.x.imageloader.handler.common.CommonImageResourceHandler
 import sviolet.turquoise.x.imageloader.handler.common.CommonNetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.TaskFactory;
 import sviolet.turquoise.x.imageloader.node.TaskFactoryImpl;
-import sviolet.turquoise.x.imageloader.server.MemoryCacheServer;
+import sviolet.turquoise.x.imageloader.server.mem.MemoryCacheServer;
 import sviolet.turquoise.x.imageloader.stub.StubFactory;
 import sviolet.turquoise.x.imageloader.stub.support.StubFactoryImpl;
 

@@ -17,18 +17,18 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.server;
+package sviolet.turquoise.x.imageloader.server.net;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * record resource keys which loaded succeed
+ * Record resource keys which loaded succeed
  *
  * Created by S.Violet on 2016/12/16.
  */
-class History {
+class NetworkLoadingHistory {
 
     private int capacity;
     private int position = 0;
@@ -38,7 +38,7 @@ class History {
 
     private final ReentrantLock lock = new ReentrantLock();
 
-    History(int capacity) {
+    NetworkLoadingHistory(int capacity) {
         this.capacity = capacity;
         this.historySet = new HashSet<>(capacity);
         this.historyQueue = new String[capacity];

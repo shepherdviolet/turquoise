@@ -31,7 +31,7 @@ import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.EngineCallback;
+import sviolet.turquoise.x.imageloader.server.net.NetworkCallback;
 
 /**
  * <p>used to emulate net loading</p>
@@ -88,7 +88,7 @@ public class EmulateNetworkLoadHandler extends CommonNetworkLoadHandler {
     }
 
     @Override
-    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
 
         try {
             String url = taskInfo.getUrl();
@@ -125,7 +125,7 @@ public class EmulateNetworkLoadHandler extends CommonNetworkLoadHandler {
 
     }
 
-    private void fetchImage(Context context, int index, EngineCallback<Result> callback) throws InterruptedException, IOException {
+    private void fetchImage(Context context, int index, NetworkCallback<Result> callback) throws InterruptedException, IOException {
         //emulate delay
         Thread.sleep(delay);
         //emulate load

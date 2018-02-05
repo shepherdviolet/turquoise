@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.server;
+package sviolet.turquoise.x.imageloader.server.net;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,26 +32,34 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.IndispensableState;
 import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
-import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
+import sviolet.turquoise.x.imageloader.server.Engine;
+import sviolet.turquoise.x.imageloader.server.Server;
+import sviolet.turquoise.x.imageloader.server.disk.DiskCacheServer;
 
 /**
  * <p>Net Load Engine</p>
  *
  * Created by S.Violet on 2016/2/19.
  */
-public class NetEngine extends Engine {
+public class NetworkEngine extends Engine {
 
     private static final int HISTORY_CAPACITY = 30;
 
     private Map<String, TaskGroup> taskGroups = new ConcurrentHashMap<>();
-    private History history = new History(HISTORY_CAPACITY);
+    private NetworkLoadingHistory history = new NetworkLoadingHistory(HISTORY_CAPACITY);
     private ReentrantLock lock = new ReentrantLock();
 
     @Override
     protected boolean preCheck(Task task) {
-        return task.getParams().getSourceType() == Params.SourceType.HTTP_GET;
+        switch (task.getParams().getSourceType()) {
+            case HTTP_GET:
+            case GEN_QR:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -60,7 +68,7 @@ public class NetEngine extends Engine {
         //return if resource has loaded recently
         if (history.contains(task.getResourceKey())){
             if (!task.hasReturnedFromNetEngine()){
-                getComponentManager().getLogger().d("[NetEngine]task return to DiskEngine phase, the resource has loaded recently, task:" + task);
+                getComponentManager().getLogger().d("[NetworkEngine]task return to DiskEngine phase, the resource has loaded recently, task:" + task);
                 task.setServerType(Server.Type.DISK_ENGINE);
                 task.setState(Task.State.STAND_BY);
                 task.setHasReturnedFromNetEngine(true);
@@ -68,7 +76,7 @@ public class NetEngine extends Engine {
                 return;
             }else{
                 //task can only return to DiskEngine once
-                getComponentManager().getLogger().d("[NetEngine]task has returned to DiskEngine phase once, loading by NetEngine this time, task:" + task);
+                getComponentManager().getLogger().d("[NetworkEngine]task has returned to DiskEngine phase once, loading by NetworkEngine this time, task:" + task);
             }
         }
 
@@ -110,7 +118,7 @@ public class NetEngine extends Engine {
         long connectTimeout = indispensableState.isIndispensable() ? getNetworkConnectTimeout(task) << 1 : getNetworkConnectTimeout(task);
         long readTimeout = indispensableState.isIndispensable() ? getNetworkReadTimeout(task) << 1 : getNetworkReadTimeout(task);
         //network loading, callback's timeout is triple of network timeout
-        EngineCallback<NetworkLoadHandler.Result> callback = new EngineCallback<>((connectTimeout + readTimeout) * 3, getComponentManager().getLogger());
+        NetworkCallback<NetworkLoadHandler.Result> callback = new NetworkCallback<>((connectTimeout + readTimeout) * 3, getComponentManager().getLogger());
         try {
             getNetworkLoadHandler(task).onHandle(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), callback, connectTimeout, readTimeout, getComponentManager().getLogger());
         }catch(Exception e){
@@ -121,19 +129,19 @@ public class NetEngine extends Engine {
         //waiting for result
         int result = callback.getResult();
         if (getComponentManager().getLogger().checkEnable(TLogger.DEBUG)) {
-            getComponentManager().getLogger().d("[NetEngine]get result from networkHandler, result:" + result + ", task:" + task);
+            getComponentManager().getLogger().d("[NetworkEngine]get result from networkHandler, result:" + result + ", task:" + task);
         }
         switch(result){
             //load succeed
-            case EngineCallback.RESULT_SUCCEED:
+            case NetworkCallback.RESULT_SUCCEED:
                 onResultSucceed(task, callback.getData(), indispensableState);
                 return;
             //load failed
-            case EngineCallback.RESULT_FAILED:
+            case NetworkCallback.RESULT_FAILED:
                 onResultFailed(task, callback.getException(), indispensableState);
                 return;
             //load canceled
-            case EngineCallback.RESULT_CANCELED:
+            case NetworkCallback.RESULT_CANCELED:
             default:
                 onResultCanceled(task, indispensableState);
                 break;
@@ -205,7 +213,7 @@ public class NetEngine extends Engine {
         //try to write disk cache
         LowNetworkSpeedStrategy.Configure lowNetworkSpeedConfig = getComponentManager().getServerSettings().getLowNetworkSpeedStrategy().getConfigure(getComponentManager().getApplicationContextImage(), indispensableState);
         if (getComponentManager().getLogger().checkEnable(TLogger.DEBUG)) {
-            getComponentManager().getLogger().d("[NetEngine]LowNetworkSpeedStrategy:" + lowNetworkSpeedConfig.getType() + ", task:" + task);
+            getComponentManager().getLogger().d("[NetworkEngine]LowNetworkSpeedStrategy:" + lowNetworkSpeedConfig.getType() + ", task:" + task);
         }
         DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream, lowNetworkSpeedConfig);
         switch (result.getType()){
@@ -284,7 +292,7 @@ public class NetEngine extends Engine {
                 imageResource = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
                         task, file, getComponentManager().getLogger());
             }else{
-                throw new Exception("[NetEngine]can't decode neither byte[] nor file");
+                throw new Exception("[NetworkEngine]can't decode neither byte[] nor file");
             }
         }catch(Exception e){
             getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
@@ -293,7 +301,7 @@ public class NetEngine extends Engine {
         //check valid
         if (!getComponentManager().getServerSettings().getImageResourceHandler().isValid(imageResource)){
             getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[NetEngine]decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
+                    new Exception("[NetworkEngine]decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
             return null;
         }
         return imageResource;

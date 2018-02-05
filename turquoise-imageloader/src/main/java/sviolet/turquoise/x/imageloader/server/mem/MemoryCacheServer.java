@@ -17,14 +17,12 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.server;
-
-import android.content.Context;
+package sviolet.turquoise.x.imageloader.server.mem;
 
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
-import sviolet.turquoise.x.imageloader.server.module.ImageResourceCacheModule;
+import sviolet.turquoise.x.imageloader.server.Server;
 
 /**
  * <p>Manage memory caches (TILoader inner memory cache)</p>

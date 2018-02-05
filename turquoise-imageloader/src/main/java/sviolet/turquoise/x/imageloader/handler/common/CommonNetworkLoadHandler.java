@@ -31,7 +31,7 @@ import sviolet.thistle.util.judge.CheckUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.EngineCallback;
+import sviolet.turquoise.x.imageloader.server.net.NetworkCallback;
 
 /**
  * <p>common implementation of NetworkLoadHandler</p>
@@ -48,11 +48,11 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
      * <p>CAUTION:</p>
      *
      * <p>You should call "callback.setResultSucceed()"/"callback.setResultFailed()"/"callback.setResultCanceled()"
-     * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block for a long time,
-     * until EngineCallback timeout.Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
+     * when process finished, whether loading succeed or failed. if not, NetworkEngine's thread will be block for a long time,
+     * until NetworkCallback timeout.Because NetworkEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
      */
     @Override
-    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
         try{
             //load
             Result result = load(new URL(taskInfo.getUrl()), null, 0, callback, connectTimeout, readTimeout);
@@ -78,7 +78,7 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
      * @param callback callback
      * @return Result
      */
-    private Result load(URL url, URL prevUrl, int redirectTimes, EngineCallback<Result> callback, long connectTimeout, long readTimeout) throws Exception {
+    private Result load(URL url, URL prevUrl, int redirectTimes, NetworkCallback<Result> callback, long connectTimeout, long readTimeout) throws Exception {
         //skip when redirect too many times
         if (redirectTimes >= MAXIMUM_REDIRECT_TIMES) {
             throw new Exception("[CommonNetworkLoadHandler]redirect times > maximum(" + MAXIMUM_REDIRECT_TIMES + ")");

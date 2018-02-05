@@ -33,7 +33,7 @@ import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.EngineCallback;
+import sviolet.turquoise.x.imageloader.server.net.NetworkCallback;
 
 /**
  * 自定义实现网络加载: 加载本地资源图片模拟网络加载
@@ -65,7 +65,7 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
      * 线程才会继续执行, 因此必须保证每种情况都使用callback返回结果, 包括异常.
      *
      * <pre><@code
-     *      public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+     *      public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
      *          try{
      *              //third party network utils
      *              XXX.get(url, params, new OnFinishListener(){
@@ -88,7 +88,7 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
      * 注意根据connectTimeout/readTimeout设置超时.
      */
     @Override
-    public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+    public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
 
         //模拟异步执行
         pool.execute(new Runnable() {

@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.server;
+package sviolet.turquoise.x.imageloader.server.disk;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -31,7 +31,6 @@ import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.module.DiskCacheModule;
 
 /**
  * <p>Manage disk cache (TILoader inner disk cache)</p>

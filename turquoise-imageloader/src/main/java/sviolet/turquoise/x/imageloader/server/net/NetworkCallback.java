@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.server;
+package sviolet.turquoise.x.imageloader.server.net;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -32,7 +32,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  * @author S.Violet
  *
  */
-public class EngineCallback <ResultDataType> {
+public class NetworkCallback<ResultDataType> {
 
     public static final int RESULT_NULL = 0;//no result
     public static final int RESULT_SUCCEED = 1;//load succeed
@@ -56,9 +56,9 @@ public class EngineCallback <ResultDataType> {
     /**
      * @param timeout timeout of waiting, millis
      */
-    EngineCallback(long timeout, TLogger logger){
+    NetworkCallback(long timeout, TLogger logger){
         if (timeout <= 0){
-            throw new RuntimeException("[EngineCallback]timeout must > 0");
+            throw new RuntimeException("[NetworkCallback]timeout must > 0");
         }
         if (logger == null){
             logger = TLogger.get(null);
@@ -128,7 +128,7 @@ public class EngineCallback <ResultDataType> {
     }
 
     /**
-     * <p>if loading has been canceled by method {@link EngineCallback#cancel()}</p>
+     * <p>if loading has been canceled by method {@link NetworkCallback#cancel()}</p>
      */
     public boolean isCancelling(){
         lock.lock();
@@ -140,7 +140,7 @@ public class EngineCallback <ResultDataType> {
     }
 
     /**
-     * <p>callback when loading canceled by method {@link EngineCallback#cancel()}</p>
+     * <p>callback when loading canceled by method {@link NetworkCallback#cancel()}</p>
      *
      * <p>maybe in UI Thread</p>
      */
@@ -161,15 +161,15 @@ public class EngineCallback <ResultDataType> {
             if (result == RESULT_NULL) {
                 if (!condition.await(timeout, TimeUnit.MILLISECONDS)) {
                     /**
-                     * <p>waiting for result timeout! Make sure that NetworkLoadHandler correctly use EngineCallback to return result,
+                     * <p>waiting for result timeout! Make sure that NetworkLoadHandler correctly use NetworkCallback to return result,
                      * whether load succeed or failed.</p>
                      *
                      * <p>In custom NetworkLoadHandler. You should call "callback.setResultSucceed()"/"callback.setResultFailed()"/"callback.setResultCanceled()"
-                     * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block for a long time, until EngineCallback timeout.
-                     * Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
+                     * when process finished, whether loading succeed or failed. if not, NetworkEngine's thread will be block for a long time, until NetworkCallback timeout.
+                     * Because NetworkEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
                      */
                     result = RESULT_INTERRUPTED;
-                    logger.e("[EngineCallback]waiting for result timeout! Make sure that NetworkLoadHandler correctly use EngineCallback to return result, whether load succeed or failed");
+                    logger.e("[NetworkCallback]waiting for result timeout! Make sure that NetworkLoadHandler correctly use NetworkCallback to return result, whether load succeed or failed");
                 }
             }
             return result;

@@ -266,7 +266,7 @@ public class Params {
          * and loading with {@link LowNetworkSpeedStrategy.Type#INDISPENSABLE_TASK} strategy.
          * Generally, it is used for loading large image and gif.</p>
          *
-         * <p>You should use this option with caution, NetEngine's thread will be occupied by "dispensable" task
+         * <p>You should use this option with caution, NetworkEngine's thread will be occupied by "dispensable" task
          * for a long time.</p>
          *
          * <p>False by default.</p>
@@ -521,24 +521,31 @@ public class Params {
      */
     public enum SourceType {
         /**
-         * Get image from network (http get)
+         * <p>Get image from network : HTTP GET</p>
          */
         HTTP_GET("0"),
 
         /**
-         * Get image from local disk
+         * <p>Get image from local disk</p>
          */
         LOCAL_DISK("1"),
 
         /**
-         * Get image from assets
+         * <p>Get image from assets</p>
          */
         APK_ASSETS("2"),
 
         /**
-         * Get image from resources
+         * <p>Get image from resources</p>
          */
-        APK_RES("3");
+        APK_RES("3"),
+
+        /**
+         * <p>Special</p>
+         *
+         * <p>Generate qr-code image by key value</p>
+         */
+        GEN_QR("a");
 
         private String mark;
 

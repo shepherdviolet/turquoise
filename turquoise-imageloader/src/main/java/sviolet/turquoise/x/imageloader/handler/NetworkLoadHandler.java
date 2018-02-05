@@ -27,7 +27,7 @@ import java.io.InputStream;
 import sviolet.thistle.entity.Destroyable;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.EngineCallback;
+import sviolet.turquoise.x.imageloader.server.net.NetworkCallback;
 
 /**
  * <p>implement network load</p>
@@ -44,11 +44,11 @@ public interface NetworkLoadHandler {
      * <p>CAUTION:</p>
      *
      * <p>You should call "callback.setResultSucceed()"/"callback.setResultFailed()"/"callback.setResultCanceled()"
-     * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block for a long time,
-     * until EngineCallback timeout.Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
+     * when process finished, whether loading succeed or failed. if not, NetworkEngine's thread will be block for a long time,
+     * until NetworkCallback timeout.Because NetworkEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
      *
      * <pre><@code
-     *      public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+     *      public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
      *          try{
      *              //load by third party network utils
      *              //don't forget set timeout
@@ -77,7 +77,7 @@ public interface NetworkLoadHandler {
      * @param readTimeout read timeout of network
      * @param logger logger
      */
-    void onHandle(Context applicationContext, Context context, Task.Info taskInfo, EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger);
+    void onHandle(Context applicationContext, Context context, Task.Info taskInfo, NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger);
 
     /**
      * <p>network loading result (on succeed)</p>

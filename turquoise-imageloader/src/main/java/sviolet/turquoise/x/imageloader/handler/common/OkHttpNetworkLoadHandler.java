@@ -33,7 +33,7 @@ import okhttp3.ResponseBody;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.EngineCallback;
+import sviolet.turquoise.x.imageloader.server.net.NetworkCallback;
 
 /**
  * <p>NetworkLoadHandler on okhttp</p>
@@ -59,11 +59,11 @@ public class OkHttpNetworkLoadHandler implements NetworkLoadHandler {
      * <p>CAUTION:</p>
      *
      * <p>You should call "callback.setResultSucceed()"/"callback.setResultFailed()"/"callback.setResultCanceled()"
-     * when process finished, whether loading succeed or failed. if not, NetEngine's thread will be block for a long time,
-     * until EngineCallback timeout.Because NetEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
+     * when process finished, whether loading succeed or failed. if not, NetworkEngine's thread will be block for a long time,
+     * until NetworkCallback timeout.Because NetworkEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
      */
     @Override
-    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, final EngineCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, final NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
         Request.Builder requestBuilder = new Request.Builder().url(taskInfo.getUrl());
         if (headers != null) {
             for (Map.Entry<String, String> entry : headers.entrySet()) {

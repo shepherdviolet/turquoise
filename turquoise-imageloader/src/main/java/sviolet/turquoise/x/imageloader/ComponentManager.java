@@ -29,13 +29,13 @@ import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.NodeFactory;
 import sviolet.turquoise.x.imageloader.node.NodeFactoryImpl;
 import sviolet.turquoise.x.imageloader.node.NodeManager;
-import sviolet.turquoise.x.imageloader.server.DiskCacheServer;
-import sviolet.turquoise.x.imageloader.server.DiskEngine;
-import sviolet.turquoise.x.imageloader.server.DiskLoadServer;
+import sviolet.turquoise.x.imageloader.server.disk.DiskCacheServer;
+import sviolet.turquoise.x.imageloader.server.disk.DiskEngine;
+import sviolet.turquoise.x.imageloader.server.disk.DiskLoadServer;
 import sviolet.turquoise.x.imageloader.server.Engine;
-import sviolet.turquoise.x.imageloader.server.MemoryCacheServer;
-import sviolet.turquoise.x.imageloader.server.MemoryEngine;
-import sviolet.turquoise.x.imageloader.server.NetEngine;
+import sviolet.turquoise.x.imageloader.server.mem.MemoryCacheServer;
+import sviolet.turquoise.x.imageloader.server.mem.MemoryEngine;
+import sviolet.turquoise.x.imageloader.server.net.NetworkEngine;
 
 /**
  * <p>Manage all components</p>
@@ -205,7 +205,7 @@ public class ComponentManager {
         diskLoadServer = new DiskLoadServer();
         memoryEngine = new MemoryEngine();
         diskEngine = new DiskEngine();
-        netEngine = new NetEngine();
+        netEngine = new NetworkEngine();
 
         //init components
         serverSettings.init(ComponentManager.getInstance());
