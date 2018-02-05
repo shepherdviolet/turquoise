@@ -84,7 +84,7 @@ public class ComponentManager {
     private DiskLoadServer diskLoadServer;
     private Engine memoryEngine;
     private Engine diskEngine;
-    private Engine netEngine;
+    private Engine networkEngine;
 
     private ServerSettings serverSettings;
 
@@ -123,8 +123,8 @@ public class ComponentManager {
         return diskEngine;
     }
 
-    public Engine getNetEngine() {
-        return netEngine;
+    public Engine getNetworkEngine() {
+        return networkEngine;
     }
 
     /**
@@ -205,7 +205,7 @@ public class ComponentManager {
         diskLoadServer = new DiskLoadServer();
         memoryEngine = new MemoryEngine();
         diskEngine = new DiskEngine();
-        netEngine = new NetworkEngine();
+        networkEngine = new NetworkEngine();
 
         //init components
         serverSettings.init(ComponentManager.getInstance());
@@ -214,7 +214,7 @@ public class ComponentManager {
         diskLoadServer.init(ComponentManager.getInstance());
         memoryEngine.init(ComponentManager.getInstance());
         diskEngine.init(ComponentManager.getInstance());
-        netEngine.init(ComponentManager.getInstance());
+        networkEngine.init(ComponentManager.getInstance());
         getLogger().i("[ComponentManager]TILoader initialized");
     }
 

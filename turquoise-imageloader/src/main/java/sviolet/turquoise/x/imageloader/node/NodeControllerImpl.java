@@ -25,7 +25,6 @@ import android.os.Message;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -89,7 +88,7 @@ public class NodeControllerImpl extends NodeController {
 
     private RequestQueue memoryRequestQueue;
     private RequestQueue diskRequestQueue;
-    private RequestQueue netRequestQueue;
+    private RequestQueue networkRequestQueue;
     private ResponseQueue responseQueue = new InfiniteResponseQueue();
 
     private Map<String, StubGroup> stubPool = new ConcurrentHashMap<>();
@@ -139,11 +138,11 @@ public class NodeControllerImpl extends NodeController {
         if (infiniteRequestQueue){
             memoryRequestQueue = new InfiniteRequestQueue();
             diskRequestQueue = new InfiniteRequestQueue();
-            netRequestQueue = new InfiniteRequestQueue();
+            networkRequestQueue = new InfiniteRequestQueue();
         }else {
             memoryRequestQueue = new LossyRequestQueue(settings.getMemoryQueueSize(), manager.getLogger());
             diskRequestQueue = new LossyRequestQueue(settings.getDiskQueueSize(), manager.getLogger());
-            netRequestQueue = new LossyRequestQueue(settings.getNetQueueSize(), manager.getLogger());
+            networkRequestQueue = new LossyRequestQueue(settings.getNetQueueSize(), manager.getLogger());
         }
     }
 
@@ -198,7 +197,7 @@ public class NodeControllerImpl extends NodeController {
             case DISK_ENGINE:
                 return diskRequestQueue.get();
             case NETWORK_ENGINE:
-                return netRequestQueue.get();
+                return networkRequestQueue.get();
             default:
                 manager.getLogger().e("NodeControllerImpl:pullTask illegal Server.Type:<" + type.toString() + ">");
                 break;
@@ -277,8 +276,8 @@ public class NodeControllerImpl extends NodeController {
 
     private void executeTaskToNet(Task task){
         if (task.getState() == Task.State.STAND_BY){
-            Task obsoleteTask = netRequestQueue.put(task);
-            manager.getNetEngine().ignite();
+            Task obsoleteTask = networkRequestQueue.put(task);
+            manager.getNetworkEngine().ignite();
             callbackToObsolete(obsoleteTask);
         }else{
             task.setState(Task.State.FAILED);
@@ -498,7 +497,7 @@ public class NodeControllerImpl extends NodeController {
             return;
         }
         manager.getMemoryEngine().ignite();
-        manager.getNetEngine().ignite();
+        manager.getNetworkEngine().ignite();
         manager.getDiskEngine().ignite();
     }
 
@@ -547,8 +546,8 @@ public class NodeControllerImpl extends NodeController {
             //shutdown thread pool
             dispatchThreadPool.shutdown();
             //clear queue
-            if (netRequestQueue != null) {
-                netRequestQueue.clear();
+            if (networkRequestQueue != null) {
+                networkRequestQueue.clear();
             }
             if (diskRequestQueue != null) {
                 diskRequestQueue.clear();
