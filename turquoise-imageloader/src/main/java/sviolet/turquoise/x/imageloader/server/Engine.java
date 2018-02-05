@@ -145,7 +145,7 @@ public abstract class Engine implements ComponentManager.Component, Server {
         return manager;
     }
 
-    protected NetworkLoadHandler getNetworkLoadHandler(Task task){
+    public NetworkLoadHandler getNetworkLoadHandler(Task task){
         if (task.getNodeSettings() != null){
             if (task.getNodeSettings().getNetworkLoadHandler() != null){
                 return task.getNodeSettings().getNetworkLoadHandler();
@@ -154,14 +154,14 @@ public abstract class Engine implements ComponentManager.Component, Server {
         return getComponentManager().getServerSettings().getNetworkLoadHandler();
     }
 
-    protected DecodeHandler getDecodeHandler(Task task){
+    public DecodeHandler getDecodeHandler(Task task){
         return getComponentManager().getServerSettings().getDecodeHandler();
     }
 
     /**
      * @return milli second
      */
-    protected long getNetworkConnectTimeout(Task task){
+    public long getNetworkConnectTimeout(Task task){
         if (task.getNodeSettings() != null){
             if (task.getNodeSettings().getNetworkConnectTimeout() > 0){
                 return task.getNodeSettings().getNetworkConnectTimeout();
@@ -173,7 +173,7 @@ public abstract class Engine implements ComponentManager.Component, Server {
     /**
      * @return milli second
      */
-    protected long getNetworkReadTimeout(Task task){
+    public long getNetworkReadTimeout(Task task){
         if (task.getNodeSettings() != null){
             if (task.getNodeSettings().getNetworkReadTimeout() > 0){
                 return task.getNodeSettings().getNetworkReadTimeout();

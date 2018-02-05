@@ -20,28 +20,22 @@
 package sviolet.turquoise.x.imageloader.server.net;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.IndispensableState;
-import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
-import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.Engine;
 import sviolet.turquoise.x.imageloader.server.Server;
-import sviolet.turquoise.x.imageloader.server.disk.DiskCacheServer;
 
 /**
  * <p>Net Load Engine</p>
  *
- * Created by S.Violet on 2016/2/19.
+ * @author S.Violet
  */
 public class NetworkEngine extends Engine {
 
@@ -99,7 +93,7 @@ public class NetworkEngine extends Engine {
 
         if (executable) {
             try {
-                loadByHandler(task, group.getIndispensableState());
+                load(task, group.getIndispensableState());
             } catch (Exception e) {
                 try {
                     getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
@@ -111,124 +105,20 @@ public class NetworkEngine extends Engine {
         }
     }
 
-    private void loadByHandler(Task task, IndispensableState indispensableState) {
-        //reset progress
-        task.getLoadProgress().reset();
-        //timeout, indispensable task has double timeout
-        long connectTimeout = indispensableState.isIndispensable() ? getNetworkConnectTimeout(task) << 1 : getNetworkConnectTimeout(task);
-        long readTimeout = indispensableState.isIndispensable() ? getNetworkReadTimeout(task) << 1 : getNetworkReadTimeout(task);
-        //network loading, callback's timeout is triple of network timeout
-        NetworkCallback<NetworkLoadHandler.Result> callback = new NetworkCallback<>((connectTimeout + readTimeout) * 3, getComponentManager().getLogger());
-        try {
-            getNetworkLoadHandler(task).onHandle(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), callback, connectTimeout, readTimeout, getComponentManager().getLogger());
-        }catch(Exception e){
-            getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-            handleFailed(task);
-            return;
-        }
-        //waiting for result
-        int result = callback.getResult();
-        if (getComponentManager().getLogger().checkEnable(TLogger.DEBUG)) {
-            getComponentManager().getLogger().d("[NetworkEngine]get result from networkHandler, result:" + result + ", task:" + task);
-        }
-        switch(result){
-            //load succeed
-            case NetworkCallback.RESULT_SUCCEED:
-                onResultSucceed(task, callback.getData(), indispensableState);
-                return;
-            //load failed
-            case NetworkCallback.RESULT_FAILED:
-                onResultFailed(task, callback.getException(), indispensableState);
-                return;
-            //load canceled
-            case NetworkCallback.RESULT_CANCELED:
-            default:
-                onResultCanceled(task, indispensableState);
-                break;
-        }
-    }
-
-    /*********************************************************************
-     * handle network result
-     */
-
-    private void onResultSucceed(Task task, NetworkLoadHandler.Result data, IndispensableState indispensableState) {
-        //dispatch by type
-        if (data.getType() == NetworkLoadHandler.ResultType.NULL){
-            getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                    new Exception("[NetworkLoadHandler]callback return null result!"), getComponentManager().getLogger());
-            handleFailed(task);
-        }else if (data.getType() == NetworkLoadHandler.ResultType.BYTES){
-            //set progress
-            task.getLoadProgress().setTotal(data.getBytes().length);
-            task.getLoadProgress().setLoaded(data.getBytes().length);
-            //handle
-            onBytesResult(task, data.getBytes(), indispensableState);
-        }else if (data.getType() == NetworkLoadHandler.ResultType.INPUTSTREAM){
-            //set progress
-            task.getLoadProgress().setTotal(data.getLength());
-            //handle
-            onInputStreamResult(task, data.getInputStream(), indispensableState);
-        }
-    }
-
-    private void onResultFailed(Task task, Exception exception, IndispensableState indispensableState) {
-        if (exception != null){
-            getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), exception, getComponentManager().getLogger());
-        }
-        handleFailed(task);
-    }
-
-    private void onResultCanceled(Task task, IndispensableState indispensableState) {
-        handleCanceled(task);
-    }
-
     /**
-     * @param task task
-     * @param bytes image bytes data
+     * load by servers
      */
-    private void onBytesResult(Task task, byte[] bytes, IndispensableState indispensableState){
-        //try to write disk cache
-        getComponentManager().getDiskCacheServer().write(task, bytes);
-        //handle data
-        handleImageData(task, bytes, null);
-    }
-
-    /**
-     * @param task task
-     * @param inputStream image input stream
-     */
-    private void onInputStreamResult(Task task, InputStream inputStream, IndispensableState indispensableState){
-        //cancel loading if image data out of limit
-        if (task.getLoadProgress().total() > getComponentManager().getServerSettings().getImageDataLengthLimit()){
-            getComponentManager().getServerSettings().getExceptionHandler().onImageDataLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                    task.getTaskInfo(), task.getLoadProgress().total(), getComponentManager().getServerSettings().getImageDataLengthLimit(), getComponentManager().getLogger());
-            try {
-                inputStream.close();
-            } catch (IOException ignored) {
-            }
-            handleCanceled(task);
-            return;
-        }
-        //try to write disk cache
-        LowNetworkSpeedStrategy.Configure lowNetworkSpeedConfig = getComponentManager().getServerSettings().getLowNetworkSpeedStrategy().getConfigure(getComponentManager().getApplicationContextImage(), indispensableState);
-        if (getComponentManager().getLogger().checkEnable(TLogger.DEBUG)) {
-            getComponentManager().getLogger().d("[NetworkEngine]LowNetworkSpeedStrategy:" + lowNetworkSpeedConfig.getType() + ", task:" + task);
-        }
-        DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream, lowNetworkSpeedConfig);
-        switch (result.getType()){
-            case SUCCEED:
-                handleImageData(task, null, result.getTargetFile());
+    private void load(Task task, IndispensableState indispensableState){
+        switch (task.getParams().getSourceType()) {
+            case HTTP_GET:
+                getComponentManager().getHttpGetServer().load(task, indispensableState);
                 break;
-            case RETURN_MEMORY_BUFFER:
-                handleImageData(task, result.getMemoryBuffer(), null);
+            case GEN_QR:
+                //TODO
                 break;
-            case CANCELED:
-                handleCanceled(task);
-                break;
-            case FAILED:
             default:
-                handleFailed(task);
+                getComponentManager().getLogger().e("[NetworkEngine]load: Unsupported sourceType:" + task.getParams().getSourceType());
+                responseCanceled(task);
                 break;
         }
     }
@@ -237,7 +127,7 @@ public class NetworkEngine extends Engine {
      * handle data
      */
 
-    private void handleImageData(Task task, byte[] bytes, File file){
+    void handleImageData(Task task, byte[] bytes, File file){
         //add resource key to history if loaded succeed
         history.put(task.getResourceKey());
         //get group
@@ -259,7 +149,7 @@ public class NetworkEngine extends Engine {
         group.getSet().clear();
     }
 
-    private void handleFailed(Task task){
+    void handleFailed(Task task){
         TaskGroup group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;
@@ -270,7 +160,7 @@ public class NetworkEngine extends Engine {
         group.getSet().clear();
     }
 
-    private void handleCanceled(Task task){
+    void handleCanceled(Task task){
         TaskGroup group = taskGroups.remove(task.getResourceKey());
         if (group == null){
             return;

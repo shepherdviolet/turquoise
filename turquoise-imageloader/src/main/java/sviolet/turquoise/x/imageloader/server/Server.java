@@ -35,6 +35,8 @@ public interface Server {
         MEMORY_CACHE,
         DISK_CACHE,
         DISK_LOAD,
+        NETWORK_HTTP_GET,
+        NETWORK_QR_GEN,
         MEMORY_ENGINE,
         DISK_ENGINE,
         NETWORK_ENGINE
