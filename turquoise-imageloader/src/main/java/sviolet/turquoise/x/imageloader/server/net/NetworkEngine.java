@@ -128,7 +128,7 @@ public class NetworkEngine extends Engine {
      * handle data
      */
 
-    void handleImageData(Task task, byte[] bytes, File file){
+    void handleImageData(Task task, DecodeHandler.DecodeType decodeType, Object data){
         //add resource key to history if loaded succeed
         history.put(task.getResourceKey());
         //get group
@@ -138,7 +138,7 @@ public class NetworkEngine extends Engine {
         }
         for (Task t : group.getSet()) {
             //decode
-            ImageResource imageResource = decode(t, bytes, file);
+            ImageResource imageResource = decode(t, decodeType, data);
             if (imageResource == null) {
                 responseFailed(t);
                 continue;
@@ -172,19 +172,12 @@ public class NetworkEngine extends Engine {
         group.getSet().clear();
     }
 
-    private ImageResource decode(Task task, byte[] bytes, File file){
+    private ImageResource decode(Task task, DecodeHandler.DecodeType decodeType, Object data){
         ImageResource imageResource = null;
         try {
-            //dispatch type
-            if (bytes != null) {
-                imageResource = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                        task, DecodeHandler.DecodeType.BYTES, bytes, getComponentManager().getLogger());
-            }else if(file != null){
-                imageResource = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                        task, DecodeHandler.DecodeType.FILE, file, getComponentManager().getLogger());
-            }else{
-                throw new Exception("[NetworkEngine]can't decode neither byte[] nor file");
-            }
+            //decode
+            imageResource = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
+                    task, decodeType, data, getComponentManager().getLogger());
         }catch(Exception e){
             getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
             return null;

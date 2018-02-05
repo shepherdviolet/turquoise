@@ -20,6 +20,9 @@
 package sviolet.turquoise.x.imageloader.server.net;
 
 import sviolet.turquoise.x.imageloader.ComponentManager;
+import sviolet.turquoise.x.imageloader.entity.IndispensableState;
+import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
+import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.Server;
 
 /**
@@ -30,6 +33,7 @@ import sviolet.turquoise.x.imageloader.server.Server;
 public class ZxingGenerateServer implements ComponentManager.Component, Server {
 
     private ComponentManager manager;
+    private NetworkEngine networkEngine;
 
     @Override
     public void init(ComponentManager manager) {
@@ -43,6 +47,19 @@ public class ZxingGenerateServer implements ComponentManager.Component, Server {
 
     private ComponentManager getComponentManager(){
         return manager;
+    }
+
+    private NetworkEngine getNetworkEngine() {
+        return networkEngine;
+    }
+
+    //load//////////////////////////////////////////////////////////////////////////////////////
+
+    void load(Task task, IndispensableState indispensableState) {
+        //try to write disk cache TODO developing
+        getComponentManager().getDiskCacheServer().write(task, task.getUrl().getBytes());
+        //handle data
+        getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.BYTES, task.getUrl().getBytes());
     }
 
 }

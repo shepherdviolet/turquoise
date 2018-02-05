@@ -26,6 +26,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.entity.IndispensableState;
 import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
+import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.Server;
@@ -145,7 +146,7 @@ public class HttpGetServer implements ComponentManager.Component, Server {
         //try to write disk cache
         getComponentManager().getDiskCacheServer().write(task, bytes);
         //handle data
-        getNetworkEngine().handleImageData(task, bytes, null);
+        getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.BYTES, bytes);
     }
 
     /**
@@ -171,10 +172,10 @@ public class HttpGetServer implements ComponentManager.Component, Server {
         DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream, lowNetworkSpeedConfig);
         switch (result.getType()){
             case SUCCEED:
-                getNetworkEngine().handleImageData(task, null, result.getTargetFile());
+                getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.FILE, result.getTargetFile());
                 break;
             case RETURN_MEMORY_BUFFER:
-                getNetworkEngine().handleImageData(task, result.getMemoryBuffer(), null);
+                getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.BYTES, result.getMemoryBuffer());
                 break;
             case CANCELED:
                 getNetworkEngine().handleCanceled(task);

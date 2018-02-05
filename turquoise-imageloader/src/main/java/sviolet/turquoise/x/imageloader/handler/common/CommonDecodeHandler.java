@@ -151,6 +151,7 @@ public class CommonDecodeHandler extends DecodeHandler {
                 return BitmapUtils.decodeFromAssets(applicationContext.getAssets(), (String) data, reqWidth, reqHeight, bitmapConfig, quality);
             case QR_CODE:
                 try {
+                    //TODO developing
                     return ZxingUtils.generateQrCode((String)data, reqWidth, reqHeight, 1, "utf-8", ZxingUtils.CorrectionLevel.M);
                 } catch (ZxingUtils.QrCodeGenerateException e) {
                     throw new RuntimeException("Error while generating qr-code bitmap:" + String.valueOf(data), e);
