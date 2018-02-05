@@ -19,6 +19,7 @@
 
 package pl.droidsonroids.gif;
 
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.support.annotation.NonNull;
@@ -50,9 +51,11 @@ public class EnhancedGifDrawable extends GifDrawable {
     public static EnhancedGifDrawable decode(@NonNull File file, int reqWidth, int reqHeight, BitmapUtils.InSampleQuality quality) throws IOException {
         //calculate sample size
         final BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
-        bitmapOptions.inJustDecodeBounds = true;//仅计算参数, 不解码
+        //仅计算参数, 不解码
+        bitmapOptions.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(file.getAbsolutePath(), bitmapOptions);
-        int inSampleSize = BitmapUtils.calculateInSampleSize(bitmapOptions.outWidth, bitmapOptions.outHeight, reqWidth, reqHeight, quality);//缩放因子(整数倍)
+        //缩放因子(整数倍)
+        int inSampleSize = BitmapUtils.calculateInSampleSize(bitmapOptions.outWidth, bitmapOptions.outHeight, reqWidth, reqHeight, quality);
         //decode
         GifOptions options = new GifOptions();
         options.setInSampleSize(inSampleSize);
@@ -71,12 +74,28 @@ public class EnhancedGifDrawable extends GifDrawable {
         return new EnhancedGifDrawable(bytes, options).setBytesDataMode();
     }
 
+    public static EnhancedGifDrawable decode(Resources resources, int resId, int reqWidth, int reqHeight, BitmapUtils.InSampleQuality quality) throws IOException {
+        //calculate sample size
+        final BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+        bitmapOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(resources, resId, bitmapOptions);
+        int inSampleSize = BitmapUtils.calculateInSampleSize(bitmapOptions.outWidth, bitmapOptions.outHeight, reqWidth, reqHeight, quality);
+        //set sample size
+        GifOptions options = new GifOptions();
+        options.setInSampleSize(inSampleSize);
+        return new EnhancedGifDrawable(resources, resId, options);
+    }
+
     private EnhancedGifDrawable(@NonNull File file, GifOptions options) throws IOException {
         super(new InputSource.FileSource(file), null, null, true, options);
     }
 
     private EnhancedGifDrawable(@NonNull byte[] bytes, GifOptions options) throws IOException {
         super(new InputSource.ByteArraySource(bytes), null, null, true, options);
+    }
+
+    private EnhancedGifDrawable(Resources resources, int resId, GifOptions options) throws IOException {
+        super(new InputSource.ResourcesSource(resources, resId), null, null, true, options);
     }
 
     @Override

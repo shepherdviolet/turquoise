@@ -270,11 +270,11 @@ public class BasicActivity extends TActivity {
 //        });
 
         /*
-         * 从assets加载图片
+         * 从res加载图片
          */
-        String url7 = "images/local_image_1.jpg";
+        String url7 = "mipmap/rounded_list_image1";
         Params params7 = new Params.Builder()
-                .setSourceType(Params.SourceType.APK_ASSETS)
+                .setSourceType(Params.SourceType.APK_RES)
                 .build();
         TILoader.node(this).load(url7, params7, imageView7);
 

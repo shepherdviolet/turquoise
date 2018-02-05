@@ -53,6 +53,8 @@ public class GifActivity extends TAppCompatActivity {
 
     @ResourceId(R.id.gif_main_imageview1)
     private ImageView imageView1;
+    @ResourceId(R.id.gif_main_imageview2)
+    private ImageView imageView2;
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -75,7 +77,7 @@ public class GifActivity extends TAppCompatActivity {
      *
      */
     private void loadGIF(){
-        /**
+        /*
          * 像加载普通图片一样加载GIF即可
          */
         String url1 = "https://camo.githubusercontent.com/d406ac5a03a2b1fa5cf41fadc8d2408cb8709bdc/68747470733a2f2f6431337961637572716a676172612e636c6f756466726f6e742e6e65742f75736572732f3132353035362f73637265656e73686f74732f313635303331372f7265616c6573746174652d70756c6c5f312d322d332e676966";
@@ -85,6 +87,23 @@ public class GifActivity extends TAppCompatActivity {
         TILoader.node(this).load(url1, params, imageView1);
 
         imageView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
+
+        /*
+         * 从res加载GIF
+         */
+        String url2 = "mipmap/gif_1";
+        Params params2 = new Params.Builder()
+                .setSourceType(Params.SourceType.APK_RES)
+                .build();
+        TILoader.node(this).load(url2, params2, imageView2);
+
+        imageView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //失败重载

@@ -104,10 +104,27 @@ public class DiskLoadServer implements ComponentManager.Component, Server {
      */
     public ImageResource readFromRes(Task task, DecodeHandler decodeHandler){
         initialize();
-
-        //TODO developing
-
-        return null;
+        //parse res id
+        int resId = getComponentManager().getApplicationContextImage().getResources().getIdentifier(
+                getComponentManager().getApplicationContextImage().getPackageName() + ":" + task.getUrl(), null, null);
+        if (resId <= 0) {
+            getComponentManager().getServerSettings().getExceptionHandler().onApkLoadNotExistsException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                    new Exception("[TILoader]Loading from apk res failed, res not found:" + task.getUrl()), getComponentManager().getLogger());
+            return null;
+        }
+        //decode
+        try {
+            ImageResource imageResource = decodeHandler.decodeRes(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task, resId, getComponentManager().getLogger());
+            if (imageResource == null) {
+                getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                        new Exception("[TILoader]Decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
+                return null;
+            }
+            return imageResource;
+        } catch (Throwable t) {
+            getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), t, getComponentManager().getLogger());
+            return null;
+        }
     }
 
     private ComponentManager getComponentManager(){
