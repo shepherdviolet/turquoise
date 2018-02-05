@@ -523,22 +523,32 @@ public class Params {
         /**
          * Get image from network (http get)
          */
-        HTTP_GET,
+        HTTP_GET("0"),
 
         /**
          * Get image from local disk
          */
-        LOCAL_DISK,
+        LOCAL_DISK("1"),
 
         /**
          * Get image from assets
          */
-        APK_ASSETS,
+        APK_ASSETS("2"),
 
         /**
          * Get image from resources
          */
-        APK_RES
+        APK_RES("3");
+
+        private String mark;
+
+        SourceType(String mark) {
+            this.mark = mark;
+        }
+
+        public String getMark() {
+            return mark;
+        }
     }
 
 }

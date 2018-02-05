@@ -41,7 +41,7 @@ import sviolet.turquoise.x.imageloader.node.NodeController;
  */
 public abstract class AbsStub implements Stub {
 
-    private static final String NULL = "null";
+    private static final String NULL = "TILoader_Special_Key_Null_@a%#5r#$6t4";
 
     //params///////////////////////////////
 
@@ -392,7 +392,7 @@ public abstract class AbsStub implements Stub {
     @Override
     public String getKey(){
         if (getType() == Type.EXTRACT){
-            return "extract:" + getResourceKey() + params.getKeySuffix();
+            return getResourceKey() + "@EXT" + params.getKeySuffix();
         }
         return getResourceKey() + params.getKeySuffix();
     }
@@ -404,7 +404,7 @@ public abstract class AbsStub implements Stub {
             if (url == null) {
                 url = NULL;
             }
-            resourceKey = ByteUtils.bytesToHex(DigestCipher.digestStr(url, DigestCipher.TYPE_SHA1));
+            resourceKey = params.getSourceType().getMark() + ByteUtils.bytesToHex(DigestCipher.digestStr(url, DigestCipher.TYPE_SHA1));
         }
         return resourceKey;
     }
