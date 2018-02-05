@@ -28,6 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.IndispensableState;
+import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.Engine;
 import sviolet.turquoise.x.imageloader.server.Server;
@@ -177,10 +178,10 @@ public class NetworkEngine extends Engine {
             //dispatch type
             if (bytes != null) {
                 imageResource = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                        task, bytes, getComponentManager().getLogger());
+                        task, DecodeHandler.DecodeType.BYTES, bytes, getComponentManager().getLogger());
             }else if(file != null){
                 imageResource = getDecodeHandler(task).decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                        task, file, getComponentManager().getLogger());
+                        task, DecodeHandler.DecodeType.FILE, file, getComponentManager().getLogger());
             }else{
                 throw new Exception("[NetworkEngine]can't decode neither byte[] nor file");
             }

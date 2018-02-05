@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2017 S.Violet
+ * Copyright (C) 2015-2018 S.Violet
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,32 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.server;
+package sviolet.turquoise.x.imageloader.server.net;
+
+import sviolet.turquoise.x.imageloader.ComponentManager;
+import sviolet.turquoise.x.imageloader.server.Server;
 
 /**
- * <p>Server</p>
+ * Generate qr-code image by url value
  *
- * Created by S.Violet on 2016/3/15.
+ * @author S.Violet
  */
-public interface Server {
+public class ZxingGenerateServer implements ComponentManager.Component, Server {
 
-    /**
-     * @return get the type of server
-     */
-    Type getServerType();
+    private ComponentManager manager;
 
-    enum Type{
-        MEMORY_CACHE,
-        DISK_CACHE,
-        DISK_LOAD,
-        NETWORK_HTTP_GET,
-        NETWORK_ZXING_GEN,
-        MEMORY_ENGINE,
-        DISK_ENGINE,
-        NETWORK_ENGINE
+    @Override
+    public void init(ComponentManager manager) {
+        this.manager = manager;
+    }
+
+    @Override
+    public Type getServerType() {
+        return Type.NETWORK_ZXING_GEN;
+    }
+
+    private ComponentManager getComponentManager(){
+        return manager;
     }
 
 }

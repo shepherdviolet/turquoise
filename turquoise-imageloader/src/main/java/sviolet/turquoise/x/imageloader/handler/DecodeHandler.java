@@ -54,6 +54,8 @@ public abstract class DecodeHandler {
     public static final String CUSTOM_REQ_WIDTH = "DecodeHandler_custom_req_width";
     public static final String CUSTOM_REQ_HEIGHT = "DecodeHandler_custom_req_height";
 
+    //method//////////////////////////////////////////////////////////////////////////////////////////
+
     /**
      * decode image from bytes
      * @param applicationContext applicationContext
@@ -63,61 +65,10 @@ public abstract class DecodeHandler {
      * @param logger logger
      * @return ImageResource
      */
-    public abstract ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, byte[] data, TLogger logger);
+    public abstract ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, DecodeType decodeType, Object data, TLogger logger);
 
-    /**
-     * decode image from file
-     * @param applicationContext applicationContext
-     * @param context activity context, might be null
-     * @param taskInfo task info
-     * @param file file of image
-     * @param logger logger
-     * @return ImageResource
-     */
-    public abstract ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, File file, TLogger logger);
-
-    /**
-     * decode image from apk resource
-     * @param applicationContext applicationContext
-     * @param context activity context, might be null
-     * @param taskInfo task info
-     * @param resId resource id
-     * @param logger logger
-     * @return ImageResource
-     */
-    public abstract ImageResource onDecodeRes(Context applicationContext, Context context, Task.Info taskInfo, int resId, TLogger logger);
-
-    /**
-     * decode image from apk assets
-     * @param applicationContext applicationContext
-     * @param context activity context, might be null
-     * @param taskInfo task info
-     * @param assetsPath assets path of file
-     * @param logger logger
-     * @return ImageResource
-     */
-    public abstract ImageResource onDecodeAssets(Context applicationContext, Context context, Task.Info taskInfo, String assetsPath, TLogger logger);
-
-    public final ImageResource decode(Context applicationContext, Context context, Task task, byte[] data, TLogger logger){
-        ImageResource imageResource = onDecode(applicationContext, context, task.getTaskInfo(), data, logger);
-        imageResource = intercept(applicationContext, context, task, logger, imageResource);
-        return imageResource;
-    }
-
-    public final ImageResource decode(Context applicationContext, Context context, Task task, File file, TLogger logger){
-        ImageResource imageResource = onDecode(applicationContext, context, task.getTaskInfo(), file, logger);
-        imageResource = intercept(applicationContext, context, task, logger, imageResource);
-        return imageResource;
-    }
-
-    public final ImageResource decodeRes(Context applicationContext, Context context, Task task, int resId, TLogger logger){
-        ImageResource imageResource = onDecodeRes(applicationContext, context, task.getTaskInfo(), resId, logger);
-        imageResource = intercept(applicationContext, context, task, logger, imageResource);
-        return imageResource;
-    }
-
-    public final ImageResource decodeAssets(Context applicationContext, Context context, Task task, String assetsPath, TLogger logger){
-        ImageResource imageResource = onDecodeAssets(applicationContext, context, task.getTaskInfo(), assetsPath, logger);
+    public final ImageResource decode(Context applicationContext, Context context, Task task, DecodeType decodeType, Object data, TLogger logger){
+        ImageResource imageResource = onDecode(applicationContext, context, task.getTaskInfo(), decodeType, data, logger);
         imageResource = intercept(applicationContext, context, task, logger, imageResource);
         return imageResource;
     }
@@ -147,6 +98,29 @@ public abstract class DecodeHandler {
 
         ImageResource intercept(Context applicationContext, Context context, Task.Info taskInfo, ImageResource imageResource, TLogger logger);
 
+    }
+
+    public enum DecodeType {
+        /**
+         * decode byte[]
+         */
+        BYTES,
+        /**
+         * decode File
+         */
+        FILE,
+        /**
+         * decode resources in apk (int resId)
+         */
+        RES,
+        /**
+         * decode assets in apk (String assetsPath)
+         */
+        ASSETS,
+        /**
+         * generate qr-code image by url value (String value)
+         */
+        QR_CODE
     }
 
     /**

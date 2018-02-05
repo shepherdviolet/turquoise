@@ -21,6 +21,7 @@ package sviolet.turquoise.util.bitmap;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -118,11 +119,11 @@ public class BitmapUtils {
     /**
      * 从assets中解码图片
      *
-     * @param context       context
+     * @param assetManager  assetManager
      * @param assetsPath    assets中的路径
      */
-    public static Bitmap decodeFromAssets(Context context, String assetsPath) {
-        return decodeFromAssets(context, assetsPath, 0, 0, Config.ARGB_8888, InSampleQuality.MEDIUM);
+    public static Bitmap decodeFromAssets(AssetManager assetManager, String assetsPath) {
+        return decodeFromAssets(assetManager, assetsPath, 0, 0, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -131,13 +132,13 @@ public class BitmapUtils {
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
      *
-     * @param context       context
+     * @param assetManager  assetManager
      * @param assetsPath    assets中的路径
      * @param reqWidth      需求宽度 px
      * @param reqHeight     需求高度 px
      */
-    public static Bitmap decodeFromAssets(Context context, String assetsPath, int reqWidth, int reqHeight) {
-        return decodeFromAssets(context, assetsPath, reqWidth, reqHeight, Config.ARGB_8888, InSampleQuality.MEDIUM);
+    public static Bitmap decodeFromAssets(AssetManager assetManager, String assetsPath, int reqWidth, int reqHeight) {
+        return decodeFromAssets(assetManager, assetsPath, reqWidth, reqHeight, Config.ARGB_8888, InSampleQuality.MEDIUM);
     }
 
     /**
@@ -146,23 +147,23 @@ public class BitmapUtils {
      * 需求尺寸(reqWidth/reqHeight)参数用于节省内存消耗,请根据界面展示所需尺寸设置(像素px).图片解码时会
      * 根据需求尺寸整数倍缩小,且长宽保持原图比例,解码后的Bitmap尺寸通常不等于需求尺寸.设置为0不缩小图片.<Br/>
      *
-     * @param context       context
+     * @param assetManager  assetManager
      * @param assetsPath    assets中的路径
      * @param reqWidth      需求宽度 px
      * @param reqHeight     需求高度 px
      * @param bitmapConfig  颜色深度
      * @param quality       图片质量, 默认InSampleQuality.MEDIUM, 若不需要缩小, 设置ORIGINAL
      */
-    public static Bitmap decodeFromAssets(Context context, String assetsPath, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, InSampleQuality quality) {
-        if (context == null) {
-            throw new IllegalArgumentException("context is null");
+    public static Bitmap decodeFromAssets(AssetManager assetManager, String assetsPath, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, InSampleQuality quality) {
+        if (assetManager == null) {
+            throw new IllegalArgumentException("assetManager is null");
         }
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = true;//仅计算参数, 不解码
 
         InputStream inputStream = null;
         try {
-            inputStream = context.getAssets().open(assetsPath);
+            inputStream = assetManager.open(assetsPath);
             BitmapFactory.decodeStream(inputStream, null, options);
         } catch (Throwable t) {
             return null;
@@ -180,7 +181,7 @@ public class BitmapUtils {
         options.inPreferredConfig = bitmapConfig;//颜色深度
 
         try {
-            inputStream = context.getAssets().open(assetsPath);
+            inputStream = assetManager.open(assetsPath);
             return BitmapFactory.decodeStream(inputStream, null, options);
         } catch (Throwable t) {
             return null;

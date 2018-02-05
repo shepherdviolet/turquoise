@@ -44,33 +44,70 @@ public class ZxingUtils {
      * @param height 二维码高度(注意限定, 不要太大, 否则会内存溢出)
      * @param margin 边距
      * @param charset 字符集
-     * @param errorCorrectionLevel 纠错级别
+     * @param correctionLevel 纠错级别
      * @return Bitmap
      * @throws WriterException 生成异常
      */
-    public static Bitmap generateQrCode(String contents, int width, int height, int margin, String charset, ErrorCorrectionLevel errorCorrectionLevel) throws WriterException {
+    public static Bitmap generateQrCode(String contents, int width, int height, int margin, String charset, CorrectionLevel correctionLevel) throws QrCodeGenerateException {
+        ErrorCorrectionLevel errorCorrectionLevel;
+        switch (correctionLevel) {
+            case L:
+                errorCorrectionLevel = ErrorCorrectionLevel.L;
+                break;
+            case Q:
+                errorCorrectionLevel = ErrorCorrectionLevel.Q;
+                break;
+            case H:
+                errorCorrectionLevel = ErrorCorrectionLevel.H;
+                break;
+            case M:
+            default:
+                errorCorrectionLevel = ErrorCorrectionLevel.M;
+        }
+
         Hashtable<EncodeHintType, Object> hints = new Hashtable<>();
         hints.put(EncodeHintType.ERROR_CORRECTION, errorCorrectionLevel);
         hints.put(EncodeHintType.CHARACTER_SET, charset);
         hints.put(EncodeHintType.MARGIN, margin);
 
-        BitMatrix bitMatrix = new MultiFormatWriter().encode(
-                contents,
-                BarcodeFormat.QR_CODE,
-                width,
-                height,
-                hints);
+        try {
+            BitMatrix bitMatrix = new MultiFormatWriter().encode(
+                    contents,
+                    BarcodeFormat.QR_CODE,
+                    width,
+                    height,
+                    hints);
 
-        width = bitMatrix.getWidth();
-        height = bitMatrix.getHeight();
+            width = bitMatrix.getWidth();
+            height = bitMatrix.getHeight();
 
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                bitmap.setPixel(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            for (int x = 0; x < width; x++) {
+                for (int y = 0; y < height; y++) {
+                    bitmap.setPixel(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+                }
             }
+            return bitmap;
+        } catch (Throwable t) {
+            throw new QrCodeGenerateException("Error while generating qr-code bitmap", t);
         }
-        return bitmap;
+    }
+
+    public static class QrCodeGenerateException extends Exception {
+        public QrCodeGenerateException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    public enum CorrectionLevel {
+        /** L = ~7% correction */
+        L,
+        /** M = ~15% correction */
+        M,
+        /** Q = ~25% correction */
+        Q,
+        /** H = ~30% correction */
+        H
     }
 
 }
