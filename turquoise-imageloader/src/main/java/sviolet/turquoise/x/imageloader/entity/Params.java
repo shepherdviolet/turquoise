@@ -101,7 +101,29 @@ public class Params {
         /**
          * <p>Specify where to get the image.</p>
          *
-         * TODO document
+         * <p>Load from local disk:</p>
+         * <pre>{@code
+         *      Params params = new Params.Builder()
+         *          .setSourceType(Params.SourceType.LOCAL_DISK)
+         *          .build();
+         *      TILoader.node(this).load(DirectoryUtils.getExternalStorageDirectory().getAbsolutePath() + "/test.jpg", params, imageView);
+         * }</pre>
+         *
+         * <p>Load from apk res:</p>
+         * <pre>{@code
+         *      Params params = new Params.Builder()
+         *          .setSourceType(Params.SourceType.APK_RES)
+         *          .build();
+         *      TILoader.node(this).load("mipmap/image1", params, imageView);
+         * }</pre>
+         *
+         * <p>Load from apk assets:</p>
+         * <pre>{@code
+         *      Params params = new Params.Builder()
+         *          .setSourceType(Params.SourceType.APK_ASSETS)
+         *          .build();
+         *      TILoader.node(this).load("images/image1.jpg", params, imageView);
+         * }</pre>
          *
          * @param sourceType Specify where to get the image. HTTP_GET by default.
          */
