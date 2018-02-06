@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
-import sviolet.thistle.model.thread.LazySingleThreadPool;
 import sviolet.thistle.util.concurrent.ThreadPoolExecutorUtils;
 import sviolet.turquoise.enhance.common.WeakHandler;
 
@@ -83,7 +82,7 @@ public class TQueue {
 	
 	//Variable//////////////////////////////////////////////////////
 
-    private volatile LazySingleThreadPool dispatchThreadPool;//调度线程池
+    private volatile ExecutorService dispatchThreadPool;//调度线程池
     private volatile ExecutorService taskThreadPool;//任务线程池
 
 	private LinkedHashMap<String, TTask> waittingTasks;//等待队列
@@ -599,7 +598,7 @@ public class TQueue {
         if (dispatchThreadPool == null){
             synchronized (this) {
                 if (dispatchThreadPool == null) {
-                    dispatchThreadPool = new LazySingleThreadPool("TQueue-%d");
+                    dispatchThreadPool = ThreadPoolExecutorUtils.createLazy(60L, "TQueue-%d");
                 }
             }
         }
@@ -625,7 +624,7 @@ public class TQueue {
         if (taskThreadPool == null){
             synchronized (this) {
                 if (taskThreadPool == null) {
-                    taskThreadPool = ThreadPoolExecutorUtils.newInstance(0, Integer.MAX_VALUE, 60L, "TQueue-%d");
+                    taskThreadPool = ThreadPoolExecutorUtils.createCached(0, Integer.MAX_VALUE, 60L, "TQueue-%d");
                 }
             }
         }

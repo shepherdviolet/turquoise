@@ -25,11 +25,12 @@ import android.os.Message;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 
+import sviolet.thistle.util.concurrent.ThreadPoolExecutorUtils;
 import sviolet.turquoise.enhance.common.WeakHandler;
-import sviolet.thistle.model.thread.LazySingleThreadPool;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
@@ -457,7 +458,7 @@ public class NodeControllerImpl extends NodeController {
      * Dispatch Thread
      */
 
-    private LazySingleThreadPool dispatchThreadPool = new LazySingleThreadPool("TLoader-NodeController-%d");
+    private ExecutorService dispatchThreadPool = ThreadPoolExecutorUtils.createLazy(60L, "TLoader-NodeController-%d");
 
     @Override
     public void postDispatch() {

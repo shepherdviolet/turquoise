@@ -21,12 +21,13 @@ package sviolet.turquoise.x.imageloader.server.disk;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.thistle.model.cache.DiskLruCache;
-import sviolet.thistle.model.thread.LazySingleThreadPool;
+import sviolet.thistle.util.concurrent.ThreadPoolExecutorUtils;
 import sviolet.turquoise.util.droid.ApplicationUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.node.Task;
@@ -57,7 +58,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
     private int holdCounter = 0;
     private long lastOpenFailedTime = 0;//last open failed time
 
-    private LazySingleThreadPool dispatchThreadPool;
+    private ExecutorService dispatchThreadPool;
     private ReentrantLock statusLock = new ReentrantLock();
 
     private boolean initialized = false;
@@ -65,7 +66,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
     @Override
     public void init(ComponentManager manager) {
         this.manager = manager;
-        this.dispatchThreadPool = new LazySingleThreadPool("TLoader-DiskCacheModule-%d");
+        this.dispatchThreadPool = ThreadPoolExecutorUtils.createLazy(60L, "TLoader-DiskCacheModule-%d");
         status = Status.PAUSE;
     }
 
