@@ -24,7 +24,6 @@ import android.graphics.Bitmap;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 
@@ -38,7 +37,7 @@ import java.util.Hashtable;
 public class ZxingUtils {
 
     /**
-     * 生成二维码图片
+     * 生成二维码图片(ALPHA_8)
      * @param contents 数据(注意限定, 不要太大, 否则无法绘制)
      * @param width 二维码宽度(注意限定, 不要太大, 否则会内存溢出)
      * @param height 二维码高度(注意限定, 不要太大, 否则会内存溢出)
@@ -46,7 +45,7 @@ public class ZxingUtils {
      * @param charset 字符集
      * @param correctionLevel 纠错级别
      * @return Bitmap
-     * @throws WriterException 生成异常
+     * @throws QrCodeGenerateException 生成异常
      */
     public static Bitmap generateQrCode(String contents, int width, int height, int margin, String charset, CorrectionLevel correctionLevel) throws QrCodeGenerateException {
         ErrorCorrectionLevel errorCorrectionLevel;
@@ -81,10 +80,10 @@ public class ZxingUtils {
             width = bitMatrix.getWidth();
             height = bitMatrix.getHeight();
 
-            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    bitmap.setPixel(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0xFFFFFFFF);
+                    bitmap.setPixel(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0x00000000);
                 }
             }
             return bitmap;
