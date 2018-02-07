@@ -82,6 +82,12 @@
                     android:layout_height="90dp"
                     android:scaleType="fitXY" />
 
+                <ImageView
+                    android:id="@+id/basic_main_imageview10"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:scaleType="fitXY" />
+
             </LinearLayout>
 
         </LinearLayout>

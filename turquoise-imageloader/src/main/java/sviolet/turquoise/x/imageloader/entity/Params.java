@@ -36,6 +36,16 @@ import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
  */
 public class Params {
 
+    //extras key/////////////////////////////////////////////////////////////////////////////////
+
+    //TODO doc
+    public static final String URL_TO_QR_CODE_DISK_CACHE_EABLE = "Params_url_to_qr_code_disk_cache_enable";
+    public static final String URL_TO_QR_CODE_CHARSET = "Params_url_to_qr_code_charset";
+    public static final String URL_TO_QR_CODE_MARGIN = "Params_url_to_qr_code_margin";
+    public static final String URL_TO_QR_CODE_CORRECTION_LEVEL = "Params_url_to_qr_code_correction_level";
+
+    //params/////////////////////////////////////////////////////////////////////////////////////
+
     private static class Values{
 
         private SourceType sourceType = DEFAULT_SOURCE_TYPE;
@@ -452,26 +462,37 @@ public class Params {
         return null;
     }
 
-    public Integer getExtraInteger(String key){
+    public Integer getExtraInteger(String key, Integer fallback){
         if (values.extras != null){
             Object value = values.extras.get(key);
             if (value instanceof Integer){
                 return (Integer) value;
             }
-            return null;
+            return fallback;
         }
-        return null;
+        return fallback;
     }
 
-    public String getExtraString(String key){
+    public String getExtraString(String key, String fallback){
         if (values.extras != null){
             Object value = values.extras.get(key);
             if (value instanceof String){
                 return (String) value;
             }
-            return null;
+            return fallback;
         }
-        return null;
+        return fallback;
+    }
+
+    public Boolean getExtraBoolean(String key, Boolean fallback){
+        if (values.extras != null){
+            Object value = values.extras.get(key);
+            if (value instanceof Boolean){
+                return (Boolean) value;
+            }
+            return fallback;
+        }
+        return fallback;
     }
 
     //function////////////////////////////////////////////////////////////
@@ -545,7 +566,7 @@ public class Params {
          *
          * <p>Generate qr-code image by key value</p>
          */
-        GEN_QR("a");
+        URL_TO_QR_CODE("a");
 
         private String mark;
 

@@ -19,7 +19,6 @@
 
 package sviolet.turquoise.x.imageloader.server.net;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -50,7 +49,7 @@ public class NetworkEngine extends Engine {
     protected boolean preCheck(Task task) {
         switch (task.getParams().getSourceType()) {
             case HTTP_GET:
-            case GEN_QR:
+            case URL_TO_QR_CODE:
                 return true;
             default:
                 return false;
@@ -114,8 +113,8 @@ public class NetworkEngine extends Engine {
             case HTTP_GET:
                 getComponentManager().getHttpGetServer().load(task, indispensableState);
                 break;
-            case GEN_QR:
-                //TODO
+            case URL_TO_QR_CODE:
+                getComponentManager().getZxingGenerateServer().generateQrCode(task, indispensableState);
                 break;
             default:
                 getComponentManager().getLogger().e("[NetworkEngine]load: Unsupported sourceType:" + task.getParams().getSourceType());

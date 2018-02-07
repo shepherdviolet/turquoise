@@ -37,6 +37,7 @@ import sviolet.turquoise.x.imageloader.server.mem.MemoryCacheServer;
 import sviolet.turquoise.x.imageloader.server.mem.MemoryEngine;
 import sviolet.turquoise.x.imageloader.server.net.HttpGetServer;
 import sviolet.turquoise.x.imageloader.server.net.NetworkEngine;
+import sviolet.turquoise.x.imageloader.server.net.ZxingGenerateServer;
 
 /**
  * <p>Manage all components</p>
@@ -84,6 +85,7 @@ public class ComponentManager {
     private DiskCacheServer diskCacheServer;
     private DiskLoadServer diskLoadServer;
     private HttpGetServer httpGetServer;
+    private ZxingGenerateServer zxingGenerateServer;
     private Engine memoryEngine;
     private Engine diskEngine;
     private Engine networkEngine;
@@ -119,6 +121,10 @@ public class ComponentManager {
 
     public HttpGetServer getHttpGetServer() {
         return httpGetServer;
+    }
+
+    public ZxingGenerateServer getZxingGenerateServer() {
+        return zxingGenerateServer;
     }
 
     public Engine getMemoryEngine(){
@@ -210,6 +216,7 @@ public class ComponentManager {
         diskCacheServer = new DiskCacheServer();
         diskLoadServer = new DiskLoadServer();
         httpGetServer = new HttpGetServer();
+        zxingGenerateServer = new ZxingGenerateServer();
         memoryEngine = new MemoryEngine();
         diskEngine = new DiskEngine();
         networkEngine = new NetworkEngine();
@@ -220,6 +227,7 @@ public class ComponentManager {
         diskCacheServer.init(ComponentManager.getInstance());
         diskLoadServer.init(ComponentManager.getInstance());
         httpGetServer.init(ComponentManager.getInstance());
+        zxingGenerateServer.init(ComponentManager.getInstance());
         memoryEngine.init(ComponentManager.getInstance());
         diskEngine.init(ComponentManager.getInstance());
         networkEngine.init(ComponentManager.getInstance());

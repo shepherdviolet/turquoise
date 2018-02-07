@@ -102,25 +102,29 @@ public abstract class DecodeHandler {
 
     public enum DecodeType {
         /**
-         * decode byte[]
+         * decode image from byte[]
          */
-        BYTES,
+        IMAGE_BYTES,
         /**
-         * decode File
+         * decode image from File
          */
-        FILE,
+        IMAGE_FILE,
         /**
-         * decode resources in apk (int resId)
+         * decode image from resources (int resId)
          */
-        RES,
+        IMAGE_RES,
         /**
-         * decode assets in apk (String assetsPath)
+         * decode image from assets (String assetsPath)
          */
-        ASSETS,
+        IMAGE_ASSETS,
         /**
          * generate qr-code image by url value (String value)
          */
-        QR_CODE
+        QR_CODE_STR,
+        /**
+         * generate qr-code image from File (File file)
+         */
+        QR_CODE_FILE
     }
 
     /**

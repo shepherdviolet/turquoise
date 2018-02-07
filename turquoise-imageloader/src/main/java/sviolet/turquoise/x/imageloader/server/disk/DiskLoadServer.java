@@ -83,7 +83,7 @@ public class DiskLoadServer implements ComponentManager.Component, Server {
         //decode
         try {
             ImageResource imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                    task, DecodeHandler.DecodeType.FILE, targetFile, getComponentManager().getLogger());
+                    task, DecodeHandler.DecodeType.IMAGE_FILE, targetFile, getComponentManager().getLogger());
             if (imageResource == null) {
                 getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
                         new Exception("[TILoader]Decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
@@ -122,7 +122,7 @@ public class DiskLoadServer implements ComponentManager.Component, Server {
         }
         //decode
         try {
-            ImageResource imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task, DecodeHandler.DecodeType.ASSETS, task.getUrl(), getComponentManager().getLogger());
+            ImageResource imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task, DecodeHandler.DecodeType.IMAGE_ASSETS, task.getUrl(), getComponentManager().getLogger());
             if (imageResource == null) {
                 getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
                         new Exception("[TILoader]Decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());
@@ -153,7 +153,7 @@ public class DiskLoadServer implements ComponentManager.Component, Server {
         }
         //decode
         try {
-            ImageResource imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task, DecodeHandler.DecodeType.RES, resId, getComponentManager().getLogger());
+            ImageResource imageResource = decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task, DecodeHandler.DecodeType.IMAGE_RES, resId, getComponentManager().getLogger());
             if (imageResource == null) {
                 getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
                         new Exception("[TILoader]Decoding failed, return null or invalid ImageResource"), getComponentManager().getLogger());

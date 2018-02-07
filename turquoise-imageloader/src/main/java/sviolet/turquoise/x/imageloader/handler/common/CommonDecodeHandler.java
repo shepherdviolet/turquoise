@@ -22,8 +22,12 @@ package sviolet.turquoise.x.imageloader.handler.common;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import pl.droidsonroids.gif.EnhancedGifDrawable;
 import pl.droidsonroids.gif.GifDrawable;
@@ -32,11 +36,14 @@ import sviolet.turquoise.util.bitmap.ZxingUtils;
 import sviolet.turquoise.util.judge.GifInspectUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
+import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
  * <p>common implementation of DecodeHandler</p>
+ *
+ * TODO docs
  *
  * @author S.Violet
  */
@@ -48,18 +55,22 @@ public class CommonDecodeHandler extends DecodeHandler {
 
     private int gifDrawableReferenceState = 0;
 
+    private static final int ZXING_REFERENCE_STATE_UNKNOWN = 0;
+    private static final int ZXING_REFERENCE_STATE_MISSING = -1;
+    private static final int ZXING_REFERENCE_STATE_EXISTS = 1;
+
+    private int zxingReferenceState = 0;
+
     //decode//////////////////////////////////////////////////////////////////////////
 
     @Override
     public ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, DecodeType decodeType, Object data, TLogger logger) {
-        Integer customReqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_WIDTH);
-        Integer customReqHeight = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_HEIGHT);
-        int reqWidth = customReqWidth == null ? taskInfo.getParams().getReqWidth() : customReqWidth;
-        int reqHeight = customReqHeight == null ? taskInfo.getParams().getReqHeight() : customReqHeight;
+        Integer reqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_WIDTH, taskInfo.getParams().getReqWidth());
+        Integer reqHeight = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_HEIGHT, taskInfo.getParams().getReqHeight());
         return distinguishDataType(applicationContext, context, taskInfo, decodeType, data, logger, reqWidth, reqHeight);
     }
 
-    protected ImageResource distinguishDataType(Context applicationContext, Context context, Task.Info taskInfo, DecodeType decodeType, Object data, TLogger logger, int reqWidth, int reqHeight) {
+    private ImageResource distinguishDataType(Context applicationContext, Context context, Task.Info taskInfo, DecodeType decodeType, Object data, TLogger logger, int reqWidth, int reqHeight) {
         if (!isGif(applicationContext, decodeType, data, logger)){
             //bitmap
             return handleBitmap(applicationContext, context, taskInfo, decodeType, data, logger, reqWidth, reqHeight);
@@ -76,20 +87,23 @@ public class CommonDecodeHandler extends DecodeHandler {
             return false;
         }
         switch (decodeType) {
-            case BYTES:
+            case IMAGE_BYTES:
                 return GifInspectUtils.isGif((byte[]) data);
-            case FILE:
+            case IMAGE_FILE:
                 return GifInspectUtils.isGif((File) data);
-            case RES:
+            case IMAGE_RES:
                 return GifInspectUtils.isGif(applicationContext.getResources(), (int) data);
-            case ASSETS:
+            case IMAGE_ASSETS:
                 return GifInspectUtils.isGif(applicationContext.getAssets(), (String) data);
-            case QR_CODE:
+            case QR_CODE_STR:
+            case QR_CODE_FILE:
                 return false;
             default:
                 throw new RuntimeException("[CommonDecodeHandler]Unsupported decodeType:" + decodeType);
         }
     }
+
+    //check reference////////////////////////////////////////////////////////////////////////////
 
     private boolean checkGifDrawableReference(TLogger logger) {
         if (gifDrawableReferenceState == GIF_DRAWABLE_REFERENCE_STATE_UNKNOWN) {
@@ -98,7 +112,7 @@ public class CommonDecodeHandler extends DecodeHandler {
                 gifDrawableReferenceState = GIF_DRAWABLE_REFERENCE_STATE_EXISTS;
             } catch (ClassNotFoundException e) {
                 gifDrawableReferenceState = GIF_DRAWABLE_REFERENCE_STATE_MISSING;
-                logger.e("[EnhancedDecodeHandler]Your project lacks a dependency of pl.droidsonroids.gif:android-gif-drawable:?.?.?, can not display GIF", e);
+                logger.e("[CommonDecodeHandler]Your project lacks a dependency of pl.droidsonroids.gif:android-gif-drawable:?.?.?, can not display GIF", e);
             }
         }
         if (gifDrawableReferenceState == GIF_DRAWABLE_REFERENCE_STATE_MISSING) {
@@ -108,11 +122,28 @@ public class CommonDecodeHandler extends DecodeHandler {
         return false;
     }
 
+    private boolean checkZxingReference(TLogger logger) {
+        if (zxingReferenceState == ZXING_REFERENCE_STATE_UNKNOWN) {
+            try {
+                Class.forName("com.google.zxing.qrcode.decoder.ErrorCorrectionLevel");
+                Class.forName("com.google.zxing.MultiFormatWriter");
+                zxingReferenceState = ZXING_REFERENCE_STATE_EXISTS;
+            } catch (ClassNotFoundException e) {
+                zxingReferenceState = ZXING_REFERENCE_STATE_MISSING;
+                logger.e("[CommonDecodeHandler]Your project lacks a dependency of com.google.zxing:core:?.?.?, can not generate qr-code", e);
+            }
+        }
+        if (zxingReferenceState == ZXING_REFERENCE_STATE_MISSING) {
+            return true;
+        }
+        return false;
+    }
+
     //decode bitmap///////////////////////////////////////////////////////////////////////////
 
     private ImageResource handleBitmap(Context applicationContext, Context context, Task.Info taskInfo, DecodeType decodeType, Object data, TLogger logger, int reqWidth, int reqHeight) {
         //decoding
-        Bitmap bitmap = decodeBitmap(applicationContext, decodeType, data, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), taskInfo.getParams().getDecodeInSampleQuality());
+        Bitmap bitmap = decodeBitmap(applicationContext, taskInfo, decodeType, data, logger, reqWidth, reqHeight, taskInfo.getParams().getBitmapConfig(), taskInfo.getParams().getDecodeInSampleQuality());
         if (bitmap == null) {
             throw new RuntimeException("[CommonDecodeHandler]decoding failed, illegal image data");
         }
@@ -139,25 +170,71 @@ public class CommonDecodeHandler extends DecodeHandler {
         return new ImageResource(ImageResource.Type.BITMAP, bitmap);
     }
 
-    private Bitmap decodeBitmap(Context applicationContext, DecodeType decodeType, Object data, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, BitmapUtils.InSampleQuality quality){
+    private Bitmap decodeBitmap(Context applicationContext, Task.Info taskInfo, DecodeType decodeType, Object data, TLogger logger, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, BitmapUtils.InSampleQuality quality){
         switch (decodeType) {
-            case BYTES:
+            case IMAGE_BYTES:
                 return BitmapUtils.decodeFromByteArray((byte[]) data, reqWidth, reqHeight, bitmapConfig, quality);
-            case FILE:
+            case IMAGE_FILE:
                 return BitmapUtils.decodeFromFile(((File) data).getAbsolutePath(), reqWidth, reqHeight, bitmapConfig, quality);
-            case RES:
+            case IMAGE_RES:
                 return BitmapUtils.decodeFromResource(applicationContext.getResources(), (int) data, reqWidth, reqHeight, bitmapConfig, quality);
-            case ASSETS:
+            case IMAGE_ASSETS:
                 return BitmapUtils.decodeFromAssets(applicationContext.getAssets(), (String) data, reqWidth, reqHeight, bitmapConfig, quality);
-            case QR_CODE:
-                try {
-                    //TODO developing
-                    return ZxingUtils.generateQrCode((String)data, reqWidth, reqHeight, 1, "utf-8", ZxingUtils.CorrectionLevel.M);
-                } catch (ZxingUtils.QrCodeGenerateException e) {
-                    throw new RuntimeException("Error while generating qr-code bitmap:" + String.valueOf(data), e);
-                }
+            case QR_CODE_STR:
+                return generateQrCode(applicationContext, taskInfo, (String)data, logger, reqWidth, reqHeight, bitmapConfig, quality);
+            case QR_CODE_FILE:
+                return generateQrCode(applicationContext, taskInfo, (File)data, logger, reqWidth, reqHeight, bitmapConfig, quality);
             default:
                 throw new RuntimeException("[CommonDecodeHandler]Unsupported decodeType for bitmap:" + decodeType);
+        }
+    }
+
+    private Bitmap generateQrCode(Context applicationContext, Task.Info taskInfo, String data, TLogger logger, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, BitmapUtils.InSampleQuality quality) {
+        if (checkZxingReference(logger)){
+            return null;
+        }
+        String charset = taskInfo.getParams().getExtraString(Params.URL_TO_QR_CODE_CHARSET, "utf-8");
+        int margin = taskInfo.getParams().getExtraInteger(Params.URL_TO_QR_CODE_MARGIN, 1);
+        Object correctionLevel = taskInfo.getParams().getExtra(Params.URL_TO_QR_CODE_CORRECTION_LEVEL);
+        if (!(correctionLevel instanceof ZxingUtils.CorrectionLevel)){
+            correctionLevel = ZxingUtils.CorrectionLevel.M;
+        }
+        try {
+            return ZxingUtils.generateQrCode(data, reqWidth, reqHeight, margin, charset, (ZxingUtils.CorrectionLevel) correctionLevel);
+        } catch (ZxingUtils.QrCodeGenerateException e) {
+            throw new RuntimeException("Error while generating qr-code bitmap from url, url:" + String.valueOf(data), e);
+        }
+    }
+
+    private Bitmap generateQrCode(Context applicationContext, Task.Info taskInfo, File file, TLogger logger, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, BitmapUtils.InSampleQuality quality) {
+        if (checkZxingReference(logger)){
+            return null;
+        }
+        String charset = taskInfo.getParams().getExtraString(Params.URL_TO_QR_CODE_CHARSET, "utf-8");
+        int margin = taskInfo.getParams().getExtraInteger(Params.URL_TO_QR_CODE_MARGIN, 1);
+        Object correctionLevel = taskInfo.getParams().getExtra(Params.URL_TO_QR_CODE_CORRECTION_LEVEL);
+        if (!(correctionLevel instanceof ZxingUtils.CorrectionLevel)){
+            correctionLevel = ZxingUtils.CorrectionLevel.M;
+        }
+        InputStream inputStream = null;
+        try {
+            inputStream = new BufferedInputStream(new FileInputStream(file));
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            int length;
+            byte[] buff = new byte[1024];
+            while ((length = inputStream.read(buff)) >= 0){
+                byteArrayOutputStream.write(buff, 0, length);
+            }
+            return ZxingUtils.generateQrCode(byteArrayOutputStream.toString(), reqWidth, reqHeight, margin, charset, (ZxingUtils.CorrectionLevel) correctionLevel);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while generating qr-code bitmap from disk cache, url:" + taskInfo.getUrl(), e);
+        } finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (IOException ignored) {
+                }
+            }
         }
     }
 
@@ -165,21 +242,21 @@ public class CommonDecodeHandler extends DecodeHandler {
 
     private ImageResource handleGif(Context applicationContext, Context context, Task.Info taskInfo, DecodeType decodeType, Object data, TLogger logger, int reqWidth, int reqHeight) {
         try {
-            return new ImageResource(ImageResource.Type.GIF, decodeGif(applicationContext, decodeType, data, reqWidth, reqHeight, taskInfo.getParams().getDecodeInSampleQuality()));
+            return new ImageResource(ImageResource.Type.GIF, decodeGif(applicationContext, taskInfo, decodeType, data, logger, reqWidth, reqHeight, taskInfo.getParams().getDecodeInSampleQuality()));
         } catch (IOException e) {
             throw new RuntimeException("[EnhancedDecodeHandler]error while decoding gif from bytes", e);
         }
     }
 
-    private GifDrawable decodeGif(Context applicationContext, DecodeType decodeType, Object data, int reqWidth, int reqHeight, BitmapUtils.InSampleQuality quality) throws IOException {
+    private GifDrawable decodeGif(Context applicationContext, Task.Info taskInfo, DecodeType decodeType, Object data, TLogger logger, int reqWidth, int reqHeight, BitmapUtils.InSampleQuality quality) throws IOException {
         switch (decodeType) {
-            case BYTES:
+            case IMAGE_BYTES:
                 return EnhancedGifDrawable.decode((byte[]) data, reqWidth, reqHeight, quality);
-            case FILE:
+            case IMAGE_FILE:
                 return EnhancedGifDrawable.decode((File) data, reqWidth, reqHeight, quality);
-            case RES:
+            case IMAGE_RES:
                 return EnhancedGifDrawable.decode(applicationContext.getResources(), (int) data, reqWidth, reqHeight, quality);
-            case ASSETS:
+            case IMAGE_ASSETS:
                 return EnhancedGifDrawable.decode(applicationContext.getAssets(), (String) data, reqWidth, reqHeight, quality);
             default:
                 throw new RuntimeException("[CommonDecodeHandler]Unsupported decodeType for gif:" + decodeType);

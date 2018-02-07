@@ -69,6 +69,8 @@ public class BasicActivity extends TActivity {
     private ImageView imageView8;
     @ResourceId(R.id.basic_main_imageview9)
     private ImageView imageView9;
+    @ResourceId(R.id.basic_main_imageview10)
+    private ImageView imageView10;
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
@@ -300,6 +302,23 @@ public class BasicActivity extends TActivity {
         TILoader.node(this).load(url9, params9, imageView9);
 
         imageView9.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //失败重载
+                TILoaderUtils.getStubRemoter(v).relaunch();
+            }
+        });
+
+        /*
+         * 生成二维码
+         */
+        String url10 = "http://www.baidu.com";
+        Params params10 = new Params.Builder()
+                .setSourceType(Params.SourceType.URL_TO_QR_CODE)
+                .build();
+        TILoader.node(this).load(url10, params10, imageView10);
+
+        imageView10.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //失败重载

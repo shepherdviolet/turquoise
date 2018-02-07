@@ -71,6 +71,7 @@ public class ServerSettings implements ComponentManager.Component{
         private int reloadTimes = DEFAULT_RELOAD_TIMES;
         private File diskCachePath = null;
 
+        private int urlLengthLimit = DEFAULT_URL_LENGTH_LIMIT;
         private long imageDataLengthLimit = DEFAULT_IMAGE_DATA_LENGTH_LIMIT;
         private long memoryBufferLengthLimit = DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT;
         private LowNetworkSpeedStrategy lowNetworkSpeedStrategy = new LowNetworkSpeedStrategy.Builder().build();
@@ -249,6 +250,22 @@ public class ServerSettings implements ComponentManager.Component{
                 throw new RuntimeException("[ServerSettings]diskLoadMaxThread must >= 1");
             }
             values.diskLoadMaxThread = maxThread;
+            return this;
+        }
+
+        /**
+         * <p>[Senior Setting]Set url length limit</p>
+         *
+         * <p>You can increase max length of url by this method.</p>
+         *
+         * @param urlLengthLimit max length of url, 8K by default
+         */
+        public Builder setUrlLengthLimit(int urlLengthLimit){
+            if (urlLengthLimit <= 0){
+                throw new RuntimeException("UrlLengthLimit must > 0");
+            }
+            values.urlLengthLimit = urlLengthLimit;
+            values.stubFactory.setUrlLengthLimit(urlLengthLimit);
             return this;
         }
 
@@ -467,6 +484,7 @@ public class ServerSettings implements ComponentManager.Component{
     public static final long DEFAULT_NETWORK_READ_TIMEOUT = 5000;//ms
     private static final int DEFAULT_RELOAD_TIMES = 1;
 
+    public static final int DEFAULT_URL_LENGTH_LIMIT = 8 * 1024;
     private static final long DEFAULT_IMAGE_DATA_LENGTH_LIMIT = -1;
     private static final long MIN_IMAGE_DATA_LENGTH_LIMIT = 1024 * 1024;
     private static final float DEFAULT_IMAGE_DATA_LENGTH_LIMIT_PERCENT = 0.3f;
@@ -559,6 +577,10 @@ public class ServerSettings implements ComponentManager.Component{
 
     public int getReloadTimes(){
         return values.reloadTimes;
+    }
+
+    public int getUrlLengthLimit(){
+        return values.urlLengthLimit;
     }
 
     public long getImageDataLengthLimit(){

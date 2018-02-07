@@ -24,27 +24,24 @@ import android.widget.ImageView;
 
 import sviolet.turquoise.x.imageloader.entity.OnLoadedListener;
 import sviolet.turquoise.x.imageloader.entity.Params;
+import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 import sviolet.turquoise.x.imageloader.stub.StubFactory;
 
 /**
  * <p>Stub factory</p>
  *
- * Created by S.Violet on 2016/2/23.
+ * @author S.Violet
  */
 public final class StubFactoryImpl extends StubFactory {
 
     private StubFactory customStubFactory;
+    private int urlLengthLimit = ServerSettings.DEFAULT_URL_LENGTH_LIMIT;
 
     @Override
     public final Stub newLoadStub(String url, Params params, View view) {
         //check input
-        if (url == null){
-            throw new RuntimeException("[TILoader]can't load image without url!");
-        }
-        if (view == null){
-            throw new RuntimeException("[TILoader]can't load image into a null View!");
-        }
+        checkInput(url, view);
         //copy params
         if (params == null){
             params = new Params.Builder().build();
@@ -75,12 +72,7 @@ public final class StubFactoryImpl extends StubFactory {
     @Override
     public final Stub newLoadBackgroundStub(String url, Params params, View view) {
         //check input
-        if (url == null){
-            throw new RuntimeException("[TILoader]can't load image without url!");
-        }
-        if (view == null){
-            throw new RuntimeException("[TILoader]can't load image into a null View!");
-        }
+        checkInput(url, view);
         //copy params
         if (params == null){
             params = new Params.Builder().build();
@@ -108,12 +100,7 @@ public final class StubFactoryImpl extends StubFactory {
     @Override
     public final Stub newExtractStub(String url, Params params, OnLoadedListener listener) {
         //check input
-        if (url == null){
-            throw new RuntimeException("[TILoader]can't load image without url!");
-        }
-        if (listener == null){
-            throw new RuntimeException("[TILoader]can't extract image without listener!");
-        }
+        checkInput(url, listener);
         //copy params
         if (params == null){
             params = new Params.Builder().build();
@@ -134,12 +121,40 @@ public final class StubFactoryImpl extends StubFactory {
         return stub;
     }
 
+    private void checkInput(String url, View view) {
+        if (url == null){
+            throw new RuntimeException("[TILoader]can't load image without url!");
+        }
+        if (url.length() > urlLengthLimit){
+            throw new RuntimeException("[TILoader]Url is too long! limit:" + urlLengthLimit);
+        }
+        if (view == null){
+            throw new RuntimeException("[TILoader]can't load image into a null View!");
+        }
+    }
+
+    private void checkInput(String url, OnLoadedListener listener) {
+        if (url == null){
+            throw new RuntimeException("[TILoader]can't load image without url!");
+        }
+        if (url.length() > urlLengthLimit){
+            throw new RuntimeException("[TILoader]Url is too long! limit:" + urlLengthLimit);
+        }
+        if (listener == null){
+            throw new RuntimeException("[TILoader]can't extract image without listener!");
+        }
+    }
+
     protected final Stub newExtractStubInner(String url, Params params, OnLoadedListener listener){
         return new ExtractStub(url, params, listener);
     }
 
     public final void setCustomStubFactory(StubFactory factory) {
         this.customStubFactory = factory;
+    }
+
+    public void setUrlLengthLimit(int urlLengthLimit){
+        this.urlLengthLimit = urlLengthLimit;
     }
 
 }

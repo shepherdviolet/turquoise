@@ -146,7 +146,7 @@ public class HttpGetServer implements ComponentManager.Component, Server {
         //try to write disk cache
         getComponentManager().getDiskCacheServer().write(task, bytes);
         //handle data
-        getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.BYTES, bytes);
+        getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.IMAGE_BYTES, bytes);
     }
 
     /**
@@ -172,10 +172,10 @@ public class HttpGetServer implements ComponentManager.Component, Server {
         DiskCacheServer.Result result = getComponentManager().getDiskCacheServer().write(task, inputStream, lowNetworkSpeedConfig);
         switch (result.getType()){
             case SUCCEED:
-                getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.FILE, result.getTargetFile());
+                getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.IMAGE_FILE, result.getTargetFile());
                 break;
             case RETURN_MEMORY_BUFFER:
-                getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.BYTES, result.getMemoryBuffer());
+                getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.IMAGE_BYTES, result.getMemoryBuffer());
                 break;
             case CANCELED:
                 getNetworkEngine().handleCanceled(task);

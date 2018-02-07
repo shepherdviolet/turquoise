@@ -53,13 +53,18 @@ public class DiskCacheServer extends DiskCacheModule {
         //fetch cache file
         try {
             File targetFile = get(task);
-            if (targetFile == null || !targetFile.exists()) {
+            if (targetFile == null || !targetFile.exists()|| targetFile.isDirectory()) {
+                return null;
+            }
+            //decode type
+            DecodeHandler.DecodeType decodeType = judgeDecodeType(task, targetFile);
+            if (decodeType == null){
                 return null;
             }
             //decode
             try {
                 return decodeHandler.decode(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                        task, DecodeHandler.DecodeType.FILE, targetFile, getComponentManager().getLogger());
+                        task, decodeType, targetFile, getComponentManager().getLogger());
             } catch (Throwable t) {
                 getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), t, getComponentManager().getLogger());
                 return null;
@@ -67,6 +72,20 @@ public class DiskCacheServer extends DiskCacheModule {
         } finally {
             //release
             release();
+        }
+    }
+
+    private DecodeHandler.DecodeType judgeDecodeType(Task task, File file){
+        switch (task.getParams().getSourceType()) {
+            case URL_TO_QR_CODE:
+                if (file.length() > getComponentManager().getServerSettings().getUrlLengthLimit()) {
+                    getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
+                            new Exception("Invalid qr-code cache file, too long, limit:" + getComponentManager().getServerSettings().getUrlLengthLimit()), getComponentManager().getLogger());
+                    return null;
+                }
+                return DecodeHandler.DecodeType.QR_CODE_FILE;
+            default:
+                return DecodeHandler.DecodeType.IMAGE_FILE;
         }
     }
 
