@@ -64,7 +64,7 @@ public class ZxingGenerateServer implements ComponentManager.Component, Server {
      */
     void generateQrCode(Task task, IndispensableState indispensableState) {
         //try to write disk cache
-        if (task.getParams().getExtraBoolean(Params.URL_TO_QR_CODE_DISK_CACHE_EABLE, false)) {
+        if (task.getParams().getExtraBoolean(Params.URL_TO_QR_CODE_DISK_CACHE_ENABLE, false)) {
             try {
                 getComponentManager().getDiskCacheServer().write(task, task.getUrl().getBytes(task.getParams().getExtraString(Params.URL_TO_QR_CODE_CHARSET, "utf-8")));
             } catch (UnsupportedEncodingException e) {

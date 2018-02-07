@@ -193,12 +193,14 @@ public class CommonDecodeHandler extends DecodeHandler {
         if (checkZxingReference(logger)){
             return null;
         }
+        //extras
         String charset = taskInfo.getParams().getExtraString(Params.URL_TO_QR_CODE_CHARSET, "utf-8");
         int margin = taskInfo.getParams().getExtraInteger(Params.URL_TO_QR_CODE_MARGIN, 1);
         Object correctionLevel = taskInfo.getParams().getExtra(Params.URL_TO_QR_CODE_CORRECTION_LEVEL);
         if (!(correctionLevel instanceof ZxingUtils.CorrectionLevel)){
             correctionLevel = ZxingUtils.CorrectionLevel.M;
         }
+        //generate
         try {
             return ZxingUtils.generateQrCode(data, reqWidth, reqHeight, margin, charset, (ZxingUtils.CorrectionLevel) correctionLevel);
         } catch (ZxingUtils.QrCodeGenerateException e) {
@@ -210,12 +212,14 @@ public class CommonDecodeHandler extends DecodeHandler {
         if (checkZxingReference(logger)){
             return null;
         }
+        //extras
         String charset = taskInfo.getParams().getExtraString(Params.URL_TO_QR_CODE_CHARSET, "utf-8");
         int margin = taskInfo.getParams().getExtraInteger(Params.URL_TO_QR_CODE_MARGIN, 1);
         Object correctionLevel = taskInfo.getParams().getExtra(Params.URL_TO_QR_CODE_CORRECTION_LEVEL);
         if (!(correctionLevel instanceof ZxingUtils.CorrectionLevel)){
             correctionLevel = ZxingUtils.CorrectionLevel.M;
         }
+        //generate
         InputStream inputStream = null;
         try {
             inputStream = new BufferedInputStream(new FileInputStream(file));

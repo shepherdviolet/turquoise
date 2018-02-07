@@ -22,6 +22,7 @@ package sviolet.turquoise.x.imageloader.entity;
 import android.graphics.Bitmap;
 import android.view.View;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import sviolet.turquoise.util.bitmap.BitmapUtils;
@@ -38,10 +39,32 @@ public class Params {
 
     //extras key/////////////////////////////////////////////////////////////////////////////////
 
-    //TODO doc
-    public static final String URL_TO_QR_CODE_DISK_CACHE_EABLE = "Params_url_to_qr_code_disk_cache_enable";
+    /**
+     * For SourceType.URL_TO_QR_CODE
+     * Value type: boolean
+     * If true, we will store qr-code into disk cache, false by default.
+     */
+    public static final String URL_TO_QR_CODE_DISK_CACHE_ENABLE = "Params_url_to_qr_code_disk_cache_enable";
+
+    /**
+     * For SourceType.URL_TO_QR_CODE
+     * Value type: String
+     * Charset of qr-code, utf-8 by default
+     */
     public static final String URL_TO_QR_CODE_CHARSET = "Params_url_to_qr_code_charset";
+
+    /**
+     * For SourceType.URL_TO_QR_CODE
+     * Value type: int
+     * Margin of qr-code image, 1 by default
+     */
     public static final String URL_TO_QR_CODE_MARGIN = "Params_url_to_qr_code_margin";
+
+    /**
+     * For SourceType.URL_TO_QR_CODE
+     * Value type: ZxingUtils.CorrectionLevel
+     * Error correction of qr-code, ZxingUtils.CorrectionLevel.M by default
+     */
     public static final String URL_TO_QR_CODE_CORRECTION_LEVEL = "Params_url_to_qr_code_correction_level";
 
     //params/////////////////////////////////////////////////////////////////////////////////////
@@ -133,6 +156,18 @@ public class Params {
          *          .setSourceType(Params.SourceType.APK_ASSETS)
          *          .build();
          *      TILoader.node(this).load("images/image1.jpg", params, imageView);
+         * }</pre>
+         *
+         * <p>Generate qr-code by url value:</p>
+         * <pre>{@code
+         *      Params params = new Params.Builder()
+         *          .setSourceType(Params.SourceType.URL_TO_QR_CODE)
+         *          .addExtra(Params.URL_TO_QR_CODE_DISK_CACHE_ENABLE, false)
+         *          .addExtra(Params.URL_TO_QR_CODE_CHARSET, "utf-8")
+         *          .addExtra(Params.URL_TO_QR_CODE_MARGIN, 1)
+         *          .addExtra(Params.URL_TO_QR_CODE_CORRECTION_LEVEL, ZxingUtils.CorrectionLevel.M)
+         *          .build();
+         *      TILoader.node(this).load("hello world", params, imageView);
          * }</pre>
          *
          * @param sourceType Specify where to get the image. HTTP_GET by default.
@@ -367,6 +402,14 @@ public class Params {
 
         public Builder setExtras(Map<String, Object> extras){
             values.extras = extras;
+            return this;
+        }
+
+        public Builder addExtra(String key, Object value){
+            if (values.extras == null) {
+                values.extras = new HashMap<>(1);
+            }
+            values.extras.put(key, value);
             return this;
         }
 
