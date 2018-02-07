@@ -86,10 +86,10 @@ public class GifActivity extends TAppCompatActivity {
          * 像加载普通图片一样加载GIF即可
          */
         String url1 = "https://camo.githubusercontent.com/d406ac5a03a2b1fa5cf41fadc8d2408cb8709bdc/68747470733a2f2f6431337961637572716a676172612e636c6f756466726f6e742e6e65742f75736572732f3132353035362f73637265656e73686f74732f313635303331372f7265616c6573746174652d70756c6c5f312d322d332e676966";
-        Params params = new Params.Builder()
+        Params params1 = new Params.Builder()
                 .setIndispensable()//设置为重要任务, 有双倍的超时时间, 采用专用的低网速策略(延长加载时间)
                 .build();
-        TILoader.node(this).load(url1, params, imageView1);
+        TILoader.node(this).load(url1, imageView1, params1);
 
         imageView1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +106,7 @@ public class GifActivity extends TAppCompatActivity {
         Params params2 = new Params.Builder()
                 .setSourceType(Params.SourceType.APK_RES)
                 .build();
-        TILoader.node(this).load(url2, params2, imageView2);
+        TILoader.node(this).load(url2, imageView2, params2);
 
         imageView2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +123,7 @@ public class GifActivity extends TAppCompatActivity {
         Params params3 = new Params.Builder()
                 .setSourceType(Params.SourceType.APK_ASSETS)
                 .build();
-        TILoader.node(this).load(url3, params3, imageView3);
+        TILoader.node(this).load(url3, imageView3, params3);
 
         imageView3.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -140,7 +140,7 @@ public class GifActivity extends TAppCompatActivity {
         Params params4 = new Params.Builder()
                 .setSourceType(Params.SourceType.LOCAL_DISK)
                 .build();
-        TILoader.node(this).load(url4, params4, imageView4);
+        TILoader.node(this).load(url4, imageView4, params4);
 
         imageView4.setOnClickListener(new View.OnClickListener() {
             @Override

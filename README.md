@@ -132,7 +132,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
             .build();
 
         //Load image and display in ImageView
-        TILoader.node(this).load(url, params, imageView);
+        TILoader.node(this).load(url, imageView, params);
 
 ```
 

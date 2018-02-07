@@ -55,11 +55,11 @@ public class LoadNode extends Node {
 
     @Override
     public void load(String url, View view) {
-        load(url, null, view);
+        load(url, view, null);
     }
 
     @Override
-    public void load(String url, Params params, View view) {
+    public void load(String url, View view, Params params) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
         try {
@@ -72,11 +72,11 @@ public class LoadNode extends Node {
 
     @Override
     public void loadBackground(String url, View view) {
-        loadBackground(url, null, view);
+        loadBackground(url, view, null);
     }
 
     @Override
-    public void loadBackground(String url, Params params, View view) {
+    public void loadBackground(String url, View view, Params params) {
         manager.waitingForInitialized();
         controller.waitingForInitialized();
         try {

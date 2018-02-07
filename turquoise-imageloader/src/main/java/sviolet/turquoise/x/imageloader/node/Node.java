@@ -72,10 +72,10 @@ public abstract class Node {
      * methods to make screen accommodate more pictures.</p>
      *
      * @param url URL
-     * @param params loading params
      * @param view target View
+     * @param params loading params
      */
-    public abstract void load(String url, Params params, View view);
+    public abstract void load(String url, View view, Params params);
 
     /**
      * [Initialize TILoader]this method will initialize TILoader<br/>
@@ -109,10 +109,10 @@ public abstract class Node {
      * methods to make screen accommodate more pictures.</p>
      *
      * @param url URL
-     * @param params loading params
      * @param view View
+     * @param params loading params
      */
-    public abstract void loadBackground(String url, Params params, View view);
+    public abstract void loadBackground(String url, View view, Params params);
 
     /**
      * Node Setting, you should setting before Node initialized (invoke TILoader.node().load() will initialize Node)<br/>

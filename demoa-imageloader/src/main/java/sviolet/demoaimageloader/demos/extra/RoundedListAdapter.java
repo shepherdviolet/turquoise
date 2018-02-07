@@ -128,7 +128,7 @@ public class RoundedListAdapter extends BaseAdapter {
             });
         }
 
-        TILoader.node(context).load(item.getUrl(0), params, imageView);
+        TILoader.node(context).load(item.getUrl(0), imageView, params);
 
         return holder.getConvertView();
     }

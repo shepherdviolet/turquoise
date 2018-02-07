@@ -179,10 +179,10 @@ public class BasicActivity extends TActivity {
         String url2 = "https://raw.githubusercontent.com/shepherdviolet/static-resources/master/image/logo/turquoise.jpg";
         int image2Width = MeasureUtils.getScreenWidth(this) / 3;//指定图片宽度
         int image2Height = image2Width * 3 / 4;//指定图片高度
-        Params params = new Params.Builder()
+        Params params2 = new Params.Builder()
                 .setReqSize(image2Width, image2Height)//指定尺寸
                 .build();
-        TILoader.node(this).load(url2, params, imageView2);
+        TILoader.node(this).load(url2, imageView2, params2);
 
         imageView2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,7 +228,7 @@ public class BasicActivity extends TActivity {
                     }
                 })
                 .build();
-        TILoader.node(this).load(url5, params5, imageView5);
+        TILoader.node(this).load(url5, imageView5, params5);
 
         imageView5.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,7 +248,7 @@ public class BasicActivity extends TActivity {
                 .useExtensionBackgroundDrawableFactory(IMAGE_VIEW_6_EXTENSION_INDEX)//使用特殊的背景图
                 .setImageAppearDuration(0)//设置图片出现的时间
                 .build();
-        TILoader.node(this).load(url6, params6, imageView6);
+        TILoader.node(this).load(url6, imageView6, params6);
 
         imageView6.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -265,7 +265,7 @@ public class BasicActivity extends TActivity {
         Params params7 = new Params.Builder()
                 .setSourceType(Params.SourceType.APK_RES)
                 .build();
-        TILoader.node(this).load(url7, params7, imageView7);
+        TILoader.node(this).load(url7, imageView7, params7);
 
         imageView7.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -282,7 +282,7 @@ public class BasicActivity extends TActivity {
         Params params8 = new Params.Builder()
                 .setSourceType(Params.SourceType.APK_ASSETS)
                 .build();
-        TILoader.node(this).load(url8, params8, imageView8);
+        TILoader.node(this).load(url8, imageView8, params8);
 
         imageView8.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -299,7 +299,7 @@ public class BasicActivity extends TActivity {
         Params params9 = new Params.Builder()
                 .setSourceType(Params.SourceType.LOCAL_DISK)
                 .build();
-        TILoader.node(this).load(url9, params9, imageView9);
+        TILoader.node(this).load(url9, imageView9, params9);
 
         imageView9.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -320,7 +320,7 @@ public class BasicActivity extends TActivity {
 //                .addExtra(Params.URL_TO_QR_CODE_MARGIN, 1)
 //                .addExtra(Params.URL_TO_QR_CODE_CORRECTION_LEVEL, ZxingUtils.CorrectionLevel.M)
                 .build();
-        TILoader.node(this).load(url10, params10, imageView10);
+        TILoader.node(this).load(url10, imageView10, params10);
 
         imageView10.setOnClickListener(new View.OnClickListener() {
             @Override
