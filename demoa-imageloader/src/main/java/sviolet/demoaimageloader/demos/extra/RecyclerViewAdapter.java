@@ -28,6 +28,7 @@ import sviolet.demoaimageloader.R;
 import sviolet.turquoise.ui.adapter.TRecyclerViewAdapter;
 import sviolet.turquoise.ui.adapter.TRecyclerViewHolder;
 import sviolet.turquoise.x.imageloader.TILoader;
+import sviolet.turquoise.x.imageloader.entity.Params;
 
 /**
  * Created by S.Violet on 2016/5/18.
@@ -59,7 +60,9 @@ public class RecyclerViewAdapter extends TRecyclerViewAdapter {
 
     @Override
     public void onBindViewHolder(TRecyclerViewHolder holder, int position) {
-        TILoader.node(context).load(dataList.get(position).getUrl(0), holder.get(R.id.recycler_view_main_item_image));
+        TILoader.node(context).load(dataList.get(position).getUrl(0), holder.get(R.id.recycler_view_main_item_image), new Params.Builder()
+                .setSourceType(Params.SourceType.URL_TO_QR_CODE)
+                .build());
     }
 
 }

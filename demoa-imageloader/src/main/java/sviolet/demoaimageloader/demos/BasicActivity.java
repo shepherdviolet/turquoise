@@ -315,7 +315,6 @@ public class BasicActivity extends TActivity {
         String url10 = "Hello TILoader";
         Params params10 = new Params.Builder()
                 .setSourceType(Params.SourceType.URL_TO_QR_CODE)
-//                .addExtra(Params.URL_TO_QR_CODE_DISK_CACHE_ENABLE, false)
 //                .addExtra(Params.URL_TO_QR_CODE_CHARSET, "utf-8")
 //                .addExtra(Params.URL_TO_QR_CODE_MARGIN, 1)
 //                .addExtra(Params.URL_TO_QR_CODE_CORRECTION_LEVEL, ZxingUtils.CorrectionLevel.M)
