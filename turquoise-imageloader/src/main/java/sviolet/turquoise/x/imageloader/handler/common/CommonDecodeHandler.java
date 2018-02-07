@@ -22,12 +22,8 @@ package sviolet.turquoise.x.imageloader.handler.common;
 import android.content.Context;
 import android.graphics.Bitmap;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import pl.droidsonroids.gif.EnhancedGifDrawable;
 import pl.droidsonroids.gif.GifDrawable;
@@ -42,8 +38,6 @@ import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
  * <p>common implementation of DecodeHandler</p>
- *
- * TODO docs
  *
  * @author S.Violet
  */
@@ -95,8 +89,7 @@ public class CommonDecodeHandler extends DecodeHandler {
                 return GifInspectUtils.isGif(applicationContext.getResources(), (int) data);
             case IMAGE_ASSETS:
                 return GifInspectUtils.isGif(applicationContext.getAssets(), (String) data);
-            case QR_CODE_STR:
-            case QR_CODE_FILE:
+            case QR_CODE:
                 return false;
             default:
                 throw new RuntimeException("[CommonDecodeHandler]Unsupported decodeType:" + decodeType);
@@ -180,10 +173,8 @@ public class CommonDecodeHandler extends DecodeHandler {
                 return BitmapUtils.decodeFromResource(applicationContext.getResources(), (int) data, reqWidth, reqHeight, bitmapConfig, quality);
             case IMAGE_ASSETS:
                 return BitmapUtils.decodeFromAssets(applicationContext.getAssets(), (String) data, reqWidth, reqHeight, bitmapConfig, quality);
-            case QR_CODE_STR:
+            case QR_CODE:
                 return generateQrCode(applicationContext, taskInfo, (String)data, logger, reqWidth, reqHeight, bitmapConfig, quality);
-            case QR_CODE_FILE:
-                return generateQrCode(applicationContext, taskInfo, (File)data, logger, reqWidth, reqHeight, bitmapConfig, quality);
             default:
                 throw new RuntimeException("[CommonDecodeHandler]Unsupported decodeType for bitmap:" + decodeType);
         }
@@ -205,40 +196,6 @@ public class CommonDecodeHandler extends DecodeHandler {
             return ZxingUtils.generateQrCode(data, reqWidth, reqHeight, margin, charset, (ZxingUtils.CorrectionLevel) correctionLevel);
         } catch (ZxingUtils.QrCodeGenerateException e) {
             throw new RuntimeException("Error while generating qr-code bitmap from url, url:" + String.valueOf(data), e);
-        }
-    }
-
-    private Bitmap generateQrCode(Context applicationContext, Task.Info taskInfo, File file, TLogger logger, int reqWidth, int reqHeight, Bitmap.Config bitmapConfig, BitmapUtils.InSampleQuality quality) {
-        if (checkZxingReference(logger)){
-            return null;
-        }
-        //extras
-        String charset = taskInfo.getParams().getExtraString(Params.URL_TO_QR_CODE_CHARSET, "utf-8");
-        int margin = taskInfo.getParams().getExtraInteger(Params.URL_TO_QR_CODE_MARGIN, 1);
-        Object correctionLevel = taskInfo.getParams().getExtra(Params.URL_TO_QR_CODE_CORRECTION_LEVEL);
-        if (!(correctionLevel instanceof ZxingUtils.CorrectionLevel)){
-            correctionLevel = ZxingUtils.CorrectionLevel.M;
-        }
-        //generate
-        InputStream inputStream = null;
-        try {
-            inputStream = new BufferedInputStream(new FileInputStream(file));
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            int length;
-            byte[] buff = new byte[1024];
-            while ((length = inputStream.read(buff)) >= 0){
-                byteArrayOutputStream.write(buff, 0, length);
-            }
-            return ZxingUtils.generateQrCode(byteArrayOutputStream.toString(), reqWidth, reqHeight, margin, charset, (ZxingUtils.CorrectionLevel) correctionLevel);
-        } catch (Exception e) {
-            throw new RuntimeException("Error while generating qr-code bitmap from disk cache, url:" + taskInfo.getUrl(), e);
-        } finally {
-            if (inputStream != null){
-                try {
-                    inputStream.close();
-                } catch (IOException ignored) {
-                }
-            }
         }
     }
 

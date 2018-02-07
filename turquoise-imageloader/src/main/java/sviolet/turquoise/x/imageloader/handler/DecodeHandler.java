@@ -120,11 +120,7 @@ public abstract class DecodeHandler {
         /**
          * generate qr-code image by url value (String value)
          */
-        QR_CODE_STR,
-        /**
-         * generate qr-code image from File (File file)
-         */
-        QR_CODE_FILE
+        QR_CODE
     }
 
     /**

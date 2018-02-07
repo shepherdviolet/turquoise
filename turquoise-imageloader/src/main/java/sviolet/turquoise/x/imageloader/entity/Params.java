@@ -41,13 +41,6 @@ public class Params {
 
     /**
      * For SourceType.URL_TO_QR_CODE
-     * Value type: boolean
-     * If true, we will store qr-code into disk cache, false by default.
-     */
-    public static final String URL_TO_QR_CODE_DISK_CACHE_ENABLE = "Params_url_to_qr_code_disk_cache_enable";
-
-    /**
-     * For SourceType.URL_TO_QR_CODE
      * Value type: String
      * Charset of qr-code, utf-8 by default
      */
@@ -162,7 +155,6 @@ public class Params {
          * <pre>{@code
          *      Params params = new Params.Builder()
          *          .setSourceType(Params.SourceType.URL_TO_QR_CODE)
-         *          .addExtra(Params.URL_TO_QR_CODE_DISK_CACHE_ENABLE, false)
          *          .addExtra(Params.URL_TO_QR_CODE_CHARSET, "utf-8")
          *          .addExtra(Params.URL_TO_QR_CODE_MARGIN, 1)
          *          .addExtra(Params.URL_TO_QR_CODE_CORRECTION_LEVEL, ZxingUtils.CorrectionLevel.M)

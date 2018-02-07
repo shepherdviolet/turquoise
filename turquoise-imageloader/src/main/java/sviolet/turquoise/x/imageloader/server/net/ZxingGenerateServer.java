@@ -19,11 +19,8 @@
 
 package sviolet.turquoise.x.imageloader.server.net;
 
-import java.io.UnsupportedEncodingException;
-
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.entity.IndispensableState;
-import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.Server;
@@ -63,19 +60,8 @@ public class ZxingGenerateServer implements ComponentManager.Component, Server {
      * generate qr-code by url value
      */
     void generateQrCode(Task task, IndispensableState indispensableState) {
-        //try to write disk cache
-        if (task.getParams().getExtraBoolean(Params.URL_TO_QR_CODE_DISK_CACHE_ENABLE, false)) {
-            try {
-                getComponentManager().getDiskCacheServer().write(task, task.getUrl().getBytes(task.getParams().getExtraString(Params.URL_TO_QR_CODE_CHARSET, "utf-8")));
-            } catch (UnsupportedEncodingException e) {
-                getComponentManager().getServerSettings().getExceptionHandler().onDecodeException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                        new Exception("Error while parsing url to bytes, charset:" + task.getParams().getExtraString(Params.URL_TO_QR_CODE_CHARSET, "utf-8"), e), getComponentManager().getLogger());
-                getNetworkEngine().handleFailed(task);
-                return;
-            }
-        }
         //handle data
-        getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.QR_CODE_STR, task.getUrl());
+        getNetworkEngine().handleImageData(task, DecodeHandler.DecodeType.QR_CODE, task.getUrl());
     }
 
 }

@@ -26,7 +26,7 @@ import sviolet.turquoise.x.imageloader.server.Engine;
 /**
  * <p>Disk Load Engine</p>
  *
- * Created by S.Violet on 2016/2/19.
+ * @author S.Violet
  */
 public class DiskEngine extends Engine {
 
@@ -46,6 +46,11 @@ public class DiskEngine extends Engine {
                 break;
             case APK_RES:
                 loadFromRes(task);
+                break;
+            case URL_TO_QR_CODE:
+                //to network engine
+                task.setState(Task.State.FAILED);
+                response(task);
                 break;
             default:
                 //default way
