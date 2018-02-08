@@ -59,8 +59,13 @@ public class CommonDecodeHandler extends DecodeHandler {
 
     @Override
     public ImageResource onDecode(Context applicationContext, Context context, Task.Info taskInfo, DecodeType decodeType, Object data, TLogger logger) {
-        Integer reqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_WIDTH, taskInfo.getParams().getReqWidth());
-        Integer reqHeight = taskInfo.getParams().getExtraInteger(DecodeHandler.CUSTOM_REQ_HEIGHT, taskInfo.getParams().getReqHeight());
+        int reqWidth = taskInfo.getParams().getExtraInteger(DecodeHandler.EXTRA_CUSTOM_REQ_WIDTH, taskInfo.getParams().getReqWidth());
+        int reqHeight = taskInfo.getParams().getExtraInteger(DecodeHandler.EXTRA_CUSTOM_REQ_HEIGHT, taskInfo.getParams().getReqHeight());
+        float reqDimensionZoom = taskInfo.getParams().getExtraFloat(DecodeHandler.EXTRA_REQ_DIMENSION_ZOOM, 1f);
+        if (reqDimensionZoom != 1 && reqWidth > 0 && reqHeight > 0){
+            reqWidth = (int) ((float)reqWidth * reqDimensionZoom);
+            reqHeight = (int) ((float)reqHeight * reqDimensionZoom);
+        }
         return distinguishDataType(applicationContext, context, taskInfo, decodeType, data, logger, reqWidth, reqHeight);
     }
 
@@ -185,9 +190,9 @@ public class CommonDecodeHandler extends DecodeHandler {
             return null;
         }
         //extras
-        String charset = taskInfo.getParams().getExtraString(Params.URL_TO_QR_CODE_CHARSET, "utf-8");
-        int margin = taskInfo.getParams().getExtraInteger(Params.URL_TO_QR_CODE_MARGIN, 1);
-        Object correctionLevel = taskInfo.getParams().getExtra(Params.URL_TO_QR_CODE_CORRECTION_LEVEL);
+        String charset = taskInfo.getParams().getExtraString(Params.EXTRA_URL_TO_QR_CODE_CHARSET, "utf-8");
+        int margin = taskInfo.getParams().getExtraInteger(Params.EXTRA_URL_TO_QR_CODE_MARGIN, 1);
+        Object correctionLevel = taskInfo.getParams().getExtra(Params.EXTRA_URL_TO_QR_CODE_CORRECTION_LEVEL);
         if (!(correctionLevel instanceof ZxingUtils.CorrectionLevel)){
             correctionLevel = ZxingUtils.CorrectionLevel.M;
         }

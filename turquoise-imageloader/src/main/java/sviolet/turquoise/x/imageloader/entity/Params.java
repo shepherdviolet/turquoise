@@ -44,21 +44,21 @@ public class Params {
      * Value type: String
      * Charset of qr-code, utf-8 by default
      */
-    public static final String URL_TO_QR_CODE_CHARSET = "Params_url_to_qr_code_charset";
+    public static final String EXTRA_URL_TO_QR_CODE_CHARSET = "Params_url_to_qr_code_charset";
 
     /**
      * For SourceType.URL_TO_QR_CODE
      * Value type: int
      * Margin of qr-code image, 1 by default
      */
-    public static final String URL_TO_QR_CODE_MARGIN = "Params_url_to_qr_code_margin";
+    public static final String EXTRA_URL_TO_QR_CODE_MARGIN = "Params_url_to_qr_code_margin";
 
     /**
      * For SourceType.URL_TO_QR_CODE
      * Value type: ZxingUtils.CorrectionLevel
      * Error correction of qr-code, ZxingUtils.CorrectionLevel.M by default
      */
-    public static final String URL_TO_QR_CODE_CORRECTION_LEVEL = "Params_url_to_qr_code_correction_level";
+    public static final String EXTRA_URL_TO_QR_CODE_CORRECTION_LEVEL = "Params_url_to_qr_code_correction_level";
 
     //params/////////////////////////////////////////////////////////////////////////////////////
 
@@ -155,9 +155,9 @@ public class Params {
          * <pre>{@code
          *      Params params = new Params.Builder()
          *          .setSourceType(Params.SourceType.URL_TO_QR_CODE)
-         *          .addExtra(Params.URL_TO_QR_CODE_CHARSET, "utf-8")
-         *          .addExtra(Params.URL_TO_QR_CODE_MARGIN, 1)
-         *          .addExtra(Params.URL_TO_QR_CODE_CORRECTION_LEVEL, ZxingUtils.CorrectionLevel.M)
+         *          .addExtra(Params.EXTRA_URL_TO_QR_CODE_CHARSET, "utf-8")
+         *          .addExtra(Params.EXTRA_URL_TO_QR_CODE_MARGIN, 1)
+         *          .addExtra(Params.EXTRA_URL_TO_QR_CODE_CORRECTION_LEVEL, ZxingUtils.CorrectionLevel.M)
          *          .build();
          *      TILoader.node(this).load("hello world", params, imageView);
          * }</pre>
@@ -502,6 +502,17 @@ public class Params {
             Object value = values.extras.get(key);
             if (value instanceof Integer){
                 return (Integer) value;
+            }
+            return fallback;
+        }
+        return fallback;
+    }
+
+    public Float getExtraFloat(String key, Float fallback){
+        if (values.extras != null){
+            Object value = values.extras.get(key);
+            if (value instanceof Float){
+                return (Float) value;
             }
             return fallback;
         }

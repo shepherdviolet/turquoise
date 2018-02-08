@@ -44,15 +44,32 @@ public abstract class DecodeHandler {
      *
      * <pre>{@code
      *         Map<String, Object> extras = new HashMap<>();
-     *         extras.put(DecodeHandler.CUSTOM_REQ_WIDTH, 100);
-     *         extras.put(DecodeHandler.CUSTOM_REQ_HEIGHT, 100);
+     *         extras.put(DecodeHandler.EXTRA_CUSTOM_REQ_WIDTH, 100);
+     *         extras.put(DecodeHandler.EXTRA_CUSTOM_REQ_HEIGHT, 100);
      *         Params paramsDemo = new Params.Builder()
      *              .setExtras(extras)
      *              .build();
      * }</pre>
      */
-    public static final String CUSTOM_REQ_WIDTH = "DecodeHandler_custom_req_width";
-    public static final String CUSTOM_REQ_HEIGHT = "DecodeHandler_custom_req_height";
+    public static final String EXTRA_CUSTOM_REQ_WIDTH = "DecodeHandler_custom_req_width";
+    public static final String EXTRA_CUSTOM_REQ_HEIGHT = "DecodeHandler_custom_req_height";
+
+    /**
+     * <p>DecodeHandler will adjust reqWidth/reqHeight while decoding if set this extra. The final
+     * reqWidth/reqHeight = reqWidth/reqHeight * zoomValue.</p>
+     *
+     * <p>TYPE::Float</p>
+     *
+     * <p>Example: shorten to a half.</p>
+     * <pre>{@code
+     *         Map<String, Object> extras = new HashMap<>();
+     *         extras.put(DecodeHandler.EXTRA_REQ_DIMENSION_ZOOM, 0.5f);
+     *         Params paramsDemo = new Params.Builder()
+     *              .setExtras(extras)
+     *              .build();
+     * }</pre>
+     */
+    public static final String EXTRA_REQ_DIMENSION_ZOOM = "DecodeHandler_req_dimension_zoom";
 
     //method//////////////////////////////////////////////////////////////////////////////////////////
 
