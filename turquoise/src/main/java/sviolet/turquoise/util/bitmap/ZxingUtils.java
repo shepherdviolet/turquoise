@@ -42,12 +42,13 @@ public class ZxingUtils {
      * @param width 二维码宽度(注意限定, 不要太大, 否则会内存溢出)
      * @param height 二维码高度(注意限定, 不要太大, 否则会内存溢出)
      * @param margin 边距
+     * @param bitmapConfig 输出的Bitmap格式, 推荐ALPHA_8, 节省内存
      * @param charset 字符集
      * @param correctionLevel 纠错级别
      * @return Bitmap
      * @throws QrCodeGenerateException 生成异常
      */
-    public static Bitmap generateQrCode(String contents, int width, int height, int margin, String charset, CorrectionLevel correctionLevel) throws QrCodeGenerateException {
+    public static Bitmap generateQrCode(String contents, int width, int height, int margin, Bitmap.Config bitmapConfig, String charset, CorrectionLevel correctionLevel) throws QrCodeGenerateException {
         ErrorCorrectionLevel errorCorrectionLevel;
         switch (correctionLevel) {
             case L:
@@ -80,10 +81,10 @@ public class ZxingUtils {
             width = bitMatrix.getWidth();
             height = bitMatrix.getHeight();
 
-            Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8);
+            Bitmap bitmap = Bitmap.createBitmap(width, height, bitmapConfig);
             for (int x = 0; x < width; x++) {
                 for (int y = 0; y < height; y++) {
-                    bitmap.setPixel(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0x00000000);
+                    bitmap.setPixel(x, y, bitMatrix.get(x, y) ? 0xFF000000 : 0x00FFFFFF);
                 }
             }
             return bitmap;

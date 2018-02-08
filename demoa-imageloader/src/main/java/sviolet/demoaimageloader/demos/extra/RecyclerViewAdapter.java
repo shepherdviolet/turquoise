@@ -21,6 +21,7 @@ package sviolet.demoaimageloader.demos.extra;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 
 import java.util.List;
 
@@ -63,7 +64,12 @@ public class RecyclerViewAdapter extends TRecyclerViewAdapter {
     public void onBindViewHolder(TRecyclerViewHolder holder, int position) {
         TILoader.node(context).load(dataList.get(position).getUrl(0), holder.get(R.id.recycler_view_main_item_image), new Params.Builder()
                 .setSourceType(Params.SourceType.URL_TO_QR_CODE)
-                .addExtra(DecodeHandler.EXTRA_REQ_DIMENSION_ZOOM, 0.5f)
+                .setBitmapConfig(Bitmap.Config.ALPHA_8)//save memory
+                .addExtra(DecodeHandler.EXTRA_REQ_DIMENSION_ZOOM, 0.5f)//save memory
+//                .addExtra(Params.EXTRA_URL_TO_QR_CODE_CHARSET, "utf-8")
+//                .addExtra(Params.EXTRA_URL_TO_QR_CODE_MARGIN, 1)
+//                .addExtra(Params.EXTRA_URL_TO_QR_CODE_CORRECTION_LEVEL, ZxingUtils.CorrectionLevel.M)
+//                .addExtra(Params.EXTRA_URL_TO_QR_CODE_FORCE_SQUARE, false)
                 .build());
     }
 

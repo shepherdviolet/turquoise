@@ -162,9 +162,11 @@ public class Params {
          * <pre>{@code
          *      Params params = new Params.Builder()
          *          .setSourceType(Params.SourceType.URL_TO_QR_CODE)
-         *          .addExtra(Params.EXTRA_URL_TO_QR_CODE_CHARSET, "utf-8")
-         *          .addExtra(Params.EXTRA_URL_TO_QR_CODE_MARGIN, 1)
-         *          .addExtra(Params.EXTRA_URL_TO_QR_CODE_CORRECTION_LEVEL, ZxingUtils.CorrectionLevel.M)
+         *          .setBitmapConfig(Bitmap.Config.ALPHA_8)//save memory
+         *          .addExtra(DecodeHandler.EXTRA_REQ_DIMENSION_ZOOM, 0.5f)//save memory
+         *          .addExtra(Params.EXTRA_URL_TO_QR_CODE_CHARSET, "utf-8")//optional
+         *          .addExtra(Params.EXTRA_URL_TO_QR_CODE_MARGIN, 1)//optional
+         *          .addExtra(Params.EXTRA_URL_TO_QR_CODE_CORRECTION_LEVEL, ZxingUtils.CorrectionLevel.M)//optional
          *          .build();
          *      TILoader.node(this).load("hello world", params, imageView);
          * }</pre>

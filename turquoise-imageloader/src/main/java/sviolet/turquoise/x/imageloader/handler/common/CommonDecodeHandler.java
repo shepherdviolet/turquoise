@@ -204,6 +204,7 @@ public class CommonDecodeHandler extends DecodeHandler {
                     forceSquare ? Math.min(reqWidth, reqHeight) : reqWidth,
                     forceSquare ? Math.min(reqWidth, reqHeight) : reqHeight,
                     margin,
+                    bitmapConfig,
                     charset,
                     (ZxingUtils.CorrectionLevel) correctionLevel);
         } catch (ZxingUtils.QrCodeGenerateException e) {
