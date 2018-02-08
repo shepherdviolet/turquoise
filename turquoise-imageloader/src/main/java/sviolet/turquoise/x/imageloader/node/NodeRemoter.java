@@ -120,8 +120,9 @@ public class NodeRemoter {
             if (pause.compareAndSet(true, false)) {
                 int count = controller.getNodePauseCount().decrementAndGet();
                 if (count <= 0) {
+                    controller.postDispatch();
                     controller.postIgnite();
-                    controller.getLogger().d("[NodeRemoter]resume and re-ignite, nodeId:" + controller.getNodeId());
+                    controller.getLogger().d("[NodeRemoter]resume, start dispatch and ignite, nodeId:" + controller.getNodeId());
                 }else {
                     controller.getLogger().d("[NodeRemoter]resume, nodeId:" + controller.getNodeId());
                 }

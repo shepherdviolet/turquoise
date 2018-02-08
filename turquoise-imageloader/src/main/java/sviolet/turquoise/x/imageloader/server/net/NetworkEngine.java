@@ -27,6 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.IndispensableState;
+import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 import sviolet.turquoise.x.imageloader.server.Engine;
@@ -59,8 +60,10 @@ public class NetworkEngine extends Engine {
     @Override
     protected void executeNewTask(Task task) {
 
-        //return if resource has loaded recently
-        if (history.contains(task.getResourceKey())){
+        //Return if resource has loaded recently
+        //Exception: URL_TO_QR_CODE loading always, ignore history check
+        if (task.getParams().getSourceType() != Params.SourceType.URL_TO_QR_CODE &&
+            history.contains(task.getResourceKey())){
             if (!task.hasReturnedFromNetEngine()){
                 getComponentManager().getLogger().d("[NetworkEngine]task return to DiskEngine phase, the resource has loaded recently, task:" + task);
                 task.setServerType(Server.Type.DISK_ENGINE);
