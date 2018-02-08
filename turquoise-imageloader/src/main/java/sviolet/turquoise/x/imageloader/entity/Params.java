@@ -60,6 +60,13 @@ public class Params {
      */
     public static final String EXTRA_URL_TO_QR_CODE_CORRECTION_LEVEL = "Params_url_to_qr_code_correction_level";
 
+    /**
+     * For SourceType.URL_TO_QR_CODE
+     * Value type: boolean
+     * If true, the bitmap of qr-code will be square in any case, false by default
+     */
+    public static final String EXTRA_URL_TO_QR_CODE_FORCE_SQUARE = "Params_url_to_qr_code_force_square";
+
     //params/////////////////////////////////////////////////////////////////////////////////////
 
     private static class Values{

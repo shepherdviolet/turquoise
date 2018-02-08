@@ -192,13 +192,20 @@ public class CommonDecodeHandler extends DecodeHandler {
         //extras
         String charset = taskInfo.getParams().getExtraString(Params.EXTRA_URL_TO_QR_CODE_CHARSET, "utf-8");
         int margin = taskInfo.getParams().getExtraInteger(Params.EXTRA_URL_TO_QR_CODE_MARGIN, 1);
+        boolean forceSquare = taskInfo.getParams().getExtraBoolean(Params.EXTRA_URL_TO_QR_CODE_FORCE_SQUARE, false);
         Object correctionLevel = taskInfo.getParams().getExtra(Params.EXTRA_URL_TO_QR_CODE_CORRECTION_LEVEL);
         if (!(correctionLevel instanceof ZxingUtils.CorrectionLevel)){
             correctionLevel = ZxingUtils.CorrectionLevel.M;
         }
         //generate
         try {
-            return ZxingUtils.generateQrCode(data, reqWidth, reqHeight, margin, charset, (ZxingUtils.CorrectionLevel) correctionLevel);
+            return ZxingUtils.generateQrCode(
+                    data,
+                    forceSquare ? Math.min(reqWidth, reqHeight) : reqWidth,
+                    forceSquare ? Math.min(reqWidth, reqHeight) : reqHeight,
+                    margin,
+                    charset,
+                    (ZxingUtils.CorrectionLevel) correctionLevel);
         } catch (ZxingUtils.QrCodeGenerateException e) {
             throw new RuntimeException("Error while generating qr-code bitmap from url, url:" + String.valueOf(data), e);
         }
