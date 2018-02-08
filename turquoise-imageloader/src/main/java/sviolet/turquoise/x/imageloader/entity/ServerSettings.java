@@ -51,7 +51,7 @@ import sviolet.turquoise.x.imageloader.stub.support.StubFactoryImpl;
 /**
  * <p>TILoader global settings</p>
  *
- * Created by S.Violet on 2016/2/16.
+ * @author S.Violet
  */
 public class ServerSettings implements ComponentManager.Component{
 
@@ -113,7 +113,7 @@ public class ServerSettings implements ComponentManager.Component{
         //settings////////////////////////////////////////////////////////////////////////////
 
         /**
-         * set if TILoader's logger enabled
+         * Set if TILoader's logger enabled
          * @param enabled true: enable
          */
         public Builder setLogEnabled(boolean enabled){
@@ -122,6 +122,7 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
+         * {@value DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE} by default
          * @param wipeDiskCacheWhenUpdate if true, disk cache will wipe when App update (versionCode change)
          */
         public Builder setWipeDiskCacheWhenUpdate(boolean wipeDiskCacheWhenUpdate){
@@ -130,7 +131,7 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * set the memory cache size by percent of app's MemoryClass
+         * Set the memory cache size by percent of app's MemoryClass
          * @param context context
          * @param percent percent of app's MemoryClass (0f-0.5f), default:{@value MemoryCacheServer#DEFAULT_MEMORY_CACHE_PERCENT}, min-size:{@value MemoryCacheServer#MIN_MEMORY_CACHE_SIZE}bytes
          */
@@ -152,8 +153,8 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * set the disk cache size
-         * @param sizeMb mb, > 0
+         * Set the disk cache size, 50MB by default
+         * @param sizeMb MB, > 0
          */
         public Builder setDiskCacheSize(float sizeMb){
             //控制上下限
@@ -177,8 +178,8 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * set timeout of network connect
-         * @param timeout timeout milli second
+         * Set timeout of network connect
+         * @param timeout timeout milli second, {@value DEFAULT_NETWORK_CONNECT_TIMEOUT} by default
          */
         public Builder setNetworkConnectTimeout(long timeout){
             if (timeout <= 0){
@@ -189,8 +190,8 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * set timeout of network read
-         * @param timeout timeout milli second
+         * Set timeout of network read
+         * @param timeout timeout milli second, {@value DEFAULT_NETWORK_READ_TIMEOUT} by default
          */
         public Builder setNetworkReadTimeout(long timeout){
             if (timeout <= 0){
@@ -219,6 +220,7 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
+         * Set reload times
          * @param reloadTimes reload times (reload when load failed), {@value DEFAULT_RELOAD_TIMES} by default
          */
         public Builder setReloadTimes(int reloadTimes){
@@ -230,7 +232,7 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * [Senior Setting]set the max thread of memory loading engine
+         * [Senior Setting]Set the max thread of memory loading engine
          * @param maxThread max thread num, >=1, {@value DEFAULT_MEMORY_LOAD_MAX_THREAD} by default
          */
         public Builder setMemoryLoadMaxThread(int maxThread){
@@ -242,7 +244,7 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * [Senior Setting]set the max thread of disk loading engine
+         * [Senior Setting]Set the max thread of disk loading engine
          * @param maxThread max thread num, >=1, {@value DEFAULT_DISK_LOAD_MAX_THREAD} by default
          */
         public Builder setDiskLoadMaxThread(int maxThread){
@@ -270,7 +272,7 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * <p>[Senior Setting]set image data length limit by percent of app's memoryClass</p>
+         * <p>[Senior Setting]Set image data length limit by percent of app's memoryClass</p>
          *
          * <p>To avoid OOM, TILoader will cancel load task if data length of source image is out of limit,
          * then call ExceptionHandler->onImageDataLengthOutOfLimitException() to handle this event. You can
@@ -295,7 +297,7 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * <p>[Senior Setting]set memory buffer length limit by percent of app's memoryClass</p>
+         * <p>[Senior Setting]Set memory buffer length limit by percent of app's memoryClass</p>
          *
          * <p>When disk cache of TILoader is not healthy (memory full or access failed), to show image as usual,
          * we have to write all data into memory buffer, and decoding image from memory buffer.
@@ -476,7 +478,7 @@ public class ServerSettings implements ComponentManager.Component{
     public static final boolean DEFAULT_LOG_ENABLED = true;
     public static final boolean DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE = false;
     public static final int DEFAULT_MEMORY_CACHE_SIZE = 0;
-    public static final int DEFAULT_DISK_CACHE_SIZE = 30 * 1024 * 1024;
+    public static final int DEFAULT_DISK_CACHE_SIZE = 50 * 1024 * 1024;
     public static final int DEFAULT_MEMORY_LOAD_MAX_THREAD = 1;
     public static final int DEFAULT_DISK_LOAD_MAX_THREAD = 2;
     public static final int DEFAULT_NETWORK_LOAD_MAX_THREAD = 4;
@@ -487,7 +489,7 @@ public class ServerSettings implements ComponentManager.Component{
     public static final int DEFAULT_URL_LENGTH_LIMIT = 8 * 1024;
     private static final long DEFAULT_IMAGE_DATA_LENGTH_LIMIT = -1;
     private static final long MIN_IMAGE_DATA_LENGTH_LIMIT = 1024 * 1024;
-    private static final float DEFAULT_IMAGE_DATA_LENGTH_LIMIT_PERCENT = 0.3f;
+    private static final float DEFAULT_IMAGE_DATA_LENGTH_LIMIT_PERCENT = 0.2f;
     private static final long DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT = -1;
     private static final long MIN_MEMORY_BUFFER_LENGTH_LIMIT = 512 * 1024;
     private static final float DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT = 0.02f;
