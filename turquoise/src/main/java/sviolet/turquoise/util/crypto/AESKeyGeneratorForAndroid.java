@@ -39,7 +39,7 @@ public class AESKeyGeneratorForAndroid {
 	/**
 	 * <p>生成128位AES密钥(不同系统平台相同seed生成结果可能不同)</p>
 	 *
-	 * <p>android专用, 相同seed产生相同秘钥</p>
+	 * <p>android专用, 相同seed产生相同秘钥, 但安全性下降</p>
 	 *
 	 * @param seed 秘钥种子
 	 */
@@ -50,7 +50,7 @@ public class AESKeyGeneratorForAndroid {
 	/**
 	 * <p>生成AES密钥(不同系统平台相同seed生成结果可能不同)</p>
 	 *
-	 * <p>android专用, 相同seed产生相同秘钥</p>
+	 * <p>android专用, 相同seed产生相同秘钥, 但安全性下降</p>
 	 *
 	 * @param seed 秘钥种子
 	 * @param bits 秘钥位数(128)
