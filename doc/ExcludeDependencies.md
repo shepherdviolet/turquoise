@@ -12,12 +12,16 @@
             exclude group:'com.android.support'
             exclude group:'com.squareup.okhttp3'
             exclude group:'com.google.zxing'
+            exclude group:'com.google.code.gson'
+            exclude group:'org.bouncycastle'
         }
         compile ('com.github.shepherdviolet.turquoise:turquoise-imageloader:9.0') {
             exclude group:'org.jetbrains.kotlin', module:'kotlin-stdlib-jre7'
             exclude group:'com.android.support'
             exclude group:'com.squareup.okhttp3'
             exclude group:'com.google.zxing'
+            exclude group:'com.google.code.gson'
+            exclude group:'org.bouncycastle'
         }
     }
 ```
