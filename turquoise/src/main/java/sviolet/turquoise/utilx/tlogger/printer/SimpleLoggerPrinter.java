@@ -62,6 +62,7 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
     private PrintWorker worker;
 
     private AtomicBoolean queueFull = new AtomicBoolean(false);
+    private AtomicBoolean started = new AtomicBoolean(false);
     private AtomicBoolean disabled = new AtomicBoolean(false);
 
     /**
@@ -96,7 +97,6 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
         this.locale = locale;
         this.messageQueue.offer(getDateFormat().format(new Date()) + " --------------------------SimpleLoggerPrinter--------------------------\n");
         this.worker = new PrintWorker(messageQueue, queueFull, disabled, logDirectory, maxLogSizeMB, sensitiveLogEnabled);
-        new Thread(this.worker).start();
     }
 
     @Override
@@ -148,6 +148,13 @@ public class SimpleLoggerPrinter implements LoggerPrinter {
         )){
             Log.e("Turquoise", "[SimpleLoggerPrinter]message queue is full, log can not write to disk");
             queueFull.set(true);
+        }
+    }
+
+    @Override
+    public void start() {
+        if (started.compareAndSet(false, true)) {
+            new Thread(this.worker).start();
         }
     }
 

@@ -170,12 +170,19 @@ class TLoggerCenter {
         return logger;
     }
 
-    void setPrinter(LoggerPrinter printer){
+    synchronized void setPrinter(LoggerPrinter printer){
+        //previous
+        LoggerPrinter previous = this.printer;
+        //attach
         if (printer == null){
             this.printer = new NullLoggerPrinter();
         } else {
+            printer.start();
             this.printer = printer;
         }
+        //close previous
+        previous.flush();
+        previous.close();
     }
 
     LoggerPrinter getPrinter(){
