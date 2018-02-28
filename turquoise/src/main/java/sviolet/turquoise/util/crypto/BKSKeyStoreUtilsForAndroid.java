@@ -7,8 +7,12 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.List;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -23,12 +27,19 @@ import javax.net.ssl.X509TrustManager;
 public class BKSKeyStoreUtilsForAndroid {
 
     /**
-     * 从BKS文件中创建TLS型SslSocketFactory
+     * <p>从BKS文件中创建TLS型SslSocketFactory</p>
+     *
+     * <p>
+     * Note:<br>
+     * OkHttpClient或HttpsUrlConnection如果配置了自定义证书链(keystore中可以配置多个证书链), 只要服务端
+     * 证书所属的根证书与自定义证书链中的根证书相符, 均可验证通过, 及时服务端证书或二级CA证书未在自定义证书链
+     * 中配置.
+     * </p>
      *
      * <pre>{@code
-     *  SSLSocketFactoryAndX509TrustManager x509TrustManagerAndSSLSocketFactory = newTlsSslSocketFactoryFromBks(getResources().openRawResource(R.raw.keystore), "PASSWORD");
+     *  SSLSocketFactoryAndX509TrustManager sslSocketFactoryAndX509TrustManager = newTlsSslSocketFactoryFromBks(getResources().openRawResource(R.raw.keystore), "PASSWORD");
      *  OkHttpClient okHttpClient = new OkHttpClient.Builder()
-     *      .sslSocketFactory(x509TrustManagerAndSSLSocketFactory.getSslSocketFactory(), x509TrustManagerAndSSLSocketFactory.getX509TrustManager())
+     *      .sslSocketFactory(sslSocketFactoryAndX509TrustManager.getSslSocketFactory(), sslSocketFactoryAndX509TrustManager.getX509TrustManager())
      *      .build();
      * }</pre>
      *
@@ -80,6 +91,32 @@ public class BKSKeyStoreUtilsForAndroid {
 
         public SSLSocketFactory getSslSocketFactory() {
             return sslSocketFactory;
+        }
+    }
+
+    /**
+     * 从BKS文件中获取所有证书
+     * @param inputStream 输入流
+     * @param password 密码
+     */
+    public static List<Certificate> getCertificatesFromBks(InputStream inputStream, String password) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
+        try {
+            //keystore from bks
+            KeyStore keyStore = KeyStore.getInstance("BKS");
+            keyStore.load(inputStream, password.toCharArray());
+            Enumeration<String> enumeration = keyStore.aliases();
+            List<Certificate> certificates = new ArrayList<>();
+            while (enumeration.hasMoreElements()) {
+                certificates.add(keyStore.getCertificate(enumeration.nextElement()));
+            }
+            return certificates;
+        } finally {
+            if (inputStream != null){
+                try {
+                    inputStream.close();
+                } catch (Exception ignore){
+                }
+            }
         }
     }
 
