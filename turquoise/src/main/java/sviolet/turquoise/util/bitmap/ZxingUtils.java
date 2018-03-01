@@ -37,12 +37,12 @@ import java.util.Hashtable;
 public class ZxingUtils {
 
     /**
-     * 生成二维码图片(ALPHA_8)
+     * 生成二维码图片
      * @param contents 数据(注意限定, 不要太大, 否则无法绘制)
      * @param width 二维码宽度(注意限定, 不要太大, 否则会内存溢出)
      * @param height 二维码高度(注意限定, 不要太大, 否则会内存溢出)
      * @param margin 边距
-     * @param bitmapConfig 输出的Bitmap格式, 推荐ALPHA_8, 节省内存
+     * @param bitmapConfig 输出的Bitmap格式, 推荐RGB_565, 节省内存
      * @param charset 字符集
      * @param correctionLevel 纠错级别
      * @return Bitmap

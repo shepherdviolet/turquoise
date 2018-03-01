@@ -162,7 +162,6 @@ public class Params {
          * <pre>{@code
          *      Params params = new Params.Builder()
          *          .setSourceType(Params.SourceType.URL_TO_QR_CODE)
-         *          .setBitmapConfig(Bitmap.Config.ALPHA_8)//save memory
          *          .addExtra(DecodeHandler.EXTRA_REQ_DIMENSION_ZOOM, 0.5f)//save memory
          *          .addExtra(Params.EXTRA_URL_TO_QR_CODE_CHARSET, "utf-8")//optional
          *          .addExtra(Params.EXTRA_URL_TO_QR_CODE_MARGIN, 1)//optional
@@ -287,7 +286,7 @@ public class Params {
         }
 
         /**
-         * set BitmapConfig
+         * Set BitmapConfig, RGB_565 by default. (Avoid to use ALPHA_8, has bug in some devices)
          * @param bitmapConfig bitmapConfig
          */
         public Builder setBitmapConfig(Bitmap.Config bitmapConfig){
