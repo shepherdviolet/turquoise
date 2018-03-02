@@ -1,7 +1,10 @@
 package sviolet.turquoise.util.crypto;
 
+import org.bouncycastle.operator.OperatorCreationException;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -22,7 +25,10 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 /**
- * 安卓BKS证书密钥文件工具
+ * <p>安卓BKS证书密钥文件工具</p>
+ *
+ * <p>案例: 优先使用自定义证书链验证服务端证书(解决部分手机系统证书认证有问题的情况), 当抛出握手异常的时候,
+ * 尝试使用系统的SSLSocketFactory.getDefault().</p>
  */
 public class BKSKeyStoreUtilsForAndroid {
 
@@ -76,6 +82,9 @@ public class BKSKeyStoreUtilsForAndroid {
         }
     }
 
+    /**
+     * SSLSocketFactory和X509TrustManager
+     */
     public static class SSLSocketFactoryAndX509TrustManager {
         private X509TrustManager x509TrustManager;
         private SSLSocketFactory sslSocketFactory;
@@ -114,6 +123,37 @@ public class BKSKeyStoreUtilsForAndroid {
             if (inputStream != null){
                 try {
                     inputStream.close();
+                } catch (Exception ignore){
+                }
+            }
+        }
+    }
+
+    /**
+     * 把证书保存到BKS文件中
+     * @param outputStream 文件输出流
+     * @param password 密码
+     * @param aliases 别名
+     * @param certificates 证书
+     */
+    public static void storeCertificates(OutputStream outputStream, String password, String[] aliases, Certificate[] certificates) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, OperatorCreationException {
+        if (aliases == null || certificates == null) {
+            throw new NullPointerException("aliases or certificates is null");
+        }
+        if (aliases.length != certificates.length) {
+            throw new IllegalArgumentException("length of aliases and certificates mismatch");
+        }
+        try {
+            KeyStore keyStore = KeyStore.getInstance("BKS");
+            keyStore.load(null);
+            for (int i = 0 ; i < aliases.length ; i++) {
+                keyStore.setCertificateEntry(aliases[i], certificates[i]);
+            }
+            keyStore.store(outputStream, password != null ? password.toCharArray() : null);
+        } finally {
+            if (outputStream != null){
+                try {
+                    outputStream.close();
                 } catch (Exception ignore){
                 }
             }
