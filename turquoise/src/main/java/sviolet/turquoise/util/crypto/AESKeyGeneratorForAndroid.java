@@ -29,11 +29,14 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import sviolet.thistle.util.crypto.AESKeyGenerator;
-import sviolet.thistle.util.crypto.DigestCipher;
 
 /**
  * Android专用AES秘钥生成工具
+ *
+ * <p>安卓P开始, SecureRandom.getInstance("SHA1PRNG", "Crypto")无法调用, Crypto JCA provider被删除.</p>
+ * @deprecated 安卓P开始, SecureRandom.getInstance("SHA1PRNG", "Crypto")无法调用, Crypto JCA provider被删除.
  */
+@Deprecated
 public class AESKeyGeneratorForAndroid {
 
 	/**
@@ -41,8 +44,12 @@ public class AESKeyGeneratorForAndroid {
 	 *
 	 * <p>android专用, 相同seed产生相同秘钥, 但安全性下降</p>
 	 *
+	 * <p>安卓P开始, SecureRandom.getInstance("SHA1PRNG", "Crypto")无法调用, Crypto JCA provider被删除.</p>
+	 *
 	 * @param seed 秘钥种子
+	 * @deprecated 安卓P开始, SecureRandom.getInstance("SHA1PRNG", "Crypto")无法调用, Crypto JCA provider被删除.
 	 */
+	@Deprecated
 	public static byte[] generate(byte[] seed) throws NoSuchProviderException {
 		return generate(seed, 128);
 	}
@@ -52,10 +59,14 @@ public class AESKeyGeneratorForAndroid {
 	 *
 	 * <p>android专用, 相同seed产生相同秘钥, 但安全性下降</p>
 	 *
+	 * <p>安卓P开始, SecureRandom.getInstance("SHA1PRNG", "Crypto")无法调用, Crypto JCA provider被删除.</p>
+	 *
 	 * @param seed 秘钥种子
 	 * @param bits 秘钥位数(128)
+	 * @deprecated 安卓P开始, SecureRandom.getInstance("SHA1PRNG", "Crypto")无法调用, Crypto JCA provider被删除.
 	 */
 	@SuppressLint("TrulyRandom")
+	@Deprecated
 	public static byte[] generate(byte[] seed, int bits) throws NoSuchProviderException{
 		KeyGenerator keyGenerator;
 		SecureRandom secureRandom;
