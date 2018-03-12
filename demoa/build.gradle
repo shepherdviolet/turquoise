@@ -106,6 +106,15 @@ android {
 //        }
 //    }
 
+    // 测试依赖(Android P)
+
+    // Required if using classes in android.test.runner
+//    useLibrary 'android.test.runner'
+    // Required if using classes in android.test.base
+//    useLibrary 'android.test.base'
+    // Required if using classes in android.test.mock
+//    useLibrary 'android.test.mock'
+
 }
 
 dependencies {

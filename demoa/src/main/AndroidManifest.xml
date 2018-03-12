@@ -129,4 +129,17 @@
 
     </application>
 
+    <!-- 测试依赖(Android P) -->
+
+    <!-- You don't need to include android:required="false" if your app's
+     minSdkVersion is 'P'. -->
+    <!--<uses-library android:name="android.test.runner"-->
+        <!--android:required="false" />-->
+    <!-- For both of these declarations, you don't need to include
+     android:required="false" if your app's minSdkVersion is 'P'. -->
+    <!--<uses-library android:name="android.test.base"-->
+        <!--android:required="false" />-->
+    <!--<uses-library android:name="android.test.mock"-->
+        <!--android:required="false" />-->
+
 </manifest>
