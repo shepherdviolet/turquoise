@@ -40,6 +40,7 @@ import sviolet.turquoise.x.imageloader.node.Task;
  */
 public class DiskCacheServer extends DiskCacheModule {
 
+    public static final int READ_BUFF_SIZE = 8 * 1024;
     private static final int OUTPUT_STREAM_BUFF_SIZE = 64 * 1024;
 
     /************************************************************************
@@ -121,7 +122,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 //buffer, to save memory
                 long startTime = System.currentTimeMillis();
                 long imageDataLengthLimit = getComponentManager().getServerSettings().getImageDataLengthLimit();
-                byte[] buffer = new byte[DiskCacheServer.BUFFER_SIZE];
+                byte[] buffer = new byte[DiskCacheServer.READ_BUFF_SIZE];
                 int readLength;
                 int loopCount = 0;
                 //read and write
@@ -318,7 +319,7 @@ public class DiskCacheServer extends DiskCacheModule {
         if (buffer != null) {
             outputStream.write(buffer, 0, bufferDataLength);
         }else{
-            buffer = new byte[DiskCacheServer.BUFFER_SIZE];
+            buffer = new byte[DiskCacheServer.READ_BUFF_SIZE];
         }
         long startTime = System.currentTimeMillis();
         long memoryBufferLengthLimit = getComponentManager().getServerSettings().getMemoryBufferLengthLimit();
