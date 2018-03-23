@@ -66,7 +66,10 @@ public class LoadNode extends Node {
             Stub stub = manager.getServerSettings().getStubFactory().newLoadStub(url, params, view);
             stub.initialize(controller);
         } catch (Exception e){
-            getManager().getLogger().e("[LoadNode]error while creating or initializing LoadStub, url:" + url, e);
+            //avoid exceptions when controller has been destroyed
+            if (!getController().isDestroyed()) {
+                getManager().getLogger().e("[LoadNode]error while creating or initializing LoadStub, url:" + url, e);
+            }
         }
     }
 
@@ -83,7 +86,10 @@ public class LoadNode extends Node {
             Stub stub = manager.getServerSettings().getStubFactory().newLoadBackgroundStub(url, params, view);
             stub.initialize(controller);
         } catch (Exception e){
-            getManager().getLogger().e("[LoadNode]error while creating or initializing LoadStub, url:" + url, e);
+            //avoid exceptions when controller has been destroyed
+            if (!getController().isDestroyed()) {
+                getManager().getLogger().e("[LoadNode]error while creating or initializing LoadStub, url:" + url, e);
+            }
         }
     }
 

@@ -56,7 +56,10 @@ public class ExtractNode extends LoadNode {
             stub.initialize(getController());
             return stub.getStubRemoter();
         } catch (Exception e){
-            getManager().getLogger().e("[ExtractNode]error while creating or initializing ExtractStub, url:" + url, e);
+            //avoid exceptions when controller has been destroyed
+            if (!getController().isDestroyed()) {
+                getManager().getLogger().e("[ExtractNode]error while creating or initializing ExtractStub, url:" + url, e);
+            }
         }
         return StubRemoter.NULL_STUB_REMOTER;
     }
