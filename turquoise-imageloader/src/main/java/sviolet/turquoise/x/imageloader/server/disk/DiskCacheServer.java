@@ -19,6 +19,8 @@
 
 package sviolet.turquoise.x.imageloader.server.disk;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -94,6 +96,7 @@ public class DiskCacheServer extends DiskCacheModule {
         DiskLruCache.Editor editor = null;
         OutputStream outputStream = null;
         try {
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
             //edit cache file
             editor = edit(task);
             if (editor == null) {
@@ -101,7 +104,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                         getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
                         new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, write disk cache failed"), getComponentManager().getLogger());
-                writeToMemoryBuffer(task, inputStream, result, null, 0, lowNetworkSpeedConfig);
+                writeToMemoryBuffer(task, bufferedInputStream, result, null, 0, lowNetworkSpeedConfig);
                 return result;
             }
             /*
@@ -114,6 +117,7 @@ public class DiskCacheServer extends DiskCacheModule {
             if (isHealthy()) {
                 //write to disk first, and return File
                 outputStream = editor.newOutputStream(0);
+                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
                 //buffer, to save memory
                 long startTime = System.currentTimeMillis();
                 long imageDataLengthLimit = getComponentManager().getServerSettings().getImageDataLengthLimit();
@@ -124,7 +128,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 while (true) {
                     try {
                         //read from inputStream
-                        readLength = inputStream.read(buffer);
+                        readLength = bufferedInputStream.read(buffer);
                     } catch (Exception e) {
                         throw new NetworkException(e);
                     }
@@ -148,8 +152,7 @@ public class DiskCacheServer extends DiskCacheModule {
                     }
                     try {
                         //try to write disk
-                        outputStream.write(buffer, 0, readLength);
-                        outputStream.flush();
+                        bufferedOutputStream.write(buffer, 0, readLength);
                     }catch (Exception e){
                         //not healthy
                         setHealthy(false);
@@ -158,7 +161,7 @@ public class DiskCacheServer extends DiskCacheModule {
                             abortEditor(editor);
                             getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                                     getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-                            writeToMemoryBuffer(task, inputStream, result, buffer, readLength, lowNetworkSpeedConfig);
+                            writeToMemoryBuffer(task, bufferedInputStream, result, buffer, readLength, lowNetworkSpeedConfig);
                             return result;
                         }
                         throw e;
@@ -169,17 +172,20 @@ public class DiskCacheServer extends DiskCacheModule {
                     throw new NetworkException(new Exception("[TILoader]network load failed, null content received (1)"));
                 }
                 //succeed
+                bufferedOutputStream.flush();
                 editor.commit();
                 result.setType(ResultType.SUCCEED);
                 setHealthy(true);
             }else{
                 //if disk is not healthy, data write to memory buffer, and return bytes, in order to ensure pictures display normally.
-                writeToMemoryBuffer(task, inputStream, result, null, 0, lowNetworkSpeedConfig);
+                writeToMemoryBuffer(task, bufferedInputStream, result, null, 0, lowNetworkSpeedConfig);
                 //trying to write to disk cache
                 if (result.getType() == ResultType.RETURN_MEMORY_BUFFER && result.getMemoryBuffer().length > 0) {
                     try {
                         outputStream = editor.newOutputStream(0);
-                        outputStream.write(result.getMemoryBuffer());
+                        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+                        bufferedOutputStream.write(result.getMemoryBuffer());
+                        bufferedOutputStream.flush();
                         editor.commit();
                         setHealthy(true);
                     }catch(Exception e){
@@ -260,7 +266,9 @@ public class DiskCacheServer extends DiskCacheModule {
             if (bytes != null && bytes.length > 0) {
                 try {
                     outputStream = editor.newOutputStream(0);
-                    outputStream.write(bytes);
+                    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream);
+                    bufferedOutputStream.write(bytes);
+                    bufferedOutputStream.flush();
                     editor.commit();
                     setHealthy(true);
                     return true;
@@ -340,7 +348,6 @@ public class DiskCacheServer extends DiskCacheModule {
                 return;
             }
             outputStream.write(buffer, 0, readLength);
-            outputStream.flush();
             loopCount++;
         }
         if (outputStream.size() <= 0){
