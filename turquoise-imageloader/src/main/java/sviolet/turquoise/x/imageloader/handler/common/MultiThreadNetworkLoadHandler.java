@@ -33,7 +33,7 @@ import sviolet.turquoise.x.imageloader.server.disk.DiskCacheServer;
  *
  * @author S.Violet
  */
-public abstract class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
+public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
 
     private static final int MAXIMUM_REDIRECT_TIMES = 5;
     private static final int READ_BUFF_LENGTH = 8 * 1024;
@@ -107,6 +107,9 @@ public abstract class MultiThreadNetworkLoadHandler implements NetworkLoadHandle
         List<long[]> offsetList = new ArrayList<>(maxBlockNum);
 
         try {
+
+            long connectStartTime = System.currentTimeMillis();
+
             //connect first
             response = connect(null, taskInfo.getUrl(), 0, 0, minBlockSize - 1, connectTimeout, readTimeout, taskInfo, logger);
             //check content range
@@ -180,7 +183,7 @@ public abstract class MultiThreadNetworkLoadHandler implements NetworkLoadHandle
             taskInfo.getLoadProgress().setTotal(contentRange.totalSize);
 
             if (logger.checkEnable(TLogger.DEBUG)) {
-                logger.d("[MultiThreadNetworkLoadHandler]Network loading start, connections:" + responseList.size() + ", task:" + taskInfo);
+                logger.d("[MultiThreadNetworkLoadHandler]Network loading start, connections:" + responseList.size() + ", connect elapse:" + (System.currentTimeMillis() - connectStartTime) + ", task:" + taskInfo);
             }
 
             //监控线程通知工作线程停止
@@ -194,8 +197,8 @@ public abstract class MultiThreadNetworkLoadHandler implements NetworkLoadHandle
             }
 
             //dead line, fallback
-            long startTime = System.currentTimeMillis();
             long deadLine = System.currentTimeMillis() + lowNetworkSpeedConfig.getDeadline() * 2;
+            long readStartTime = System.currentTimeMillis();
 
             while (true) {
                 try {
@@ -214,7 +217,7 @@ public abstract class MultiThreadNetworkLoadHandler implements NetworkLoadHandle
                     stopSignal.set(true);
                     break;
                 }
-                if (!checkNetworkSpeed(applicationContext, context, startTime, taskInfo, lowNetworkSpeedConfig, exceptionHandler, logger)) {
+                if (!checkNetworkSpeed(applicationContext, context, readStartTime, taskInfo, lowNetworkSpeedConfig, exceptionHandler, logger)) {
                     stopSignal.set(true);
                     return HandleResult.CANCELED;
                 }
@@ -226,6 +229,12 @@ public abstract class MultiThreadNetworkLoadHandler implements NetworkLoadHandle
                     }
                     return HandleResult.CANCELED;
                 }
+            }
+
+            if (logger.checkEnable(TLogger.DEBUG)) {
+                long readElapse = System.currentTimeMillis() - readStartTime;
+                String readSpeed = readElapse <= 0 ? "0KB/s" : String.valueOf((int)(((double)contentRange.totalSize / 1024d) / ((double)readElapse / 1000d))) + "KB/s";
+                logger.d("[MultiThreadNetworkLoadHandler]Network loading finish, connections:" + responseList.size() + ", read elapse:" + readElapse + ", speed:" + readSpeed + ", task:" + taskInfo);
             }
 
             return HandleResult.SUCCEED;
