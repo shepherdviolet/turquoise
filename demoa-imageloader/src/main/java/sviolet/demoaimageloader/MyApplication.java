@@ -92,7 +92,6 @@ public class MyApplication extends TApplication {
 //                .setBackgroundImageResId(R.mipmap.async_image_loading)//自定义背景图(作为加载目标图的背景, 不常用)
 //                .setWipeDiskCacheWhenUpdate(true)//当APP更新时清空磁盘缓存(versionCode变化)
 //                .setImageDataLengthLimitPercent(this, 0.3f)//高级配置:图片资源数据长度限制(超过设定值将取消加载任务)
-//                .setMemoryBufferLengthLimitPercent(this, 0.02f)//高级配置:内存缓存区数据长度限制(超过设定值将取消任务), 仅在磁盘缓存访问异常时, 才会用到内存缓存区
 //                .setLowNetworkSpeedStrategy(lowNetworkSpeedStrategy)//高级配置
 ////                .setLoadingDrawableFactory(new MyLoadingDrawableFactory())//方式1:自定义实现加载图(完全自己实现)
 //                .setLoadingDrawableFactory(new CommonLoadingDrawableFactory()//方式2:配置通用加载图

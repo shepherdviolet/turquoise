@@ -60,8 +60,8 @@ public class CommonExceptionHandler implements ExceptionHandler {
 
     private static final String IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_CN = "部分图片过大, 加载失败.";
     private static final String IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_EN = "Some images are too large, loading failed.";
-    private static final String MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_CN = "磁盘访问失败, 大图加载失败.";
-    private static final String MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_EN = "Disk access failed, large image loading failed.";
+    private static final String HTTP_CONTENT_RANGE_PARSE_TOAST_CN = "服务端资源异常, 加载效率低";
+    private static final String HTTP_CONTENT_RANGE_PARSE_TOAST_EN = "Abnormal server resources, low loading efficiency";
     private static final String TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_CN = "网速过慢, 图片加载失败.";
     private static final String TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_EN = "Network speed is too slow, loading failed.";
 
@@ -182,11 +182,11 @@ public class CommonExceptionHandler implements ExceptionHandler {
     }
 
     @Override
-    public void onMemoryBufferLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger) {
-        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT);
+    public void onHttpContentRangeParseException(Context applicationContext, Context context, Task.Info taskInfo, TLogger logger) {
+        Message msg = myHandler.obtainMessage(MyHandler.HANDLER_ON_HTTP_CONTENT_RANGE_PARSE);
         msg.obj = new Info(applicationContext);
         msg.sendToTarget();
-        logger.e("MemoryBufferLengthOutOfLimit: diskCache is unhealthy, we have to write data into memory buffer, but the image is too large, so we cancel loading, ServerSettings->setMemoryBufferLengthLimitPercent() can adjust limit, dataLength:" + dataLength + ", limit:" + lengthLimit + ", task:" + taskInfo);
+        logger.e("HttpContentRangeParseException: CAUTION!!! Http ranges is not accepted, first connection is accepted, but the others did not, task:" + taskInfo);
     }
 
     @Override
@@ -235,7 +235,7 @@ public class CommonExceptionHandler implements ExceptionHandler {
         private static final int HANDLER_ON_APK_LOAD_COMMON_EXCEPTION = 4;
         private static final int HANDLER_ON_APK_LOAD_NOT_EXISTS_EXCEPTION = 5;
         private static final int HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT = 6;
-        private static final int HANDLER_ON_MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT = 7;
+        private static final int HANDLER_ON_HTTP_CONTENT_RANGE_PARSE = 7;
         private static final int HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK = 8;
         private static final int HANDLER_NETWORK_NOT_CONNECTED = 9;
 
@@ -263,8 +263,8 @@ public class CommonExceptionHandler implements ExceptionHandler {
                 case HANDLER_ON_IMAGE_DATA_LENGTH_OUT_OF_LIMIT:
                     host.showToast(((Info) msg.obj).getApplicationContext(), IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_CN, IMAGE_DATA_LENGTH_OUT_OF_LIMIT_TOAST_EN);
                     break;
-                case HANDLER_ON_MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT:
-                    host.showToast(((Info) msg.obj).getApplicationContext(), MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_CN, MEMORY_BUFFER_LENGTH_OUT_OF_LIMIT_TOAST_EN);
+                case HANDLER_ON_HTTP_CONTENT_RANGE_PARSE:
+                    host.showToast(((Info) msg.obj).getApplicationContext(), HTTP_CONTENT_RANGE_PARSE_TOAST_CN, HTTP_CONTENT_RANGE_PARSE_TOAST_EN);
                     break;
                 case HANDLER_ON_TASK_ABORT_ON_LOW_SPEED_NETWORK:
                     host.showToast(((Info) msg.obj).getApplicationContext(), TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_CN, TASK_ABORT_ON_LOW_SPEED_NETWORK_TOAST_EN);

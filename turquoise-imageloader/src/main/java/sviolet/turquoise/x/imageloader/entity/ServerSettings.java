@@ -73,7 +73,6 @@ public class ServerSettings implements ComponentManager.Component{
 
         private int urlLengthLimit = DEFAULT_URL_LENGTH_LIMIT;
         private long imageDataLengthLimit = DEFAULT_IMAGE_DATA_LENGTH_LIMIT;
-        private long memoryBufferLengthLimit = DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT;
         private LowNetworkSpeedStrategy lowNetworkSpeedStrategy = new LowNetworkSpeedStrategy.Builder().build();
 
         //handler////////////////////////////////////////////////////////////////////////////
@@ -297,36 +296,6 @@ public class ServerSettings implements ComponentManager.Component{
         }
 
         /**
-         * <p>[Senior Setting]Set memory buffer length limit by percent of app's memoryClass</p>
-         *
-         * <p>When disk cache of TILoader is not healthy (memory full or access failed), to show image as usual,
-         * we have to write all data into memory buffer, and decoding image from memory buffer.
-         * To avoid OOM, we will cancel load task if data length of source image is out of buffer limit,
-         * then call ExceptionHandler->onMemoryBufferLengthOutOfLimitException() to handle this event.
-         * You can adjust the limit value by ServerSettings->setMemoryBufferLengthLimitPercent();</p>
-         *
-         * @param context context
-         * @param percent percent of app's memoryClass (0~0.2f), default:{@value DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT}, min-size:{@value MIN_MEMORY_BUFFER_LENGTH_LIMIT}bytes
-         */
-        public Builder setMemoryBufferLengthLimitPercent(Context context, float percent){
-            if (context == null){
-                throw new RuntimeException("[ServerSettings]setMemoryBufferLengthLimitPercent:　context is null!");
-            }
-            if (percent > 0.2f){
-                percent = 0.2f;
-            }
-            //app memory class
-            final int memoryClass = DeviceUtils.getMemoryClass(context);
-            //calculate
-            long limit = (long) (1024 * 1024 * memoryClass * percent);
-            if (limit < MIN_MEMORY_BUFFER_LENGTH_LIMIT){
-                limit = MIN_MEMORY_BUFFER_LENGTH_LIMIT;
-            }
-            values.memoryBufferLengthLimit = limit;
-            return this;
-        }
-
-        /**
          * <p>[Senior Setting]</p>
          *
          * <p>Some times, network speed is very slow, but uninterruptedly, it will hardly to cause read-timeout exception,
@@ -490,7 +459,6 @@ public class ServerSettings implements ComponentManager.Component{
     private static final long DEFAULT_IMAGE_DATA_LENGTH_LIMIT = -1;
     private static final long MIN_IMAGE_DATA_LENGTH_LIMIT = 1024 * 1024;
     private static final float DEFAULT_IMAGE_DATA_LENGTH_LIMIT_PERCENT = 0.2f;
-    private static final long DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT = -1;
     private static final long MIN_MEMORY_BUFFER_LENGTH_LIMIT = 512 * 1024;
     private static final float DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT = 0.02f;
 
@@ -599,22 +567,6 @@ public class ServerSettings implements ComponentManager.Component{
         //calculate by default percent
         values.imageDataLengthLimit = (long) (1024 * 1024 * memoryClass * DEFAULT_IMAGE_DATA_LENGTH_LIMIT_PERCENT);
         return values.imageDataLengthLimit;
-    }
-
-    public long getMemoryBufferLengthLimit(){
-        if (values.memoryBufferLengthLimit > 0){
-            return values.memoryBufferLengthLimit;
-        }
-        Context context = manager.getApplicationContextImage();
-        if (context == null){
-            //return min memory buffer length limit, if context == null
-            return MIN_MEMORY_BUFFER_LENGTH_LIMIT;
-        }
-        //app memory class
-        final int memoryClass = DeviceUtils.getMemoryClass(context);
-        //calculate by default percent
-        values.memoryBufferLengthLimit = (long) (1024 * 1024 * memoryClass * DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT);
-        return values.memoryBufferLengthLimit;
     }
 
     public LowNetworkSpeedStrategy getLowNetworkSpeedStrategy(){

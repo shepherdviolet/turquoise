@@ -84,8 +84,8 @@ public class MyExceptionHandler implements ExceptionHandler {
     }
 
     @Override
-    public void onMemoryBufferLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger) {
-        Log.e("MyExceptionHandler", "onMemoryBufferLengthOutOfLimitException", null);
+    public void onHttpContentRangeParseException(Context applicationContext, Context context, Task.Info taskInfo, TLogger logger) {
+        Log.e("MyExceptionHandler", "onHttpContentRangeParseException", null);
     }
 
     @Override

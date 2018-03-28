@@ -146,22 +146,18 @@ public interface ExceptionHandler {
     void onImageDataLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger);
 
     /**
-     * <p>exception while memory buffer length out of limit (cancel loading), notify user generally</p>
+     * <p>exception while first connection accept ranges but the others are not accepted (cancel loading), notify user generally</p>
      *
-     * <p>When disk cache of TILoader is not healthy (memory full or access failed), to show image as usual,
-     * we have to write all data into memory buffer, and decoding image from memory buffer.
-     * To avoid OOM, we will cancel load task if data length of source image is out of buffer limit,
-     * then call ExceptionHandler->onMemoryBufferLengthOutOfLimitException() to handle this event.
-     * You can adjust the limit value by ServerSettings->setMemoryBufferLengthLimitPercent();</p>
+     * <p>This event occurs during multithreaded loading. When the first connection indicates that it
+     * supports ACCEPT_RANGES, but other connections indicate that they do not support ACCEPT_RANGES (
+     * Or the returned parameters do not match expectations).</p>
      *
      * @param applicationContext application context
      * @param context activity context, maybe null
      * @param taskInfo taskInfo
-     * @param dataLength length of data
-     * @param lengthLimit limit of memory buffer
      * @param logger logger
      */
-    void onMemoryBufferLengthOutOfLimitException(Context applicationContext, Context context, Task.Info taskInfo, long dataLength, long lengthLimit, TLogger logger);
+    void onHttpContentRangeParseException(Context applicationContext, Context context, Task.Info taskInfo, TLogger logger);
 
     /**
      * <p>Some times, network speed is very slow, but uninterruptedly, it will hardly to cause read-timeout exception,
