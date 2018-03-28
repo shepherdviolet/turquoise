@@ -29,16 +29,14 @@ import java.util.Map;
 
 import sviolet.thistle.util.judge.CheckUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
-import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.net.NetworkCallback;
 
 /**
  * <p>common implementation of NetworkLoadHandler</p>
  *
- * Created by S.Violet on 2016/3/22.
+ * @author S.Violet
  */
-public class CommonNetworkLoadHandler implements NetworkLoadHandler {
+public class CommonNetworkLoadHandler extends AbstractNetworkLoadHandler {
 
     private static final int MAXIMUM_REDIRECT_TIMES = 5;
 
@@ -52,7 +50,7 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
      * until NetworkCallback timeout.Because NetworkEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
      */
     @Override
-    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, NetworkCallback<Result> callback, long connectTimeout, long readTimeout, long imageDataLengthLimit, TLogger logger) {
         try{
             //load
             Result result = load(new URL(taskInfo.getUrl()), null, 0, callback, connectTimeout, readTimeout);
@@ -76,7 +74,7 @@ public class CommonNetworkLoadHandler implements NetworkLoadHandler {
      * @param prevUrl last url
      * @param redirectTimes redirect times
      * @param callback callback
-     * @return Result
+     * @return WriteResult
      */
     private Result load(URL url, URL prevUrl, int redirectTimes, NetworkCallback<Result> callback, long connectTimeout, long readTimeout) throws Exception {
         //skip when redirect too many times

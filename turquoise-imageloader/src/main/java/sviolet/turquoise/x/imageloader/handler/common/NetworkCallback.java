@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.x.imageloader.server.net;
+package sviolet.turquoise.x.imageloader.handler.common;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -27,7 +27,7 @@ import sviolet.thistle.entity.Destroyable;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
- * <p>is used to callback Engine by asynchronous way, return result</p>
+ * <p>Is used to callback Engine by asynchronous way, return result</p>
  *
  * @author S.Violet
  *

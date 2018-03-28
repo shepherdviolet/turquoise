@@ -31,18 +31,16 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import sviolet.turquoise.utilx.tlogger.TLogger;
-import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.net.NetworkCallback;
 
 /**
  * <p>NetworkLoadHandler on okhttp</p>
  *
  * <p>dependency::com.squareup.okhttp3:okhttp:3.3.1</p>
  *
- * Created by S.Violet on 2016/6/15.
+ * @author S.Violet
  */
-public class OkHttpNetworkLoadHandler implements NetworkLoadHandler {
+public class OkHttpNetworkLoadHandler extends AbstractNetworkLoadHandler {
 
     private OkHttpClient okHttpClient;
 
@@ -63,7 +61,7 @@ public class OkHttpNetworkLoadHandler implements NetworkLoadHandler {
      * until NetworkCallback timeout.Because NetworkEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
      */
     @Override
-    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, final NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, final NetworkCallback<Result> callback, long connectTimeout, long readTimeout, long imageDataLengthLimit, TLogger logger) {
         Request.Builder requestBuilder = new Request.Builder().url(taskInfo.getUrl());
         if (headers != null) {
             for (Map.Entry<String, String> entry : headers.entrySet()) {

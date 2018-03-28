@@ -19,29 +19,22 @@
 
 package sviolet.turquoise.x.imageloader.server.disk;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.RandomAccessFile;
 
 import sviolet.thistle.model.cache.DiskLruCache;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
-import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
-import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**
  * <p>Manage disk cache (TILoader inner disk cache)</p>
  *
- * Created by S.Violet on 2016/4/5.
+ * @author S.Violet
  */
 public class DiskCacheServer extends DiskCacheModule {
-
-    public static final int READ_BUFF_SIZE = 8 * 1024;
-    private static final int OUTPUT_STREAM_BUFF_SIZE = 64 * 1024;
 
     /************************************************************************
      * read
@@ -79,157 +72,47 @@ public class DiskCacheServer extends DiskCacheModule {
      */
 
     /**
-     * ResultType.SUCCEED :<br/>
-     * use {@link Result#getTargetFile()} to get File of resource, and than decode from this file<br/>
-     * <br/>
-     * ResultType.FAILED :<br/>
-     * write failed and can't restore data, you have to return failed state<br/>
-     * <br/>
-     * ResultType.RETURN_MEMORY_BUFFER :<br/>
-     * use {@link Result#getMemoryBuffer()} to get bytes of resource, and than decode from bytes<br/>
-     *
+     * Start write process
      * @param task task
-     * @param inputStream InputStream
-     * @param lowNetworkSpeedConfig lowNetworkSpeedConfig
-     * @return Result
+     * @param writeProcess write logic
      */
-    public Result write(Task task, InputStream inputStream, LowNetworkSpeedStrategy.Configure lowNetworkSpeedConfig) {
-        Result result = new Result();//result of write task
+    public WriteResult startWrite(Task task, WriteProcess writeProcess){
+        WriteResult result = null;
         DiskLruCache.Editor editor = null;
-        OutputStream outputStream = null;
+
         try {
-            //edit cache file
             editor = edit(task);
-            if (editor == null) {
+            if (editor == null){
                 //if cache file fetch failed, write data to memory buffer, skip write to disk
-                getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
-                        getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                        new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, write disk cache failed"), getComponentManager().getLogger());
-                writeToMemoryBuffer(task, inputStream, result, null, 0, lowNetworkSpeedConfig);
-                return result;
+                throw new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, write disk cache failed");
             }
-            /*
-             * Check disk cache healthy status.
-             * If cache is healthy, data write to disk first, and return File, decoder will decode image from file,
-             * in order to use less memory.
-             * If cache is not healthy, data write to memory buffer, and return bytes, decoder will decode image from bytes,
-             * in order to ensure pictures display normally.
-             */
-            if (isHealthy()) {
-                //write to disk first, and return File
-                outputStream = editor.newOutputStream(0);
-                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream, OUTPUT_STREAM_BUFF_SIZE);
-                //buffer, to save memory
-                long startTime = System.currentTimeMillis();
-                long imageDataLengthLimit = getComponentManager().getServerSettings().getImageDataLengthLimit();
-                byte[] buffer = new byte[DiskCacheServer.READ_BUFF_SIZE];
-                int readLength;
-                int loopCount = 0;
-                //read and write
-                while (true) {
-                    try {
-                        //read from inputStream
-                        readLength = inputStream.read(buffer);
-                    } catch (Exception e) {
-                        throw new NetworkException(e);
-                    }
-                    if (readLength < 0) {
-                        break;
-                    }
-                    //record progress
-                    task.getLoadProgress().increaseLoaded(readLength);
-                    //check if data out of limit
-                    if (task.getLoadProgress().loaded() > imageDataLengthLimit){
-                        abortEditor(editor);
-                        getComponentManager().getServerSettings().getExceptionHandler().onImageDataLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                                task.getTaskInfo(), task.getLoadProgress().loaded(), getComponentManager().getServerSettings().getImageDataLengthLimit(), getComponentManager().getLogger());
-                        result.setType(ResultType.CANCELED);
-                        return result;
-                    }
-                    //check if speed is low
-                    if (checkNetworkSpeed(startTime, loopCount, task, result, lowNetworkSpeedConfig)){
-                        abortEditor(editor);
-                        return result;
-                    }
-                    try {
-                        //try to write disk
-                        bufferedOutputStream.write(buffer, 0, readLength);
-                    }catch (Exception e){
-                        //not healthy
-                        setHealthy(false);
-                        //if error while writing first buffer data, try to write to memory buffer, in order to ensure pictures display normally.
-                        if (loopCount == 0){
-                            abortEditor(editor);
-                            getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
-                                    getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-                            writeToMemoryBuffer(task, inputStream, result, buffer, readLength, lowNetworkSpeedConfig);
-                            return result;
-                        }
-                        throw e;
-                    }
-                    loopCount++;
-                }
-                if (loopCount == 0){
-                    throw new NetworkException(new Exception("[TILoader]network load failed, null content received (1)"));
-                }
-                //succeed
-                bufferedOutputStream.flush();
+            result = writeProcess.onWrite(task, new WriterProvider(editor));
+            if (result == null || result.getType() != ResultType.SUCCEED){
+                abortEditor(editor);
+            } else {
                 editor.commit();
-                result.setType(ResultType.SUCCEED);
-                setHealthy(true);
-            }else{
-                //if disk is not healthy, data write to memory buffer, and return bytes, in order to ensure pictures display normally.
-                writeToMemoryBuffer(task, inputStream, result, null, 0, lowNetworkSpeedConfig);
-                //trying to write to disk cache
-                if (result.getType() == ResultType.RETURN_MEMORY_BUFFER && result.getMemoryBuffer().length > 0) {
-                    try {
-                        outputStream = editor.newOutputStream(0);
-                        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(outputStream, OUTPUT_STREAM_BUFF_SIZE);
-                        bufferedOutputStream.write(result.getMemoryBuffer());
-                        bufferedOutputStream.flush();
-                        editor.commit();
-                        setHealthy(true);
-                    }catch(Exception e){
-                        setHealthy(false);
-                        abortEditor(editor);
-                        getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
-                                getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-                    }
-                }else{
-                    abortEditor(editor);
-                    getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(
-                            getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                            new Exception("[TILoader]network load failed, null content received (3)"), getComponentManager().getLogger());
-                }
             }
-        }catch(NetworkException e){
-            abortEditor(editor);
-            getComponentManager().getServerSettings().getExceptionHandler().onNetworkLoadException(
-                    getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e.getCause(), getComponentManager().getLogger());
         }catch(Exception e){
             abortEditor(editor);
             getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
                     getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
         } finally {
-            closeStream(inputStream);
-            closeStream(outputStream);
             release();
         }
-        //fetch target file while succeed
-        fetchTargetFile(task, result);
-        return result;
-    }
 
-    private void fetchTargetFile(Task task, Result result) {
+        if (result == null) {
+            result = WriteResult.failedResult();
+        }
+
+        //fetch target file from cache
         if (result.getType() == ResultType.SUCCEED){
             try {
                 File targetFile = get(task);
                 if (targetFile == null || !targetFile.exists()) {
-                    setHealthy(false);
                     result.setType(ResultType.FAILED);
                     getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheReadException(
                             getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                            new Exception("[TILoader]resources have been written to disk cache, but we can't find target File!!!"), getComponentManager().getLogger());
+                            new Exception("[TILoader]Resources have been written to disk cache, but we can't find target File!!!"), getComponentManager().getLogger());
                 } else {
                     result.setTargetFile(targetFile);
                 }
@@ -237,196 +120,7 @@ public class DiskCacheServer extends DiskCacheModule {
                 release();
             }
         }
-    }
-
-    /**
-     * ResultType.SUCCEED :<br/>
-     * write succeed, please decode from origin bytes<br/>
-     * <br/>
-     * ResultType.FAILED :<br/>
-     * write failed, please decode from origin bytes<br/>
-     * <br/>
-     *
-     * @param task task
-     * @param bytes bytes
-     * @return true: write succeed
-     */
-    public boolean write(Task task, byte[] bytes){
-        DiskLruCache.Editor editor = null;
-        OutputStream outputStream = null;
-        try {
-            //edit cache file
-            editor = edit(task);
-            if (editor == null) {
-                getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
-                        getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                        new Exception("[TILoader]diskLruCache.edit(cacheKey) return null, write disk cache failed (2)"), getComponentManager().getLogger());
-                return false;
-            }
-            //trying to write to disk cache
-            if (bytes != null && bytes.length > 0) {
-                try {
-                    outputStream = editor.newOutputStream(0);
-                    outputStream.write(bytes);
-                    outputStream.flush();
-                    editor.commit();
-                    setHealthy(true);
-                    return true;
-                } catch (Exception e) {
-                    setHealthy(false);
-                    abortEditor(editor);
-                    getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
-                            getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-                }
-            } else {
-                abortEditor(editor);
-                getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
-                        getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(),
-                        new Exception("[TILoader]disk cache write failed, bytes is null"), getComponentManager().getLogger());
-            }
-        }catch(Exception e){
-            abortEditor(editor);
-            getComponentManager().getServerSettings().getExceptionHandler().onDiskCacheWriteException(
-                    getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(), task.getTaskInfo(), e, getComponentManager().getLogger());
-        }finally {
-            closeStream(outputStream);
-            release();
-        }
-        return false;
-    }
-
-    /**
-     * data load from network write to full size memory buffer, in order to ensure pictures display normally.
-     * @param task task
-     * @param inputStream inputStream
-     * @param result result of write task
-     * @param buffer fix buffer, might have data
-     * @param bufferDataLength data length of fix buffer
-     * @throws NetworkException exception of network
-     * @throws IOException exception of io
-     */
-    private void writeToMemoryBuffer(Task task, InputStream inputStream, Result result, byte[] buffer, int bufferDataLength, LowNetworkSpeedStrategy.Configure lowNetworkSpeedConfig) throws NetworkException, IOException  {
-        //cancel loading if memory buffer out of limit
-        if (task.getLoadProgress().total() > getComponentManager().getServerSettings().getMemoryBufferLengthLimit()){
-            getComponentManager().getServerSettings().getExceptionHandler().onMemoryBufferLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                    task.getTaskInfo(), task.getLoadProgress().total(), getComponentManager().getServerSettings().getMemoryBufferLengthLimit(), getComponentManager().getLogger());
-            result.setType(ResultType.CANCELED);
-            return;
-        }
-        //full size buffer
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        //fix buffer
-        if (buffer != null) {
-            outputStream.write(buffer, 0, bufferDataLength);
-        }else{
-            buffer = new byte[DiskCacheServer.READ_BUFF_SIZE];
-        }
-        long startTime = System.currentTimeMillis();
-        long memoryBufferLengthLimit = getComponentManager().getServerSettings().getMemoryBufferLengthLimit();
-        int readLength;
-        int loopCount = 0;
-        while (true) {
-            try {
-                readLength = inputStream.read(buffer);
-            } catch (Exception ne) {
-                throw new NetworkException(ne);
-            }
-            if (readLength < 0) {
-                break;
-            }
-            //record progress
-            task.getLoadProgress().increaseLoaded(readLength);
-            //check if data out of limit
-            if (task.getLoadProgress().loaded() > memoryBufferLengthLimit){
-                getComponentManager().getServerSettings().getExceptionHandler().onMemoryBufferLengthOutOfLimitException(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                        task.getTaskInfo(), task.getLoadProgress().loaded(), getComponentManager().getServerSettings().getMemoryBufferLengthLimit(), getComponentManager().getLogger());
-                result.setType(ResultType.CANCELED);
-                return;
-            }
-            //check if speed is low
-            if (checkNetworkSpeed(startTime, loopCount, task, result, lowNetworkSpeedConfig)){
-                return;
-            }
-            outputStream.write(buffer, 0, readLength);
-            loopCount++;
-        }
-        if (outputStream.size() <= 0){
-            throw new NetworkException(new Exception("[TILoader]network load failed, null content received (2)"));
-        }
-        //return memory buffer
-        result.setType(ResultType.RETURN_MEMORY_BUFFER);
-        result.setMemoryBuffer(outputStream.toByteArray());
-    }
-
-    private boolean checkNetworkSpeed(long startTime, int loopCount, Task task, Result result, LowNetworkSpeedStrategy.Configure lowNetworkSpeedConfig){
-        //decrease check frequency
-        if (loopCount << 30 != 0){
-            return false;
-        }
-
-        final long elapseTime = System.currentTimeMillis() - startTime + 1;
-        final long loadedData = task.getLoadProgress().loaded();
-        final long totalData = task.getLoadProgress().total();
-
-        ServerSettings serverSettings = getComponentManager().getServerSettings();
-        final long deadline = lowNetworkSpeedConfig.getDeadline();
-        final long windowPeriod = lowNetworkSpeedConfig.getWindowPeriod();
-        final int thresholdSpeed = lowNetworkSpeedConfig.getThresholdSpeed();
-
-        //dead line
-        if (elapseTime > deadline){
-            int speed = (int) ((float)loadedData / (elapseTime >> 10));
-            serverSettings.getExceptionHandler().handleLowNetworkSpeedEvent(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                    task.getTaskInfo(), elapseTime, speed, getComponentManager().getLogger());
-            result.setType(ResultType.CANCELED);
-            return true;
-        }
-        //if in window period, skip speed check
-        if (elapseTime < windowPeriod){
-            return false;
-        }
-        //check speed
-        int speed = (int) ((float)loadedData / (elapseTime >> 10));
-        //check by thresholdSpeed
-        if (speed > thresholdSpeed) {
-            //check by progress
-            if (totalData > 0) {
-                //calculate min speed by total data length
-                int minSpeed = (int)((float)totalData / (deadline >> 10));
-                //80% off
-                if (speed > minSpeed * 0.8f){
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-        serverSettings.getExceptionHandler().handleLowNetworkSpeedEvent(getComponentManager().getApplicationContextImage(), getComponentManager().getContextImage(),
-                task.getTaskInfo(), elapseTime, speed, getComponentManager().getLogger());
-        result.setType(ResultType.CANCELED);
-        return true;
-    }
-
-    /************************************************************************
-     * function
-     */
-
-    private void closeStream(InputStream stream){
-        if (stream != null){
-            try {
-                stream.close();
-            } catch (IOException ignored) {
-            }
-        }
-    }
-
-    private void closeStream(OutputStream stream){
-        if (stream != null){
-            try {
-                stream.close();
-            } catch (IOException ignored) {
-            }
-        }
+        return result;
     }
 
     private void abortEditor(DiskLruCache.Editor editor){
@@ -449,47 +143,91 @@ public class DiskCacheServer extends DiskCacheModule {
         CANCELED
     }
 
-    public static class Result{
+    /**
+     * DiskCache write result
+     */
+    public final static class WriteResult {
 
         private ResultType type;
-        private byte[] memoryBuffer;
         private File targetFile;
 
-        public Result(){
-            type = ResultType.FAILED;
+        private WriteResult(){
+        }
+
+        public static WriteResult succeedResult() {
+            WriteResult result = new WriteResult();
+            result.setType(ResultType.SUCCEED);
+            return result;
+        }
+
+        public static WriteResult failedResult() {
+            WriteResult result = new WriteResult();
+            result.setType(ResultType.FAILED);
+            return result;
+        }
+
+        public static WriteResult canceledResult(){
+            WriteResult result = new WriteResult();
+            result.setType(ResultType.CANCELED);
+            return result;
         }
 
         public ResultType getType() {
             return type;
         }
 
-        public byte[] getMemoryBuffer() {
-            return memoryBuffer;
-        }
-
-        public void setType(ResultType type) {
-            this.type = type;
-        }
-
-        public void setMemoryBuffer(byte[] memoryBuffer) {
-            this.memoryBuffer = memoryBuffer;
-        }
-
         public File getTargetFile() {
             return targetFile;
         }
 
-        public void setTargetFile(File targetFile) {
+        private void setType(ResultType type) {
+            this.type = type;
+        }
+
+        private void setTargetFile(File targetFile) {
             this.targetFile = targetFile;
         }
     }
 
-    private static class NetworkException extends Exception{
+    /**
+     * Writer provider, to open OutputStream or RandomAccessFile
+     */
+    public static class WriterProvider {
 
-        public NetworkException(Throwable throwable) {
-            super(throwable);
+        private DiskLruCache.Editor editor;
+
+        private WriterProvider(DiskLruCache.Editor editor) {
+            this.editor = editor;
         }
 
+        /**
+         * Open OutputStream to target file
+         */
+        public OutputStream newOutputStream() throws IOException {
+            return editor.newOutputStream(0);
+        }
+
+        /**
+         * Open RandomAccessFile to target file
+         */
+        public RandomAccessFile newRandomAccessFileForWrite() throws IOException {
+            return editor.newRandomAccessFileForWrite(0);
+        }
+
+    }
+
+    /**
+     * Implement write process
+     */
+    public interface WriteProcess {
+
+        /**
+         * Write data to writerProvider
+         * @param task task
+         * @param writerProvider to open OutputStream or RandomAccessFile
+         * @return write result
+         */
+        WriteResult onWrite(Task task, WriterProvider writerProvider);
     }
 
 }

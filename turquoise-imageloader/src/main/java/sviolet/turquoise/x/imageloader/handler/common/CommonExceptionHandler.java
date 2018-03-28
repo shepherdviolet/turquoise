@@ -40,12 +40,12 @@ import sviolet.turquoise.x.imageloader.node.Task;
 /**
  * <p>common implementation of ExceptionHandler</p>
  *
- * Created by S.Violet on 2016/3/22.
+ * @author S.Violet
  */
 public class CommonExceptionHandler implements ExceptionHandler {
 
-    private static final String DISK_CACHE_EXCEPTION_TOAST_CN = "图片缓存访问失败,请检查手机内存是否已满,图片将始终通过网络下载.";
-    private static final String DISK_CACHE_EXCEPTION_TOAST_EN = "Image cache access failed, check your device memory, image will loading from network always.";
+    private static final String DISK_CACHE_EXCEPTION_TOAST_CN = "手机存储已满(存储访问错误), 图片无法加载";
+    private static final String DISK_CACHE_EXCEPTION_TOAST_EN = "The storage is full(storage access error), image loading failed";
     private static final long DISK_CACHE_EXCEPTION_NOTICE_INTERVAL = 20 * 1000L;//20s
 
     private static final String DISK_LOAD_EXCEPTION_TOAST_CN = "磁盘加载图片失败";

@@ -21,146 +21,70 @@ package sviolet.turquoise.x.imageloader.handler;
 
 import android.content.Context;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import sviolet.thistle.entity.Destroyable;
 import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.imageloader.entity.IndispensableState;
+import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.net.NetworkCallback;
+import sviolet.turquoise.x.imageloader.server.disk.DiskCacheServer;
 
 /**
- * <p>implement network load</p>
+ * <p>Implement network load logic</p>
  *
- * <p>see:{@link sviolet.turquoise.x.imageloader.handler.common.CommonNetworkLoadHandler}</p>
+ * <p>It is recommended to implement {@link sviolet.turquoise.x.imageloader.handler.common.AbstractNetworkLoadHandler},
+ * this interface is for highly customized.</p>
  *
- * Created by S.Violet on 2016/2/19.
+ * @author S.Violet
  */
 public interface NetworkLoadHandler {
 
     /**
-     * <p>load from net</p>
+     * <p>Implement network load logic</p>
      *
-     * <p>CAUTION:</p>
-     *
-     * <p>You should call "callback.setResultSucceed()"/"callback.setResultFailed()"/"callback.setResultCanceled()"
-     * when process finished, whether loading succeed or failed. if not, NetworkEngine's thread will be block for a long time,
-     * until NetworkCallback timeout.Because NetworkEngine will invoke callback.getResult, this method will block thread util you setResult.</p>
-     *
-     * <pre><@code
-     *      public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
-     *          try{
-     *              //load by third party network utils
-     *              //don't forget set timeout
-     *              XXX.get(url, connectTimeout, readTimeout, new OnFinishListener(){
-     *                  public void onSucceed(InputStream inputStream){
-     *                      //return result
-     *                      callback.setResultSucceed(new Result(inputStream));
-     *                  }
-     *                  public void onFailed(Exception e){
-     *                      //return result
-     *                      callback.setResultFailed(e);
-     *                  }
-     *              });
-     *          }catch(Exception e){
-     *              //return result
-     *              callback.setResultFailed(e);
-     *          }
-     *      }
-     * </pre>
+     * <p>It is recommended to implement {@link sviolet.turquoise.x.imageloader.handler.common.AbstractNetworkLoadHandler},
+     * this interface is for highly customized.</p>
      *
      * @param applicationContext application context
-     * @param context activity context, maybe null
-     * @param taskInfo taskInfo
-     * @param callback callback, you must return result by it.
-     * @param connectTimeout connect timeout of network
-     * @param readTimeout read timeout of network
+     * @param context context
+     * @param writerProvider get OutputStream or RandomAccessFile, for write data to cache file
+     * @param taskInfo task info
+     * @param indispensableState indispensable state
+     * @param lowNetworkSpeedConfig low network speed config
+     * @param connectTimeout connect timeout
+     * @param readTimeout read timeout
+     * @param imageDataLengthLimit image data length limit
+     * @param exceptionHandler exception handler
      * @param logger logger
+     * @return handle result
      */
-    void onHandle(Context applicationContext, Context context, Task.Info taskInfo, NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger);
+    HandleResult onHandle(
+            Context applicationContext,
+            Context context,
+            DiskCacheServer.WriterProvider writerProvider,
+            Task.Info taskInfo,
+            IndispensableState indispensableState,
+            LowNetworkSpeedStrategy.Configure lowNetworkSpeedConfig,
+            long connectTimeout,
+            long readTimeout,
+            long imageDataLengthLimit,
+            ExceptionHandler exceptionHandler,
+            TLogger logger);
 
     /**
-     * <p>network loading result (on succeed)</p>
-     *
-     * <p>you can return InputStream or bytes</p>
+     * NetworkLoadHandler handle result
      */
-    class Result implements Destroyable{
-
-        public static final int UNKNOWN_LENGTH = -1;
-
-        private ResultType type = ResultType.NULL;
-        private byte[] bytes;
-        private InputStream inputStream;
-        private int length = UNKNOWN_LENGTH;
-
-        public Result(InputStream inputStream){
-            if (inputStream == null){
-                this.type = ResultType.NULL;
-                return;
-            }
-            this.type = ResultType.INPUTSTREAM;
-            this.inputStream = inputStream;
-        }
-
+    enum HandleResult {
         /**
-         * @deprecated Best to use {@link Result(InputStream)}, bytes result will cost more memory!!!
+         * load succeed (to file)
          */
-        @Deprecated
-        public Result(byte[] bytes){
-            if (bytes == null){
-                this.type = ResultType.NULL;
-                return;
-            }
-            this.type = ResultType.BYTES;
-            this.bytes = bytes;
-            this.length = bytes.length;
-        }
-
-        public ResultType getType() {
-            return type;
-        }
-
-        public byte[] getBytes() {
-            return bytes;
-        }
-
-        public InputStream getInputStream() {
-            return inputStream;
-        }
-
-        public int getLength() {
-            return length;
-        }
-
-        public Result setLength(int length) {
-            if (this.type != ResultType.NULL) {
-                this.length = length;
-            }
-            return this;
-        }
-
-        @Override
-        public void onDestroy() {
-            type = ResultType.NULL;
-            if (inputStream != null){
-                try {
-                    inputStream.close();
-                } catch (IOException ignored) {
-                }
-            }
-            if (bytes != null){
-                bytes = null;
-            }
-        }
-    }
-
-    /**
-     * network loading result type
-     */
-    enum ResultType{
-        NULL,
-        BYTES,
-        INPUTSTREAM
+        SUCCEED,
+        /**
+         * load failed
+         */
+        FAILED,
+        /**
+         * load canceled
+         */
+        CANCELED
     }
 
 }

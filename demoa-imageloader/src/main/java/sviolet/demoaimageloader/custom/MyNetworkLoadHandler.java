@@ -31,16 +31,16 @@ import sviolet.demoaimageloader.R;
 import sviolet.thistle.util.concurrent.ThreadPoolExecutorUtils;
 import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
-import sviolet.turquoise.x.imageloader.handler.NetworkLoadHandler;
+import sviolet.turquoise.x.imageloader.handler.common.AbstractNetworkLoadHandler;
+import sviolet.turquoise.x.imageloader.handler.common.NetworkCallback;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.net.NetworkCallback;
 
 /**
  * 自定义实现网络加载: 加载本地资源图片模拟网络加载
  *
- * Created by S.Violet on 2016/4/20.
+ * @author S.Violet
  */
-public class MyNetworkLoadHandler implements NetworkLoadHandler {
+public class MyNetworkLoadHandler extends AbstractNetworkLoadHandler {
 
     private Random random = new Random(System.currentTimeMillis());
     private int index = 0;
@@ -65,13 +65,14 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
      * 线程才会继续执行, 因此必须保证每种情况都使用callback返回结果, 包括异常.
      *
      * <pre><@code
-     *      public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+     *      public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, NetworkCallback<Result> callback, long connectTimeout, long readTimeout, long imageDataLengthLimit, TLogger logger) {
      *          try{
-     *              //third party network utils
-     *              XXX.get(url, params, new OnFinishListener(){
+     *              //load by third party network utils
+     *              //don't forget set timeout
+     *              XXX.get(url, connectTimeout, readTimeout, new OnFinishListener(){
      *                  public void onSucceed(InputStream inputStream){
      *                      //return result
-     *                      callback.setResultSucceed(new Result(inputStream));
+     *                      callback.setResultSucceed(new WriteResult(inputStream));
      *                  }
      *                  public void onFailed(Exception e){
      *                      //return result
@@ -88,7 +89,7 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
      * 注意根据connectTimeout/readTimeout设置超时.
      */
     @Override
-    public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+    public void onHandle(Context applicationContext, final Context context, final Task.Info taskInfo, final NetworkCallback<Result> callback, long connectTimeout, long readTimeout, long imageDataLengthLimit, TLogger logger) {
 
         //模拟异步执行
         pool.execute(new Runnable() {
@@ -127,7 +128,7 @@ public class MyNetworkLoadHandler implements NetworkLoadHandler {
                     }
 
                     //bytes方式返回
-//                    callback.setResultSucceed(new Result(data));
+//                    callback.setResultSucceed(new WriteResult(data));
                     //inputStream方式返回
                     ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
                     callback.setResultSucceed(new Result(inputStream));

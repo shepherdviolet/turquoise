@@ -31,14 +31,13 @@ import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
-import sviolet.turquoise.x.imageloader.server.net.NetworkCallback;
 
 /**
  * <p>used to emulate net loading</p>
  *
- * Created by S.Violet on 2016/3/22.
+ * @author S.Violet
  */
-public class EmulateNetworkLoadHandler extends CommonNetworkLoadHandler {
+public class EmulateNetworkLoadHandler extends AbstractNetworkLoadHandler {
 
     public static final String EMULATE_URL_PREFIX = "emulate_res_index://";
 
@@ -88,7 +87,7 @@ public class EmulateNetworkLoadHandler extends CommonNetworkLoadHandler {
     }
 
     @Override
-    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, NetworkCallback<Result> callback, long connectTimeout, long readTimeout, TLogger logger) {
+    public void onHandle(Context applicationContext, Context context, Task.Info taskInfo, NetworkCallback<Result> callback, long connectTimeout, long readTimeout, long imageDataLengthLimit, TLogger logger) {
 
         try {
             String url = taskInfo.getUrl();

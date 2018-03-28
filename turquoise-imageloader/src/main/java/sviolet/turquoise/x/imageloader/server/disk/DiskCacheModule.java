@@ -22,7 +22,6 @@ package sviolet.turquoise.x.imageloader.server.disk;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -52,7 +51,6 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
 
     private DiskLruCache diskLruCache;
     private Status status = Status.UNINITIALIZED;
-    private AtomicBoolean isHealthy = new AtomicBoolean(true);
     private int holdCounter = 0;
     private long lastOpenFailedTime = 0;//last open failed time
 
@@ -227,14 +225,6 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
 
     public void wipe(File path) throws IOException {
         DiskLruCache.deleteContents(path);
-    }
-
-    public boolean isHealthy(){
-        return isHealthy.get();
-    }
-
-    protected void setHealthy(boolean isHealthy){
-        this.isHealthy.set(isHealthy);
     }
 
     protected ComponentManager getComponentManager(){
