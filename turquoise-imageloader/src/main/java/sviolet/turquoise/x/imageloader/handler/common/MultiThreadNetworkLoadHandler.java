@@ -64,7 +64,8 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
     /**
      * @param maxBlockNum max thread num to load one image, must >= 2
      * @param probeBlockSize bytes, ranges of first connection, must >= {@value SPLIT_THRESHOLD}
-     * @param standardNetworkSpeed KB/s, This network speed is used to evaluate the number of threads needed, must >= 16
+     * @param standardNetworkSpeed KB/s, This config is used to evaluate the number of work threads, must >= 16,
+     *                             The closer to the real download speed of your server, the better.
      * @param verboseLog print verbose log if true
      */
     public MultiThreadNetworkLoadHandler(int maxBlockNum, long probeBlockSize, long standardNetworkSpeed, boolean verboseLog) {
