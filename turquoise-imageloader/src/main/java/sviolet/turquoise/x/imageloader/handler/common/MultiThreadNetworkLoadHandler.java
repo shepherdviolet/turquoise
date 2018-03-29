@@ -45,7 +45,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
     private Map<String, String> headers;
 
     private long probeBlockSize = 100L * 1024L * 1024L;//bytes, must >= SPLIT_THRESHOLD
-    private long standardNetworkSpeed = 128L;//KB/s or B/ms, must >= 16
+    private long standardNetworkSpeed = 512L;//KB/s or B/ms, must >= 16
     private int maxBlockNum = 4;//must >= 2
     private boolean verboseLog = true;
 
@@ -150,7 +150,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 int minBlockNum = contentRange.endPosition == contentRange.totalSize - 1 ? 1 : 2;
                 if (contentRange.totalSize < (contentRange.endPosition + 1) * maxBlockNum) {
                     if (verboseLog && logger.checkEnable(TLogger.DEBUG)) {
-                        logger.d("[MultiThreadNetworkLoadHandler]Calculate block num, firstConnectElapse:" + firstConnectElapse + ", total size:" + contentRange.totalSize + ", task:" + taskInfo);
+                        logger.d("[MultiThreadNetworkLoadHandler:verbose]Calculate block num, firstConnectElapse:" + firstConnectElapse + ", total size:" + contentRange.totalSize + ", task:" + taskInfo);
                     }
                     //small data
                     long optimalElapse = Long.MAX_VALUE;
@@ -162,7 +162,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                             optimalBlockNum = blockNum;
                         }
                         if (verboseLog && logger.checkEnable(TLogger.DEBUG)) {
-                            logger.d("[MultiThreadNetworkLoadHandler]Calculate block num, if blockNum = " + blockNum + ", elapse = " + elapse + ", task:" + taskInfo);
+                            logger.d("[MultiThreadNetworkLoadHandler:verbose]Calculate block num, if blockNum = " + blockNum + ", elapse = " + elapse + ", task:" + taskInfo);
                         }
                     }
                 }
@@ -185,6 +185,9 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 //add first connect to list
                 responseList.add(response);
                 offsetList.add(new long[]{0, firstBlockSize - 1});
+                if (verboseLog && logger.checkEnable(TLogger.DEBUG)) {
+                    logger.d("[MultiThreadNetworkLoadHandler:verbose]Block 1, start:0, end:" + (firstBlockSize - 1) + ", task:" + taskInfo);
+                }
                 //connect others
                 long start = firstBlockSize;
                 long end;
@@ -224,6 +227,10 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                     //add to list
                     responseList.add(response);
                     offsetList.add(new long[]{start, end});
+                    if (verboseLog && logger.checkEnable(TLogger.DEBUG)) {
+                        logger.d("[MultiThreadNetworkLoadHandler:verbose]Block " + connectCount + ", start:" + start + ", end:" + end + ", task:" + taskInfo);
+                    }
+                    //next
                     start = start + nextBlockSize;
                     connectCount++;
                 }
