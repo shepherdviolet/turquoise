@@ -147,6 +147,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 long firstConnectElapse = System.currentTimeMillis() - connectStartTime;
                 //calculate block num
                 int optimalBlockNum = maxBlockNum;
+                int minBlockNum = contentRange.endPosition == contentRange.totalSize - 1 ? 1 : 2;
                 if (contentRange.totalSize < (contentRange.endPosition + 1) * maxBlockNum) {
                     if (verboseLog && logger.checkEnable(TLogger.DEBUG)) {
                         logger.d("[MultiThreadNetworkLoadHandler]Calculate block num, firstConnectElapse:" + firstConnectElapse + ", total size:" + contentRange.totalSize + ", task:" + taskInfo);
@@ -154,7 +155,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                     //small data
                     long optimalElapse = Long.MAX_VALUE;
                     long elapse;
-                    for (int blockNum = maxBlockNum; blockNum >= 2; blockNum--) {
+                    for (int blockNum = maxBlockNum; blockNum >= minBlockNum; blockNum--) {
                         elapse = firstConnectElapse * blockNum + (long) ((double) contentRange.totalSize / (double) (standardNetworkSpeed * blockNum));
                         if (elapse < optimalElapse) {
                             optimalElapse = elapse;
@@ -168,11 +169,17 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 //calculate block size
                 long firstBlockSize;
                 long nextBlockSize;
-                if (contentRange.totalSize < (contentRange.endPosition + 1) * optimalBlockNum) {
+                if (optimalBlockNum == 1){
+                    //one block
+                    firstBlockSize = contentRange.endPosition + 1;
+                    nextBlockSize = firstBlockSize;
+                } else if (contentRange.totalSize < (contentRange.endPosition + 1) * optimalBlockNum) {
+                    //average distribution
                     firstBlockSize = (long) ((double) contentRange.totalSize / (double) optimalBlockNum);
                     nextBlockSize = firstBlockSize;
                 } else {
-                    firstBlockSize = (contentRange.endPosition + 1);
+                    //fill first block, the others average distribution
+                    firstBlockSize = contentRange.endPosition + 1;
                     nextBlockSize = (long) ((double) (contentRange.totalSize - (contentRange.endPosition + 1)) / (double) (optimalBlockNum - 1));
                 }
                 //add first connect to list
