@@ -37,17 +37,51 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
 
     private static final int MAXIMUM_REDIRECT_TIMES = 5;
     private static final int READ_BUFF_LENGTH = 8 * 1024;
-    private static final long SPLIT_THRESHOLD = 8L * 1024L;
+    private static final long SPLIT_THRESHOLD = 16L * 1024L;
 
     private Map<String, OkHttpClient> okHttpClients = new ConcurrentHashMap<>(2);
     private ExecutorService workThreadPool = ThreadPoolExecutorUtils.createCached(0, Integer.MAX_VALUE, 60L, "MultiThreadNetworkLoadHandler-worker-%d");
 
     private Map<String, String> headers;
 
-    private long probeBlockSize = 100L * 1024L * 1024L;//bytes, must >= SPLIT_THRESHOLD
-    private long standardNetworkSpeed = 512L;//KB/s or B/ms, must >= 16
-    private int maxBlockNum = 4;//must >= 2
-    private boolean verboseLog = true;
+    private int maxBlockNum;
+    private long probeBlockSize;
+    private long standardNetworkSpeed;
+    private boolean verboseLog;
+
+    public MultiThreadNetworkLoadHandler() {
+        this(4, false);
+    }
+
+    /**
+     * @param maxBlockNum max thread num to load one image, must >= 2
+     * @param verboseLog print verbose log if true
+     */
+    public MultiThreadNetworkLoadHandler(int maxBlockNum, boolean verboseLog) {
+        this(maxBlockNum, 100L * 1024L * 1024L, 512L, verboseLog);
+    }
+
+    /**
+     * @param maxBlockNum max thread num to load one image, must >= 2
+     * @param probeBlockSize bytes, ranges of first connection, must >= {@value SPLIT_THRESHOLD}
+     * @param standardNetworkSpeed KB/s, This network speed is used to evaluate the number of threads needed, must >= 16
+     * @param verboseLog print verbose log if true
+     */
+    public MultiThreadNetworkLoadHandler(int maxBlockNum, long probeBlockSize, long standardNetworkSpeed, boolean verboseLog) {
+        if (maxBlockNum < 2) {
+            throw new IllegalArgumentException("maxBlockNum must >= 2");
+        }
+        if (probeBlockSize < SPLIT_THRESHOLD) {
+            throw new IllegalArgumentException("probeBlockSize must >= " + SPLIT_THRESHOLD);
+        }
+        if (standardNetworkSpeed < 16) {
+            throw new IllegalArgumentException("standardNetworkSpeed must >= 16");
+        }
+        this.maxBlockNum = maxBlockNum;
+        this.probeBlockSize = probeBlockSize;
+        this.standardNetworkSpeed = standardNetworkSpeed;
+        this.verboseLog = verboseLog;
+    }
 
     protected OkHttpClient getClient(long connectTimeout, long readTimeout){
         OkHttpClient client = okHttpClients.get(connectTimeout + "+" + readTimeout);
@@ -88,6 +122,9 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
      * logic
      */
 
+    /**
+     * Multi-thread load logic
+     */
     @Override
     public final HandleResult onHandle(
             Context applicationContext,
@@ -613,7 +650,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
         private long startPosition;
         private long endPosition;
 
-        public ContentRange(boolean parseError, boolean acceptRanges, long totalSize, long startPosition, long endPosition) {
+        private ContentRange(boolean parseError, boolean acceptRanges, long totalSize, long startPosition, long endPosition) {
             this.parseError = parseError;
             this.acceptRanges = acceptRanges;
             this.totalSize = totalSize;
