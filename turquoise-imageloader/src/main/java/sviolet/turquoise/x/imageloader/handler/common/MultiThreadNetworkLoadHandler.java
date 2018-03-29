@@ -37,13 +37,16 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
 
     private static final int MAXIMUM_REDIRECT_TIMES = 5;
     private static final int READ_BUFF_LENGTH = 8 * 1024;
+    private static final long SPLIT_THRESHOLD = 8L * 1024L;
 
     private Map<String, OkHttpClient> okHttpClients = new ConcurrentHashMap<>(2);
     private ExecutorService workThreadPool = ThreadPoolExecutorUtils.createCached(0, Integer.MAX_VALUE, 60L, "MultiThreadNetworkLoadHandler-worker-%d");
 
     private Map<String, String> headers;
-    private long minBlockSize = 32L * 1024L;
-    private int maxBlockNum = 4;
+
+    private long probeBlockSize = 100L * 1024L * 1024L;//bytes, must >= SPLIT_THRESHOLD
+    private long standardNetworkSpeed = 512L;//KB/s or B/ms, must >= 16
+    private int maxBlockNum = 4;//must >= 2
 
     protected OkHttpClient getClient(long connectTimeout, long readTimeout){
         OkHttpClient client = okHttpClients.get(connectTimeout + "+" + readTimeout);
@@ -111,42 +114,74 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
             long connectStartTime = System.currentTimeMillis();
 
             //connect first
-            response = connect(null, taskInfo.getUrl(), 0, 0, minBlockSize - 1, connectTimeout, readTimeout, taskInfo, logger);
+            response = connect(null, taskInfo.getUrl(), 0, 0, probeBlockSize - 1, connectTimeout, readTimeout, taskInfo, logger);
             //check content range
             ContentRange contentRange = parseContentRange(response, taskInfo, logger);
             if (contentRange.parseError) {
+                //parse error, reconnect without ranges
                 close(response);
                 response = connect(null, taskInfo.getUrl(), 0, -1, -1, connectTimeout, readTimeout, taskInfo, logger);
+                //reset content range
+                contentRange.acceptRanges = false;
+                contentRange.totalSize = response.body().contentLength();
+                contentRange.startPosition = 0;
+                contentRange.endPosition = contentRange.totalSize - 1;
             }
 
             //cancel loading if image data out of limit
-            if (contentRange.totalSize > imageDataLengthLimit) {
+            if (contentRange.totalSize > imageDataLengthLimit || contentRange.totalSize <= 0) {
                 exceptionHandler.onImageDataLengthOutOfLimitException(applicationContext, context,
                         taskInfo, taskInfo.getLoadProgress().total(), imageDataLengthLimit, logger);
                 return NetworkLoadHandler.HandleResult.CANCELED;
             }
 
-            //add to list
-            responseList.add(response);
-            offsetList.add(new long[]{contentRange.startPosition, contentRange.endPosition});
-
             //multi-connect if we can
-            if (contentRange.acceptRanges && contentRange.endPosition < contentRange.totalSize - 1) {
-                //calculate block size
-                long remainSize = contentRange.totalSize - contentRange.endPosition - 1;
-                long blockSize;
-                if (remainSize <= minBlockSize * (maxBlockNum - 1)) {
-                    blockSize = minBlockSize;
-                } else {
-                    blockSize = (int)((double)remainSize / (double)(maxBlockNum - 1) + 1);
+            if (!contentRange.acceptRanges || contentRange.totalSize <= SPLIT_THRESHOLD) {
+                //one connection
+                //add first connect to list
+                responseList.add(response);
+                offsetList.add(new long[]{0, contentRange.totalSize - 1});
+            } else {
+                //multi connection
+                long firstConnectElapse = System.currentTimeMillis() - connectStartTime;
+                //calculate block num
+                int optimalBlockNum = maxBlockNum;
+                if (contentRange.totalSize < (contentRange.endPosition + 1) * maxBlockNum) {
+                    //small data
+                    long optimalElapse = Long.MAX_VALUE;
+                    long elapse;
+                    for (int blockNum = maxBlockNum; blockNum >= 2; blockNum--) {
+                        elapse = firstConnectElapse * blockNum + (long) ((double) contentRange.totalSize / (double) (standardNetworkSpeed * blockNum));
+                        if (elapse < optimalElapse) {
+                            optimalElapse = elapse;
+                            optimalBlockNum = blockNum;
+                        }
+                    }
                 }
+                //calculate block size
+                long firstBlockSize;
+                long nextBlockSize;
+                if (contentRange.totalSize < (contentRange.endPosition + 1) * optimalBlockNum) {
+                    firstBlockSize = (long) ((double) contentRange.totalSize / (double) optimalBlockNum);
+                    nextBlockSize = firstBlockSize;
+                } else {
+                    firstBlockSize = (contentRange.endPosition + 1);
+                    nextBlockSize = (long) ((double) (contentRange.totalSize - (contentRange.endPosition + 1)) / (double) (optimalBlockNum - 1));
+                }
+                //add first connect to list
+                responseList.add(response);
+                offsetList.add(new long[]{0, firstBlockSize - 1});
                 //connect others
-                long start = minBlockSize;
+                long start = firstBlockSize;
                 long end;
                 ContentRange subContentRange;
-                while(start <= contentRange.totalSize - 1) {
-                    end = start + blockSize - 1;
-                    if (end > contentRange.totalSize - 1){
+                int connectCount = 2;
+                while (connectCount <= optimalBlockNum && start <= contentRange.totalSize - 1) {
+                    end = start + nextBlockSize - 1;
+                    if (end > contentRange.totalSize - 1) {
+                        end = contentRange.totalSize - 1;
+                    }
+                    if (connectCount >= optimalBlockNum) {
                         end = contentRange.totalSize - 1;
                     }
                     //connect
@@ -157,21 +192,26 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                         if (logger.checkEnable(TLogger.ERROR)) {
                             logger.e("[MultiThreadNetworkLoadHandler]CAUTION!!! Http ranges is not accepted, first connection is accepted, but the others did not, bad content range:[" + subContentRange + "], task:" + taskInfo);
                         }
-                        exceptionHandler.onHttpContentRangeParseException(applicationContext,context, taskInfo, logger);
+                        exceptionHandler.onHttpContentRangeParseException(applicationContext, context, taskInfo, logger);
                         //close all connections
                         response.close();
                         for (Response responseItem : responseList) {
                             close(responseItem);
                         }
+                        //clean list
+                        responseList.removeAll(null);
+                        offsetList.removeAll(null);
                         //reconnect
                         response = connect(null, taskInfo.getUrl(), 0, -1, -1, connectTimeout, readTimeout, taskInfo, logger);
                         responseList.add(response);
+                        offsetList.add(new long[]{0, response.body().contentLength() - 1});
                         break;
                     }
                     //add to list
                     responseList.add(response);
                     offsetList.add(new long[]{start, end});
-                    start = start + blockSize;
+                    start = start + nextBlockSize;
+                    connectCount++;
                 }
             }
 
@@ -180,26 +220,27 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
             randomAccessFile.setLength(contentRange.totalSize);
             randomAccessFile.close();
 
+            //refresh ui
             taskInfo.getLoadProgress().setTotal(contentRange.totalSize);
 
             if (logger.checkEnable(TLogger.DEBUG)) {
                 logger.d("[MultiThreadNetworkLoadHandler]Network loading start, connections:" + responseList.size() + ", connect elapse:" + (System.currentTimeMillis() - connectStartTime) + ", task:" + taskInfo);
             }
 
-            //监控线程通知工作线程停止
             AtomicBoolean stopSignal = new AtomicBoolean(false);
-            //工作线程完成计数
             AtomicInteger finishSignal = new AtomicInteger(0);
-            //工作线程反馈异常
             AtomicReference<Throwable> exceptionSignal = new AtomicReference<>(null);
-            for (int i = 0 ; i < responseList.size() ; i++) {
-                read(responseList.get(i), offsetList.get(i), stopSignal, finishSignal, exceptionSignal, writerProvider, taskInfo);
-            }
 
             //dead line, fallback
             long deadLine = System.currentTimeMillis() + lowNetworkSpeedConfig.getDeadline() * 2;
             long readStartTime = System.currentTimeMillis();
 
+            //start reading
+            for (int i = 0 ; i < responseList.size() ; i++) {
+                read(responseList.get(i), offsetList.get(i), stopSignal, finishSignal, exceptionSignal, writerProvider, taskInfo);
+            }
+
+            //watcher thread
             while (true) {
                 try {
                     synchronized (stopSignal) {
@@ -217,6 +258,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                     stopSignal.set(true);
                     break;
                 }
+                //check network speed
                 if (!checkNetworkSpeed(applicationContext, context, readStartTime, taskInfo, lowNetworkSpeedConfig, exceptionHandler, logger)) {
                     stopSignal.set(true);
                     return HandleResult.CANCELED;
@@ -313,14 +355,14 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
             if (logger.checkEnable(TLogger.DEBUG)) {
                 logger.d("[MultiThreadNetworkLoadHandler]Http ranges is not accepted, task:" + taskInfo);
             }
-            return new ContentRange(false, false, response.body().contentLength() - 1, 0, 0);
+            return new ContentRange(false, false, response.body().contentLength(), 0, response.body().contentLength() - 1);
         }
         if (contentRangeOrigin.length() < 10
                 || !contentRangeOrigin.startsWith("bytes ")) {
             if (logger.checkEnable(TLogger.DEBUG)) {
                 logger.d("[MultiThreadNetworkLoadHandler]Http ranges is not accepted, invalid Content-range:[" + contentRangeOrigin + "], task:" + taskInfo);
             }
-            return new ContentRange(true, false, response.body().contentLength() - 1, 0, 0);
+            return new ContentRange(true, false, response.body().contentLength(), 0, response.body().contentLength() - 1);
         }
 
         String contentRangeString = contentRangeOrigin.substring(6);
@@ -337,9 +379,9 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 if (logger.checkEnable(TLogger.DEBUG)) {
                     logger.d("[MultiThreadNetworkLoadHandler]Http ranges is not accepted, invalid Content-range:[" + contentRangeOrigin + "], task:" + taskInfo);
                 }
-                return new ContentRange(true, false, response.body().contentLength() - 1, 0, 0);
+                return new ContentRange(true, false, response.body().contentLength(), 0, response.body().contentLength() - 1);
             }
-            return new ContentRange(true, true, totalSize, startPosition, endPosition);
+            return new ContentRange(false, true, totalSize, startPosition, endPosition);
         }
 
         int index1 = contentRangeString.indexOf("-");
@@ -347,7 +389,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
             if (logger.checkEnable(TLogger.DEBUG)) {
                 logger.d("[MultiThreadNetworkLoadHandler]Http ranges is not accepted, invalid Content-range:[" + contentRangeOrigin + "], task:" + taskInfo);
             }
-            return new ContentRange(true, false, response.body().contentLength() - 1, 0, 0);
+            return new ContentRange(true, false, response.body().contentLength(), 0, response.body().contentLength() - 1);
         } else if (index1 == 0) {
             startPosition = 0;
         } else {
@@ -357,7 +399,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 if (logger.checkEnable(TLogger.DEBUG)) {
                     logger.d("[MultiThreadNetworkLoadHandler]Http ranges is not accepted, invalid Content-range:[" + contentRangeOrigin + "], task:" + taskInfo);
                 }
-                return new ContentRange(true, false, response.body().contentLength() - 1, 0, 0);
+                return new ContentRange(true, false, response.body().contentLength(), 0, response.body().contentLength() - 1);
             }
         }
 
@@ -366,7 +408,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
             if (logger.checkEnable(TLogger.DEBUG)) {
                 logger.d("[MultiThreadNetworkLoadHandler]Http ranges is not accepted, invalid Content-range:[" + contentRangeOrigin + "], task:" + taskInfo);
             }
-            return new ContentRange(true, false, response.body().contentLength() - 1, 0, 0);
+            return new ContentRange(true, false, response.body().contentLength(), 0, response.body().contentLength() - 1);
         } else if (index2 == index1 + 1) {
             endPosition = response.body().contentLength() - 1;
         } else {
@@ -376,7 +418,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 if (logger.checkEnable(TLogger.DEBUG)) {
                     logger.d("[MultiThreadNetworkLoadHandler]Http ranges is not accepted, invalid Content-range:[" + contentRangeOrigin + "], task:" + taskInfo);
                 }
-                return new ContentRange(true, false, response.body().contentLength() - 1, 0, 0);
+                return new ContentRange(true, false, response.body().contentLength(), 0, response.body().contentLength() - 1);
             }
         }
 
@@ -384,7 +426,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
             if (logger.checkEnable(TLogger.DEBUG)) {
                 logger.d("[MultiThreadNetworkLoadHandler]Http ranges is not accepted, invalid Content-range:[" + contentRangeOrigin + "], task:" + taskInfo);
             }
-            return new ContentRange(true, false, response.body().contentLength() - 1, 0, 0);
+            return new ContentRange(true, false, response.body().contentLength(), 0, response.body().contentLength() - 1);
         }
 
         try {
@@ -393,14 +435,14 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
             if (logger.checkEnable(TLogger.DEBUG)) {
                 logger.d("[MultiThreadNetworkLoadHandler]Http ranges is not accepted, invalid Content-range:[" + contentRangeOrigin + "], task:" + taskInfo);
             }
-            return new ContentRange(true, false, response.body().contentLength() - 1, 0, 0);
+            return new ContentRange(true, false, response.body().contentLength(), 0, response.body().contentLength() - 1);
         }
 
         if (endPosition > totalSize - 1){
             if (logger.checkEnable(TLogger.DEBUG)) {
                 logger.d("[MultiThreadNetworkLoadHandler]Http ranges is not accepted, invalid Content-range:[" + contentRangeOrigin + "], task:" + taskInfo);
             }
-            return new ContentRange(true, false, response.body().contentLength() - 1, 0, 0);
+            return new ContentRange(true, false, response.body().contentLength(), 0, response.body().contentLength() - 1);
         }
 
         return new ContentRange(false, true, totalSize, startPosition, endPosition);
@@ -447,7 +489,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                         //write to disk
                         randomAccessFile.seek(start);
                         randomAccessFile.write(buff, 0, writeLength);
-                        start += readLength;
+                        start += writeLength;
                     }
 
                     //finish
