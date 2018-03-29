@@ -45,8 +45,9 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
     private Map<String, String> headers;
 
     private long probeBlockSize = 100L * 1024L * 1024L;//bytes, must >= SPLIT_THRESHOLD
-    private long standardNetworkSpeed = 512L;//KB/s or B/ms, must >= 16
+    private long standardNetworkSpeed = 128L;//KB/s or B/ms, must >= 16
     private int maxBlockNum = 4;//must >= 2
+    private boolean verboseLog = true;
 
     protected OkHttpClient getClient(long connectTimeout, long readTimeout){
         OkHttpClient client = okHttpClients.get(connectTimeout + "+" + readTimeout);
@@ -147,6 +148,9 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 //calculate block num
                 int optimalBlockNum = maxBlockNum;
                 if (contentRange.totalSize < (contentRange.endPosition + 1) * maxBlockNum) {
+                    if (verboseLog && logger.checkEnable(TLogger.DEBUG)) {
+                        logger.d("[MultiThreadNetworkLoadHandler]Calculate block num, firstConnectElapse:" + firstConnectElapse + ", total size:" + contentRange.totalSize + ", task:" + taskInfo);
+                    }
                     //small data
                     long optimalElapse = Long.MAX_VALUE;
                     long elapse;
@@ -155,6 +159,9 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                         if (elapse < optimalElapse) {
                             optimalElapse = elapse;
                             optimalBlockNum = blockNum;
+                        }
+                        if (verboseLog && logger.checkEnable(TLogger.DEBUG)) {
+                            logger.d("[MultiThreadNetworkLoadHandler]Calculate block num, if blockNum = " + blockNum + ", elapse = " + elapse + ", task:" + taskInfo);
                         }
                     }
                 }
