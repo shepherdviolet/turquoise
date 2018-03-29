@@ -189,7 +189,6 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                     if (verboseLog && logger.checkEnable(TLogger.DEBUG)) {
                         logger.d("[MultiThreadNetworkLoadHandler:verbose]Calculate block num, firstConnectElapse:" + firstConnectElapse + ", total size:" + contentRange.totalSize + ", task:" + taskInfo);
                     }
-                    //small data
                     long optimalElapse = Long.MAX_VALUE;
                     long elapse;
                     for (int blockNum = maxBlockNum; blockNum >= minBlockNum; blockNum--) {
