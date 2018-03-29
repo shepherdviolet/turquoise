@@ -41,6 +41,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
 
     private Map<String, OkHttpClient> okHttpClients = new ConcurrentHashMap<>(2);
     private ExecutorService workThreadPool = ThreadPoolExecutorUtils.createCached(0, Integer.MAX_VALUE, 60L, "MultiThreadNetworkLoadHandler-worker-%d");
+    private NetworkSpeedRecorder networkSpeedRecorder;
 
     private Map<String, String> headers;
 
@@ -58,7 +59,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
      * @param verboseLog print verbose log if true
      */
     public MultiThreadNetworkLoadHandler(int maxBlockNum, boolean verboseLog) {
-        this(maxBlockNum, 100L * 1024L * 1024L, 1024L, verboseLog);
+        this(maxBlockNum, 100L * 1024L * 1024L, 512L, verboseLog);
     }
 
     /**
@@ -85,6 +86,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
         this.probeBlockSize = probeBlockSize;
         this.standardNetworkSpeed = standardNetworkSpeed;
         this.verboseLog = verboseLog;
+        this.networkSpeedRecorder = new NetworkSpeedRecorder();
     }
 
     protected OkHttpClient getClient(long connectTimeout, long readTimeout){
@@ -190,13 +192,16 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 int optimalBlockNum = maxBlockNum;
                 int minBlockNum = contentRange.endPosition == contentRange.totalSize - 1 ? 1 : 2;
                 if (contentRange.totalSize < (contentRange.endPosition + 1) * maxBlockNum) {
+                    double averageSpeed = networkSpeedRecorder.getSpeed(taskInfo.getUrl(), standardNetworkSpeed);
                     if (verboseLog && logger.checkEnable(TLogger.DEBUG)) {
-                        logger.d("[MultiThreadNetworkLoadHandler:verbose]Calculate block num, firstConnectElapse:" + firstConnectElapse + ", total size:" + contentRange.totalSize + ", task:" + taskInfo);
+                        logger.d("[MultiThreadNetworkLoadHandler:verbose]Calculate block num, firstConnectElapse:" + firstConnectElapse + ", total size:" + contentRange.totalSize + ", threadAverageSpeed:" + (int)averageSpeed + "KB/s, task:" + taskInfo);
                     }
                     long optimalElapse = Long.MAX_VALUE;
                     long elapse;
                     for (int blockNum = maxBlockNum; blockNum >= minBlockNum; blockNum--) {
-                        elapse = firstConnectElapse * blockNum + (long) ((double) contentRange.totalSize / (double) (standardNetworkSpeed * blockNum));
+                        elapse = firstConnectElapse +
+                                (long)((double)firstConnectElapse * (double)(blockNum - 1) * 0.7d) +
+                                (long)((double) contentRange.totalSize / (averageSpeed * (double)blockNum));
                         if (elapse < optimalElapse) {
                             optimalElapse = elapse;
                             optimalBlockNum = blockNum;
@@ -334,10 +339,12 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 }
             }
 
+            long readElapse = System.currentTimeMillis() - readStartTime;
+            double readSpeed = readElapse <= 0 ? 0d : ((double)contentRange.totalSize / 1024d) / ((double)readElapse / 1000d);
+            networkSpeedRecorder.record(taskInfo.getUrl(), readSpeed / responseList.size());
+
             if (logger.checkEnable(TLogger.DEBUG)) {
-                long readElapse = System.currentTimeMillis() - readStartTime;
-                String readSpeed = readElapse <= 0 ? "0KB/s" : String.valueOf((int)(((double)contentRange.totalSize / 1024d) / ((double)readElapse / 1000d))) + "KB/s";
-                logger.d("[MultiThreadNetworkLoadHandler]Network loading finish, connections:" + responseList.size() + ", read elapse:" + readElapse + ", speed:" + readSpeed + ", task:" + taskInfo);
+                logger.d("[MultiThreadNetworkLoadHandler]Network loading finish, connections:" + responseList.size() + ", read elapse:" + readElapse + ", speed:" + (int)readSpeed + "KB/s, task:" + taskInfo);
             }
 
             return HandleResult.SUCCEED;
