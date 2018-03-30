@@ -337,7 +337,7 @@ public abstract class AbstractNetworkLoadHandler implements NetworkLoadHandler {
 
         } catch (NetworkException e) {
             exceptionHandler.onNetworkLoadException(
-                    applicationContext, context, taskInfo, e.getCause(), logger);
+                    applicationContext, context, taskInfo, e, logger);
         } catch (Exception e) {
             exceptionHandler.onDiskCacheWriteException(
                     applicationContext, context, taskInfo, e, logger);

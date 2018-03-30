@@ -362,7 +362,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
 
         } catch (NetworkException e) {
             exceptionHandler.onNetworkLoadException(
-                    applicationContext, context, taskInfo, e.getCause(), logger);
+                    applicationContext, context, taskInfo, e, logger);
         } catch (Throwable e) {
             exceptionHandler.onDiskCacheWriteException(
                     applicationContext, context, taskInfo, e, logger);
