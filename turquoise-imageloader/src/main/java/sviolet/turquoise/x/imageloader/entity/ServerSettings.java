@@ -447,7 +447,7 @@ public class ServerSettings implements ComponentManager.Component{
     public static final boolean DEFAULT_LOG_ENABLED = true;
     public static final boolean DEFAULT_WIPE_DISK_CACHE_WHEN_UPDATE = false;
     public static final int DEFAULT_MEMORY_CACHE_SIZE = 0;
-    public static final int DEFAULT_DISK_CACHE_SIZE = 50 * 1024 * 1024;
+    public static final int DEFAULT_DISK_CACHE_SIZE = 100 * 1024 * 1024;
     public static final int DEFAULT_MEMORY_LOAD_MAX_THREAD = 1;
     public static final int DEFAULT_DISK_LOAD_MAX_THREAD = 2;
     public static final int DEFAULT_NETWORK_LOAD_MAX_THREAD = 4;
@@ -459,8 +459,6 @@ public class ServerSettings implements ComponentManager.Component{
     private static final long DEFAULT_IMAGE_DATA_LENGTH_LIMIT = -1;
     private static final long MIN_IMAGE_DATA_LENGTH_LIMIT = 1024 * 1024;
     private static final float DEFAULT_IMAGE_DATA_LENGTH_LIMIT_PERCENT = 0.2f;
-    private static final long MIN_MEMORY_BUFFER_LENGTH_LIMIT = 512 * 1024;
-    private static final float DEFAULT_MEMORY_BUFFER_LENGTH_LIMIT_PERCENT = 0.02f;
 
     public static final DiskCachePath DEFAULT_DISK_CACHE_PATH = DiskCachePath.INNER_STORAGE;
     public static final String DEFAULT_DISK_CACHE_SUB_PATH = "tiloader-cache";
