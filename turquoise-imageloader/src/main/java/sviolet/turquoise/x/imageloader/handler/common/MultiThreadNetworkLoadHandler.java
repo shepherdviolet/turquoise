@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,16 +51,16 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
     private long standardNetworkSpeed;
     private boolean verboseLog;
 
-    public MultiThreadNetworkLoadHandler() {
-        this(4, false);
+    public MultiThreadNetworkLoadHandler(Context context) {
+        this(context, 4, false);
     }
 
     /**
      * @param maxBlockNum max thread num to load one image, must >= 2
      * @param verboseLog print verbose log if true
      */
-    public MultiThreadNetworkLoadHandler(int maxBlockNum, boolean verboseLog) {
-        this(maxBlockNum, 100L * 1024L * 1024L, 512L, verboseLog);
+    public MultiThreadNetworkLoadHandler(Context context, int maxBlockNum, boolean verboseLog) {
+        this(context, maxBlockNum, 100L * 1024L * 1024L, 512L, verboseLog);
     }
 
     /**
@@ -72,7 +73,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
      * @param verboseLog print verbose log if true,
      *                   false by default
      */
-    public MultiThreadNetworkLoadHandler(int maxBlockNum, long probeBlockSize, long standardNetworkSpeed, boolean verboseLog) {
+    public MultiThreadNetworkLoadHandler(Context context, int maxBlockNum, long probeBlockSize, long standardNetworkSpeed, boolean verboseLog) {
         if (maxBlockNum < 2) {
             throw new IllegalArgumentException("maxBlockNum must >= 2");
         }
@@ -86,7 +87,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
         this.probeBlockSize = probeBlockSize;
         this.standardNetworkSpeed = standardNetworkSpeed;
         this.verboseLog = verboseLog;
-        this.networkSpeedRecorder = new NetworkSpeedRecorder();
+        this.networkSpeedRecorder = new NetworkSpeedRecorder(context);
     }
 
     protected OkHttpClient getClient(long connectTimeout, long readTimeout){
@@ -157,6 +158,14 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
 
             long connectStartTime = System.currentTimeMillis();
 
+            //host
+            String host = null;
+            try {
+                URL urlObj = new URL(taskInfo.getUrl());
+                host = urlObj.getHost();
+            } catch (Throwable ignore) {
+            }
+
             //connect first
             response = connect(null, taskInfo.getUrl(), 0, 0, probeBlockSize - 1, connectTimeout, readTimeout, taskInfo, logger);
             //check content range
@@ -192,7 +201,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 int optimalBlockNum = maxBlockNum;
                 int minBlockNum = contentRange.endPosition == contentRange.totalSize - 1 ? 1 : 2;
                 if (contentRange.totalSize < (contentRange.endPosition + 1) * maxBlockNum) {
-                    double averageSpeed = networkSpeedRecorder.getSpeed(taskInfo.getUrl(), standardNetworkSpeed);
+                    double averageSpeed = networkSpeedRecorder.getSpeed(host, standardNetworkSpeed);
                     if (verboseLog && logger.checkEnable(TLogger.DEBUG)) {
                         logger.d("[MultiThreadNetworkLoadHandler:verbose]Calculate block num, firstConnectElapse:" + firstConnectElapse + ", total size:" + contentRange.totalSize + ", threadAverageSpeed:" + (int)averageSpeed + "KB/s, task:" + taskInfo);
                     }
@@ -327,6 +336,8 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
                 //check network speed
                 if (!checkNetworkSpeed(applicationContext, context, readStartTime, taskInfo, lowNetworkSpeedConfig, exceptionHandler, logger)) {
                     stopSignal.set(true);
+                    //record speed 0 if low speed
+                    networkSpeedRecorder.record(host, 0);
                     return HandleResult.CANCELED;
                 }
                 //deadline
@@ -341,7 +352,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
 
             long readElapse = System.currentTimeMillis() - readStartTime;
             double readSpeed = readElapse <= 0 ? 0d : ((double)contentRange.totalSize / 1024d) / ((double)readElapse / 1000d);
-            networkSpeedRecorder.record(taskInfo.getUrl(), readSpeed / responseList.size());
+            networkSpeedRecorder.record(host, readSpeed / responseList.size());
 
             if (logger.checkEnable(TLogger.DEBUG)) {
                 logger.d("[MultiThreadNetworkLoadHandler]Network loading finish, connections:" + responseList.size() + ", read elapse:" + readElapse + ", speed:" + (int)readSpeed + "KB/s, task:" + taskInfo);

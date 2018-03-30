@@ -78,7 +78,7 @@ public class MyApplication extends TApplication {
                 .setMemoryCachePercent(getApplicationContext(), 0.1f)//分配10%的APP内存用于图片缓存
                 .setDiskCacheSize(30)//分配30M用于图片磁盘缓存
                 .setCustomStubFactory(new MyStubFactory())//自定义实现Stub工厂(用于增加对新控件的支持)
-                .setNetworkLoadHandler(new MultiThreadNetworkLoadHandler(4, true))//改用多线程
+                .setNetworkLoadHandler(new MultiThreadNetworkLoadHandler(getApplicationContext(), 4, true))//改用多线程
 //                .setDiskCachePath(getApplicationContext(), ServerSettings.DiskCachePath.EXTERNAL_STORAGE, "TILoaderDemo")//设置优先使用外部存储作为磁盘缓存, 子目录"TILoaderDemo"
 //                .setMemoryLoadMaxThread(1)//设置内存加载线程数(默认1, 通常无需修改)
 //                .setDiskLoadMaxThread(2)//设置磁盘加载线程数(默认2, 通常无需修改)
