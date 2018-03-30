@@ -109,15 +109,16 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 ### Basic Usage:
 ```gradle
 
-        //TILoader setting, non-essential
+        //TILoader setting, non-essential, usually written in Application.onCreate(...)
         TILoader.setting(
             new ServerSettings.Builder()
                 .setMemoryCachePercent(getApplicationContext(), 0.1f)
                 .setDiskCacheSize(10)
                 .setLogEnabled(true)
+                .setNetworkLoadHandler(new MultiThreadNetworkLoadHandler(getApplicationContext()))//New feature
                 .build());
 
-        //Node setting, non-essential
+        //Node setting, non-essential, usually written in Activity.onCreate(...)
         TILoader.node(this).setting(
             new NodeSettings.Builder()
                 .setLoadingDrawableFactory(
