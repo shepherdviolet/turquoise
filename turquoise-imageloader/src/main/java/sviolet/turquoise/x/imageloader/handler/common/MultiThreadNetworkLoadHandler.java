@@ -5,6 +5,8 @@ import android.content.Context;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.URL;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +17,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -105,10 +114,22 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
     }
 
     protected OkHttpClient genClient(long connectTimeout, long readTimeout){
+
+        SSLSocketFactory sslSocketFactory;
+        try {
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, new TrustManager[]{irresponsibleX509TrustManager}, new SecureRandom());
+            sslSocketFactory = sslContext.getSocketFactory();
+        } catch (Exception e) {
+            throw new RuntimeException("FATAL ERROR: SSLSocketFactory build error when generating OkHttpClient", e);
+        }
+
         return new OkHttpClient.Builder()
                 .connectTimeout(connectTimeout, TimeUnit.MILLISECONDS)
                 .writeTimeout(connectTimeout, TimeUnit.MILLISECONDS)
                 .readTimeout(readTimeout, TimeUnit.MILLISECONDS)
+                .sslSocketFactory(sslSocketFactory, irresponsibleX509TrustManager)
+                .hostnameVerifier(irresponsibleHostnameVerifier)
                 .build();
     }
 
@@ -663,6 +684,32 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
             }
         }
     }
+
+    /**
+     * The X509TrustManager which accept all sites
+     */
+    private X509TrustManager irresponsibleX509TrustManager = new X509TrustManager() {
+        @Override
+        public void checkClientTrusted(X509Certificate[] chain, String authType) {
+        }
+        @Override
+        public void checkServerTrusted(X509Certificate[] chain, String authType) {
+        }
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[]{};
+        }
+    };
+
+    /**
+     * The HostnameVerifier which accept all sites
+     */
+    private HostnameVerifier irresponsibleHostnameVerifier = new HostnameVerifier() {
+        @Override
+        public boolean verify(String s, SSLSession sslSession) {
+            return true;
+        }
+    };
 
     private static class ContentRange {
         private boolean parseError = false;
