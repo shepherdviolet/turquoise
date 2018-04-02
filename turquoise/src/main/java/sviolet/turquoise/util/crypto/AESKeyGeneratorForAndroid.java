@@ -65,7 +65,7 @@ public class AESKeyGeneratorForAndroid {
 	 * @param bits 秘钥位数(128)
 	 * @deprecated 安卓P开始, SecureRandom.getInstance("SHA1PRNG", "Crypto")无法调用, Crypto JCA provider被删除.
 	 */
-	@SuppressLint("TrulyRandom")
+	@SuppressLint({"TrulyRandom", "DeletedProvider"})
 	@Deprecated
 	public static byte[] generate(byte[] seed, int bits) throws NoSuchProviderException{
 		KeyGenerator keyGenerator;

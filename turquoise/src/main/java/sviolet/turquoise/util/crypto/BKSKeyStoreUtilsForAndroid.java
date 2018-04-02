@@ -1,7 +1,5 @@
 package sviolet.turquoise.util.crypto;
 
-import org.bouncycastle.operator.OperatorCreationException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -136,7 +134,7 @@ public class BKSKeyStoreUtilsForAndroid {
      * @param aliases 别名
      * @param certificates 证书
      */
-    public static void storeCertificates(OutputStream outputStream, String password, String[] aliases, Certificate[] certificates) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, OperatorCreationException {
+    public static void storeCertificates(OutputStream outputStream, String password, String[] aliases, Certificate[] certificates) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException {
         if (aliases == null || certificates == null) {
             throw new NullPointerException("aliases or certificates is null");
         }
