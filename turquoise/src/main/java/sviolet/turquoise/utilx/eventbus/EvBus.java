@@ -40,16 +40,16 @@ import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 
 /**
- * <p>超轻量级事件总线</p>
+ * <p>轻量级事件总线</p>
  *
  * <p>
  *     1.在事件总线中, 我们用消息的类型(Class)来标识消息, 相同类型(Class)的消息, 视为相同的消息.<br/>
- *     2.事件总线传递的是消息的引用, 不会进行深度拷贝.<br/>
+ *     2.事件总线传递的是消息的引用, 不会进行深度拷贝, 不会进行序列化.<br/>
  *     3.有两种消息传递模式, register/post模式和transmit模式, 两种模式传递的消息互不干扰, 即使类型一致.<br/>
  *     4.Activity生命周期结束时(onDestroy)消息和接收器会被自动清除, 无需调用unregister方法反注册接收器.<br/>
  * </p>
  *
- * <p>消息类型+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+ * <p> 消息类型 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
  *
  * <p>普通消息: 在transmit模式中, 一条普通消息只能被消费一次(transmitPop)</p>
  *
@@ -81,31 +81,31 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  *      }
  * }</pre>
  *
- * <p>用法1+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+ * <p> 模式1 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
  *
  * <p>register/post模式: 这种模式用于新的页面向之前已存在的页面(Context)发送消息. 或在几个存在的页面间
  * 发送消息. 这个模式下, 常驻消息(EvResidentMessage)与普通消息(EvMessage)没有差别, 消息只在发送时有效.
- * 一条消息可以同时被复数个注册了的接收器接收并处理. 当你发送(post)时, 消息会被塞入所有注册了接收该类型
- * 消息的普通消息池中, 并寻找合适的时机处理消息. 普通消息池与transmit模式的传输专用消息池完全独立, 互不干扰.</p>
+ * 一条消息可以同时被复数个注册了的接收器接收并处理(广播). 当你发送(post)时, 消息会被塞入所有注册了接收该类型
+ * 消息的普通消息池中, 并在合适的时机处理消息. 普通消息池与transmit模式的传输专用消息池完全独立, 互不干扰.</p>
  *
  * <p>先在一个Activity或Fragment中注册一个接收器, EvBus.Type指定处理方式, EvReceiver的泛型指定接受消息类
  * 型(JavaBean).</p>
  *
  * <pre>{@code
- *      //注册接收器, 接受GuideActivity.Bean类型的消息, 收到消息后在onStart之后处理
- *      EvBus.register(this, EvBus.Type.ON_START, new EvReceiver<GuideActivity.Bean>(){
- *          protected void onReceive(GuideActivity.Bean message) {
+ *      //注册接收器, 接受GuideActivity.Message1类型的消息, 收到消息后延迟到Activity.onStart时处理
+ *      EvBus.register(this, EvBus.Type.ON_START, new EvReceiver<GuideActivity.Message1>(){
+ *          protected void onReceive(GuideActivity.Message1 message) {
  *              Toast.makeText(GuideActivity.this, message.getValue(), Toast.LENGTH_SHORT).show();
  *          }
  *      });
  * }</pre>
  *
  * <p>确保接收器已经注册好. 实例化JavaBean, 调用EvBus.post()方法发送消息, 所有注册了该JavaBean类型的接收
- * 器都会收到消息, 具体的调用时机根据EvBus.Type指定.</p>
+ * 器都会收到消息, 具体的调用时机由EvBus.Type指定.</p>
  *
  * <pre>{@code
  *      //实例化JavaBean, 类型与EvReceiver的泛型相符
- *      GuideActivity.Bean bean = new GuideActivity.Bean();
+ *      GuideActivity.Message1 bean = new GuideActivity.Message1();
  *      bean.setValue("hello world");
  *      //发送消息(广播)
  *      EvBus.post(bean);
@@ -116,7 +116,36 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  * <p>注意:这种方式必须先注册接收器, 再发送消息, 否则将不会收到消息. EvReceiver接收器的泛型必须指定, 且与
  * 发送的消息类型相符.</p>
  *
- * <p>用法2+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
+ * <p> 注解方式注册 ----------------------------------------------</p>
+ *
+ * <p>EvBus支持注解方式注册接收器, 代替回调函数方式. </p>
+ *
+ * <pre>
+ *      protected void onCreate(Bundle savedInstanceState) {
+ *          try {
+ *              //注册所有注解声明的接收器, 并根据注解获取transmit消息(必须)
+ *              EvBus.registerAnnotations(this);
+ *              //其他初始化操作(示例)
+ *              initData();
+ *              initView();
+ *          } catch (EvBus.MissingMessageException e) {
+ *              //当获取不到EvReceiverDeclare注解声明为required的消息时, 应提醒用户并结束当前Activity,
+ *              //要避免后续程序抛出空指针异常
+ *              logger.e("Missing message, message type:" + e.getMessageType(), e);
+ *              Toast.makeText(getApplicationContext(), "未知错误[UnknownError]", Toast.LENGTH_SHORT).show();
+ *              finish();
+ *          }
+ *      }
+ *      //注册接收器, 接收类型为RefreshListMessage的消息, 在Activity.onStart时调用
+ *      //注意: 方法参数必须为一个, 参数类型指定消息类型, 同类型的消息在一个Activity中只能注册一次
+ *      //当EvBus.registerAnnotations(this)方法被调用时, 会把本方法注册为一个接收器
+ *      <code>@EvReceiverDeclare(type = EvBus.Type.ON_START)</code>
+ *      private void refreshList(RefreshListMessage message) {
+ *          //处理消息
+ *      }
+ * </pre>
+ *
+ * <p> 模式2 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
  *
  * <p>transmit模式: 这种模式用于当前页面(Context)向即将启动的新页面发送消息, 或向未来的复数个新页面发送
  * 消息. 塞入消息(transmitPush)时, 消息会先进入当前页面的传输专用消息池. 在新的页面启动时, 会从当前页面
@@ -142,8 +171,9 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  *      GuideActivity.Bean message = EvBus.transmitRemove(this, GuideActivity.Bean.class);
  * }</pre>
  *
+ * <p> 更好的获取消息方式 ----------------------------------------------</p>
+ *
  * <pre>{@code
- *      //扩展用法:
  *      //transmit用于Activity间传递数据, 一般情况下, 不会出现Message为空的情况(前一个页面肯定送了消息)
  *      //但是从程序的健壮性考虑, 后一个页面还是要判断一下消息是否为空(避免出现空指针), 这样一个一个判断
  *      //十分繁琐, 因此, EvBus提供了transmitPopRequired和transmitRemoveRequired方法, 你可以参考下面的
@@ -158,6 +188,35 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  *          finish();
  *      }
  * }</pre>
+ *
+ * <p> 注解方式获取消息 ----------------------------------------------</p>
+ *
+ * <p>EvBus支持注解方式获取消息, 代替transmitPop方法. </p>
+ *
+ * <pre>
+ *
+ *      //声明该Activity需要类型为Message1的消息
+ *      //必须(required = true), 不删除(remove = false, 若为true则等同于transmitRemove)
+ *      //当EvBus.registerAnnotations(this)方法被调用时, 消息会被注入这里
+ *      <code>@EvTransmitPopDeclare(required = true, remove = false)</code>
+ *      private Message1 message1;
+ *
+ *      protected void onCreate(Bundle savedInstanceState) {
+ *          try {
+ *              //注册所有注解声明的接收器, 并根据注解获取transmit消息(必须)
+ *              EvBus.registerAnnotations(this);
+ *              //其他初始化操作(示例)
+ *              initData();
+ *              initView();
+ *          } catch (EvBus.MissingMessageException e) {
+ *              //当获取不到EvReceiverDeclare注解声明为required的消息时, 应提醒用户并结束当前Activity,
+ *              //要避免后续程序抛出空指针异常
+ *              logger.e("Missing message, message type:" + e.getMessageType(), e);
+ *              Toast.makeText(getApplicationContext(), "未知错误[UnknownError]", Toast.LENGTH_SHORT).show();
+ *              finish();
+ *          }
+ *      }
+ * </pre>
  *
  * Created by S.Violet on 2017/1/16.
  */
