@@ -140,6 +140,23 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  *      GuideActivity.Bean message = EvBus.transmitRemove(this, GuideActivity.Bean.class);
  * }</pre>
  *
+ * <pre>{@code
+ *      //扩展用法:
+ *      //transmit用于Activity间传递数据, 一般情况下, 不会出现Message为空的情况(前一个页面肯定送了消息)
+ *      //但是从程序的健壮性考虑, 后一个页面还是要判断一下消息是否为空(避免出现空指针), 这样一个一个判断
+ *      //十分繁琐, 因此, EvBus提供了transmitPopRequired和transmitRemoveRequired方法, 你可以参考下面的
+ *      //方式获取消息, 并统一处理消息为空的情况(提示用户并结束当前Activity).
+ *      try {
+ *          message1 = EvBus.transmitPopRequired(this, GuideActivity.Bean1.class);
+ *          message2 = EvBus.transmitPopRequired(this, GuideActivity.Bean2.class);
+ *          ......
+ *      } catch (MissingMessageException e) {
+ *          //提示用户并结束当前Activity
+ *          Toast.makeText(...).show();
+ *          finish();
+ *      }
+ * }</pre>
+ *
  * Created by S.Violet on 2017/1/16.
  */
 public class EvBus {
@@ -334,6 +351,51 @@ public class EvBus {
     }
 
     /**
+     * [API14+][transmit模式] 从传输专用消息池中获取消息, 普通消息会从消息池中删除, 常驻消息(EvResidentMessage)允许复数次获取,
+     * 如果获取不到则抛出异常
+     * @param activity activity
+     * @param messageClass 消息 类型
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitPopRequired(Activity activity, Class<T> messageClass) throws MissingMessageException {
+        T message = transmitPop(activity, messageClass);
+        if (message == null) {
+            throw new MissingMessageException(messageClass, "Missing required EvMessage, activity:" + activity + ", messageClass:" + messageClass);
+        }
+        return message;
+    }
+
+    /**
+     * [API14+][transmit模式] 从传输专用消息池中获取消息, 普通消息会从消息池中删除, 常驻消息(EvResidentMessage)允许复数次获取,
+     * 如果获取不到则抛出异常
+     * @param fragment fragment
+     * @param messageClass 消息 类型
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitPopRequired(Fragment fragment, Class<T> messageClass) throws MissingMessageException {
+        T message = transmitPop(fragment, messageClass);
+        if (message == null) {
+            throw new MissingMessageException(messageClass, "Missing required EvMessage, fragment:" + fragment + ", messageClass:" + messageClass);
+        }
+        return message;
+    }
+
+    /**
+     * [API14+][transmit模式] 从传输专用消息池中获取消息, 普通消息会从消息池中删除, 常驻消息(EvResidentMessage)允许复数次获取,
+     * 如果获取不到则抛出异常
+     * @param fragment fragment
+     * @param messageClass 消息 类型
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitPopRequired(android.support.v4.app.Fragment fragment, Class<T> messageClass) throws MissingMessageException {
+        T message = transmitPop(fragment, messageClass);
+        if (message == null) {
+            throw new MissingMessageException(messageClass, "Missing required EvMessage, fragment:" + fragment + ", messageClass:" + messageClass);
+        }
+        return message;
+    }
+
+    /**
      * [API14+][transmit模式] 从传输专用消息池中获取消息, 普通消息会从消息池中删除, 常驻消息(EvResidentMessage)允许复数次获取
      * @param activity activity
      * @param messageClass 消息 类型
@@ -388,6 +450,51 @@ public class EvBus {
             return null;
         }
         return getStation(fragment, true).popTransmitMessage(messageClass);
+    }
+
+    /**
+     * [API14+][transmit模式] 从传输专用消息池中移除消息, 包括常驻消息(EvResidentMessage)也会被移除,
+     * 如果获取不到则抛出异常
+     * @param activity activity
+     * @param messageClass 消息 类型
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitRemoveRequired(Activity activity, Class<T> messageClass) throws MissingMessageException {
+        T message = transmitRemove(activity, messageClass);
+        if (message == null) {
+            throw new MissingMessageException(messageClass, "Missing required EvMessage, activity:" + activity + ", messageClass:" + messageClass);
+        }
+        return message;
+    }
+
+    /**
+     * [API14+][transmit模式] 从传输专用消息池中移除消息, 包括常驻消息(EvResidentMessage)也会被移除,
+     * 如果获取不到则抛出异常
+     * @param fragment fragment
+     * @param messageClass 消息 类型
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitRemoveRequired(Fragment fragment, Class<T> messageClass) throws MissingMessageException {
+        T message = transmitRemove(fragment, messageClass);
+        if (message == null) {
+            throw new MissingMessageException(messageClass, "Missing required EvMessage, fragment:" + fragment + ", messageClass:" + messageClass);
+        }
+        return message;
+    }
+
+    /**
+     * [API14+][transmit模式] 从传输专用消息池中移除消息, 包括常驻消息(EvResidentMessage)也会被移除,
+     * 如果获取不到则抛出异常
+     * @param fragment fragment
+     * @param messageClass 消息 类型
+     */
+    @RequiresApi(api = Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    public static <T extends EvMessage> T transmitRemoveRequired(android.support.v4.app.Fragment fragment, Class<T> messageClass) throws MissingMessageException {
+        T message = transmitRemove(fragment, messageClass);
+        if (message == null) {
+            throw new MissingMessageException(messageClass, "Missing required EvMessage, fragment:" + fragment + ", messageClass:" + messageClass);
+        }
+        return message;
     }
 
     /**
@@ -595,6 +702,25 @@ public class EvBus {
             }
         }
         return (EvStation) component;
+    }
+
+    /********************************************************************************************
+     * class
+     */
+
+    public static class MissingMessageException extends Exception {
+
+        private Class<? extends EvMessage> messageType;
+
+        public MissingMessageException(Class<? extends EvMessage> messageType, String message) {
+            super(message);
+            this.messageType = messageType;
+        }
+
+        public Class<? extends EvMessage> getMessageType() {
+            return messageType;
+        }
+
     }
 
 }
