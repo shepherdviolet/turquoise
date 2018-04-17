@@ -162,6 +162,16 @@ class EvStation implements LifeCycle {
         receivers.remove(messageClass);
     }
 
+    void unregisterAll() {
+        if (destroyed){
+            return;
+        }
+        if (getActivity() == null){
+            return;
+        }
+        receivers.clear();
+    }
+
     void pushTransmitMessage(EvMessage message){
         if (destroyed){
             return;

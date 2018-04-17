@@ -45,6 +45,7 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  *     1.在事件总线中, 我们用消息的类型(Class)来标识消息, 相同类型(Class)的消息, 视为相同的消息.<br/>
  *     2.事件总线传递的是消息的引用, 不会进行深度拷贝.<br/>
  *     3.有两种消息传递模式, register/post模式和transmit模式, 两种模式传递的消息互不干扰, 即使类型一致.<br/>
+ *     4.Activity生命周期结束时(onDestroy)消息和接收器会被自动清除, 无需调用unregister方法反注册接收器.<br/>
  * </p>
  *
  * <p>消息类型+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++</p>
@@ -270,6 +271,36 @@ public class EvBus {
     public static void unregister(android.support.v4.app.Fragment fragment, Class<? extends EvMessage> messageClass) {
         check(fragment, messageClass);
         getStation(fragment, true).unregister(messageClass);
+    }
+
+    /**
+     * [register/post模式]反注册所有消息接收器,
+     * Activity生命周期结束时(onDestroy)消息和接收器会被自动清除, 无需调用unregister方法反注册接收器.
+     * @param activity activity
+     */
+    public static void unregisterAll(Activity activity) {
+        check(activity);
+        getStation(activity, true).unregisterAll();
+    }
+
+    /**
+     * [register/post模式]反注册所有消息接收器,
+     * Activity生命周期结束时(onDestroy)消息和接收器会被自动清除, 无需调用unregister方法反注册接收器.
+     * @param fragment fragment
+     */
+    public static void unregisterAll(Fragment fragment) {
+        check(fragment);
+        getStation(fragment, true).unregisterAll();
+    }
+
+    /**
+     * [register/post模式]反注册所有消息接收器,
+     * Activity生命周期结束时(onDestroy)消息和接收器会被自动清除, 无需调用unregister方法反注册接收器.
+     * @param fragment fragment
+     */
+    public static void unregisterAll(android.support.v4.app.Fragment fragment) {
+        check(fragment);
+        getStation(fragment, true).unregisterAll();
     }
 
     /**
@@ -619,6 +650,12 @@ public class EvBus {
         }
         if (messageClass == null){
             throw new IllegalArgumentException("[EvBus]messageClass == null");
+        }
+    }
+
+    private static void check(Object context){
+        if (context == null) {
+            throw new IllegalArgumentException("[EvBus]context == null");
         }
     }
 
