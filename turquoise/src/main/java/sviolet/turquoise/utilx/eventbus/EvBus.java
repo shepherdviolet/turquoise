@@ -155,10 +155,19 @@ public class EvBus {
      */
 
     /**
-     * [register/post模式]发送消息, 在发送前注册(register)的接收器都会收到这个消息
+     * [register/post模式]发送消息, 在发送前注册(register)的接收器都会收到这个消息(广播)
      * @param message 消息, 类型必须匹配接收器指定的类型
      */
     public static void post(EvMessage message){
+        post(message, null);
+    }
+
+    /**
+     * [register/post模式]发送消息, 在发送前注册(register)的接收器都会收到这个消息(指定接收该消息的Activity类型)
+     * @param message 消息, 类型必须匹配接收器指定的类型
+     * @param specifiedActivityType 指定接收该消息的Activity类型
+     */
+    public static void post(EvMessage message, Class<?> specifiedActivityType){
         if (message == null){
             return;
         }
@@ -172,7 +181,7 @@ public class EvBus {
         }
         //遍历所有station并推送消息
         for (EvStation station : stations){
-            if (station.post(message)){
+            if (station.post(message, specifiedActivityType)){
                 result = true;
             }
         }

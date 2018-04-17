@@ -61,11 +61,15 @@ class EvStation implements LifeCycle {
         activityWeakReference = new WeakReference<>(activity);
     }
 
-    boolean post(EvMessage message){
+    boolean post(EvMessage message, Class<?> specifiedActivityType){
         if (destroyed){
             return false;
         }
-        if (getActivity() == null){
+        Activity activity = getActivity();
+        if (activity == null){
+            return false;
+        }
+        if (specifiedActivityType != null && !specifiedActivityType.isAssignableFrom(activity.getClass())) {
             return false;
         }
         //根据消息类型获取接收器
