@@ -105,8 +105,10 @@ import sviolet.turquoise.utilx.tlogger.TLogger;
  *      //实例化JavaBean, 类型与EvReceiver的泛型相符
  *      GuideActivity.Bean bean = new GuideActivity.Bean();
  *      bean.setValue("hello world");
- *      //发送消息
+ *      //发送消息(广播)
  *      EvBus.post(bean);
+ *      //发送消息(指定接收该消息的Activity类型)
+ *      //EvBus.post(bean, SomeActivity.class);
  * }</pre>
  *
  * <p>注意:这种方式必须先注册接收器, 再发送消息, 否则将不会收到消息. EvReceiver接收器的泛型必须指定, 且与
@@ -165,7 +167,7 @@ public class EvBus {
     /**
      * [register/post模式]发送消息, 在发送前注册(register)的接收器都会收到这个消息(指定接收该消息的Activity类型)
      * @param message 消息, 类型必须匹配接收器指定的类型
-     * @param specifiedActivityType 指定接收该消息的Activity类型
+     * @param specifiedActivityType 指定接收该消息的Activity类型(继承该类型的Activity也会收到消息)
      */
     public static void post(EvMessage message, Class<?> specifiedActivityType){
         if (message == null){
