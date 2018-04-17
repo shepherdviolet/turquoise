@@ -25,6 +25,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.widget.Toast;
 
 import java.util.Collections;
 import java.util.List;
@@ -211,7 +212,110 @@ public class EvBus {
     }
 
     /**
-     * [register/post模式]注册消息接收器
+     * [register/post模式]
+     * 1.根据EvTransmitPopDeclare注释, 从EvBus中获取消息, 注入到成员变量中
+     * 2.根据EvReceiverDeclare注释, 注册消息接收器
+     * @param activity activity
+     * @throws MissingMessageException 标记为required的消息为空
+     */
+    public static void registerAnnotations(Activity activity) throws MissingMessageException {
+        check(activity);
+        EvAnnotationRegister.register(getStation(activity, true), activity);
+    }
+
+    /**
+     * [register/post模式]
+     * 静默处理异常
+     * 1.根据EvTransmitPopDeclare注释, 从EvBus中获取消息, 注入到成员变量中
+     * 2.根据EvReceiverDeclare注释, 注册消息接收器
+     * @param activity activity
+     * @return 异常时返回false
+     */
+    public static boolean registerAnnotationsQuiet(Activity activity) {
+        try {
+            registerAnnotations(activity);
+            return true;
+        } catch (MissingMessageException e) {
+            TLogger.get(activity).e("Missing message, message type:" + e.getMessageType(), e);
+            Toast.makeText(activity.getApplicationContext(), "未知错误[UnknownError]", Toast.LENGTH_SHORT).show();
+            activity.finish();
+            return false;
+        }
+    }
+
+    /**
+     * [register/post模式]
+     * 1.根据EvTransmitPopDeclare注释, 从EvBus中获取消息, 注入到成员变量中
+     * 2.根据EvReceiverDeclare注释, 注册消息接收器
+     * @param fragment fragment
+     * @throws MissingMessageException 标记为required的消息为空
+     */
+    public static void registerAnnotations(Fragment fragment) throws MissingMessageException {
+        check(fragment);
+        EvAnnotationRegister.register(getStation(fragment, true), fragment);
+    }
+
+    /**
+     * [register/post模式]
+     * 静默处理异常
+     * 1.根据EvTransmitPopDeclare注释, 从EvBus中获取消息, 注入到成员变量中
+     * 2.根据EvReceiverDeclare注释, 注册消息接收器
+     * @param fragment fragment
+     * @return 异常时返回false
+     */
+    public static boolean registerAnnotationsQuiet(Fragment fragment) {
+        try {
+            registerAnnotations(fragment);
+            return true;
+        } catch (MissingMessageException e) {
+            TLogger.get(fragment).e("Missing message, message type:" + e.getMessageType(), e);
+            Activity activity = fragment.getActivity();
+            if (activity != null) {
+                Toast.makeText(activity.getApplicationContext(), "未知错误[UnknownError]", Toast.LENGTH_SHORT).show();
+                activity.finish();
+            }
+            return false;
+        }
+    }
+
+    /**
+     * [register/post模式]
+     * 1.根据EvTransmitPopDeclare注释, 从EvBus中获取消息, 注入到成员变量中
+     * 2.根据EvReceiverDeclare注释, 注册消息接收器
+     * @param fragment fragment
+     * @throws MissingMessageException 标记为required的消息为空
+     */
+    public static void registerAnnotations(android.support.v4.app.Fragment fragment) throws MissingMessageException {
+        check(fragment);
+        EvAnnotationRegister.register(getStation(fragment, true), fragment);
+    }
+
+    /**
+     * [register/post模式]
+     * 静默处理异常
+     * 1.根据EvTransmitPopDeclare注释, 从EvBus中获取消息, 注入到成员变量中
+     * 2.根据EvReceiverDeclare注释, 注册消息接收器
+     * @param fragment fragment
+     * @return 异常时返回false
+     */
+    public static boolean registerAnnotationsQuiet(android.support.v4.app.Fragment fragment) {
+        try {
+            registerAnnotations(fragment);
+            return true;
+        } catch (MissingMessageException e) {
+            TLogger.get(fragment).e("Missing message, message type:" + e.getMessageType(), e);
+            Activity activity = fragment.getActivity();
+            if (activity != null) {
+                Toast.makeText(activity.getApplicationContext(), "未知错误[UnknownError]", Toast.LENGTH_SHORT).show();
+                activity.finish();
+            }
+            return false;
+        }
+    }
+
+    /**
+     * [register/post模式]注册消息接收器,
+     * 在同一个Activity重复注册同类型的接收器会覆盖之前的接收器
      * @param activity Activity
      * @param type 接收方式
      * @param receiver 接收器, 必须用泛型指定接受的消息类型
@@ -222,7 +326,8 @@ public class EvBus {
     }
 
     /**
-     * [register/post模式]注册消息接收器
+     * [register/post模式]注册消息接收器,
+     * 在同一个Activity重复注册同类型的接收器会覆盖之前的接收器
      * @param fragment fragment
      * @param type 接收方式
      * @param receiver 接收器, 必须用泛型指定接受的消息类型
@@ -233,7 +338,8 @@ public class EvBus {
     }
 
     /**
-     * [register/post模式]注册消息接收器
+     * [register/post模式]注册消息接收器,
+     * 在同一个Activity重复注册同类型的接收器会覆盖之前的接收器
      * @param fragment fragment
      * @param type 接收方式
      * @param receiver 接收器, 必须用泛型指定接受的消息类型

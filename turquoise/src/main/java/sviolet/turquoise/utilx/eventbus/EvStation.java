@@ -48,7 +48,7 @@ class EvStation implements LifeCycle {
     private WeakReference<Activity> activityWeakReference;
     private boolean destroyed = false;
 
-    private Map<Class<? extends EvMessage>, EvReceiver> receivers = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Class<? extends EvMessage>, EvReceiver> receivers = new ConcurrentHashMap<>();
     private List<EvMessage> onStartMessages = Collections.synchronizedList(new ArrayList<EvMessage>());
     private List<EvMessage> onResumeMessages = Collections.synchronizedList(new ArrayList<EvMessage>());
     private List<EvMessage> onPauseMessages = Collections.synchronizedList(new ArrayList<EvMessage>());
@@ -150,6 +150,21 @@ class EvStation implements LifeCycle {
         }
         receiver.setType(type);
         receivers.put(actualTypes.get(0), receiver);
+    }
+
+    boolean registerByAnnotation(Class<? extends EvMessage> messageType, EvBus.Type type, EvReceiver receiver){
+        if (destroyed){
+            return true;
+        }
+        if (getActivity() == null){
+            return true;
+        }
+        receiver.setType(type);
+        if (receivers.putIfAbsent(messageType, receiver) == null) {
+            return true;
+        }
+        //duplicate receiver
+        return false;
     }
 
     void unregister(Class<? extends EvMessage> messageClass) {
@@ -296,7 +311,7 @@ class EvStation implements LifeCycle {
         transmitMessages.clear();
     }
 
-    private Activity getActivity(){
+    Activity getActivity(){
         if (activityWeakReference != null){
             return activityWeakReference.get();
         }
