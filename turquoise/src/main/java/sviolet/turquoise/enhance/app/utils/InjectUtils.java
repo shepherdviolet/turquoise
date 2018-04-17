@@ -44,6 +44,7 @@ import sviolet.thistle.util.reflect.ReflectCache;
 public class InjectUtils {
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 1.根据"类"的@ResourceId注释注入对应的Activity布局文件<br/>
      * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
      * @param activity activity
@@ -54,6 +55,7 @@ public class InjectUtils {
     }
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 1.根据"类"的@ResourceId注释注入对应的Activity布局文件<br/>
      * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
      * @param dialog dialog
@@ -64,6 +66,7 @@ public class InjectUtils {
     }
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 1.根据"类"的@ResourceId注释注入对应的Fragment布局文件<br/>
      * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
      */
@@ -76,6 +79,7 @@ public class InjectUtils {
     }
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 1.根据"类"的@ResourceId注释注入对应的Fragment布局文件<br/>
      * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
      */
@@ -88,6 +92,7 @@ public class InjectUtils {
     }
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 根据"类"的注释注入<Br/>
      * 1.根据"类"的@ResourceId注释注入对应的Activity布局文件<br/>
      */
@@ -106,6 +111,7 @@ public class InjectUtils {
     }
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 根据"类"的注释注入<Br/>
      * 1.根据"类"的@ResourceId注释注入对应的Dialog布局文件<br/>
      */
@@ -124,6 +130,7 @@ public class InjectUtils {
     }
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 根据"类"的注释注入<Br/>
      * 1.根据"类"的@ResourceId注释注入对应的Fragment布局文件<br/>
      */
@@ -143,6 +150,7 @@ public class InjectUtils {
     }
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 根据"类"的注释注入<Br/>
      * 1.根据"类"的@ResourceId注释注入对应的Fragment布局文件<br/>
      */
@@ -162,6 +170,7 @@ public class InjectUtils {
     }
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 根据成员变量的注释注入<br/>
      * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
      */
@@ -173,6 +182,7 @@ public class InjectUtils {
     }
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 根据成员变量的注释注入<br/>
      * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
      */
@@ -184,6 +194,7 @@ public class InjectUtils {
     }
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 根据成员变量的注释注入<br/>
      * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
      */
@@ -195,6 +206,7 @@ public class InjectUtils {
     }
 
     /**
+     * [TActivity/TFragmentActivity/TAppCompatActivity已经调用了该方法, 无需再调用]
      * 根据成员变量的注释注入<br/>
      * 2.根据"成员变量"的@ResourceId注释注入布局中对应的View对象<br/>
      */
