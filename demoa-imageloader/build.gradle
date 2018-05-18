@@ -13,8 +13,9 @@ android {
         multiDexEnabled false
 
         ndk {
-            //使得APK中只包含指定版本的so库
-            abiFilters "armeabi", "armeabi-v7a", "x86"
+            //使得APK中只包含指定版本的so库(AS3.2以后armeabi可能被抛弃)
+            abiFilters "armeabi-v7a"
+//            abiFilters "armeabi", "armeabi-v7a", "x86"
         }
     }
 
