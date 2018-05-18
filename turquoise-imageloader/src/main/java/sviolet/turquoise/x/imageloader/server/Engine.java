@@ -41,8 +41,8 @@ public abstract class Engine implements ComponentManager.Component, Server {
 
     private ComponentManager manager;
 
-    private ExecutorService dispatchThreadPool = ThreadPoolExecutorUtils.createLazy(60L, "TLoader-Engine-dispatcher-%d");
-    private ExecutorService taskThreadPool = ThreadPoolExecutorUtils.createCached(0, Integer.MAX_VALUE, 60L, "TLoader-Engine-worker-%d");
+    private ExecutorService dispatchThreadPool = ThreadPoolExecutorUtils.createLazy(60L, "sva-til-e-dispatch-%d");
+    private ExecutorService taskThreadPool = ThreadPoolExecutorUtils.createCached(0, Integer.MAX_VALUE, 60L, "sva-til-e-worker-%d");
 
     private AtomicInteger taskCount = new AtomicInteger(0);
     private List<Task> cache;//single Thread to operate the cache!

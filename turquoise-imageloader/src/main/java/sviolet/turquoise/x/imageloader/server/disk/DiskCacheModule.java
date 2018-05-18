@@ -62,7 +62,7 @@ public class DiskCacheModule implements ComponentManager.Component, Server {
     @Override
     public void init(ComponentManager manager) {
         this.manager = manager;
-        this.dispatchThreadPool = ThreadPoolExecutorUtils.createLazy(60L, "TLoader-DiskCacheModule-%d");
+        this.dispatchThreadPool = ThreadPoolExecutorUtils.createLazy(60L, "sva-til-dcm-dispatch-%d");
         status = Status.PAUSE;
     }
 

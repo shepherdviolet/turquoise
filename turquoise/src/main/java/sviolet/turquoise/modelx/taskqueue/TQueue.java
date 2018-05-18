@@ -598,7 +598,7 @@ public class TQueue {
         if (dispatchThreadPool == null){
             synchronized (this) {
                 if (dispatchThreadPool == null) {
-                    dispatchThreadPool = ThreadPoolExecutorUtils.createLazy(60L, "TQueue-%d");
+                    dispatchThreadPool = ThreadPoolExecutorUtils.createLazy(60L, "sva-tq-dispatch-%d");
                 }
             }
         }
@@ -624,7 +624,7 @@ public class TQueue {
         if (taskThreadPool == null){
             synchronized (this) {
                 if (taskThreadPool == null) {
-                    taskThreadPool = ThreadPoolExecutorUtils.createCached(0, Integer.MAX_VALUE, 60L, "TQueue-%d");
+                    taskThreadPool = ThreadPoolExecutorUtils.createCached(0, Integer.MAX_VALUE, 60L, "sva-tq-worker-%d");
                 }
             }
         }

@@ -50,7 +50,7 @@ public class MultiThreadNetworkLoadHandler implements NetworkLoadHandler {
     private static final long SPLIT_THRESHOLD = 16L * 1024L;
 
     private Map<String, OkHttpClient> okHttpClients = new ConcurrentHashMap<>(2);
-    private ExecutorService workThreadPool = ThreadPoolExecutorUtils.createCached(0, Integer.MAX_VALUE, 60L, "MultiThreadNetworkLoadHandler-worker-%d");
+    private ExecutorService workThreadPool = ThreadPoolExecutorUtils.createCached(0, Integer.MAX_VALUE, 60L, "sva-til-mtnlh-worker-%d");
     private NetworkSpeedRecorder networkSpeedRecorder;
 
     private Map<String, String> headers;

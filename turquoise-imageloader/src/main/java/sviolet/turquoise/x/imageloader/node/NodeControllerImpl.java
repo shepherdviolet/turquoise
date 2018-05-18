@@ -458,7 +458,7 @@ public class NodeControllerImpl extends NodeController {
      * Dispatch Thread
      */
 
-    private ExecutorService dispatchThreadPool = ThreadPoolExecutorUtils.createLazy(60L, "TLoader-NodeController-%d");
+    private ExecutorService dispatchThreadPool = ThreadPoolExecutorUtils.createLazy(60L, "sva-til-nc-dispatch-%d");
 
     @Override
     public void postDispatch() {
