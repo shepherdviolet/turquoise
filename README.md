@@ -104,7 +104,7 @@ https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.m
 ![Dependency](https://img.shields.io/badge/Maven%20Dependency-support--v4-dc143c.svg?style=flat)
 [![Dependency](https://img.shields.io/badge/Maven%20Dependency-android--gif--drawable-dc143c.svg?style=flat)](https://github.com/koral--/android-gif-drawable)
 
-###### Load and display image from network
+###### Load and display image from network / local disk / assets / res
 
 ### Basic Usage:
 ```gradle
