@@ -1,5 +1,5 @@
 # Turquoise 9.3
-###### A comprehensive Android library for private use.
+###### A comprehensive Android library.
 ###### https://github.com/shepherdviolet/turquoise
 
 ![](https://github.com/shepherdviolet/static-resources/blob/master/image/logo/turquoise.jpg)<br/>
