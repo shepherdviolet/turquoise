@@ -24,11 +24,11 @@
 
 * How to exclude dependencies
 
-https://github.com/shepherdviolet/turquoise/blob/master/doc/ExcludeDependencies.md <br/>
+https://github.com/shepherdviolet/turquoise/blob/master/doc/exclude-dependencies.md <br/>
 
 * Import dependencies from aar package
 
-https://github.com/shepherdviolet/turquoise/blob/master/doc/ExportImportManual.md <br/>
+https://github.com/shepherdviolet/turquoise/blob/master/doc/export-import-manual.md <br/>
 
 <br/>
 <br/>
