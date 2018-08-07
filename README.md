@@ -8,13 +8,10 @@
 
 ```gradle
     repositories {
-        //Local repository
-        //maven { url 'file:C:/m2repository/repository' }
-        jcenter()
+		//turquoise
         maven { url 'https://jitpack.io' }
-        google()
-        //Deprecated way, use jitpack.io instead, just for reference
-        //maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }
+        //thistle
+        mavenCentral()
     }
     dependencies {
         compile 'com.github.shepherdviolet.turquoise:turquoise:9.3'
