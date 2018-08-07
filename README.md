@@ -8,9 +8,9 @@
 
 ```gradle
     repositories {
-		//turquoise
+		//Turquoise in jitpack
         maven { url 'https://jitpack.io' }
-        //thistle
+        //Thistle in mavenCentral
         mavenCentral()
     }
     dependencies {
