@@ -27,6 +27,7 @@ buildscript {
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
+        mavenCentral()
 //        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
     }
 
@@ -51,6 +52,7 @@ allprojects {
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
+        mavenCentral()
 //        mavenLocal()//本地仓库
 //        maven{ url 'file:C:/m2repository/repository'}//本地仓库:指定路径
 //        maven { url 'https://github.com/shepherdviolet/alternate-maven-repository/raw/master/repository' }//custom repo
