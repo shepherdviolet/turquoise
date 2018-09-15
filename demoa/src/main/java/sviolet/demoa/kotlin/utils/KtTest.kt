@@ -19,7 +19,7 @@
 
 package sviolet.demoa.kotlin.utils
 
-import sviolet.thistle.kotlin.extension.getJClassSimpleName
+import sviolet.thistle.x.kotlin.extension.getJClassSimpleName
 
 /**
  * simple kotlin demo
