@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.model.network;
+package sviolet.turquoise.model.net;
 
 import android.annotation.TargetApi;
 import android.content.Context;

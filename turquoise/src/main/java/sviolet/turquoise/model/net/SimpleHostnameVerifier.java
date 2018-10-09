@@ -1,4 +1,4 @@
-package sviolet.turquoise.model.network;
+package sviolet.turquoise.model.net;
 
 import java.security.cert.Certificate;
 import java.security.cert.CertificateParsingException;
