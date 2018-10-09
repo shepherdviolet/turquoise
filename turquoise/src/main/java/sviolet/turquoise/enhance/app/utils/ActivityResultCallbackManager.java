@@ -26,7 +26,7 @@ import android.util.SparseArray;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.thistle.entity.common.Destroyable;
-import sviolet.turquoise.common.statics.PublicConstants;
+import sviolet.turquoise.entity.statics.PublicConstants;
 
 /**
  * <p>将原先需要重写Activity.onActivityResult处理的事件转为回调形式,

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import sviolet.turquoise.common.exception.DeprecatedException;
+import sviolet.turquoise.entity.exception.DeprecatedException;
 
 /**
  * 

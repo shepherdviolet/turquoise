@@ -25,7 +25,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 
 import sviolet.thistle.util.common.ParasiticVars;
-import sviolet.turquoise.common.statics.StringConstants;
+import sviolet.turquoise.entity.statics.StringConstants;
 
 /**
  * 生命周期监听Fragment for supportV4<p/>

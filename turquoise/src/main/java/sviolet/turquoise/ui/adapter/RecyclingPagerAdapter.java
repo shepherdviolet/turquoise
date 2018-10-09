@@ -27,7 +27,7 @@ import android.widget.AdapterView;
 import java.util.HashSet;
 import java.util.Set;
 
-import sviolet.turquoise.common.statics.PublicConstants;
+import sviolet.turquoise.entity.statics.PublicConstants;
 
 /**
  * <p>A {@link PagerAdapter} which behaves like an {@link android.widget.Adapter} with view types and

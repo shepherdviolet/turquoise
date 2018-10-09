@@ -31,7 +31,7 @@ import java.lang.reflect.Field;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.thistle.util.common.ParasiticVars;
-import sviolet.turquoise.common.statics.StringConstants;
+import sviolet.turquoise.entity.statics.StringConstants;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;
 

@@ -21,7 +21,7 @@ package sviolet.turquoise.uix.slideengine.impl;
 
 import android.content.Context;
 
-import sviolet.turquoise.common.exception.DeprecatedException;
+import sviolet.turquoise.entity.exception.DeprecatedException;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;
 
 /**

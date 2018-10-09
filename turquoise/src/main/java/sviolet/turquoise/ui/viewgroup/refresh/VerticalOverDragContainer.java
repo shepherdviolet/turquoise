@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sviolet.turquoise.R;
-import sviolet.turquoise.common.compat.CompatOverScroller;
+import sviolet.turquoise.compat.CompatOverScroller;
 import sviolet.turquoise.enhance.common.WeakHandler;
 import sviolet.turquoise.ui.util.ListViewUtils;
 import sviolet.turquoise.ui.util.ScrollViewUtils;

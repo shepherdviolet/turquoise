@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.common.exception;
+package sviolet.turquoise.entity.exception;
 
 /**
  * [异常]弃用异常<Br/>

@@ -24,7 +24,7 @@ import android.view.View;
 
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.common.statics.PublicConstants;
+import sviolet.turquoise.entity.statics.PublicConstants;
 import sviolet.turquoise.x.imageloader.drawable.ContainerDrawable;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.Params;

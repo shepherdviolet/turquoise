@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import sviolet.turquoise.common.statics.PublicConstants;
+import sviolet.turquoise.entity.statics.PublicConstants;
 import sviolet.thistle.util.judge.CheckUtils;
 import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.utilx.tlogger.TLogger;

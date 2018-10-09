@@ -29,7 +29,7 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
-import sviolet.turquoise.common.statics.StringConstants;
+import sviolet.turquoise.entity.statics.StringConstants;
 import sviolet.turquoise.util.droid.ApplicationUtils;
 
 /**

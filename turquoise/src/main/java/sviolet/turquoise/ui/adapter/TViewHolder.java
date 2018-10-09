@@ -25,7 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import sviolet.turquoise.common.statics.PublicConstants;
+import sviolet.turquoise.entity.statics.PublicConstants;
 
 /**
  * <p>ViewHolder工具, 用于Adapter</p>

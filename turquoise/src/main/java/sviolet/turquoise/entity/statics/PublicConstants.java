@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.common.statics;
+package sviolet.turquoise.entity.statics;
 
 import android.view.View;
 

@@ -24,7 +24,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.view.ViewConfiguration;
 
-import sviolet.turquoise.common.compat.CompatOverScroller;
+import sviolet.turquoise.compat.CompatOverScroller;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureClickListener;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureMoveListener;
 import sviolet.turquoise.uix.viewgesturectrl.ViewGestureTouchListener;
