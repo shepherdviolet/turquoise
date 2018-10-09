@@ -17,21 +17,33 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.kotlin.utilx.tfork
+package sviolet.turquoise.x.kotlin.extension
+
+import android.content.Context
+import android.widget.Toast
 
 /**
- * TFork公共配置
+ * Android Toast extensions
  *
- * Created by S.Violet on 2017/6/2.
+ * Created by S.Violet on 2017/5/26.
  */
-object TForkConfigure {
 
-    //当同时执行的fork块达到该数量时, 打印日志警告
-    var WARNING_THREAD_NUM = 10
-    //当同时执行的fork块达到该数量时, 抛出异常(APP崩溃)
-    var MAX_THREAD_NUM = 100
+/**
+ * Show short toast
+ */
+fun Context?.toast(msg: String?){
+    if (this == null || msg == null){
+        return
+    }
+    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+}
 
-    //await/uiAwait默认超时时间(超时后流程终止)
-    var DEFAULT_AWAIT_TIMEOUT = 5 * 60 * 1000L
-
+/**
+ * Show long toast
+ */
+fun Context?.toastl(msg: String?){
+    if (this == null || msg == null){
+        return
+    }
+    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
 }

@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.kotlin.utilx.tfork
+package sviolet.turquoise.x.kotlin.tfork
 
 import sviolet.thistle.model.queue.AsyncWaiter
 

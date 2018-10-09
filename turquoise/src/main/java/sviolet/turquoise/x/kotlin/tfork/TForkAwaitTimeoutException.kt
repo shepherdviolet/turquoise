@@ -17,33 +17,11 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.kotlin.extension
-
-import android.content.Context
-import android.widget.Toast
+package sviolet.turquoise.x.kotlin.tfork
 
 /**
- * Android Toast extensions
+ * await/uiAwait块超时的异常
  *
- * Created by S.Violet on 2017/5/26.
+ * Created by S.Violet on 2017/5/31.
  */
-
-/**
- * Show short toast
- */
-fun Context?.toast(msg: String?){
-    if (this == null || msg == null){
-        return
-    }
-    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-}
-
-/**
- * Show long toast
- */
-fun Context?.toastl(msg: String?){
-    if (this == null || msg == null){
-        return
-    }
-    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
-}
+internal class TForkAwaitTimeoutException(val msg: String) : Exception(msg)
