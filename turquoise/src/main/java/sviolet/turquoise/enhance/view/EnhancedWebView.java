@@ -17,7 +17,7 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.turquoise.enhance.common;
+package sviolet.turquoise.enhance.view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
