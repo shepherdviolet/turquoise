@@ -32,7 +32,7 @@ import sviolet.demoa.slide.view.CardSlideView;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
-import sviolet.turquoise.uix.slideengine.view.AdaptListView;
+import sviolet.turquoise.x.gesture.slideengine.view.AdaptListView;
 
 /**
  * 卡片Demo

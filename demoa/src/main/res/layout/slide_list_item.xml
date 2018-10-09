@@ -38,7 +38,7 @@ LinearLayoutDrawer必须设置背景颜色
 
     </RelativeLayout>
 
-    <sviolet.turquoise.uix.slideengine.view.LinearLayoutDrawer
+    <sviolet.turquoise.x.gesture.slideengine.view.LinearLayoutDrawer
         android:id="@+id/slide_list_drawer"
         android:layout_width="match_parent"
         android:layout_height="100dp"
@@ -100,6 +100,6 @@ LinearLayoutDrawer必须设置背景颜色
             sviolet:LinearShadowView_direction="right"
             android:color="#40000000" />
 
-    </sviolet.turquoise.uix.slideengine.view.LinearLayoutDrawer>
+    </sviolet.turquoise.x.gesture.slideengine.view.LinearLayoutDrawer>
 
 </RelativeLayout>

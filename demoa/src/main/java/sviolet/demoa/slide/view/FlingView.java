@@ -19,11 +19,11 @@
 
 package sviolet.demoa.slide.view;
 
-import sviolet.turquoise.uix.slideengine.listener.OnVelocityOverflowListener;
+import sviolet.turquoise.x.gesture.slideengine.listener.OnVelocityOverflowListener;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.uix.slideengine.abs.SlideView;
-import sviolet.turquoise.uix.slideengine.impl.LinearFlingEngine;
-import sviolet.turquoise.uix.slideengine.impl.LinearGestureDriver;
+import sviolet.turquoise.x.gesture.slideengine.abs.SlideView;
+import sviolet.turquoise.x.gesture.slideengine.impl.LinearFlingEngine;
+import sviolet.turquoise.x.gesture.slideengine.impl.LinearGestureDriver;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

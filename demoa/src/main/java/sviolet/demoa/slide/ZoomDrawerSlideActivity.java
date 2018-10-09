@@ -33,7 +33,7 @@ import sviolet.demoa.slide.view.ZoomRelativeLayoutDrawer;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
-import sviolet.turquoise.uix.slideengine.listener.OnSlideStopListener;
+import sviolet.turquoise.x.gesture.slideengine.listener.OnSlideStopListener;
 import sviolet.turquoise.util.droid.MeasureUtils;
 
 @DemoDescription(

@@ -30,8 +30,8 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.ui.view.shadow.LinearShadowView;
-import sviolet.turquoise.uix.slideengine.listener.OnSlideStopListener;
-import sviolet.turquoise.uix.slideengine.view.RelativeLayoutDrawer;
+import sviolet.turquoise.x.gesture.slideengine.listener.OnSlideStopListener;
+import sviolet.turquoise.x.gesture.slideengine.view.RelativeLayoutDrawer;
 
 @DemoDescription(
         title = "Drawer",

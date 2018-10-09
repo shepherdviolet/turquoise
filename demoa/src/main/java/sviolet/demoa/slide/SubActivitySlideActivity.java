@@ -27,10 +27,10 @@ import sviolet.demoa.R;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.TActivity;
-import sviolet.turquoise.uix.slideengine.listener.OnSlideStopListener;
+import sviolet.turquoise.x.gesture.slideengine.listener.OnSlideStopListener;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.uix.slideengine.impl.LinearGestureDriver;
-import sviolet.turquoise.uix.slideengine.view.RelativeLayoutDrawer;
+import sviolet.turquoise.x.gesture.slideengine.impl.LinearGestureDriver;
+import sviolet.turquoise.x.gesture.slideengine.view.RelativeLayoutDrawer;
 
 /**
  * 可侧滑关闭Activity的demo(子Activity)

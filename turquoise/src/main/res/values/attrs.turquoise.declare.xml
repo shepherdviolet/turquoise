@@ -76,7 +76,7 @@
 
 <resources>
 
-    <!-- sviolet.turquoise.uix.slideengine.view.DotPageIndicator -->
+    <!-- sviolet.turquoise.x.motion.slideengine.view.DotPageIndicator -->
     <declare-styleable name="DotPageIndicator">
         <!-- 颜色 -->
         <attr name="android:color" />

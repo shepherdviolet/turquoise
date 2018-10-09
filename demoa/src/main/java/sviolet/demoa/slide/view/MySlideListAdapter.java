@@ -32,8 +32,8 @@ import java.util.List;
 
 import sviolet.demoa.R;
 import sviolet.turquoise.ui.adapter.TViewHolder;
-import sviolet.turquoise.uix.slideengine.view.LinearLayoutDrawer;
-import sviolet.turquoise.uix.slideengine.view.SlideListAdapter;
+import sviolet.turquoise.x.gesture.slideengine.view.LinearLayoutDrawer;
+import sviolet.turquoise.x.gesture.slideengine.view.SlideListAdapter;
 
 /**
  * 滑动列表适配器
