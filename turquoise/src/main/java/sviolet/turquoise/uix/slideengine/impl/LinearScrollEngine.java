@@ -23,7 +23,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import sviolet.turquoise.compat.ui.viewgroup.CompatScroller;
+import sviolet.turquoise.compat.viewgroup.CompatScroller;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;
 
 /**

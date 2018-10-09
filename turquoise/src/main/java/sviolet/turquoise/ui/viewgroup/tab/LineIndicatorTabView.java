@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sviolet.turquoise.R;
-import sviolet.turquoise.compat.ui.viewgroup.CompatOverScroller;
+import sviolet.turquoise.compat.viewgroup.CompatOverScroller;
 import sviolet.turquoise.ui.util.motion.ClickDetector;
 import sviolet.turquoise.ui.util.ViewCommonUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
