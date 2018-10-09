@@ -33,7 +33,7 @@ import android.view.View;
 import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.R;
-import sviolet.turquoise.compat.CompatOverScroller;
+import sviolet.turquoise.compat.ui.viewgroup.CompatOverScroller;
 import sviolet.turquoise.util.droid.MeasureUtils;
 
 /**

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package sviolet.turquoise.compat;
+package sviolet.turquoise.compat.ui.viewgroup;
 
 import android.content.Context;
 import android.hardware.SensorManager;
