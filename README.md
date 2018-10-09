@@ -1,4 +1,4 @@
-# Turquoise 10.0
+# Turquoise 11.0
 ###### A comprehensive Android library.
 ###### https://github.com/shepherdviolet/turquoise
 
@@ -14,8 +14,8 @@
         mavenCentral()
     }
     dependencies {
-        compile 'com.github.shepherdviolet.turquoise:turquoise:10.0'
-        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader:10.0'
+        compile 'com.github.shepherdviolet.turquoise:turquoise:11.0'
+        compile 'com.github.shepherdviolet.turquoise:turquoise-imageloader:11.0'
     }
 ```
 
