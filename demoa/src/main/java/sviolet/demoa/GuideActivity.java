@@ -36,7 +36,6 @@ import sviolet.demoa.common.DemoList;
 import sviolet.demoa.common.DemoListAdapter;
 import sviolet.demoa.fingerprint.FingerprintActivity;
 import sviolet.demoa.info.InfoActivity;
-import sviolet.demoa.kotlin.KtTestActivity;
 import sviolet.demoa.other.OtherActivity;
 import sviolet.demoa.refresh.RefreshActivity;
 import sviolet.demoa.slide.SlideActivity;
@@ -62,7 +61,6 @@ import sviolet.turquoise.utilx.tlogger.printer.SimpleLoggerPrinter;
         SlideActivity.class,
         RefreshActivity.class,
         FingerprintActivity.class,
-        KtTestActivity.class,
         InfoActivity.class,
         OtherActivity.class,
         TempActivity.class

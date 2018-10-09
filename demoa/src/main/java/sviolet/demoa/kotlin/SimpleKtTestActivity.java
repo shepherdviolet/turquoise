@@ -17,41 +17,41 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.demoa.kotlin;
-
-import android.os.Bundle;
-import android.widget.Toast;
-
-import sviolet.demoa.R;
-import sviolet.demoa.common.DemoDescription;
-import sviolet.demoa.kotlin.utils.KtTest;
-import sviolet.turquoise.enhance.app.TActivity;
-import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
-import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-
-@DemoDescription(
-        title = "Simple Kotlin Demo",
-        type = "Kotlin",
-        info = "simple demo of kotlin"
-)
-
-/**
- * 简单的Kotlin示例<br/>
- *
- * Created by S.Violet on 2017/05/19.
- */
-@ResourceId(R.layout.kotlin_simple_main)
-@ActivitySettings(
-        statusBarColor = 0xFF30C0C0,
-        navigationBarColor = 0xFF30C0C0
-)
-public class SimpleKtTestActivity extends TActivity {
-
-    @Override
-    protected void onInitViews(Bundle savedInstanceState) {
-
-        Toast.makeText(this, new KtTest("kotlin demo").greet(), Toast.LENGTH_SHORT).show();
-
-    }
-
-}
+//package sviolet.demoa.kotlin;
+//
+//import android.os.Bundle;
+//import android.widget.Toast;
+//
+//import sviolet.demoa.R;
+//import sviolet.demoa.common.DemoDescription;
+//import sviolet.demoa.kotlin.utils.KtTest;
+//import sviolet.turquoise.enhance.app.TActivity;
+//import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
+//import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+//
+//@DemoDescription(
+//        title = "Simple Kotlin Demo",
+//        type = "Kotlin",
+//        info = "simple demo of kotlin"
+//)
+//
+///**
+// * 简单的Kotlin示例<br/>
+// *
+// * Created by S.Violet on 2017/05/19.
+// */
+//@ResourceId(R.layout.kotlin_simple_main)
+//@ActivitySettings(
+//        statusBarColor = 0xFF30C0C0,
+//        navigationBarColor = 0xFF30C0C0
+//)
+//public class SimpleKtTestActivity extends TActivity {
+//
+//    @Override
+//    protected void onInitViews(Bundle savedInstanceState) {
+//
+//        Toast.makeText(this, new KtTest("kotlin demo").greet(), Toast.LENGTH_SHORT).show();
+//
+//    }
+//
+//}

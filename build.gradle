@@ -35,8 +35,8 @@ buildscript {
     dependencies {
         //common
         classpath "com.android.tools.build:gradle:$version_androidPluginVersion"//安卓构建插件
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$version_kotlinVersion"//kotlin
         classpath "com.github.shepherdviolet:gradle-turquoise:$version_gradleTurquoiseVersion"//gradle-turquoise plugin
+//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$version_kotlinVersion"//kotlin
     }
 
 }
@@ -63,7 +63,7 @@ allprojects {
 
 configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
     apply plugin: 'com.android.library'
-    apply plugin: 'kotlin-android'
+//    apply plugin: 'kotlin-android'
 
     android {
         compileSdkVersion Integer.valueOf(version_compileSdkVersion)
@@ -102,7 +102,7 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
 
     dependencies {
         //implementation依赖的库, 对上一层依赖不可见. api依赖的库, 对上一层依赖可见
-        implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$version_kotlinVersion"
+//        implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$version_kotlinVersion"
     }
 
 }
@@ -111,11 +111,11 @@ configure(subprojects.findAll { it.name.startsWith('turquoise') }) {
 
 configure(subprojects.findAll { it.name.startsWith('demo') }) {
     apply plugin: 'com.android.application'
-    apply plugin: 'kotlin-android'
+//    apply plugin: 'kotlin-android'
 
     dependencies {
         //implementation依赖的库, 对上一层依赖不可见. api依赖的库, 对上一层依赖可见
-        implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$version_kotlinVersion"
+//        implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$version_kotlinVersion"
     }
 
 }

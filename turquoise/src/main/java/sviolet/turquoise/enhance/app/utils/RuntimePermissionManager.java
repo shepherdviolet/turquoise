@@ -31,7 +31,7 @@ import android.util.SparseArray;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import sviolet.thistle.entity.Destroyable;
+import sviolet.thistle.entity.common.Destroyable;
 import sviolet.turquoise.common.statics.PublicConstants;
 import sviolet.turquoise.ui.dialog.CommonSimpleDialog;
 import sviolet.turquoise.ui.dialog.SimpleDialogBuilder;

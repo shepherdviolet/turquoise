@@ -17,21 +17,21 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.demoa.kotlin.utils
-
-import sviolet.thistle.x.kotlin.extension.getJClassSimpleName
-
-/**
- * simple kotlin demo
- *
- * Created by S.Violet on 2017/5/19.
- */
-class KtTest(val name: String) {
-
-    fun greet() : String {
-        val msg = "[${getJClassSimpleName()}]Hello to $name"
-        println(msg)
-        return msg
-    }
-
-}
+//package sviolet.demoa.kotlin.utils
+//
+//import sviolet.thistle.x.kotlin.extension.getJClassSimpleName
+//
+///**
+// * simple kotlin demo
+// *
+// * Created by S.Violet on 2017/5/19.
+// */
+//class KtTest(val name: String) {
+//
+//    fun greet() : String {
+//        val msg = "[${getJClassSimpleName()}]Hello to $name"
+//        println(msg)
+//        return msg
+//    }
+//
+//}

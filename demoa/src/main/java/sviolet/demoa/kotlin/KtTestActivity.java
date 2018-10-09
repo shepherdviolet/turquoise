@@ -17,30 +17,30 @@
  * Email: shepherdviolet@163.com
  */
 
-package sviolet.demoa.kotlin;
-
-import sviolet.demoa.GuideActivity;
-import sviolet.demoa.common.DemoDescription;
-import sviolet.demoa.common.DemoList;
-
-/**************************************************************
- * Demo配置
- */
-
-// Demo列表
-@DemoList({
-        SimpleKtTestActivity.class
-})
-
-/**************************************************************
- *  Activity
- */
-
-//Demo描述
-@DemoDescription(
-        title = "Kotlin Demo",
-        type = "Lang",
-        info = "Demo of Kotlin"
-)
-public class KtTestActivity extends GuideActivity {
-}
+//package sviolet.demoa.kotlin;
+//
+//import sviolet.demoa.GuideActivity;
+//import sviolet.demoa.common.DemoDescription;
+//import sviolet.demoa.common.DemoList;
+//
+///**************************************************************
+// * Demo配置
+// */
+//
+//// Demo列表
+//@DemoList({
+//        SimpleKtTestActivity.class
+//})
+//
+///**************************************************************
+// *  Activity
+// */
+//
+////Demo描述
+//@DemoDescription(
+//        title = "Kotlin Demo",
+//        type = "Lang",
+//        info = "Demo of Kotlin"
+//)
+//public class KtTestActivity extends GuideActivity {
+//}

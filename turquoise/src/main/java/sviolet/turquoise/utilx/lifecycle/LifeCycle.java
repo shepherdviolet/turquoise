@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.utilx.lifecycle;
 
-import sviolet.thistle.entity.Destroyable;
+import sviolet.thistle.entity.common.Destroyable;
 
 /**
  * 生命周期监听器(Android Activity生命周期监听)
