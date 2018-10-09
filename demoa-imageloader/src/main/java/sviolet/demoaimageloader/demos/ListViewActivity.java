@@ -34,7 +34,7 @@ import sviolet.demoaimageloader.custom.MyNetworkLoadHandler;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.ui.viewgroup.refresh.CircleDropRefreshIndicator;
 import sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer;
 import sviolet.turquoise.x.imageloader.TILoader;

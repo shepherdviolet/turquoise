@@ -30,7 +30,7 @@ import android.view.ViewGroup;
 
 import sviolet.turquoise.enhance.app.mvp.TView;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 
 /**
  * [组件扩展]Fragment<br>

@@ -27,7 +27,7 @@ import android.view.View.OnClickListener;
 
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.uix.slideengine.abs.GestureDriver;
 import sviolet.turquoise.uix.slideengine.abs.SlideEngine;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;

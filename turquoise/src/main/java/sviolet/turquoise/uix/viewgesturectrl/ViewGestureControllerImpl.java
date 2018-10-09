@@ -27,7 +27,7 @@ import android.view.VelocityTracker;
 import java.util.ArrayList;
 import java.util.List;
 
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.thistle.util.math.MathUtils;
 
 /**

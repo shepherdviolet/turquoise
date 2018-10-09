@@ -30,7 +30,7 @@ import android.widget.RelativeLayout;
 import java.lang.ref.WeakReference;
 
 import sviolet.turquoise.R;
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.ui.util.ViewCommonUtils;
 
 /**

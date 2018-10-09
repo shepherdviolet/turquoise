@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.thistle.util.concurrent.ConcurrentUtils;
 import sviolet.thistle.util.reflect.ReflectUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;

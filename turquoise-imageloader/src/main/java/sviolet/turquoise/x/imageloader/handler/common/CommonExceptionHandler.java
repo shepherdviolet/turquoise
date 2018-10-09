@@ -29,7 +29,7 @@ import java.lang.ref.WeakReference;
 import java.net.UnknownHostException;
 import java.util.concurrent.atomic.AtomicLong;
 
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.NetStateUtils;

@@ -29,7 +29,7 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.util.droid.DeviceUtils;
 
 /**

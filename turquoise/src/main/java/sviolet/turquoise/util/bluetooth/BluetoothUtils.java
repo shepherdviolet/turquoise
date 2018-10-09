@@ -37,7 +37,7 @@ import android.support.annotation.RequiresPermission;
 import java.util.ArrayList;
 import java.util.List;
 
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.LocationUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;

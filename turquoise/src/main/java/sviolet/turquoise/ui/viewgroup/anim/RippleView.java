@@ -35,7 +35,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
 
 import sviolet.turquoise.R;
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 
 /**
  * 水波纹触摸效果控件(RelativeLayout)

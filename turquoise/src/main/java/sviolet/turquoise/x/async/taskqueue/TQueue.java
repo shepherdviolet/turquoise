@@ -30,7 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 
 import sviolet.thistle.util.concurrent.ThreadPoolExecutorUtils;
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 
 /**
  * 任务队列 (必须在主线程实例化)<br/>

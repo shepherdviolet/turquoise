@@ -45,7 +45,7 @@ import sviolet.demoa.R;
 import sviolet.thistle.util.conversion.Base64Utils;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.util.crypto.AndroidKeyStoreUtils;
 import sviolet.turquoise.util.droid.FingerprintUtils;
 import sviolet.turquoise.utilx.lifecycle.LifeCycle;

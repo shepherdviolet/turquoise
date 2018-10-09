@@ -22,7 +22,7 @@ package sviolet.turquoise.uix.slideengine.impl;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import sviolet.turquoise.enhance.common.WeakHandler;
+import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.uix.slideengine.abs.GestureDriver;
 import sviolet.turquoise.uix.slideengine.abs.SlideEngine;
 import sviolet.turquoise.uix.slideengine.abs.SlideView;
