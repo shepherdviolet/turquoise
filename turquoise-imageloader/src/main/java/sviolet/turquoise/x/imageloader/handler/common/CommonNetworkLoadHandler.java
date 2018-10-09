@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import sviolet.thistle.util.judge.CheckUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**

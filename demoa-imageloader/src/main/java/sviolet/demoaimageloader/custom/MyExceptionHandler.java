@@ -22,7 +22,7 @@ package sviolet.demoaimageloader.custom;
 import android.content.Context;
 import android.util.Log;
 
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 

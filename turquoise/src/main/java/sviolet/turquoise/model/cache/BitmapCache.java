@@ -30,7 +30,7 @@ import java.util.Map;
 
 import sviolet.thistle.compat.cache.CompatLruCache;
 import sviolet.turquoise.util.droid.DeviceUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * 

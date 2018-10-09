@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.x.kotlin.tfork
 
-import sviolet.turquoise.utilx.tlogger.logw
+import sviolet.turquoise.x.common.tlogger.logw
 
 /**
  * TFork

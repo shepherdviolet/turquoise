@@ -26,7 +26,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
 import sviolet.turquoise.util.droid.DeviceUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 @ApplicationSettings(
         DEBUG = BuildConfig._DEBUG,//Debug模式, 装载DebugSetting配置

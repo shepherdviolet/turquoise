@@ -28,7 +28,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
 import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.LoadProgress;
 import sviolet.turquoise.x.imageloader.entity.Params;
 

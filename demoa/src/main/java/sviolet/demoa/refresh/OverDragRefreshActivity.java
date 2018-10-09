@@ -32,7 +32,7 @@ import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.ui.viewgroup.refresh.VerticalOverDragContainer;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 @DemoDescription(
         title = "OverDrag Demo",

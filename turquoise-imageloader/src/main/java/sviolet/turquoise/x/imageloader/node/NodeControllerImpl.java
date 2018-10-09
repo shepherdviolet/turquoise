@@ -31,7 +31,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.thistle.util.concurrent.ThreadPoolExecutorUtils;
 import sviolet.turquoise.enhance.async.WeakHandler;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.drawable.BackgroundDrawableFactory;

@@ -19,7 +19,7 @@
 
 package sviolet.turquoise.x.kotlin.tfork
 
-import sviolet.turquoise.utilx.tlogger.logw
+import sviolet.turquoise.x.common.tlogger.logw
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 

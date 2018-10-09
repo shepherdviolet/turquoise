@@ -40,9 +40,9 @@ import java.util.List;
 import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.LocationUtils;
-import sviolet.turquoise.utilx.lifecycle.LifeCycle;
-import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.lifecycle.LifeCycle;
+import sviolet.turquoise.x.common.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * <p>蓝牙工具(状态判断/设备扫描)</p>

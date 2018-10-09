@@ -24,7 +24,7 @@ import sviolet.turquoise.enhance.app.TApplication;
 import sviolet.turquoise.enhance.app.annotation.setting.ApplicationSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;

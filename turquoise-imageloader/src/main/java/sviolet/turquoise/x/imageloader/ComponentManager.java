@@ -24,7 +24,7 @@ import android.content.Context;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.NodeFactory;
 import sviolet.turquoise.x.imageloader.node.NodeFactoryImpl;

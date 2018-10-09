@@ -48,9 +48,9 @@ import sviolet.turquoise.enhance.app.utils.InjectUtils;
 import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.util.crypto.AndroidKeyStoreUtils;
 import sviolet.turquoise.util.droid.FingerprintUtils;
-import sviolet.turquoise.utilx.lifecycle.LifeCycle;
-import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.lifecycle.LifeCycle;
+import sviolet.turquoise.x.common.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * 指纹识别窗口

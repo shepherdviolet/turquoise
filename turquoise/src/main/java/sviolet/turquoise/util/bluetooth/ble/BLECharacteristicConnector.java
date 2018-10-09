@@ -41,9 +41,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.util.bluetooth.BluetoothUtils;
-import sviolet.turquoise.utilx.lifecycle.LifeCycle;
-import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.lifecycle.LifeCycle;
+import sviolet.turquoise.x.common.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * <p>

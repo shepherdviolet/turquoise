@@ -31,7 +31,7 @@ import android.webkit.WebView;
 
 import java.lang.reflect.Method;
 
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * (修正三星输入法在WebView中number类型无小数点的bug)

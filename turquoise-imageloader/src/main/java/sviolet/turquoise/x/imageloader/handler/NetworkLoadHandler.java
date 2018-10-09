@@ -21,7 +21,7 @@ package sviolet.turquoise.x.imageloader.handler;
 
 import android.content.Context;
 
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.IndispensableState;
 import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
 import sviolet.turquoise.x.imageloader.node.Task;

@@ -25,7 +25,7 @@ import android.graphics.drawable.TransitionDrawable;
 
 import java.lang.ref.WeakReference;
 
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.stub.Stub;
 
 /**

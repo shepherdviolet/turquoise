@@ -27,7 +27,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.mvp.TView;
 import sviolet.turquoise.enhance.app.utils.InjectUtils;
 import sviolet.turquoise.enhance.app.utils.RuntimePermissionManager;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * <p>[组件扩展]Activity</p>

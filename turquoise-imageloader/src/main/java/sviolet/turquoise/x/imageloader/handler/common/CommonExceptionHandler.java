@@ -33,7 +33,7 @@ import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.NetStateUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;
 import sviolet.turquoise.x.imageloader.node.Task;
 

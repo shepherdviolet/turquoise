@@ -35,7 +35,7 @@ import sviolet.demoaimageloader.R;
 import sviolet.turquoise.ui.adapter.TViewHolder;
 import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;

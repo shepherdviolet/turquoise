@@ -25,7 +25,7 @@ import android.graphics.Bitmap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sviolet.turquoise.util.bitmap.BitmapUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * <p>a wrapper of bitmap decode from resource</p>

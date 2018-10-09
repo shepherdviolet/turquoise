@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.thistle.util.conversion.ByteUtils;
 import sviolet.thistle.util.crypto.DigestCipher;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.LoadProgress;

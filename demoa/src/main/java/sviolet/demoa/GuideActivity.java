@@ -45,8 +45,8 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.enhance.app.utils.RuntimePermissionManager;
 import sviolet.turquoise.ui.util.motion.MultiClickFilter;
 import sviolet.turquoise.util.droid.DirectoryUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
-import sviolet.turquoise.utilx.tlogger.printer.SimpleLoggerPrinter;
+import sviolet.turquoise.x.common.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.printer.SimpleLoggerPrinter;
 
 /**************************************************************
  * Demo配置

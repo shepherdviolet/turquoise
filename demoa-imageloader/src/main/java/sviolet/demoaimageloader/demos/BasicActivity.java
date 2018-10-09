@@ -15,7 +15,7 @@ import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
 import sviolet.turquoise.util.bitmap.BlurUtils;
 import sviolet.turquoise.util.droid.DirectoryUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoader;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.drawable.common.CircleLoadingAnimationDrawableFactory;

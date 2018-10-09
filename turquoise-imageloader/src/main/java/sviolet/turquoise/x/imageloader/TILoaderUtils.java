@@ -31,7 +31,7 @@ import java.util.Map;
 import sviolet.turquoise.entity.statics.PublicConstants;
 import sviolet.thistle.util.judge.CheckUtils;
 import sviolet.turquoise.util.droid.DirectoryUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.ServerSettings;
 import sviolet.turquoise.x.imageloader.node.Node;

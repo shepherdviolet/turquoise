@@ -30,7 +30,7 @@ import pl.droidsonroids.gif.GifDrawable;
 import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.util.bitmap.ZxingUtils;
 import sviolet.turquoise.util.judge.GifInspectUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.entity.Params;
 import sviolet.turquoise.x.imageloader.handler.DecodeHandler;

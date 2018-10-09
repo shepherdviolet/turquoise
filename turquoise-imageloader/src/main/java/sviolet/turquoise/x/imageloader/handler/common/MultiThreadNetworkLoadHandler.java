@@ -30,7 +30,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import sviolet.thistle.util.concurrent.ThreadPoolExecutorUtils;
 import sviolet.thistle.util.judge.CheckUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.IndispensableState;
 import sviolet.turquoise.x.imageloader.entity.LowNetworkSpeedStrategy;
 import sviolet.turquoise.x.imageloader.handler.ExceptionHandler;

@@ -39,7 +39,7 @@ import sviolet.thistle.util.conversion.Base64Utils;
 import sviolet.turquoise.util.crypto.AndroidKeyStoreUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.FingerprintUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * 指纹识别封装套件

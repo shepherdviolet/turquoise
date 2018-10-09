@@ -33,9 +33,9 @@ import android.widget.TextView;
 import sviolet.demoa.R;
 import sviolet.demoa.info.LayoutInspectorInfoActivity;
 import sviolet.turquoise.util.droid.DrawOverlaysUtils;
-import sviolet.turquoise.utilx.accessibility.AccessibilityContainerService;
-import sviolet.turquoise.utilx.accessibility.AccessibilityModule;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.accessibility.AccessibilityContainerService;
+import sviolet.turquoise.x.common.accessibility.AccessibilityModule;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * LayoutInspector布局分析辅助服务模块

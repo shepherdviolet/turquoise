@@ -27,7 +27,7 @@ import java.util.Map;
 import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.HttpUrl;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * <p>[OKHttp:CookieJar]在内存中保持Cookie</p>

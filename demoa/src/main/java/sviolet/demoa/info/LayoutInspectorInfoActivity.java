@@ -40,7 +40,7 @@ import sviolet.turquoise.enhance.async.WeakHandler;
 import sviolet.turquoise.util.droid.AccessibilityUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.DrawOverlaysUtils;
-import sviolet.turquoise.utilx.accessibility.AccessibilityContainerService;
+import sviolet.turquoise.x.common.accessibility.AccessibilityContainerService;
 
 /**
  * 布局分析器设置界面(AccessibilityService+叠加层实现)

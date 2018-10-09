@@ -112,7 +112,7 @@
             android:label="@string/temp_main_title"/>
 
         <service
-            android:name="sviolet.turquoise.utilx.accessibility.AccessibilityContainerService"
+            android:name="sviolet.turquoise.x.common.accessibility.AccessibilityContainerService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
             android:enabled="true"
             android:exported="true">

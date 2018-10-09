@@ -21,10 +21,8 @@ package sviolet.turquoise.x.imageloader.handler;
 
 import android.content.Context;
 
-import java.io.File;
-
 import sviolet.turquoise.util.common.DateTimeUtilsForAndroid;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.TILoaderUtils;
 import sviolet.turquoise.x.imageloader.entity.ImageResource;
 import sviolet.turquoise.x.imageloader.node.Task;

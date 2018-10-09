@@ -23,7 +23,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 
-import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.x.common.lifecycle.LifeCycleUtils;
 import sviolet.turquoise.x.imageloader.ComponentManager;
 import sviolet.turquoise.x.imageloader.server.Engine;
 import sviolet.turquoise.x.imageloader.entity.Params;

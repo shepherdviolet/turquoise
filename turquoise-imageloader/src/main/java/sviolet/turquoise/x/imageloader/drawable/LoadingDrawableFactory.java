@@ -24,7 +24,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 import sviolet.thistle.entity.common.Destroyable;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.entity.LoadProgress;
 import sviolet.turquoise.x.imageloader.entity.Params;
 

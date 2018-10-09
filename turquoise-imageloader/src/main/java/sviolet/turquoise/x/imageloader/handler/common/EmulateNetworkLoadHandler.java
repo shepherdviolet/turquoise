@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import sviolet.turquoise.util.bitmap.BitmapUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**

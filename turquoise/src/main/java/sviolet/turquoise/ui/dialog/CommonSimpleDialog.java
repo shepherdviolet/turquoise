@@ -35,7 +35,7 @@ import android.widget.TextView;
 import sviolet.turquoise.ui.util.StateListDrawableUtils;
 import sviolet.turquoise.util.conversion.HtmlStringUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * <p>简单的Dialog</p>

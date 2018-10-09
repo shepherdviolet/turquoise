@@ -21,7 +21,7 @@ package sviolet.turquoise.x.imageloader.node.queue;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 import sviolet.turquoise.x.imageloader.node.Task;
 
 /**

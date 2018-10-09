@@ -42,8 +42,8 @@ import sviolet.turquoise.enhance.app.annotation.setting.DebugSettings;
 import sviolet.turquoise.enhance.app.annotation.setting.ReleaseSettings;
 import sviolet.turquoise.util.droid.ApplicationUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
-import sviolet.turquoise.utilx.eventbus.EvBus;
-import sviolet.turquoise.utilx.tlogger.TLogger;
+import sviolet.turquoise.x.async.eventbus.EvBus;
+import sviolet.turquoise.x.common.tlogger.TLogger;
 
 /**
  * [组件扩展]Application<br>

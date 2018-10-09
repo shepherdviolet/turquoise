@@ -22,7 +22,6 @@ package sviolet.demoa.other;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v4.view.ViewPager;
 import android.view.MotionEvent;
 import android.view.View;
@@ -44,7 +43,7 @@ import sviolet.turquoise.ui.util.ViewCommonUtils;
 import sviolet.turquoise.util.bitmap.CachedBitmapUtils;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.MeasureUtils;
-import sviolet.turquoise.utilx.lifecycle.LifeCycleUtils;
+import sviolet.turquoise.x.common.lifecycle.LifeCycleUtils;
 
 @DemoDescription(
         title = "Multi item in ViewPager Demo",
