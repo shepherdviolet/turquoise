@@ -10,9 +10,7 @@ dependencies {
     //implementation依赖的库, 对上一层依赖不可见. api依赖的库, 对上一层依赖可见
     //api
     api fileTree(include: ['*.jar'], dir: 'libs')
-    api ("com.github.shepherdviolet:thistle:$version_thistleVersion") {
-        exclude group:'org.bouncycastle'
-    }
+    api ("com.github.shepherdviolet:thistle-common:$version_thistleVersion")
     //required
     implementation "com.android.support:support-v4:$version_supportVersion"
     //optional
