@@ -25,6 +25,7 @@ import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.annotation.RequiresPermission;
@@ -39,11 +40,22 @@ import java.util.Locale;
 public class DeviceUtils {
 
     /**
-     * 获取设备IMEI号
+     * 获取安卓ID, 出厂化/刷机等操作后会变, Android 8 (API 26) 以上不同APP获得的也不同(详见官方文档)
+     */
+    public static String getAndroidId(Context context){
+        return Settings.System.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    /**
+     * 获取设备IMEI号, Android 10 (API 29) 以上就获取不到了
      * <uses-permission android:name="android.permission.READ_PHONE_STATE" />
      */
     @RequiresPermission("android.permission.READ_PHONE_STATE")
     public static String getIMEI(Context context) {
+        if (getVersionSDK() >= 29) {
+            // API 29 以上即使通过了权限, 也会抛出异常
+            return "";
+        }
         final TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String imei = manager.getDeviceId();
         if (imei != null) {
@@ -53,7 +65,7 @@ public class DeviceUtils {
     }
 
     /**
-     * 获取设备MAC地址<br>
+     * 获取设备MAC地址, Android 6 (API 23) 以上就获取不到了(变成02:00:00:00:00:00)<br>
      * <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
      */
     @RequiresPermission("android.permission.ACCESS_WIFI_STATE")
