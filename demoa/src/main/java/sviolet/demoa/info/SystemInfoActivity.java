@@ -19,6 +19,8 @@
 
 package sviolet.demoa.info;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.widget.TextView;
 
@@ -27,6 +29,7 @@ import sviolet.demoa.common.DemoDescription;
 import sviolet.turquoise.enhance.app.TActivity;
 import sviolet.turquoise.enhance.app.annotation.inject.ResourceId;
 import sviolet.turquoise.enhance.app.annotation.setting.ActivitySettings;
+import sviolet.turquoise.enhance.app.utils.RuntimePermissionManager;
 import sviolet.turquoise.util.droid.DeviceUtils;
 import sviolet.turquoise.util.droid.FingerprintUtils;
 import sviolet.turquoise.util.droid.SystemAppUtils;
@@ -52,12 +55,20 @@ public class SystemInfoActivity extends TActivity {
 
     @Override
     protected void onInitViews(Bundle savedInstanceState) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(getDeviceInfo());
-        stringBuilder.append(getSystemInfo());
-        stringBuilder.append(getCpuInfo());
-        stringBuilder.append(getWebViewInfo());
-        textView.setText(stringBuilder.toString());
+        executePermissionTask(new String[]{Manifest.permission.READ_PHONE_STATE, Manifest.permission.ACCESS_WIFI_STATE}, new RuntimePermissionManager.RequestPermissionTask() {
+            @Override
+            public void onResult(String[] permissions, int[] grantResults, boolean allGranted) {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.append(getDeviceInfo());
+                stringBuilder.append(getSystemInfo());
+                stringBuilder.append(getCpuInfo());
+                stringBuilder.append(getWebViewInfo());
+                if (allGranted) {
+                    stringBuilder.append(getIds());
+                }
+                textView.setText(stringBuilder.toString());
+            }
+        });
     }
 
     private String getDeviceInfo(){
@@ -95,6 +106,13 @@ public class SystemInfoActivity extends TActivity {
             return "\nWebView version: " + info.versionName + "(" + info.versionCode + ")\nWebView is updated: " + info.isUpdated;
         }
         return "\nWebView version: null\nWebView is updated: null";
+    }
+
+    @SuppressLint("MissingPermission")
+    private String getIds(){
+        return "\nAndroid ID: " + DeviceUtils.getAndroidId(this) +
+                "\nIMEI: " + DeviceUtils.getIMEI(this) +
+                "\nMAC: " + DeviceUtils.getMacAddress(this);
     }
 
 }
